@@ -39,8 +39,8 @@ public class LogoutController extends AbstractController {
 	 * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		Cookie cookie = WebUtils.getCookie(request, WebConstants.CONST_COOKIE_TGC_ID);
-		String service = request.getParameter(WebConstants.CONST_MODEL_SERVICE);
+		Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
+		String service = request.getParameter(WebConstants.SERVICE);
 
 		if (cookie != null)
 		{
@@ -57,7 +57,7 @@ public class LogoutController extends AbstractController {
 	
 	private void destroyTicketGrantingTicketCookie(HttpServletRequest request, HttpServletResponse response)
 	{
-		Cookie cookie = new Cookie(WebConstants.CONST_COOKIE_TGC_ID, WebConstants.CONST_COOKIE_DEFAULT_EMPTY_VALUE);
+		Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE);
 		cookie.setMaxAge(0);
 		cookie.setPath(request.getContextPath());
 		cookie.setSecure(true);

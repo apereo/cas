@@ -54,8 +54,8 @@ public class ServiceValidateController extends AbstractController
 		if (serviceTicket == null)
 		{
 			logger.info("ServiceTicket [" + validationRequest.getTicket() + "was invalid.");
-			model.put(WebConstants.CONST_MODEL_CODE, "INVALID_TICKET");
-			model.put(WebConstants.CONST_MODEL_DESC, "ticket '" + validationRequest.getTicket() + "' not recognized.");
+			model.put(WebConstants.CODE, "INVALID_TICKET");
+			model.put(WebConstants.DESC, "ticket '" + validationRequest.getTicket() + "' not recognized.");
 			return new ModelAndView(casValidationFailure, model);
 		}
 		else
@@ -65,16 +65,16 @@ public class ServiceValidateController extends AbstractController
 			{
 				logger.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
 				ProxyGrantingTicket proxyGrantingTicket = ticketManager.createProxyGrantingTicket(serviceTicket.getPrincipal(), casAttributes, serviceTicket);
-				model.put(WebConstants.CONST_MODEL_PGTIOU, proxyGrantingTicket.getProxyIou());
+				model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
 			}
 		}
 		
 		if (serviceTicket instanceof ProxyTicket) {
 			ProxyTicket p = (ProxyTicket)  serviceTicket;
-			model.put(WebConstants.CONST_MODEL_PROXIES, p.getProxies());
+			model.put(WebConstants.PROXIES, p.getProxies());
 		}
 		
-		model.put(WebConstants.CONST_MODEL_PRINCIPAL, serviceTicket.getPrincipal());
+		model.put(WebConstants.PRINCIPAL, serviceTicket.getPrincipal());
 		
 		return new ModelAndView(casValidationSuccess, model);
 	}

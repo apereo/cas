@@ -81,7 +81,7 @@ public class LoginController extends AbstractFormController {
 		if (mv != null)
 			return mv;*/
 
-		String loginToken = request.getParameter(WebConstants.CONST_MODEL_TICKET);
+		String loginToken = request.getParameter(WebConstants.TICKET);
 
 		if (!loginTokens.containsKey(loginToken)) {
 			logger.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
@@ -100,12 +100,12 @@ public class LoginController extends AbstractFormController {
 			if (ticket == null) {
 				logger.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
 				ticket = ticketManager.createTicketGrantingTicket(principal, casAttributes);
-				createCookie(WebConstants.CONST_COOKIE_TGC_ID, ticket.getId(), request, response);
+				createCookie(WebConstants.COOKIE_TGC_ID, ticket.getId(), request, response);
 			}
 			if (casAttributes.isWarn())
-				createCookie(WebConstants.CONST_COOKIE_PRIVACY, WebConstants.CONST_COOKIE_DEFAULT_FILLED_VALUE, request, response);
+				createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
 			else
-				createCookie(WebConstants.CONST_COOKIE_PRIVACY, WebConstants.CONST_COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+				createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
 
 			casAttributes.setFirst(true);
 			return grantForService(request, ticket, casAttributes);
@@ -122,7 +122,7 @@ public class LoginController extends AbstractFormController {
 		Map map = new HashMap();
 		String newToken = idGenerator.getNewTokenId();
 		loginTokens.put(newToken, new Date());
-		map.put(WebConstants.CONST_MODEL_LOGIN_TICKET, newToken);
+		map.put(WebConstants.LOGIN_TICKET, newToken);
 		return map;
 	}
 
@@ -143,7 +143,7 @@ public class LoginController extends AbstractFormController {
 		if (mv != null)
 			return mv;
 
-		model.put(WebConstants.CONST_MODEL_CAS_ATTRIBUTES, casAttributes);
+		model.put(WebConstants.CAS_ATTRIBUTES, casAttributes);
 		return super.showForm(request, errors, formView, model);
 	}
 
@@ -173,14 +173,14 @@ public class LoginController extends AbstractFormController {
 		boolean first = casAttributes.isFirst();
 		if (StringUtils.hasText(service)) {
 			String token = ticketManager.createServiceTicket(ticket.getPrincipal(), casAttributes, ticket).getId();
-			model.put(WebConstants.CONST_MODEL_TICKET, token);
-			model.put(WebConstants.CONST_MODEL_SERVICE, service);
-			model.put(WebConstants.CONST_MODEL_FIRST, new Boolean(first).toString());
+			model.put(WebConstants.TICKET, token);
+			model.put(WebConstants.SERVICE, service);
+			model.put(WebConstants.FIRST, new Boolean(first).toString());
 			if (!first) {
 				if (privacyRequested(request))
 					return new ModelAndView(confirmView, model);
 				else {
-					model.remove(WebConstants.CONST_MODEL_SERVICE);
+					model.remove(WebConstants.SERVICE);
 					return new ModelAndView(new RedirectView(service), model);
 				}
 			} else
@@ -190,14 +190,14 @@ public class LoginController extends AbstractFormController {
 	}
 
 	private boolean privacyRequested(HttpServletRequest request) {
-		Cookie cookie = WebUtils.getCookie(request, WebConstants.CONST_COOKIE_PRIVACY);
+		Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_PRIVACY);
 		if (cookie == null)
 			return false;
 		return Boolean.getBoolean(cookie.getValue());
 	}
 
 	private TicketGrantingTicket getTicketGrantingTicket(final HttpServletRequest request, final Principal principal, final ValidationRequest validationRequest) {
-		Cookie tgt = WebUtils.getCookie(request, WebConstants.CONST_COOKIE_TGC_ID);
+		Cookie tgt = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
 		validationRequest.setPrincipal(principal);
 		TicketGrantingTicket ticket = null;
 		if (tgt != null) {

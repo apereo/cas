@@ -62,14 +62,14 @@ public class ProxyController extends AbstractController
 		{
 			logger.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
 			proxyTicket = ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
-			model.put(WebConstants.CONST_MODEL_TICKET, proxyTicket.getId());
+			model.put(WebConstants.TICKET, proxyTicket.getId());
 			return new ModelAndView(casProxySuccess, model);
 		}
 		else
 		{
 			logger.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-			model.put(WebConstants.CONST_MODEL_CODE, "BAD_PGT");
-			model.put(WebConstants.CONST_MODEL_DESC, "unrecognized pgt: " + validationRequest.getTicket());
+			model.put(WebConstants.CODE, "BAD_PGT");
+			model.put(WebConstants.DESC, "unrecognized pgt: " + validationRequest.getTicket());
 			return new ModelAndView(casProxyFailure, model);
 		}
 	}
