@@ -25,6 +25,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
     }
 
     public boolean isExpired(final Ticket ticket) {
-        return (ticket.getCountOfUses() > this.numberOfUses || System.currentTimeMillis() - ticket.getLastTimeUsed() > this.timeToKillInMilliSeconds);
+        return (ticket == null) || (ticket.getCountOfUses() > this.numberOfUses) || (System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
     }
 }

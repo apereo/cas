@@ -5,7 +5,6 @@
 package org.jasig.cas.authentication.handler.support;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -37,12 +36,13 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+        BufferedReader bufferedReader = null;
 
         if (uRequest.getUserName() == null || uRequest.getPassword() == null)
             return false;
 
         try {
-            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(this.fileName)));
+            bufferedReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(this.fileName)));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
                 final String[] lineFields = line.split(this.separator);
@@ -57,15 +57,18 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     break;
                 }
             }
-            bufferedReader.close();
         }
-        catch (FileNotFoundException ffe) {
-            System.out.println(ffe);
-            return false;
-        }
-        catch (IOException ioe) {
-            System.out.println(ioe);
-            return false;
+        catch (Exception e) {
+            log.error(e);
+        } finally {
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (IOException e) {
+                // can't do anything about this
+            }
+                
         }
         return false;
     }

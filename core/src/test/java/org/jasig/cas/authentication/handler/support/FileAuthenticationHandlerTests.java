@@ -9,7 +9,6 @@ import java.net.URL;
 import junit.framework.TestCase;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.UnsupportedCredentialsException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -19,7 +18,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  */
 public class FileAuthenticationHandlerTests extends TestCase {
 
-    private AuthenticationHandler authenticationHandler;
+    private FileAuthenticationHandler authenticationHandler;
 
     /**
      * @see junit.framework.TestCase#setUp()
@@ -27,7 +26,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         this.authenticationHandler = new FileAuthenticationHandler();
-        ((FileAuthenticationHandler)this.authenticationHandler).setFileName("authentication.txt");
+        this.authenticationHandler.setFileName("authentication.txt");
 
     }
 
@@ -136,8 +135,8 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testAuthenticatesUserInFileWithCommaSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        ((FileAuthenticationHandler)this.authenticationHandler).setFileName("authentication2.txt");
-        ((FileAuthenticationHandler)this.authenticationHandler).setSeparator(",");
+        this.authenticationHandler.setFileName("authentication2.txt");
+        this.authenticationHandler.setSeparator(",");
 
         c.setUserName("scott");
         c.setPassword("rutgers");
@@ -153,8 +152,8 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testFailsUserNotInFileWithCommaSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        ((FileAuthenticationHandler)this.authenticationHandler).setFileName("authentication2.txt");
-        ((FileAuthenticationHandler)this.authenticationHandler).setSeparator(",");
+        this.authenticationHandler.setFileName("authentication2.txt");
+        this.authenticationHandler.setSeparator(",");
 
         c.setUserName("fds");
         c.setPassword("rutgers");
@@ -164,6 +163,80 @@ public class FileAuthenticationHandlerTests extends TestCase {
         }
         catch (AuthenticationException e) {
             // this is okay because it means the test failed.
+        }
+    }
+    
+    public void testFailsGoodUsernameBadPassword() {
+        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+
+        this.authenticationHandler.setFileName("authentication2.txt");
+        this.authenticationHandler.setSeparator(",");
+
+        c.setUserName("scott");
+        c.setPassword("rutgers1");
+
+        try {
+            assertFalse(this.authenticationHandler.authenticate(c));
+        }
+        catch (AuthenticationException e) {
+            // this is okay because it means the test failed.
+        }
+    }
+    
+    public void testAfterPropertiesSetNoPasswordTranslator() {
+        this.authenticationHandler.setPasswordTranslator(null);
+        
+        try {
+            this.authenticationHandler.afterPropertiesSet();
+            fail("Exception expected.");
+        } catch (Exception e) {
+            // this is good
+        }
+    }
+    
+    public void testAfterProperties() {
+        
+        try {
+            this.authenticationHandler.afterPropertiesSet();
+
+        } catch (Exception e) {
+            fail("No Exception expected.");
+        }
+    }
+    
+    public void testAfterPropertiesSetNoFileName() {
+        this.authenticationHandler.setFileName(null);
+        
+        try {
+            this.authenticationHandler.afterPropertiesSet();
+            fail("Exception expected.");
+        } catch (Exception e) {
+            // this is good
+        }
+    }
+    
+    public void testAfterPropertiesSetNoSeperator() {
+        this.authenticationHandler.setSeparator(null);
+        
+        try {
+            this.authenticationHandler.afterPropertiesSet();
+            fail("Exception expected.");
+        } catch (Exception e) {
+            // this is good
+        }
+    }
+    
+    public void testAuthenticateNoFileName() {
+        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        this.authenticationHandler.setFileName("fff");
+        
+        c.setUserName("scott");
+        c.setPassword("rutgers");
+        
+        try {
+            assertFalse(this.authenticationHandler.authenticate(c));
+        } catch (Exception e) {
+            // this is good
         }
     }
 }
