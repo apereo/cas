@@ -15,7 +15,7 @@ import java.util.List;
  * @version $Id$
  *
  */
-public interface ProxyTicket extends Ticket
+public interface ProxyTicket extends ServiceTicket
 {
 	List getProxies();
 }
