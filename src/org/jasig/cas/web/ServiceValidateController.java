@@ -84,6 +84,13 @@ public class ServiceValidateController extends AbstractController implements Ini
                 log.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy authentication specification.");
                 throw new TicketException(TicketException.INVALID_TICKET, "ticket not backed by initial CAS login, as requested");
            }
+           
+           if (this.cas10protocol) {
+       		final PrintWriter out = response.getWriter();
+               log.info("Successfully retrieved ServiceTicket for ticket id [" + serviceTicketId + "] and service [" + service + "]");
+               out.print("yes\n" + ((Principal) assertion.getChainedPrincipals().get(0)).getId() + "\n");
+               return null;
+           }
             
             model.put(WebConstants.PRINCIPAL, assertion.getChainedPrincipals().get(0));
             
@@ -99,12 +106,7 @@ public class ServiceValidateController extends AbstractController implements Ini
                 
                 model.put(WebConstants.PROXIES, Collections.unmodifiableList(proxies));
             }
-            if (this.cas10protocol) {
-        		final PrintWriter out = response.getWriter();
-                log.info("Successfully retrieved ServiceTicket for ticket id [" + serviceTicketId + "] and service [" + service + "]");
-                out.print("yes\n" + ((Principal) assertion.getChainedPrincipals().get(0)).getId() + "\n");
-                return null;
-            }
+
 
             return new ModelAndView(ViewNames.CONST_SERVICE_SUCCESS, model);
         }
@@ -139,7 +141,7 @@ public class ServiceValidateController extends AbstractController implements Ini
     	try {
     	return (AuthenticationSpecification) this.authenticationSpecificationClass.newInstance();
     	} catch (Exception e) {
-    		throw new IllegalStateException("Unable to instanciate instance of " + this.authenticationSpecificationClass.getClass().getName());
+    	    throw new RuntimeException(e);
     	}
     }
     
@@ -149,5 +151,20 @@ public class ServiceValidateController extends AbstractController implements Ini
      */
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    /**
+     * @param authenticationSpecificationClass The authenticationSpecificationClass to set.
+     */
+    public void setAuthenticationSpecificationClass(
+            Class authenticationSpecificationClass) {
+        this.authenticationSpecificationClass = authenticationSpecificationClass;
+    }
+
+    /**
+     * @param cas10protocol The cas10protocol to set.
+     */
+    public void setCas10protocol(boolean cas10protocol) {
+        this.cas10protocol = cas10protocol;
     }
 }
