@@ -4,8 +4,6 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URL;
 
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
@@ -13,7 +11,12 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Id$
+ *
+ */
 public class Cas20ProxyHandlerTests extends TestCase {
 
     public void testAfterPropertiesSetBad() {

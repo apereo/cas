@@ -13,7 +13,12 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Id$
+ *
+ */
 public class TimeoutExpirationPolicyTests extends TestCase {
     private static final long TIMEOUT = 5000;
     private ExpirationPolicy expirationPolicy;

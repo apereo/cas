@@ -17,11 +17,14 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Id$
+ *
+ */
 public class TicketGrantingTicketImplTests extends TestCase {
 
-    /* public TicketGrantingTicketImpl(final String id, final TicketGrantingTicket ticketGrantingTicket, final Authentication authentication,
- 36         final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) */
     public void testNullAuthentication() {
         try {
             new TicketGrantingTicketImpl("test", null, null, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());

@@ -6,7 +6,12 @@ package org.jasig.cas.util;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Id$
+ *
+ */
 public class DefaultUniqueTicketIdGeneratorTests extends TestCase {
     
     public void testUniqueGenerationOfTicketIds() {
