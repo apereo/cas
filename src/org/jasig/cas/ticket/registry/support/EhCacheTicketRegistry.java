@@ -11,15 +11,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.Element;
 
 /**
  * Ticket registry backed by EHCache caching subsystem.
@@ -63,8 +62,11 @@ public class EhCacheTicketRegistry implements TicketRegistry {
         }
     	
     	final Ticket ticket = this.getTicket(ticketId);
+    	
+    	if (ticket == null)
+    		return null;
 
-        if (!ticket.getClass().isAssignableFrom(clazz))
+        if (!clazz.isAssignableFrom(ticket.getClass()))
             throw new InvalidTicketClassException("Ticket [" + ticket.getId() + "] is of type "
                 + ticket.getClass() + " when we were expecting " + clazz);
 
@@ -106,9 +108,10 @@ public class EhCacheTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTickets()
      */
     public Collection getTickets() {
-        List keys = this.cache.getKeys();
-        Collection items = new ArrayList();
         try {
+            List keys = this.cache.getKeys();
+            Collection items = new ArrayList();
+
             for (Iterator iter = keys.iterator(); iter.hasNext();) {
                 Serializable key = (Serializable) iter.next();
                 Element element = this.cache.get(key);

@@ -40,6 +40,9 @@ public class DefaultTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
     public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketClassException {
+    	if (clazz == null)
+    		throw new IllegalArgumentException("clazz cannot be null");
+    	
     	final Ticket ticket = this.getTicket(ticketId);
 
         if (ticket == null)

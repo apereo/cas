@@ -19,8 +19,7 @@ import org.jasig.cas.ticket.Ticket;
 public interface TicketRegistry {
 
     /**
-     * Add a ticket to the registry. Ticket storage is based on the ticket id. If a ticket already exists with that id in the cache, a
-     * DuplicateTicketException is thrown.
+     * Add a ticket to the registry. Ticket storage is based on the ticket id. 
      * 
      * @param ticket The ticket we wish to add to the cache.
      */
@@ -41,7 +40,6 @@ public interface TicketRegistry {
      * 
      * @param ticketId the id of the ticket we wish to retrieve
      * @return the requested ticket.
-     * @throws InvalidTicketClassException
      */
     Ticket getTicket(String ticketId);
     
