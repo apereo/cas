@@ -8,8 +8,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.JdbcTemplateAndDataSourceHolder;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 
@@ -18,14 +20,15 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * exists. This class defaults to a PasswordTranslator of PlainTextPasswordTranslator.
  * 
  * @author Scott Battaglia
+ * @author Dmitriy Kopylenko
  * @version $Id$
  */
 
-public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
+public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractAuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    private static final String SQL_PREFIX = "Select count(*) from ";
+    private static final String SQL_PREFIX = "Select count('x') from ";
 
     private String fieldUser;
 
@@ -35,16 +38,18 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcA
 
     private PasswordTranslator passwordTranslator;
 
-    private String SQL;
+    private String sql;
+
+    private JdbcTemplateAndDataSourceHolder jdbcTemplateAndDataSourceHolder;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
+    protected boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String encyptedPassword = this.passwordTranslator.translate(uRequest.getPassword());
 
-        final int count = this.getJdbcTemplate().queryForInt(this.SQL, new Object[] {uRequest.getUserName(), encyptedPassword});
+        final int count = this.jdbcTemplateAndDataSourceHolder.getJdbcTemplate().queryForInt(this.sql, new Object[] {uRequest.getUserName(), encyptedPassword});
 
         return count > 0;
     }
@@ -56,12 +61,10 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcA
         return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void initDao() throws Exception {
-        if (this.fieldPassword == null || this.fieldUser == null || this.tableUsers == null) {
-            throw new IllegalStateException("fieldPassword, fieldUser and tableUsers must be set on " + this.getClass().getName());
+    public void init() throws Exception {
+        if (this.fieldPassword == null || this.fieldUser == null || this.tableUsers == null || this.jdbcTemplateAndDataSourceHolder == null) {
+            throw new IllegalStateException("fieldPassword, fieldUser, jdbcTemplateAndDataSourceHolder and tableUsers must be set on "
+                + this.getClass().getName());
         }
 
         if (this.passwordTranslator == null) {
@@ -69,7 +72,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcA
             log.info("PasswordTranslator not set.  Using default PasswordTranslator of class " + this.passwordTranslator.getClass().getName());
         }
 
-        this.SQL = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser + " = ? And " + this.fieldPassword + " = ?";
+        this.sql = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser + " = ? And " + this.fieldPassword + " = ?";
     }
 
     /**
@@ -98,5 +101,12 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcA
      */
     public void setTableUsers(final String tableUsers) {
         this.tableUsers = tableUsers;
+    }
+
+    /**
+     * @param jdbcTemplateAndDataSourceHolder The jdbcTemplateAndDataSourceHolder to set.
+     */
+    public void setJdbcTemplateAndDataSourceHolder(JdbcTemplateAndDataSourceHolder jdbcTemplateAndDataSourceHolder) {
+        this.jdbcTemplateAndDataSourceHolder = jdbcTemplateAndDataSourceHolder;
     }
 }
