@@ -68,7 +68,9 @@
   	</property>
   </bean>
   
-  <bean id="simpleMappingExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+  <bean id="ticketExceptionHandlerExceptionResolver" class="org.jasig.cas.web.TicketExceptionHandlerExceptionResolver" />
+  
+  <bean id="simpleMappingHandlerExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
   	<property name="exceptionMappings">
   		<props>
 			<prop key="UndeclaredThrowableException">serviceErrorView</prop>

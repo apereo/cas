@@ -224,6 +224,7 @@ public final class CentralAuthenticationServiceImpl implements
 
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
+        log.debug("Attempting to create TicketGrantingTicket for " + credentials);
         if (credentials == null) {
             throw new IllegalArgumentException("credentials is a required field.");
         }
@@ -231,10 +232,9 @@ public final class CentralAuthenticationServiceImpl implements
         try {
             final Authentication authentication = this.authenticationManager
                 .authenticate(credentials);
-            final TicketGrantingTicket ticketGrantingTicket;
     
             synchronized (this.ticketRegistry) {
-                ticketGrantingTicket = new TicketGrantingTicketImpl(
+                final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                     this.uniqueTicketIdGenerator
                         .getNewTicketId(TicketGrantingTicket.PREFIX),
                     authentication, this.ticketGrantingTicketExpirationPolicy);
