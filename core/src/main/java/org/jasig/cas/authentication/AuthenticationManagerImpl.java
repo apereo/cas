@@ -45,7 +45,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     /** A list of AuthenticationAttributesPopulators. */
     private List authenticationAttributesPopulators;
 
-    public Authentication authenticateAndResolveCredentials(
+    public Authentication authenticate(
         final Credentials credentials) throws AuthenticationException {
         boolean authenticated = false;
 
@@ -103,7 +103,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         
         for (final Iterator populators = this.authenticationAttributesPopulators.iterator(); populators.hasNext();) {
             final AuthenticationAttributesPopulator populator = (AuthenticationAttributesPopulator) populators.next();
-            authentication =  populator.populateAttributes(authentication);
+            authentication = populator.populateAttributes(authentication);
         }
         
         return authentication;

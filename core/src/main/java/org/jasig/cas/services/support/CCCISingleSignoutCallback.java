@@ -9,7 +9,7 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.services.AuthenticatedService;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.SingleSignoutCallback;
 import org.jasig.cas.util.UrlUtils;
 
@@ -26,7 +26,7 @@ public final class CCCISingleSignoutCallback implements SingleSignoutCallback {
     /** The log to log errors. */
     private final Log log = LogFactory.getLog(CCCISingleSignoutCallback.class);
 
-    public boolean sendSingleSignoutRequest(final AuthenticatedService service,
+    public boolean signOut(final RegisteredService service,
         final String serviceTicketId) {
         try {
             URL callbackUrl = new URL(service.getId());

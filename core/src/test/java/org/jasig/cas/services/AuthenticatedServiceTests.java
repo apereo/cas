@@ -23,10 +23,10 @@ public class AuthenticatedServiceTests extends TestCase {
 		final boolean ALLOWTOPROXY = true;
 		final boolean FORCEAUTHENTICATION = true;
 		final String THEME = "theme";
-		final SingleSignoutCallback callback = new SingleSignoutCallback() {public boolean sendSingleSignoutRequest(AuthenticatedService service, String test) {return false;} };
+		final SingleSignoutCallback callback = new SingleSignoutCallback() {public boolean signOut(RegisteredService service, String test) {return false;} };
 		final URL url = null;
 		
-		AuthenticatedService authenticatedService = new AuthenticatedService(ID, ALLOWTOPROXY, FORCEAUTHENTICATION, THEME, callback, url);
+		RegisteredService authenticatedService = new RegisteredService(ID, ALLOWTOPROXY, FORCEAUTHENTICATION, THEME, callback, url);
 		
 		assertEquals(ID, authenticatedService.getId());
 		assertEquals(ALLOWTOPROXY, authenticatedService.isAllowedToProxy());
@@ -38,7 +38,7 @@ public class AuthenticatedServiceTests extends TestCase {
 	
 	public void testNoId() {
 		try {
-			new AuthenticatedService(null, false, false, null, null, null);
+			new RegisteredService(null, false, false, null, null, null);
 			fail("IllegalArgumentsException expected.");
 		} catch (Exception e) {
 			return;

@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.services.AuthenticatedService;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -54,11 +54,11 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
         boolean foundIt = false;
         ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
             .getTicket(serviceTicketId);
-        AuthenticatedService authenticatedService = null;
+        RegisteredService authenticatedService = null;
 
         for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter
             .hasNext();) {
-            authenticatedService = (AuthenticatedService) iter.next();
+            authenticatedService = (RegisteredService) iter.next();
             if ((authenticatedService.getProxyUrl().toExternalForm()
                 .equals(serviceTicket.getService().getId()))
                 || (authenticatedService.getId().equals(serviceTicket

@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.AssertionImpl;
+import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 
 import junit.framework.TestCase;
@@ -57,7 +57,7 @@ public class Cas20ProtocolValidationSpecificationTests extends TestCase {
         final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification(
             true);
         list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new AssertionImpl(list, true);
+        final Assertion assertion = new ImmutableAssertionImpl(list, true);
         assertTrue(s.isSatisfiedBy(assertion));
     }
 
@@ -66,7 +66,7 @@ public class Cas20ProtocolValidationSpecificationTests extends TestCase {
         final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification(
             true);
         list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new AssertionImpl(list, false);
+        final Assertion assertion = new ImmutableAssertionImpl(list, false);
         assertFalse(s.isSatisfiedBy(assertion));
     }
 
@@ -75,7 +75,7 @@ public class Cas20ProtocolValidationSpecificationTests extends TestCase {
         final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification(
             false);
         list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new AssertionImpl(list, true);
+        final Assertion assertion = new ImmutableAssertionImpl(list, true);
         assertTrue(s.isSatisfiedBy(assertion));
     }
 
@@ -84,7 +84,7 @@ public class Cas20ProtocolValidationSpecificationTests extends TestCase {
         final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification(
             false);
         list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new AssertionImpl(list, false);
+        final Assertion assertion = new ImmutableAssertionImpl(list, false);
         assertTrue(s.isSatisfiedBy(assertion));
     }
 

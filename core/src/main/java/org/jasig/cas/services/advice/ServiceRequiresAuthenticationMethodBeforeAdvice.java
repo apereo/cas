@@ -8,7 +8,7 @@ package org.jasig.cas.services.advice;
 import java.lang.reflect.Method;
 
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.services.AuthenticatedService;
+import org.jasig.cas.services.RegisteredService;
 
 /**
  * @author Scott Battaglia
@@ -22,7 +22,7 @@ public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
     private static final int NUMBER_OF_ARGS = 3;
 
     protected void beforeInternal(final Method method, final Object[] args,
-        final Object target, final AuthenticatedService service)
+        final Object target, final RegisteredService service)
         throws Exception {
         if (args.length != NUMBER_OF_ARGS) {
             return;

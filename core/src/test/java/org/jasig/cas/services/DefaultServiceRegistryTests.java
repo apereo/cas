@@ -22,10 +22,10 @@ public class DefaultServiceRegistryTests extends TestCase {
 	private final boolean ALLOWTOPROXY = true;
 	private final boolean FORCEAUTHENTICATION = true;
 	private final String THEME = "theme";
-	private final SingleSignoutCallback callback = new SingleSignoutCallback() {public boolean sendSingleSignoutRequest(AuthenticatedService service, String test) {return false;} };
+	private final SingleSignoutCallback callback = new SingleSignoutCallback() {public boolean signOut(RegisteredService service, String test) {return false;} };
 	private final URL url = null;
 	
-	private AuthenticatedService authenticatedService = new AuthenticatedService(this.ID, this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME, this.callback, this.url);
+	private RegisteredService authenticatedService = new RegisteredService(this.ID, this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME, this.callback, this.url);
 	private DefaultServiceRegistry serviceRegistry = new DefaultServiceRegistry(); 
 	
 	public void setUp() throws Exception {
@@ -68,7 +68,7 @@ public class DefaultServiceRegistryTests extends TestCase {
 	}
 	
 	public void testGetCollection() {
-		final AuthenticatedService authenticatedService2 = new AuthenticatedService("test2", this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME, this.callback, this.url);
+		final RegisteredService authenticatedService2 = new RegisteredService("test2", this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME, this.callback, this.url);
 		
 		this.serviceRegistry.addService(authenticatedService2);
 		this.serviceRegistry.addService(this.authenticatedService);
