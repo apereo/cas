@@ -12,7 +12,7 @@ package org.jasig.cas.validation;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class Cas10ProtocolValidationSpecification implements
+public class Cas10ProtocolValidationSpecification implements
     ValidationSpecification {
 
     /** The default value for the renew attribute is false. */

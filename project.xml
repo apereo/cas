@@ -350,6 +350,76 @@
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
+				<war.bundle>false</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-support</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>

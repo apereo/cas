@@ -146,7 +146,7 @@
 	</target>
 
 	<target name="release" depends="javadoc" description="Generate release zip file">
-
+		<mkdir dir="${dist.dir}" />
 		<delete file="${dist.dir}/${release.zip}"/>
 		<delete file="${dist.dir}/${release.gzip}"/>
 
@@ -159,7 +159,7 @@
 			<include name="*.properties"/>
 			<include name="*.xml"/>
 			<include name="*.bat"/>
-			<include name="${web.dir}/**" />
+			<include name="webapp/**" />
 		</fileset>
 
 		<zip zipfile="${dist.dir}/${release.zip}">
@@ -175,7 +175,7 @@
 				<include name="*.txt"/>
 				<include name="*.properties"/>
 				<include name="*.bat"/>
-				<include name="${web.dir}/**" />
+				<include name="webapp/**" />
 			</tarfileset>		
 		</tar>
 	
