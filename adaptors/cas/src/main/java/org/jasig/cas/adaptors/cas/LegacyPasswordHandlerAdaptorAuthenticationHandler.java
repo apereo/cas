@@ -24,9 +24,6 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
 
     private PasswordHandler passwordHandler;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
-     */
     public boolean authenticateInternal(final Credentials credentials) {
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials)credentials;
 
@@ -35,9 +32,6 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
             .getPassword());
     }
 
-    /**
-     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
-     */
     protected boolean supports(final Credentials credentials) {
         if (credentials == null)
             return false;

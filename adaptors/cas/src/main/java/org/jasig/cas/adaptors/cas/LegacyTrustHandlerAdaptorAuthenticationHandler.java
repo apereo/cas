@@ -25,9 +25,6 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
 
     private TrustHandler trustHandler;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
-     */
     public boolean authenticateInternal(final Credentials credentials) {
         final LegacyCasTrustedCredentials casCredentials = (LegacyCasTrustedCredentials)credentials;
 
@@ -35,9 +32,6 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
             .getServletRequest()));
     }
 
-    /**
-     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
-     */
     protected boolean supports(final Credentials credentials) {
         return credentials != null
             && LegacyCasTrustedCredentials.class.equals(credentials.getClass());
