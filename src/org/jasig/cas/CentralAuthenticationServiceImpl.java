@@ -132,17 +132,18 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
         }
 
         synchronized (serviceTicket) {
+            serviceTicket.incrementCountOfUses();
+            serviceTicket.updateLastTimeUsed();
+
             if (serviceTicket.isExpired()) {
                 log.debug("ServiceTicket [" + serviceTicketId + "] has expired.");
                 throw new TicketException(TicketException.INVALID_TICKET, "ticket '" + serviceTicketId + "' not recognized");
             }
-
+            
             if (!service.equals(serviceTicket.getService())) {
                 log.debug("ServiceTicket [" + serviceTicketId + "] does not match supplied service.");
                 throw new TicketException(TicketException.INVALID_SERVICE, "ticket '" + serviceTicketId + "' does not match supplied service");
             }
-
-            serviceTicket.incrementCountOfUses();
         }
 
         return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals(), serviceTicket.isFromNewLogin());
