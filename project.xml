@@ -56,6 +56,26 @@
 			<timezone>-5</timezone>
 		</developer>
 		<developer>
+			<name>Susan Bramhall</name>
+			<id>susan.bramhall</id>
+			<email>susan.bramhall at yale.edu</email>
+			<organization>Yale University</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+		<developer>
+			<name>Howard Gilbert</name>
+			<id>hgilbert</id>
+			<email>howard.gilbert at yale.edu</email>
+			<organization>Yale University</organization>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+		<developer>
 			<name>Dmitriy Kopylenko</name>
 			<id>dkopylen</id>
 			<email>dkopylen at rutgers.edu</email>
@@ -97,22 +117,6 @@
 			<timezone>-5</timezone>
 		</developer>
 	</developers>
-	<contributors>
-		<contributor>
-			<name>Susan Bramhall</name>
-			<id>susan.bramhall</id>
-			<email>susan.bramhall at yale.edu</email>
-			<organization>Yale University</organization>
-			<timezone>-5</timezone>
-		</contributor>
-		<contributor>
-			<name>Howard Gilbert</name>
-			<id>hgilbert</id>
-			<email>howard.gilbert at yale.edu</email>
-			<organization>Yale University</organization>
-			<timezone>-5</timezone>
-		</contributor>
-	</contributors>
 	<licenses>
 		<license>
 			<name>JA-SIG Collaborative License for Use</name>
