@@ -87,8 +87,8 @@ public class LoginController extends AbstractFormController {
             errors.reject("error.invalid.loginticket", null);
             return showForm(request, response, errors);
         }
-        else
-            this.loginTokens.remove(loginToken);
+
+        this.loginTokens.remove(loginToken);
 
         principal = this.authenticationManager.authenticateUser(authRequest);
 
@@ -110,10 +110,9 @@ public class LoginController extends AbstractFormController {
             casAttributes.setFirst(true);
             return grantForService(request, ticket, casAttributes);
         }
-        else {
-            errors.reject("error.username.and.password", null);
-            return showForm(request, response, errors);
-        }
+
+        errors.reject("error.username.and.password", null);
+        return showForm(request, response, errors);
     }
 
     /**
@@ -184,13 +183,12 @@ public class LoginController extends AbstractFormController {
             if (!first) {
                 if (privacyRequested(request))
                     return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
-                else {
-                    model.remove(WebConstants.SERVICE);
-                    return new ModelAndView(new RedirectView(service), model);
-                }
-            }
-            else
+
+                model.remove(WebConstants.SERVICE);
                 return new ModelAndView(new RedirectView(service), model);
+            }
+
+            return new ModelAndView(new RedirectView(service), model);
         }
         return new ModelAndView(ViewNames.CONST_LOGON_SUCCESS);
     }

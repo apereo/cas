@@ -107,7 +107,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
         }
         if (response != null)
             return this.pgtIou;
-        else
-            return null;
+
+        return null;
     }
 }

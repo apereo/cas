@@ -47,9 +47,8 @@ public class LogoutController extends AbstractController {
         if (service != null) {
             return new ModelAndView(new RedirectView(service));
         }
-        else {
-            return new ModelAndView(ViewNames.CONST_LOGOUT);
-        }
+
+        return new ModelAndView(ViewNames.CONST_LOGOUT);
     }
 
     private void destroyTicketGrantingTicketCookie(HttpServletRequest request, HttpServletResponse response) {

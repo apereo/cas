@@ -27,7 +27,7 @@ public class DefaultCredentialsToPrincipalResolverTest extends TestCase {
         UsernamePasswordAuthenticationRequest request = new UsernamePasswordAuthenticationRequest();
         request.setUserName(null);
         try {
-            Principal p = this.resolver.resolvePrincipal(request);
+            this.resolver.resolvePrincipal(request);
         }
         catch (IllegalArgumentException e) {
             return;

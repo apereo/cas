@@ -69,7 +69,7 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
         try {
-            ProxyGrantingTicket pgt = (ProxyGrantingTicket)this.ticketCreator.createTicket(this.principal, this.casAttributes, serviceTicket);
+            this.ticketCreator.createTicket(this.principal, this.casAttributes, serviceTicket);
         }
         catch (IllegalArgumentException e) {
             return;
@@ -84,7 +84,7 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
         try {
-            ProxyGrantingTicket pgt = (ProxyGrantingTicket) this.ticketCreator.createTicket(this.principal, this.casAttributes,  serviceTicket);
+            this.ticketCreator.createTicket(this.principal, this.casAttributes,  serviceTicket);
         }
         catch (TicketCreationException e) {
             return;

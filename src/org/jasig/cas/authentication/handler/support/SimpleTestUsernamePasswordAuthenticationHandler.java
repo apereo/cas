@@ -28,10 +28,9 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
             log.debug("User [" + username + "] was successfully authenticated.");
             return true;
         }
-        else {
-            log.debug("User [" + username + "] failed authentication");
-            return false;
-        }
+
+        log.debug("User [" + username + "] failed authentication");
+        return false;
     }
 
     /**
