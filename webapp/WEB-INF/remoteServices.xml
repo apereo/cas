@@ -36,6 +36,22 @@
 	
 	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice">
 		<property name="ticketStats"><ref local="statsBean" /></property>
+        <property name="statsStateMutators">
+            <map>
+                <entry key="delegateTicketGrantingTicket">
+                    <value>incrementNumberOfProxyGrantingTicketsVended</value>
+                </entry>
+                <entry key="grantServiceTicket">
+                    <value>incrementNumberOfServiceTicketsVended</value>
+                </entry>
+                <entry key="createTicketGrantingTicket">
+                    <value>incrementNumberOfTicketGrantingTicketsVended</value>
+                </entry>
+                <entry key="">
+                    <value>incrementNumberOfProxyTicketsVended</value>
+                </entry>
+            </map>
+        </property>
 	</bean>
 	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
@@ -49,5 +65,9 @@
 				<value>.*CentralAuthenticationService.*createTicketGrantingTicket.*</value>
 			</list>
 		</property>
+        <property name="perl5">
+            <value>false</value>
+        </property>
 	</bean>
+    
 </beans>

@@ -5,6 +5,8 @@
 package org.jasig.cas.stat.advice;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jasig.cas.stat.TicketStats;
 import org.springframework.aop.AfterReturningAdvice;
@@ -16,6 +18,9 @@ import org.springframework.aop.AfterReturningAdvice;
  *
  */
 public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAdvice {
+    private Map statsStateMutators = new HashMap();
+    
+    
     private static final String PROXY_GRANTING_TICKET_METHOD = "delegateTicketGrantingTicket";
     private static final String SERVICE_TICKET_METHOD = "grantServiceTicket";
     private static final String TICKET_GRANTING_TICKET_METHOD = "createTicketGrantingTicket";
@@ -26,11 +31,22 @@ public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAd
      * @see org.springframework.aop.AfterReturningAdvice#afterReturning(java.lang.Object, java.lang.reflect.Method, java.lang.Object[], java.lang.Object)
      */
     public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
-        if (returnValue == null) {
+        //Scott, now using Map to map method name on the target to "stats muteator methods"
+        //and reflectively invoke them!
+      
+        if (returnValue == null || this.statsStateMutators.isEmpty()) {
             return;
         }
         
-        if (PROXY_GRANTING_TICKET_METHOD.equals(method.getName())) {
+        String statsStateMutatorMethodName = (String)this.statsStateMutators.get(method.getName());
+        if(statsStateMutatorMethodName == null){
+            return;
+        }
+        Method statsStateMutatorMethod = this.ticketStats.getClass().getMethod(statsStateMutatorMethodName, null);
+        statsStateMutatorMethod.invoke(this.ticketStats, null);
+        
+        
+        /*if (PROXY_GRANTING_TICKET_METHOD.equals(method.getName())) {
             this.ticketStats.incrementNumberOfProxyGrantingTicketsVended();
         } else if (SERVICE_TICKET_METHOD.equals(method.getName())) {
             this.ticketStats.incrementNumberOfServiceTicketsVended();
@@ -38,12 +54,19 @@ public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAd
             this.ticketStats.incrementNumberOfTicketGrantingTicketsVended();
         } else if (PROXY_TICKET_METHOD.equals(method.getName())) {
             this.ticketStats.incrementNumberOfProxyTicketsVended();
-        }
+        }*/
     }
     /**
      * @param ticketStats The ticketStats to set.
      */
     public void setTicketStats(TicketStats ticketStats) {
         this.ticketStats = ticketStats;
+    }
+    
+    /**
+     * @param statsStateMutators The statsStateMutators to set.
+     */
+    public void setStatsStateMutators(Map statsStateMutators) {
+        this.statsStateMutators = statsStateMutators;
     }
 }
