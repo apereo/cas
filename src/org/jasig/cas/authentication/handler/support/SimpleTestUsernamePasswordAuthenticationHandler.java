@@ -37,6 +37,6 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-    	// no intialization required
+        log.warn(this.getClass().getName() + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }
 }
