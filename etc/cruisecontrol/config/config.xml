@@ -1,0 +1,78 @@
+<cruisecontrol>
+	<system>
+		<configuration>
+			<threads>
+				1 
+			</threads>
+		</configuration>
+	</system>
+	<project
+		name="cas3"
+		buildafterfailed="true">
+		<dateformat format="yyyy-MM-dd HH:mm:ss" />
+		<labelincrementer
+			defaultLabel="Build.1" 
+			preBuildIncrementer="true"
+			separator="." />
+		
+		<listeners>
+			<currentbuildstatuslistener
+				file="C:\opt\cruisecontrol\main\logs\cas3\status.html" />
+		</listeners>
+		<bootstrappers>
+			<cvsbootstrapper localWorkingCopy="/opt/eclipse/workspace/cas3" />
+			<!-- Use the commented out thing below if publishing remotely-->
+			<!--
+			<currentbuildstatusftpbootstrapper
+				file="status.html"
+				destDir="/cruisecontrol/"
+				targethost="jasig.org"
+				targetUser="cas-user"
+				targetPasswd="mypassword"
+				targetPort="21"
+				targetDir="."
+				targetSeparator="/"
+				 />
+			-->
+		</bootstrappers>
+		<modificationset
+			requiremodification="false"
+			quietperiod="60">
+			<alwaysbuild />
+		</modificationset>
+		<schedule>
+			<ant
+				buildfile="/opt/eclipse/workspace/cas3/build.xml"
+				target="release"
+				time="1157"
+				uselogger="true"
+				loggerclassname="org.apache.tools.ant.XmlLogger" />
+		</schedule>
+		<log
+			dir="logs/cas3">
+			<!--
+			<merge
+				dir="JUNIT TESTS"
+				removeproperties="true"
+				pattern="*.xml" />
+			-->
+		</log>
+		<publishers>
+			<artifactspublisher
+				dir="target"
+				dest="c:\opt\cruisecontrol\main\logs\cas3" />
+			<email
+				buildresultsurl="http://localhost:8080/cruisecontrol/buildresults"
+				failasimportant="true"
+				mailhost="rci.rutgers.edu"
+				reportsuccess="always"
+				returnaddress="noreply@rutgers.edu"
+				returnname="CruiseControl AutoBuilder"
+				skipusers="true">
+				<always address="scott_battaglia@rutgers.edu" />
+			</email>
+		</publishers>
+			
+			
+	</project>
+</cruisecontrol>
