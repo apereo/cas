@@ -28,7 +28,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler implements Authen
     public boolean authenticate(final Credentials credentials) throws AuthenticationException {
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials)credentials;
 
-        return passwordHandler.authenticate(casCredentials.getServletRequest(), casCredentials.getUserName(), casCredentials.getPassword());
+        return this.passwordHandler.authenticate(casCredentials.getServletRequest(), casCredentials.getUserName(), casCredentials.getPassword());
     }
 
     /**
