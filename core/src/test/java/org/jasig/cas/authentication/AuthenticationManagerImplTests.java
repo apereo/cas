@@ -46,6 +46,10 @@ public class AuthenticationManagerImplTests extends TestCase {
 		handlers.add(new HttpBasedServiceCredentialsAuthenticationHandler());
 		
 		a.setAuthenticationHandlers(handlers);
+        
+        List populators = new ArrayList();
+        populators.add(new DefaultAuthenticationAttributesPopulator());
+        a.setAuthenticationAttributesPopulators(populators);
 	}
 	
 	private void setUpManager2(AuthenticationManagerImpl a) {
