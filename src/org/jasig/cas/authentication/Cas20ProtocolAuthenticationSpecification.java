@@ -13,6 +13,10 @@ package org.jasig.cas.authentication;
  *
  */
 public class Cas20ProtocolAuthenticationSpecification extends Cas10ProtocolAuthenticationSpecification implements AuthenticationSpecification {
+	public Cas20ProtocolAuthenticationSpecification() {
+		super();
+	}
+	
     public Cas20ProtocolAuthenticationSpecification(boolean renew) {
         super(renew);
     }
