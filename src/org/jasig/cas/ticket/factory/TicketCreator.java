@@ -14,7 +14,7 @@ import org.jasig.cas.ticket.Ticket;
  * @author Scott Battaglia
  * @version $Id$
  * @see org.jasig.cas.ticket.Ticket
- * @see org.jasig.cas.domain.TicketCreationAttributes
+ * @see org.jasig.cas.ticket.CasAttributes
  */
 public interface TicketCreator {
 

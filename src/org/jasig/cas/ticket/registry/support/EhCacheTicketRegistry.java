@@ -37,7 +37,8 @@ public class EhCacheTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.domain.Ticket)
+     * 
+     * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
      */
     public void addTicket(final Ticket ticket) {
         if (ticket == null) {

@@ -25,8 +25,8 @@ public abstract class AbstractTicketValidatorHelper implements TicketValidatorHe
     /**
      * A Template method
      * 
-     * @see org.jasig.cas.ticket.validation.TicketValidatorHelper#validateForRequest(org.jasig.cas.domain.Ticket,
-     * org.jasig.cas.domain.ValidationRequest)
+     * @see org.jasig.cas.ticket.validation.TicketValidatorHelper#validateForRequest(org.jasig.cas.ticket.Ticket,
+     * org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public final boolean validateForRequest(final Ticket ticket, final ValidationRequest request) {
         if (ticket.isExpired())

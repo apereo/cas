@@ -26,7 +26,7 @@ public interface TicketManager
 	 * 
 	 * Method to create a a proxy granting ticket and add it to the registry.
 	 * 
-	 * @param ticketCreationAttributes The initial setup attributes for a ticket.
+	 * @param casAttributes The initial setup attributes for a ticket.
 	 * @param ticket The parent ticket of the ProxyGrantingTicket
 	 * @return the ticket created.
 	 */
@@ -36,7 +36,7 @@ public interface TicketManager
 	 * 
 	 * Method to create a proxy ticket and add it to the registry.
 	 * 
-	 * @param ticketCreationAttributes The initial setup attributes for a ticket.
+	 * @param casAttributes The initial setup attributes for a ticket.
 	 * @param ticket The parent ticket of the ProxyTicket
 	 * @return the ticket created.
 	 */
@@ -46,7 +46,7 @@ public interface TicketManager
 	 * 
 	 * Method to create a service ticket and add it to the registry.
 	 * 
-	 * @param ticketCreationAttributes The initial setup attributes for a ticket.
+	 * @param casAttributes The initial setup attributes for a ticket.
 	 * @param ticket The parent ticket of the ServiceTIcket
 	 * @return the ticket created.
 	 */
@@ -56,7 +56,7 @@ public interface TicketManager
 	 * 
 	 * Method to create a a ticket granting ticket and add it to the registry.
 	 * 
-	 * @param ticketCreationAttributes The initial setup attributes for a ticket.
+	 * @param casAttributes The initial setup attributes for a ticket.
 	 * @return the ticket created.
 	 */
 	TicketGrantingTicket createTicketGrantingTicket(Principal principal, CasAttributes casAttributes);

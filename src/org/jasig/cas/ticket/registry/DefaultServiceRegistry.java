@@ -18,7 +18,7 @@ import org.jasig.cas.ticket.registry.ServiceRegistry;
  * 
  * @author Scott Battaglia
  * @version $Id$
- * @see org.jasig.cas.ticket.ServiceRegistry
+ * @see org.jasig.cas.ticket.registry.ServiceRegistry
  */
 public class DefaultServiceRegistry implements ServiceRegistry {
 	protected final Log logger = LogFactory.getLog(getClass());

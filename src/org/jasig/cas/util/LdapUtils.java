@@ -19,7 +19,7 @@ public abstract class LdapUtils {
 	 * 
 	 * @param filter
 	 * @param userName
-	 * @return
+	 * @return the filtered string populated with the username
 	 */
 	public static String getFilterWithValues(final String filter, final String userName) {
 		Properties properties = new Properties();

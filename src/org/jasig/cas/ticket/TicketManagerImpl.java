@@ -60,31 +60,32 @@ public class TicketManagerImpl implements TicketManager {
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#createTicketGrantingTicket(org.jasig.cas.domain.TicketCreationAttributes)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#createTicketGrantingTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes)
      */
     public TicketGrantingTicket createTicketGrantingTicket(final Principal principal, final CasAttributes casAttributes) {
         return (TicketGrantingTicket) this.createAndAddToRegistry(TicketGrantingTicket.class, principal, casAttributes, null);
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#createProxyGrantingTicket(org.jasig.cas.domain.TicketCreationAttributes,
-     * org.jasig.cas.domain.ServiceTicket)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#createProxyGrantingTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.ServiceTicket)
      */
     public ProxyGrantingTicket createProxyGrantingTicket(final Principal principal, final CasAttributes casAttributes, final ServiceTicket ticket) {
         return (ProxyGrantingTicket) this.createAndAddToRegistry(ProxyGrantingTicket.class,principal, casAttributes, ticket);
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#createProxyTicket(org.jasig.cas.domain.TicketCreationAttributes,
-     * org.jasig.cas.domain.ProxyGrantingTicket)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#createProxyTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.ProxyGrantingTicket)
      */
     public ProxyTicket createProxyTicket(final Principal principal, final CasAttributes casAttributes, final ProxyGrantingTicket ticket) {
         return (ProxyTicket) this.createAndAddToRegistry(ProxyTicket.class, principal, casAttributes, ticket);
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#createServiceTicket(org.jasig.cas.domain.TicketCreationAttributes,
-     * org.jasig.cas.domain.TicketGrantingTicket)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#createServiceTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.TicketGrantingTicket)
      */
     public ServiceTicket createServiceTicket(final Principal principal, final CasAttributes casAttributes, final TicketGrantingTicket ticket) {
         return (ServiceTicket) this.createAndAddToRegistry(ServiceTicket.class, principal, casAttributes, ticket);
@@ -98,21 +99,24 @@ public class TicketManagerImpl implements TicketManager {
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#deleteTicket(org.jasig.cas.domain.Ticket)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#deleteTicket(org.jasig.cas.ticket.Ticket)
      */
     public boolean deleteTicket(final Ticket ticket) {
     	return (ticket == null) ? false : ticketRegistry.deleteTicket(ticket.getId());
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#validateProxyGrantingTicket(org.jasig.cas.domain.ValidationRequest)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#validateProxyGrantingTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ProxyGrantingTicket validateProxyGrantingTicket(final ValidationRequest validationRequest) {
         return (ProxyGrantingTicket) retrieveValidTicket(validationRequest, ProxyGrantingTicket.class);
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#validateProxyTicket(org.jasig.cas.domain.ValidationRequest)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#validateProxyTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ProxyTicket validateProxyTicket(ValidationRequest validationRequest) {
         return (ProxyTicket) retrieveValidTicket(validationRequest, ProxyTicket.class);
@@ -120,14 +124,16 @@ public class TicketManagerImpl implements TicketManager {
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#validateServiceTicket(org.jasig.cas.domain.ValidationRequest)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#validateServiceTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ServiceTicket validateServiceTicket(final ValidationRequest validationRequest) {
         return (ServiceTicket) retrieveValidTicket(validationRequest, ServiceTicket.class);
     }
 
     /**
-     * @see org.jasig.cas.ticket.TicketManager#validateTicketGrantingTicket(org.jasig.cas.domain.ValidationRequest)
+     * 
+     * @see org.jasig.cas.ticket.TicketManager#validateTicketGrantingTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public TicketGrantingTicket validateTicketGrantingTicket(final ValidationRequest validationRequest) {
         return (TicketGrantingTicket) retrieveValidTicket(validationRequest, TicketGrantingTicket.class);

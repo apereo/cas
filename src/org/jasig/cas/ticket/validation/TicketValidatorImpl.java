@@ -22,8 +22,8 @@ public class TicketValidatorImpl implements TicketValidator {
     private List ticketValidatorHelpers;
 
     /**
-     * @see org.jasig.cas.ticket.validation.TicketValidator#validate(org.jasig.cas.domain.Ticket,
-     * org.jasig.cas.domain.ValidationRequest)
+     * 
+     * @see org.jasig.cas.ticket.validation.TicketValidator#validate(org.jasig.cas.ticket.Ticket, org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public boolean validate(final Ticket ticket, final ValidationRequest request) {
     	logger.debug("Attempting to find validator for ticket of type [" + ticket.getClass().getName() + "]");

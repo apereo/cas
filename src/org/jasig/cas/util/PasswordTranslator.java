@@ -5,8 +5,9 @@
 package org.jasig.cas.util;
 
 /**
+ * 
  * Interface to provide a standard way to translate a plaintext password into a different representation
- * of that password (i.e. md5) so that the password may be compared with the stored encrypted password
+ * of that password so that the password may be compared with the stored encrypted password
  * without having to decode the encrypted password.
  * 
  * @author Scott Battaglia

@@ -29,7 +29,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	private List credentialsToPrincipalResolvers;
 	
 	/**
-	 * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public Principal authenticateUser(final AuthenticationRequest request)
 	{

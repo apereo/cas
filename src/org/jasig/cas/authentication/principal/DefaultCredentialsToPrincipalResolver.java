@@ -20,18 +20,20 @@ import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
 	protected final Log logger = LogFactory.getLog(getClass());
 
-    /**
-     * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#resolvePrincipal(AuthenticationRequest)
-     */
+	/**
+	 * 
+	 * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#resolvePrincipal(org.jasig.cas.authentication.AuthenticationRequest)
+	 */
     public Principal resolvePrincipal(final AuthenticationRequest authenticationRequest) {
     	final UsernamePasswordAuthenticationRequest basicAuthenticationRequest = (UsernamePasswordAuthenticationRequest) authenticationRequest;
     	logger.debug("Creating SimplePrincipal for [" + basicAuthenticationRequest.getUserName() + "]");
         return new SimplePrincipal(basicAuthenticationRequest.getUserName());
     }
 
-	/**
-	 * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#supports(org.jasig.cas.domain.AuthenticationRequest)
-	 */
+    /**
+     * 
+     * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#supports(org.jasig.cas.authentication.AuthenticationRequest)
+     */
 	public boolean supports(AuthenticationRequest request) {
 		return request.getClass().isAssignableFrom(UsernamePasswordAuthenticationRequest.class);
 	}
