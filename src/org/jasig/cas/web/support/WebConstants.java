@@ -5,6 +5,7 @@
 package org.jasig.cas.web.support;
 
 /**
+ * Various constants used by CAS web tier components.
  * @author Scott Battaglia
  * @version $Id$
  *
