@@ -13,7 +13,6 @@
 
 	<!-- Set properties needed for build -->
 	<property file="project.properties"/>
-	<property file="user.properties" />
 
 	<!-- Set build classpath -->
 	<path id="all-libs">
