@@ -13,11 +13,13 @@
 		<property name="credentialsToPrincipalResolvers">
 			<list>
 				<bean class="org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver" />
+				<bean class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
 			</list>
 		</property>
 		<property name="authenticationHandlers">
 			<list>
 				<bean class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+				<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
 			</list>
 		</property>
 	</bean>

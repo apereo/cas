@@ -33,6 +33,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler implements Authent
             return false;
         }
         
+        log.debug("Attempting to resolve credentials for " + serviceCredentials);
         try {
         	response = UrlUtils.getResponseBodyFromUrl(serviceCredentials.getCallbackUrl());
         } catch (Exception e) {

@@ -55,7 +55,12 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         	// can't do anything with this
         }
         
-        return response != null ? proxyIou : null;
+        if (response == null) {
+        	log.info("Could not send ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
+        	return null;
+        }
+    	log.info("Sent ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
+    	return proxyIou;
 
 
     }
