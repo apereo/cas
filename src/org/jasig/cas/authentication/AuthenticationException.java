@@ -1,16 +1,15 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
-
 
 /**
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public class AuthenticationException extends Exception {
+
     private String code;
 
     private String description;
@@ -19,18 +18,21 @@ public class AuthenticationException extends Exception {
      * Comment for <code>serialVersionUID</code>
      */
     private static final long serialVersionUID = 3906648604830611762L;
+
     /**
      * 
      */
     public AuthenticationException() {
         super();
     }
+
     /**
      * @param arg0
      */
     public AuthenticationException(String arg0) {
         super(arg0);
     }
+
     /**
      * @param arg0
      * @param arg1
@@ -38,19 +40,20 @@ public class AuthenticationException extends Exception {
     public AuthenticationException(String arg0, Throwable arg1) {
         super(arg0, arg1);
     }
+
     /**
      * @param arg0
      */
     public AuthenticationException(Throwable arg0) {
         super(arg0);
     }
-    
+
     public AuthenticationException(String arg0, String code, String description) {
-        super (arg0);
+        super(arg0);
         this.code = code;
         this.description = description;
     }
-    
+
     public AuthenticationException(String arg0, Throwable arg1, String code, String description) {
         super(arg0, arg1);
         this.code = code;
@@ -63,6 +66,7 @@ public class AuthenticationException extends Exception {
     public String getCode() {
         return this.code;
     }
+
     /**
      * @return Returns the description.
      */
