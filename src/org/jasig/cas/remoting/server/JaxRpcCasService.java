@@ -2,10 +2,10 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.webservice.server;
+package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
-import org.jasig.cas.webservice.CasService;
+import org.jasig.cas.remoting.CasService;
 import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
 
 /**
@@ -23,7 +23,7 @@ public class JaxRpcCasService extends ServletEndpointSupport implements CasServi
         this.casService = (CasService) getWebApplicationContext().getBean(CONST_CAS_SERVICE_NAME);
     }
 	/**
-	 * @see org.jasig.cas.webservice.server.RemoteCasService#getServiceTicket(org.jasig.cas.domain.AuthenticationRequest)
+	 * @see org.jasig.cas.remoting.server.RemoteCasService#getServiceTicket(org.jasig.cas.domain.AuthenticationRequest)
 	 */
 	public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
 		return casService.getServiceTicket(request, serviceUrl);

@@ -2,26 +2,30 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.webservice;
+package org.jasig.cas.remoting.server;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 
+
 /**
- * Interface for the services exposed by CAS remote services.  These services
- * can be either SOAP, RMI, etc.  The CasService does not care.
+ * Remote CasService interface required for JAX-RPC
  * 
  * @author Scott Battaglia
  * @version $Id$
  *
  */
-public interface CasService {
-
+public interface RemoteCasService extends Remote
+{
 	/**
 	 * 
 	 * Method that if provided the proper credentials will return a service ticket.
 	 * 
 	 * @param request The authentication request to retrieve a CAS service ticket
 	 * @return A CAS service ticket or null.
+	 * @throws RemoteException
 	 */
-	String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl);
+	String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) throws RemoteException;
 }

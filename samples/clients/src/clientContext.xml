@@ -12,12 +12,12 @@
 	</bean>
 	
 	<!-- Proxy for the JAX-RPC/Axis-exported OrderService -->
-	<bean id="casService" class="org.jasig.cas.webservice.client.NestedJavaBeanAxisPortProxyFactoryBean">
+	<bean id="casService" class="org.jasig.cas.remoting.client.NestedJavaBeanAxisPortProxyFactoryBean">
 		<property name="serviceInterface">
-			<value>org.jasig.cas.webservice.CasService</value>
+			<value>org.jasig.cas.remoting.CasService</value>
 		</property>
 		<property name="portInterface">
-			<value>org.jasig.cas.webservice.server.RemoteCasService</value>
+			<value>org.jasig.cas.remoting.server.RemoteCasService</value>
 		</property>
 		<property name="serviceFactoryClass">
 			<value>org.apache.axis.client.ServiceFactory</value>

@@ -2,7 +2,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.ticket.web;
+package org.jasig.cas.web;
 
 import java.io.PrintWriter;
 

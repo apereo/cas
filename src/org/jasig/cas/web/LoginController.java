@@ -2,7 +2,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.web;
+package org.jasig.cas.web;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationRequest;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.constants.WebConstants;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketManager;
@@ -23,6 +22,7 @@ import org.jasig.cas.ticket.validation.BasicAuthenticationRequestValidator;
 import org.jasig.cas.ticket.validation.ValidationRequest;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
+import org.jasig.cas.web.support.WebConstants;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;

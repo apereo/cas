@@ -2,7 +2,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.webservice.client;
+package org.jasig.cas.remoting.client;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

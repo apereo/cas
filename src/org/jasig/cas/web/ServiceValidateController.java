@@ -2,7 +2,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.ticket.web;
+package org.jasig.cas.web;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.constants.WebConstants;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketManager;
 import org.jasig.cas.ticket.validation.ValidationRequest;
+import org.jasig.cas.web.support.WebConstants;
 import org.springframework.web.bind.BindUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;

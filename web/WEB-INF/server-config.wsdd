@@ -32,7 +32,7 @@
  </service>
  <service name="CasService" provider="java:RPC">
   <parameter name="allowedMethods" value="*"/>
-  <parameter name="className" value="org.jasig.cas.webservice.server.JaxRpcCasService"/>
+  <parameter name="className" value="org.jasig.cas.remoting.server.JaxRpcCasService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest" qname="ns:UsernamePasswordAuthenticationRequest" xmlns:ns="urn:CasService"/>
  </service>
  <transport name="http">

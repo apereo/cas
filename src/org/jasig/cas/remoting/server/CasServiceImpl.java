@@ -2,16 +2,16 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.webservice.server;
+package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.remoting.CasService;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketManager;
-import org.jasig.cas.webservice.CasService;
 import org.springframework.validation.DataBinder;
 
 
@@ -27,7 +27,7 @@ public class CasServiceImpl implements CasService {
 	private AuthenticationManager authenticationManager;
 
 	/**
-	 * @see org.jasig.cas.webservice.CasService#getServiceTicket(org.jasig.cas.domain.AuthenticationRequest)
+	 * @see org.jasig.cas.remoting.CasService#getServiceTicket(org.jasig.cas.domain.AuthenticationRequest)
 	 */
 	public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
 		final Principal principal;
