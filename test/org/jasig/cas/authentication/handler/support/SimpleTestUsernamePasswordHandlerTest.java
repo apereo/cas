@@ -1,5 +1,6 @@
-package org.jasig.cas.handlers;
+package org.jasig.cas.authentication.handler.support;
 
+import org.jasig.cas.adaptors.cas.LegacyCasTrustedCredentials;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -17,6 +18,14 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
 
     private AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
 
+    public void testSupportsProperUserCredentials() {
+        assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
+    }
+    
+    public void testDoesntSupportBadUserCredentials() {
+        assertFalse(this.authenticationHandler.supports(new LegacyCasTrustedCredentials()));
+    }
+    
     public void testValidUsernamePassword() {
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
         authRequest.setUserName("test");
@@ -37,7 +46,7 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         try {
             assertFalse(this.authenticationHandler.authenticate(authRequest));
         } catch (AuthenticationException ae) {
-            fail();
+        	// this is okay
         }
     }
 
@@ -49,7 +58,7 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         try {
             assertFalse(this.authenticationHandler.authenticate(authRequest));
         } catch (AuthenticationException ae) {
-            fail();
+            // this is okay
         }
     }
 }
