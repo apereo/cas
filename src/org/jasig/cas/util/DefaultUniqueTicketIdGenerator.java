@@ -4,6 +4,7 @@
  */
 package org.jasig.cas.util;
 
+
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}
  * 
@@ -19,6 +20,11 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     public DefaultUniqueTicketIdGenerator() {
         this.numericGenerator = new DefaultLongNumericGenerator(1);
         this.randomStringGenerator = new DefaultRandomStringGenerator();
+    }
+    
+    public DefaultUniqueTicketIdGenerator(int maxLength) {
+        this.numericGenerator = new DefaultLongNumericGenerator(1);
+        this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
     }
 
     /**
