@@ -6,8 +6,8 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
@@ -21,27 +21,27 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class AcceptUsersAuthenticationHandlerTest extends TestCase {
-    final private Map users;
+public class RejectUsersAuthenticationHandlerTests extends TestCase {
+    final private Collection users;
 
     final private AuthenticationHandler authenticationHandler;
     
-    public AcceptUsersAuthenticationHandlerTest() {
-        this.users = new HashMap();
+    public RejectUsersAuthenticationHandlerTests() {
+        this.users = new ArrayList();
         
-        this.users.put("scott", "rutgers");
-        this.users.put("dima", "javarules");
-        this.users.put("bill", "thisisAwesoME");
+        this.users.add("scott");
+        this.users.add("dima");
+        this.users.add("bill");
+   
+        this.authenticationHandler = new RejectUsersAuthenticationHandler();
         
-        this.authenticationHandler = new AcceptUsersAuthenticationHandler();
-        
-        ((AcceptUsersAuthenticationHandler) this.authenticationHandler).setUsers(this.users);
+        ((RejectUsersAuthenticationHandler) this.authenticationHandler).setUsers(this.users); 
     }
     
     public void testSupportsProperUserCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         
-        c.setUserName("scott");
+        c.setUserName("fff");
         c.setPassword("rutgers");
         try {
         	this.authenticationHandler.authenticate(c);
@@ -64,29 +64,29 @@ public class AcceptUsersAuthenticationHandlerTest extends TestCase {
         }
     }
     
-    public void testAuthenticatesUserInMap() {
+    public void testFailsUserInMap() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         
         c.setUserName("scott");
         c.setPassword("rutgers");
         
         try {
-        	assertTrue(this.authenticationHandler.authenticate(c));
+        	assertFalse(this.authenticationHandler.authenticate(c));
         } catch (AuthenticationException e) {
-            fail("AuthenticationException caught but it should not have been thrown.");
+//            fail("AuthenticationException caught but it should not have been thrown.");
         }
     }
     
-    public void testFailsUserNotInMap() {
+    public void testPassesUserNotInMap() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         
         c.setUserName("fds");
         c.setPassword("rutgers");
         
         try {
-        assertFalse(this.authenticationHandler.authenticate(c));
+        assertTrue(this.authenticationHandler.authenticate(c));
         } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
+            fail("Exception thrown but not expected.");
         }
     }
     
@@ -107,19 +107,6 @@ public class AcceptUsersAuthenticationHandlerTest extends TestCase {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         
         c.setUserName(null);
-        c.setPassword(null);
-        
-        try {
-        assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
-    }
-    
-    public void testFailsNullPassword() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        
-        c.setUserName("scott");
         c.setPassword(null);
         
         try {

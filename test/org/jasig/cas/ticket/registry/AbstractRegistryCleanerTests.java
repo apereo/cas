@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public abstract class AbstractRegistryCleanerTestCase extends TestCase {
+public abstract class AbstractRegistryCleanerTests extends TestCase {
     private RegistryCleaner registryCleaner;
     private TicketRegistry ticketRegistry;
     

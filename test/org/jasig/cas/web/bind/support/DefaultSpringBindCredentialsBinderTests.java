@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class DefaultSpringBindCredentialsBinderTest extends TestCase {
+public class DefaultSpringBindCredentialsBinderTests extends TestCase {
 
     private CredentialsBinder credentialsBinder = new DefaultSpringBindCredentialsBinder();
     

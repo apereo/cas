@@ -2,35 +2,4 @@ CENTRAL AUTHENTICATION SERVICE (CAS)
 --------------------------------------------------------------------
 
 Changes in version 3.0M1 (dd.mm.yyyy)
-* Introduction of AuthenticationRequest marker interface
-* Use data binder for validation in web service
-* Introduction of TicketFactory interface
-* Introduction of DefaultTicketFactoryImpl class
-* Made variables final for immutable tickets and for constructor parameters
-* Introduced unmodifiable list for proxies returned by ProxyTicket and Collections returned by registries
-* StringBuffer for string concatenation
-* HashCode and Equals, toString override for Tickets
-* Reworked items from AuthenticationRequest and TicketCreationAttributes into CasAttributes
-* Introduction of PasswordTranslators with three implementations: plain, DES, MD5
-* CredentialsToPrincipalResolver now checks if it supports an AuthenticationRequest
-* Translation of most of the GenericHandlers to CAS 3.0 handlers (still one LDAP one left)
-* DefaultAuthenticationManager now handles multiple credentialsToPrincipal resolvers
-* Started to refactor config stuff to move out stuff that will most likely be customized into a new file
-* Addition of JavaBeanAxisPortProxyFactoryBean to automagically handle registering javabeans for the web service
-* More java docs
-* Removed dependency on CommonsId
-
-
-Changes in version 3.0-alpha (15.10.2004)
-* Added Quartz timers for registry cleanup
-* Added service ticket retrieval web service
-* Added sample java client to get service ticket via web service
-* Refactored ProxyGrantingTicket to remove dependency on UrlUtils
-* Refactored LoginController to remove dependency on TypeConversionUtils
-* Added two new views to replace old login/logout views which were ugly.
-* Added two test cases
-* Refactored LoginController to share code for retrieving ticket from cookie
-* Fixed 34 warnings in the Javadocs
-* Created lib folder for holding dependencies
-* Created more robust Ant build.
-* Logging (INFO) and (DEBUG) level
+* This is the initial public "preview" release of CAS3

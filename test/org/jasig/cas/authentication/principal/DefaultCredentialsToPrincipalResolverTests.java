@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class DefaultCredentialsToPrincipalResolverTest extends TestCase {
+public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
 
     private CredentialsToPrincipalResolver resolver = new DefaultCredentialsToPrincipalResolver();
 

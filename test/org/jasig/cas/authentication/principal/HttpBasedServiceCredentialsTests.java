@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class HttpBasedServiceCredentialsTest extends TestCase {
+public class HttpBasedServiceCredentialsTests extends TestCase {
     public void testNullURL() {
         try {
             new HttpBasedServiceCredentials(null);

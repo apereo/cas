@@ -12,7 +12,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class UsernamePasswordCredentialsTest extends TestCase {
+public class UsernamePasswordCredentialsTests extends TestCase {
     public void testSetGetUsername() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final String userName = "test";

@@ -27,7 +27,6 @@ Release conents:
 
 3. DISTRIBUTION JAR FILES
 
-
 The "dist" directory contains the following distinct jar files and wars:
 
 * cas-spring-server.jar 
@@ -37,10 +36,12 @@ The "dist" directory contains the following distinct jar files and wars:
 - Contents: complete web application ready for deployment.
 
 4.   DEPENDENCIES
-* EhCache 1.0
+
+* EhCache 1.1
 * J2EE Servlet 2.3+
-* Spring 1.1.4
+* Spring 1.1.4+
+
+5. DEPLOYMENT
+
 * Servlet Container that can handle JSP 2.0 (i.e. Tomcat 5.0.28)
-
-
 

@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class BasicCredentialsValidatorTest extends TestCase {
+public class BasicCredentialsValidatorTests extends TestCase {
     private Validator validator = new BasicCredentialsValidator();
     
     public void testSupportsUsernamePasswordCredentials() {

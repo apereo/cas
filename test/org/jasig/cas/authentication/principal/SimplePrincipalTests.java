@@ -2,9 +2,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
-
-import org.jasig.cas.authentication.SimpleService;
+package org.jasig.cas.authentication.principal;
 
 import junit.framework.TestCase;
 
@@ -14,11 +12,11 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class SimpleServiceTest extends TestCase {
+public class SimplePrincipalTests extends TestCase {
 
     public void testNullId() {
         try {
-            new SimpleService(null);
+            new SimplePrincipal(null);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -28,8 +26,8 @@ public class SimpleServiceTest extends TestCase {
     
     public void testProperId() {
         final String id = "test";
-        SimpleService service = new SimpleService(id);
+        SimplePrincipal principal = new SimplePrincipal(id);
         
-        assertEquals(id, service.getId());
+        assertEquals(id, principal.getId());
     }
 }
