@@ -61,7 +61,7 @@ public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAd
     /**
      * @param ticketStats The ticketStats to set.
      */
-    public void setTicketStats(TicketStatisticsManager ticketStatsManager) {
+    public void setTicketStatsManager(TicketStatisticsManager ticketStatsManager) {
         this.ticketStatsManager = ticketStatsManager;
     }
 
