@@ -18,6 +18,8 @@ import org.jasig.cas.util.UrlUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
+ * Proxy Handler to handle the default callback functionality of CAS 2.0.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  *
