@@ -286,20 +286,19 @@ TODO: need this?  Building CAS requires J2SE 1.4; the "dist" JARs are built with
 
 		<mkdir dir="${reports.dir}"/>
 
-		<junit forkmode="perBatch" printsummary="yes" haltonfailure="yes" haltonerror="yes">
+		<junit printsummary="yes" haltonfailure="yes" haltonerror="yes">
 
 			<!-- Must go first to ensure any jndi.properties files etc take precedence  -->
 			<classpath location="${target.testclasses.dir}"/>
-			<classpath location="${lib.dir}" />
-			<classpath location="$target.classes.dir}" />
+			<classpath location="${lib.dir}"/>
+			<classpath location="${target.classes.dir}"/>
 
 			<!-- Need files loaded as resources -->
 			<classpath location="${test.dir}"/>
 
 			<classpath refid="all-libs"/>
 
-			<formatter type="plain" usefile="false"/>
-			<formatter type="xml"/>
+			<formatter type="plain"/>
 
 			<batchtest fork="yes" todir="${reports.dir}">
 				<fileset dir="${target.testclasses.dir}"
