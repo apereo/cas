@@ -59,7 +59,7 @@
     <property name="xfire"><ref bean="xfire"/></property>
   </bean>
 
-  <bean id="remoteCentralAuthenticationService" class="org.jasig.cas.remoting.server.CentralAuthenticationServiceRemoteService">
+  <bean id="remoteCentralAuthenticationService" class="org.jasig.cas.remoting.server.RemoteCentralAuthenticationService">
   	<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
   	<property name="validators">
   		<list>
