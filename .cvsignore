@@ -2,3 +2,4 @@ build
 dist
 target
 bin
+*.jpage
