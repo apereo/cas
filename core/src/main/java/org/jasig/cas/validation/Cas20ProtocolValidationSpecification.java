@@ -12,14 +12,27 @@ package org.jasig.cas.validation;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Cas20ProtocolValidationSpecification extends
-    Cas10ProtocolValidationSpecification implements ValidationSpecification {
-
+public final class Cas20ProtocolValidationSpecification implements ValidationSpecification {
+    
+    private final Cas10ProtocolValidationSpecification cas10protocolValidationSpecification;
+    
     public Cas20ProtocolValidationSpecification() {
-        super();
+        this.cas10protocolValidationSpecification = new Cas10ProtocolValidationSpecification();
     }
 
     public Cas20ProtocolValidationSpecification(final boolean renew) {
-        super(renew);
+        this.cas10protocolValidationSpecification = new Cas10ProtocolValidationSpecification(renew);
+    }
+
+    public boolean isSatisfiedBy(final Assertion assertion) {
+        return this.cas10protocolValidationSpecification.isSatisfiedBy(assertion);
+    }
+    
+    public void setRenew(final boolean renew) {
+        this.cas10protocolValidationSpecification.setRenew(renew);
+    }
+    
+    public boolean isRenew() {
+        return this.cas10protocolValidationSpecification.isRenew();
     }
 }

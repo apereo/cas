@@ -20,7 +20,7 @@
 				<prop key="/serviceValidate">serviceValidateController</prop>
 				<prop key="/validate">legacyValidateController</prop>
 				<prop key="/proxy">proxyController</prop>
-				<prop key="/proxyValidate">serviceValidateController</prop>
+				<prop key="/proxyValidate">proxyValidateController</prop>
 				<prop key="/CentralAuthenticationService">xFireCentralAuthenticationService</prop>
             </props>
         </property>
@@ -28,6 +28,12 @@
 	
 	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
 		<property name="proxyHandler"><ref bean="proxy20Handler" /></property>
+		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
+	</bean>
+	
+	<bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
+		<property name="proxyHandler"><ref bean="proxy20Handler" /></property>
+		<property name="allowedToProxy"><value>true</value></property>
 		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
 	</bean>
 	
