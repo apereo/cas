@@ -1,6 +1,6 @@
 CENTRAL AUTHENTICATION SERVICE (CAS)
 --------------------------------------------------------------------
-http://www.yale.edu/tp/auth/
+http://jasigch.princeton.edu:9000/display/CAS
 
 1.  INTRODUCTION
 
