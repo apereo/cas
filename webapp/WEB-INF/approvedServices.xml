@@ -9,7 +9,10 @@
 	<bean id="serviceAllowedMethodBeforeAdvice" class="org.jasig.cas.services.advice.ServiceAllowedMethodBeforeAdvice">
 		<property name="serviceRegistry"><ref local="serviceRegistry" /></property>
 	</bean>
-
+	
+	<bean id="serviceRequiresAuthenticationMethodBeforeAdvice" class="org.jasig.cas.services.advice.ServiceRequiresAuthenticationMethodBeforeAdvice">
+		<property name="serviceRegistry"><ref local="serviceRegistry" /></property>
+	</bean>
 
 	<!-- ADVISORS -->	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
@@ -21,6 +24,18 @@
 			<list>
 				<value>.*CentralAuthenticationService.grantServiceTicket.*</value>
 				<value>.*CentralAuthenticationService.validateServiceTicket.*</value>
+			</list>
+		</property>
+        <property name="perl5">
+            <value>false</value>
+        </property>
+	</bean>
+	
+	<bean id="serviceRequiresAuthenticationMethodBeforeAdviceAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<constructor-arg><ref local="serviceRequiresAuthenticationMethodBeforeAdvice" /></constructor-arg>
+		<property name="patterns">
+			<list>
+				<value>.*CentralAuthenticationService.grantServiceTicket.*</value>
 			</list>
 		</property>
         <property name="perl5">
