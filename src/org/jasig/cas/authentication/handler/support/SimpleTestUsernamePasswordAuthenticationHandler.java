@@ -20,9 +20,9 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
     public boolean authenticate(final Credentials credentials) {
-        final UsernamePasswordCredentials authRequest = (UsernamePasswordCredentials) credentials;
-        final String username = authRequest.getUserName();
-        final String password = authRequest.getPassword();
+        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
+        final String username = usernamePasswordCredentials.getUserName();
+        final String password = usernamePasswordCredentials.getPassword();
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             log.debug("User [" + username + "] was successfully authenticated.");

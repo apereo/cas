@@ -23,11 +23,11 @@ public interface AuthenticationHandler {
      * @throws AuthenticationException An AuthenticationException can contain details about why
      * a particular authentication request failed.  AuthenticationExceptions contain code/desc.
      */
-    boolean authenticate(final Credentials credentials) throws AuthenticationException;
+    boolean authenticate(Credentials credentials) throws AuthenticationException;
 
     /**
      * @param request The credentials we want to check if the handler supports.
      * @return true if the handler supports authenticating this type of request. False otherwise.
      */
-    boolean supports(final Credentials credentials);
+    boolean supports(Credentials credentials);
 }

@@ -33,16 +33,21 @@ import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
  */
 public final class CentralAuthenticationServiceImpl extends ServletEndpointSupport implements CentralAuthenticationService {
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(this.getClass());
 
+    /** TicketRegistry for storing and retrieving tickets as needed. **/
     private TicketRegistry ticketRegistry;
 
+    /** AuthenticationManager for authenticating credentials for purposes of obtaining tickets. **/
     private AuthenticationManager authenticationManager;
 
+    /** UniqueTicketIdGenerator to generate ids for any tickets created **/
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
+    /** Expiration policy for ticket granting tickets **/
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
+    /** ExpirationPolicy for Service Tickets */
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
@@ -58,9 +63,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 ticket.expire();
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
             }
-
-        }
-        catch (InvalidTicketException ite) {
+        } catch (InvalidTicketException ite) {
             log.debug("Invalid request to remove ticket [" + ticketGrantingTicketId + "].  Ticket not a valid TicketGrantingTicket.");
             throw new IllegalArgumentException("ticketGrantingTicketId must be the ID of a TicketGrantingTicket");
         }
@@ -70,15 +73,13 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
      * @see org.jasig.cas.CentralAuthenticationService#grantServiceTicket(java.lang.String, org.jasig.cas.Service)
      */
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketCreationException {
-        final TicketGrantingTicket ticketGrantingTicket;
-        final ServiceTicket serviceTicket;
-
         try {
-            ticketGrantingTicket = (TicketGrantingTicket)ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket)ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+
             if (ticketGrantingTicket == null)
                 return null;
 
-            serviceTicket = ticketGrantingTicket.grantServiceTicket(service);
+            final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(service);
 
             ticketRegistry.addTicket(serviceTicket);
 
@@ -86,9 +87,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 + serviceTicket.getGrantingTicket().getPrincipal().getId() + "]");
 
             return serviceTicket.getId();
-
-        }
-        catch (InvalidTicketException ite) {
+        } catch (InvalidTicketException ite) {
             throw new TicketCreationException("Unable to retrieve TicketGrantingTicket to grant service ticket.");
         }
     }
@@ -120,12 +119,12 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
 
         final ServiceTicket serviceTicket = (ServiceTicket)ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
+        if (serviceTicket == null) {
+            log.debug("ServiceTicket [" + serviceTicketId + "] does not exist.");
+            throw new TicketException(TicketException.INVALID_TICKET, "ticket '" + serviceTicketId + "' not recognized");
+        }
+
         synchronized (serviceTicket) {
-            if (serviceTicket == null) {
-                log.debug("ServiceTicket [" + serviceTicketId + "] does not exist.");
-                throw new TicketException(TicketException.INVALID_TICKET, "ticket '" + serviceTicketId + "' not recognized");
-            }
-            
             if (serviceTicket.isExpired()) {
                 log.debug("ServiceTicket [" + serviceTicketId + "] has expired.");
                 throw new TicketException(TicketException.INVALID_TICKET, "ticket '" + serviceTicketId + "' not recognized");

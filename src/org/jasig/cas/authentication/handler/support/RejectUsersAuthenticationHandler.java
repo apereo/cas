@@ -22,10 +22,10 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+    public boolean authenticate(final Credentials credentials) {
+        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
 
-        return !this.users.contains(uRequest.getUserName());
+        return !this.users.contains(usernamePasswordCredentials.getUserName());
     }
 
     /**

@@ -31,8 +31,6 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
 
     private static final String SQL_PREFIX = "Select count(*) from ";
 
-    private static final PasswordTranslator DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordTranslator();
-
     private List dataSources;
 
     private String fieldUser;
@@ -41,7 +39,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
 
     private String tableUsers;
 
-    private PasswordTranslator passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
+    private PasswordTranslator passwordTranslator;
 
     private String SQL;
 
@@ -76,10 +74,14 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        if (this.passwordTranslator == null || this.dataSources == null || this.fieldPassword == null || this.fieldUser == null
-            || this.tableUsers == null) {
+        if (this.dataSources == null || this.fieldPassword == null || this.fieldUser == null || this.tableUsers == null) {
             throw new IllegalStateException("passwordTranslator, dataSources, fieldPassword, fieldUser and tableUsers must be set on "
                 + this.getClass().getName());
+        }
+        
+        if (this.passwordTranslator == null) {
+            this.passwordTranslator = new PlainTextPasswordTranslator();
+            log.info("PasswordTranslator not set.  Using default PasswordTranslator of class " + this.passwordTranslator.getClass().getName());
         }
 
         this.SQL = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser + " = ? And " + this.fieldPassword + " = ?";
