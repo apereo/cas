@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -143,7 +144,12 @@ public class LoginController extends SimpleFormController implements Initializin
         this.credentialsBinder.bind(request, credentials);
 
         if (renew && StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service)) {
-            serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
+            try {
+                serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
+            } catch (AuthenticationException e) {
+                errors.reject("bad.credentials", null);
+                return super.processFormSubmission(request, response, command, errors);
+            }
         }
 
         if (serviceTicketId == null) {
