@@ -17,6 +17,7 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.AttributeHelper;
 import org.springframework.ldap.core.SearchResultCallbackHandler;
 import org.springframework.ldap.core.support.LdapDaoSupport;
 
@@ -57,17 +58,18 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements Aut
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
         List values = (List)this.getLdapTemplate().search(this.searchBase, LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
-            this.getSearchControls(), new SearchResultCallbackHandler() {
-            private List cns = new ArrayList();
-            
-            public void processSearchResult(SearchResult searchResult) throws NamingException {
-                cns.add(searchResult.getAttributes().get("cn").get(0));
-            }
-            
-            public Object getResult() {
-                return cns;
-            }
-        });
+            this.getSearchControls(), new SearchResultCallbackHandler(){
+
+                private List cns = new ArrayList();
+
+                public void processSearchResult(SearchResult searchResult) throws NamingException {
+                    cns.add(AttributeHelper.getAttributeAsString(searchResult, "cn"));
+                }
+
+                public Object getResult() {
+                    return cns;
+                }
+            });
 
         if (values == null || values.isEmpty())
             return false;
@@ -114,7 +116,7 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements Aut
         else
             this.scopeValue = SearchControls.SUBTREE_SCOPE;
     }
-    
+
     public boolean supports(Credentials credentials) {
         return credentials != null && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
@@ -167,6 +169,7 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements Aut
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
+
     /**
      * @param filter The filter to set.
      */
