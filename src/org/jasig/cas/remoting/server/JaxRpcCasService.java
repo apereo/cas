@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.remoting.server;
 
@@ -13,21 +13,22 @@ import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
  * 
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public class JaxRpcCasService extends ServletEndpointSupport implements CasService, RemoteCasService {
-	private static final String CONST_CAS_SERVICE_NAME = "casService";
-	private CasService casService;
+
+    private static final String CONST_CAS_SERVICE_NAME = "casService";
+
+    private CasService casService;
 
     protected void onInit() {
-        this.casService = (CasService) getWebApplicationContext().getBean(CONST_CAS_SERVICE_NAME);
+        this.casService = (CasService)getWebApplicationContext().getBean(CONST_CAS_SERVICE_NAME);
     }
 
     /**
-     * 
-     * @see org.jasig.cas.remoting.server.RemoteCasService#getServiceTicket(org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest, java.lang.String)
+     * @see org.jasig.cas.remoting.server.RemoteCasService#getServiceTicket(org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest,
+     * java.lang.String)
      */
-	public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
-		return this.casService.getServiceTicket(request, serviceUrl);
-	}
+    public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
+        return this.casService.getServiceTicket(request, serviceUrl);
+    }
 }

@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.factory.support;
 
@@ -17,7 +17,6 @@ import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.factory.TicketCreator;
 
-
 /**
  * TicketCreator for ServiceTicket
  * 
@@ -26,28 +25,31 @@ import org.jasig.cas.ticket.factory.TicketCreator;
  * @see org.jasig.cas.ticket.ServiceTicket
  */
 public class ServiceTicketCreator implements TicketCreator {
-	protected final Log log = LogFactory.getLog(getClass());
+
+    protected final Log log = LogFactory.getLog(getClass());
+
     private static final String PREFIX = "ST";
+
     private ExpirationPolicy policy;
+
     private ServiceRegistry serviceRegistry;
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
+     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal,
+     * org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
-    	final String service = casAttributes.getService();
+        final String service = casAttributes.getService();
         log.debug("Attempting to resolve service id via Service Registry for Service [" + service + "]");
-        
+
         if (!this.serviceRegistry.serviceExists(service))
             throw new TicketCreationException("A valid service is required to create a service ticket.");
 
         log.debug("Creating ServiceTicket for ID [" + ticketId + "]");
-        return new ServiceTicketImpl(ticketId, (TicketGrantingTicket) grantingTicket, service, casAttributes.isFirst(), this.policy);
+        return new ServiceTicketImpl(ticketId, (TicketGrantingTicket)grantingTicket, service, casAttributes.isFirst(), this.policy);
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#supports(java.lang.Class)
      */
     public boolean supports(final Class clazz) {
@@ -55,7 +57,6 @@ public class ServiceTicketCreator implements TicketCreator {
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#getPrefix()
      */
     public String getPrefix() {

@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.factory.support;
 
@@ -19,7 +19,6 @@ import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.factory.TicketCreator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
-
 /**
  * TicketCreator for ProxyGrantingTicket
  * 
@@ -28,32 +27,37 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  * @see ProxyGrantingTicketCreator
  */
 public class ProxyGrantingTicketCreator implements TicketCreator {
-	protected final Log log = LogFactory.getLog(getClass());
+
+    protected final Log log = LogFactory.getLog(getClass());
+
     private static final String PREFIX = "PGT";
+
     private static final String PGTIOU_PREFIX = "PGTIOU";
+
     private ExpirationPolicy expirationPolicy;
+
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
+     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal,
+     * org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
         String pgtIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
 
         log.debug("Creating ticket of type ProxyGrantingTicket with ID [" + ticketId + "]");
-        
+
         try {
-	        ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(ticketId, (ServiceTicket)grantingTicket, new URL(casAttributes.getCallbackUrl()), pgtIou, this.expirationPolicy);
-	        return ticket;
+            ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(ticketId, (ServiceTicket)grantingTicket,
+                new URL(casAttributes.getCallbackUrl()), pgtIou, this.expirationPolicy);
+            return ticket;
         }
         catch (MalformedURLException mue) {
-        	throw new TicketCreationException("Unable to create ticket with callbackUrl of " + casAttributes.getCallbackUrl());
+            throw new TicketCreationException("Unable to create ticket with callbackUrl of " + casAttributes.getCallbackUrl());
         }
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#supports(java.lang.Class)
      */
     public boolean supports(final Class clazz) {

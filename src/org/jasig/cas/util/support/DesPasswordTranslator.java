@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util.support;
 
@@ -15,53 +15,57 @@ import org.springframework.beans.factory.InitializingBean;
 
 import sun.misc.BASE64Encoder;
 
-
 /**
- * Implementation of a password handler that encrypts a password using DES.  Requires
- * a key to have been created already and stored as a String.
+ * Implementation of a password handler that encrypts a password using DES. Requires a key to have been created already and stored as a String.
  * 
  * @author Scott Battaglia
  * @version $Id$
- * 
  */
 public class DesPasswordTranslator implements PasswordTranslator, InitializingBean {
-	protected final Log log = LogFactory.getLog(getClass());
-	private static final String ALGORITHM = "DES";
-	private String key;
-	private Cipher cipher;
-	private BASE64Encoder encoder = new BASE64Encoder();
-	/**
-	 * @see org.jasig.cas.util.PasswordTranslator#translate(java.lang.String)
-	 */
-	public String translate(String password) {
-		try {
-			byte[] passwordAsBytes = password.getBytes("UTF8");
-			byte[] encryptedAsBytes = this.cipher.doFinal(passwordAsBytes);
-			
-			return this.encoder.encode(encryptedAsBytes);
-		} catch (Exception e) {
-			log.debug(e);
-		}
 
-		return null;
-	}
-	
-	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	public void afterPropertiesSet() throws Exception {
-		if (this.key == null)
-			throw new IllegalStateException("key must be set on " + this.getClass().getName());
-		
-		SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), ALGORITHM);
-		this.cipher = Cipher.getInstance(ALGORITHM);
-		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-	}
+    protected final Log log = LogFactory.getLog(getClass());
 
-	/**
-	 * @param key The key to set.
-	 */
-	public void setKey(String key) {
-		this.key = key;
-	}
+    private static final String ALGORITHM = "DES";
+
+    private String key;
+
+    private Cipher cipher;
+
+    private BASE64Encoder encoder = new BASE64Encoder();
+
+    /**
+     * @see org.jasig.cas.util.PasswordTranslator#translate(java.lang.String)
+     */
+    public String translate(String password) {
+        try {
+            byte[] passwordAsBytes = password.getBytes("UTF8");
+            byte[] encryptedAsBytes = this.cipher.doFinal(passwordAsBytes);
+
+            return this.encoder.encode(encryptedAsBytes);
+        }
+        catch (Exception e) {
+            log.debug(e);
+        }
+
+        return null;
+    }
+
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (this.key == null)
+            throw new IllegalStateException("key must be set on " + this.getClass().getName());
+
+        SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), ALGORITHM);
+        this.cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+    }
+
+    /**
+     * @param key The key to set.
+     */
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -9,10 +9,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 
-
 /**
- * Abstract implementation of a ticket that handles all ticket state for policies. Also incorporates properties common
- * among all tickets.
+ * Abstract implementation of a ticket that handles all ticket state for policies. Also incorporates properties common among all tickets.
  * 
  * @author Scott Battaglia
  * @version $Id$
@@ -20,9 +18,13 @@ import org.jasig.cas.authentication.principal.Principal;
 public abstract class AbstractTicket implements Ticket {
 
     final private ExpirationPolicy expirationPolicy;
+
     private long lastTimeUsed;
+
     private int count;
+
     final private Principal principal;
+
     final private String id;
 
     public AbstractTicket(final String id, final Principal person, final ExpirationPolicy expirationPolicy) {
@@ -57,14 +59,13 @@ public abstract class AbstractTicket implements Ticket {
     public long getLastUsedTime() {
         return this.lastTimeUsed;
     }
-    
+
     public void incrementCount() {
-    	this.count++;
+        this.count++;
     }
-    
-    public void updateLastUse()
-    {
-    	this.lastTimeUsed = System.currentTimeMillis();
+
+    public void updateLastUse() {
+        this.lastTimeUsed = System.currentTimeMillis();
     }
 
     /**
@@ -73,16 +74,16 @@ public abstract class AbstractTicket implements Ticket {
     public boolean isExpired() {
         return this.expirationPolicy.isExpired(this);
     }
-    
+
     public boolean equals(Object o) {
-    	return EqualsBuilder.reflectionEquals(this, o);
+        return EqualsBuilder.reflectionEquals(this, o);
     }
-    
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
-	}
-	
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

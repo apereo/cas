@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.support;
 
@@ -16,6 +16,7 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 public class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
 
     final private long timeToKillInMilliSeconds;
+
     final private int numberOfUses;
 
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKillInMilliSeconds) {
@@ -24,7 +25,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.ticket.AbstractTicket)
      */
     public boolean isExpired(final AbstractTicket ticket) {

@@ -9,13 +9,15 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * @author Scott Battaglia
  * @version $Id$
- *
  */
-public abstract class AbstractServiceTicketValidator implements
-        ServiceTicketValidator, InitializingBean {
+public abstract class AbstractServiceTicketValidator implements ServiceTicketValidator, InitializingBean {
+
     private URL casValidateUrl;
+
     private URL proxyCallbackUrl;
+
     private boolean renew = false;
+
     private URL service;
 
     /**
@@ -24,7 +26,7 @@ public abstract class AbstractServiceTicketValidator implements
     public final CasReceipt validate(String ticketId) {
         return this.validateInternal(ticketId);
     }
-    
+
     public abstract CasReceipt validateInternal(String ticketId);
 
     /**
@@ -33,18 +35,21 @@ public abstract class AbstractServiceTicketValidator implements
     public void setCasValidateUrl(URL casValidateUrl) {
         this.casValidateUrl = casValidateUrl;
     }
+
     /**
      * @param proxyCallbackUrl The proxyCallbackUrl to set.
      */
     public void setProxyCallbackUrl(URL proxyCallbackUrl) {
         this.proxyCallbackUrl = proxyCallbackUrl;
     }
+
     /**
      * @param renew The renew to set.
      */
     public void setRenew(boolean renew) {
         this.renew = renew;
     }
+
     /**
      * @param service The service to set.
      */
@@ -58,26 +63,29 @@ public abstract class AbstractServiceTicketValidator implements
     public void afterPropertiesSet() throws Exception {
         if (casValidateUrl == null || !casValidateUrl.getProtocol().startsWith("https"))
             throw new IllegalStateException("casValidateUrl must be set (and secure) on " + this.getClass().getName());
-        
+
         if (proxyCallbackUrl != null && !proxyCallbackUrl.getProtocol().startsWith("https"))
             throw new IllegalStateException("The ProxyCallbackUrl must be a secure URL");
-        
+
         if (service == null || !service.getProtocol().startsWith("https")) {
             throw new IllegalStateException("Service URL must be set and be secure!");
         }
     }
+
     /**
      * @return Returns the casValidateUrl.
      */
     public URL getCasValidateUrl() {
         return casValidateUrl;
     }
+
     /**
      * @return Returns the proxyCallbackUrl.
      */
     public URL getProxyCallbackUrl() {
         return proxyCallbackUrl;
     }
+
     /**
      * @return Returns the renew.
      */

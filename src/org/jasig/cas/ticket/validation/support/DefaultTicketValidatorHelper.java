@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.validation.support;
 
@@ -18,17 +18,16 @@ import org.jasig.cas.ticket.validation.ValidationRequest;
  */
 public class DefaultTicketValidatorHelper extends AbstractTicketValidatorHelper {
 
-	/**
-	 * 
-	 * @see org.jasig.cas.ticket.validation.AbstractTicketValidatorHelper#isValidForRequestInternal(org.jasig.cas.ticket.Ticket, org.jasig.cas.ticket.validation.ValidationRequest)
-	 */
+    /**
+     * @see org.jasig.cas.ticket.validation.AbstractTicketValidatorHelper#isValidForRequestInternal(org.jasig.cas.ticket.Ticket,
+     * org.jasig.cas.ticket.validation.ValidationRequest)
+     */
     protected boolean isValidForRequestInternal(final Ticket ticket, final ValidationRequest request) {
         // only uses expiration test from abstract
         return true;
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.validation.TicketValidatorHelper#supports(org.jasig.cas.ticket.Ticket)
      */
     public boolean supports(final Ticket ticket) {
