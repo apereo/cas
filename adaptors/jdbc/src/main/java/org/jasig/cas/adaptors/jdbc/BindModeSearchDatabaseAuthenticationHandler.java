@@ -8,10 +8,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jasig.cas.authentication.UnsupportedCredentialsException;
-import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.JdbcTemplateAndDataSourceHolder;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
@@ -22,13 +20,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @author Dmitriy Kopylenko
  * @version $Id$
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends AbstractAuthenticationHandler {
-    
-    private JdbcTemplateAndDataSourceHolder jdbcTemplateAndDataSourceHolder;
-    
-    public BindModeSearchDatabaseAuthenticationHandler(JdbcTemplateAndDataSourceHolder jdbcTemplateAndDataSourceHolder) {
-        this.jdbcTemplateAndDataSourceHolder = jdbcTemplateAndDataSourceHolder;
-    }
+public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
     
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
@@ -39,8 +31,8 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractAuthent
         final String password = uRequest.getPassword();
 
         try {
-            Connection c = this.jdbcTemplateAndDataSourceHolder.getDataSource().getConnection(username, password);
-            DataSourceUtils.closeConnectionIfNecessary(c, this.jdbcTemplateAndDataSourceHolder.getDataSource());
+            Connection c = this.getJdbcTemplate().getDataSource().getConnection(username, password);
+            DataSourceUtils.closeConnectionIfNecessary(c, this.getJdbcTemplate().getDataSource());
             return true;
         }
         catch (SQLException e) {

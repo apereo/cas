@@ -8,10 +8,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.JdbcTemplateAndDataSourceHolder;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 
@@ -24,7 +22,7 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * @version $Id$
  */
 
-public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractAuthenticationHandler {
+public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -40,8 +38,6 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractAuthe
 
     private String sql;
 
-    private JdbcTemplateAndDataSourceHolder jdbcTemplateAndDataSourceHolder;
-
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
@@ -49,7 +45,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractAuthe
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String encyptedPassword = this.passwordTranslator.translate(uRequest.getPassword());
 
-        final int count = this.jdbcTemplateAndDataSourceHolder.getJdbcTemplate().queryForInt(this.sql, new Object[] {uRequest.getUserName(), encyptedPassword});
+        final int count = getJdbcTemplate().queryForInt(this.sql, new Object[] {uRequest.getUserName(), encyptedPassword});
 
         return count > 0;
     }
@@ -62,8 +58,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractAuthe
     }
 
     public void init() throws Exception {
-        if (this.fieldPassword == null || this.fieldUser == null || this.tableUsers == null || this.jdbcTemplateAndDataSourceHolder == null) {
-            throw new IllegalStateException("fieldPassword, fieldUser, jdbcTemplateAndDataSourceHolder and tableUsers must be set on "
+        if (this.fieldPassword == null || this.fieldUser == null || this.tableUsers == null) {
+            throw new IllegalStateException("fieldPassword, fieldUser and tableUsers must be set on "
                 + this.getClass().getName());
         }
 
@@ -101,12 +97,5 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractAuthe
      */
     public void setTableUsers(final String tableUsers) {
         this.tableUsers = tableUsers;
-    }
-
-    /**
-     * @param jdbcTemplateAndDataSourceHolder The jdbcTemplateAndDataSourceHolder to set.
-     */
-    public void setJdbcTemplateAndDataSourceHolder(JdbcTemplateAndDataSourceHolder jdbcTemplateAndDataSourceHolder) {
-        this.jdbcTemplateAndDataSourceHolder = jdbcTemplateAndDataSourceHolder;
     }
 }
