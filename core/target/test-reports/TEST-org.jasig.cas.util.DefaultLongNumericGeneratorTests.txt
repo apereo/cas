@@ -1,3 +1,0 @@
-Testsuite: org.jasig.cas.util.DefaultLongNumericGeneratorTests
-Tests run: 3, Failures: 0, Errors: 0, Time elapsed: 0.01 sec
-

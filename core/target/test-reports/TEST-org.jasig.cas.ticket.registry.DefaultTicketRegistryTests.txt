@@ -1,3 +1,0 @@
-Testsuite: org.jasig.cas.ticket.registry.DefaultTicketRegistryTests
-Tests run: 15, Failures: 0, Errors: 0, Time elapsed: 0.09 sec
-
