@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,6 +83,10 @@ public class LoginController extends SimpleFormController implements Initializin
         if (this.credentialsBinder == null) {
         	this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
         	log.info("CredentialsBinder not set.  Using default CredentialsBinder of " + this.credentialsBinder.getClass().getName());
+        	
+        	if (!this.credentialsBinder.supports(this.getCommandClass())) {
+        		throw new ServletException("CredentialsBinder does not support supplied Command Class: " + this.getCommandClass());
+        	}
         }
     }
 

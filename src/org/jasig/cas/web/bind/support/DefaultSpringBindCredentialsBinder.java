@@ -22,4 +22,11 @@ public class DefaultSpringBindCredentialsBinder implements CredentialsBinder {
 	public void bind(HttpServletRequest request, Credentials credentials) {
 		// don't do anything, Spring binding handles everything already due to the controller
 	}
+	
+	/**
+	 * @see org.jasig.cas.web.bind.CredentialsBinder#supports(java.lang.Class)
+	 */
+	public boolean supports(Class clazz) {
+		return true; // supports any kind of credentials
+	}
 }
