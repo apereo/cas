@@ -11,8 +11,8 @@ package org.jasig.cas;
  */
 public final class CasVersion {
 
-    protected CasVersion() {
-        // hidden constructor so that no one can extend
+    private CasVersion() {
+        // this class is not instantiable
     }
 
     /**
