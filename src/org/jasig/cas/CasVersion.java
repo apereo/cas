@@ -12,7 +12,7 @@ package org.jasig.cas;
 public class CasVersion {
 
     /**
-     * Return the full Spring version string.
+     * Return the full CAS version string.
      * 
      * @see java.lang.Package#getImplementationVersion
      */
