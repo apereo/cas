@@ -2,9 +2,12 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.ticket.registry;
+package org.jasig.cas.ticket.registry.support;
 
 import net.sf.ehcache.Cache;
+
+import org.jasig.cas.ticket.registry.AbstractTicketRegistryTestCase;
+import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.registry.support.EhCacheTicketRegistry;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

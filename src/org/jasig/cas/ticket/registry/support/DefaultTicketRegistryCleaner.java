@@ -4,13 +4,16 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.util.RegistryCleaner;
 
 /**
  * Class to look for expired tickets and remove them from the registry.
@@ -25,16 +28,22 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
     private TicketRegistry ticketRegistry;
 
     /**
-     * @see org.jasig.cas.util.RegistryCleaner#clean()
+     * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
      */
     public void clean() {
+        final List ticketsToRemove = new ArrayList();
         log.info("Starting cleaning of expired tickets from ticket registry at [" + new Date() + "]");
         synchronized (this.ticketRegistry) {
             for (Iterator iter = this.ticketRegistry.getTickets().iterator(); iter.hasNext();) {
                 final Ticket ticket = (Ticket)iter.next();
-
+                
                 if (ticket.isExpired())
-                    iter.remove();
+                    ticketsToRemove.add(ticket);
+            }
+            
+            for (Iterator iter = ticketsToRemove.iterator(); iter.hasNext();) {
+                final Ticket ticket = (Ticket) iter.next();
+                this.ticketRegistry.deleteTicket(ticket.getId());
             }
         }
         log.info("Finished cleaning of expired tickets from ticket registry at [" + new Date() + "]");

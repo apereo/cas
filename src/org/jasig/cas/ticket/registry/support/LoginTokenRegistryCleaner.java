@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.util.RegistryCleaner;
+import org.jasig.cas.ticket.registry.RegistryCleaner;
 
 /**
  * Class to determine if a loginToken is ready to be removed.
@@ -27,7 +27,7 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
     private long timeOut;
 
     /**
-     * @see org.jasig.cas.util.RegistryCleaner#clean()
+     * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
      */
     public void clean() {
         final long currentTime = System.currentTimeMillis();
