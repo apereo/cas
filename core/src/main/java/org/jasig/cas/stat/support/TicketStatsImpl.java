@@ -4,24 +4,27 @@
  */
 package org.jasig.cas.stat.support;
 
-import org.jasig.cas.stat.TicketStatsMBean;
+import org.jasig.cas.stat.TicketStats;
 
-
-public class TicketStatsMBeanImpl implements TicketStatsMBean {
-    private static final int MILLISECONDS_IN_A_SECOND = 1000;
-    
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Id$
+ *
+ */
+public class TicketStatsImpl implements TicketStats {
     private int numberOfProxyTicketsVended;
-    private int numberOfServiceTicketesVended;
+    private int numberOfServiceTicketsVended;
     private int numberOfTicketGrantingTicketsVended;
     private int numberOfProxyGrantingTicketsVended;
     
     private long startUpTime;
     
-    public TicketStatsMBeanImpl() {
+    public TicketStatsImpl() {
         this.startUpTime = System.currentTimeMillis();
         this.numberOfProxyGrantingTicketsVended = 0;
         this.numberOfProxyTicketsVended = 0;
-        this.numberOfServiceTicketesVended = 0;
+        this.numberOfServiceTicketsVended = 0;
         this.numberOfTicketGrantingTicketsVended = 0;
     }
     
@@ -30,7 +33,7 @@ public class TicketStatsMBeanImpl implements TicketStatsMBean {
     }
 
     public int getNumberOfServiceTicketsVended() {
-        return this.numberOfServiceTicketesVended;
+        return this.numberOfServiceTicketsVended;
     }
 
     public int getNumberOfTicketGrantingTicketsVended() {
@@ -42,19 +45,19 @@ public class TicketStatsMBeanImpl implements TicketStatsMBean {
     }
 
     public double getProxyTicketsPerSecond() {
-        return getNumberOfTicketsPerSecond(this.numberOfProxyTicketsVended);
+        return getTicketsPerSecond(this.numberOfProxyTicketsVended);
     }
 
     public double getServiceTicketsPerSecond() {
-        return getNumberOfTicketsPerSecond(this.numberOfServiceTicketesVended);
+        return getTicketsPerSecond(this.numberOfServiceTicketsVended);
     }
 
     public double getTicketGrantingticketsPerSecond() {
-        return getNumberOfTicketsPerSecond(this.numberOfTicketGrantingTicketsVended);
+        return getTicketsPerSecond(this.numberOfTicketGrantingTicketsVended);
     }
 
     public double getProxyGrantingTicketsPerSecond() {
-        return getNumberOfTicketsPerSecond(this.numberOfProxyGrantingTicketsVended);
+        return getTicketsPerSecond(this.numberOfProxyGrantingTicketsVended);
     }
     
     public void incrementNumberOfProxyGrantingTicketsVended() {
@@ -66,17 +69,15 @@ public class TicketStatsMBeanImpl implements TicketStatsMBean {
     }
     
     public void incrementNumberOfServiceTicketsVended() {
-        this.numberOfServiceTicketesVended++;
+        this.numberOfServiceTicketsVended++;
     }
     
     public void incrementNumberOfTicketGrantingTicketsVended() {
         this.numberOfTicketGrantingTicketsVended++;
     }
     
-    private double getNumberOfTicketsPerSecond(int numberOfTickets) {
-        final long timeElapsed = System.currentTimeMillis() - this.startUpTime;
-        final long timeElapsedInSeconds = timeElapsed / MILLISECONDS_IN_A_SECOND;
-        
-        return numberOfTickets / timeElapsedInSeconds;
+    private double getTicketsPerSecond(int numberOfTickets) {
+        long elapsedTime = (System.currentTimeMillis() - this.startUpTime) / 1000;
+        return (numberOfTickets / elapsedTime);
     }
 }

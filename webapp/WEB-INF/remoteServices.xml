@@ -1,12 +1,13 @@
-ave a<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
+<!--
 	<bean id="mbeanserver" class="org.springframework.jmx.support.MBeanServerFactoryBean">
 		<property name="defaultDomain"><value>cas</value></property>
 	</bean>
-
+-->
 	<bean id="mbeanadapter" class="org.springframework.jmx.MBeanExporter">
-	    <property name="server"><ref local="mbeanserver"/></property>
+<!--	    <property name="server"><ref local="mbeanserver"/></property>-->
     	<property name="beans">
 	      	<map>
     	    	<entry key="cas:id=stats">
@@ -15,23 +16,38 @@ ave a<?xml version="1.0" encoding="UTF-8"?>
 			</map>
     	</property>
 	</bean>
-
+<!--
 	<bean id="jmxconnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
 		<property name="server">
 			<ref local="mbeanserver" />
 		</property>
-	    <!-- This is the default URL anyway -->
 		<property name="serviceUrl">
 			<value>service:jmx:jmxmp://localhost:9876</value>
 		</property>
 		<property name="threaded">
 			<value>true</value>
 		</property>
-	    <!-- Ensure the connector thread doesn't keep the servlet container running -->
 		<property name="daemon">
 			<value>true</value>
 		</property>
 	</bean>
-
-	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatsMBeanImpl" />
+-->
+	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatsImpl" />
+	
+	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice">
+		<property name="ticketStats"><ref local="statsBean" /></property>
+	</bean>
+	
+	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+	
+	<bean id="logStatsAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<constructor-arg><ref local="logTicketStatisticsAfterReturningAdvice" /></constructor-arg>
+		<property name="patterns">
+			<list>
+				<value>.*CentralAuthenticationService.*delegateTicketGrantingTicket.*</value>
+				<value>.*CentralAuthenticationService.*grantServiceTicket.*</value>
+				<value>.*CentralAuthenticationService.*createTicketGrantingTicket.*</value>
+			</list>
+		</property>
+	</bean>
 </beans>
