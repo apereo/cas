@@ -203,6 +203,29 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+		
+		<dependency>
+			<groupId>commons-attributes</groupId>
+			<artifactId>commons-attributes-api</artifactId>
+			<version>2.1</version>
+			<type>jar</type>
+			<url>http://jakarta.apache.org/commons/attributes/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-attributes</groupId>
+			<artifactId>commons-attributes-compiler</artifactId>
+			<version>2.1</version>
+			<type>jar</type>
+			<url>http://jakarta.apache.org/commons/attributes/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -286,6 +309,17 @@
 		<dependency>
 			<groupId>springframework</groupId>
 			<artifactId>spring</artifactId>
+			<version>1.1.4</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-sandbox</artifactId>
 			<version>1.1.4</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>

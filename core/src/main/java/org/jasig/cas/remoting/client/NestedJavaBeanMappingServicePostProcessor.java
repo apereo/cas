@@ -74,9 +74,9 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
     public void postProcessJaxRpcService(Service service) {
         final TypeMappingRegistry registry = service.getTypeMappingRegistry();
         final TypeMapping mapping = registry.createTypeMapping();
-        final Class serviceInterface = this.serviceInterface;
+//        final Class serviceInterface = this.serviceInterface;
 
-        registerBeans(mapping, new ArrayList(), serviceInterface);
+        registerBeans(mapping, new ArrayList(), this.serviceInterface);
 
         if (this.beans != null) {
             for (Iterator iter = this.beans.iterator(); iter.hasNext();) {

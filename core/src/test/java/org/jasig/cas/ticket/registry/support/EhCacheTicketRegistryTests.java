@@ -35,9 +35,9 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
     }
     
     public void testBadCacheGetTicket() {
-        Cache cache = new Cache("test1", 1, true, false, 5, 2);
+        Cache badCache = new Cache("test1", 1, true, false, 5, 2);
         
-        this.ticketRegistry.setCache(cache);
+        this.ticketRegistry.setCache(badCache);
         
         try {
             this.ticketRegistry.getTicket("testTicket");
@@ -47,9 +47,9 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
         }
     }
     public void testBadCacheGetTickets() {
-        Cache cache = new Cache("test2", 1, true, false, 5, 2);
+        Cache badCache = new Cache("test2", 1, true, false, 5, 2);
         
-        this.ticketRegistry.setCache(cache);
+        this.ticketRegistry.setCache(badCache);
         
         try {
             this.ticketRegistry.getTickets();
