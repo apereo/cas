@@ -7,6 +7,7 @@ package org.jasig.cas.authentication;
 import java.util.HashMap;
 
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
 
@@ -22,7 +23,7 @@ public class DefaultAuthenticationAttributesPopulatorTests extends TestCase {
     }
 
     public void testPopulateAttributes() {
-        assertEquals(this.authentication, this.populator.populateAttributes(this.authentication));
+        assertEquals(this.authentication, this.populator.populateAttributes(this.authentication, new UsernamePasswordCredentials()));
     }
 
 }

@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Credentials;
+
 /**
  * Strategy to populate the Authentication object with additional 
  * attributes.  This is not guaranteed to return the same Authentication
@@ -23,5 +25,5 @@ public interface AuthenticationAttributesPopulator {
      * @param authentication The Authentication object which we want to add attributes to.
      * @return the Authentication object with the new attributes.
      */
-    Authentication populateAttributes(Authentication authentication);
+    Authentication populateAttributes(Authentication authentication, Credentials credentials);
 }
