@@ -18,7 +18,7 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Id$
  */
 public class TicketValidatorImpl implements TicketValidator {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     private List ticketValidatorHelpers;
 
     /**
@@ -26,17 +26,17 @@ public class TicketValidatorImpl implements TicketValidator {
      * @see org.jasig.cas.ticket.validation.TicketValidator#validate(org.jasig.cas.ticket.Ticket, org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public boolean validate(final Ticket ticket, final ValidationRequest request) {
-    	logger.debug("Attempting to find validator for ticket of type [" + ticket.getClass().getName() + "]");
-        for (Iterator iter = ticketValidatorHelpers.iterator(); iter.hasNext();) {
+    	this.log.debug("Attempting to find validator for ticket of type [" + ticket.getClass().getName() + "]");
+        for (Iterator iter = this.ticketValidatorHelpers.iterator(); iter.hasNext();) {
             final TicketValidatorHelper helper = (TicketValidatorHelper) iter.next();
 
             if (helper.supports(ticket)) {
-            	logger.debug("Found validator of type [" + helper.getClass().getName() + "] for [" + ticket.getClass().getName() + "]");
+            	this.log.debug("Found validator of type [" + helper.getClass().getName() + "] for [" + ticket.getClass().getName() + "]");
             	return (helper.validateForRequest(ticket, request));
             }
         }
             
-        logger.debug("No validator registered for [" + ticket.getClass().getName() + "].  Assuming no validation required.");
+        this.log.debug("No validator registered for [" + ticket.getClass().getName() + "].  Assuming no validation required.");
         return true;
     }
 

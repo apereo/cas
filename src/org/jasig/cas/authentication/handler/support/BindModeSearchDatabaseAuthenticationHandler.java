@@ -38,7 +38,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractUsernam
 		final String username = uRequest.getUserName();
 		final String password = uRequest.getPassword();
 		
-		for (Iterator iter = servers.keySet().iterator(); iter.hasNext();) {
+		for (Iterator iter = this.servers.keySet().iterator(); iter.hasNext();) {
 			final DataSource dataSource;
 			final String url    = (String) iter.next();
 			final String driver = servers.getProperty(url);
@@ -56,7 +56,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractUsernam
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (servers == null) {
+		if (this.servers == null) {
 			throw new IllegalStateException("The drivers and urls must be set on " + this.getClass().getName());
 		}
 	}

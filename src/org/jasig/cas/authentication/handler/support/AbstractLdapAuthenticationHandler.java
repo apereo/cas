@@ -35,11 +35,11 @@ public abstract class AbstractLdapAuthenticationHandler extends AbstractUsername
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (servers == null || servers.isEmpty() || authentication == null || contextFactory == null || filter == null) {
+		if (this.servers == null || this.servers.isEmpty() || this.authentication == null || this.contextFactory == null || this.filter == null) {
 			throw new IllegalStateException("The list of servers, authentication, contextFactory and securityProtocol must be set for " + this.getClass().getName());
 		}
 		
-		initHandler();
+		this.initHandler();
 	}
 	
 	protected void initHandler() throws Exception {
@@ -49,14 +49,14 @@ public abstract class AbstractLdapAuthenticationHandler extends AbstractUsername
 		final Hashtable hashtable = new Hashtable(5, 0.75f);
 		DirContext context = null;
 		
-		hashtable.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
+		hashtable.put(Context.INITIAL_CONTEXT_FACTORY, this.contextFactory);
 		hashtable.put(Context.PROVIDER_URL, url);
-		hashtable.put(Context.SECURITY_AUTHENTICATION, authentication);
+		hashtable.put(Context.SECURITY_AUTHENTICATION, this.authentication);
 		hashtable.put(Context.SECURITY_PRINCIPAL, userName);
 		hashtable.put(Context.SECURITY_CREDENTIALS, password);
 
 		if (secure)
-			hashtable.put(Context.SECURITY_PROTOCOL, securityProtocol);
+			hashtable.put(Context.SECURITY_PROTOCOL, this.securityProtocol);
 		try {
 			context = new InitialDirContext(hashtable);
 			return context;

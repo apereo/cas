@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved.
+ * See license distributed with this file and available
  * online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.factory;
@@ -32,11 +33,11 @@ public class DefaultTicketFactory implements TicketFactory {
 	 * @see org.jasig.cas.ticket.factory.TicketFactory#getTicket(java.lang.Class, org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.Ticket)
 	 */
     public Ticket getTicket(final Class clazz, final Principal principal, final CasAttributes casAttributes, final Ticket parentTicket) {
-        for (Iterator iter = ticketCreators.iterator(); iter.hasNext();) {
+        for (Iterator iter = this.ticketCreators.iterator(); iter.hasNext();) {
             TicketCreator ticketCreator = (TicketCreator)iter.next();
 
             if (ticketCreator.supports(clazz))
-                return ticketCreator.createTicket(principal, casAttributes, uniqueIdGenerator.getNewTicketId(ticketCreator.getPrefix()), parentTicket);
+                return ticketCreator.createTicket(principal, casAttributes, this.uniqueIdGenerator.getNewTicketId(ticketCreator.getPrefix()), parentTicket);
         }
 
         throw new TicketCreatorNotFoundException("No TicketCreator registered for ticket type: " + clazz.getName());

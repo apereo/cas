@@ -23,7 +23,7 @@ import org.jasig.cas.ticket.factory.TicketCreator;
  * @see org.jasig.cas.ticket.TicketGrantingTicket
  */
 public class TicketGrantingTicketCreator implements TicketCreator {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     private static final String PREFIX = "TGT";
     private ExpirationPolicy policy;
 
@@ -40,8 +40,8 @@ public class TicketGrantingTicketCreator implements TicketCreator {
 	 */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
 
-        logger.debug("Creating TicketGrantingTicket for ID [" + ticketId + "]");
-        return new TicketGrantingTicketImpl(ticketId, principal, policy);
+        this.log.debug("Creating TicketGrantingTicket for ID [" + ticketId + "]");
+        return new TicketGrantingTicketImpl(ticketId, principal, this.policy);
     }
 
     /**

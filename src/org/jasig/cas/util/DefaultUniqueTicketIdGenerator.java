@@ -29,9 +29,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     	StringBuffer buffer = new StringBuffer();
     	buffer.append(prefix);
     	buffer.append("-");
-    	buffer.append(numericGenerator.getNextNumberAsString());
+    	buffer.append(this.numericGenerator.getNextNumberAsString());
     	buffer.append("-");
-    	buffer.append(randomStringGenerator.getNewString());
+    	buffer.append(this.randomStringGenerator.getNewString());
     	return buffer.toString();
     }
 

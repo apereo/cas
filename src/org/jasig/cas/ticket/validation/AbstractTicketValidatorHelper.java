@@ -21,7 +21,7 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Id$
  */
 public abstract class AbstractTicketValidatorHelper implements TicketValidatorHelper {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     /**
      * A Template method
      * 
@@ -32,7 +32,7 @@ public abstract class AbstractTicketValidatorHelper implements TicketValidatorHe
         if (ticket.isExpired())
             return false;
 
-        return isValidForRequestInternal(ticket, request);
+        return this.isValidForRequestInternal(ticket, request);
     }
 
     /**

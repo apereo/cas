@@ -42,17 +42,17 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;
 		try {
-			final FileReader fileReader = new FileReader(fileName);
+			final FileReader fileReader = new FileReader(this.fileName);
 			final BufferedReader bufferedReader = new BufferedReader(fileReader);
 			String line = null;
 			
 			while ((line = bufferedReader.readLine()) != null) {
-				final String[] lineFields = line.split(separator);
+				final String[] lineFields = line.split(this.separator);
 				final String userName = lineFields[0];
 				final String password = lineFields[1];
 				
 				if (uRequest.getUserName().equals(userName)) {
-					if (passwordTranslator.translate(uRequest.getPassword()).equals(password)) {
+					if (this.passwordTranslator.translate(uRequest.getPassword()).equals(password)) {
 						bufferedReader.close();
 						return true;
 					}

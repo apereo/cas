@@ -33,27 +33,27 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 	 * @return Returns the fromNewLogin.
 	 */
 	public boolean isFromNewLogin() {
-		return fromNewLogin;
+		return this.fromNewLogin;
 	}
 
 	/**
 	 * @return Returns the grantor.
 	 */
 	public TicketGrantingTicket getGrantor() {
-		return grantor;
+		return this.grantor;
 	}
 
 	/**
 	 * @return Returns the service.
 	 */
 	public String getService() {
-		return service;
+		return this.service;
 	}
 
 	/**
 	 * @see org.jasig.cas.ticket.Ticket#isExpired()
 	 */
 	public boolean isExpired() {
-		return super.isExpired() || grantor.isExpired();
+		return super.isExpired() || this.grantor.isExpired();
 	}
 }

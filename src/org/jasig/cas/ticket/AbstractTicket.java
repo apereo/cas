@@ -47,20 +47,19 @@ public abstract class AbstractTicket implements Ticket {
      * @see org.jasig.cas.ticket.Ticket#getId()
      */
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public int getCountOfUses() {
-        return count;
+        return this.count;
     }
 
     public long getLastUsedTime() {
-        return lastTimeUsed;
+        return this.lastTimeUsed;
     }
     
-    public void incrementCount()
-    {
-    	count++;
+    public void incrementCount() {
+    	this.count++;
     }
     
     public void updateLastUse()
@@ -72,7 +71,7 @@ public abstract class AbstractTicket implements Ticket {
      * @see org.jasig.cas.ticket.Ticket#isExpired()
      */
     public boolean isExpired() {
-        return expirationPolicy.isExpired(this);
+        return this.expirationPolicy.isExpired(this);
     }
     
     public boolean equals(Object o) {

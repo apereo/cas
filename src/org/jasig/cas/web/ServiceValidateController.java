@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public class ServiceValidateController extends AbstractController
 {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 	private TicketManager ticketManager;
 
 	/**
@@ -47,23 +47,23 @@ public class ServiceValidateController extends AbstractController
 		ServiceTicket serviceTicket;
 		BindUtils.bind(request, validationRequest, "validationRequest");
 
-		logger.info("Attempting to retrieve a valid ServiceTicket for [" + validationRequest.getTicket() + "]");
-		serviceTicket = ticketManager.validateServiceTicket(validationRequest);
+		this.log.info("Attempting to retrieve a valid ServiceTicket for [" + validationRequest.getTicket() + "]");
+		serviceTicket = this.ticketManager.validateServiceTicket(validationRequest);
 		
 		if (serviceTicket == null)
 		{
-			logger.info("ServiceTicket [" + validationRequest.getTicket() + "was invalid.");
+			this.log.info("ServiceTicket [" + validationRequest.getTicket() + "was invalid.");
 			model.put(WebConstants.CODE, "INVALID_TICKET");
 			model.put(WebConstants.DESC, "ticket '" + validationRequest.getTicket() + "' not recognized.");
 			return new ModelAndView(ViewNames.CONST_SERVICE_FAILURE, model);
 		}
 		else
 		{
-			logger.info("ServiceTicket [" + validationRequest.getTicket() + "was valid.");
+			this.log.info("ServiceTicket [" + validationRequest.getTicket() + "was valid.");
 			if (validationRequest.getPgtUrl() != null)
 			{
-				logger.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
-				ProxyGrantingTicket proxyGrantingTicket = ticketManager.createProxyGrantingTicket(serviceTicket.getPrincipal(), casAttributes, serviceTicket);
+				this.log.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
+				ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(serviceTicket.getPrincipal(), casAttributes, serviceTicket);
 				model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
 			}
 		}
@@ -79,7 +79,7 @@ public class ServiceValidateController extends AbstractController
 	}
 
 	/**
-	 * @param ticketManager The ticketManager to set.
+	 * @param this.ticketManager The this.ticketManager to set.
 	 */
 	public void setTicketManager(TicketManager ticketManager)
 	{

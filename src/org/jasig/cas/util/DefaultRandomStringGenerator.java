@@ -49,13 +49,13 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
 	public synchronized String getNewString() {
 		long currentTime = System.currentTimeMillis();
 		long count = 0;
-		long random = Math.abs(randomizer.nextLong());
+		long random = Math.abs(this.randomizer.nextLong());
 		StringBuffer buffer = new StringBuffer(DEFAULT_LENGTH);
 		
-		if (currentTime == lastTimeUsed)
-			count = countForLastTimeUsed++;
+		if (currentTime == this.lastTimeUsed)
+			count = this.countForLastTimeUsed++;
 		else {
-			lastTimeUsed = currentTime;
+			this.lastTimeUsed = currentTime;
 			count = 0;
 		}
 		

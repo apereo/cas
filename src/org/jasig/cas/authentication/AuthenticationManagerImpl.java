@@ -24,7 +24,7 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 
 public class AuthenticationManagerImpl implements AuthenticationManager {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 	private List authenticationHandlers;
 	private List credentialsToPrincipalResolvers;
 	
@@ -34,12 +34,12 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	 */
 	public Principal authenticateUser(final AuthenticationRequest request)
 	{
-		for (Iterator iter = authenticationHandlers.iterator(); iter.hasNext();)
+		for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();)
 		{
 			final AuthenticationHandler handler = (AuthenticationHandler) iter.next();
 			
 			if (handler.supports(request) && handler.authenticate(request)) {
-				for (Iterator resolvers = credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
+				for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
 					CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver) resolvers.next();
 					
 					if (resolver.supports(request))

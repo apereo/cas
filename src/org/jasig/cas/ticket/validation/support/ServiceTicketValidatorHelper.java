@@ -29,11 +29,11 @@ public class ServiceTicketValidatorHelper extends AbstractTicketValidatorHelper 
             return false;
 
         if (serviceTicket.getService().equals(request.getService())) {
-        	logger.debug("ServiceTicket [" + ticket.getId() + "] successfully validated.");
+        	this.log.debug("ServiceTicket [" + ticket.getId() + "] successfully validated.");
         	return true;
         }
         else {
-        	logger.debug("ServiceTicket [" + ticket.getId() + "] service of [" + serviceTicket.getService() + "] does not match validation request of [" + request.getService() + "]");
+        	this.log.debug("ServiceTicket [" + ticket.getId() + "] service of [" + serviceTicket.getService() + "] does not match validation request of [" + request.getService() + "]");
         	return false;
         }
     }

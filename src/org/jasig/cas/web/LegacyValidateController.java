@@ -28,7 +28,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *
  */
 public class LegacyValidateController extends AbstractController {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 	private TicketManager ticketManager;
 	
 	public LegacyValidateController() {
@@ -44,15 +44,15 @@ public class LegacyValidateController extends AbstractController {
 
 		BindUtils.bind(request, validationRequest, "validationRequest");
 		
-		logger.info("Attempting to retrieve valid ServiceTicket for [" + validationRequest.getTicket());
-		serviceTicket = ticketManager.validateServiceTicket(validationRequest);
+		this.log.info("Attempting to retrieve valid ServiceTicket for [" + validationRequest.getTicket());
+		serviceTicket = this.ticketManager.validateServiceTicket(validationRequest);
 		
 		if (serviceTicket == null) {
-			logger.info("Unable to retrieve ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
+			this.log.info("Unable to retrieve ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
 			out.print("no\n\n");
 		}
 		else {
-			logger.info("Successfully retrieved ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
+			this.log.info("Successfully retrieved ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
 			out.print("yes\n" + serviceTicket.getPrincipal().getId()+"\n");
 		}
 		

@@ -42,10 +42,10 @@ public class CasServiceImpl implements CasService {
 		if (dataBinder.getErrors().hasErrors())
 			return null;
 		
-		if ((principal = authenticationManager.authenticateUser(request)) != null)
+		if ((principal = this.authenticationManager.authenticateUser(request)) != null)
 		{
-			TicketGrantingTicket tgt = ticketManager.createTicketGrantingTicket(principal, casAttributes);
-			ServiceTicket st = ticketManager.createServiceTicket(principal, casAttributes, tgt);
+			TicketGrantingTicket tgt = this.ticketManager.createTicketGrantingTicket(principal, casAttributes);
+			ServiceTicket st = this.ticketManager.createServiceTicket(principal, casAttributes, tgt);
 			
 			return st.getId();
 		}

@@ -38,7 +38,7 @@ import org.springframework.aop.framework.ProxyFactory;
  * @see org.jasig.cas.ticket.AbstractTicket
  */
 public class TicketManagerImpl implements TicketManager {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     private TicketFactory ticketFactory;
     private TicketRegistry ticketRegistry;
     private TicketValidator ticketValidator;
@@ -54,8 +54,8 @@ public class TicketManagerImpl implements TicketManager {
      * @return the newly created ticket.
      */
     private Ticket createAndAddToRegistry(final Class clazz, final Principal principal, final CasAttributes casAttributes, final Ticket ticket) {
-        final Ticket newTicket = ticketFactory.getTicket(clazz, principal, casAttributes, ticket);
-        ticketRegistry.addTicket(newTicket);
+        final Ticket newTicket = this.ticketFactory.getTicket(clazz, principal, casAttributes, ticket);
+        this.ticketRegistry.addTicket(newTicket);
         return this.immutableTicketProxyFactory.getProxyForTicket(newTicket);
     }
 
@@ -95,7 +95,7 @@ public class TicketManagerImpl implements TicketManager {
      * @see org.jasig.cas.ticket.TicketManager#deleteTicket(java.lang.String)
      */
     public boolean deleteTicket(final String ticketId) {
-    	return (ticketId == null) ? false : ticketRegistry.deleteTicket(ticketId);
+    	return (ticketId == null) ? false : this.ticketRegistry.deleteTicket(ticketId);
     }
 
     /**
@@ -103,7 +103,7 @@ public class TicketManagerImpl implements TicketManager {
      * @see org.jasig.cas.ticket.TicketManager#deleteTicket(org.jasig.cas.ticket.Ticket)
      */
     public boolean deleteTicket(final Ticket ticket) {
-    	return (ticket == null) ? false : ticketRegistry.deleteTicket(ticket.getId());
+    	return (ticket == null) ? false : this.ticketRegistry.deleteTicket(ticket.getId());
     }
 
     /**
@@ -111,7 +111,7 @@ public class TicketManagerImpl implements TicketManager {
      * @see org.jasig.cas.ticket.TicketManager#validateProxyGrantingTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ProxyGrantingTicket validateProxyGrantingTicket(final ValidationRequest validationRequest) {
-        return (ProxyGrantingTicket) retrieveValidTicket(validationRequest, ProxyGrantingTicket.class);
+        return (ProxyGrantingTicket) this.retrieveValidTicket(validationRequest, ProxyGrantingTicket.class);
     }
 
     /**
@@ -119,7 +119,7 @@ public class TicketManagerImpl implements TicketManager {
      * @see org.jasig.cas.ticket.TicketManager#validateProxyTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ProxyTicket validateProxyTicket(ValidationRequest validationRequest) {
-        return (ProxyTicket) retrieveValidTicket(validationRequest, ProxyTicket.class);
+        return (ProxyTicket) this.retrieveValidTicket(validationRequest, ProxyTicket.class);
 
     }
 
@@ -128,7 +128,7 @@ public class TicketManagerImpl implements TicketManager {
      * @see org.jasig.cas.ticket.TicketManager#validateServiceTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ServiceTicket validateServiceTicket(final ValidationRequest validationRequest) {
-        return (ServiceTicket) retrieveValidTicket(validationRequest, ServiceTicket.class);
+        return (ServiceTicket) this.retrieveValidTicket(validationRequest, ServiceTicket.class);
     }
 
     /**
@@ -136,7 +136,7 @@ public class TicketManagerImpl implements TicketManager {
      * @see org.jasig.cas.ticket.TicketManager#validateTicketGrantingTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public TicketGrantingTicket validateTicketGrantingTicket(final ValidationRequest validationRequest) {
-        return (TicketGrantingTicket) retrieveValidTicket(validationRequest, TicketGrantingTicket.class);
+        return (TicketGrantingTicket) this.retrieveValidTicket(validationRequest, TicketGrantingTicket.class);
     }
 
     /**
@@ -149,14 +149,14 @@ public class TicketManagerImpl implements TicketManager {
      * @return
      */
     private Ticket retrieveValidTicket(final String ticketId, final ValidationRequest request, final Class clazz) {
-        final Ticket ticket = ticketRegistry.getTicket(ticketId, clazz);
+        final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
 
         if (ticket == null)
             return null;
 
         synchronized (ticket) {
-            if (ticketValidator.validate(ticket, request)) {
-            	logger.debug("Successful validation.  Updating state for ticket [" + ticket.getId() + "]");
+            if (this.ticketValidator.validate(ticket, request)) {
+            	this.log.debug("Successful validation.  Updating state for ticket [" + ticket.getId() + "]");
                 AbstractTicket t = (AbstractTicket) ticket;
                 t.incrementCount();
                 t.updateLastUse();
@@ -167,7 +167,7 @@ public class TicketManagerImpl implements TicketManager {
     }
 
     private Ticket retrieveValidTicket(final ValidationRequest request, final Class clazz) {
-        return retrieveValidTicket(request.getTicket(), request, clazz);
+        return this.retrieveValidTicket(request.getTicket(), request, clazz);
     }
 
     /**

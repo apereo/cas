@@ -27,14 +27,14 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;
 		
-		return !users.contains(uRequest.getUserName());
+		return !this.users.contains(uRequest.getUserName());
 	}
 
 	/**
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (users == null) {
+		if (this.users == null) {
 			throw new IllegalStateException("You must provide a list of users that are not allowed to use the system.");
 		}
 	}

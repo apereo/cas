@@ -23,12 +23,12 @@ public class UsernamePasswordAuthenticationRequest implements AuthenticationRequ
 	 * @return Returns the password.
 	 */
 	public String getPassword() {
-		return password;
+		return this.password;
 	}
 	/**
 	 * @param password The password to set.
 	 */
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		this.password = password;
 	}
 
@@ -36,12 +36,12 @@ public class UsernamePasswordAuthenticationRequest implements AuthenticationRequ
 	 * @return Returns the userName.
 	 */
 	public String getUserName() {
-		return userName;
+		return this.userName;
 	}
 	/**
 	 * @param userName The userName to set.
 	 */
-	public void setUserName(String userName) {
+	public void setUserName(final String userName) {
 		this.userName = userName;
 	}
 	

@@ -30,11 +30,11 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
 		final String password = authRequest.getPassword();
 		
 		if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
-			logger.debug("User [" + username + "] was successfully authenticated.");
+			this.log.debug("User [" + username + "] was successfully authenticated.");
 			return true;
 		}
 		else {
-			logger.debug("User [" + username + "] failed authentication");
+			this.log.debug("User [" + username + "] failed authentication");
 			return false;
 		}
 	}

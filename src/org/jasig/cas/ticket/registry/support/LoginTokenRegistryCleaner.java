@@ -21,7 +21,7 @@ import org.jasig.cas.util.RegistryCleaner;
  *
  */
 public class LoginTokenRegistryCleaner implements RegistryCleaner {
-	protected final Log logger = LogFactory.getLog(getClass());	
+	protected final Log log = LogFactory.getLog(getClass());	
 	private Map loginTokens;
 	private long timeOut;
 	/**
@@ -30,21 +30,21 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
 	public void clean()
 	{
 		final long currentTime = System.currentTimeMillis();
-		logger.info("Started cleaning up login tokens at [" + new Date() + "]");
-		synchronized (loginTokens)
+		this.log.info("Started cleaning up login tokens at [" + new Date() + "]");
+		synchronized (this.loginTokens)
 		{
-			final Set keys = loginTokens.keySet();
+			final Set keys = this.loginTokens.keySet();
 			
 			for (Iterator iter = keys.iterator(); iter.hasNext();)
 			{
 				final String key = (String) iter.next();
 				final Date lastUsed = (Date) loginTokens.get(key);
 				
-				if ((lastUsed.getTime() - currentTime) > timeOut)
-					loginTokens.remove(key);
+				if ((lastUsed.getTime() - currentTime) > this.timeOut)
+					this.loginTokens.remove(key);
 			}
 		}
-		logger.info("Finished cleaning up login tokens at [" + new Date() + "]");
+		this.log.info("Finished cleaning up login tokens at [" + new Date() + "]");
 	}
 
 	/**

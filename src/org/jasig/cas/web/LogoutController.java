@@ -31,7 +31,7 @@ import org.springframework.web.util.WebUtils;
  *  
  */
 public class LogoutController extends AbstractController {
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
 
     private TicketManager ticketManager;
 
@@ -44,7 +44,7 @@ public class LogoutController extends AbstractController {
         String service = request.getParameter(WebConstants.SERVICE);
 
         if (cookie != null) {
-            ticketManager.deleteTicket(cookie.getValue());
+            this.ticketManager.deleteTicket(cookie.getValue());
             destroyTicketGrantingTicketCookie(request, response);
         }
 

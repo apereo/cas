@@ -26,7 +26,7 @@ import org.jasig.cas.ticket.factory.TicketCreator;
  * @see org.jasig.cas.ticket.ServiceTicket
  */
 public class ServiceTicketCreator implements TicketCreator {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     private static final String PREFIX = "ST";
     private ExpirationPolicy policy;
     private ServiceRegistry serviceRegistry;
@@ -37,13 +37,13 @@ public class ServiceTicketCreator implements TicketCreator {
      */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
     	final String service = casAttributes.getService();
-        logger.debug("Attempting to resolve service id via Service Registry for Service [" + service + "]");
+        this.log.debug("Attempting to resolve service id via Service Registry for Service [" + service + "]");
         
-        if (!serviceRegistry.serviceExists(service))
+        if (!this.serviceRegistry.serviceExists(service))
             throw new TicketCreationException("A valid service is required to create a service ticket.");
 
-        logger.debug("Creating ServiceTicket for ID [" + ticketId + "]");
-        return new ServiceTicketImpl(ticketId, (TicketGrantingTicket) grantingTicket, service, casAttributes.isFirst(), policy);
+        this.log.debug("Creating ServiceTicket for ID [" + ticketId + "]");
+        return new ServiceTicketImpl(ticketId, (TicketGrantingTicket) grantingTicket, service, casAttributes.isFirst(), this.policy);
     }
 
     /**
