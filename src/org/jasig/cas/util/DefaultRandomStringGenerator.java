@@ -14,7 +14,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     private static final int MAX_TIMESTAMP_LENGTH = 10;
 
-    private static final int MAX_RANDOM_LENGTH = 4;
+    private static final int MAX_RANDOM_LENGTH = 12;
 
     private static final int MIN_LENGTH = MAX_TIMESTAMP_LENGTH + MAX_RANDOM_LENGTH + 1;
 
@@ -26,7 +26,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     private static final int DEFAULT_LENGTH = 15;
 
-    private static final long MAX_RANDOM_LEN = 1679616; // DEFAULT_BASE ^ MAX_RANDOM_LENGTH
+    private static final long MAX_RANDOM_LEN = 4738381338321616896L; // DEFAULT_BASE ^ MAX_RANDOM_LENGTH
 
     private static final long MAX_TIMESTAMP_LEN = 3656158440062976L; // DEFAULT_BASE ^ MAX_TIMESTAMP_LENGTH
 
@@ -57,6 +57,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
         long currentTime = System.currentTimeMillis();
         long count = 0;
         long random = Math.abs(this.randomizer.nextLong());
+        long random2 = Math.abs(this.randomizer.nextLong());
         StringBuffer buffer = new StringBuffer(DEFAULT_LENGTH);
 
         if (currentTime == this.lastTimeUsed)
@@ -71,10 +72,14 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
         random %= MAX_RANDOM_LEN;
         random += MAX_RANDOM_LEN;
+        
+        random2 %= MAX_RANDOM_LEN;
+        random2 += MAX_RANDOM_LEN;
 
         buffer.append(Long.toString(random, DEFAULT_BASE).substring(1));
         buffer.append(Long.toString(currentTime, DEFAULT_BASE).substring(1));
         buffer.append(Long.toString(count, DEFAULT_BASE));
+        buffer.append(Long.toString(random2, DEFAULT_BASE).substring(1));
 
         return buffer.toString();
     }
