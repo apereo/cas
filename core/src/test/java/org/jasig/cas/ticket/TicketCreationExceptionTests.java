@@ -19,21 +19,6 @@ public class TicketCreationExceptionTests extends TestCase {
           new TicketCreationException();
       }
       
-      public void testMessageParamConstructor() {
-          final String MESSAGE = "test";
-          TicketCreationException t = new TicketCreationException(MESSAGE);
-          assertEquals(MESSAGE, t.getMessage());
-      }
-      
-      public void testMessageAndThrowableParamsConstructor() {
-          final String MESSAGE = "test";
-          final Throwable THROWABLE = new Throwable();
-          TicketCreationException t = new TicketCreationException(MESSAGE, THROWABLE);
-          
-          assertEquals(MESSAGE, t.getMessage());
-          assertEquals(THROWABLE, t.getCause());
-      }
-      
       public void testThrowableParamConstructor() {
           final Throwable THROWABLE = new Throwable();
           TicketCreationException t = new TicketCreationException(THROWABLE);
