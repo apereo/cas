@@ -1,5 +1,0 @@
-CENTRAL AUTHENTICATION SERVICE (CAS)
---------------------------------------------------------------------
-
-Changes in version 3.0M1 (02.11.2005)
-* This is the initial public "preview" release of CAS3

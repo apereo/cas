@@ -1,0 +1,3 @@
+Testsuite: org.jasig.cas.validation.Cas10ProtocolValidationSpecificationTests
+Tests run: 8, Failures: 0, Errors: 0, Time elapsed: 0.01 sec
+

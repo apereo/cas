@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<extend>${basedir}/../project.xml</extend>
+	<pomVersion>1</pomVersion>
+	<artifactId>cas-server-adaptors</artifactId>
+	<name>JA-SIG Central Authentication Service - Adaptors</name>
+	<groupId>cas</groupId>
+	<repository>
+		<connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas</connection>
+		<developerConnection>cm:cvs:pserver:${maven.username}@uportal.org:/home/cvs/jasig:cas</developerConnection>
+		<url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/adaptors/</url>
+	</repository>
+	<dependencies>
+		<dependency>
+			<groupId>cas</groupId>
+			<artifactId>cas-server</artifactId>
+			<version>3.0-m1</version>
+			<type>jar</type>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+	</dependencies>
+</project>
