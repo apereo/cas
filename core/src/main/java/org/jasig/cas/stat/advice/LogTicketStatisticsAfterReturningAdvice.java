@@ -1,44 +1,50 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.stat.advice;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Properties;
 
-import org.jasig.cas.stat.TicketStats;
+import org.jasig.cas.stat.TicketStatisticsManager;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
-
 /**
+ * After returning AOP advice which updates <code>TicketStatistics</code> state at the specific target's object joinpoints.
+ * <p>
+ * Note: the joinpoints captured by a pointcut are assumed to be the ones that deal with <code>Ticket's</code> state. Those joinpoints (method
+ * invocation names) should be properly configured as keys in the <b>statsStateMutators </b> property and must be mapped to the appropriate ticket
+ * statistics mutator method names on the <code>TicketStatisticsManager</code>
+ * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
  * @version $Id$
- *
  */
 public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAdvice, InitializingBean {
-    private Map statsStateMutators = new HashMap();
 
-    private TicketStats ticketStats;
+    private Properties statsStateMutators = new Properties();
+
+    private TicketStatisticsManager ticketStatsManager;
+
     /**
-     * @see org.springframework.aop.AfterReturningAdvice#afterReturning(java.lang.Object, java.lang.reflect.Method, java.lang.Object[], java.lang.Object)
+     * @see org.springframework.aop.AfterReturningAdvice#afterReturning(java.lang.Object, java.lang.reflect.Method, java.lang.Object[],
+     * java.lang.Object)
      */
     public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
         if (returnValue == null) {
             return;
         }
-        
-        String statsStateMutatorMethodName = (String)this.statsStateMutators.get(method.getName());
-        if(statsStateMutatorMethodName == null){
+
+        String statsStateMutatorMethodName = this.statsStateMutators.getProperty(method.getName());
+        if (statsStateMutatorMethodName == null) {
             return;
         }
-        Method statsStateMutatorMethod = this.ticketStats.getClass().getMethod(statsStateMutatorMethodName, null);
-        statsStateMutatorMethod.invoke(this.ticketStats, null);
+        Method statsStateMutatorMethod = this.ticketStatsManager.getClass().getMethod(statsStateMutatorMethodName, null);
+        statsStateMutatorMethod.invoke(this.ticketStatsManager, null);
     }
-    
+
     /**
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
@@ -46,23 +52,23 @@ public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAd
         if (this.statsStateMutators == null | this.statsStateMutators.isEmpty()) {
             throw new IllegalStateException("You must set the statsStateMutators on " + this.getClass().getName());
         }
-        
-        if (this.ticketStats == null ) {
-            throw new IllegalStateException("You must set the ticketStats bean on " + this.getClass().getName());
+
+        if (this.ticketStatsManager == null) {
+            throw new IllegalStateException("You must set the ticketStatsManager bean on " + this.getClass().getName());
         }
     }
 
     /**
      * @param ticketStats The ticketStats to set.
      */
-    public void setTicketStats(TicketStats ticketStats) {
-        this.ticketStats = ticketStats;
+    public void setTicketStats(TicketStatisticsManager ticketStatsManager) {
+        this.ticketStatsManager = ticketStatsManager;
     }
-    
+
     /**
      * @param statsStateMutators The statsStateMutators to set.
      */
-    public void setStatsStateMutators(Map statsStateMutators) {
+    public void setStatsStateMutators(Properties statsStateMutators) {
         this.statsStateMutators = statsStateMutators;
     }
 }

@@ -37,20 +37,12 @@
 	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice">
 		<property name="ticketStats"><ref local="statsBean" /></property>
         <property name="statsStateMutators">
-            <map>
-                <entry key="delegateTicketGrantingTicket">
-                    <value>incrementNumberOfProxyGrantingTicketsVended</value>
-                </entry>
-                <entry key="grantServiceTicket">
-                    <value>incrementNumberOfServiceTicketsVended</value>
-                </entry>
-                <entry key="createTicketGrantingTicket">
-                    <value>incrementNumberOfTicketGrantingTicketsVended</value>
-                </entry>
-                <entry key="">
-                    <value>incrementNumberOfProxyTicketsVended</value>
-                </entry>
-            </map>
+            <props>
+                <prop key="delegateTicketGrantingTicket">incrementNumberOfProxyGrantingTicketsVended</prop>
+                <prop key="grantServiceTicket">incrementNumberOfServiceTicketsVended</prop>
+                <prop key="createTicketGrantingTicket">incrementNumberOfTicketGrantingTicketsVended</prop>
+                <prop key="">incrementNumberOfProxyTicketsVended</prop>
+            </props>
         </property>
 	</bean>
 	
