@@ -8,7 +8,10 @@ package org.jasig.cas.stat.advice;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
+import org.jasig.cas.authentication.Service;
 import org.jasig.cas.stat.TicketStatisticsManager;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -33,6 +36,10 @@ public class LogTicketStatisticsAfterReturningAdvice implements
     private Properties statsStateMutators = new Properties();
 
     private TicketStatisticsManager ticketStatsManager;
+	
+	private TicketRegistry ticketRegistry;
+	
+	private static final String PROXY_TICKET_METHOD = "grantServiceTicket";
 
     public void afterReturning(Object returnValue, Method method,
         Object[] args, Object target) throws Throwable {
@@ -46,6 +53,16 @@ public class LogTicketStatisticsAfterReturningAdvice implements
         if (statsStateMutatorMethodName == null) {
             return;
         }
+		
+		if (statsStateMutatorMethodName.equals(PROXY_TICKET_METHOD)) {
+			ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket((String) returnValue);
+
+			// we have a proxy ticket!!
+			if ((serviceTicket.getGrantingTicket().getAuthentication().getPrincipal() instanceof Service) && (serviceTicket.getGrantingTicket().getGrantingTicket() != null)) {
+				this.ticketStatsManager.incrementNumberOfProxyTicketsVended();
+				return;
+			}
+		}
 
         Method statsStateMutatorMethod = this.ticketStatsManager.getClass()
             .getMethod(statsStateMutatorMethodName, null);
@@ -65,6 +82,10 @@ public class LogTicketStatisticsAfterReturningAdvice implements
                 "You must set the ticketStatsManager bean on "
                     + this.getClass().getName());
         }
+		
+		if (this.ticketRegistry == null) {
+			throw new IllegalStateException("You must set the ticketRegistry bean on " + this.getClass().getName());
+		}
     }
 
     /**
@@ -80,4 +101,13 @@ public class LogTicketStatisticsAfterReturningAdvice implements
     public void setStatsStateMutators(Properties statsStateMutators) {
         this.statsStateMutators = statsStateMutators;
     }
+
+	/**
+	 * @param ticketRegistry the TicketRegistry to set.
+	 */
+	public void setTicketRegistry(TicketRegistry ticketRegistry) {
+		this.ticketRegistry = ticketRegistry;
+	}
+	
+
 }

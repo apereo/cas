@@ -54,6 +54,7 @@
 	
 	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice">
 		<property name="ticketStatsManager"><ref local="statsBean" /></property>
+		<property name="ticketRegistry"><ref bean="ticketRegistry" /></property>
         <property name="statsStateMutators">
             <props>
                 <prop key="delegateTicketGrantingTicket">incrementNumberOfProxyGrantingTicketsVended</prop>
