@@ -17,6 +17,9 @@ public class HttpBasedServiceCredentials implements Credentials {
     final private URL callbackUrl;
 
     public HttpBasedServiceCredentials(URL callbackUrl) {
+        if (callbackUrl == null) {
+            throw new IllegalStateException("callbackUrl must be set on " + this.getClass().getName());
+        }
         this.callbackUrl = callbackUrl;
     }
 
