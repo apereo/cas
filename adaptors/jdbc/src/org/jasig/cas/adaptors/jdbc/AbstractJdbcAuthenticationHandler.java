@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
  * Abstract class to duplicate AbstractHandler
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
