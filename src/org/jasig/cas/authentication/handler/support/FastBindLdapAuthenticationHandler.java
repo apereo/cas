@@ -22,7 +22,8 @@ import org.jasig.cas.util.LdapUtils;
 public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticationHandler {
 	
 	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;

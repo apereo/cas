@@ -42,6 +42,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 	private boolean allowMultipleAccounts;
 
 	/**
+	 * 
 	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public boolean authenticate(final AuthenticationRequest request) {

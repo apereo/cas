@@ -34,8 +34,10 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 	private String separator = DEFAULT_SEPARATOR;
 	private PasswordTranslator passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
 	private String fileName;
+
 	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;

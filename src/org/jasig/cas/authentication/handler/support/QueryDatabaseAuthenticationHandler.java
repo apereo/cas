@@ -30,15 +30,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @version $Id$
  *
  */
+// TODO: efficient???
 public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 	private PasswordTranslator passwordTranslator = new PlainTextPasswordTranslator();
 	private List dataSources;
 	private String sql;	
 
-	// TODO: efficient???
+
 	
 	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;

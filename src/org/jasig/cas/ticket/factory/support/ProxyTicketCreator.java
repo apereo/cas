@@ -30,8 +30,8 @@ public class ProxyTicketCreator implements TicketCreator {
     private ExpirationPolicy policy;
 
     /**
-     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.domain.TicketCreationAttributes,
-     * java.lang.String, org.jasig.cas.domain.Ticket)
+     * 
+     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
     public Ticket createTicket(final Principal principal, CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
     	logger.debug("Creating ProxyGrantingTicket with ID [" + ticketId + "]");
@@ -39,6 +39,7 @@ public class ProxyTicketCreator implements TicketCreator {
     }
 
     /**
+     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#supports(java.lang.Class)
      */
     public boolean supports(final Class clazz) {
@@ -46,6 +47,7 @@ public class ProxyTicketCreator implements TicketCreator {
     }
 
     /**
+     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#getPrefix()
      */
     public String getPrefix() {

@@ -20,7 +20,8 @@ import org.springframework.util.StringUtils;
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler
 {
 	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public boolean authenticate(final AuthenticationRequest request)
 	{

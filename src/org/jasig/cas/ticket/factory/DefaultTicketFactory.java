@@ -27,10 +27,10 @@ public class DefaultTicketFactory implements TicketFactory {
 
     private UniqueTicketIdGenerator uniqueIdGenerator;
 
-    /**
-     * @see org.jasig.cas.ticket.factory.TicketFactory#getTicket(java.lang.Class, org.jasig.cas.domain.TicketCreationAttributes,
-     * org.jasig.cas.domain.Ticket)
-     */
+	/**
+	 * 
+	 * @see org.jasig.cas.ticket.factory.TicketFactory#getTicket(java.lang.Class, org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.Ticket)
+	 */
     public Ticket getTicket(final Class clazz, final Principal principal, final CasAttributes casAttributes, final Ticket parentTicket) {
         for (Iterator iter = ticketCreators.iterator(); iter.hasNext();) {
             TicketCreator ticketCreator = (TicketCreator)iter.next();

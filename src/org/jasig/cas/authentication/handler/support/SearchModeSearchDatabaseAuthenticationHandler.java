@@ -31,6 +31,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @version $Id$
  *
  */
+
+// TODO: is this efficient enough??
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 	private static final String SQL_PREFIX = "Select count(*) from ";
 	private static final PasswordTranslator DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordTranslator();
@@ -40,10 +42,10 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
 	private String fieldPassword;
 	private String tableUsers;
 	private PasswordTranslator passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
-	
-	// TODO: is this efficient enough??
+
 	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;

@@ -32,6 +32,7 @@ import org.springframework.beans.factory.DisposableBean;
  * @version $Id$
  *
  */
+// TODO: can we keep the context open?
 public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
 	private static final String DEFAULT_MAP = "passwd.byname";
 	private static final String DEFAULT_CONTEXT_FACTORY = "com.sun.jndi.nis.NISCtxFactory";
@@ -49,10 +50,9 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
 	private Hashtable config;
 	private InitialContext initialContext;
 
-	// TODO: can we keep the context open?
-	
 	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
 	 */
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;

@@ -34,10 +34,10 @@ public class TicketGrantingTicketCreator implements TicketCreator {
         this.policy = policy;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.domain.TicketCreationAttributes,
-     * java.lang.String, org.jasig.cas.domain.Ticket)
-     */
+	/**
+	 * 
+	 * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
+	 */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
 
         logger.debug("Creating TicketGrantingTicket for ID [" + ticketId + "]");
@@ -45,6 +45,7 @@ public class TicketGrantingTicketCreator implements TicketCreator {
     }
 
     /**
+     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#supports(java.lang.Class)
      */
     public boolean supports(final Class clazz) {
@@ -52,6 +53,7 @@ public class TicketGrantingTicketCreator implements TicketCreator {
     }
 
     /**
+     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#getPrefix()
      */
     public String getPrefix() {

@@ -35,8 +35,8 @@ public class ProxyGrantingTicketCreator implements TicketCreator {
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     /**
-     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.domain.TicketCreationAttributes,
-     * java.lang.String, org.jasig.cas.domain.Ticket)
+     * 
+     * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
         String pgtIou = uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
@@ -53,6 +53,7 @@ public class ProxyGrantingTicketCreator implements TicketCreator {
     }
 
     /**
+     * 
      * @see org.jasig.cas.ticket.factory.TicketCreator#supports(java.lang.Class)
      */
     public boolean supports(final Class clazz) {
