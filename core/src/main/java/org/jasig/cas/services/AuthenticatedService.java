@@ -20,6 +20,10 @@ public class AuthenticatedService {
     private String theme;
 
     public AuthenticatedService(final String id, final boolean allowedToProxy, final boolean forceAuthentication, final String theme) {
+        if (id == null || theme == null) {
+            throw new IllegalArgumentException("id and theme are required parameters.");
+        }
+
         this.id = id;
         this.allowedToProxy = allowedToProxy;
         this.forceAuthentication = forceAuthentication;
