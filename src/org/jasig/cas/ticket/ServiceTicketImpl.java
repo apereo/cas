@@ -25,7 +25,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     private final Service service;
 
-    private final boolean fromNewLogin;
+    private boolean fromNewLogin;
 
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
@@ -50,6 +50,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
+    }
+    
+    public void setFromNewLogin(boolean fromNewLogin) {
+        this.fromNewLogin = fromNewLogin;
     }
 
     public Service getService() {

@@ -30,6 +30,13 @@ public interface ServiceTicket extends Ticket {
      * @return true if it is, false otherwise.
      */
     boolean isFromNewLogin();
+    
+    /**
+     * Method to allow you to set the fromNewLogin flag.
+     * 
+     * @param fromNewLogin
+     */
+    void setFromNewLogin(boolean fromNewLogin);
 
     /**
      * Method to grant a TicketGrantingTicket from this service to the authentication. Analogous to the ProxyGrantingTicket.
