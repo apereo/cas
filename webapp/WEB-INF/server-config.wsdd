@@ -31,18 +31,16 @@
   <parameter name="className" value="org.apache.axis.Version"/>
  </service>
  <service name="CentralAuthenticationService" provider="java:RPC">
-  <parameter name="allowedMethods" value="*"/>
-  <parameter name="className" value="org.jasig.cas.CentralAuthenticationServiceImpl"/>
+  <parameter name="allowedMethods" value="createTicketGrantingTicket,delegateTicketGrantingTicket,destroyTicketGrantingTicket,grantServiceTicket,validateServiceTicket"/>
+  <parameter name="className" value="org.jasig.cas.remoting.server.CentralAuthenticationServiceRemoteService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.UsernamePasswordCredentials" qname="ns:UsernamePasswordCredentials" xmlns:ns="urn:CentralAuthenticationService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.SimplePrincipal" qname="ns:SimplePrincipal" xmlns:ns="urn:CentralAuthenticationService"/>
-	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.SimpleService" qname="ns:SimpleService" xmlns:ns="urn:CentralAuthenticationService"/>
-	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.Cas20ProtocolAuthenticationSpecification" qname="ns:Cas20ProtocolAuthenticationSpecification" xmlns:ns="urn:CentralAuthenticationService"/>
-	<beanMapping languageSpecificType="java:org.jasig.cas.validation.AssertionImpl" qname="ns:AssertionImpl" xmlns:ns="urn:CentralAuthenticationService"/>
-	<beanMapping languageSpecificType="java:org.jasig.cas.ticket.ExpirationPolicy" qname="ns:ExpirationPolicy" xmlns:ns="urn:CentralAuthenticationService"/>
+	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.SimpleService" qname="ns:SimpleService" xmlns:ns="urn:CentralAuthenticationService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.Credentials" qname="ns:Credentials" xmlns:ns="urn:CentralAuthenticationService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.Principal" qname="ns:Principal" xmlns:ns="urn:CentralAuthenticationService"/>
+	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.Service" qname="ns:Service" xmlns:ns="urn:CentralAuthenticationService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.validation.Assertion" qname="ns:Assertion" xmlns:ns="urn:CentralAuthenticationService"/>
-	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.Service" qname="ns:Service" xmlns:ns="urn:CentralAuthenticationService"/>
+	<beanMapping languageSpecificType="java:org.jasig.cas.validation.ImmutableAssertionImpl" qname="ns:AssertionImpl" xmlns:ns="urn:CentralAuthenticationService"/>
  </service>
  <transport name="http">
   <requestFlow>
@@ -59,5 +57,3 @@
   </responseFlow>
  </transport>
 </deployment>
-
-<!-- meaningless comment added to force commit of change from binary to ASCII -->

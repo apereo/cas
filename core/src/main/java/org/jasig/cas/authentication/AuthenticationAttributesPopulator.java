@@ -12,6 +12,7 @@ package org.jasig.cas.authentication;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
+ * @since 3.0
  *
  */
 public interface AuthenticationAttributesPopulator {
