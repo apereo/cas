@@ -37,11 +37,7 @@
 			<h2 style="margin-bottom:0;">Please Log In</h2>
 
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
-			
-               
-                     You may establish JA-SIG authentication now in order to access protected services later.
-               
-              This is not a public network and explicit authorization is required.
+			  Congratulations on bringing CAS online!  The default authentication handler authenticates where usernames equal passwords: go ahead, try it out. <br /><br />
 			  For security reasons, please Log Out and Exit your web browser when you are done accessing services that require authentication!
 			</p>
 
