@@ -69,10 +69,10 @@ public class AuthenticatedService {
     }
 
 	public SingleSignoutCallback getSingleSignoutCallback() {
-		return singleSignoutCallback;
+		return this.singleSignoutCallback;
 	}
 
 	public URL getProxyUrl() {
-		return proxyUrl;
+		return this.proxyUrl;
 	}
 }

@@ -45,7 +45,7 @@ public class MonitorServiceTicketsAfterReturningAdvice implements
 		final ServiceTicket serviceTicket = (ServiceTicket) ticket;
 		final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
 		
-		synchronized (singleSignoutMapping) {
+		synchronized (this.singleSignoutMapping) {
 		
 			if (this.singleSignoutMapping.containsKey(ticketGrantingTicket.getId())) {
 				Set serviceTickets = (Set) this.singleSignoutMapping.get(ticketGrantingTicket);
@@ -53,7 +53,7 @@ public class MonitorServiceTicketsAfterReturningAdvice implements
 			} else {
 				Set serviceTickets = new HashSet();
 				serviceTickets.add(serviceTicket);
-				singleSignoutMapping.put(ticketGrantingTicket.getId(), serviceTickets);
+				this.singleSignoutMapping.put(ticketGrantingTicket.getId(), serviceTickets);
 			}
 		}
 	}
