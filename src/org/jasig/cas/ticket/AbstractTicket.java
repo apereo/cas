@@ -7,7 +7,6 @@ package org.jasig.cas.ticket;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for policies. Also incorporates properties common among all tickets.
@@ -23,26 +22,16 @@ public abstract class AbstractTicket implements Ticket {
 
     private int count;
 
-    final private Principal principal;
-
     final private String id;
 
-    public AbstractTicket(final String id, final Principal person, final ExpirationPolicy expirationPolicy) {
-        if (expirationPolicy == null || id == null || person == null)
-            throw new IllegalArgumentException("id, person and expirationPolicy are required parameters.");
+    public AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
+        if (expirationPolicy == null || id == null)
+            throw new IllegalArgumentException("id and expirationPolicy are required parameters.");
 
-        this.principal = person;
         this.id = id;
         this.lastTimeUsed = System.currentTimeMillis();
 
         this.expirationPolicy = expirationPolicy;
-    }
-
-    /**
-     * @see org.jasig.cas.ticket.Ticket#getPrincipal()
-     */
-    public Principal getPrincipal() {
-        return this.principal;
     }
 
     /**

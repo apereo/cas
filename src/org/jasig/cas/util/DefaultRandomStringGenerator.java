@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.util;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * @author Scott Battaglia
@@ -34,7 +34,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     private long countForLastTimeUsed = 0;
 
-    private Random randomizer = new Random();;
+    private SecureRandom randomizer = new SecureRandom();;
 
     /**
      * @see org.jasig.cas.util.RandomStringGenerator#getMinLength()

@@ -6,8 +6,6 @@ package org.jasig.cas.ticket;
 
 import java.io.Serializable;
 
-import org.jasig.cas.authentication.principal.Principal;
-
 /**
  * Interface for the generic concept of a ticket.
  * 
@@ -15,13 +13,6 @@ import org.jasig.cas.authentication.principal.Principal;
  * @version $Id$
  */
 public interface Ticket extends Serializable {
-
-    /**
-     * Method to retrieve the username.
-     * 
-     * @return the username
-     */
-    Principal getPrincipal();
 
     /**
      * Method to retrieve the id.

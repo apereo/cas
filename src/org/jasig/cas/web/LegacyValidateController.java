@@ -56,7 +56,7 @@ public class LegacyValidateController extends AbstractController {
         else {
             log.info("Successfully retrieved ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service ["
                 + validationRequest.getService() + "]");
-            out.print("yes\n" + serviceTicket.getPrincipal().getId() + "\n");
+            out.print("yes\n" + serviceTicket.getGrantor().getPrincipal().getId() + "\n");
         }
 
         out.flush();

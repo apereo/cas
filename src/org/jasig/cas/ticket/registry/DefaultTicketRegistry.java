@@ -44,7 +44,7 @@ public class DefaultTicketRegistry implements TicketRegistry {
             return null;
 
         if (!clazz.isAssignableFrom(ticket.getClass()))
-            throw new InvalidTicketException("Ticket [" + ticket.getId() + "] for user [" + ticket.getPrincipal() + "] is of type "
+            throw new InvalidTicketException("Ticket [" + ticket.getId() + " is of type "
                 + ticket.getClass() + " when we were expecting " + clazz);
 
         log.debug("Ticket [" + ticketId + "] found in registry.");

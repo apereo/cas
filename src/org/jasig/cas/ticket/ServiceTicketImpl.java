@@ -23,7 +23,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     public ServiceTicketImpl(final String id, final TicketGrantingTicket ticket, final String service, final boolean fromNewLogin,
         final ExpirationPolicy policy) {
-        super(id, ticket.getPrincipal(), policy);
+        super(id, policy);
         if (ticket == null || service == null)
             throw new IllegalArgumentException("ticket and service are required parameters");
         this.grantor = ticket;

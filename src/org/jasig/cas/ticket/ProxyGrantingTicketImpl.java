@@ -36,7 +36,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
      * @param policy
      */
     public ProxyGrantingTicketImpl(final String id, final ServiceTicket parent, final URL proxyId, final String pgtIou, final ExpirationPolicy policy) {
-        super(id, parent.getPrincipal(), policy);
+        super(id, parent.getGrantor().getPrincipal(), policy);
 
         if (parent == null || proxyId == null || pgtIou == null)
             throw new IllegalArgumentException("parent, pgtIou and proxyId are required parameters.");
