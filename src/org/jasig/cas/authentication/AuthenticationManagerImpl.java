@@ -29,23 +29,31 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
     private List authenticationHandlers;
 
     private List credentialsToPrincipalResolvers;
-
+    
     /**
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.authentication.AuthenticationRequest)
      */
     public Authentication authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException {
+        boolean authenticated = false;
+        
         for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();) {
             final AuthenticationHandler handler = (AuthenticationHandler)iter.next();
 
             try {
                 if (!handler.authenticate(credentials)) {
+                    log.info("AuthenticationHandler: " + handler.getClass().getName() + " failed to authenticate the user.");
                 	return null;
                 }
+                log.info("AuthenticationHandler: " + handler.getClass().getName() + " successfully authenticated the user.");
+                authenticated = true;
 				break;
             } catch (UnsupportedCredentialsException e) {
                 continue;
             }
         }
+        
+        if (!authenticated)
+            return null;
         
 		for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
 			final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
