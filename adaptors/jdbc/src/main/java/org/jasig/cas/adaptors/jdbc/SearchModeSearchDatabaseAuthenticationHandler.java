@@ -39,9 +39,6 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
-     */
     protected boolean authenticateInternal(final Credentials request)
         throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
@@ -54,9 +51,6 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
         return count > 0;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
-     */
     protected boolean supports(Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials
