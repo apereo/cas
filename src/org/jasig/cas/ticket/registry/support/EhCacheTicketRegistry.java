@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
@@ -57,7 +57,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
     /**
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
-    public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketException {
+    public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketClassException {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz argument must not be null.");
         }
@@ -65,7 +65,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
     	final Ticket ticket = this.getTicket(ticketId);
 
         if (!ticket.getClass().isAssignableFrom(clazz))
-            throw new InvalidTicketException("Ticket [" + ticket.getId() + "] is of type "
+            throw new InvalidTicketClassException("Ticket [" + ticket.getId() + "] is of type "
                 + ticket.getClass() + " when we were expecting " + clazz);
 
         return ticket;

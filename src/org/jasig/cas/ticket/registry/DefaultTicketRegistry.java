@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.Ticket;
 
 /**
@@ -39,14 +39,14 @@ public class DefaultTicketRegistry implements TicketRegistry {
     /**
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
-    public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketException {
+    public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketClassException {
     	final Ticket ticket = this.getTicket(ticketId);
 
         if (ticket == null)
             return null;
 
         if (!clazz.isAssignableFrom(ticket.getClass()))
-            throw new InvalidTicketException("Ticket [" + ticket.getId() + " is of type "
+            throw new InvalidTicketClassException("Ticket [" + ticket.getId() + " is of type "
                 + ticket.getClass() + " when we were expecting " + clazz);
 
         return ticket;

@@ -49,14 +49,14 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     }
 
     /**
-     * @return Returns the fromNewLogin.
+     * @see org.jasig.cas.ticket.ServiceTicket#isFromNewLogin()
      */
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
 
     /**
-     * @return Returns the service.
+     * @see org.jasig.cas.ticket.ServiceTicket#getService()
      */
     public Service getService() {
         return this.service;

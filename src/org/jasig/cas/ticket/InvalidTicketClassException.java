@@ -10,21 +10,21 @@ package org.jasig.cas.ticket;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class InvalidTicketException extends TicketException {
+public class InvalidTicketClassException extends TicketException {
 
     private static final long serialVersionUID = 6833932903118682012L;
 
     /**
      * 
      */
-    public InvalidTicketException() {
+    public InvalidTicketClassException() {
         super();
     }
 
     /**
      * @param message
      */
-    public InvalidTicketException(String message) {
+    public InvalidTicketClassException(String message) {
         super(message);
     }
 
@@ -32,14 +32,14 @@ public class InvalidTicketException extends TicketException {
      * @param message
      * @param cause
      */
-    public InvalidTicketException(String message, Throwable cause) {
+    public InvalidTicketClassException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
      * @param cause
      */
-    public InvalidTicketException(Throwable cause) {
+    public InvalidTicketClassException(Throwable cause) {
         super(cause);
     }
 }

@@ -30,8 +30,11 @@ public interface ServiceTicket extends Ticket {
     boolean isFromNewLogin();
     
     /**
-     * 
-     * @return
+     * Method to grant a TicketGrantingTicket from this service to the 
+     * principal.  Analogous to the ProxyGrantingTicket.
+     *
+     * @param principal The principal we wish to grant a ticket for.
+     * @return The ticket granting ticket.
      */
     TicketGrantingTicket grantTicketGrantingTicket(Principal principal);
 }
