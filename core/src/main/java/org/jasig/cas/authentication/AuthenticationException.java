@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
 
@@ -11,8 +11,8 @@ package org.jasig.cas.authentication;
  * AuthenticationExceptions
  * 
  * @author Scott Battaglia
- * @version $Id: AuthenticationException.java,v 1.2 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class AuthenticationException extends Exception {
 

@@ -17,8 +17,8 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
  * AuthenticationHandler
  * 
  * @author Scott Battaglia
- * @version $Id: LegacyTrustHandlerAdaptorAuthenticationHandler.java,v 1.3
- * 2005/03/07 21:00:05 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
     AbstractAuthenticationHandler implements InitializingBean {

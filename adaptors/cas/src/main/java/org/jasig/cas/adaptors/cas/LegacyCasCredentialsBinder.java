@@ -15,8 +15,8 @@ import org.jasig.cas.web.bind.CredentialsBinder;
  * ServletRequest.
  * 
  * @author Scott
- * @version $Id: LegacyCasCredentialsBinder.java,v 1.2 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class LegacyCasCredentialsBinder implements CredentialsBinder {
 

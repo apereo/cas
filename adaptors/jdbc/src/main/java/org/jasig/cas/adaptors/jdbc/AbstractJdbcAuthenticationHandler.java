@@ -9,6 +9,11 @@ import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandle
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ */
 public abstract class AbstractJdbcAuthenticationHandler extends
     AbstractAuthenticationHandler implements InitializingBean {
 

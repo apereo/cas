@@ -20,8 +20,8 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Id: BindModeSearchDatabaseAuthenticationHandler.java,v 1.6
- * 2005/03/07 21:00:05 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcAuthenticationHandler {

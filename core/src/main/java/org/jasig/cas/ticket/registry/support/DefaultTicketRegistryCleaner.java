@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry.support;
 
@@ -20,8 +20,8 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * Class to look for expired tickets and remove them from the registry.
  * 
  * @author Scott Battaglia
- * @version $Id: DefaultTicketRegistryCleaner.java,v 1.2 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class DefaultTicketRegistryCleaner implements RegistryCleaner {
 

@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.util.support;
 
@@ -17,8 +17,8 @@ import org.jasig.cas.util.PasswordTranslator;
  * Hash you would get from a PHP hash.
  * 
  * @author Scott Battaglia
- * @version $Id: Md5PasswordTranslator.java,v 1.2 2005/02/27 05:49:26 sbattaglia
- * Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class Md5PasswordTranslator implements PasswordTranslator {
 

@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
 
@@ -13,7 +13,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * The simplest implementation of a representation of a service.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class SimpleService implements Service {
 

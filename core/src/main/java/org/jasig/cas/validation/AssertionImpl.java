@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.validation;
 
@@ -16,7 +16,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * number of attributes required to conform to the CAS 2 protocol.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class AssertionImpl implements Assertion {
 

@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
@@ -17,8 +17,8 @@ import org.jasig.cas.util.UrlUtils;
  * etc.
  * 
  * @author Scott Battaglia
- * @version $Id: HttpBasedServiceCredentialsAuthenticationHandler.java,v 1.3
- * 2005/03/07 21:00:05 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class HttpBasedServiceCredentialsAuthenticationHandler extends
     AbstractAuthenticationHandler {

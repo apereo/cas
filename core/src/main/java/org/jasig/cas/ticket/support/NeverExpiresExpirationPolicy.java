@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.support;
 
@@ -14,8 +14,8 @@ import org.jasig.cas.ticket.Ticket;
  * as long as the particular CAS Universe exists.
  * 
  * @author Scott Battaglia
- * @version $Id: NeverExpiresExpirationPolicy.java,v 1.2 2005/03/01 05:04:58
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class NeverExpiresExpirationPolicy implements ExpirationPolicy {
 

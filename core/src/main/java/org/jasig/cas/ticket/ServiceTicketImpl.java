@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -14,7 +14,8 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  * access to a particular service. It will only work for a particular service.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 

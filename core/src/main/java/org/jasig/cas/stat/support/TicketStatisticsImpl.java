@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.stat.support;
 
@@ -13,8 +13,8 @@ import org.jasig.cas.stat.TicketStatisticsManager;
  * Statistics",persistPeriod=1,objectName="cas:id=stats")
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Id: TicketStatisticsImpl.java,v 1.4 2005/03/01 05:04:58 sbattaglia
- * Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class TicketStatisticsImpl implements TicketStatistics,
     TicketStatisticsManager {
