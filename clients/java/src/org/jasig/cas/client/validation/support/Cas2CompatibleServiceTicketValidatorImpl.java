@@ -4,9 +4,6 @@ import java.io.StringReader;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.jasig.cas.client.receipt.CasReceipt;
 import org.jasig.cas.client.receipt.CasResponseCasReceipt;
 import org.jasig.cas.client.receipt.ErrorCasReceipt;
@@ -22,28 +19,29 @@ public class Cas2CompatibleServiceTicketValidatorImpl extends AbstractServiceTic
 
     private static final String XML_CAS_AUTHENTICATION_FAILURE = "cas:authenticationFailure";
 
-    private final HttpClient client = new HttpClient();
+   //  private final HttpClient client = new HttpClient();
 
     /**
      * @see org.jasig.cas.client.validation.support.AbstractServiceTicketValidator#validateInternal(java.lang.String)
      */
     public CasReceipt validateInternal(String ticketId) {
         String response;
-        GetMethod getMethod = new GetMethod(getCasValidateUrl().toString());
-        getMethod.setQueryString(getNameValuePairs(ticketId));
+        // GetMethod getMethod = new GetMethod(getCasValidateUrl().toString());
+        // getMethod.setQueryString(getNameValuePairs(ticketId));
 
         try {
-            this.client.executeMethod(getMethod);
-            response = getMethod.getResponseBodyAsString();
+            //this.client.executeMethod(getMethod);
+            // response = getMethod.getResponseBodyAsString();
 
-            return getCasReceipt(response);
+            // return getCasReceipt(response);
 
         }
         catch (Exception e) {
             return new ErrorCasReceipt();
         }
+        return null;
     }
-
+/*
     protected NameValuePair[] getNameValuePairs(String ticketId) {
         NameValuePair pairs[] = new NameValuePair[4];
 
@@ -53,7 +51,7 @@ public class Cas2CompatibleServiceTicketValidatorImpl extends AbstractServiceTic
         pairs[3] = new NameValuePair("pgtUrl", this.getProxyCallbackUrl().toString());
         return pairs;
     }
-
+*/
     protected CasReceipt getCasReceipt(String response) throws Exception {
         CasResponseCasReceipt casReceipt = new CasResponseCasReceipt();
         XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();

@@ -4,10 +4,9 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -15,6 +14,7 @@ import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.util.UrlUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -28,17 +28,14 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    private HttpClient httpClient;
-
     /**
      * @see org.jasig.cas.ticket.proxy.ProxyHandler#handle(org.jasig.cas.authentication.principal.Credentials)
      */
     public String handle(Credentials credentials, String proxyGrantingTicketId) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
-        final String proxyIou = uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
+        final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
         final StringBuffer stringBuffer = new StringBuffer();
-        final String callbackUrl;
-        final GetMethod getMethod;
+        String response = null;
 
         stringBuffer.append(serviceCredentials.getCallbackUrl().toExternalForm());
 
@@ -51,33 +48,18 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append(proxyIou);
         stringBuffer.append("&pgtId=");
         stringBuffer.append(proxyGrantingTicketId);
-
-        getMethod = new GetMethod(stringBuffer.toString());
-
+        
         try {
-            httpClient.executeMethod(getMethod);
-            final String response = getMethod.getResponseBodyAsString();
-            getMethod.releaseConnection();
+        	response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer.toString()));
+        } catch (MalformedURLException e) {
+        	// can't do anything with this
+        }
+        
+        return response != null ? proxyIou : null;
 
-            if (response != null) {
-                return proxyIou;
-            }
-        }
-        catch (IOException ioe) {
-        }
-        finally {
-            getMethod.releaseConnection();
-        }
 
-        return null;
     }
     
-    /**
-     * @param httpClient The httpClient to set.
-     */
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
     /**
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to set.
      */
@@ -89,12 +71,6 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        if (this.httpClient == null) {
-            this.httpClient = new HttpClient();
-            log.info("No HttpClient specified for " + this.getClass().getName() + ".  Using default HttpClient settings.");
-            
-        }
-        
         if (this.uniqueTicketIdGenerator == null) {
             this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
             log.info("No UniqueTicketIdGenerator specified for " + this.getClass().getName() + ".  Using " + this.uniqueTicketIdGenerator.getClass().getName());
