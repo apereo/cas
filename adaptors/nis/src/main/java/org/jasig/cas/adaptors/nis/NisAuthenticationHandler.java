@@ -58,9 +58,6 @@ public class NisAuthenticationHandler extends
 
     private InitialContext initialContext;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
-     */
     public boolean authenticateInternal(final Credentials request)
         throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
@@ -107,9 +104,6 @@ public class NisAuthenticationHandler extends
         this.passwordTranslator = passwordTranslator;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.domain == null || this.host == null || this.map == null
             || this.passwordTranslator == null || this.contextFactory == null
@@ -130,9 +124,6 @@ public class NisAuthenticationHandler extends
         this.initialContext = new InitialDirContext(this.config);
     }
 
-    /**
-     * @see org.springframework.beans.factory.DisposableBean#destroy()
-     */
     public void destroy() throws Exception {
         this.initialContext.close();
     }
