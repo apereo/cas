@@ -18,14 +18,17 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class SimpleService implements Service {
 
+    /** ID for serializing */
     private static final long serialVersionUID = 3258129150454936116L;
 
+    /** Unique identifier for this service. */
     private String id;
 
     public SimpleService(String id) {
 
-        if (id == null)
+        if (id == null) {
             throw new IllegalArgumentException("ID cannot be null");
+        }
 
         this.id = id;
     }
@@ -34,7 +37,7 @@ public class SimpleService implements Service {
         return this.id;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null || !this.getClass().equals(o.getClass()))
             return false;
 
