@@ -1,0 +1,3 @@
+Testsuite: org.jasig.cas.ticket.registry.support.EhCacheTicketRegistryTests
+Tests run: 15, Failures: 0, Errors: 0, Time elapsed: 0.02 sec
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<document>
+  <properties>
+    <title>Changelog Report</title>
+  </properties>
+  <body>
+    <section name="Changelog Report">
+      <p>Timeframe: 30 days, Total Commits: 0 Total Number of Files Changed: 0</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Author</th>
+            <th>File/Message</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+  </body>
+</document>
