@@ -85,7 +85,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 Authentication authentication = this.authenticationManager.authenticateAndResolveCredentials(credentials);
                 
                 if (authentication == null) {
-                    throw new AuthenticationException();
+                    return null;
                 }
 
                 Principal originalPrincipal = ticketGrantingTicket.getAuthentication().getPrincipal();
