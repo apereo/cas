@@ -19,6 +19,7 @@ import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
@@ -57,6 +58,9 @@ public final class ServiceValidateController extends AbstractController
 
     /** The view to redirect to on a validation failure. */
     private String failureView;
+    
+    /** Boolean to indicate whether this controller allows proxying. */
+    private boolean allowedToProxy;
 
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
@@ -83,6 +87,11 @@ public final class ServiceValidateController extends AbstractController
             log.info("No failureView specified.  Using default of "
                 + this.failureView);
         }
+        
+        if (this.proxyHandler == null) {
+            this.proxyHandler = new Cas20ProxyHandler();
+            log.info("No proxyHandler specified.  Defaulting to " + this.proxyHandler.getClass().getName());
+        }
     }
 
     protected ModelAndView handleRequestInternal(
@@ -106,9 +115,15 @@ public final class ServiceValidateController extends AbstractController
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] does not satisfy authentication specification.");
                 
-                // internationalize this.
+                // TODO internationalize this.
                 model.put(WebConstants.CODE, "INVALID_TICKET");
                 model.put(WebConstants.DESC, "ticket not backed by initial CAS login, as requested");
+                return new ModelAndView(this.failureView, model);
+            }
+            
+            if (!this.allowedToProxy && assertion.getChainedPrincipals().size() > 1) {
+                model.put(WebConstants.CODE, "INVALID_TICKET");
+                model.put(WebConstants.DESC, "we do not accept proxy tickets");
                 return new ModelAndView(this.failureView, model);
             }
 
@@ -120,18 +135,15 @@ public final class ServiceValidateController extends AbstractController
                         .delegateTicketGrantingTicket(serviceTicketId,
                             serviceCredentials);
 
-                    if (proxyGrantingTicketId != null) {
-                        final String proxyIou = this.proxyHandler.handle(
-                            serviceCredentials, proxyGrantingTicketId);
-                        model.put(WebConstants.PGTIOU, proxyIou);
-                    }
+                    final String proxyIou = this.proxyHandler.handle(
+                        serviceCredentials, proxyGrantingTicketId);
+                    model.put(WebConstants.PGTIOU, proxyIou);
                 } catch (MalformedURLException e) {
                     log
                         .debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: "
                             + pgtUrl);
-                    log.debug("Exception message was: " + e.getMessage());
                 } catch (TicketException e) {
-                    log.info("TicketException generating ticket for: "
+                    log.error("TicketException generating ticket for: "
                         + pgtUrl);
                 }
             }
@@ -140,7 +152,7 @@ public final class ServiceValidateController extends AbstractController
             return new ModelAndView(this.successView, model);
         } catch (TicketException te) {
             model.put(WebConstants.CODE, te.getCode());
-            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(te.getCode()));
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(te.getCode(), te.getCode()));
             return new ModelAndView(this.failureView, model);
         }
     }
@@ -191,5 +203,9 @@ public final class ServiceValidateController extends AbstractController
      */
     public void setProxyHandler(final ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
+    }
+    
+    public void setAllowedToProxy(final boolean allowedToProxy) {
+        this.allowedToProxy = allowedToProxy;
     }
 }
