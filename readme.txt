@@ -23,6 +23,7 @@ Release conents:
 * "test" contains the Java source files for CAS's test suite TODO
 * "dist" contains various CAS distribution jar files
 * "docs" contains general documentation and API javadocs
+* "samples" contains sample application
 
 3. DISTRIBUTION JAR FILES
 
