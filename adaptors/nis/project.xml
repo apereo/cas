@@ -7,7 +7,7 @@
   <siteDirectory></siteDirectory>
   <repository>
     <connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas</connection>
-    <developerConnection>cm:cvs:pserver:${maven.username}@uportal.org:/home/cvs/jasig:cas</developerConnection>
+    <developerConnection>scm:cvs:pserver:${maven.username}@uportal.org:/home/cvs/jasig:cas</developerConnection>
     <url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/adaptors/nis/</url>
   </repository>
   <build>

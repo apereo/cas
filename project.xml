@@ -397,6 +397,7 @@
 		<report>maven-simian-plugin</report>
 		<report>maven-tasklist-plugin</report>
 		<report>maven-findbugs-plugin</report>
-<!--		<report>maven-dashboard-plugin</report>-->
+	    <report>maven-license-plugin</report>
+	    <report>maven-multiproject-plugin</report>
 	</reports>
 </project>
