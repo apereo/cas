@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
   <extend>${basedir}/../project.xml</extend>
-  <pomVersion>1</pomVersion>
+  <pomVersion>3</pomVersion>
   <artifactId>cas-server-legacycas</artifactId>
   <name>JA-SIG Central Authentication Service - Legacy CAS AuthenticationHandler Adaptor</name>
   <siteDirectory></siteDirectory>

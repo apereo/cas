@@ -1,5 +1,5 @@
 <project>
-	<pomVersion>1</pomVersion>
+	<pomVersion>3</pomVersion>
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
@@ -16,8 +16,6 @@
 	<shortDescription>CAS is enterprise Single Sign On for the web.</shortDescription>
 	<url>http://jasigch.princeton.edu:9000/display/CAS</url>
 	<issueTrackingUrl>http://jasigch.princeton.edu:9000/jira/secure/BrowseProject.jspa?id=10007</issueTrackingUrl>
-<!--	<siteAddress>ja-sig.org</siteAddress>
-	<siteDirectory>/htdocs/cas</siteDirectory>-->
 	<repository>
 		<connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas</connection>
 		<developerConnection>scm:cvs:pserver:${maven.username}@uportal.org:/home/cvs/jasig:cas</developerConnection>
@@ -313,13 +311,14 @@
 			<version>0.8.4</version>
 			<type>plugin</type>
 		</dependency>
+		
 		<dependency>
-			<groupId>statcvs</groupId>
-			<artifactId>maven-statcvs-plugin</artifactId>
-			<version>2.5</version>
+			<groupId>maven</groupId>
+			<artifactId>plugins</artifactId>
+			<jar>maven-jira-plugin-1.1.2.jar</jar>
+			<version>1.1.2</version>
 			<type>plugin</type>
 		</dependency>
-		
 	</dependencies>
 	<build>
 		<sourceDirectory>${basedir}/core/src/main/java</sourceDirectory>
@@ -375,5 +374,6 @@
 		<report>maven-simian-plugin</report>
 		<report>maven-tasklist-plugin</report>
 		<report>maven-findbugs-plugin</report>
+<!--		<report>maven-jira-plugin</report>-->
 	</reports>
 </project>
