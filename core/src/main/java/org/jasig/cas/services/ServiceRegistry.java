@@ -3,7 +3,7 @@
  * http://www.uportal.org/license.html
  */
 
-package org.jasig.cas.ticket.registry;
+package org.jasig.cas.services;
 
 import java.util.List;
 
@@ -17,32 +17,18 @@ import java.util.List;
 public interface ServiceRegistry {
 
     /**
-     * Method to manually add one service to the list.
-     * 
-     * @param service The service to add.
-     */
-    public void addService(String service);
-
-    /**
      * Method to determine if the service exists in the registry. Default behavior of returning true if there are no services registered in the
      * system.
      * 
-     * @param service the service to check
-     * @return true if the service exists or there are no services registered. False otherwise.
+     * @param serviceId the service to check
+     * @return true if the service exists. False otherwise.
      */
-    public boolean serviceExists(String service);
-
-    /**
-     * Method to delete a service from the list.
-     * 
-     * @param service The service to delete
-     */
-    public void deleteService(String service);
+    boolean serviceExists(String serviceId);
 
     /**
      * Method to return the list of services in the registry.
      * 
      * @return A list of services
      */
-    public List getServices();
+    List getServices();
 }

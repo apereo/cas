@@ -10,13 +10,14 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.services.ServiceRegistry;
 
 /**
  * Default Implementation of the {@link ServiceRegistry}
  * 
  * @author Scott Battaglia
  * @version $Id$
- * @see org.jasig.cas.ticket.registry.ServiceRegistry
+ * @see org.jasig.cas.services.ServiceRegistry
  */
 public class DefaultServiceRegistry implements ServiceRegistry {
 
