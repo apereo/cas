@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="var" path="CLOVER_RUNTIME"/>
 	<classpathentry kind="src" path="core/src/test/resources"/>
+	<classpathentry kind="src" path="adaptors/cas/test"/>
+	<classpathentry kind="src" path="adaptors/jdbc/test"/>
+	<classpathentry kind="src" path="adaptors/ldap/test"/>
+	<classpathentry kind="src" path="adaptors/nis/test"/>
+	<classpathentry kind="src" path="core/test"/>
 	<classpathentry kind="src" path="adaptors/nis/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/nis/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/ldap/src/main/java"/>
