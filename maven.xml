@@ -33,7 +33,6 @@
 	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${maven.build.dir}/cas-server-${pom.currentVersion}.jar" />
 	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${basedir}/lib/jmxremote_optional.jar" />
 	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${basedir}/lib/jmxremote.jar" />
-	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${basedir}/lib/spring-sandbox.jar" />
 	</preGoal>
 	
 	<goal name="maven-multichanges-report:register">
