@@ -21,7 +21,7 @@ public class AssertionImplTest extends TestCase {
     
     public void testNullParameters() {
         try {
-            final AssertionImpl assertion = new AssertionImpl(null, false);
+            new AssertionImpl(null, false);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -31,7 +31,7 @@ public class AssertionImplTest extends TestCase {
     
     public void testEmptyParameters() {
         try {
-            final AssertionImpl assertion = new AssertionImpl(new ArrayList(), false);
+           new AssertionImpl(new ArrayList(), false);
         } catch (IllegalArgumentException e) {
             return;
         }
