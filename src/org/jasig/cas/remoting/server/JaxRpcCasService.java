@@ -28,6 +28,6 @@ public class JaxRpcCasService extends ServletEndpointSupport implements CasServi
      * @see org.jasig.cas.remoting.server.RemoteCasService#getServiceTicket(org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest, java.lang.String)
      */
 	public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
-		return casService.getServiceTicket(request, serviceUrl);
+		return this.casService.getServiceTicket(request, serviceUrl);
 	}
 }

@@ -31,6 +31,6 @@ public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
 	}
 	
 	public List getProxies() {
-		return Collections.unmodifiableList(((ProxyGrantingTicket) getGrantor()).getProxies());
+		return Collections.unmodifiableList(((ProxyGrantingTicket) this.getGrantor()).getProxies());
 	}
 }

@@ -28,7 +28,7 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  * @see ProxyGrantingTicketCreator
  */
 public class ProxyGrantingTicketCreator implements TicketCreator {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     private static final String PREFIX = "PGT";
     private static final String PGTIOU_PREFIX = "PGTIOU";
     private ExpirationPolicy expirationPolicy;
@@ -39,12 +39,12 @@ public class ProxyGrantingTicketCreator implements TicketCreator {
      * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
-        String pgtIou = uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
+        String pgtIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
 
-        logger.debug("Creating ticket of type ProxyGrantingTicket with ID [" + ticketId + "]");
+        this.log.debug("Creating ticket of type ProxyGrantingTicket with ID [" + ticketId + "]");
         
         try {
-	        ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(ticketId, (ServiceTicket)grantingTicket, new URL(casAttributes.getCallbackUrl()), pgtIou, expirationPolicy);
+	        ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(ticketId, (ServiceTicket)grantingTicket, new URL(casAttributes.getCallbackUrl()), pgtIou, this.expirationPolicy);
 	        return ticket;
         }
         catch (MalformedURLException mue) {

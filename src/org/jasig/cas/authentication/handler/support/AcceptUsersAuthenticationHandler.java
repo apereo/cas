@@ -34,10 +34,10 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;
 		final String cachedPassword;
 		
-		if (!users.containsKey(uRequest.getUserName()))
+		if (!this.users.containsKey(uRequest.getUserName()))
 			return false;
 		
-		cachedPassword = (String) users.get(uRequest.getUserName());
+		cachedPassword = (String) this.users.get(uRequest.getUserName());
 		
 		return (cachedPassword.equals(uRequest.getPassword()));
 	}
@@ -46,7 +46,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (users == null) {
+		if (this.users == null) {
 			throw new IllegalStateException("users must be set on " + this.getClass().getName());
 		}
 	}

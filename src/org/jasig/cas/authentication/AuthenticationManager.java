@@ -22,5 +22,5 @@ public interface AuthenticationManager
 	 * @param request the authentication credentials
 	 * @return the Principal the credentials authenticate.
 	 */
-	public Principal authenticateUser(AuthenticationRequest request);
+	public Principal authenticateUser(final AuthenticationRequest request);
 }

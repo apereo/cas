@@ -54,14 +54,14 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 			final List results = new ArrayList();
 
 			try {
-				dirContext = this.getContext(bindUsername, bindPassword, url);
+				dirContext = this.getContext(this.bindUsername, this.bindPassword, url);
 				
 				if (dirContext == null) {
-					logger.debug("Unable to authenticate LDAP user [" + bindUsername + "] for LDAP server [" + url + "]");
+					this.log.debug("Unable to authenticate LDAP user [" + this.bindUsername + "] for LDAP server [" + url + "]");
 					return false;					
 				}
 				
-				NamingEnumeration namingEnumeration = dirContext.search(searchBase, LdapUtils.getFilterWithValues(this.getFilter(), uRequest.getUserName()), constraints);
+				NamingEnumeration namingEnumeration = dirContext.search(this.searchBase, LdapUtils.getFilterWithValues(this.getFilter(), uRequest.getUserName()), this.constraints);
 				
 				if (!namingEnumeration.hasMoreElements()) {
 					dirContext.close();
@@ -82,7 +82,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 				for (Iterator resultsIter = results.iterator(); iter.hasNext();) {
 					String dn = (String) resultsIter.next();
 					
-					DirContext test = this.getContext(dn + ","+searchBase, uRequest.getPassword(), url);
+					DirContext test = this.getContext(dn + ","+this.searchBase, uRequest.getPassword(), url);
 					
 					if (test != null) {
 						test.close();
@@ -93,7 +93,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 				return false;
 			}
 			catch (NamingException e) {
-				logger.debug("LDAP ERROR: Unable to connect to LDAP server " + url + ".  Attempting to contact next server (if exists).");
+				log.debug("LDAP ERROR: Unable to connect to LDAP server " + url + ".  Attempting to contact next server (if exists).");
 			}
 		}
 		
@@ -101,7 +101,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 	}
 	
 	protected SearchControls initializeSearchControls() {
-		SearchControls constraints = new SearchControls(scopeValue, maxNumberResults, timeout,  RETURN_VALUES, false, false);
+		SearchControls constraints = new SearchControls(this.scopeValue, this.maxNumberResults, this.timeout,  RETURN_VALUES, false, false);
 		constraints.setSearchScope(SearchControls.SUBTREE_SCOPE); // TODO why????
 		
 		return constraints;
@@ -111,23 +111,23 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (bindUsername == null || bindPassword == null)
+		if (this.bindUsername == null || this.bindPassword == null)
 			throw new IllegalStateException("bindUsername and bindPassword must be set on " + this.getClass().getName());
 		
-		if (!scopeOneLevel && !scopeObject && !scopeSubtree)
+		if (!this.scopeOneLevel && !this.scopeObject && !this.scopeSubtree)
 			throw new IllegalStateException("Either scopeOneLevel, scopeObject or scopeSubtree must be set to true on " + this.getClass().getName());
 		
-		if ((scopeOneLevel && scopeObject) || (scopeOneLevel && scopeSubtree) || (scopeObject && scopeSubtree))
+		if ((this.scopeOneLevel && this.scopeObject) || (this.scopeOneLevel && this.scopeSubtree) || (this.scopeObject && this.scopeSubtree))
 			throw new IllegalStateException("You can only set one property to tree on scopeOneLevel, scopeObject, and scopeSubtree for " + this.getClass().getName());
 		
-		if (scopeOneLevel)
-			scopeValue = SearchControls.ONELEVEL_SCOPE;
-		else if (scopeObject)
-			scopeValue = SearchControls.OBJECT_SCOPE;
+		if (this.scopeOneLevel)
+		    this.scopeValue = SearchControls.ONELEVEL_SCOPE;
+		else if (this.scopeObject)
+		    this.scopeValue = SearchControls.OBJECT_SCOPE;
 		else
-			scopeValue = SearchControls.SUBTREE_SCOPE;
+		    this.scopeValue = SearchControls.SUBTREE_SCOPE;
 		
-		constraints = initializeSearchControls();
+		this.constraints = initializeSearchControls();
 	}
 	/**
 	 * @param allowMultipleAccounts The allowMultipleAccounts to set.

@@ -36,8 +36,6 @@ public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePassword
 	private List dataSources;
 	private String sql;	
 
-
-	
 	/**
 	 * 
 	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
@@ -46,13 +44,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePassword
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;
 		final String username = uRequest.getUserName();
 		final String password = uRequest.getPassword();
-		final String encryptedPassword = passwordTranslator.translate(password);
+		final String encryptedPassword = this.passwordTranslator.translate(password);
 		
-		for (Iterator iter = dataSources.iterator(); iter.hasNext();) {
+		for (Iterator iter = this.dataSources.iterator(); iter.hasNext();) {
 			try {
 				final DataSource dataSource = (DataSource) iter.next();
 				final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-				final String dbPassword = (String) jdbcTemplate.queryForObject(sql, new Object[] {username}, String.class);
+				final String dbPassword = (String) jdbcTemplate.queryForObject(this.sql, new Object[] {username}, String.class);
 				
 				if (dbPassword.equals(encryptedPassword))
 					return true;
@@ -70,7 +68,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePassword
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (dataSources == null || sql == null || passwordTranslator == null) {
+		if (this.dataSources == null || this.sql == null || this.passwordTranslator == null) {
 			throw new IllegalStateException("dataSources, sql, and passwordTranslator must be set on " + this.getClass().getName());
 		}
 	}

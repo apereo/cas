@@ -63,9 +63,9 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
 	}
 	
 	protected synchronized long getNextValue() {
-		if (!wrap && count == Long.MAX_VALUE)
+		if (!this.wrap && this.count == Long.MAX_VALUE)
 			throw new IllegalStateException("Maximum value reached for this number generator.");
 		
-		return ++count;
+		return ++this.count;
 	}
 }

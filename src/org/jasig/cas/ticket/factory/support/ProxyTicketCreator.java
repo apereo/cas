@@ -24,7 +24,7 @@ import org.jasig.cas.ticket.factory.TicketCreator;
  * @see org.jasig.cas.ticket.ProxyTicket
  */
 public class ProxyTicketCreator implements TicketCreator {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     private static final String PREFIX = "PT";
 
     private ExpirationPolicy policy;
@@ -34,8 +34,8 @@ public class ProxyTicketCreator implements TicketCreator {
      * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
     public Ticket createTicket(final Principal principal, CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
-    	logger.debug("Creating ProxyGrantingTicket with ID [" + ticketId + "]");
-        return new ProxyTicketImpl(ticketId, (ProxyGrantingTicket)grantingTicket, casAttributes.getTargetService(), policy);
+    	this.log.debug("Creating ProxyGrantingTicket with ID [" + ticketId + "]");
+        return new ProxyTicketImpl(ticketId, (ProxyGrantingTicket)grantingTicket, casAttributes.getTargetService(), this.policy);
     }
 
     /**

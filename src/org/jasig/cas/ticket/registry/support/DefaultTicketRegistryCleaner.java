@@ -22,18 +22,17 @@ import org.jasig.cas.util.RegistryCleaner;
  *
  */
 public class DefaultTicketRegistryCleaner implements RegistryCleaner {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 	private TicketRegistry ticketRegistry;
 
 	/**
 	 * @see org.jasig.cas.util.RegistryCleaner#clean()
 	 */
-	public void clean()
-	{
-		logger.info("Starting cleaning of expired tickets from ticket registry at [" + new Date() + "]");
-		synchronized (ticketRegistry)
+	public void clean() {
+		this.log.info("Starting cleaning of expired tickets from ticket registry at [" + new Date() + "]");
+		synchronized (this.ticketRegistry)
 		{
-			for (Iterator iter = ticketRegistry.getTickets().iterator(); iter.hasNext();)
+			for (Iterator iter = this.ticketRegistry.getTickets().iterator(); iter.hasNext();)
 			{
 				final Ticket ticket = (Ticket) iter.next();
 				
@@ -41,13 +40,12 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
 					iter.remove();
 			}
 		}
-		logger.info("Finished cleaning of expired tickets from ticket registry at [" + new Date() + "]");
+		this.log.info("Finished cleaning of expired tickets from ticket registry at [" + new Date() + "]");
 	}
 	/**
 	 * @param ticketRegistry The ticketRegistry to set.
 	 */
-	public void setTicketRegistry(final TicketRegistry ticketRegistry)
-	{
+	public void setTicketRegistry(final TicketRegistry ticketRegistry) {
 		this.ticketRegistry = ticketRegistry;
 	}
 }

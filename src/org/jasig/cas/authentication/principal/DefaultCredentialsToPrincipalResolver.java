@@ -18,7 +18,7 @@ import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
  * @see org.jasig.cas.authentication.principal.SimplePrincipal
  */
 public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 
 	/**
 	 * 
@@ -26,7 +26,7 @@ public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrinc
 	 */
     public Principal resolvePrincipal(final AuthenticationRequest authenticationRequest) {
     	final UsernamePasswordAuthenticationRequest basicAuthenticationRequest = (UsernamePasswordAuthenticationRequest) authenticationRequest;
-    	logger.debug("Creating SimplePrincipal for [" + basicAuthenticationRequest.getUserName() + "]");
+    	this.log.debug("Creating SimplePrincipal for [" + basicAuthenticationRequest.getUserName() + "]");
         return new SimplePrincipal(basicAuthenticationRequest.getUserName());
     }
 

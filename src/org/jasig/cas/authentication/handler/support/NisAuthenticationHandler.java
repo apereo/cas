@@ -61,7 +61,7 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
 			final String nisFields[] = nisEntry.split(":");
 			String nisEncryptedPassword = nisFields[1];
 			
-			return nisEncryptedPassword.matches(passwordTranslator.translate(uRequest.getPassword()));
+			return nisEncryptedPassword.matches(this.passwordTranslator.translate(uRequest.getPassword()));
 		} catch (NamingException e) {
 			return false;
 		}
@@ -95,18 +95,18 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (domain == null || host == null || map == null || passwordTranslator == null || contextFactory == null || securityAuthentication == null) {
+		if (this.domain == null || this.host == null || this.map == null || this.passwordTranslator == null || this.contextFactory == null || this.securityAuthentication == null) {
 			throw new IllegalStateException("domain, host, map, contextFactory, securityAuthentication and passwordTranslator cannot be null on " + this.getClass().getName());
 		}
 		
-		url = DEFAULT_PROTOCOL + host + "/" + domain;
-		config = new Hashtable(5, 0.75F);
+		url = DEFAULT_PROTOCOL + this.host + "/" + this.domain;
+		this.config = new Hashtable(5, 0.75F);
 		
-		config.put(Context.INITIAL_CONTEXT_FACTORY, contextFactory);
-		config.put(Context.PROVIDER_URL, url);
-		config.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
+		this.config.put(Context.INITIAL_CONTEXT_FACTORY, this.contextFactory);
+		this.config.put(Context.PROVIDER_URL, this.url);
+		this.config.put(Context.SECURITY_AUTHENTICATION, this.securityAuthentication);
 		
-		initialContext = new InitialDirContext(config);
+		this.initialContext = new InitialDirContext(this.config);
 	}
 	
 	/**

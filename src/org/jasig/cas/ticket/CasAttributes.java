@@ -26,13 +26,13 @@ public class CasAttributes {
 	 * @return Returns the callbackUrl.
 	 */
 	public String getCallbackUrl() {
-		return callbackUrl;
+		return this.callbackUrl;
 	}
 	/**
 	 * @return Returns the targetService.
 	 */
 	public String getTargetService() {
-		return targetService;
+		return this.targetService;
 	}
 	/**
 	 * @param targetService The targetService to set.
@@ -50,7 +50,7 @@ public class CasAttributes {
 	 * @return Returns the first.
 	 */
 	public boolean isFirst() {
-		return first;
+		return this.first;
 	}
 	/**
 	 * @param first The first to set.
@@ -62,7 +62,7 @@ public class CasAttributes {
 	 * @return Returns the gateway.
 	 */
 	public String getGateway() {
-		return gateway;
+		return this.gateway;
 	}
 	/**
 	 * @param gateway The gateway to set.
@@ -74,7 +74,7 @@ public class CasAttributes {
 	 * @return Returns the pgtIou.
 	 */
 	public String getPgtIou() {
-		return pgtIou;
+		return this.pgtIou;
 	}
 	/**
 	 * @param pgtIou The pgtIou to set.
@@ -86,7 +86,7 @@ public class CasAttributes {
 	 * @return Returns the pgtUrl.
 	 */
 	public String getPgtUrl() {
-		return pgtUrl;
+		return this.pgtUrl;
 	}
 	/**
 	 * @param pgtUrl The pgtUrl to set.
@@ -98,7 +98,7 @@ public class CasAttributes {
 	 * @return Returns the renew.
 	 */
 	public boolean isRenew() {
-		return renew;
+		return this.renew;
 	}
 	/**
 	 * @param renew The renew to set.
@@ -110,7 +110,7 @@ public class CasAttributes {
 	 * @return Returns the service.
 	 */
 	public String getService() {
-		return service;
+		return this.service;
 	}
 	/**
 	 * @param service The service to set.
@@ -122,7 +122,7 @@ public class CasAttributes {
 	 * @return Returns the warn.
 	 */
 	public boolean isWarn() {
-		return warn;
+		return this.warn;
 	}
 	/**
 	 * @param warn The warn to set.

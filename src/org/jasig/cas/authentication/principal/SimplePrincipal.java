@@ -23,7 +23,7 @@ public class SimplePrincipal implements Principal {
 	 * @see org.jasig.cas.authentication.principal.Principal#getId()
 	 */
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public boolean equals(Object o)

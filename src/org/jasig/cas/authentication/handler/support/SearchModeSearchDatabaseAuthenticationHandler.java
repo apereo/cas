@@ -42,6 +42,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
 	private String fieldPassword;
 	private String tableUsers;
 	private PasswordTranslator passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
+	private String SQL;
 
 	/**
 	 * 
@@ -49,15 +50,14 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
 	 */
 	public boolean authenticate(final AuthenticationRequest request) {
 		final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest) request;
-		final String SQL = SQL_PREFIX + tableUsers + " Where " + fieldUser + " = ? And " + fieldPassword + " = ?";
 		
-		for (Iterator iter = dataSources.iterator(); iter.hasNext();) {
+		for (Iterator iter = this.dataSources.iterator(); iter.hasNext();) {
 			
 			try {
 				final DataSource dataSource = (DataSource) iter.next();
 				final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-				final String encyptedPassword = passwordTranslator.translate(uRequest.getPassword());
-				int count = jdbcTemplate.queryForInt(SQL, new Object[] {uRequest.getUserName(), encyptedPassword});
+				final String encyptedPassword = this.passwordTranslator.translate(uRequest.getPassword());
+				int count = jdbcTemplate.queryForInt(this.SQL, new Object[] {uRequest.getUserName(), encyptedPassword});
 				
 				if (count > 0)
 					return true;
@@ -75,9 +75,11 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (passwordTranslator == null || dataSources == null || fieldPassword == null || fieldUser == null || tableUsers == null) {
+		if (this.passwordTranslator == null || this.dataSources == null || this.fieldPassword == null || this.fieldUser == null || this.tableUsers == null) {
 			throw new IllegalStateException("passwordTranslator, dataSources, fieldPassword, fieldUser and tableUsers must be set on " + this.getClass().getName());
 		}
+		
+		SQL = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser + " = ? And " + this.fieldPassword + " = ?";
 	}
 
 	/**

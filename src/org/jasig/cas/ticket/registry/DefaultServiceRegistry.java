@@ -21,7 +21,7 @@ import org.jasig.cas.ticket.registry.ServiceRegistry;
  * @see org.jasig.cas.ticket.registry.ServiceRegistry
  */
 public class DefaultServiceRegistry implements ServiceRegistry {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
     final private List services;
 
     public DefaultServiceRegistry() {
@@ -46,10 +46,10 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      * @see org.jasig.cas.ticket.registry.ServiceRegistry#serviceExists(java.lang.String)
      */
     public boolean serviceExists(final String service) {
-    	logger.debug("Attempting to determine if service [" + service + "] exists.");
+    	this.log.debug("Attempting to determine if service [" + service + "] exists.");
     	
-        if (services.isEmpty()) {
-        	logger.debug("Services List is empty.  Assuming service registry is not in use.");
+        if (this.services.isEmpty()) {
+        	this.log.debug("Services List is empty.  Assuming service registry is not in use.");
             return true;        	
         }
 
@@ -57,15 +57,15 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         if (service == null)
             return false;
 
-        for (Iterator iter = services.iterator(); iter.hasNext();) {
+        for (Iterator iter = this.services.iterator(); iter.hasNext();) {
             String validService = (String)iter.next();
 
             if (service.startsWith(validService)) {
-            	logger.debug("Service [" + service + "] found in registry.");
+            	this.log.debug("Service [" + service + "] found in registry.");
                 return true;
             }
         }
-        logger.debug("Unable to find service [" + service + "] in registry.");
+        this.log.debug("Unable to find service [" + service + "] in registry.");
         return false;
     }
 

@@ -28,7 +28,7 @@ public class ValidationRequest {
 	 * @return Returns the principal.
 	 */
 	public Principal getPrincipal() {
-		return principal;
+		return this.principal;
 	}
 	/**
 	 * @param principal The principal to set.
@@ -41,13 +41,13 @@ public class ValidationRequest {
 	 */
 	public String getPgt()
 	{
-		return pgt;
+		return this.pgt;
 	}
 	/**
 	 * @return Returns the renew.
 	 */
 	public boolean isRenew() {
-		return renew;
+		return this.renew;
 	}
 	/**
 	 * @param renew The renew to set.
@@ -59,7 +59,7 @@ public class ValidationRequest {
 	 * @return Returns the service.
 	 */
 	public String getService() {
-		return service;
+		return this.service;
 	}
 	/**
 	 * @param service The service to set.
@@ -79,7 +79,7 @@ public class ValidationRequest {
 	 * @return Returns the ticket.
 	 */
 	public String getTicket() {
-		return ticket;
+		return this.ticket;
 	}
 	/**
 	 * @param ticket The ticket to set.
@@ -92,7 +92,7 @@ public class ValidationRequest {
 	 * @return Returns the pgtIou.
 	 */
 	public String getPgtIou() {
-		return pgtIou;
+		return this.pgtIou;
 	}
 	/**
 	 * @param pgtIou The pgtIou to set.
@@ -104,7 +104,7 @@ public class ValidationRequest {
 	 * @return Returns the callbackUrl.
 	 */
 	public String getCallbackUrl() {
-		return callbackUrl;
+		return this.callbackUrl;
 	}
 	/**
 	 * @param callbackUrl The callbackUrl to set.
@@ -116,7 +116,7 @@ public class ValidationRequest {
 	 * @return Returns the pgtUrl.
 	 */
 	public String getPgtUrl() {
-		return pgtUrl;
+		return this.pgtUrl;
 	}
 	/**
 	 * @param pgtUrl The pgtUrl to set.
@@ -129,7 +129,7 @@ public class ValidationRequest {
 	 */
 	public String getTargetService()
 	{
-		return targetService;
+		return this.targetService;
 	}
 	/**
 	 * @param targetService The targetService to set.

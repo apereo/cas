@@ -25,12 +25,12 @@ public interface AuthenticationHandler {
 	 * @param request the request to authenticate
 	 * @return true if the request is valid, false otherwise.
 	 */
-	boolean authenticate(AuthenticationRequest request);
+	boolean authenticate(final AuthenticationRequest request);
 	
 	/**
 	 * 
 	 * @param request The request we want to check if the handler supports.
 	 * @return true if the handler supports authenticating this type of request.  False otherwise.
 	 */
-	boolean supports(AuthenticationRequest request);
+	boolean supports(final AuthenticationRequest request);
 }

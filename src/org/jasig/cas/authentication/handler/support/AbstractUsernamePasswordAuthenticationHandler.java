@@ -21,7 +21,7 @@ import org.springframework.beans.factory.InitializingBean;
  *
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler implements AuthenticationHandler, InitializingBean {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 
 	/**
 	 * 

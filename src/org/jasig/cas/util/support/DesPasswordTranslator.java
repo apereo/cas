@@ -25,9 +25,8 @@ import sun.misc.BASE64Encoder;
  * 
  */
 public class DesPasswordTranslator implements PasswordTranslator, InitializingBean {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 	private static final String ALGORITHM = "DES";
-	private SecretKey secretKey;
 	private String key;
 	private Cipher cipher;
 	private BASE64Encoder encoder = new BASE64Encoder();
@@ -37,11 +36,11 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
 	public String translate(String password) {
 		try {
 			byte[] passwordAsBytes = password.getBytes("UTF8");
-			byte[] encryptedAsBytes = cipher.doFinal(passwordAsBytes);
+			byte[] encryptedAsBytes = this.cipher.doFinal(passwordAsBytes);
 			
-			return encoder.encode(encryptedAsBytes);
+			return this.encoder.encode(encryptedAsBytes);
 		} catch (Exception e) {
-			logger.debug(e);
+			this.log.debug(e);
 		}
 
 		return null;
@@ -51,11 +50,11 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (key == null)
+		if (this.key == null)
 			throw new IllegalStateException("key must be set on " + this.getClass().getName());
 		
 		SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), ALGORITHM);
-		cipher = Cipher.getInstance(ALGORITHM);
+		this.cipher = Cipher.getInstance(ALGORITHM);
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 	}
 

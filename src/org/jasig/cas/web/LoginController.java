@@ -50,7 +50,7 @@ import org.springframework.web.util.WebUtils;
  *
  */
 public class LoginController extends AbstractFormController {
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 	private TicketManager ticketManager;
 	private AuthenticationManager authenticationManager;
 	private Map loginTokens;
@@ -84,23 +84,23 @@ public class LoginController extends AbstractFormController {
 
 		String loginToken = request.getParameter(WebConstants.TICKET);
 
-		if (!loginTokens.containsKey(loginToken)) {
-			logger.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
+		if (!this.loginTokens.containsKey(loginToken)) {
+			this.log.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
 			errors.reject("error.invalid.loginticket", null);
 			return showForm(request, response, errors);
 		} else
-			loginTokens.remove(loginToken);
+			this.loginTokens.remove(loginToken);
 
-		principal = authenticationManager.authenticateUser(authRequest);
+		principal = this.authenticationManager.authenticateUser(authRequest);
 
 		if (principal != null) {
-			logger.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");
+			this.log.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");
 
 			TicketGrantingTicket ticket = getTicketGrantingTicket(request, principal, validationRequest);
 			
 			if (ticket == null) {
-				logger.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
-				ticket = ticketManager.createTicketGrantingTicket(principal, casAttributes);
+				this.log.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
+				ticket = this.ticketManager.createTicketGrantingTicket(principal, casAttributes);
 				createCookie(WebConstants.COOKIE_TGC_ID, ticket.getId(), request, response);
 			}
 			if (casAttributes.isWarn())
@@ -121,8 +121,8 @@ public class LoginController extends AbstractFormController {
 	 */
 	protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
 		Map map = new HashMap();
-		String newToken = idGenerator.getNewTokenId();
-		loginTokens.put(newToken, new Date());
+		String newToken = this.idGenerator.getNewTokenId();
+		this.loginTokens.put(newToken, new Date());
 		map.put(WebConstants.LOGIN_TICKET, newToken);
 		return map;
 	}
@@ -173,7 +173,7 @@ public class LoginController extends AbstractFormController {
 		String service = casAttributes.getService();
 		boolean first = casAttributes.isFirst();
 		if (StringUtils.hasText(service)) {
-			String token = ticketManager.createServiceTicket(ticket.getPrincipal(), casAttributes, ticket).getId();
+			String token = this.ticketManager.createServiceTicket(ticket.getPrincipal(), casAttributes, ticket).getId();
 			model.put(WebConstants.TICKET, token);
 			model.put(WebConstants.SERVICE, service);
 			model.put(WebConstants.FIRST, new Boolean(first).toString());
@@ -203,7 +203,7 @@ public class LoginController extends AbstractFormController {
 		TicketGrantingTicket ticket = null;
 		if (tgt != null) {
 			validationRequest.setTicket(tgt.getValue());
-			ticket = ticketManager.validateTicketGrantingTicket(validationRequest);
+			ticket = this.ticketManager.validateTicketGrantingTicket(validationRequest);
 		}
 		return ticket;
 	}

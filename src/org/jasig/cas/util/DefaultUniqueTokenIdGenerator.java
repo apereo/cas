@@ -17,13 +17,13 @@ public class DefaultUniqueTokenIdGenerator implements UniqueTokenIdGenerator {
     final private RandomStringGenerator idGenerator;
 
     public DefaultUniqueTokenIdGenerator() {
-        idGenerator = new DefaultRandomStringGenerator();
+        this.idGenerator = new DefaultRandomStringGenerator();
     }
 
     /**
      * @see org.jasig.cas.util.UniqueTokenIdGenerator#getNewTokenId()
      */
     public String getNewTokenId() {
-        return idGenerator.getNewString();
+        return this.idGenerator.getNewString();
     }
 }

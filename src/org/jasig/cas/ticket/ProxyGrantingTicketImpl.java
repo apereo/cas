@@ -51,22 +51,22 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
 	 * @return Returns the parent.
 	 */
 	public ServiceTicket getParent() {
-		return parent;
+		return this.parent;
 	}
 
 	/**
 	 * @return Returns the proxyId.
 	 */
 	public URL getProxyId() {
-		return proxyId;
+		return this.proxyId;
 	}
 
 	public List getProxies() {
 		List list = new ArrayList();
-		list.add(getProxyId());
+		list.add(this.getProxyId());
 
-		if (parent.getGrantor().getClass().isAssignableFrom(ProxyGrantingTicket.class))
-			list.addAll(((ProxyGrantingTicket) parent.getGrantor()).getProxies());
+		if (this.parent.getGrantor().getClass().isAssignableFrom(ProxyGrantingTicket.class))
+			list.addAll(((ProxyGrantingTicket) this.parent.getGrantor()).getProxies());
 
 		return Collections.unmodifiableList(list);
 	}
@@ -75,7 +75,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
 	 * @see org.jasig.cas.ticket.Ticket#isExpired()
 	 */
 	public boolean isExpired() {
-		return super.isExpired() || parent.isExpired();
+		return super.isExpired() || this.parent.isExpired();
 	}
 
 	/**
@@ -88,9 +88,9 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
 		String callbackUrl = this.getProxyId().toString();
 
 		if (this.getProxyId().getQuery() != null)
-			callbackUrl += "&" + "pgtIou=" + pgtIou + "&pgtId=" + this.getId();
+			callbackUrl += "&" + "pgtIou=" + this.pgtIou + "&pgtId=" + this.getId();
 		else
-			callbackUrl += "?" + "pgtIou=" + pgtIou + "&pgtId=" + this.getId();
+			callbackUrl += "?" + "pgtIou=" + this.pgtIou + "&pgtId=" + this.getId();
 
 		httpClient = new HttpClient();
 		getMethod = new GetMethod(callbackUrl);
@@ -102,7 +102,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
 			getMethod.releaseConnection();
 		}
 		if (response != null)
-			return pgtIou;
+			return this.pgtIou;
 		else
 			return null;
 	}

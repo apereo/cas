@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  *  
  */
 public class ProxyController extends AbstractController {
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
 
     private TicketManager ticketManager;
 
@@ -54,18 +54,16 @@ public class ProxyController extends AbstractController {
         BindUtils.bind(request, casAttributes, "casAttributes");
         validationRequest.setTicket(validationRequest.getPgt());
 
-        logger
-                .info("Attempting to retrieve valid ProxyGrantingTicket for ticket id ["
-                        + validationRequest.getTicket() + "]");
-        ticket = ticketManager.validateProxyGrantingTicket(validationRequest);
+        this.log.info("Attempting to retrieve valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+        ticket = this.ticketManager.validateProxyGrantingTicket(validationRequest);
 
         if (ticket != null) {
-            logger.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-            proxyTicket = ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
+            this.log.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+            proxyTicket = this.ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
             model.put(WebConstants.TICKET, proxyTicket.getId());
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, model);
         } else {
-            logger.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+            this.log.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
             model.put(WebConstants.CODE, "BAD_PGT");
             model.put(WebConstants.DESC, "unrecognized pgt: " + validationRequest.getTicket());
             return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
