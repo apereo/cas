@@ -37,7 +37,6 @@ The "dist" directory contains the following distinct jar files and wars:
 
 4.   DEPENDENCIES
 * Commons HttpClient 2.0
-* Commons Id 0.1
 * EhCache 1.0
 * J2EE Servlet 2.3+
 * Spring 1.1.2

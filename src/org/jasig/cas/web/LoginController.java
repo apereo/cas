@@ -19,7 +19,7 @@ import org.jasig.cas.domain.TicketGrantingTicket;
 import org.jasig.cas.domain.ValidationRequest;
 import org.jasig.cas.domain.logic.BasicAuthenticationRequestValidator;
 import org.jasig.cas.helper.UniqueTokenIdGenerator;
-import org.jasig.cas.helper.support.CommonsIdUniqueTokenIdGenerator;
+import org.jasig.cas.helper.support.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.service.AuthenticationManager;
 import org.jasig.cas.service.TicketManager;
 import org.jasig.cas.web.support.WebConstants;
@@ -55,7 +55,7 @@ public class LoginController extends AbstractFormController {
 	private TicketManager ticketManager;
 	private AuthenticationManager authenticationManager;
 	private Map loginTokens;
-	private UniqueTokenIdGenerator idGenerator = new CommonsIdUniqueTokenIdGenerator();
+	private UniqueTokenIdGenerator idGenerator = new DefaultUniqueTokenIdGenerator();
 
 	public LoginController() {
 		setCacheSeconds(0);

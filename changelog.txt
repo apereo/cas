@@ -18,6 +18,7 @@ Changes in version 3.0M1 (dd.mm.yyyy)
 * Started to refactor config stuff to move out stuff that will most likely be customized into a new file
 * Addition of JavaBeanAxisPortProxyFactoryBean to automagically handle registering javabeans for the web service
 * More java docs
+* Removed dependency on CommonsId
 
 
 Changes in version 3.0-alpha (15.10.2004)

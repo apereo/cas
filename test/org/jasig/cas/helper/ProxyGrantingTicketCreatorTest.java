@@ -8,7 +8,7 @@ import org.jasig.cas.domain.TicketCreationException;
 import org.jasig.cas.domain.support.ServiceTicketImpl;
 import org.jasig.cas.domain.support.SimplePrincipal;
 import org.jasig.cas.domain.support.TicketGrantingTicketImpl;
-import org.jasig.cas.helper.support.CommonsIdUniqueTicketIdGenerator;
+import org.jasig.cas.helper.support.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.helper.support.ProxyGrantingTicketCreator;
 import org.jasig.cas.strategy.TimeoutExpirationPolicy;
 
@@ -27,7 +27,7 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
 	
 	public ProxyGrantingTicketCreatorTest() {
 		ticketCreator.setExpirationPolicy(new TimeoutExpirationPolicy(1000));
-		ticketCreator.setUniqueTicketIdGenerator(new CommonsIdUniqueTicketIdGenerator());
+		ticketCreator.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
 	}
 	
 	/**

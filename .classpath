@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/commons-httpclient-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-id-0.1-dev.jar"/>
 	<classpathentry kind="lib" path="lib/ehcache.jar"/>
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
 	<classpathentry kind="lib" path="lib/spring.jar"/>
