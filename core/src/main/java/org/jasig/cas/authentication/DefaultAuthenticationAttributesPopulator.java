@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Credentials;
+
 /**
  * Default AuthenticationAttributesPopulator which adds no additional attributes
  * to the Authentication object.
@@ -17,7 +19,7 @@ package org.jasig.cas.authentication;
 public final class DefaultAuthenticationAttributesPopulator implements
     AuthenticationAttributesPopulator {
 
-    public Authentication populateAttributes(final Authentication authentication) {
+    public Authentication populateAttributes(final Authentication authentication, Credentials credentials) {
         return authentication;
     }
 

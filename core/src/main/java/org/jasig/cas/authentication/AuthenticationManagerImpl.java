@@ -103,7 +103,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         
         for (final Iterator populators = this.authenticationAttributesPopulators.iterator(); populators.hasNext();) {
             final AuthenticationAttributesPopulator populator = (AuthenticationAttributesPopulator) populators.next();
-            authentication = populator.populateAttributes(authentication);
+            authentication = populator.populateAttributes(authentication, credentials);
         }
         
         return authentication;
