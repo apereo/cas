@@ -24,7 +24,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
 
     private PasswordHandler passwordHandler;
 
-    public boolean authenticateInternal(final Credentials credentials) {
+    protected boolean authenticateInternal(final Credentials credentials) {
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials)credentials;
 
         return this.passwordHandler.authenticate(casCredentials
