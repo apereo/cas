@@ -49,7 +49,7 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     }
 
     public void before(final Method method, final Object[] args,
-        final Object target) throws Exception {
+        final Object target) throws UnauthorizedServiceException {
         String serviceTicketId = (String) args[0];
         boolean foundIt = false;
         ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
