@@ -37,5 +37,6 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
+    	// no intialization required
     }
 }

@@ -12,10 +12,12 @@ package org.jasig.cas.authentication;
  *
  */
 public class Cas10ProtocolAuthenticationSpecification implements AuthenticationSpecification {
+	private final static boolean DEFAULT_RENEW = false;
+
     private boolean renew;
     
     public Cas10ProtocolAuthenticationSpecification() {
-        renew = false;
+        this.renew = DEFAULT_RENEW;
     }
     
     public Cas10ProtocolAuthenticationSpecification(boolean renew) {
@@ -27,7 +29,7 @@ public class Cas10ProtocolAuthenticationSpecification implements AuthenticationS
     }
     
     public boolean isRenew() {
-        return renew;
+        return this.renew;
     }
 
     /**

@@ -5,6 +5,7 @@
 package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Service;
+import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * Interface for a Service Ticket. A service ticket is used to grant access to a specific service.
@@ -32,5 +33,5 @@ public interface ServiceTicket extends Ticket {
      * 
      * @return
      */
-    TicketGrantingTicket grantTicketGrantingTicket();
+    TicketGrantingTicket grantTicketGrantingTicket(Principal principal);
 }

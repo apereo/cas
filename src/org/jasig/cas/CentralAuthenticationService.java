@@ -66,7 +66,7 @@ public interface CentralAuthenticationService {
      * 
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
      */
-    String delegateTicketGrantingTicket(String serviceTicketId, Credentials credentials) throws TicketCreationException, AuthenticationException;
+    String delegateTicketGrantingTicket(String serviceTicketId, Credentials credentials) throws TicketException, AuthenticationException;
 
     /**
      * Return the CAS version.

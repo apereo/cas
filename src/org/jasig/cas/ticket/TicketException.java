@@ -90,14 +90,14 @@ public class TicketException extends Exception {
      * @return Returns the code.
      */
     public String getCode() {
-        return code.toString();
+        return this.code.toString();
     }
 
     /**
      * @return Returns the description.
      */
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     protected static class TicketExceptionCode {

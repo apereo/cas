@@ -43,4 +43,6 @@ public abstract class WebConstants {
     public static final String GATEWAY = "gateway";
     
     public static final String RENEW = "renew";
+    
+    public static final String PGTURL = "pgtUrl";
 }

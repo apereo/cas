@@ -52,6 +52,7 @@ public abstract class AbstractLdapAuthenticationHandler extends AbstractUsername
     }
 
     protected void initHandler() throws Exception {
+    	// TODO: initialize handler
     }
 
     protected DirContext getContext(String userName, String password, String url) throws NamingException {

@@ -16,11 +16,12 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
 
     private static final boolean DEFAULT_WRAP = true;
 
-    private boolean wrap = DEFAULT_WRAP;
+    private boolean wrap;
 
     private long count = 0;
 
     public DefaultLongNumericGenerator() {
+    	this.wrap = DEFAULT_WRAP;
     }
 
     public DefaultLongNumericGenerator(boolean wrap) {

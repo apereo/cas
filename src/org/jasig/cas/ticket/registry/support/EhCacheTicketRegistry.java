@@ -111,7 +111,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
         try {
             for (Iterator iter = keys.iterator(); iter.hasNext();) {
                 Serializable key = (Serializable) iter.next();
-                Element element = cache.get(key);
+                Element element = this.cache.get(key);
                 items.add(element.getValue());
             }
             return Collections.unmodifiableCollection(items);

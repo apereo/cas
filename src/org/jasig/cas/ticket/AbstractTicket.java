@@ -65,7 +65,7 @@ public abstract class AbstractTicket implements Ticket {
 	 * @return Returns the ticketGrantingTicket.
 	 */
 	public TicketGrantingTicket getGrantingTicket() {
-		return ticketGrantingTicket;
+		return this.ticketGrantingTicket;
 	}
     /**
      * @see org.jasig.cas.ticket.Ticket#isExpired()
