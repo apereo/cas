@@ -9,7 +9,8 @@
 		<param-value>
 			/WEB-INF/applicationContext.xml,
 			/WEB-INF/remoteServices.xml,
-			/WEB-INF/userConfigContext.xml
+			/WEB-INF/userConfigContext.xml,
+			/WEB-INF/approvedServices.xml
 		</param-value>
 	</context-param>
 	
