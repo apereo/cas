@@ -5,8 +5,13 @@
  */
 package org.jasig.cas.services.support;
 
+import java.net.URL;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.services.AuthenticatedService;
 import org.jasig.cas.services.SingleSignoutCallback;
+import org.jasig.cas.util.UrlUtils;
 
 /**
  * Single sign out callback class to allow single signout to a 
@@ -18,10 +23,21 @@ import org.jasig.cas.services.SingleSignoutCallback;
  *
  */
 public class CCCISingleSignoutCallback implements SingleSignoutCallback {
+    
+    protected final Log log = LogFactory.getLog(getClass());
 
 	public boolean sendSingleSignoutRequest(AuthenticatedService service, String serviceTicketId) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+            URL callbackUrl = new URL(service.getId());
+            
+            callbackUrl = new URL(((callbackUrl.getQuery() != null) ? "&" : "?") + "ticket=~" + serviceTicketId);
+            
+            UrlUtils.getResponseBodyFromUrl(callbackUrl);
+        } catch (Exception e) {
+            log.error(e);
+            return false;
+        }
+		return true;
 	}
 
 }
