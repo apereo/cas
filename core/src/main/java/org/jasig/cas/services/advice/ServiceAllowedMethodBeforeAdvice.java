@@ -30,7 +30,7 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
      * java.lang.Object[], java.lang.Object)
      */
     public final void before(final Method method, final Object[] args,
-        final Object target) throws Throwable {
+        final Object target) throws UnauthorizedServiceException {
         final Service service = (Service) args[1];
         final RegisteredService authenticatedService = this.serviceRegistry
             .getService(service.getId());
@@ -45,7 +45,7 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
 
     protected void beforeInternal(final Method method, final Object[] args,
         final Object target, final RegisteredService service)
-        throws Exception {
+        throws UnauthorizedServiceException {
         // this will be overwritten by extending classes
     }
 
