@@ -308,7 +308,7 @@
 		<dependency>
 			<groupId>maven-plugins</groupId>
 			<artifactId>maven-findbugs-plugin</artifactId>
-			<version>0.8.4</version>
+			<version>1.0-SNAPSHOT</version>
 			<type>plugin</type>
 		</dependency>
 		
@@ -398,6 +398,7 @@
 		<report>maven-tasklist-plugin</report>
 		<report>maven-findbugs-plugin</report>
 	    <report>maven-license-plugin</report>
-	    <report>maven-multiproject-plugin</report>
+<!--	    <report>maven-multiproject-plugin</report>-->
+	    <report>maven-dashboard-plugin</report>
 	</reports>
 </project>
