@@ -188,13 +188,9 @@ public final class LoginController extends SimpleFormController implements
                         .grantServiceTicket(ticketGrantingTicketId,
                             new SimpleService(service), credentials);
                 } catch (TicketException e) {
-                    try {
+                    // the exception thrown by this will be handled externally
                     ticketGrantingTicketId = this.centralAuthenticationService
                     .createTicketGrantingTicket(credentials);
-                    } catch (TicketException e1) {
-                        errors.reject(e1.getCode(), getMessageSourceAccessor().getMessage(e1.getCode()));
-                        return super.processFormSubmission(request, response, command, errors);
-                    }
                 }
             }
 
@@ -212,14 +208,10 @@ public final class LoginController extends SimpleFormController implements
             }
 
             if (StringUtils.hasText(service)) {
-                try {
+                // the exception thrown here is handled externally
                     serviceTicketId = this.centralAuthenticationService
                         .grantServiceTicket(ticketGrantingTicketId,
                             new SimpleService(service));
-                } catch (TicketException e) {
-                    errors.reject(e.getCode(), getMessageSourceAccessor().getMessage(e.getCode()));
-                    return super.processFormSubmission(request, response, command, errors);
-                }
 
                 if (warn) {
                     final Map model = new HashMap();
