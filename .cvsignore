@@ -4,3 +4,5 @@ target
 bin
 *.jpage
 doc
+build.properties
+velocity.log

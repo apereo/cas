@@ -1,0 +1,20 @@
+<document>
+  <properties>
+    <title>Changelog</title>
+    <author email="scott_battaglia@rutgers.edu">Scott Battaglia</author>
+  </properties>
+  <body>
+
+    <release version="3.0-m2" date="in CVS">
+      <action dev="sbattaglia" type="add" issue="CAS-35">
+        Test Case: org.jasig.cas.util.support.Md5PasswordTranslator
+      </action>              
+    </release>
+
+    <release version="3.0-m1" date="2005-02-11">
+      <action dev="sbattaglia" type="add">
+        Initial release of the CAS 3.0
+      </action>              
+    </release>
+  </body>
+</document>

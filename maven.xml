@@ -22,7 +22,7 @@
     <postGoal name="site">
         <attainGoal name="dashboard:report-single"/>
     </postGoal>
- 
+
 	<preGoal name="war:init">
 		<attainGoal name="jar" />
 	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${maven.build.dir}/cas-server-${pom.currentVersion}.jar" />

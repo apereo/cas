@@ -12,7 +12,7 @@
 	<inceptionYear>2004</inceptionYear>
 	<package>org.jasig.cas</package>
 	<logo></logo>
-	<description></description>
+	<description>CAS 3.0 is an enterprise single sign on for the web.  It supports clients from both web browsers and web services.</description>
 	<shortDescription>CAS is enterprise Single Sign On for the web.</shortDescription>
 	<url>http://jasigch.princeton.edu:9000/display/CAS</url>
 	<issueTrackingUrl>http://jasigch.princeton.edu:9000/jira/secure/BrowseProject.jspa?id=10007</issueTrackingUrl>
@@ -46,7 +46,7 @@
 		<developer>
 			<name>Scott Battaglia</name>
 			<id>sbattaglia</id>
-			<email>scott_battaglia at rutgers.edu</email>
+			<email>scott_battaglia@rutgers.edu</email>
 			<organization>Rutgers, the State University of New Jersey</organization>
 			<roles>
 				<role>Developer</role>
@@ -56,7 +56,7 @@
 		<developer>
 			<name>Susan Bramhall</name>
 			<id>susan.bramhall</id>
-			<email>susan.bramhall at yale.edu</email>
+			<email>susan.bramhall@yale.edu</email>
 			<organization>Yale University</organization>
 			<roles>
 				<role>Developer</role>
@@ -66,7 +66,7 @@
 		<developer>
 			<name>Howard Gilbert</name>
 			<id>hgilbert</id>
-			<email>howard.gilbert at yale.edu</email>
+			<email>howard.gilbert@yale.edu</email>
 			<organization>Yale University</organization>
 			<roles>
 				<role>Developer</role>
@@ -76,7 +76,7 @@
 		<developer>
 			<name>Dmitriy Kopylenko</name>
 			<id>dkopylen</id>
-			<email>dkopylen at rutgers.edu</email>
+			<email>dkopylen@rutgers.edu</email>
 			<organization>Rutgers, the State University of New Jersey</organization>
 			<roles>
 				<role>Developer</role>
@@ -85,8 +85,8 @@
 		</developer>
 		<developer>
 			<name>Drew Mazurek</name>
-			<id></id>
-			<email>drew.mazurek at yale.edu</email>
+			<id>dmazurek</id>
+			<email>drew.mazurek@yale.edu</email>
 			<organization>Yale University</organization>
 			<roles>
 				<role>Developer</role>
@@ -96,7 +96,7 @@
 		<developer>
 			<name>Andrew Petro</name>
 			<id>apetro</id>
-			<email>andrew.petro at yale.edu</email>
+			<email>andrew.petro@yale.edu</email>
 			<organization>Yale University</organization>
 			<roles>
 				<role>Developer</role>
@@ -106,7 +106,7 @@
 		<developer>
 			<name>William G. Thompson, Jr.</name>
 			<id>wgthom</id>
-			<email>wgthom at rutgers.edu</email>
+			<email>wgthom@rutgers.edu</email>
 			<organization>Rutgers, the State University of New Jersey</organization>
 			<roles>
 				<role>Project Admin</role>
@@ -319,8 +319,30 @@
 			<version>1.1.2</version>
 			<type>plugin</type>
 		</dependency>
+		
+		<dependency>
+			<groupId>maven</groupId>
+			<artifactId>maven-announcement-plugin</artifactId>
+			<version>1.3</version>
+			<type>plugin</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>maven</groupId>
+			<artifactId>maven-changes-plugin</artifactId>
+			<version>1.3</version>
+			<type>plugin</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>maven</groupId>
+			<artifactId>maven-clover-plugin</artifactId>
+			<version>1.7</version>
+			<type>plugin</type>
+		</dependency>
 	</dependencies>
 	<build>
+		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
 		<sourceDirectory>${basedir}/core/src/main/java</sourceDirectory>
 		<unitTestSourceDirectory>${basedir}/core/src/test/java</unitTestSourceDirectory>
 		<unitTest>
@@ -363,6 +385,7 @@
 		</resources>
 	</build>
 	<reports>
+		<report>maven-changes-plugin</report>
 		<report>maven-changelog-plugin</report>
 		<report>maven-checkstyle-plugin</report>
 		<report>maven-clover-plugin</report>
@@ -374,6 +397,6 @@
 		<report>maven-simian-plugin</report>
 		<report>maven-tasklist-plugin</report>
 		<report>maven-findbugs-plugin</report>
-<!--		<report>maven-jira-plugin</report>-->
+<!--		<report>maven-dashboard-plugin</report>-->
 	</reports>
 </project>
