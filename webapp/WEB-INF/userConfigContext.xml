@@ -23,10 +23,4 @@
 			</list>
 		</property>
 	</bean>
-	
-	<!-- The Service Registry
-		 Extension point for allowing only certain services to be able to create service tickets.
-		 Default implementation takes a list of services as part of its constructor.
-	-->
-	<bean id="serviceRegistry" class="org.jasig.cas.ticket.registry.DefaultServiceRegistry" />
 </beans>
