@@ -25,7 +25,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements A
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.AuthenticationRequest)
      */
     public boolean supports(final Credentials credentials) {
-        return UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }
 
 }
