@@ -10,32 +10,24 @@ import java.util.Map;
 
 import org.jasig.cas.stat.TicketStats;
 import org.springframework.aop.AfterReturningAdvice;
+import org.springframework.beans.factory.InitializingBean;
 
 
 /**
  * @author Scott Battaglia
+ * @author Dmitriy Kopylenko
  * @version $Id$
  *
  */
-public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAdvice {
+public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAdvice, InitializingBean {
     private Map statsStateMutators = new HashMap();
-    
-    /*
-    private static final String PROXY_GRANTING_TICKET_METHOD = "delegateTicketGrantingTicket";
-    private static final String SERVICE_TICKET_METHOD = "grantServiceTicket";
-    private static final String TICKET_GRANTING_TICKET_METHOD = "createTicketGrantingTicket";
-    private static final String PROXY_TICKET_METHOD = "";
-    */
-    
+
     private TicketStats ticketStats;
     /**
      * @see org.springframework.aop.AfterReturningAdvice#afterReturning(java.lang.Object, java.lang.reflect.Method, java.lang.Object[], java.lang.Object)
      */
     public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
-        //Scott, now using Map to map method name on the target to "stats muteator methods"
-        //and reflectively invoke them!
-      
-        if (returnValue == null || this.statsStateMutators.isEmpty()) {
+        if (returnValue == null) {
             return;
         }
         
@@ -45,18 +37,21 @@ public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAd
         }
         Method statsStateMutatorMethod = this.ticketStats.getClass().getMethod(statsStateMutatorMethodName, null);
         statsStateMutatorMethod.invoke(this.ticketStats, null);
-        
-        
-        /*if (PROXY_GRANTING_TICKET_METHOD.equals(method.getName())) {
-            this.ticketStats.incrementNumberOfProxyGrantingTicketsVended();
-        } else if (SERVICE_TICKET_METHOD.equals(method.getName())) {
-            this.ticketStats.incrementNumberOfServiceTicketsVended();
-        } else if (TICKET_GRANTING_TICKET_METHOD.equals(method.getName())) {
-            this.ticketStats.incrementNumberOfTicketGrantingTicketsVended();
-        } else if (PROXY_TICKET_METHOD.equals(method.getName())) {
-            this.ticketStats.incrementNumberOfProxyTicketsVended();
-        }*/
     }
+    
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (this.statsStateMutators == null | this.statsStateMutators.isEmpty()) {
+            throw new IllegalStateException("You must set the statsStateMutators on " + this.getClass().getName());
+        }
+        
+        if (this.ticketStats == null ) {
+            throw new IllegalStateException("You must set the ticketStats bean on " + this.getClass().getName());
+        }
+    }
+
     /**
      * @param ticketStats The ticketStats to set.
      */
