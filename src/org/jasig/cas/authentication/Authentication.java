@@ -4,6 +4,7 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.jasig.cas.authentication.principal.Principal;
@@ -14,7 +15,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
  */
-public interface Authentication {
+public interface Authentication extends Serializable {
 
     /**
      * Retrieve the principal that was authenticated.

@@ -18,10 +18,10 @@ public class Md5PasswordTranslatorTests extends TestCase {
     private PasswordTranslator passwordTranslator = new Md5PasswordTranslator();
     
     public void testNullPassword() {
-        assertEquals(null, passwordTranslator.translate(null));
+        assertEquals(null, this.passwordTranslator.translate(null));
     }
     
     public void testHash() {
-        assertEquals("1f3870be274f6c49b3e31a0c6728957f", passwordTranslator.translate("apple"));
+        assertEquals("1f3870be274f6c49b3e31a0c6728957f", this.passwordTranslator.translate("apple"));
     }
 }
