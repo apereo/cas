@@ -514,7 +514,7 @@
 <!--	    <report>maven-multiproject-plugin</report>-->
 		<report>maven-multichanges-report</report>
 	    <report>maven-statcvs-plugin</report>
-	    <report>maven-dashboard-plugin</report>
+<!--	    <report>maven-dashboard-plugin</report>-->
 	    <report>maven-developer-activity-plugin</report>
 	    <report>maven-file-activity-plugin</report>
 	</reports>
