@@ -145,26 +145,29 @@ public class LoginController extends SimpleFormController implements Initializin
      * @see org.springframework.web.servlet.mvc.AbstractFormController#processFormSubmission(javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
      */
-    protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object object,
-        final BindException errors) throws Exception {
-        final Credentials credentials = (Credentials)object;
-
-        this.credentialsBinder.bind(request, credentials);
-
-        final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
-        final String service = request.getParameter(WebConstants.SERVICE);
+    protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object command, final BindException errors) throws Exception {
+        final Credentials credentials = (Credentials) command;
+        final boolean renew = this.convertValueToBoolean(request.getParameter(WebConstants.RENEW));
         final boolean warn = StringUtils.hasText(request.getParameter(WebConstants.WARN));
+        final String service = request.getParameter(WebConstants.SERVICE);
+        String serviceTicketId = null;
+        String ticketGrantingTicketId = getCookieValue(request, WebConstants.COOKIE_TGC_ID);
+        
+        this.credentialsBinder.bind(request, credentials);
+        
+        if (renew && StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service)) {
+            serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
+        }
+        
+        if (serviceTicketId == null) {
+            ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
+        }
 
         // the ticket was not created because invalid Credentials
         if (ticketGrantingTicketId == null) {
             errors.reject("bad.credentials", null);
-            return super.processFormSubmission(request, response, object, errors);
+            return super.processFormSubmission(request, response, command, errors);
         }
-
-        final String oldTicketGrantingTicketId = getCookieValue(request, WebConstants.COOKIE_TGC_ID);
-
-        if (oldTicketGrantingTicketId != null)
-            this.centralAuthenticationService.destroyTicketGrantingTicket(oldTicketGrantingTicketId);
 
         this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId, request, response);
 
@@ -174,7 +177,9 @@ public class LoginController extends SimpleFormController implements Initializin
             this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
 
         if (StringUtils.hasText(service)) {
-            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
+            if (serviceTicketId == null) {
+                serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
+            }
 
             if (warn) {
                 final Map model = new HashMap();
@@ -192,7 +197,7 @@ public class LoginController extends SimpleFormController implements Initializin
             return new ModelAndView(new RedirectView(service), model);
         }
 
-        return super.processFormSubmission(request, response, object, errors);
+        return super.processFormSubmission(request, response, command, errors);
     }
 
     private String getLoginToken() {
