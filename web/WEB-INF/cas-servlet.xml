@@ -26,10 +26,6 @@
 	
 	<bean id="logoutController" class="org.jasig.cas.web.LogoutController" autowire="byType" />
 	
-	<bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
-		<property name="cas10protocol"><value>true</value></property>
-	</bean>
-	
 	<bean id="loginController" class="org.jasig.cas.web.LoginController" autowire="byType">
 		<property name="loginTokens"><ref bean="loginTokens" /></property>
 	</bean>
