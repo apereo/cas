@@ -28,7 +28,7 @@ public class CasServiceImpl implements CasService {
     /**
      * @see org.jasig.cas.remoting.CasService#getServiceTicket(java.lang.String, java.lang.String)
      */
-    public String getServiceTicket(String ticketGrantingTicketId, String service) {
+    public String getServiceTicket(final String ticketGrantingTicketId, final String service) {
         final TicketGrantingTicket ticket;
         final CasAttributes casAttributes = new CasAttributes();
         final ServiceTicket serviceTicket;
@@ -49,7 +49,7 @@ public class CasServiceImpl implements CasService {
     /**
      * @see org.jasig.cas.remoting.CasService#getTicketGrantingTicket(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public String getTicketGrantingTicket(AuthenticationRequest request) {
+    public String getTicketGrantingTicket(final AuthenticationRequest request) {
         // TODO validation
         final Principal principal;
         final TicketGrantingTicket ticket;
