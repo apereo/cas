@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -32,13 +34,16 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     InitializingBean {
 
     /** Log instance for logging events, errors, warnigs, etc. */
-    private final Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
 
     /** A list of authentication handlers. */
     private List authenticationHandlers;
 
     /** A list of CredentialsToPrincipalResolvers. */
     private List credentialsToPrincipalResolvers;
+    
+    /** A list of AuthenticationAttributesPopulators. */
+    private List authenticationAttributesPopulators;
 
     public Authentication authenticateAndResolveCredentials(
         final Credentials credentials) throws AuthenticationException {
@@ -69,6 +74,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         if (!authenticated) {
             throw new UnsupportedCredentialsException();
         }
+        
+        Authentication authentication = null;
 
         for (final Iterator resolvers = this.credentialsToPrincipalResolvers
             .iterator(); resolvers.hasNext();) {
@@ -83,13 +90,23 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                     throw new UnsupportedCredentialsException();
                 }
 
-                return new ImmutableAuthentication(principal, null);
+                authentication = new ImmutableAuthentication(principal, new HashMap());
+                break;
             }
         }
-
-        log.error("CredentialsToPrincipalResolver not found for "
-            + credentials.getClass().getName());
-        throw new UnsupportedCredentialsException();
+        
+        if (authentication == null) {
+            log.error("CredentialsToPrincipalResolver not found for "
+                + credentials.getClass().getName());
+            throw new UnsupportedCredentialsException();
+        }
+        
+        for (final Iterator populators = this.authenticationAttributesPopulators.iterator(); populators.hasNext();) {
+            final AuthenticationAttributesPopulator populator = (AuthenticationAttributesPopulator) populators.next();
+            authentication =  populator.populateAttributes(authentication);
+        }
+        
+        return authentication;
     }
 
     public void afterPropertiesSet() throws Exception {
@@ -100,6 +117,11 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
             throw new IllegalStateException(
                 "You must provide authenticationHandlers and credentialsToPrincipalResolvers for "
                     + this.getClass().getName());
+        }
+        
+        if (this.authenticationAttributesPopulators == null || this.authenticationAttributesPopulators.isEmpty()) {
+            this.authenticationAttributesPopulators = new ArrayList();
+            this.authenticationAttributesPopulators.add(new DefaultAuthenticationAttributesPopulator());
         }
     }
 
@@ -117,5 +139,13 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     public void setCredentialsToPrincipalResolvers(
         final List credentialsToPrincipalResolvers) {
         this.credentialsToPrincipalResolvers = credentialsToPrincipalResolvers;
+    }
+
+    /**
+     * @param authenticationAttributesPopulators the authenticationAttributesPopulators to set.
+     */
+    public void setAuthenticationAttributesPopulators(
+        final List authenticationAttributesPopulators) {
+        this.authenticationAttributesPopulators = authenticationAttributesPopulators;
     }
 }

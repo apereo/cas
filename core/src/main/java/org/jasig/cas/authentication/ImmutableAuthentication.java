@@ -6,6 +6,7 @@
 package org.jasig.cas.authentication;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -32,10 +33,10 @@ public final class ImmutableAuthentication implements Authentication {
     private final Date authenticatedDate;
 
     /** An arbitrary object to hold additional attributes. */
-    private final Object attributes;
+    private final Map attributes;
 
     public ImmutableAuthentication(final Principal principal,
-        final Object attributes) {
+        final Map attributes) {
         this.principal = principal;
         this.attributes = attributes;
         this.authenticatedDate = new Date();
@@ -49,7 +50,7 @@ public final class ImmutableAuthentication implements Authentication {
         return new Date(this.authenticatedDate.getTime());
     }
 
-    public Object getAttributes() {
+    public Map getAttributes() {
         return this.attributes;
     }
 

@@ -6,6 +6,8 @@
 package org.jasig.cas.authentication;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -23,7 +25,7 @@ public class ImmutableAuthenticationTests extends TestCase {
 
     private Principal principal = new SimplePrincipal("test");
 
-    private Object obj = new Object();
+    private Map obj = new HashMap();
 
     protected void setUp() throws Exception {
         super.setUp();
