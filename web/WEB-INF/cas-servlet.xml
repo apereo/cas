@@ -12,7 +12,6 @@
             <props>
                 <prop key="/login">loginController</prop>
 				<prop key="/logout">logoutController</prop>
-				<prop key="/validate">legacyValidateController</prop>
 				<prop key="/serviceValidate">serviceValidateController</prop>
 				<prop key="/proxy">proxyController</prop>
 				<prop key="/proxyValidate">serviceValidateController</prop>
