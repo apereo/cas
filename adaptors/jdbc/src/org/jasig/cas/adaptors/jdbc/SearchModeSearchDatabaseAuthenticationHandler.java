@@ -6,12 +6,13 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
 
 /**
  * Class that given a table, username field and password field will query a database table with the provided encryption technique to see if the user
@@ -21,7 +22,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @version $Id$
  */
 
-public class SearchModeSearchDatabaseAuthenticationHandler extends JdbcDaoSupport implements AuthenticationHandler {
+public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -40,7 +41,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends JdbcDaoSuppor
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
+    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String encyptedPassword = this.passwordTranslator.translate(uRequest.getPassword());
 
@@ -52,7 +53,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends JdbcDaoSuppor
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean supports(Credentials credentials) {
+    protected boolean supports(Credentials credentials) {
         return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }
 

@@ -24,10 +24,4 @@ public interface AuthenticationHandler {
      * a particular authentication request failed.  AuthenticationExceptions contain code/desc.
      */
     boolean authenticate(Credentials credentials) throws AuthenticationException;
-
-    /**
-     * @param request The credentials we want to check if the handler supports.
-     * @return true if the handler supports authenticating this type of credentials. False otherwise.
-     */
-    boolean supports(Credentials credentials);
 }

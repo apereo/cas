@@ -4,6 +4,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.util.StringUtils;
@@ -19,7 +20,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials credentials) {
+    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
         final String username = usernamePasswordCredentials.getUserName();
         final String password = usernamePasswordCredentials.getPassword();

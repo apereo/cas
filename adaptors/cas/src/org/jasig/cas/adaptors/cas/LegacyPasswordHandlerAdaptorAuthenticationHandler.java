@@ -5,7 +5,7 @@
 package org.jasig.cas.adaptors.cas;
 
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -18,23 +18,23 @@ import edu.yale.its.tp.cas.auth.PasswordHandler;
  * @version $Id$
  *
  */
-public class LegacyPasswordHandlerAdaptorAuthenticationHandler implements AuthenticationHandler, InitializingBean {
+public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends AbstractAuthenticationHandler implements InitializingBean {
 
     private PasswordHandler passwordHandler;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticate(final Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials)credentials;
 
         return this.passwordHandler.authenticate(casCredentials.getServletRequest(), casCredentials.getUserName(), casCredentials.getPassword());
     }
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
-     */
-    public boolean supports(final Credentials credentials) {
+   /**
+    * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
+    */
+    protected boolean supports(final Credentials credentials) {
         if (credentials == null)
             return false;
 

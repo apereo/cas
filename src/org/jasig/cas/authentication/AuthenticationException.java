@@ -10,10 +10,6 @@ package org.jasig.cas.authentication;
  */
 public class AuthenticationException extends Exception {
 
-    private String code;
-
-    private String description;
-
     /**
      * Comment for <code>serialVersionUID</code>
      */
@@ -46,31 +42,5 @@ public class AuthenticationException extends Exception {
      */
     public AuthenticationException(Throwable arg0) {
         super(arg0);
-    }
-
-    public AuthenticationException(String arg0, String code, String description) {
-        super(arg0);
-        this.code = code;
-        this.description = description;
-    }
-
-    public AuthenticationException(String arg0, Throwable arg1, String code, String description) {
-        super(arg0, arg1);
-        this.code = code;
-        this.description = description;
-    }
-
-    /**
-     * @return Returns the code.
-     */
-    public String getCode() {
-        return this.code;
-    }
-
-    /**
-     * @return Returns the description.
-     */
-    public String getDescription() {
-        return this.description;
     }
 }

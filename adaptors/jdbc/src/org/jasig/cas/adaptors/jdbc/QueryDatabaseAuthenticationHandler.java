@@ -6,12 +6,11 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
  * Class that if provided a query that returns a password (parameter of query must be username) will compare that password to a translated version of
@@ -20,7 +19,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class QueryDatabaseAuthenticationHandler extends JdbcDaoSupport implements AuthenticationHandler {
+public class QueryDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -31,7 +30,7 @@ public class QueryDatabaseAuthenticationHandler extends JdbcDaoSupport implement
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
+    public boolean authenticateInternal(final Credentials request) throws UnsupportedCredentialsException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
@@ -43,7 +42,7 @@ public class QueryDatabaseAuthenticationHandler extends JdbcDaoSupport implement
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean supports(Credentials credentials) {
+    protected boolean supports(Credentials credentials) {
         return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }
 

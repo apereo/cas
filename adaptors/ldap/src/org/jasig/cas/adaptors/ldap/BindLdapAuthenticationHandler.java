@@ -13,19 +13,18 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
 import org.springframework.ldap.core.AttributeHelper;
 import org.springframework.ldap.core.SearchResultCallbackHandler;
-import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
  * @author Scott Battaglia
  * @version $Id$
  */
-public class BindLdapAuthenticationHandler extends LdapDaoSupport implements AuthenticationHandler {
+public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHandler {
 
     private static final String[] RETURN_VALUES = new String[] {"cn"};
 
@@ -54,7 +53,7 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements Aut
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
+    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
         List values = (List)this.getLdapTemplate().search(this.searchBase, LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
@@ -117,7 +116,7 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements Aut
             this.scopeValue = SearchControls.SUBTREE_SCOPE;
     }
 
-    public boolean supports(Credentials credentials) {
+    protected boolean supports(Credentials credentials) {
         return credentials != null && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
 

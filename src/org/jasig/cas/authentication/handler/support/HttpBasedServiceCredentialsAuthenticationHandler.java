@@ -7,7 +7,6 @@ package org.jasig.cas.authentication.handler.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.UrlUtils;
@@ -17,7 +16,7 @@ import org.jasig.cas.util.UrlUtils;
  * @version $Id$
  *
  */
-public class HttpBasedServiceCredentialsAuthenticationHandler implements AuthenticationHandler {
+public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
     protected final Log log = LogFactory.getLog(getClass());
     
     private static final String PROTOCOL_HTTPS = "https";
@@ -25,7 +24,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler implements Authent
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticate(Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(Credentials credentials) throws AuthenticationException {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         String response = null;
         
@@ -46,7 +45,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler implements Authent
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean supports(Credentials credentials) {
+    protected boolean supports(Credentials credentials) {
         return HttpBasedServiceCredentials.class.isAssignableFrom(credentials.getClass());
     }
 }

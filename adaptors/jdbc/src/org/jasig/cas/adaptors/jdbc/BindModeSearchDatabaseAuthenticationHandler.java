@@ -7,10 +7,9 @@ package org.jasig.cas.adaptors.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
@@ -20,11 +19,11 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends JdbcDaoSupport implements AuthenticationHandler {
+public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
+    public boolean authenticateInternal(final Credentials request) throws UnsupportedCredentialsException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
@@ -41,7 +40,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends JdbcDaoSupport 
 	/**
 	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
 	 */
-	public boolean supports(Credentials credentials) {
+	protected boolean supports(Credentials credentials) {
 		return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
 	}
 }

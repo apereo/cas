@@ -5,7 +5,7 @@
 package org.jasig.cas.adaptors.cas;
 
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
@@ -19,27 +19,24 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
  * @version $Id$
  *
  */
-public class LegacyTrustHandlerAdaptorAuthenticationHandler implements AuthenticationHandler, InitializingBean {
+public class LegacyTrustHandlerAdaptorAuthenticationHandler extends AbstractAuthenticationHandler implements InitializingBean {
 
     private TrustHandler trustHandler;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticate(final Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
         final LegacyCasTrustedCredentials casCredentials = (LegacyCasTrustedCredentials)credentials;
 
         return StringUtils.hasText(this.trustHandler.getUsername(casCredentials.getServletRequest()));
     }
 
     /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
+     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean supports(final Credentials credentials) {
-        if (credentials == null)
-            return false;
-
-        return LegacyCasTrustedCredentials.class.equals(credentials.getClass());
+    protected boolean supports(final Credentials credentials) {
+        return credentials != null && LegacyCasTrustedCredentials.class.equals(credentials.getClass());
     }
 
     /**
