@@ -5,8 +5,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -46,8 +45,7 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     public void testCleanRegistryOfExpiredTicketsAllExpired() {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, new ImmutableAuthentication(new SimplePrincipal("test"),
-                null), new NeverExpiresExpirationPolicy());
+                + i, new MockAuthentication(), new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
         }
@@ -60,15 +58,13 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     public void testCleanRegistryOneNonExpired() {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, new ImmutableAuthentication(new SimplePrincipal("test"),
-                null), new NeverExpiresExpirationPolicy());
+                + i, new MockAuthentication(), new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
         }
 
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
-            "testNoExpire", new ImmutableAuthentication(new SimplePrincipal(
-                "test"), null), new NeverExpiresExpirationPolicy());
+            "testNoExpire", new MockAuthentication(), new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
 
         this.registryCleaner.clean();

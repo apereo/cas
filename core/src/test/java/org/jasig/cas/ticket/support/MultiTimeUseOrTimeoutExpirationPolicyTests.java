@@ -5,8 +5,7 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -33,7 +32,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
             NUMBER_OF_USES, TIMEOUT);
         
         this.ticket = new TicketGrantingTicketImpl("test",
-            new ImmutableAuthentication(new SimplePrincipal("test"), null),
+            new MockAuthentication(),
             this.expirationPolicy);
         
         super.setUp();

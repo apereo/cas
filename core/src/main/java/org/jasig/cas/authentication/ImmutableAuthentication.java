@@ -37,7 +37,7 @@ public final class ImmutableAuthentication implements Authentication {
     /** An arbitrary object to hold additional attributes. */
     private final Map attributes;
 
-    public ImmutableAuthentication(final Principal principal,
+    protected ImmutableAuthentication(final Principal principal,
         final Map attributes) {
         this.principal = principal;
         this.attributes = Collections.unmodifiableMap(attributes == null ? new HashMap() : attributes);
