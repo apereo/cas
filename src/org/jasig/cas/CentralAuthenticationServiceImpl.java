@@ -14,7 +14,7 @@ import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
@@ -63,7 +63,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 ticket.expire();
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
             }
-        } catch (InvalidTicketException ite) {
+        } catch (InvalidTicketClassException ite) {
             log.debug("Invalid request to remove ticket [" + ticketGrantingTicketId + "].  Ticket not a valid TicketGrantingTicket.");
             throw new IllegalArgumentException("ticketGrantingTicketId must be the ID of a TicketGrantingTicket");
         }
@@ -87,7 +87,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 + serviceTicket.getGrantingTicket().getPrincipal().getId() + "]");
 
             return serviceTicket.getId();
-        } catch (InvalidTicketException ite) {
+        } catch (InvalidTicketClassException ite) {
             throw new TicketCreationException("Unable to retrieve TicketGrantingTicket to grant service ticket.");
         }
     }

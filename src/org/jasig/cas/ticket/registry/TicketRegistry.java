@@ -7,7 +7,7 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.Collection;
 
-import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.Ticket;
 
 /**
@@ -32,16 +32,16 @@ public interface TicketRegistry {
      * @param ticketId the id of the ticket we wish to retrieve
      * @param clazz The expected class of the ticket we wish to retrieve.
      * @return the requested ticket.
-     * @throws InvalidTicketException
+     * @throws InvalidTicketClassException
      */
-    Ticket getTicket(String ticketId, Class clazz) throws InvalidTicketException;
+    Ticket getTicket(String ticketId, Class clazz) throws InvalidTicketClassException;
 
     /**
      * Retrieve a ticket from the registry.
      * 
      * @param ticketId the id of the ticket we wish to retrieve
      * @return the requested ticket.
-     * @throws InvalidTicketException
+     * @throws InvalidTicketClassException
      */
     Ticket getTicket(String ticketId);
     
