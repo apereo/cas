@@ -26,8 +26,8 @@ public interface TicketCreator {
      * @param grantingTicket The parent ticket of the ticket we want to create.
      * @return The new immutable ticket.
      */
-    public Ticket createTicket(Principal principal, CasAttributes request, String ticketId, Ticket grantingTicket);
-
+    public Ticket createTicket(Principal principal, CasAttributes request, Ticket grantingTicket);
+    
     /**
      * Determine if a class is supported by this helper.
      * 

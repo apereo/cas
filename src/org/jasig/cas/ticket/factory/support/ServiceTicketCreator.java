@@ -24,7 +24,7 @@ import org.jasig.cas.ticket.factory.TicketCreator;
  * @version $Id$
  * @see org.jasig.cas.ticket.ServiceTicket
  */
-public class ServiceTicketCreator implements TicketCreator {
+public class ServiceTicketCreator extends AbstractTicketCreator implements TicketCreator {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -38,8 +38,9 @@ public class ServiceTicketCreator implements TicketCreator {
      * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal,
      * org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
-    public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
+    public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final Ticket grantingTicket) {
         final String service = casAttributes.getService();
+        final String ticketId = this.getUniqueTicketIdGenerator().getNewTicketId(this.getPrefix());
         log.debug("Attempting to resolve service id via Service Registry for Service [" + service + "]");
 
         if (!this.serviceRegistry.serviceExists(service))

@@ -21,7 +21,7 @@ import org.jasig.cas.ticket.factory.TicketCreator;
  * @version $Id$
  * @see org.jasig.cas.ticket.TicketGrantingTicket
  */
-public class TicketGrantingTicketCreator implements TicketCreator {
+public class TicketGrantingTicketCreator extends AbstractTicketCreator implements TicketCreator {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -40,8 +40,8 @@ public class TicketGrantingTicketCreator implements TicketCreator {
      * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal,
      * org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
-    public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
-
+    public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final Ticket grantingTicket) {
+        final String ticketId = this.getUniqueTicketIdGenerator().getNewTicketId(this.getPrefix());
         log.debug("Creating TicketGrantingTicket for ID [" + ticketId + "]");
         return new TicketGrantingTicketImpl(ticketId, principal, this.policy);
     }
