@@ -119,6 +119,17 @@
 			</roles>
 			<timezone>-5</timezone>
 		</developer>
+		<developer>
+			<name>Andy Newman</name>
+			<id>anewman</id>
+			<email>newman-andy@yale.edu</email>
+			<organization>Yale University</organization>
+			<roles>
+				<role>Project Admin</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+		
 	</developers>
 	<licenses>
 		<license>
@@ -314,7 +325,7 @@
 		<dependency>
 			<groupId>springframework</groupId>
 			<artifactId>spring</artifactId>
-			<version>1.2-dev-build.226-20050316</version>
+			<version>1.2-rc1</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
