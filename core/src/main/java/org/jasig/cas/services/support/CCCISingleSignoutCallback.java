@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.services.support;
 
+import org.jasig.cas.services.AuthenticatedService;
 import org.jasig.cas.services.SingleSignoutCallback;
 
 /**
@@ -18,7 +19,7 @@ import org.jasig.cas.services.SingleSignoutCallback;
  */
 public class CCCISingleSignoutCallback implements SingleSignoutCallback {
 
-	public boolean sendSingleSignoutRequest(String serviceTicketId) {
+	public boolean sendSingleSignoutRequest(AuthenticatedService service, String serviceTicketId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
