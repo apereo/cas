@@ -2,7 +2,7 @@
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.validation;
 
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.validation.Errors;
@@ -15,7 +15,7 @@ import org.springframework.validation.Validator;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class BasicCredentialsValidator implements Validator {
+public class UsernamePasswordCredentialsValidator implements Validator {
 
     public boolean supports(Class clazz) {
         return UsernamePasswordCredentials.class.isAssignableFrom(clazz);
