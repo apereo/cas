@@ -15,6 +15,8 @@ import org.jasig.cas.ticket.Ticket;
  */
 public class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
 
+    private static final long serialVersionUID = 3257844372614558261L;
+
     final private long timeToKillInMilliSeconds;
 
     final private int numberOfUses;

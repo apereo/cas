@@ -26,6 +26,7 @@ import org.jasig.cas.validation.AssertionImpl;
 import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
 
 /**
+ * @@org.springframework.jmx.metadata.ManagedResource(description="CAS Ticket Policies",persistPeriod=1,objectName="cas:id=policies")
  * Concrete implementation of a CentralAuthenticationService, and also the central, organizing component of CAS's internal implementation.
  * <p>
  * This class is threadsafe.
@@ -246,9 +247,10 @@ public final class CentralAuthenticationServiceImpl extends
     }
 
     /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="Set the expiration policy for the TicketGrantingticket",persistPeriod=1)
      * @param ticketGrantingTicketExpirationPolicy The ticketGrantingTicketExpirationPolicy to set.
      */
-    public void setTicketGrantingTicketExpirationPolicy(
+    public synchronized void setTicketGrantingTicketExpirationPolicy(
         final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
     }
@@ -262,10 +264,32 @@ public final class CentralAuthenticationServiceImpl extends
     }
 
     /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="Set the expiration policy for the ServiceTicket",persistPeriod=1)
      * @param serviceTicketExpirationPolicy The serviceTicketExpirationPolicy to set.
      */
-    public void setServiceTicketExpirationPolicy(
+    public synchronized void setServiceTicketExpirationPolicy(
         final ExpirationPolicy serviceTicketExpirationPolicy) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
     }
+
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="Get the expiration policy for the ServiceTicket",persistPeriod=1)
+     * @return Returns the serviceTicketExpirationPolicy.
+     */
+    public ExpirationPolicy getServiceTicketExpirationPolicy() {
+        return this.serviceTicketExpirationPolicy;
+    }
+    
+
+    
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="Get the expiration policy for the TicketGrantingTicket",persistPeriod=1)
+     * @return Returns the ticketGrantingTicketExpirationPolicy.
+     */
+    public ExpirationPolicy getTicketGrantingTicketExpirationPolicy() {
+        return this.ticketGrantingTicketExpirationPolicy;
+    }
+    
+    
+
 }

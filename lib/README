@@ -1,0 +1,5 @@
+If you are not using JDK 1.5, the following files need to be placed in the CATALINA_HOME\common\endorsed directory:
+* jmxremote_optional.jar
+* jmxremote.jar
+* jmxri.jar
+* jmxtools.jar

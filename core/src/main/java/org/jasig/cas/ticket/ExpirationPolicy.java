@@ -4,6 +4,8 @@
  */
 package org.jasig.cas.ticket;
 
+import java.io.Serializable;
+
 /**
  * Strategy that determines if the ticket is expired.
  * 
@@ -11,7 +13,7 @@ package org.jasig.cas.ticket;
  * @version $Id$
  * @see org.jasig.cas.ticket.AbstractTicket
  */
-public interface ExpirationPolicy {
+public interface ExpirationPolicy extends Serializable {
 
     /**
      * Method to determine if a Ticket has expired or not, based on the policy.

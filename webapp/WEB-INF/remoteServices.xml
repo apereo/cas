@@ -18,6 +18,9 @@
     	    	<entry key="cas:id=stats">
         	  		<ref bean="statsBean"/>
         		</entry>
+ <!--   	    	<entry key="cas:id=policies">
+        	  		<ref bean="centralAuthenticationService" />
+        		</entry>-->
 			</map>
     	</property>
 		<property name="assembler">
@@ -69,5 +72,5 @@
             <value>false</value>
         </property>
 	</bean>
-    
+
 </beans>

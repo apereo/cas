@@ -16,6 +16,8 @@ import org.jasig.cas.ticket.Ticket;
  */
 public class NeverExpiresExpirationPolicy implements ExpirationPolicy {
 
+    private static final long serialVersionUID = 3833747698242303540L;
+
     public boolean isExpired(final Ticket ticket) {
         return false;
     }
