@@ -18,9 +18,6 @@ public class DefaultUniqueTokenIdGenerator implements UniqueTokenIdGenerator {
         this.idGenerator = new DefaultRandomStringGenerator();
     }
 
-    /**
-     * @see org.jasig.cas.util.UniqueTokenIdGenerator#getNewTokenId()
-     */
     public String getNewTokenId() {
         return this.idGenerator.getNewString();
     }

@@ -19,9 +19,6 @@ public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrinc
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    /**
-     * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#resolvePrincipal(org.jasig.cas.authentication.principal.Credentials)
-     */
     public Principal resolvePrincipal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
 
@@ -34,9 +31,6 @@ public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrinc
         return new SimplePrincipal(usernamePasswordCredentials.getUserName());
     }
 
-    /**
-     * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#supports(org.jasig.cas.authentication.principal.Credentials)
-     */
     public boolean supports(Credentials credentials) {
         return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }

@@ -26,9 +26,6 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
     }
 
-    /**
-     * @see org.jasig.cas.util.UniqueTicketIdGenerator#getNewTicketId(java.lang.String)
-     */
     public String getNewTicketId(final String prefix) {
         final StringBuffer buffer = new StringBuffer();
         buffer.append(prefix);

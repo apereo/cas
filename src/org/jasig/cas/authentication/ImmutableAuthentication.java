@@ -32,30 +32,18 @@ public final class ImmutableAuthentication implements Authentication {
         this.authenticatedDate = new Date();
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Authentication#getCredentials()
-     */
     public Credentials getCredentials() {
         return this.credentials;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Authentication#getPrincipal()
-     */
     public Principal getPrincipal() {
         return this.principal;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Authentication#getAuthenticatedDate()
-     */
     public Date getAuthenticatedDate() {
         return this.authenticatedDate;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Authentication#getAttributes()
-     */
     public Object getAttributes() {
         return this.attributes;
     }

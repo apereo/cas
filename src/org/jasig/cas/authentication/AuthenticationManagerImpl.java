@@ -30,9 +30,6 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
 
     private List credentialsToPrincipalResolvers;
 
-    /**
-     * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.authentication.AuthenticationRequest)
-     */
     public Authentication authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException {
         boolean authenticated = false;
 
@@ -73,9 +70,6 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
         return null;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.authenticationHandlers == null || this.authenticationHandlers.isEmpty() || this.credentialsToPrincipalResolvers == null
             || this.credentialsToPrincipalResolvers.isEmpty()) {

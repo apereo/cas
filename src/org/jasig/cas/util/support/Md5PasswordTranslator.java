@@ -17,9 +17,6 @@ import org.jasig.cas.util.PasswordTranslator;
  */
 public class Md5PasswordTranslator implements PasswordTranslator {
 
-    /**
-     * @see org.jasig.cas.util.PasswordTranslator#translate(java.lang.String)
-     */
     public String translate(final String password) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");

@@ -2,7 +2,7 @@
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.validation;
 
 /**
  * A mapping of the Cas 1.0 protocol for authentication.
@@ -10,17 +10,17 @@ package org.jasig.cas.authentication;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class Cas10ProtocolAuthenticationSpecification implements AuthenticationSpecification {
+public class Cas10ProtocolValidationSpecification implements ValidationSpecification {
 
     private final static boolean DEFAULT_RENEW = false;
 
     private boolean renew;
 
-    public Cas10ProtocolAuthenticationSpecification() {
+    public Cas10ProtocolValidationSpecification() {
         this.renew = DEFAULT_RENEW;
     }
 
-    public Cas10ProtocolAuthenticationSpecification(boolean renew) {
+    public Cas10ProtocolValidationSpecification(boolean renew) {
         this.renew = renew;
     }
 
@@ -32,9 +32,6 @@ public class Cas10ProtocolAuthenticationSpecification implements AuthenticationS
         return this.renew;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.AuthenticationSpecification#isSatisfiedBy(org.jasig.cas.authentication.Assertion)
-     */
     public boolean isSatisfiedBy(Assertion assertion) {
         if (!this.renew)
             return true;

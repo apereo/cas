@@ -71,9 +71,6 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
         }
     }
 
-    /**
-     * @see org.springframework.remoting.jaxrpc.JaxRpcPortClientInterceptor#postProcessJaxRpcService(javax.xml.rpc.Service)
-     */
     public void postProcessJaxRpcService(Service service) {
         final TypeMappingRegistry registry = service.getTypeMappingRegistry();
         final TypeMapping mapping = registry.createTypeMapping();

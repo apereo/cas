@@ -32,19 +32,12 @@ public class LogoutController extends AbstractController implements Initializing
 
     private CentralAuthenticationService centralAuthenticationService;
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
             throw new IllegalStateException("centralAuthenticationService must be set on " + this.getClass().getName());
         }
     }
 
-    /**
-     * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse)
-     */
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
         String service = request.getParameter(WebConstants.SERVICE);

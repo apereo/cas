@@ -33,9 +33,6 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
 
     private BASE64Encoder encoder = new BASE64Encoder();
 
-    /**
-     * @see org.jasig.cas.util.PasswordTranslator#translate(java.lang.String)
-     */
     public String translate(final String password) {
         try {
             byte[] passwordAsBytes = password.getBytes("UTF8");
@@ -50,9 +47,6 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
         return null;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.key == null)
             throw new IllegalStateException("key must be set on " + this.getClass().getName());

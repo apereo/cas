@@ -36,19 +36,12 @@ public class ProxyController extends AbstractController implements InitializingB
         setCacheSeconds(0);
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
             throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
         }
     }
 
-    /**
-     * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse)
-     */
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String ticket = request.getParameter(WebConstants.TICKET);
         final Service service = new SimpleService(request.getParameter("targetService"));

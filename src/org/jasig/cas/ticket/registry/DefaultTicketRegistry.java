@@ -25,9 +25,6 @@ public class DefaultTicketRegistry implements TicketRegistry {
 
     final private Map cache = new HashMap();
 
-    /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
-     */
     public void addTicket(final Ticket ticket) {
         if (ticket == null)
             throw new IllegalArgumentException("ticket cannot be null");
@@ -36,9 +33,6 @@ public class DefaultTicketRegistry implements TicketRegistry {
         this.cache.put(ticket.getId(), ticket);
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
-     */
     public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketClassException {
         if (clazz == null)
             throw new IllegalArgumentException("clazz cannot be null");
@@ -55,9 +49,6 @@ public class DefaultTicketRegistry implements TicketRegistry {
         return ticket;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
-     */
     public Ticket getTicket(String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         final Ticket ticket = (Ticket)this.cache.get(ticketId);
@@ -68,17 +59,11 @@ public class DefaultTicketRegistry implements TicketRegistry {
         return ticket;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#deleteTicket(java.lang.String)
-     */
     public boolean deleteTicket(final String ticketId) {
         log.debug("Removing ticket [" + ticketId + "] from registry");
         return this.cache.remove(ticketId) == null ? false : true;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTickets()
-     */
     public Collection getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
     }

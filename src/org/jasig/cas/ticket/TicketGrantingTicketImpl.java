@@ -59,9 +59,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         return this.authentication;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.InternalTicketGrantingTicket#grantServiceTicket(org.jasig.cas.Service)
-     */
     public synchronized ServiceTicket grantServiceTicket(Service service) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), this, service,
             this.getCountOfUses() == 0, this.serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
@@ -71,30 +68,18 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         return serviceTicket;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.TicketGrantingTicket#isRoot()
-     */
     public boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.TicketGrantingTicket#expire()
-     */
     public void expire() {
         this.expired = true;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.Ticket#isExpired()
-     */
     public boolean isExpired() {
         return super.isExpired() || this.expired;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.TicketGrantingTicket#getChainedPrincipals()
-     */
     public List getChainedPrincipals() {
         final List list = new ArrayList();
 

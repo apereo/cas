@@ -28,9 +28,6 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
 
     private long timeOut;
 
-    /**
-     * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
-     */
     public void clean() {
         final long currentTime = System.currentTimeMillis();
         final List tokensToDelete = new ArrayList();

@@ -48,30 +48,18 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         this.expirationPolicy = policy;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.ServiceTicket#isFromNewLogin()
-     */
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.ServiceTicket#getService()
-     */
     public Service getService() {
         return this.service;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.Ticket#isExpired()
-     */
     public boolean isExpired() {
         return super.isExpired() || this.getGrantingTicket().isExpired();
     }
 
-    /**
-     * @see org.jasig.cas.ticket.InternalServiceTicket#grantTicketGrantingTicket()
-     */
     public TicketGrantingTicket grantTicketGrantingTicket(final Authentication authentication) {
         return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), this.getGrantingTicket(),
             authentication, this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);

@@ -24,9 +24,6 @@ public class SimplePrincipal implements Principal {
         this.id = id;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.principal.Principal#getId()
-     */
     public String getId() {
         return this.id;
     }

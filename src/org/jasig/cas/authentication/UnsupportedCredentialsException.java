@@ -48,16 +48,10 @@ public class UnsupportedCredentialsException extends AuthenticationException {
         super(arg0);
     }
 
-    /**
-     * @see org.jasig.cas.authentication.AuthenticationException#getCode()
-     */
     public String getCode() {
         return CODE;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.AuthenticationException#getDescription()
-     */
     public String getDescription() {
         return DESCRIPTION;
     }

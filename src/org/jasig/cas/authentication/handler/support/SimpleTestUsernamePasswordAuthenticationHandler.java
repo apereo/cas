@@ -17,9 +17,6 @@ import org.springframework.util.StringUtils;
  */
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
-    /**
-     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#authenticateInternal(org.jasig.cas.authentication.principal.Credentials)
-     */
     public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
         final String username = usernamePasswordCredentials.getUserName();
@@ -35,9 +32,6 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         return false;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         log.warn(this.getClass().getName() + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }

@@ -35,9 +35,6 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     private String fileName;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#authenticateInternal(org.jasig.cas.authentication.principal.Credentials)
-     */
     public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
@@ -73,9 +70,6 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         return false;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.fileName == null || this.passwordTranslator == null || this.separator == null) {
             throw new IllegalStateException("fileName, passwordTranslator and separator must be set on " + this.getClass().getName());
