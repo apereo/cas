@@ -20,6 +20,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @version $Id$
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
+
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
@@ -27,20 +28,21 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAut
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
-        
+
         try {
-        	Connection c = this.getDataSource().getConnection(username, password);
-        	DataSourceUtils.closeConnectionIfNecessary(c, this.getDataSource());
-        	return true;
-        } catch (SQLException e) {
-        	return false;
+            Connection c = this.getDataSource().getConnection(username, password);
+            DataSourceUtils.closeConnectionIfNecessary(c, this.getDataSource());
+            return true;
+        }
+        catch (SQLException e) {
+            return false;
         }
     }
-    
-	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
-	 */
-	protected boolean supports(Credentials credentials) {
-		return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
-	}
+
+    /**
+     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
+     */
+    protected boolean supports(Credentials credentials) {
+        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+    }
 }

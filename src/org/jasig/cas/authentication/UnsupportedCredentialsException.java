@@ -5,8 +5,8 @@
 package org.jasig.cas.authentication;
 
 /**
- * The exception thrown when a Handler does not know how to determine the validity of the credentials
- * based on the fact that it does not know what to do with the credentials presented.
+ * The exception thrown when a Handler does not know how to determine the validity of the credentials based on the fact that it does not know what to
+ * do with the credentials presented.
  * 
  * @author Scott Battaglia
  * @version $Id$

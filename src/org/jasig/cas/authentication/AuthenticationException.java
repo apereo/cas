@@ -5,8 +5,8 @@
 package org.jasig.cas.authentication;
 
 /**
- * The most generic type of authentication exception when one cannot determine why the
- * authentication actually failed.  Top of the tree of all other AuthenticationExceptions
+ * The most generic type of authentication exception when one cannot determine why the authentication actually failed. Top of the tree of all other
+ * AuthenticationExceptions
  * 
  * @author Scott Battaglia
  * @version $Id$

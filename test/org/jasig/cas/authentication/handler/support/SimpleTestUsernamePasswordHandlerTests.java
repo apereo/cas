@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
@@ -27,30 +27,35 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testSupportsProperUserCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        
+
         c.setUserName("test");
         c.setPassword("test");
         try {
-        	this.authenticationHandler.authenticate(c);
-        } catch (UnsupportedCredentialsException e) {
+            this.authenticationHandler.authenticate(c);
+        }
+        catch (UnsupportedCredentialsException e) {
             fail("UnsupportedCredentialsException caught");
-        } catch (AuthenticationException e) {
+        }
+        catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
-    
+
     public void testDoesntSupportBadUserCredentials() {
         try {
-        	this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu")));
-        } catch (MalformedURLException e) {
+            this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu")));
+        }
+        catch (MalformedURLException e) {
             fail("Could not resolve URL.");
-        } catch (UnsupportedCredentialsException e) {
+        }
+        catch (UnsupportedCredentialsException e) {
             // this is okay
-        } catch (AuthenticationException e) {
+        }
+        catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
-    
+
     public void testValidUsernamePassword() {
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
         authRequest.setUserName("test");
@@ -58,7 +63,8 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(authRequest));
-        } catch (AuthenticationException ae) {
+        }
+        catch (AuthenticationException ae) {
             fail();
         }
     }
@@ -70,8 +76,9 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(authRequest));
-        } catch (AuthenticationException ae) {
-        	// this is okay
+        }
+        catch (AuthenticationException ae) {
+            // this is okay
         }
     }
 
@@ -82,7 +89,8 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(authRequest));
-        } catch (AuthenticationException ae) {
+        }
+        catch (AuthenticationException ae) {
             // this is okay
         }
     }

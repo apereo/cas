@@ -68,8 +68,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcAuthenticati
     }
 
     /**
-     * @param sql
-     *            The sql to set.
+     * @param sql The sql to set.
      */
     public void setSql(final String sql) {
         this.sql = sql;

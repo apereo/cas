@@ -129,7 +129,7 @@ public class LoginController extends SimpleFormController implements Initializin
                     return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
                 }
 
-                return new ModelAndView(new RedirectView(service), WebConstants.TICKET, serviceTicketId); //assume first = false?
+                return new ModelAndView(new RedirectView(service), WebConstants.TICKET, serviceTicketId); // assume first = false?
             }
         }
 
@@ -181,13 +181,13 @@ public class LoginController extends SimpleFormController implements Initializin
 
                 model.put(WebConstants.TICKET, serviceTicketId);
                 model.put(WebConstants.SERVICE, service);
-                //                model.put(WebConstants.FIRST, "true");
+                // model.put(WebConstants.FIRST, "true");
                 return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
             }
 
             final Map model = new HashMap();
             model.put(WebConstants.TICKET, serviceTicketId);
-            //            model.put(WebConstants.FIRST, "true");
+            // model.put(WebConstants.FIRST, "true");
 
             return new ModelAndView(new RedirectView(service), model);
         }

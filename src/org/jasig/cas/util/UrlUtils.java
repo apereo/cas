@@ -20,6 +20,7 @@ public class UrlUtils {
 
     /**
      * Method to retrieve the response from a HTTP request for a specific URL.
+     * 
      * @param url The URL to contact.
      * @return the body of the response.
      */

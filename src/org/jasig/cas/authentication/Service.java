@@ -7,13 +7,11 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
- * A Service providing service to an authenticated principal.
- * Typically a web application or web service.
+ * A Service providing service to an authenticated principal. Typically a web application or web service.
  * 
  * @author William G. Thompson, Jr.
  * @version $Id$
- *
  */
 public interface Service extends Principal {
-    // marker interface for service.  No methods
+    // marker interface for service. No methods
 }

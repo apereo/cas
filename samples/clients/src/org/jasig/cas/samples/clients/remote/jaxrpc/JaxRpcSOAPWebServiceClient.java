@@ -37,18 +37,21 @@ public class JaxRpcSOAPWebServiceClient {
         authRequest.setPassword("test");
         try {
             String ticketGrantingTicketId = centralAuthenticationService.createTicketGrantingTicket(authRequest);
-            String serviceTicket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService("http://www.rutgers.edu"));
+            String serviceTicket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId,
+                new SimpleService("http://www.rutgers.edu"));
             Assertion assertion = centralAuthenticationService.validateServiceTicket(serviceTicket, new SimpleService("http://www.rutgers.edu"));
-            
+
             if (!authenticationSpecification.isSatisfiedBy(assertion)) {
                 throw new TicketException(TicketException.INVALID_TICKET, "ticket not backed by initial CAS login, as requested");
             }
-            
+
             System.out.println(serviceTicket);
-            System.out.println(((Principal) assertion.getChainedPrincipals().get(0)).getId());
-        } catch (TicketException tce) {
+            System.out.println(((Principal)assertion.getChainedPrincipals().get(0)).getId());
+        }
+        catch (TicketException tce) {
             System.out.println("Error getting Ticket:" + tce);
-        } catch (org.jasig.cas.authentication.AuthenticationException ae) {
+        }
+        catch (org.jasig.cas.authentication.AuthenticationException ae) {
             System.out.println("Error authenticating: " + ae);
         }
     }

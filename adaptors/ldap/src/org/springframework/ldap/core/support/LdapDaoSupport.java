@@ -12,65 +12,64 @@ import org.springframework.ldap.support.LdapUtils;
 /**
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public abstract class LdapDaoSupport implements InitializingBean {
 
-	protected final Log log = LogFactory.getLog(getClass());
-	private LdapTemplate ldapTemplate;
+    protected final Log log = LogFactory.getLog(getClass());
 
-	public final void setContextSource(final ContextSource contextSource) {
-		this.ldapTemplate = new LdapTemplate(contextSource);
-	}
+    private LdapTemplate ldapTemplate;
 
-	public final ContextSource getContextSource() {
-		return this.ldapTemplate != null ? this.ldapTemplate.getContextSource() : null;
-	}
+    public final void setContextSource(final ContextSource contextSource) {
+        this.ldapTemplate = new LdapTemplate(contextSource);
+    }
 
-	/**
-	 * @return Returns the ldapTemplate.
-	 */
-	public LdapTemplate getLdapTemplate() {
-		return this.ldapTemplate;
-	}
+    public final ContextSource getContextSource() {
+        return this.ldapTemplate != null ? this.ldapTemplate.getContextSource() : null;
+    }
 
-	/**
-	 * @param ldapTemplate The ldapTemplate to set.
-	 */
-	public void setLdapTemplate(LdapTemplate ldapTemplate) {
-		this.ldapTemplate = ldapTemplate;
-	}
+    /**
+     * @return Returns the ldapTemplate.
+     */
+    public LdapTemplate getLdapTemplate() {
+        return this.ldapTemplate;
+    }
 
-	public final void afterPropertiesSet() throws Exception {
-		if (this.ldapTemplate == null) {
-			throw new IllegalArgumentException("dataSource or ldapTemplate is required");
-		}
-		initDao();
-	}
+    /**
+     * @param ldapTemplate The ldapTemplate to set.
+     */
+    public void setLdapTemplate(LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
+    }
 
-	/**
-	 * Subclasses can override this for custom initialization behavior.
-	 * Gets called after population of this instance's bean properties.
-	 * @throws Exception if initialization fails
-	 */
-	protected void initDao() throws Exception {
-		// not required
-	}
+    public final void afterPropertiesSet() throws Exception {
+        if (this.ldapTemplate == null) {
+            throw new IllegalArgumentException("dataSource or ldapTemplate is required");
+        }
+        initDao();
+    }
 
-	/**
-	 * Return the LdapExceptionTranslator of this DAO's LdapTemplate,
-	 * for translating SQLExceptions in custom LDAP access code.
-	 */
-	protected final LdapExceptionTranslator getExceptionTranslator() {
-		return this.ldapTemplate.getExceptionTranslator();
-	}
+    /**
+     * Subclasses can override this for custom initialization behavior. Gets called after population of this instance's bean properties.
+     * 
+     * @throws Exception if initialization fails
+     */
+    protected void initDao() throws Exception {
+        // not required
+    }
 
-	/**
-	 * Close the given LDAP Context if necessary, created via this bean's
-	 * ContextSource, if it isn't bound to the thread.
-	 * @param con Ldap Context to close
-	 */
-	protected final void closeContextIfNecessary(DirContext con) {
-		LdapUtils.closeContext(con);
-	}
+    /**
+     * Return the LdapExceptionTranslator of this DAO's LdapTemplate, for translating SQLExceptions in custom LDAP access code.
+     */
+    protected final LdapExceptionTranslator getExceptionTranslator() {
+        return this.ldapTemplate.getExceptionTranslator();
+    }
+
+    /**
+     * Close the given LDAP Context if necessary, created via this bean's ContextSource, if it isn't bound to the thread.
+     * 
+     * @param con Ldap Context to close
+     */
+    protected final void closeContextIfNecessary(DirContext con) {
+        LdapUtils.closeContext(con);
+    }
 }

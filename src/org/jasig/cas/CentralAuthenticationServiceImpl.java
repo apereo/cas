@@ -35,16 +35,16 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
 
     private final Log log = LogFactory.getLog(this.getClass());
 
-    /** TicketRegistry for storing and retrieving tickets as needed. **/
+    /** TicketRegistry for storing and retrieving tickets as needed. * */
     private TicketRegistry ticketRegistry;
 
-    /** AuthenticationManager for authenticating credentials for purposes of obtaining tickets. **/
+    /** AuthenticationManager for authenticating credentials for purposes of obtaining tickets. * */
     private AuthenticationManager authenticationManager;
 
-    /** UniqueTicketIdGenerator to generate ids for any tickets created **/
+    /** UniqueTicketIdGenerator to generate ids for any tickets created * */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    /** Expiration policy for ticket granting tickets **/
+    /** Expiration policy for ticket granting tickets * */
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /** ExpirationPolicy for Service Tickets */
@@ -139,7 +139,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 log.debug("ServiceTicket [" + serviceTicketId + "] has expired.");
                 throw new TicketException(TicketException.INVALID_TICKET, "ticket '" + serviceTicketId + "' not recognized");
             }
-            
+
             if (!service.equals(serviceTicket.getService())) {
                 log.debug("ServiceTicket [" + serviceTicketId + "] does not match supplied service.");
                 throw new TicketException(TicketException.INVALID_SERVICE, "ticket '" + serviceTicketId + "' does not match supplied service");

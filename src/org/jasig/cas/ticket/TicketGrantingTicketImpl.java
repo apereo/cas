@@ -65,7 +65,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public synchronized ServiceTicket grantServiceTicket(Service service) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), this, service,
             this.getCountOfUses() == 0, this.serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
-        
+
         this.incrementCountOfUses();
 
         return serviceTicket;

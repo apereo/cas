@@ -18,60 +18,65 @@ import junit.framework.TestCase;
  */
 public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestCase {
 
-	final private URL httpBackedUrl;
+    final private URL httpBackedUrl;
 
-	final private URL httpsProperCertificateUrl;
+    final private URL httpsProperCertificateUrl;
 
-	final private URL httpsInproperCertificateUrl;
+    final private URL httpsInproperCertificateUrl;
 
-	final private AuthenticationHandler authenticationHandler;
+    final private AuthenticationHandler authenticationHandler;
 
-	public HttpBasedServiceCredentialsAuthenticationHandlerTests() throws MalformedURLException {
-		this.httpBackedUrl = new URL("http://www.ja-sig.org");
-		this.httpsProperCertificateUrl = new URL("https://www.acs.rutgers.edu");
-		this.httpsInproperCertificateUrl = new URL("https://clue.acs.rutgers.edu/");
-		this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
-	}
+    public HttpBasedServiceCredentialsAuthenticationHandlerTests() throws MalformedURLException {
+        this.httpBackedUrl = new URL("http://www.ja-sig.org");
+        this.httpsProperCertificateUrl = new URL("https://www.acs.rutgers.edu");
+        this.httpsInproperCertificateUrl = new URL("https://clue.acs.rutgers.edu/");
+        this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
+    }
 
-	public void testSupportsProperUserCredentials() {
+    public void testSupportsProperUserCredentials() {
         try {
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(this.httpsInproperCertificateUrl);
-        	this.authenticationHandler.authenticate(c);
-        } catch (AuthenticationException e) {
+            this.authenticationHandler.authenticate(c);
+        }
+        catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
-	}
+    }
 
-	public void testDoesntSupportBadUserCredentials() {
+    public void testDoesntSupportBadUserCredentials() {
         try {
-        	this.authenticationHandler.authenticate(new UsernamePasswordCredentials());
-        } catch (AuthenticationException e) {
-        	return;
+            this.authenticationHandler.authenticate(new UsernamePasswordCredentials());
+        }
+        catch (AuthenticationException e) {
+            return;
         }
         fail("AuthenticationException expected.");
-	}
+    }
 
-	public void testAcceptsProperCertificateCredentials() {
-		try {
-			assertTrue(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpsProperCertificateUrl)));
-		} catch (AuthenticationException e) {
-			fail("We should not have gotten an error.");
-		}
-	}
+    public void testAcceptsProperCertificateCredentials() {
+        try {
+            assertTrue(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpsProperCertificateUrl)));
+        }
+        catch (AuthenticationException e) {
+            fail("We should not have gotten an error.");
+        }
+    }
 
-	public void testRejectsInProperCertificateCredentials() {
-		try {
-			assertFalse(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpsInproperCertificateUrl)));
-		} catch (AuthenticationException e) {
-			// this is okay;
-		}
-	}
+    public void testRejectsInProperCertificateCredentials() {
+        try {
+            assertFalse(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpsInproperCertificateUrl)));
+        }
+        catch (AuthenticationException e) {
+            // this is okay;
+        }
+    }
 
-	public void testRejectsNonHttpsCredentials() {
-		try {
-			assertFalse(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpBackedUrl)));
-		} catch (AuthenticationException e) {
-			// this is okay.
-		}
-	}
+    public void testRejectsNonHttpsCredentials() {
+        try {
+            assertFalse(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpBackedUrl)));
+        }
+        catch (AuthenticationException e) {
+            // this is okay.
+        }
+    }
 }

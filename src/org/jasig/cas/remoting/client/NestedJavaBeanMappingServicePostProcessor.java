@@ -40,10 +40,9 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
     private List beans;
 
     private Class serviceInterface;
-    
+
     /**
-     * 
-     * @param mapping The registry to add the  beans to.
+     * @param mapping The registry to add the beans to.
      * @param registeredBeans The list of beans registered so far.
      * @param clazz The class to loop through looking for beans to add.
      */
@@ -97,9 +96,8 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
 
         registry.register("http://schemas.xmlsoap.org/soap/encoding/", mapping);
     }
-    
+
     /**
-     * 
      * @param mapping The TypeMapping to register the bean to.
      * @param clazz The JavaBean class to register.
      */
