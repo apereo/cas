@@ -15,12 +15,11 @@ import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ProxyTicket;
 import org.jasig.cas.ticket.TicketManager;
 import org.jasig.cas.ticket.validation.ValidationRequest;
+import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.web.bind.BindUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-
-
 
 /**
  * 
@@ -28,70 +27,55 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * 
  * @author Scott Battaglia
  * @version $Id$
- *
+ *  
  */
-public class ProxyController extends AbstractController
-{
-	protected final Log logger = LogFactory.getLog(getClass());
-	private TicketManager ticketManager;
-	private String casProxySuccess;
-	private String casProxyFailure;
-	
-	public ProxyController() {
-		setCacheSeconds(0);
-	}
-	
-	/**
-	 * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ValidationRequest validationRequest = new ValidationRequest();
-		CasAttributes casAttributes = new CasAttributes();
-		ProxyGrantingTicket ticket;
-		ProxyTicket proxyTicket;
-		Map model = new HashMap();
-		
-		BindUtils.bind(request, validationRequest, "validationRequest");
-		BindUtils.bind(request, casAttributes, "casAttributes");
-		validationRequest.setTicket(validationRequest.getPgt());
+public class ProxyController extends AbstractController {
+    protected final Log logger = LogFactory.getLog(getClass());
 
-		logger.info("Attempting to retrieve valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-		ticket = ticketManager.validateProxyGrantingTicket(validationRequest);
-		
-		if (ticket != null)
-		{
-			logger.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-			proxyTicket = ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
-			model.put(WebConstants.TICKET, proxyTicket.getId());
-			return new ModelAndView(casProxySuccess, model);
-		}
-		else
-		{
-			logger.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-			model.put(WebConstants.CODE, "BAD_PGT");
-			model.put(WebConstants.DESC, "unrecognized pgt: " + validationRequest.getTicket());
-			return new ModelAndView(casProxyFailure, model);
-		}
-	}
-	/**
-	 * @param casProxyFailure The casProxyFailure to set.
-	 */
-	public void setCasProxyFailure(String casProxyFailure)
-	{
-		this.casProxyFailure = casProxyFailure;
-	}
-	/**
-	 * @param casProxySuccess The casProxySuccess to set.
-	 */
-	public void setCasProxySuccess(String casProxySuccess)
-	{
-		this.casProxySuccess = casProxySuccess;
-	}
-	/**
-	 * @param ticketManager The ticketManager to set.
-	 */
-	public void setTicketManager(TicketManager ticketManager)
-	{
-		this.ticketManager = ticketManager;
-	}
+    private TicketManager ticketManager;
+
+    public ProxyController() {
+        setCacheSeconds(0);
+    }
+
+    /**
+     * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
+     *      javax.servlet.http.HttpServletResponse)
+     */
+    protected ModelAndView handleRequestInternal(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        ValidationRequest validationRequest = new ValidationRequest();
+        CasAttributes casAttributes = new CasAttributes();
+        ProxyGrantingTicket ticket;
+        ProxyTicket proxyTicket;
+        Map model = new HashMap();
+
+        BindUtils.bind(request, validationRequest, "validationRequest");
+        BindUtils.bind(request, casAttributes, "casAttributes");
+        validationRequest.setTicket(validationRequest.getPgt());
+
+        logger
+                .info("Attempting to retrieve valid ProxyGrantingTicket for ticket id ["
+                        + validationRequest.getTicket() + "]");
+        ticket = ticketManager.validateProxyGrantingTicket(validationRequest);
+
+        if (ticket != null) {
+            logger.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+            proxyTicket = ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
+            model.put(WebConstants.TICKET, proxyTicket.getId());
+            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, model);
+        } else {
+            logger.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+            model.put(WebConstants.CODE, "BAD_PGT");
+            model.put(WebConstants.DESC, "unrecognized pgt: " + validationRequest.getTicket());
+            return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
+        }
+    }
+
+    /**
+     * @param ticketManager The ticketManager to set.
+     */
+    public void setTicketManager(TicketManager ticketManager) {
+        this.ticketManager = ticketManager;
+    }
 }

@@ -6,7 +6,7 @@
 		<property name="basename"><value>messages</value></property>										
 	</bean>
 	
-	<bean id="blah" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location"><value>WEB-INF/cas.properties</value></property>
 	</bean>
 	
@@ -41,7 +41,7 @@
 
 	<!-- Ticket Factories -->
 	<bean id="ticketFactory" class="org.jasig.cas.ticket.factory.DefaultTicketFactory">
-		<property name="ticketHelpers">
+		<property name="ticketCreators">
 			<list>
 				<ref local="proxyGrantingTicketCreator" />
 				<ref local="proxyTicketCreator" />
@@ -99,7 +99,7 @@
 					<property name="jobDetail">
 						<bean id="methodInvokingRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 							<property name="targetObject">
-								<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.DefaultTicketRegistryCleaner">
+								<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner">
 									<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
 								</bean>
 							</property>

@@ -16,6 +16,7 @@ import org.jasig.cas.ticket.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketManager;
 import org.jasig.cas.ticket.validation.ValidationRequest;
+import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.web.bind.BindUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,8 +35,6 @@ public class ServiceValidateController extends AbstractController
 {
 	protected final Log logger = LogFactory.getLog(getClass());
 	private TicketManager ticketManager;
-	private String casValidationFailure;
-	private String casValidationSuccess;
 
 	/**
 	 * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -56,7 +55,7 @@ public class ServiceValidateController extends AbstractController
 			logger.info("ServiceTicket [" + validationRequest.getTicket() + "was invalid.");
 			model.put(WebConstants.CODE, "INVALID_TICKET");
 			model.put(WebConstants.DESC, "ticket '" + validationRequest.getTicket() + "' not recognized.");
-			return new ModelAndView(casValidationFailure, model);
+			return new ModelAndView(ViewNames.CONST_SERVICE_FAILURE, model);
 		}
 		else
 		{
@@ -76,23 +75,9 @@ public class ServiceValidateController extends AbstractController
 		
 		model.put(WebConstants.PRINCIPAL, serviceTicket.getPrincipal());
 		
-		return new ModelAndView(casValidationSuccess, model);
+		return new ModelAndView(ViewNames.CONST_SERVICE_SUCCESS, model);
 	}
-	
-	/**
-	 * @param casValidationFailure The casValidationFailure to set.
-	 */
-	public void setCasValidationFailure(String casValidationFailure)
-	{
-		this.casValidationFailure = casValidationFailure;
-	}
-	/**
-	 * @param casValidationSuccess The casValidationSuccess to set.
-	 */
-	public void setCasValidationSuccess(String casValidationSuccess)
-	{
-		this.casValidationSuccess = casValidationSuccess;
-	}
+
 	/**
 	 * @param ticketManager The ticketManager to set.
 	 */

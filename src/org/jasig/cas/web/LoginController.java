@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationRequest;
+import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -22,6 +23,7 @@ import org.jasig.cas.ticket.validation.BasicAuthenticationRequestValidator;
 import org.jasig.cas.ticket.validation.ValidationRequest;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
+import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
@@ -49,9 +51,6 @@ import org.springframework.web.util.WebUtils;
  */
 public class LoginController extends AbstractFormController {
 	protected final Log logger = LogFactory.getLog(getClass());
-	private String formView;
-	private String successView;
-	private String confirmView;
 	private TicketManager ticketManager;
 	private AuthenticationManager authenticationManager;
 	private Map loginTokens;
@@ -60,6 +59,8 @@ public class LoginController extends AbstractFormController {
 	public LoginController() {
 		setCacheSeconds(0);
 		this.setValidator(new BasicAuthenticationRequestValidator());
+		this.setCommandName("authenticationRequest");
+		this.setCommandClass(UsernamePasswordAuthenticationRequest.class);
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class LoginController extends AbstractFormController {
 		AuthenticationRequest authRequest = (AuthenticationRequest) command;
 		CasAttributes casAttributes = new CasAttributes();
 		ValidationRequest validationRequest = new ValidationRequest();
-		BindUtils.bind(request, authRequest, "authenticationRequest");
+		BindUtils.bind(request, authRequest, this.getCommandName());
 		BindUtils.bind(request, validationRequest, "validationRequest");
 		BindUtils.bind(request, casAttributes, "casAttributes");
 		Principal principal;
@@ -144,7 +145,7 @@ public class LoginController extends AbstractFormController {
 			return mv;
 
 		model.put(WebConstants.CAS_ATTRIBUTES, casAttributes);
-		return super.showForm(request, errors, formView, model);
+		return super.showForm(request, errors, ViewNames.CONST_LOGON, model);
 	}
 
 	private ModelAndView getViewToForwardTo(HttpServletRequest request, TicketGrantingTicket ticket, CasAttributes casAttributes, ValidationRequest validationRequest) {
@@ -178,7 +179,7 @@ public class LoginController extends AbstractFormController {
 			model.put(WebConstants.FIRST, new Boolean(first).toString());
 			if (!first) {
 				if (privacyRequested(request))
-					return new ModelAndView(confirmView, model);
+					return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
 				else {
 					model.remove(WebConstants.SERVICE);
 					return new ModelAndView(new RedirectView(service), model);
@@ -186,7 +187,7 @@ public class LoginController extends AbstractFormController {
 			} else
 				return new ModelAndView(new RedirectView(service), model);
 		}
-		return new ModelAndView(successView);
+		return new ModelAndView(ViewNames.CONST_LOGON_SUCCESS);
 	}
 
 	private boolean privacyRequested(HttpServletRequest request) {
@@ -212,27 +213,6 @@ public class LoginController extends AbstractFormController {
 	 */
 	public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
-	}
-
-	/**
-	 * @param confirmView The confirmView to set.
-	 */
-	public void setConfirmView(final String confirmView) {
-		this.confirmView = confirmView;
-	}
-
-	/**
-	 * @param formView The formView to set.
-	 */
-	public void setFormView(final String formView) {
-		this.formView = formView;
-	}
-
-	/**
-	 * @param successView The successView to set.
-	 */
-	public void setSuccessView(final String successView) {
-		this.successView = successView;
 	}
 
 	/**

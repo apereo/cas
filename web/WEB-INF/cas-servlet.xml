@@ -2,15 +2,12 @@
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 	<!-- View Resolver -->
-	<bean id="viewResolver"  class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		<property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
-		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
-		<property name="suffix"><value>.jsp</value></property>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+		<property name="basename"><value>default_views</value></property>
 	</bean>
 
 	<!-- Handler Mapping -->
-    <bean id="handlerMapping" 
-          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
+    <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
         <property name="mappings">
             <props>
                 <prop key="/login">loginController</prop>
@@ -23,35 +20,15 @@
         </property>
     </bean>
 	
-	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController">
-		<property name="casValidationFailure"><value>casServiceValidationFailure</value></property>
-		<property name="casValidationSuccess"><value>casServiceValidationSuccess</value></property>
-		<property name="ticketManager"><ref bean="ticketManager" /></property>
-	</bean>
+	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType" />
 	
-	<bean id="proxyController" class="org.jasig.cas.web.ProxyController">
-		<property name="casProxyFailure"><value>casProxyFailureView</value></property>
-		<property name="casProxySuccess"><value>casProxySuccessView</value></property>
-		<property name="ticketManager"><ref bean="ticketManager" /></property>
-	</bean>
+	<bean id="proxyController" class="org.jasig.cas.web.ProxyController" autowire="byType" />
 	
-	<bean id="logoutController" class="org.jasig.cas.web.LogoutController">
-		<property name="logoutView"><value>casLogoutView</value></property>
-		<property name="ticketManager"><ref bean="ticketManager" /></property>
-	</bean>
+	<bean id="logoutController" class="org.jasig.cas.web.LogoutController" autowire="byType" />
 	
-	<bean id="legacyValidateController" class="org.jasig.cas.web.LegacyValidateController">
-		<property name="ticketManager"><ref bean="ticketManager" /></property>
-	</bean>
+	<bean id="legacyValidateController" class="org.jasig.cas.web.LegacyValidateController" autowire="byType" />
 	
-	<bean id="loginController" class="org.jasig.cas.web.LoginController">
-		<property name="authenticationManager"><ref bean="authenticationManager" /></property>
-		<property name="confirmView"><value>casConfirmView</value></property>
-		<property name="formView"><value>casFailureView</value></property>
-		<property name="successView"><value>casGenericSuccess</value></property>
-		<property name="ticketManager"><ref bean="ticketManager" /></property>
-		<property name="commandClass"><value>org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest</value></property>
-		<property name="commandName"><value>authenticationRequest</value></property>
+	<bean id="loginController" class="org.jasig.cas.web.LoginController" autowire="byType">
 		<property name="loginTokens"><ref bean="loginTokens" /></property>
 	</bean>
 </beans>
