@@ -50,7 +50,7 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticatio
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected boolean supports(Credentials credentials) {
-        return credentials == null && credentials.getClass().equals(UsernamePasswordCredentials.class);
+        return credentials != null && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
 
     /**
