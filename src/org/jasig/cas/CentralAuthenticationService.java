@@ -12,10 +12,10 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 
 /**
- * CentralAuthenticationService (CAS) is the published public interface/service facade. CAS has the following responsibilities:
- * <ol>
- * <li>Create, grant, find, and validate tickets</li>
- * </ol>
+ * The main runtime interface between a Java application and CAS. This is the central public API class abstracting the notion of an authentication
+ * service.
+ * <p>
+ * The main function of the CentralAuthenticationService is to offer create, grant, find and validate operations for instances CAS tickets.
  * 
  * @author William G. Thompson, Jr.
  * @author Dmitry Kopylenko
@@ -76,14 +76,8 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication to other Services.
      * 
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
+     * TODO: Rename the method name
      */
     String delegateTicketGrantingTicket(String serviceTicketId, Credentials credentials) throws TicketException, AuthenticationException;
-
-    /**
-     * Return the CAS version.
-     * 
-     * @return the CAS version string.
-     */
-    String getVersion();
 
 }
