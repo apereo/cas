@@ -16,8 +16,7 @@
 		<meta name="keywords" content="Central Authentication Service,JA-SIG,CAS" />
 	
 		<!-- THIS CODE PROVIDES THE FORMATTING FOR THE TEXT - PLEASE LEAVE INTACT -->
-		<link rel="stylesheet" href="css/acs.css" type="text/css" media="all" />
-		<link rel="stylesheet" href="css/cas.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="<spring:theme code="css" />" type="text/css" media="all" />
 		<script src="js/common.js" type="text/javascript"></script>
 	</head>
 

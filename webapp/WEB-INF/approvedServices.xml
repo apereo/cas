@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 	<!-- SERVICE REGISTRY -->
 	<bean id="serviceRegistry" class="org.jasig.cas.services.DefaultServiceRegistry" />
@@ -5,14 +7,14 @@
 	<!-- ADVICE -->
 	
 	<bean id="serviceAllowedMethodBeforeAdvice" class="org.jasig.cas.services.advice.ServiceAllowedMethodBeforeAdvice">
-		<property name="serviceRegistry"><ref local="serviceRegistry" />
+		<property name="serviceRegistry"><ref local="serviceRegistry" /></property>
 	</bean>
 
 
 	<!-- ADVISORS -->	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 
-	<!-- ADVISE TO CHECK IF A SERVICE IS EVEN ALLOWED TO 	
+	<!-- ADVISE TO CHECK IF A SERVICE IS EVEN ALLOWED TO ACCESS THE SYSTEM -->
 	<bean id="serviceAllowedMethodBeforeAdviceAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
 		<constructor-arg><ref local="serviceAllowedMethodBeforeAdvice" /></constructor-arg>
 		<property name="patterns">
