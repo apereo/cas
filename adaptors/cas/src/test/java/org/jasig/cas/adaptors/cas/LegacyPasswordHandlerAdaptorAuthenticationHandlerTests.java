@@ -19,7 +19,7 @@ import junit.framework.TestCase;
  * Testcase for LegacyPasswordHandlerAdaptorAuthenticationHandler.
  * @version $Revision$ $Date$
  */
-public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTest extends
+public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         TestCase {
 
     private LegacyPasswordHandlerAdaptorAuthenticationHandler lphaah;
