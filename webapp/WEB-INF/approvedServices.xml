@@ -58,7 +58,7 @@
 	</bean>
 	
 	<!--  SERVICE REGISTRY -->
-	<bean id="serviceRegistryJob" class="org.jasig.cas.services.support.DefaultReloadServiceContext">
+	<bean id="serviceRegistryJob" class="org.jasig.cas.services.support.SpringApplicationContextServiceRegistryReloader">
 		<property name="serviceRegistryManager"><ref bean="serviceRegistry" /></property>
 	</bean>
 	
