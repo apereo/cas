@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
@@ -99,6 +100,10 @@ public class ServiceValidateController extends AbstractController implements Ini
                 catch (MalformedURLException e) {
                     log.debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: " + pgtUrl);
                     log.debug("Exception message was: " + e.getMessage());
+                } catch (AuthenticationException e) {
+                    model.put(WebConstants.CODE, e.getCode());
+                    model.put(WebConstants.DESC, e.getDescription());
+                    return new ModelAndView(this.failureView, model);
                 }
             }
             model.put(WebConstants.ASSERTION, assertion);

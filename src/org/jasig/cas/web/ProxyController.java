@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.SimpleService;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,17 +46,24 @@ public class ProxyController extends AbstractController implements InitializingB
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String ticket = request.getParameter(WebConstants.PROXY_GRANTING_TICKET);
         final Service service = new SimpleService(request.getParameter(WebConstants.TARGET_SERVICE));
-        final String serviceTicket = this.centralAuthenticationService.grantServiceTicket(ticket, service);
+        
+        try {
+            final String serviceTicket = this.centralAuthenticationService.grantServiceTicket(ticket, service);
 
-        if (serviceTicket == null) {
+            if (serviceTicket == null) {
+                final Map model = new HashMap();
+                model.put(WebConstants.CODE, "BAD_PGT");
+                model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
+                return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
+            }
+    
+            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);
+        } catch (TicketException e) {
             final Map model = new HashMap();
-            model.put(WebConstants.CODE, "BAD_PGT");
-            model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
+            model.put(WebConstants.CODE, e.getCode());
+            model.put(WebConstants.DESC, e.getDescription());
             return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
-
         }
-
-        return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);
     }
 
     /**
