@@ -21,7 +21,6 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,8 +42,6 @@ public class ServiceValidateController extends AbstractController implements Ini
     private CentralAuthenticationService centralAuthenticationService;
 
     private Class authenticationSpecificationClass;
-
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     private ProxyHandler proxyHandler;
 
@@ -155,4 +152,10 @@ public class ServiceValidateController extends AbstractController implements Ini
     public void setSuccessView(String successView) {
         this.successView = successView;
     }
+	/**
+	 * @param proxyHandler The proxyHandler to set.
+	 */
+	public void setProxyHandler(ProxyHandler proxyHandler) {
+		this.proxyHandler = proxyHandler;
+	}
 }
