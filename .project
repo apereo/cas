@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CAS 3.0</name>
+	<name>cas3</name>
 	<comment></comment>
 	<projects>
+		<project>spring</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
