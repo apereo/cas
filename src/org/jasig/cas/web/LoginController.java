@@ -1,165 +1,194 @@
-/*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
- * http://www.uportal.org/license.html
+/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jasig.cas.authentication.AuthenticationManager;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.BasicCredentialsValidator;
+import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.ticket.CasAttributes;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.TicketManager;
-import org.jasig.cas.ticket.validation.BasicAuthenticationRequestValidator;
-import org.jasig.cas.ticket.validation.ValidationRequest;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.BindUtils;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractFormController;
+import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
 
 /**
- * Controller to handle login to CAS. Current flow is as follows: 1. If ticket granting ticket exists and not a renew, forward. 2. If ticket granting
- * ticket exists but is a renew then check a. if same username, access granted b. otherwise expire ticket and process login. 3. On authentication, if
- * for a service, redirect to the service. 4. Otherwise, generic CAS sign on.
- * 
  * @author Scott Battaglia
  * @version $Id$
+ *
  */
-public class LoginController extends AbstractFormController {
+public class LoginController extends SimpleFormController implements InitializingBean {
 
-    private TicketManager ticketManager;
+    /** LOGGING **/
+    protected final Log log = LogFactory.getLog(this.getClass());
 
-    private AuthenticationManager authenticationManager;
+    /** INSTANCE VARIABLES **/
+    private CentralAuthenticationService centralAuthenticationService;
+
+    private UniqueTokenIdGenerator uniqueTokenIdGenerator = null;
 
     private Map loginTokens;
 
-    private UniqueTokenIdGenerator idGenerator = new DefaultUniqueTokenIdGenerator();
-
     public LoginController() {
-        setCacheSeconds(0);
-        this.setValidator(new BasicAuthenticationRequestValidator());
-        this.setCommandName("authenticationRequest");
-        this.setCommandClass(UsernamePasswordCredentials.class);
+        this.setCacheSeconds(0);
+        this.setValidator(new BasicCredentialsValidator());
+        this.setFormView(ViewNames.CONST_LOGON);
+        this.setSuccessView(ViewNames.CONST_LOGON_SUCCESS);
     }
 
     /**
-     * @see org.springframework.web.servlet.mvc.AbstractFormController#processFormSubmission(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
-    protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
+    public void afterPropertiesSet() throws Exception {
+        if (this.loginTokens == null || this.centralAuthenticationService == null) {
+            throw new IllegalStateException("You must set loginTokens and centralAuthenticationService on " + this.getClass());
+        }
+
+        if (this.uniqueTokenIdGenerator == null) {
+            this.uniqueTokenIdGenerator = new DefaultUniqueTokenIdGenerator();
+            log.info("UniqueIdGenerator not set, using default UniqueIdGenerator of class: " + this.uniqueTokenIdGenerator.getClass());
+        }
+
+        if (this.getCommandClass() == null) {
+            this.setCommandName("credentials");
+            this.setCommandClass(UsernamePasswordCredentials.class);
+            log.info("CommandClass not set, using default CommandClass of " + this.getCommandClass().getName() + " and name of "
+                + this.getCommandName());
+        }
+    }
+
+    /**
+     * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
+     */
+    protected Map referenceData(final HttpServletRequest request) throws Exception {
+        final Map referenceData = new HashMap();
+
+        referenceData.put(WebConstants.LOGIN_TOKEN, this.getLoginToken()); // a unique token to solve browser back issues
+
+        return referenceData;
+    }
+
+    /**
+     * @see org.springframework.web.servlet.mvc.AbstractFormController#showForm(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.validation.BindException)
+     */
+    protected ModelAndView showForm(final HttpServletRequest request, final HttpServletResponse response, final BindException errors)
         throws Exception {
-        final Credentials authRequest = (Credentials)command;
-        final CasAttributes casAttributes = new CasAttributes();
-        final ValidationRequest validationRequest = new ValidationRequest();
-        BindUtils.bind(request, authRequest, this.getCommandName());
-        BindUtils.bind(request, validationRequest, "validationRequest");
-        BindUtils.bind(request, casAttributes, "casAttributes");
-        final Principal principal;
+        final String ticketGrantingTicketId = this.getCookieValue(request, WebConstants.COOKIE_TGC_ID);
+        final boolean warn = this.convertValueToBoolean(this.getCookieValue(request, WebConstants.COOKIE_PRIVACY));
+        final boolean gateway = StringUtils.hasText(request.getParameter(WebConstants.GATEWAY));
+        final String service = request.getParameter(WebConstants.SERVICE);
+        final boolean renew = StringUtils.hasText(request.getParameter(WebConstants.RENEW));
 
-        /*
-         * TicketGrantingTicket ticket = getTicketGrantingTicket(request, validationRequest); ModelAndView mv = getViewToForwardTo(request, ticket,
-         * casAttributes, validationRequest); if (mv != null) return mv;
-         */
+        // if we managed to find an existing ticketGrantingTicketId
+        if (ticketGrantingTicketId != null && StringUtils.hasText(service) && !renew) {
+            // we have a service and no request for renew
+            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
 
-        String loginToken = request.getParameter(WebConstants.TICKET);
+            if (serviceTicketId != null) {
 
-        if (!this.loginTokens.containsKey(loginToken)) {
-            logger.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
-            errors.reject("error.invalid.loginticket", null);
-            return showForm(request, response, errors);
-        }
+                if (warn) {
+                    final Map model = new HashMap();
 
-        this.loginTokens.remove(loginToken);
+                    model.put(WebConstants.TICKET, serviceTicketId);
+                    model.put(WebConstants.SERVICE, service);
+                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
+                }
 
-        principal = this.authenticationManager.authenticateCredentials(authRequest);
-
-        if (principal != null) {
-            logger.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");
-
-            TicketGrantingTicket ticket = getTicketGrantingTicket(request, principal, validationRequest);
-
-            if (ticket == null) {
-                logger.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
-                ticket = this.ticketManager.createTicketGrantingTicket(principal, casAttributes);
-                createCookie(WebConstants.COOKIE_TGC_ID, ticket.getId(), request, response);
+                return new ModelAndView(new RedirectView(service), WebConstants.TICKET, serviceTicketId); //assume first = false?
             }
-            if (casAttributes.isWarn())
-                createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
-            else
-                createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
-
-            casAttributes.setFirst(true);
-            return grantForService(request, ticket, casAttributes);
         }
 
-        errors.reject("error.username.and.password", null);
-        return showForm(request, response, errors);
+        // if we are being used as a gateway just bounce!
+        if (gateway && StringUtils.hasText(service))
+            return new ModelAndView(new RedirectView(service));
+
+        // otherwise display the logon form
+        return super.showForm(request, response, errors);
     }
 
     /**
-     * @see org.springframework.web.servlet.mvc.AbstractFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object,
-     * org.springframework.validation.Errors)
+     * @see org.springframework.web.servlet.mvc.AbstractFormController#processFormSubmission(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
      */
-    protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-        final Map map = new HashMap();
-        final String newToken = this.idGenerator.getNewTokenId();
-        this.loginTokens.put(newToken, new Date());
-        map.put(WebConstants.LOGIN_TICKET, newToken);
-        return map;
-    }
+    protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object object,
+        final BindException errors) throws Exception {
+        final Credentials credentials = (Credentials)object;
+        final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
+        final String service = request.getParameter(WebConstants.SERVICE);
+        final boolean warn = StringUtils.hasText(request.getParameter(WebConstants.WARN));
 
-    /**
-     * @see org.springframework.web.servlet.mvc.AbstractFormController#showForm(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse, org.springframework.validation.BindException)
-     */
-    protected ModelAndView showForm(HttpServletRequest request, HttpServletResponse response, BindException errors) throws Exception {
-
-        final ValidationRequest validationRequest = new ValidationRequest();
-        final CasAttributes casAttributes = new CasAttributes();
-        final Map model = new HashMap();
-
-        BindUtils.bind(request, validationRequest, "validationRequest");
-        BindUtils.bind(request, casAttributes, "casAttributes");
-        final TicketGrantingTicket ticket = getTicketGrantingTicket(request, null, validationRequest); // assume no principal since we haven't posted
-                                                                                                        // to the form yet.
-        final ModelAndView mv = getViewToForwardTo(request, ticket, casAttributes, validationRequest);
-
-        if (mv != null)
-            return mv;
-
-        model.put(WebConstants.CAS_ATTRIBUTES, casAttributes);
-        return super.showForm(request, errors, ViewNames.CONST_LOGON, model);
-    }
-
-    private ModelAndView getViewToForwardTo(HttpServletRequest request, TicketGrantingTicket ticket, CasAttributes casAttributes,
-        ValidationRequest validationRequest) {
-        if (ticket != null) {
-            if (!validationRequest.isRenew()) {
-                casAttributes.setFirst(false);
-                return grantForService(request, ticket, casAttributes);
-            }
-            if (StringUtils.hasText(casAttributes.getGateway()) && StringUtils.hasText(validationRequest.getService()))
-                return new ModelAndView(new RedirectView(validationRequest.getService()));
+        // the ticket was not created because invalid Credentials
+        if (ticketGrantingTicketId == null) {
+            errors.reject("bad.credentials", null);
+            super.processFormSubmission(request, response, object, errors);
         }
-        return null;
+
+        final String oldTicketGrantingTicketId = getCookieValue(request, WebConstants.COOKIE_TGC_ID);
+
+        if (oldTicketGrantingTicketId != null)
+            this.centralAuthenticationService.destroyTicketGrantingTicket(oldTicketGrantingTicketId);
+
+        this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId, request, response);
+
+        if (warn)
+            this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
+        else
+            this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+
+        if (StringUtils.hasText(service)) {
+            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
+
+            if (warn) {
+                final Map model = new HashMap();
+
+                model.put(WebConstants.TICKET, serviceTicketId);
+                model.put(WebConstants.SERVICE, service);
+                model.put(WebConstants.FIRST, "true");
+                return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
+            }
+
+            final Map model = new HashMap();
+            model.put(WebConstants.TICKET, serviceTicketId);
+            model.put(WebConstants.FIRST, "true");
+
+            return new ModelAndView(new RedirectView(service), model);
+        }
+
+        return super.processFormSubmission(request, response, object, errors);
     }
 
-    private void createCookie(String id, String value, HttpServletRequest request, HttpServletResponse response) {
+    private String getLoginToken() {
+        final String loginToken = this.uniqueTokenIdGenerator.getNewTokenId();
+        this.loginTokens.put(loginToken, new Date());
+
+        return loginToken;
+    }
+
+    private String getCookieValue(final HttpServletRequest request, final String cookieId) {
+        Cookie cookie = WebUtils.getCookie(request, cookieId);
+
+        return (cookie == null) ? null : cookie.getValue();
+    }
+
+    private void createCookie(final String id, final String value, final HttpServletRequest request, final HttpServletResponse response) {
         final Cookie cookie = new Cookie(id, value);
         cookie.setSecure(true);
         cookie.setMaxAge(-1);
@@ -167,66 +196,15 @@ public class LoginController extends AbstractFormController {
         response.addCookie(cookie);
     }
 
-    private ModelAndView grantForService(final HttpServletRequest request, final TicketGrantingTicket ticket, CasAttributes casAttributes) {
-        final Map model = new HashMap();
-        final String service = casAttributes.getService();
-        final boolean first = casAttributes.isFirst();
-        if (StringUtils.hasText(service)) {
-            final String token = this.ticketManager.createServiceTicket(casAttributes, ticket).getId();
-            model.put(WebConstants.TICKET, token);
-            model.put(WebConstants.SERVICE, service);
-            model.put(WebConstants.FIRST, new Boolean(first).toString());
-            if (!first) {
-                if (privacyRequested(request))
-                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
-
-                model.remove(WebConstants.SERVICE);
-                return new ModelAndView(new RedirectView(service), model);
-            }
-
-            return new ModelAndView(new RedirectView(service), model);
-        }
-        return new ModelAndView(ViewNames.CONST_LOGON_SUCCESS);
-    }
-
-    private boolean privacyRequested(HttpServletRequest request) {
-        final Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_PRIVACY);
-        if (cookie == null)
-            return false;
-        return Boolean.getBoolean(cookie.getValue());
-    }
-
-    private TicketGrantingTicket getTicketGrantingTicket(final HttpServletRequest request, final Principal principal,
-        final ValidationRequest validationRequest) {
-        final Cookie tgt = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
-        validationRequest.setPrincipal(principal);
-        TicketGrantingTicket ticket = null;
-        if (tgt != null) {
-            validationRequest.setTicket(tgt.getValue());
-            ticket = this.ticketManager.validateTicketGrantingTicket(validationRequest);
-        }
-        return ticket;
+    private boolean convertValueToBoolean(final String value) {
+        return Boolean.getBoolean(value);
     }
 
     /**
-     * @param authenticationManager The authenticationManager to set.
+     * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
-    /**
-     * @param ticketManager The ticketManager to set.
-     */
-    public void setTicketManager(final TicketManager ticketManager) {
-        this.ticketManager = ticketManager;
-    }
-
-    /**
-     * @param idGenerator The idGenerator to set.
-     */
-    public void setIdGenerator(final UniqueTokenIdGenerator idGenerator) {
-        this.idGenerator = idGenerator;
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     /**
@@ -234,5 +212,12 @@ public class LoginController extends AbstractFormController {
      */
     public void setLoginTokens(final Map loginTokens) {
         this.loginTokens = loginTokens;
+    }
+
+    /**
+     * @param uniqueTokenIdGenerator The uniqueTokenIdGenerator to set.
+     */
+    public void setUniqueTokenIdGenerator(final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
+        this.uniqueTokenIdGenerator = uniqueTokenIdGenerator;
     }
 }

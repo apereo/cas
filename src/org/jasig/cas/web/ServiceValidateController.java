@@ -6,19 +6,21 @@ package org.jasig.cas.web;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.CasAttributes;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
-import org.jasig.cas.ticket.ProxyTicket;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketManager;
-import org.jasig.cas.ticket.validation.ValidationRequest;
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Assertion;
+import org.jasig.cas.authentication.AuthenticationSpecification;
+import org.jasig.cas.authentication.Cas20ProtocolAuthenticationSpecification;
+import org.jasig.cas.authentication.SimpleService;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
-import org.springframework.web.bind.BindUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -28,56 +30,67 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class ServiceValidateController extends AbstractController {
+public class ServiceValidateController extends AbstractController implements InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    private TicketManager ticketManager;
+    private CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (this.centralAuthenticationService == null) {
+            throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
+        }
+    }
     /**
      * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ValidationRequest validationRequest = new ValidationRequest();
-        CasAttributes casAttributes = new CasAttributes();
-        Map model = new HashMap();
-        ServiceTicket serviceTicket;
-        BindUtils.bind(request, validationRequest, "validationRequest");
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final String serviceTicketId = request.getParameter(WebConstants.TICKET);
+        final String service = request.getParameter(WebConstants.SERVICE);
+        final String renew = request.getParameter("renew");
+        final Map model = new HashMap();
+        final AuthenticationSpecification authenticationSpecification = new Cas20ProtocolAuthenticationSpecification(StringUtils.hasText(renew));
+        final Assertion assertion;
 
-        log.info("Attempting to retrieve a valid ServiceTicket for [" + validationRequest.getTicket() + "]");
-        serviceTicket = this.ticketManager.validateServiceTicket(validationRequest);
+        try {
+            assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service), authenticationSpecification);
 
-        if (serviceTicket == null) {
-            log.info("ServiceTicket [" + validationRequest.getTicket() + "] was invalid.");
-            model.put(WebConstants.CODE, "INVALID_TICKET");
-            model.put(WebConstants.DESC, "ticket '" + validationRequest.getTicket() + "' not recognized.");
+            model.put(WebConstants.PRINCIPAL, assertion.getPrincipal());
+
+            return new ModelAndView(ViewNames.CONST_SERVICE_SUCCESS, model);
+        }
+        catch (TicketException te) {
+            model.put(WebConstants.CODE, te.getCode());
+            model.put(WebConstants.DESC, te.getDescription());
+
             return new ModelAndView(ViewNames.CONST_SERVICE_FAILURE, model);
         }
 
-        log.info("ServiceTicket [" + validationRequest.getTicket() + "] was valid.");
+        /*
 
-        if (validationRequest.getPgtUrl() != null) {
-            log.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + "].");
-            ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(casAttributes,
-                serviceTicket);
-            model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
-        }
+         if (validationRequest.getPgtUrl() != null) {
+         log.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
+         ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(casAttributes,
+         serviceTicket);
+         model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
+         }
 
-        if (serviceTicket instanceof ProxyTicket) {
-            ProxyTicket p = (ProxyTicket)serviceTicket;
-            model.put(WebConstants.PROXIES, p.getProxies());
-        }
-
-        model.put(WebConstants.PRINCIPAL, serviceTicket.getGrantor().getPrincipal());
-
-        return new ModelAndView(ViewNames.CONST_SERVICE_SUCCESS, model);
+         if (serviceTicket instanceof ProxyTicket) {
+         ProxyTicket p = (ProxyTicket)serviceTicket;
+         model.put(WebConstants.PROXIES, p.getProxies());
+         }
+         */
+        // TODO implement
     }
 
     /**
-     * @param this.ticketManager The this.ticketManager to set.
+     * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setTicketManager(TicketManager ticketManager) {
-        this.ticketManager = ticketManager;
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }
