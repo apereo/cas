@@ -15,6 +15,11 @@ public class HttpBasedServiceCredentialsToPrincipalResolver implements Credentia
 	 */
 	public Principal resolvePrincipal(Credentials credentials) {
 		HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
+
+		if (credentials == null)
+		    throw new IllegalArgumentException("credentials cannot be null.");
+	
+		
 		return new SimpleService(serviceCredentials.getCallbackUrl().toExternalForm());
 	}
 
@@ -22,6 +27,6 @@ public class HttpBasedServiceCredentialsToPrincipalResolver implements Credentia
 	 * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#supports(org.jasig.cas.authentication.principal.Credentials)
 	 */
 	public boolean supports(Credentials credentials) {
-        return HttpBasedServiceCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null && HttpBasedServiceCredentials.class.isAssignableFrom(credentials.getClass());
 	}
 }

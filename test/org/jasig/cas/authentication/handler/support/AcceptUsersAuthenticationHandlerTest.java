@@ -4,11 +4,13 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.jasig.cas.adaptors.cas.LegacyCasTrustedCredentials;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import junit.framework.TestCase;
 
@@ -40,7 +42,11 @@ public class AcceptUsersAuthenticationHandlerTest extends TestCase {
     }
     
     public void testDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(new LegacyCasTrustedCredentials()));
+        try {
+        	assertFalse(this.authenticationHandler.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
+        } catch (MalformedURLException e) {
+            fail("Could not resolve URL.");
+        }
     }
     
     public void testAuthenticatesUserInMap() {

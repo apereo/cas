@@ -1,5 +1,7 @@
-package org.jasig.cas.helper;
+package org.jasig.cas.authentication.principal;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
@@ -15,6 +17,22 @@ public class DefaultCredentialsToPrincipalResolverTest extends TestCase {
 
     private CredentialsToPrincipalResolver resolver = new DefaultCredentialsToPrincipalResolver();
 
+    public void testValidSupportsCredentials() {
+        assertTrue(this.resolver.supports(new UsernamePasswordCredentials()));
+    }
+    
+    public void testNullSupportsCredentials() {
+        assertFalse(this.resolver.supports(null));
+    }
+    
+    public void testInvalidSupportsCredentials() {
+        try {
+        	assertFalse(this.resolver.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
+        } catch (MalformedURLException e) {
+            fail("Invalid URL supplied.");
+        }
+    }
+    
     public void testValidCredentials() {
         UsernamePasswordCredentials request = new UsernamePasswordCredentials();
         request.setUserName("test");
@@ -33,8 +51,15 @@ public class DefaultCredentialsToPrincipalResolverTest extends TestCase {
             return;
         }
 
-        catch (Exception e) {
-            fail("IllegalArgumentException expected.");
+        fail("IllegalArgumentException expected.");
+    }
+    
+    public void testNullCredentials() {
+        try {
+            this.resolver.resolvePrincipal(null);
+        }
+        catch (IllegalArgumentException e) {
+            return;
         }
 
         fail("IllegalArgumentException expected.");

@@ -24,6 +24,10 @@ public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrinc
      */
     public Principal resolvePrincipal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
+        
+        if (credentials == null)
+            throw new IllegalArgumentException("credentials cannot be null");
+
         log.debug("Creating SimplePrincipal for [" + usernamePasswordCredentials.getUserName() + "]");
         return new SimplePrincipal(usernamePasswordCredentials.getUserName());
     }
@@ -32,6 +36,6 @@ public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrinc
      * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     public boolean supports(Credentials request) {
-        return UsernamePasswordCredentials.class.isAssignableFrom(request.getClass());
+        return request != null && UsernamePasswordCredentials.class.isAssignableFrom(request.getClass());
     }
 }
