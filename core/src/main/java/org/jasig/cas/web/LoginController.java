@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -227,10 +226,7 @@ public final class LoginController extends SimpleFormController implements
                     WebConstants.TICKET, serviceTicketId);
             }
         } catch (TicketException e) {
-            errors.reject("ticketException", e.getDescription());
-
-        } catch (AuthenticationException e) {
-            errors.reject(e.getCode(), "");
+            errors.reject(e.getCode(), e.getDescription());
         }
 
         return super.processFormSubmission(request, response, command, errors);

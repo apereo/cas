@@ -29,4 +29,8 @@ public abstract class AuthenticationException extends Exception {
     protected final void setCode(final String code) {
         this.code = code;
     }
+    
+    public final String toString() {
+        return this.code;
+    }
 }

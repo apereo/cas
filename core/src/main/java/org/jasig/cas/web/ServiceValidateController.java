@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.SimpleService;
@@ -128,8 +127,8 @@ public final class ServiceValidateController extends AbstractController
                         .debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: "
                             + pgtUrl);
                     log.debug("Exception message was: " + e.getMessage());
-                } catch (AuthenticationException e) {
-                    log.info("AuthenticationException authenticating: "
+                } catch (TicketException e) {
+                    log.info("TicketException generating ticket for: "
                         + pgtUrl);
                 }
             }
