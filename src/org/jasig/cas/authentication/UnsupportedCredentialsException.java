@@ -11,19 +11,23 @@ package org.jasig.cas.authentication;
  */
 public class UnsupportedCredentialsException extends AuthenticationException {
 
-	/**
+    private static final long serialVersionUID = 3977861752513837361L;
+    
+    private static final String CODE = "AUTH_ERROR_UNSUPPORTED_CREDENTIALS";
+    
+    private static final String DESCRIPTION = "Credentials not supported by this handler.";
+
+    /**
 	 * 
 	 */
 	public UnsupportedCredentialsException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * @param arg0
 	 */
 	public UnsupportedCredentialsException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * @param arg0
@@ -31,13 +35,19 @@ public class UnsupportedCredentialsException extends AuthenticationException {
 	 */
 	public UnsupportedCredentialsException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * @param arg0
 	 */
 	public UnsupportedCredentialsException(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
+    
+    public String getCode() {
+        return CODE;
+    }
+    
+    public String getDescription() {
+        return DESCRIPTION;
+    }
 }

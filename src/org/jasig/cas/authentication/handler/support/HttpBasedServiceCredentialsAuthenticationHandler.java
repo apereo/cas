@@ -22,7 +22,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     private static final String PROTOCOL_HTTPS = "https";
 
     /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
+     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#authenticateInternal(org.jasig.cas.authentication.principal.Credentials)
      */
     public boolean authenticateInternal(Credentials credentials) throws AuthenticationException {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
@@ -43,7 +43,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
+     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected boolean supports(Credentials credentials) {
         return HttpBasedServiceCredentials.class.isAssignableFrom(credentials.getClass());

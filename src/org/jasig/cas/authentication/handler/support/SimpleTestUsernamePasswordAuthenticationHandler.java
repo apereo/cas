@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
+     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#authenticateInternal(org.jasig.cas.authentication.principal.Credentials)
      */
     public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
