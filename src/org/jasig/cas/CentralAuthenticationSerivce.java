@@ -54,12 +54,12 @@ public interface CentralAuthenticationSerivce {
      public void destroyTicketGrantingTicket(String ticketGrantingTicketId);
      
      /**
-      * Grant a TicketGrantingTicket to a Service for proxying authentication
+      * Delegate a TicketGrantingTicket to a Service for proxying authentication
       * to other Services.
       * 
       * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
       */
-     public TicketGrantingTicket grantTicketGrantingTicket(String serviceTicketId, Credentials credentials);
+     public TicketGrantingTicket delegateTicketGrantingTicket(String serviceTicketId, Credentials credentials);
 
      /**
       * Return the CAS version.
