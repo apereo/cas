@@ -34,7 +34,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     private long countForLastTimeUsed = 0;
 
-    private SecureRandom randomizer = new SecureRandom();;
+    private SecureRandom randomizer = new SecureRandom();
 
     /**
      * @see org.jasig.cas.util.RandomStringGenerator#getMinLength()
