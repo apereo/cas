@@ -16,11 +16,8 @@ public class HttpBasedServiceCredentials implements Credentials {
 
     final private URL callbackUrl;
 
-    final private String proxyIou;
-
-    public HttpBasedServiceCredentials(URL callbackUrl, String proxyIou) {
+    public HttpBasedServiceCredentials(URL callbackUrl) {
         this.callbackUrl = callbackUrl;
-        this.proxyIou = proxyIou;
     }
 
     /**
@@ -28,12 +25,5 @@ public class HttpBasedServiceCredentials implements Credentials {
      */
     public URL getCallbackUrl() {
         return this.callbackUrl;
-    }
-
-    /**
-     * @return Returns the proxyIou.
-     */
-    public String getProxyIou() {
-        return this.proxyIou;
     }
 }

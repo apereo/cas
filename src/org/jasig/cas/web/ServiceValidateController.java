@@ -95,7 +95,7 @@ public class ServiceValidateController extends AbstractController implements Ini
 			if (StringUtils.hasText(pgtUrl)) {
 				try {
 					final String proxyIou = uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
-					final Credentials serviceCredentials = new HttpBasedServiceCredentials(new URL(pgtUrl), proxyIou);
+					final Credentials serviceCredentials = new HttpBasedServiceCredentials(new URL(pgtUrl));
 					final String proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, serviceCredentials);
 					
 					model.put(WebConstants.PGTIOU, proxyIou);
