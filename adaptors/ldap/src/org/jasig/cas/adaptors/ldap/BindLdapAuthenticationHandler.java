@@ -21,6 +21,8 @@ import org.springframework.ldap.core.AttributeHelper;
 import org.springframework.ldap.core.SearchResultCallbackHandler;
 
 /**
+ * Handler to do LDAP bind.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
