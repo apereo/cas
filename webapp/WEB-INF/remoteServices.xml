@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-<!--
 	<bean id="mbeanserver" class="org.springframework.jmx.support.MBeanServerFactoryBean">
 		<property name="defaultDomain"><value>cas</value></property>
 	</bean>
--->
 
 	<bean id="attributeSource" class="org.springframework.jmx.metadata.CommonsJmxAttributeSource" />
 
@@ -14,7 +12,7 @@
 	</bean>
 
 	<bean id="mbeanadapter" class="org.springframework.jmx.MBeanExporter">
-<!--	    <property name="server"><ref local="mbeanserver"/></property>-->
+		<property name="server"><ref local="mbeanserver"/></property>
     	<property name="beans">
 	      	<map>
     	    	<entry key="cas:id=stats">
@@ -26,7 +24,7 @@
 			<ref local="assembler" />
 		</property>
 	</bean>
-<!--
+
 	<bean id="jmxconnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
 		<property name="server">
 			<ref local="mbeanserver" />
@@ -41,7 +39,7 @@
 			<value>true</value>
 		</property>
 	</bean>
--->
+
 	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatisticsImpl" />
 	
 	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice">

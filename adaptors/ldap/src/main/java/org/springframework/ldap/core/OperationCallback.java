@@ -27,6 +27,7 @@ public interface OperationCallback {
      * @throws NamingException if thrown by a ldap operation, to be auto converted (TODO: with a customisable translater or fixed one ?)
      * @throws DataAccessException in case of custom exceptions
      */
-    Object doInAction(DirContext context) throws NamingException, DataAccessException;
+    Object doInAction(DirContext context) throws NamingException,
+        DataAccessException;
 
 }

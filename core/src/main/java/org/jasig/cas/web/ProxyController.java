@@ -27,7 +27,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class ProxyController extends AbstractController implements InitializingBean {
+public class ProxyController extends AbstractController implements
+    InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -39,16 +40,22 @@ public class ProxyController extends AbstractController implements InitializingB
 
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
-            throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
+            throw new IllegalStateException(
+                "centralAuthenticationService cannot be null on "
+                    + this.getClass().getName());
         }
     }
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        final String ticket = request.getParameter(WebConstants.PROXY_GRANTING_TICKET);
-        final Service service = new SimpleService(request.getParameter(WebConstants.TARGET_SERVICE));
-        
+    protected ModelAndView handleRequestInternal(HttpServletRequest request,
+        HttpServletResponse response) throws Exception {
+        final String ticket = request
+            .getParameter(WebConstants.PROXY_GRANTING_TICKET);
+        final Service service = new SimpleService(request
+            .getParameter(WebConstants.TARGET_SERVICE));
+
         try {
-            final String serviceTicket = this.centralAuthenticationService.grantServiceTicket(ticket, service);
+            final String serviceTicket = this.centralAuthenticationService
+                .grantServiceTicket(ticket, service);
 
             if (serviceTicket == null) {
                 final Map model = new HashMap();
@@ -56,9 +63,11 @@ public class ProxyController extends AbstractController implements InitializingB
                 model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
                 return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
             }
-    
-            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);
-        } catch (TicketException e) {
+
+            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS,
+                WebConstants.TICKET, serviceTicket);
+        }
+        catch (TicketException e) {
             final Map model = new HashMap();
             model.put(WebConstants.CODE, e.getCode());
             model.put(WebConstants.DESC, e.getDescription());
@@ -69,7 +78,8 @@ public class ProxyController extends AbstractController implements InitializingB
     /**
      * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 }

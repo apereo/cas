@@ -30,7 +30,7 @@ public interface ServiceTicket extends Ticket {
      * @return true if it is, false otherwise.
      */
     boolean isFromNewLogin();
-    
+
     /**
      * Method to allow you to set the fromNewLogin flag.
      * 

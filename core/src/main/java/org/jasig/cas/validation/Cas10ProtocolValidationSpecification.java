@@ -10,7 +10,8 @@ package org.jasig.cas.validation;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class Cas10ProtocolValidationSpecification implements ValidationSpecification {
+public class Cas10ProtocolValidationSpecification implements
+    ValidationSpecification {
 
     private final static boolean DEFAULT_RENEW = false;
 

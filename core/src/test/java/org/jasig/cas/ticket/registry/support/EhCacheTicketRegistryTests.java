@@ -28,33 +28,38 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
     private EhCacheTicketRegistry ticketRegistry;
 
     public EhCacheTicketRegistryTests() {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_FILE_NAME);
-        this.cache = (Cache)context.getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+            APPLICATION_CONTEXT_FILE_NAME);
+        this.cache = (Cache)context
+            .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
         this.ticketRegistry = new EhCacheTicketRegistry();
         this.ticketRegistry.setCache(this.cache);
     }
-    
+
     public void testBadCacheGetTicket() {
         Cache badCache = new Cache("test1", 1, true, false, 5, 2);
-        
+
         this.ticketRegistry.setCache(badCache);
-        
+
         try {
             this.ticketRegistry.getTicket("testTicket");
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is okay
         }
     }
+
     public void testBadCacheGetTickets() {
         Cache badCache = new Cache("test2", 1, true, false, 5, 2);
-        
+
         this.ticketRegistry.setCache(badCache);
-        
+
         try {
             this.ticketRegistry.getTickets();
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is okay
         }
     }

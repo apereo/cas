@@ -16,7 +16,8 @@ import org.springframework.dao.DataIntegrityViolationException;
  * 
  * @author Olivier Jolly
  */
-public class CanonicalLdapExceptionTranslator implements LdapExceptionTranslator {
+public class CanonicalLdapExceptionTranslator implements
+    LdapExceptionTranslator {
 
     /*
      * (non-Javadoc)

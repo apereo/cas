@@ -20,12 +20,14 @@ public class LegacyCasCredentialsBinder implements CredentialsBinder {
     /**
      * @see org.jasig.cas.web.bind.CredentialsBinder#bind(javax.servlet.http.HttpServletRequest, org.jasig.cas.authentication.principal.Credentials)
      */
-    public void bind(final HttpServletRequest request, final Credentials credentials) {
+    public void bind(final HttpServletRequest request,
+        final Credentials credentials) {
         if (credentials.getClass().equals(LegacyCasCredentials.class)) {
             ((LegacyCasCredentials)credentials).setServletRequest(request);
         }
         else {
-            ((LegacyCasTrustedCredentials)credentials).setServletRequest(request);
+            ((LegacyCasTrustedCredentials)credentials)
+                .setServletRequest(request);
         }
     }
 
@@ -33,7 +35,9 @@ public class LegacyCasCredentialsBinder implements CredentialsBinder {
      * @see org.jasig.cas.web.bind.CredentialsBinder#supports(java.lang.Class)
      */
     public boolean supports(Class clazz) {
-        return !(clazz == null) && (clazz.equals(LegacyCasCredentials.class) || clazz.equals(LegacyCasTrustedCredentials.class));
+        return !(clazz == null)
+            && (clazz.equals(LegacyCasCredentials.class) || clazz
+                .equals(LegacyCasTrustedCredentials.class));
     }
 
 }

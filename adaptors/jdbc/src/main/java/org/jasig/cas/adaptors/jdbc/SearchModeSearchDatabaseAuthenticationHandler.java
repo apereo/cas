@@ -22,7 +22,8 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * @version $Id$
  */
 
-public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
+public class SearchModeSearchDatabaseAuthenticationHandler extends
+    AbstractJdbcAuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -41,11 +42,14 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcA
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    protected boolean authenticateInternal(final Credentials request) throws AuthenticationException {
+    protected boolean authenticateInternal(final Credentials request)
+        throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
-        final String encyptedPassword = this.passwordTranslator.translate(uRequest.getPassword());
+        final String encyptedPassword = this.passwordTranslator
+            .translate(uRequest.getPassword());
 
-        final int count = getJdbcTemplate().queryForInt(this.sql, new Object[] {uRequest.getUserName(), encyptedPassword});
+        final int count = getJdbcTemplate().queryForInt(this.sql,
+            new Object[] {uRequest.getUserName(), encyptedPassword});
 
         return count > 0;
     }
@@ -54,21 +58,28 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcA
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected boolean supports(Credentials credentials) {
-        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null
+            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
+                .getClass());
     }
 
     public void init() throws Exception {
-        if (this.fieldPassword == null || this.fieldUser == null || this.tableUsers == null) {
-            throw new IllegalStateException("fieldPassword, fieldUser and tableUsers must be set on "
-                + this.getClass().getName());
+        if (this.fieldPassword == null || this.fieldUser == null
+            || this.tableUsers == null) {
+            throw new IllegalStateException(
+                "fieldPassword, fieldUser and tableUsers must be set on "
+                    + this.getClass().getName());
         }
 
         if (this.passwordTranslator == null) {
             this.passwordTranslator = new PlainTextPasswordTranslator();
-            log.info("PasswordTranslator not set.  Using default PasswordTranslator of class " + this.passwordTranslator.getClass().getName());
+            log
+                .info("PasswordTranslator not set.  Using default PasswordTranslator of class "
+                    + this.passwordTranslator.getClass().getName());
         }
 
-        this.sql = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser + " = ? And " + this.fieldPassword + " = ?";
+        this.sql = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser
+            + " = ? And " + this.fieldPassword + " = ?";
     }
 
     /**
@@ -88,7 +99,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcA
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(final PasswordTranslator passwordTranslator) {
+    public void setPasswordTranslator(
+        final PasswordTranslator passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 

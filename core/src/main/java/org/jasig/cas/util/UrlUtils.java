@@ -31,7 +31,8 @@ public class UrlUtils {
         try {
             connection = url.openConnection();
             connection.setRequestProperty("Connection", "close");
-            bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            bufferedReader = new BufferedReader(new InputStreamReader(
+                connection.getInputStream()));
             String line = bufferedReader.readLine();
             while (line != null) {
                 buf.append(line);

@@ -26,7 +26,8 @@ import org.springframework.ldap.core.SearchResultCallbackHandler;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHandler {
+public class BindLdapAuthenticationHandler extends
+    AbstractLdapAuthenticationHandler {
 
     private static final String[] RETURN_VALUES = new String[] {"cn"};
 
@@ -55,16 +56,20 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request)
+        throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
-        List values = (List)this.getLdapTemplate().search(this.searchBase, LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
+        List values = (List)this.getLdapTemplate().search(this.searchBase,
+            LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
             this.getSearchControls(), new SearchResultCallbackHandler(){
 
                 private List cns = new ArrayList();
 
-                public void processSearchResult(SearchResult searchResult) throws NamingException {
-                    this.cns.add(AttributeHelper.getAttributeAsString(searchResult, "cn"));
+                public void processSearchResult(SearchResult searchResult)
+                    throws NamingException {
+                    this.cns.add(AttributeHelper.getAttributeAsString(
+                        searchResult, "cn"));
                 }
 
                 public Object getResult() {
@@ -81,7 +86,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
         for (Iterator iter = values.iterator(); iter.hasNext();) {
             String dn = (String)iter.next();
 
-            DirContext test = this.getContextSource().getDirContext(dn + "," + this.searchBase, uRequest.getPassword());
+            DirContext test = this.getContextSource().getDirContext(
+                dn + "," + this.searchBase, uRequest.getPassword());
 
             if (test != null) {
                 org.springframework.ldap.support.LdapUtils.closeContext(test);
@@ -93,7 +99,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
     }
 
     protected SearchControls getSearchControls() {
-        SearchControls constraints = new SearchControls(this.scopeValue, this.maxNumberResults, this.timeout, RETURN_VALUES, false, false);
+        SearchControls constraints = new SearchControls(this.scopeValue,
+            this.maxNumberResults, this.timeout, RETURN_VALUES, false, false);
         constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         return constraints;
@@ -104,11 +111,16 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
      */
     public void initDao() throws Exception {
         if (!this.scopeOneLevel && !this.scopeObject && !this.scopeSubtree)
-            throw new IllegalStateException("Either scopeOneLevel, scopeObject or scopeSubtree must be set to true on " + this.getClass().getName());
+            throw new IllegalStateException(
+                "Either scopeOneLevel, scopeObject or scopeSubtree must be set to true on "
+                    + this.getClass().getName());
 
-        if ((this.scopeOneLevel && this.scopeObject) || (this.scopeOneLevel && this.scopeSubtree) || (this.scopeObject && this.scopeSubtree))
-            throw new IllegalStateException("You can only set one property to tree on scopeOneLevel, scopeObject, and scopeSubtree for "
-                + this.getClass().getName());
+        if ((this.scopeOneLevel && this.scopeObject)
+            || (this.scopeOneLevel && this.scopeSubtree)
+            || (this.scopeObject && this.scopeSubtree))
+            throw new IllegalStateException(
+                "You can only set one property to tree on scopeOneLevel, scopeObject, and scopeSubtree for "
+                    + this.getClass().getName());
 
         if (this.scopeOneLevel)
             this.scopeValue = SearchControls.ONELEVEL_SCOPE;
@@ -119,7 +131,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
     }
 
     protected boolean supports(Credentials credentials) {
-        return credentials != null && credentials.getClass().equals(UsernamePasswordCredentials.class);
+        return credentials != null
+            && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
 
     /**

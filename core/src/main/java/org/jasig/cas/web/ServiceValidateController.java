@@ -36,7 +36,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class ServiceValidateController extends AbstractController implements InitializingBean {
+public class ServiceValidateController extends AbstractController implements
+    InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -52,57 +53,79 @@ public class ServiceValidateController extends AbstractController implements Ini
 
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
-            throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
+            throw new IllegalStateException(
+                "centralAuthenticationService cannot be null on "
+                    + this.getClass().getName());
         }
 
         if (this.authenticationSpecificationClass == null) {
             this.authenticationSpecificationClass = Cas20ProtocolValidationSpecification.class;
-            log.info("No authentication specification class set.  Defaulting to " + this.authenticationSpecificationClass.getName());
+            log
+                .info("No authentication specification class set.  Defaulting to "
+                    + this.authenticationSpecificationClass.getName());
         }
 
         if (this.successView == null) {
             this.successView = ViewNames.CONST_SERVICE_SUCCESS;
-            log.info("No successView specified.  Using default of " + this.successView);
+            log.info("No successView specified.  Using default of "
+                + this.successView);
         }
 
         if (this.failureView == null) {
             this.failureView = ViewNames.CONST_SERVICE_FAILURE;
-            log.info("No failureView specified.  Using default of " + this.failureView);
+            log.info("No failureView specified.  Using default of "
+                + this.failureView);
         }
     }
 
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final String serviceTicketId = request.getParameter(WebConstants.TICKET);
+    protected ModelAndView handleRequestInternal(
+        final HttpServletRequest request, final HttpServletResponse response)
+        throws Exception {
+        final String serviceTicketId = request
+            .getParameter(WebConstants.TICKET);
         final String service = request.getParameter(WebConstants.SERVICE);
         final Map model = new HashMap();
-        final ValidationSpecification authenticationSpecification = this.getCommandClass();
+        final ValidationSpecification authenticationSpecification = this
+            .getCommandClass();
         final Assertion assertion;
         final String pgtUrl = request.getParameter(WebConstants.PGTURL);
-        BindUtils.bind(request, authenticationSpecification, "authenticationSpecification");
+        BindUtils.bind(request, authenticationSpecification,
+            "authenticationSpecification");
         try {
-            assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service));
+            assertion = this.centralAuthenticationService
+                .validateServiceTicket(serviceTicketId, new SimpleService(
+                    service));
             if (!authenticationSpecification.isSatisfiedBy(assertion)) {
-                log.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy authentication specification.");
-                throw new TicketException(TicketException.INVALID_TICKET, "ticket not backed by initial CAS login, as requested");
+                log.debug("ServiceTicket [" + serviceTicketId
+                    + "] does not satisfy authentication specification.");
+                throw new TicketException(TicketException.INVALID_TICKET,
+                    "ticket not backed by initial CAS login, as requested");
             }
 
             if (StringUtils.hasText(pgtUrl)) {
                 try {
-                    final Credentials serviceCredentials = new HttpBasedServiceCredentials(new URL(pgtUrl));
-                    final String proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
-                        serviceCredentials);
+                    final Credentials serviceCredentials = new HttpBasedServiceCredentials(
+                        new URL(pgtUrl));
+                    final String proxyGrantingTicketId = this.centralAuthenticationService
+                        .delegateTicketGrantingTicket(serviceTicketId,
+                            serviceCredentials);
 
                     if (proxyGrantingTicketId != null) {
-                        final String proxyIou = this.proxyHandler.handle(serviceCredentials, proxyGrantingTicketId);
+                        final String proxyIou = this.proxyHandler.handle(
+                            serviceCredentials, proxyGrantingTicketId);
                         model.put(WebConstants.PGTIOU, proxyIou);
                     }
                 }
                 catch (MalformedURLException e) {
-                    log.debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: " + pgtUrl);
+                    log
+                        .debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: "
+                            + pgtUrl);
                     log.debug("Exception message was: " + e.getMessage());
-                } catch (AuthenticationException e) {
+                }
+                catch (AuthenticationException e) {
                     model.put(WebConstants.CODE, e.getCode());
-                    model.put(WebConstants.DESC, e.getDescription());
+                    model.put(WebConstants.DESC, getMessageSourceAccessor()
+                        .getMessage(e.getCode()));
                     return new ModelAndView(this.failureView, model);
                 }
             }
@@ -119,7 +142,8 @@ public class ServiceValidateController extends AbstractController implements Ini
 
     private ValidationSpecification getCommandClass() {
         try {
-            return (ValidationSpecification)this.authenticationSpecificationClass.newInstance();
+            return (ValidationSpecification)this.authenticationSpecificationClass
+                .newInstance();
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -129,14 +153,16 @@ public class ServiceValidateController extends AbstractController implements Ini
     /**
      * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
     /**
      * @param authenticationSpecificationClass The authenticationSpecificationClass to set.
      */
-    public void setAuthenticationSpecificationClass(Class authenticationSpecificationClass) {
+    public void setAuthenticationSpecificationClass(
+        Class authenticationSpecificationClass) {
         this.authenticationSpecificationClass = authenticationSpecificationClass;
     }
 

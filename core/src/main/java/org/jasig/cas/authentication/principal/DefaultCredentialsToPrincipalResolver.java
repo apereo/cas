@@ -15,7 +15,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Id$
  * @see org.jasig.cas.authentication.principal.SimplePrincipal
  */
-public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
+public class DefaultCredentialsToPrincipalResolver implements
+    CredentialsToPrincipalResolver {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -26,12 +27,15 @@ public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrinc
             throw new IllegalArgumentException("credentials cannot be null");
         }
 
-        log.debug("Creating SimplePrincipal for [" + usernamePasswordCredentials.getUserName() + "]");
+        log.debug("Creating SimplePrincipal for ["
+            + usernamePasswordCredentials.getUserName() + "]");
 
         return new SimplePrincipal(usernamePasswordCredentials.getUserName());
     }
 
     public boolean supports(Credentials credentials) {
-        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null
+            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
+                .getClass());
     }
 }

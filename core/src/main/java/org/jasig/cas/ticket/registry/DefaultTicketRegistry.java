@@ -33,7 +33,8 @@ public class DefaultTicketRegistry implements TicketRegistry {
         this.cache.put(ticket.getId(), ticket);
     }
 
-    public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketClassException {
+    public Ticket getTicket(final String ticketId, final Class clazz)
+        throws InvalidTicketClassException {
         if (clazz == null)
             throw new IllegalArgumentException("clazz cannot be null");
 
@@ -43,8 +44,9 @@ public class DefaultTicketRegistry implements TicketRegistry {
             return null;
 
         if (!clazz.isAssignableFrom(ticket.getClass()))
-            throw new InvalidTicketClassException("Ticket [" + ticket.getId() + " is of type " + ticket.getClass() + " when we were expecting "
-                + clazz);
+            throw new InvalidTicketClassException("Ticket [" + ticket.getId()
+                + " is of type " + ticket.getClass()
+                + " when we were expecting " + clazz);
 
         return ticket;
     }

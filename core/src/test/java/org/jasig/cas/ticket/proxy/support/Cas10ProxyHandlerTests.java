@@ -22,6 +22,7 @@ public class Cas10ProxyHandlerTests extends TestCase {
     }
 
     public void testCredentialsAndProxy() {
-        assertNull(this.proxyHandler.handle(new UsernamePasswordCredentials(), "test"));
+        assertNull(this.proxyHandler.handle(new UsernamePasswordCredentials(),
+            "test"));
     }
 }

@@ -15,11 +15,13 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public class RejectUsersAuthenticationHandler extends
+    AbstractUsernamePasswordAuthenticationHandler {
 
     private Collection users;
 
-    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials)
+        throws AuthenticationException {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
 
         if (usernamePasswordCredentials.getUserName() == null)
@@ -29,7 +31,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     public void afterPropertiesSet() throws Exception {
         if (this.users == null) {
-            throw new IllegalStateException("You must provide a list of users that are not allowed to use the system.");
+            throw new IllegalStateException(
+                "You must provide a list of users that are not allowed to use the system.");
         }
     }
 

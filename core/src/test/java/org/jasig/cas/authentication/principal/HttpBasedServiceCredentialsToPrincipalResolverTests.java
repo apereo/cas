@@ -16,7 +16,8 @@ import junit.framework.TestCase;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class HttpBasedServiceCredentialsToPrincipalResolverTests extends TestCase {
+public class HttpBasedServiceCredentialsToPrincipalResolverTests extends
+    TestCase {
 
     private CredentialsToPrincipalResolver resolver = new HttpBasedServiceCredentialsToPrincipalResolver();
 
@@ -30,7 +31,8 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends TestCas
 
     public void testValidSupportsCredentials() {
         try {
-            assertTrue(this.resolver.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
+            assertTrue(this.resolver.supports(new HttpBasedServiceCredentials(
+                new URL("http://www.rutgers.edu"))));
         }
         catch (MalformedURLException e) {
             fail("Invalid URL supplied.");
@@ -39,7 +41,8 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends TestCas
 
     public void testValidCredentials() {
         try {
-            HttpBasedServiceCredentials request = new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"));
+            HttpBasedServiceCredentials request = new HttpBasedServiceCredentials(
+                new URL("http://www.rutgers.edu"));
 
             Principal p = this.resolver.resolvePrincipal(request);
 

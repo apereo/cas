@@ -33,13 +33,16 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     private final ExpirationPolicy expirationPolicy;
 
-    public ServiceTicketImpl(final String id, final TicketGrantingTicket ticket, final Service service, final boolean fromNewLogin,
-        final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator,
+    public ServiceTicketImpl(final String id,
+        final TicketGrantingTicket ticket, final Service service,
+        final boolean fromNewLogin, final ExpirationPolicy policy,
+        final UniqueTicketIdGenerator uniqueTicketIdGenerator,
         final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         super(id, ticket, policy);
 
         if (ticket == null || service == null)
-            throw new IllegalArgumentException("ticket and service are required parameters");
+            throw new IllegalArgumentException(
+                "ticket and service are required parameters");
 
         this.service = service;
         this.fromNewLogin = fromNewLogin;
@@ -51,7 +54,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
-    
+
     public void setFromNewLogin(boolean fromNewLogin) {
         this.fromNewLogin = fromNewLogin;
     }
@@ -64,9 +67,13 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         return super.isExpired() || this.getGrantingTicket().isExpired();
     }
 
-    public TicketGrantingTicket grantTicketGrantingTicket(final Authentication authentication) {
-        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), this.getGrantingTicket(),
-            authentication, this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+    public TicketGrantingTicket grantTicketGrantingTicket(
+        final Authentication authentication) {
+        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator
+            .getNewTicketId(TicketGrantingTicket.PREFIX), this
+            .getGrantingTicket(), authentication,
+            this.ticketGrantingTicketExpirationPolicy,
+            this.uniqueTicketIdGenerator, this.expirationPolicy);
     }
 
 }

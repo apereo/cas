@@ -28,6 +28,7 @@ public class DefaultSpringBindCredentialsBinderTests extends TestCase {
     }
 
     public void testSupportsUsernamePasswordCredentials() {
-        assertTrue(this.credentialsBinder.supports(UsernamePasswordCredentials.class));
+        assertTrue(this.credentialsBinder
+            .supports(UsernamePasswordCredentials.class));
     }
 }

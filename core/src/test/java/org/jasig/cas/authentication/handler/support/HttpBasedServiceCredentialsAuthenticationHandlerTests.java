@@ -16,7 +16,8 @@ import junit.framework.TestCase;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestCase {
+public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
+    TestCase {
 
     final private URL httpBackedUrl;
 
@@ -26,16 +27,19 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestC
 
     final private AuthenticationHandler authenticationHandler;
 
-    public HttpBasedServiceCredentialsAuthenticationHandlerTests() throws MalformedURLException {
+    public HttpBasedServiceCredentialsAuthenticationHandlerTests()
+        throws MalformedURLException {
         this.httpBackedUrl = new URL("http://www.ja-sig.org");
         this.httpsProperCertificateUrl = new URL("https://www.acs.rutgers.edu");
-        this.httpsInproperCertificateUrl = new URL("https://clue.acs.rutgers.edu/");
+        this.httpsInproperCertificateUrl = new URL(
+            "https://clue.acs.rutgers.edu/");
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
     }
 
     public void testSupportsProperUserCredentials() {
         try {
-            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(this.httpsInproperCertificateUrl);
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
+                this.httpsInproperCertificateUrl);
             this.authenticationHandler.authenticate(c);
         }
         catch (AuthenticationException e) {
@@ -45,7 +49,8 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestC
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            this.authenticationHandler.authenticate(new UsernamePasswordCredentials());
+            this.authenticationHandler
+                .authenticate(new UsernamePasswordCredentials());
         }
         catch (AuthenticationException e) {
             return;
@@ -55,7 +60,9 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestC
 
     public void testAcceptsProperCertificateCredentials() {
         try {
-            assertTrue(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpsProperCertificateUrl)));
+            assertTrue(this.authenticationHandler
+                .authenticate(new HttpBasedServiceCredentials(
+                    this.httpsProperCertificateUrl)));
         }
         catch (AuthenticationException e) {
             fail("We should not have gotten an error.");
@@ -64,7 +71,9 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestC
 
     public void testRejectsInProperCertificateCredentials() {
         try {
-            assertFalse(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpsInproperCertificateUrl)));
+            assertFalse(this.authenticationHandler
+                .authenticate(new HttpBasedServiceCredentials(
+                    this.httpsInproperCertificateUrl)));
         }
         catch (AuthenticationException e) {
             // this is okay;
@@ -73,7 +82,9 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestC
 
     public void testRejectsNonHttpsCredentials() {
         try {
-            assertFalse(this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(this.httpBackedUrl)));
+            assertFalse(this.authenticationHandler
+                .authenticate(new HttpBasedServiceCredentials(
+                    this.httpBackedUrl)));
         }
         catch (AuthenticationException e) {
             // this is okay.

@@ -51,7 +51,8 @@ public class UrlContextSource implements ContextSource {
      * @param securityAuthentication The securityAuthentication to set.
      */
     public void setSecurityAuthentication(String securityAuthentication) {
-        this.environment.put(Context.SECURITY_AUTHENTICATION, securityAuthentication);
+        this.environment.put(Context.SECURITY_AUTHENTICATION,
+            securityAuthentication);
     }
 
     /**
@@ -105,14 +106,17 @@ public class UrlContextSource implements ContextSource {
         try {
             // TODO check whether there is a faster way to retrieve context,
             // like lookup("") on a lazy initiated initial context
-            return (DirContext)new InitialDirContext(this.environment).lookup(this.ldapUrl);
+            return (DirContext)new InitialDirContext(this.environment)
+                .lookup(this.ldapUrl);
         }
         catch (NamingException ex) {
-            throw new DataAccessResourceFailureException("Cannot retrieve context", ex);
+            throw new DataAccessResourceFailureException(
+                "Cannot retrieve context", ex);
         }
     }
 
-    public DirContext getDirContext(final String principal, final String password) {
+    public DirContext getDirContext(final String principal,
+        final String password) {
         Hashtable environment = (Hashtable)this.environment.clone();
 
         environment.put(Context.SECURITY_PRINCIPAL, principal);
@@ -121,10 +125,12 @@ public class UrlContextSource implements ContextSource {
         try {
             // TODO check whether there is a faster way to retrieve context,
             // like lookup("") on a lazy initiated initial context
-            return (DirContext)new InitialDirContext(environment).lookup(this.ldapUrl);
+            return (DirContext)new InitialDirContext(environment)
+                .lookup(this.ldapUrl);
         }
         catch (NamingException ex) {
-            throw new DataAccessResourceFailureException("Cannot retrieve context", ex);
+            throw new DataAccessResourceFailureException(
+                "Cannot retrieve context", ex);
         }
     }
 

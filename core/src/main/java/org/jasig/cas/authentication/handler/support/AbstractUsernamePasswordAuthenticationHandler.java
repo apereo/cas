@@ -16,11 +16,14 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Scott Battaglia
  * @version $Id$
  */
-public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractAuthenticationHandler implements InitializingBean {
+public abstract class AbstractUsernamePasswordAuthenticationHandler extends
+    AbstractAuthenticationHandler implements InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
     protected final boolean supports(final Credentials credentials) {
-        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null
+            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
+                .getClass());
     }
 }

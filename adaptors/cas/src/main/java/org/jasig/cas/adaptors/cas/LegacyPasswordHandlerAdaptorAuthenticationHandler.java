@@ -17,17 +17,21 @@ import edu.yale.its.tp.cas.auth.PasswordHandler;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends AbstractAuthenticationHandler implements InitializingBean {
+public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
+    AbstractAuthenticationHandler implements InitializingBean {
 
     private PasswordHandler passwordHandler;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials)
+        throws AuthenticationException {
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials)credentials;
 
-        return this.passwordHandler.authenticate(casCredentials.getServletRequest(), casCredentials.getUserName(), casCredentials.getPassword());
+        return this.passwordHandler.authenticate(casCredentials
+            .getServletRequest(), casCredentials.getUserName(), casCredentials
+            .getPassword());
     }
 
     /**
@@ -52,7 +56,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends AbstractA
      */
     public void afterPropertiesSet() throws Exception {
         if (this.passwordHandler == null) {
-            throw new IllegalStateException("passwordHandler must be set on " + this.getClass().getName());
+            throw new IllegalStateException("passwordHandler must be set on "
+                + this.getClass().getName());
         }
     }
 }

@@ -27,7 +27,8 @@ import org.springframework.beans.factory.DisposableBean;
  * @version $Id$
  */
 // TODO: can we keep the context open?
-public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
+public class NisAuthenticationHandler extends
+    AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
 
     private static final String DEFAULT_MAP = "passwd.byname";
 
@@ -60,14 +61,17 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request)
+        throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         try {
-            final String nisEntry = this.initialContext.lookup("system/" + this.map + "/" + uRequest.getUserName()).toString();
+            final String nisEntry = this.initialContext.lookup(
+                "system/" + this.map + "/" + uRequest.getUserName()).toString();
             final String nisFields[] = nisEntry.split(":");
             String nisEncryptedPassword = nisFields[1];
 
-            return nisEncryptedPassword.matches(this.passwordTranslator.translate(uRequest.getPassword()));
+            return nisEncryptedPassword.matches(this.passwordTranslator
+                .translate(uRequest.getPassword()));
         }
         catch (NamingException e) {
             return false;
@@ -98,7 +102,8 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(final PasswordTranslator passwordTranslator) {
+    public void setPasswordTranslator(
+        final PasswordTranslator passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 
@@ -106,10 +111,12 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        if (this.domain == null || this.host == null || this.map == null || this.passwordTranslator == null || this.contextFactory == null
+        if (this.domain == null || this.host == null || this.map == null
+            || this.passwordTranslator == null || this.contextFactory == null
             || this.securityAuthentication == null) {
-            throw new IllegalStateException("domain, host, map, contextFactory, securityAuthentication and passwordTranslator cannot be null on "
-                + this.getClass().getName());
+            throw new IllegalStateException(
+                "domain, host, map, contextFactory, securityAuthentication and passwordTranslator cannot be null on "
+                    + this.getClass().getName());
         }
 
         this.url = DEFAULT_PROTOCOL + this.host + "/" + this.domain;
@@ -117,7 +124,8 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
 
         this.config.put(Context.INITIAL_CONTEXT_FACTORY, this.contextFactory);
         this.config.put(Context.PROVIDER_URL, this.url);
-        this.config.put(Context.SECURITY_AUTHENTICATION, this.securityAuthentication);
+        this.config.put(Context.SECURITY_AUTHENTICATION,
+            this.securityAuthentication);
 
         this.initialContext = new InitialDirContext(this.config);
     }

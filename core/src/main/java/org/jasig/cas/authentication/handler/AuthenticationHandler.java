@@ -24,5 +24,6 @@ public interface AuthenticationHandler {
      * @throws AuthenticationException An AuthenticationException can contain details about why a particular authentication request failed.
      * AuthenticationExceptions contain code/desc.
      */
-    boolean authenticate(Credentials credentials) throws AuthenticationException;
+    boolean authenticate(Credentials credentials)
+        throws AuthenticationException;
 }

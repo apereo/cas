@@ -30,7 +30,8 @@ public interface CentralAuthenticationService {
      * @return The String identifier of the ticket.
      * @throws AuthenticationException
      */
-    String createTicketGrantingTicket(Credentials credentials) throws AuthenticationException, TicketCreationException;
+    String createTicketGrantingTicket(Credentials credentials)
+        throws AuthenticationException, TicketCreationException;
 
     /**
      * Grant a ServiceTicket for a Service.
@@ -40,7 +41,8 @@ public interface CentralAuthenticationService {
      * @return the ServiceTicket for target Service.
      * @throws TicketCreationException
      */
-    String grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketCreationException;
+    String grantServiceTicket(String ticketGrantingTicketId, Service service)
+        throws TicketCreationException;
 
     /**
      * Grant a ServiceTicket for a Service *if* the principal resolved from the credentials matches the principal associated with the
@@ -51,8 +53,10 @@ public interface CentralAuthenticationService {
      * @param credentials the Credentials to present to receive the ServiceTicket
      * @return the ServiceTicket for target Service.
      * @throws TicketCreationException
+     * @throws AuthenticationException
      */
-    String grantServiceTicket(String ticketGrantingTicketId, Service service, Credentials credentials) throws AuthenticationException,
+    String grantServiceTicket(String ticketGrantingTicketId, Service service,
+        Credentials credentials) throws AuthenticationException,
         TicketCreationException;
 
     /**
@@ -61,8 +65,10 @@ public interface CentralAuthenticationService {
      * @param serviceTicketId Proof of prior authentication.
      * @param service Service wishing to validate a prior authentication.
      * @return ServiceTicket if valid for the service
+     * @throws TicketException
      */
-    Assertion validateServiceTicket(String serviceTicketId, Service service) throws TicketException;
+    Assertion validateServiceTicket(String serviceTicketId, Service service)
+        throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket. This has the effect of invalidating any Ticket that was derived from the TicketGrantingTicket being destroyed.
@@ -74,8 +80,13 @@ public interface CentralAuthenticationService {
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication to other Services.
      * 
+     * @param serviceTicketId The service ticket that will delegate to a TicketGrantingTicket
+     * @param Credentials The credentials of the service that wishes to have a TicketGrantingTicket delegated to it.
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
+     * @throws TicketException
+     * @throws AuthenticationException
      */
-    String delegateTicketGrantingTicket(String serviceTicketId, Credentials credentials) throws TicketException, AuthenticationException;
-
+    String delegateTicketGrantingTicket(String serviceTicketId,
+        Credentials credentials) throws TicketException,
+        AuthenticationException;
 }

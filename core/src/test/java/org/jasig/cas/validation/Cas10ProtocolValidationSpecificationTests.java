@@ -37,20 +37,23 @@ public class Cas10ProtocolValidationSpecificationTests extends TestCase {
     }
 
     public void testRenewAsTrueAsConstructor() {
-        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(true);
+        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
+            true);
 
         assertTrue(s.isRenew());
     }
 
     public void testRenewAsFalseAsConstructor() {
-        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(false);
+        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
+            false);
 
         assertFalse(s.isRenew());
     }
 
     public void testSatisfiesSpecOfTrue() {
         final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(true);
+        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
+            true);
         list.add(new SimplePrincipal("test"));
         final Assertion assertion = new AssertionImpl(list, true);
         assertTrue(s.isSatisfiedBy(assertion));
@@ -58,7 +61,8 @@ public class Cas10ProtocolValidationSpecificationTests extends TestCase {
 
     public void testNotSatisfiesSpecOfTrue() {
         final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(true);
+        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
+            true);
         list.add(new SimplePrincipal("test"));
         final Assertion assertion = new AssertionImpl(list, false);
         assertFalse(s.isSatisfiedBy(assertion));
@@ -66,7 +70,8 @@ public class Cas10ProtocolValidationSpecificationTests extends TestCase {
 
     public void testSatisfiesSpecOfFalse() {
         final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(false);
+        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
+            false);
         list.add(new SimplePrincipal("test"));
         final Assertion assertion = new AssertionImpl(list, true);
         assertTrue(s.isSatisfiedBy(assertion));
@@ -74,7 +79,8 @@ public class Cas10ProtocolValidationSpecificationTests extends TestCase {
 
     public void testSatisfiesSpecOfFalse2() {
         final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(false);
+        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
+            false);
         list.add(new SimplePrincipal("test"));
         final Assertion assertion = new AssertionImpl(list, false);
         assertTrue(s.isSatisfiedBy(assertion));

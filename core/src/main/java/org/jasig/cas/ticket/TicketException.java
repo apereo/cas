@@ -14,9 +14,11 @@ public class TicketException extends Exception {
 
     private static final long serialVersionUID = -6000583436059919480L;
 
-    public static final TicketExceptionCode INVALID_TICKET = new TicketExceptionCode("INVALID_TICKET");
+    public static final TicketExceptionCode INVALID_TICKET = new TicketExceptionCode(
+        "INVALID_TICKET");
 
-    public static final TicketExceptionCode INVALID_SERVICE = new TicketExceptionCode("INVALID_SERVICE");
+    public static final TicketExceptionCode INVALID_SERVICE = new TicketExceptionCode(
+        "INVALID_SERVICE");
 
     private TicketExceptionCode code;
 
@@ -59,7 +61,8 @@ public class TicketException extends Exception {
         super(cause);
     }
 
-    public TicketException(final String message, final TicketExceptionCode code, final String description) {
+    public TicketException(final String message,
+        final TicketExceptionCode code, final String description) {
         super(message);
         this.code = code;
         this.description = description;
@@ -69,7 +72,8 @@ public class TicketException extends Exception {
      * @param message
      * @param cause
      */
-    public TicketException(final String message, final Throwable cause, final TicketExceptionCode code, final String description) {
+    public TicketException(final String message, final Throwable cause,
+        final TicketExceptionCode code, final String description) {
         super(message, cause);
         this.code = code;
         this.description = description;
@@ -79,7 +83,8 @@ public class TicketException extends Exception {
     /**
      * @param cause
      */
-    public TicketException(final Throwable cause, final TicketExceptionCode code, final String description) {
+    public TicketException(final Throwable cause,
+        final TicketExceptionCode code, final String description) {
         super(cause);
         this.code = code;
         this.description = description;

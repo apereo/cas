@@ -42,7 +42,8 @@ import org.springframework.web.util.WebUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class LoginController extends SimpleFormController implements InitializingBean {
+public class LoginController extends SimpleFormController implements
+    InitializingBean {
 
     /** LOGGING * */
     protected final Log log = LogFactory.getLog(this.getClass());
@@ -64,33 +65,44 @@ public class LoginController extends SimpleFormController implements Initializin
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.loginTokens == null || this.centralAuthenticationService == null) {
-            throw new IllegalStateException("You must set loginTokens and centralAuthenticationService on " + this.getClass());
+        if (this.loginTokens == null
+            || this.centralAuthenticationService == null) {
+            throw new IllegalStateException(
+                "You must set loginTokens and centralAuthenticationService on "
+                    + this.getClass());
         }
 
         if (this.uniqueTokenIdGenerator == null) {
             this.uniqueTokenIdGenerator = new DefaultUniqueTokenIdGenerator();
-            log.info("UniqueIdGenerator not set, using default UniqueIdGenerator of class: " + this.uniqueTokenIdGenerator.getClass());
+            log
+                .info("UniqueIdGenerator not set, using default UniqueIdGenerator of class: "
+                    + this.uniqueTokenIdGenerator.getClass());
         }
 
         if (this.getCommandClass() == null) {
             this.setCommandName("credentials");
             this.setCommandClass(UsernamePasswordCredentials.class);
-            log.info("CommandClass not set, using default CommandClass of " + this.getCommandClass().getName() + " and name of "
+            log.info("CommandClass not set, using default CommandClass of "
+                + this.getCommandClass().getName() + " and name of "
                 + this.getCommandName());
         }
 
         if (this.credentialsBinder == null) {
             this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
-            log.info("CredentialsBinder not set.  Using default CredentialsBinder of " + this.credentialsBinder.getClass().getName());
+            log
+                .info("CredentialsBinder not set.  Using default CredentialsBinder of "
+                    + this.credentialsBinder.getClass().getName());
 
             if (!this.credentialsBinder.supports(this.getCommandClass())) {
-                throw new ServletException("CredentialsBinder does not support supplied Command Class: " + this.getCommandClass());
+                throw new ServletException(
+                    "CredentialsBinder does not support supplied Command Class: "
+                        + this.getCommandClass());
             }
         }
     }
 
-    protected Map referenceData(final HttpServletRequest request) throws Exception {
+    protected Map referenceData(final HttpServletRequest request)
+        throws Exception {
         final Map referenceData = new HashMap();
 
         referenceData.put(WebConstants.LOGIN_TOKEN, this.getLoginToken()); // a unique token to solve browser back issues
@@ -98,18 +110,26 @@ public class LoginController extends SimpleFormController implements Initializin
         return referenceData;
     }
 
-    protected ModelAndView showForm(final HttpServletRequest request, final HttpServletResponse response, final BindException errors)
+    protected ModelAndView showForm(final HttpServletRequest request,
+        final HttpServletResponse response, final BindException errors)
         throws Exception {
-        final String ticketGrantingTicketId = this.getCookieValue(request, WebConstants.COOKIE_TGC_ID);
-        final boolean warn = this.convertValueToBoolean(this.getCookieValue(request, WebConstants.COOKIE_PRIVACY));
-        final boolean gateway = StringUtils.hasText(request.getParameter(WebConstants.GATEWAY));
+        final String ticketGrantingTicketId = this.getCookieValue(request,
+            WebConstants.COOKIE_TGC_ID);
+        final boolean warn = this.convertValueToBoolean(this.getCookieValue(
+            request, WebConstants.COOKIE_PRIVACY));
+        final boolean gateway = StringUtils.hasText(request
+            .getParameter(WebConstants.GATEWAY));
         final String service = request.getParameter(WebConstants.SERVICE);
-        final boolean renew = this.convertValueToBoolean(request.getParameter(WebConstants.RENEW));
+        final boolean renew = this.convertValueToBoolean(request
+            .getParameter(WebConstants.RENEW));
 
         // if we managed to find an existing ticketGrantingTicketId
-        if (StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service) && !renew) {
+        if (StringUtils.hasText(ticketGrantingTicketId)
+            && StringUtils.hasText(service) && !renew) {
             // we have a service and no request for renew
-            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
+            final String serviceTicketId = this.centralAuthenticationService
+                .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
+                    service));
 
             if (serviceTicketId != null) {
 
@@ -118,10 +138,12 @@ public class LoginController extends SimpleFormController implements Initializin
 
                     model.put(WebConstants.TICKET, serviceTicketId);
                     model.put(WebConstants.SERVICE, service);
-                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
+                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM,
+                        model);
                 }
 
-                return new ModelAndView(new RedirectView(service), WebConstants.TICKET, serviceTicketId); // assume first = false?
+                return new ModelAndView(new RedirectView(service),
+                    WebConstants.TICKET, serviceTicketId); // assume first = false?
             }
         }
 
@@ -133,64 +155,73 @@ public class LoginController extends SimpleFormController implements Initializin
         return super.showForm(request, response, errors);
     }
 
-    protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object command,
-        final BindException errors) throws Exception {
+    protected ModelAndView processFormSubmission(
+        final HttpServletRequest request, final HttpServletResponse response,
+        final Object command, final BindException errors) throws Exception {
         final Credentials credentials = (Credentials)command;
-        final boolean renew = this.convertValueToBoolean(request.getParameter(WebConstants.RENEW));
-        final boolean warn = StringUtils.hasText(request.getParameter(WebConstants.WARN));
+        final boolean renew = this.convertValueToBoolean(request
+            .getParameter(WebConstants.RENEW));
+        final boolean warn = StringUtils.hasText(request
+            .getParameter(WebConstants.WARN));
         final String service = request.getParameter(WebConstants.SERVICE);
         String serviceTicketId = null;
-        String ticketGrantingTicketId = getCookieValue(request, WebConstants.COOKIE_TGC_ID);
+        String ticketGrantingTicketId = getCookieValue(request,
+            WebConstants.COOKIE_TGC_ID);
 
         this.credentialsBinder.bind(request, credentials);
 
         try {
-            if (renew && StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service)) {
-                serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
+            if (renew && StringUtils.hasText(ticketGrantingTicketId)
+                && StringUtils.hasText(service)) {
+                serviceTicketId = this.centralAuthenticationService
+                    .grantServiceTicket(ticketGrantingTicketId,
+                        new SimpleService(service), credentials);
             }
-    
+
             if (serviceTicketId == null) {
-                ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
+                ticketGrantingTicketId = this.centralAuthenticationService
+                    .createTicketGrantingTicket(credentials);
             }
-    
-            // the ticket was not created because invalid Credentials
-            if (ticketGrantingTicketId == null) {
-                errors.reject("bad.credentials", null);
-                return super.processFormSubmission(request, response, command, errors);
-            }
-    
-            this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId, request, response);
-    
+
+            this.createCookie(WebConstants.COOKIE_TGC_ID,
+                ticketGrantingTicketId, request, response);
+
             if (warn)
-                this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
+                this
+                    .createCookie(WebConstants.COOKIE_PRIVACY,
+                        WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request,
+                        response);
             else
-                this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
-    
+                this.createCookie(WebConstants.COOKIE_PRIVACY,
+                    WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+
             if (StringUtils.hasText(service)) {
                 if (serviceTicketId == null) {
-                    serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
+                    serviceTicketId = this.centralAuthenticationService
+                        .grantServiceTicket(ticketGrantingTicketId,
+                            new SimpleService(service));
                 }
-    
+
                 if (warn) {
                     final Map model = new HashMap();
-    
+
                     model.put(WebConstants.TICKET, serviceTicketId);
                     model.put(WebConstants.SERVICE, service);
                     // model.put(WebConstants.FIRST, "true");
-                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
+                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM,
+                        model);
                 }
-    
-                final Map model = new HashMap();
-                model.put(WebConstants.TICKET, serviceTicketId);
-                // model.put(WebConstants.FIRST, "true");
-    
-                return new ModelAndView(new RedirectView(service), model);
+
+                return new ModelAndView(new RedirectView(service),
+                    WebConstants.TICKET, serviceTicketId);
             }
-        } catch (TicketException e) {
+        }
+        catch (TicketException e) {
             errors.reject("ticketException", e.getDescription());
-            
-        } catch (AuthenticationException e) {
-            errors.reject("authenticationException", e.getDescription());
+
+        }
+        catch (AuthenticationException e) {
+            errors.reject(e.getCode(), "");
         }
 
         return super.processFormSubmission(request, response, command, errors);
@@ -203,13 +234,15 @@ public class LoginController extends SimpleFormController implements Initializin
         return loginToken;
     }
 
-    private String getCookieValue(final HttpServletRequest request, final String cookieId) {
+    private String getCookieValue(final HttpServletRequest request,
+        final String cookieId) {
         Cookie cookie = WebUtils.getCookie(request, cookieId);
 
         return (cookie == null) ? null : cookie.getValue();
     }
 
-    private void createCookie(final String id, final String value, final HttpServletRequest request, final HttpServletResponse response) {
+    private void createCookie(final String id, final String value,
+        final HttpServletRequest request, final HttpServletResponse response) {
         final Cookie cookie = new Cookie(id, value);
         cookie.setSecure(true);
         cookie.setMaxAge(-1);
@@ -224,7 +257,8 @@ public class LoginController extends SimpleFormController implements Initializin
     /**
      * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -238,7 +272,8 @@ public class LoginController extends SimpleFormController implements Initializin
     /**
      * @param uniqueTokenIdGenerator The uniqueTokenIdGenerator to set.
      */
-    public void setUniqueTokenIdGenerator(final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
+    public void setUniqueTokenIdGenerator(
+        final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
         this.uniqueTokenIdGenerator = uniqueTokenIdGenerator;
     }
 

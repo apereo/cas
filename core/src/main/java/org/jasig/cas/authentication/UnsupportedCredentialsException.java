@@ -15,7 +15,7 @@ public class UnsupportedCredentialsException extends AuthenticationException {
 
     private static final long serialVersionUID = 3977861752513837361L;
 
-    private static final String CODE = "AUTH_ERROR_UNSUPPORTED_CREDENTIALS";
+    private static final String CODE = "error.authentication.credentials.unsupported";
 
     private static final String DESCRIPTION = "Credentials not supported by this handler.";
 

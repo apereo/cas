@@ -18,17 +18,20 @@ import org.jasig.cas.util.LdapUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticationHandler {
+public class FastBindLdapAuthenticationHandler extends
+    AbstractLdapAuthenticationHandler {
 
     private String filter;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request)
+        throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
-        DirContext dirContext = this.getContextSource().getDirContext(LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
+        DirContext dirContext = this.getContextSource().getDirContext(
+            LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
             uRequest.getPassword());
 
         if (dirContext == null) {
@@ -50,7 +53,8 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticatio
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected boolean supports(Credentials credentials) {
-        return credentials != null && credentials.getClass().equals(UsernamePasswordCredentials.class);
+        return credentials != null
+            && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
 
     /**
@@ -60,7 +64,8 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticatio
         super.initDao();
 
         if (this.filter == null) {
-            throw new IllegalStateException("filter must be set on " + this.getClass().getName());
+            throw new IllegalStateException("filter must be set on "
+                + this.getClass().getName());
         }
     }
 }

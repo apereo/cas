@@ -26,9 +26,11 @@ public abstract class AbstractTicket implements Ticket {
 
     final private TicketGrantingTicket ticketGrantingTicket;
 
-    public AbstractTicket(final String id, TicketGrantingTicket ticket, final ExpirationPolicy expirationPolicy) {
+    public AbstractTicket(final String id, TicketGrantingTicket ticket,
+        final ExpirationPolicy expirationPolicy) {
         if (expirationPolicy == null || id == null)
-            throw new IllegalArgumentException("id and expirationPolicy are required parameters.");
+            throw new IllegalArgumentException(
+                "id and expirationPolicy are required parameters.");
 
         this.id = id;
         this.lastTimeUsed = System.currentTimeMillis();

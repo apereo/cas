@@ -40,7 +40,7 @@ public class SimplePrincipal implements Principal {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-    
+
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }

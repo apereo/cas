@@ -18,7 +18,8 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
+public class TicketGrantingTicketImpl extends AbstractTicket implements
+    TicketGrantingTicket {
 
     private static final long serialVersionUID = -8673232562725683059L;
 
@@ -32,13 +33,18 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     private boolean expired = false;
 
-    public TicketGrantingTicketImpl(final String id, final TicketGrantingTicket ticketGrantingTicket, final Authentication authentication,
-        final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
+    public TicketGrantingTicketImpl(final String id,
+        final TicketGrantingTicket ticketGrantingTicket,
+        final Authentication authentication, final ExpirationPolicy policy,
+        final UniqueTicketIdGenerator uniqueTicketIdGenerator,
+        final ExpirationPolicy serviceExpirationPolicy) {
         super(id, ticketGrantingTicket, policy);
 
-        if (authentication == null || uniqueTicketIdGenerator == null || serviceExpirationPolicy == null) {
-            throw new IllegalArgumentException("authentication, uniqueTicketIdGenerator, and serviceExpirationPolicy cannot be null on "
-                + this.getClass().getName());
+        if (authentication == null || uniqueTicketIdGenerator == null
+            || serviceExpirationPolicy == null) {
+            throw new IllegalArgumentException(
+                "authentication, uniqueTicketIdGenerator, and serviceExpirationPolicy cannot be null on "
+                    + this.getClass().getName());
         }
 
         this.authentication = authentication;
@@ -47,9 +53,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         this.expirationPolicy = policy;
     }
 
-    public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy,
-        final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
-        this(id, null, authentication, policy, uniqueTicketIdGenerator, serviceExpirationPolicy);
+    public TicketGrantingTicketImpl(final String id,
+        final Authentication authentication, final ExpirationPolicy policy,
+        final UniqueTicketIdGenerator uniqueTicketIdGenerator,
+        final ExpirationPolicy serviceExpirationPolicy) {
+        this(id, null, authentication, policy, uniqueTicketIdGenerator,
+            serviceExpirationPolicy);
     }
 
     /**
@@ -60,8 +69,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     public synchronized ServiceTicket grantServiceTicket(Service service) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), this, service,
-            this.getCountOfUses() == 0, this.serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(
+            this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+            this, service, this.getCountOfUses() == 0,
+            this.serviceExpirationPolicy, this.uniqueTicketIdGenerator,
+            this.expirationPolicy);
 
         this.incrementCountOfUses();
 
@@ -77,7 +89,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     public boolean isExpired() {
-        return super.isExpired() || this.expired || (this.getGrantingTicket() != null && this.getGrantingTicket().isExpired());
+        return super.isExpired()
+            || this.expired
+            || (this.getGrantingTicket() != null && this.getGrantingTicket()
+                .isExpired());
     }
 
     public List getChainedPrincipals() {

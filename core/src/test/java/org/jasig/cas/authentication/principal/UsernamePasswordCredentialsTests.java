@@ -29,14 +29,16 @@ public class UsernamePasswordCredentialsTests extends TestCase {
 
         assertEquals(password, c.getPassword());
     }
-    
+
     public void testToString() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final String userName = "test";
 
         c.setUserName(userName);
-        
-        assertEquals(c.getClass().getName()+"@"+ Integer.toHexString(c.hashCode())+"[userName="+userName+"]", c.toString());
+
+        assertEquals(
+            c.getClass().getName() + "@" + Integer.toHexString(c.hashCode())
+                + "[userName=" + userName + "]", c.toString());
     }
 
 }

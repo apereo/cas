@@ -21,7 +21,8 @@ import sun.misc.BASE64Encoder;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class DesPasswordTranslator implements PasswordTranslator, InitializingBean {
+public class DesPasswordTranslator implements PasswordTranslator,
+    InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -49,9 +50,11 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
 
     public void afterPropertiesSet() throws Exception {
         if (this.key == null)
-            throw new IllegalStateException("key must be set on " + this.getClass().getName());
+            throw new IllegalStateException("key must be set on "
+                + this.getClass().getName());
 
-        SecretKey secretKey = new SecretKeySpec(this.key.getBytes("UTF8"), ALGORITHM);
+        SecretKey secretKey = new SecretKeySpec(this.key.getBytes("UTF8"),
+            ALGORITHM);
         this.cipher = Cipher.getInstance(ALGORITHM);
         this.cipher.init(Cipher.ENCRYPT_MODE, secretKey);
     }

@@ -18,11 +18,13 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public class AcceptUsersAuthenticationHandler extends
+    AbstractUsernamePasswordAuthenticationHandler {
 
     private Map users;
 
-    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request)
+        throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String cachedPassword;
 
@@ -37,7 +39,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     public void afterPropertiesSet() throws Exception {
         if (this.users == null) {
-            throw new IllegalStateException("users must be set on " + this.getClass().getName());
+            throw new IllegalStateException("users must be set on "
+                + this.getClass().getName());
         }
     }
 
