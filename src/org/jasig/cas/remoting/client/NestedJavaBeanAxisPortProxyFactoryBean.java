@@ -71,7 +71,7 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
 
         registerBeans(mapping, new ArrayList(), serviceInterface);
         
-        for (Iterator iter = beans.iterator(); iter.hasNext();) {
+        for (Iterator iter = this.beans.iterator(); iter.hasNext();) {
             final String bean = (String) iter.next();
             try {
                 final Class clazz = Class.forName(bean);

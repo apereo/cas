@@ -38,14 +38,14 @@ public class UserDefinedLengthRandomStringGenerator implements RandomStringGener
      * @see org.jasig.cas.util.RandomStringGenerator#getMinLength()
      */
     public int getMinLength() {
-        return MAX_TIMESTAMP_LENGTH + MAX_RANDOM_LENGTH + 1;
+        return MAX_TIMESTAMP_LENGTH + this.MAX_RANDOM_LENGTH + 1;
     }
 
     /**
      * @see org.jasig.cas.util.RandomStringGenerator#getMaxLength()
      */
     public int getMaxLength() {
-        return MAX_TIMESTAMP_LENGTH + MAX_RANDOM_LENGTH + MAX_ALPHANUMERIC_VALUE_LENGTH;
+        return MAX_TIMESTAMP_LENGTH + this.MAX_RANDOM_LENGTH + MAX_ALPHANUMERIC_VALUE_LENGTH;
     }
 
     /**
@@ -54,10 +54,10 @@ public class UserDefinedLengthRandomStringGenerator implements RandomStringGener
     public synchronized String getNewString() {
         long currentTime = System.currentTimeMillis();
         long count = 0;
-        final byte[] random = new byte[MAX_RANDOM_LENGTH];
+        final byte[] random = new byte[this.MAX_RANDOM_LENGTH];
         StringBuffer buffer = new StringBuffer(DEFAULT_LENGTH);
         
-        randomizer.nextBytes(random);
+        this.randomizer.nextBytes(random);
 
         if (currentTime == this.lastTimeUsed)
             count = this.countForLastTimeUsed++;

@@ -34,6 +34,6 @@ public class JaxRpcCasService extends ServletEndpointSupport implements CasServi
      * @see org.jasig.cas.remoting.CasService#getTicketGrantingTicket(org.jasig.cas.authentication.AuthenticationRequest)
      */
     public String getTicketGrantingTicket(final AuthenticationRequest request) {
-        return this.getTicketGrantingTicket(request);
+        return this.casService.getTicketGrantingTicket(request);
     }
 }

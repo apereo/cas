@@ -36,7 +36,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractUsernam
         for (Iterator iter = this.servers.keySet().iterator(); iter.hasNext();) {
             final DataSource dataSource;
             final String url = (String)iter.next();
-            final String driver = servers.getProperty(url);
+            final String driver = this.servers.getProperty(url);
             try {
                 dataSource = new DriverManagerDataSource(driver, url, username, password);
                 return true;

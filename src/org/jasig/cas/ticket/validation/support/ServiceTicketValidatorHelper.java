@@ -43,6 +43,6 @@ public class ServiceTicketValidatorHelper extends AbstractTicketValidatorHelper 
      * @see org.jasig.cas.ticket.validation.TicketValidatorHelper#supports(org.jasig.cas.ticket.Ticket)
      */
     public boolean supports(final Ticket ticket) {
-        return ticket.getClass().equals(ServiceTicket.class) || ticket.getClass().equals(ProxyTicket.class);
+        return ServiceTicket.class.isAssignableFrom(ticket.getClass()) || ProxyTicket.class.isAssignableFrom(ticket.getClass());
     }
 }

@@ -27,8 +27,8 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
     private final Principal principal = new SimplePrincipal("netId");
 
     public ProxyGrantingTicketCreatorTest() {
-        ticketCreator.setExpirationPolicy(new TimeoutExpirationPolicy(1000));
-        ticketCreator.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        this.ticketCreator.setExpirationPolicy(new TimeoutExpirationPolicy(1000));
+        this.ticketCreator.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
     }
 
     /**
@@ -36,12 +36,12 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        casAttributes = new CasAttributes();
+        this.casAttributes = new CasAttributes();
     }
 
     public void testNoParameters() {
         try {
-            ticketCreator.createTicket(principal, casAttributes, null);
+            this.ticketCreator.createTicket(this.principal, this.casAttributes, null);
         }
         catch (TicketCreationException e) {
             return;
@@ -54,22 +54,22 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
     }
 
     public void testProperParameters() {
-        casAttributes.setCallbackUrl("https://www.acs.rutgers.edu");
+        this.casAttributes.setCallbackUrl("https://www.acs.rutgers.edu");
 
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
-        ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes, serviceTicket);
+        ProxyGrantingTicket pgt = (ProxyGrantingTicket)this.ticketCreator.createTicket(this.principal, this.casAttributes, serviceTicket);
 
-        assertEquals(pgt.getProxyId().toString(), casAttributes.getCallbackUrl());
+        assertEquals(pgt.getProxyId().toString(), this.casAttributes.getCallbackUrl());
     }
 
     public void testNonHttpsParameters() {
-        casAttributes.setCallbackUrl("http://www.acs.rutgers.edu");
+        this.casAttributes.setCallbackUrl("http://www.acs.rutgers.edu");
 
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
         try {
-            ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes, serviceTicket);
+            ProxyGrantingTicket pgt = (ProxyGrantingTicket)this.ticketCreator.createTicket(this.principal, this.casAttributes, serviceTicket);
         }
         catch (IllegalArgumentException e) {
             return;
@@ -79,12 +79,12 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
     }
 
     public void testBadUrlParameters() {
-        casAttributes.setCallbackUrl("aaaa");
+        this.casAttributes.setCallbackUrl("aaaa");
 
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
         try {
-            ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes,  serviceTicket);
+            ProxyGrantingTicket pgt = (ProxyGrantingTicket) this.ticketCreator.createTicket(this.principal, this.casAttributes,  serviceTicket);
         }
         catch (TicketCreationException e) {
             return;

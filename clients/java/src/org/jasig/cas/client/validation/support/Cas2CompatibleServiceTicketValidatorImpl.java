@@ -33,7 +33,7 @@ public class Cas2CompatibleServiceTicketValidatorImpl extends AbstractServiceTic
         getMethod.setQueryString(getNameValuePairs(ticketId));
 
         try {
-            client.executeMethod(getMethod);
+            this.client.executeMethod(getMethod);
             response = getMethod.getResponseBodyAsString();
 
             return getCasReceipt(response);

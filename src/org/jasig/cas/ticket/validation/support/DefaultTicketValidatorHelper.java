@@ -31,6 +31,6 @@ public class DefaultTicketValidatorHelper extends AbstractTicketValidatorHelper 
      * @see org.jasig.cas.ticket.validation.TicketValidatorHelper#supports(org.jasig.cas.ticket.Ticket)
      */
     public boolean supports(final Ticket ticket) {
-        return ticket.getClass().equals(ProxyGrantingTicket.class);
+        return ProxyGrantingTicket.class.isAssignableFrom(ticket.getClass());
     }
 }

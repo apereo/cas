@@ -82,7 +82,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractUsern
                 + this.getClass().getName());
         }
 
-        SQL = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser + " = ? And " + this.fieldPassword + " = ?";
+        this.SQL = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser + " = ? And " + this.fieldPassword + " = ?";
     }
 
     /**

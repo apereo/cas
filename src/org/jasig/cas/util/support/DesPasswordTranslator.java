@@ -57,9 +57,9 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
         if (this.key == null)
             throw new IllegalStateException("key must be set on " + this.getClass().getName());
 
-        SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF8"), ALGORITHM);
+        SecretKey secretKey = new SecretKeySpec(this.key.getBytes("UTF8"), ALGORITHM);
         this.cipher = Cipher.getInstance(ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        this.cipher.init(Cipher.ENCRYPT_MODE, secretKey);
     }
 
     /**

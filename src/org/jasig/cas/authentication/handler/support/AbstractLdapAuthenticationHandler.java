@@ -64,7 +64,7 @@ public abstract class AbstractLdapAuthenticationHandler extends AbstractUsername
         hashtable.put(Context.SECURITY_PRINCIPAL, userName);
         hashtable.put(Context.SECURITY_CREDENTIALS, password);
 
-        if (secure)
+        if (this.secure)
             hashtable.put(Context.SECURITY_PROTOCOL, this.securityProtocol);
         try {
             context = new InitialDirContext(hashtable);
@@ -82,7 +82,7 @@ public abstract class AbstractLdapAuthenticationHandler extends AbstractUsername
      * @return Returns the filter.
      */
     public String getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**
@@ -96,7 +96,7 @@ public abstract class AbstractLdapAuthenticationHandler extends AbstractUsername
      * @return Returns the servers.
      */
     public List getServers() {
-        return servers;
+        return this.servers;
     }
 
     /**

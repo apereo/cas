@@ -61,7 +61,7 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
     public boolean authenticate(final AuthenticationRequest request) {
         final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest)request;
         try {
-            final String nisEntry = initialContext.lookup("system/" + map + "/" + uRequest.getUserName()).toString();
+            final String nisEntry = this.initialContext.lookup("system/" + this.map + "/" + uRequest.getUserName()).toString();
             final String nisFields[] = nisEntry.split(":");
             String nisEncryptedPassword = nisFields[1];
 
@@ -110,7 +110,7 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
                 + this.getClass().getName());
         }
 
-        url = DEFAULT_PROTOCOL + this.host + "/" + this.domain;
+        this.url = DEFAULT_PROTOCOL + this.host + "/" + this.domain;
         this.config = new Hashtable(5, 0.75F);
 
         this.config.put(Context.INITIAL_CONTEXT_FACTORY, this.contextFactory);
@@ -124,6 +124,6 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
      * @see org.springframework.beans.factory.DisposableBean#destroy()
      */
     public void destroy() throws Exception {
-        initialContext.close();
+        this.initialContext.close();
     }
 }

@@ -21,7 +21,7 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         authRequest.setUserName("test");
         authRequest.setPassword("test");
 
-        assertTrue(authenticationHandler.authenticate(authRequest));
+        assertTrue(this.authenticationHandler.authenticate(authRequest));
     }
 
     public void testInvalidUsernamePassword() {
@@ -29,7 +29,7 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         authRequest.setUserName("test");
         authRequest.setPassword("test2");
 
-        assertFalse(authenticationHandler.authenticate(authRequest));
+        assertFalse(this.authenticationHandler.authenticate(authRequest));
     }
 
     public void testNullUsernamePassword() {
@@ -37,6 +37,6 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         authRequest.setUserName(null);
         authRequest.setPassword(null);
 
-        assertFalse(authenticationHandler.authenticate(authRequest));
+        assertFalse(this.authenticationHandler.authenticate(authRequest));
     }
 }

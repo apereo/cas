@@ -61,13 +61,13 @@ public abstract class AbstractServiceTicketValidator implements ServiceTicketVal
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        if (casValidateUrl == null || !casValidateUrl.getProtocol().startsWith("https"))
+        if (this.casValidateUrl == null || !this.casValidateUrl.getProtocol().startsWith("https"))
             throw new IllegalStateException("casValidateUrl must be set (and secure) on " + this.getClass().getName());
 
-        if (proxyCallbackUrl != null && !proxyCallbackUrl.getProtocol().startsWith("https"))
+        if (this.proxyCallbackUrl != null && !this.proxyCallbackUrl.getProtocol().startsWith("https"))
             throw new IllegalStateException("The ProxyCallbackUrl must be a secure URL");
 
-        if (service == null || !service.getProtocol().startsWith("https")) {
+        if (this.service == null || !this.service.getProtocol().startsWith("https")) {
             throw new IllegalStateException("Service URL must be set and be secure!");
         }
     }
@@ -76,27 +76,27 @@ public abstract class AbstractServiceTicketValidator implements ServiceTicketVal
      * @return Returns the casValidateUrl.
      */
     public URL getCasValidateUrl() {
-        return casValidateUrl;
+        return this.casValidateUrl;
     }
 
     /**
      * @return Returns the proxyCallbackUrl.
      */
     public URL getProxyCallbackUrl() {
-        return proxyCallbackUrl;
+        return this.proxyCallbackUrl;
     }
 
     /**
      * @return Returns the renew.
      */
     public boolean isRenew() {
-        return renew;
+        return this.renew;
     }
 
     /**
      * @return Returns the service.
      */
     public URL getService() {
-        return service;
+        return this.service;
     }
 }

@@ -28,6 +28,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @return Returns the principal.
      */
     public Principal getPrincipal() {
-        return principal;
+        return this.principal;
     }
 }
