@@ -1,3 +1,8 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.web;
 
 import java.util.HashMap;
@@ -6,6 +11,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.ViewNames;
@@ -25,6 +32,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class TicketExceptionHandlerExceptionResolver implements
     HandlerExceptionResolver {
+    
+    private final Log log = LogFactory.getLog(TicketExceptionHandlerExceptionResolver.class);
 
     public TicketExceptionHandlerExceptionResolver() {
         super();
@@ -34,8 +43,11 @@ public class TicketExceptionHandlerExceptionResolver implements
         final HttpServletResponse response, final Object handler, final Exception exception) {
         
         if (!(exception instanceof TicketException)) {
+            log.debug("Exception detected was: " + exception.getClass().getName());
             return null;
         }
+        
+        log.debug("Detected TicketException. Showing error page.");
         final TicketException t = (TicketException) exception;
         BindException errors = new BindException(new UsernamePasswordCredentials(), "credentials");
         errors.reject(t.getCode());
@@ -45,5 +57,4 @@ public class TicketExceptionHandlerExceptionResolver implements
         
         return new ModelAndView(ViewNames.CONST_LOGON, model);
     }
-
 }

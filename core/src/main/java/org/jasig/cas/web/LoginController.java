@@ -188,10 +188,13 @@ public final class LoginController extends SimpleFormController implements
                         .grantServiceTicket(ticketGrantingTicketId,
                             new SimpleService(service), credentials);
                 } catch (TicketException e) {
-                    // the exception thrown by this will be handled externally
-                    ticketGrantingTicketId = this.centralAuthenticationService
-                    .createTicketGrantingTicket(credentials);
+                    // nothing to do here....move on.
                 }
+            }
+            
+            if (serviceTicketId == null) {
+                ticketGrantingTicketId = this.centralAuthenticationService
+                .createTicketGrantingTicket(credentials);
             }
 
             this.createCookie(WebConstants.COOKIE_TGC_ID,
