@@ -97,11 +97,6 @@ public class UrlContextSource implements ContextSource {
         this.environment.put(Context.SECURITY_PROTOCOL, securityProtocol);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.ldap.support.ContextSourceInterface#getDirContext()
-     */
     public DirContext getDirContext() {
         try {
             // TODO check whether there is a faster way to retrieve context,
