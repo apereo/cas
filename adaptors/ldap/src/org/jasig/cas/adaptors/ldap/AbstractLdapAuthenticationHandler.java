@@ -12,6 +12,7 @@ import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
  * Abstract class that duplicates functionality of AbstractHandler
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
