@@ -24,6 +24,9 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     public boolean authenticate(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
+        
+        if (usernamePasswordCredentials.getUserName() == null)
+            return false;
 
         return !this.users.contains(usernamePasswordCredentials.getUserName());
     }
