@@ -18,9 +18,10 @@ import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Class to advise the removal of Tickets from the Ticket Registry.  Watches the tickets being
- * requested to be deleted and checks if its in its list to apply single-sign out to.  If it is,
- * it sends single sign out requests to any service associated with that ticket.
+ * Class to advise the removal of Tickets from the Ticket Registry. Watches the
+ * tickets being requested to be deleted and checks if its in its list to apply
+ * single-sign out to. If it is, it sends single sign out requests to any
+ * service associated with that ticket.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -32,56 +33,62 @@ import org.springframework.beans.factory.InitializingBean;
  * @see org.jasig.cas.ticket.registry.TicketRegistry
  */
 public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvice
-		implements AfterReturningAdvice, InitializingBean {
+    implements AfterReturningAdvice, InitializingBean {
 
-	private ServiceRegistry serviceRegistry;
-	
-	private Map singleSignoutMapping;
-	
-	
-	public void afterReturning(final Object returnValue, final Method method, final Object[] args,
-			final Object target) throws Throwable {
-		final String ticketGrantingTicketId = (String) args[0];
-		final Set servicesToCallback;
+    private ServiceRegistry serviceRegistry;
 
-		synchronized (this.singleSignoutMapping) {
-			if (!this.singleSignoutMapping.containsKey(ticketGrantingTicketId)) {
-				return;
-			}
-			
-			servicesToCallback = (Set) this.singleSignoutMapping.get(ticketGrantingTicketId);
-			this.singleSignoutMapping.remove(ticketGrantingTicketId);
-		}
-		
-		for (final Iterator iter = servicesToCallback.iterator(); iter.hasNext();) {
-			final ServiceTicket serviceTicket = (ServiceTicket) iter.next();
-			final AuthenticatedService service = this.serviceRegistry.getService(serviceTicket.getService().getId());
-			final SingleSignoutCallback callback = service.getSingleSignoutCallback();
-			
-			if (callback != null ){
-				callback.sendSingleSignoutRequest(service, serviceTicket.getId());
-			}
-		}
-	}
+    private Map singleSignoutMapping;
 
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
+    public void afterReturning(final Object returnValue, final Method method,
+        final Object[] args, final Object target) throws Throwable {
+        final String ticketGrantingTicketId = (String) args[0];
+        final Set servicesToCallback;
 
+        synchronized (this.singleSignoutMapping) {
+            if (!this.singleSignoutMapping.containsKey(ticketGrantingTicketId)) {
+                return;
+            }
 
-	public void setSingleSignoutMapping(Map singleSignoutMapping) {
-		this.singleSignoutMapping = singleSignoutMapping;
-	}
+            servicesToCallback = (Set) this.singleSignoutMapping
+                .get(ticketGrantingTicketId);
+            this.singleSignoutMapping.remove(ticketGrantingTicketId);
+        }
 
-	public void afterPropertiesSet() throws Exception {
-		if (this.serviceRegistry == null) {
-			throw new IllegalStateException("serviceRegistry cannot be null on " + this.getClass().getName());
-		}
-		
-		if (this.singleSignoutMapping == null) {
-			throw new IllegalStateException("singleSignoutMapping cannot be null on " + this.getClass().getName());
-		}
-	}
-	
+        for (final Iterator iter = servicesToCallback.iterator(); iter
+            .hasNext();) {
+            final ServiceTicket serviceTicket = (ServiceTicket) iter.next();
+            final AuthenticatedService service = this.serviceRegistry
+                .getService(serviceTicket.getService().getId());
+            final SingleSignoutCallback callback = service
+                .getSingleSignoutCallback();
+
+            if (callback != null) {
+                callback.sendSingleSignoutRequest(service, serviceTicket
+                    .getId());
+            }
+        }
+    }
+
+    public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
+    }
+
+    public void setSingleSignoutMapping(Map singleSignoutMapping) {
+        this.singleSignoutMapping = singleSignoutMapping;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if (this.serviceRegistry == null) {
+            throw new IllegalStateException(
+                "serviceRegistry cannot be null on "
+                    + this.getClass().getName());
+        }
+
+        if (this.singleSignoutMapping == null) {
+            throw new IllegalStateException(
+                "singleSignoutMapping cannot be null on "
+                    + this.getClass().getName());
+        }
+    }
 
 }

@@ -27,7 +27,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
 
     protected final boolean authenticateInternal(final Credentials credentials)
         throws AuthenticationException {
-        return authenticateUsernamePasswordInternal((UsernamePasswordCredentials)credentials);
+        return authenticateUsernamePasswordInternal((UsernamePasswordCredentials) credentials);
     }
 
     protected abstract boolean authenticateUsernamePasswordInternal(

@@ -39,15 +39,15 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
             final Set keys = this.loginTokens.keySet();
 
             for (Iterator iter = keys.iterator(); iter.hasNext();) {
-                final String key = (String)iter.next();
-                final Date lastUsed = (Date)loginTokens.get(key);
+                final String key = (String) iter.next();
+                final Date lastUsed = (Date) loginTokens.get(key);
 
                 if ((currentTime - lastUsed.getTime()) > this.timeOut)
                     tokensToDelete.add(key);
             }
 
             for (Iterator iter = tokensToDelete.iterator(); iter.hasNext();) {
-                final String key = (String)iter.next();
+                final String key = (String) iter.next();
                 this.loginTokens.remove(key);
             }
         }

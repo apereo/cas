@@ -66,7 +66,7 @@ public class DefaultReloadServiceContextCronJob implements
                 for (final Iterator iter = beanFactory.getBeansOfType(
                     AuthenticatedService.class).values().iterator(); iter
                     .hasNext();) {
-                    final AuthenticatedService authenticatedService = (AuthenticatedService)iter
+                    final AuthenticatedService authenticatedService = (AuthenticatedService) iter
                         .next();
                     log.debug("Adding [" + authenticatedService.getId()
                         + "] to ServiceRegistry");

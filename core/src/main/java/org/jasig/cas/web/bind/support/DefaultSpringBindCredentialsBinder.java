@@ -17,14 +17,30 @@ import org.jasig.cas.web.bind.CredentialsBinder;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DefaultSpringBindCredentialsBinder implements CredentialsBinder {
+public final class DefaultSpringBindCredentialsBinder implements
+    CredentialsBinder {
 
-    public void bind(HttpServletRequest request, Credentials credentials) {
-        // don't do anything, Spring binding handles everything already due to
-        // the controller
+    /**
+     * This method does nothing as Spring handles everything.
+     * 
+     * @param request The HttpServletRequest from which we wish to bind
+     * credentials to
+     * @param credentials The credentials we will be doing custom binding to.
+     */
+    public void bind(final HttpServletRequest request,
+        final Credentials credentials) {
+        // there is nothing to see here, move along please.
     }
 
-    public boolean supports(Class clazz) {
-        return true; // supports any kind of credentials
+    /**
+     * This supports method will always return true since the class does
+     * nothing.
+     * 
+     * @param clazz The class to determine is supported or not
+     * @return true if this class is supported by the CredentialsBinder, false
+     * otherwise.
+     */
+    public boolean supports(final Class clazz) {
+        return true;
     }
 }

@@ -24,7 +24,7 @@ public class DefaultCredentialsToPrincipalResolver implements
     protected final Log log = LogFactory.getLog(getClass());
 
     public Principal resolvePrincipal(final Credentials credentials) {
-        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
+        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
 
         if (credentials == null) {
             throw new IllegalArgumentException("credentials cannot be null");

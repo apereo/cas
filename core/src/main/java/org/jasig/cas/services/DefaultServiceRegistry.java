@@ -45,7 +45,7 @@ public class DefaultServiceRegistry implements ServiceRegistry,
     }
 
     public AuthenticatedService getService(final String serviceId) {
-        AuthenticatedService authenticatedService = (AuthenticatedService)this.services
+        AuthenticatedService authenticatedService = (AuthenticatedService) this.services
             .get(serviceId);
         log.debug("Attempting to retrieve service [" + serviceId
             + "] from Service Registry");

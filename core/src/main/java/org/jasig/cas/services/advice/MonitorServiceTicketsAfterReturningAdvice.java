@@ -18,61 +18,69 @@ import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Class to watch for ServiceTickets being entered into the registry and adding them to the list of ticktets
- * to watch for Single Signout capabilities.
+ * Class to watch for ServiceTickets being entered into the registry and adding
+ * them to the list of ticktets to watch for Single Signout capabilities.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
+ * 
  */
 public class MonitorServiceTicketsAfterReturningAdvice implements
-		AfterReturningAdvice, InitializingBean {
-	
-	private TicketRegistry ticketRegistry;
-	
-	private Map singleSignoutMapping;
+    AfterReturningAdvice, InitializingBean {
 
-	public void afterReturning(final Object returnObject, final Method method, final Object[] args,
-			final Object target) throws Throwable {
-		
-		final Ticket ticket = (Ticket) args[0];
-		
-		if (!(ticket instanceof ServiceTicket)) {
-			return;
-		}
-		
-		final ServiceTicket serviceTicket = (ServiceTicket) ticket;
-		final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
-		
-		synchronized (this.singleSignoutMapping) {
-		
-			if (this.singleSignoutMapping.containsKey(ticketGrantingTicket.getId())) {
-				Set serviceTickets = (Set) this.singleSignoutMapping.get(ticketGrantingTicket);
-				serviceTickets.add(serviceTicket);
-			} else {
-				Set serviceTickets = new HashSet();
-				serviceTickets.add(serviceTicket);
-				this.singleSignoutMapping.put(ticketGrantingTicket.getId(), serviceTickets);
-			}
-		}
-	}
+    private TicketRegistry ticketRegistry;
 
-	public void setSingleSignoutMapping(Map singleSignoutMapping) {
-		this.singleSignoutMapping = singleSignoutMapping;
-	}
+    private Map singleSignoutMapping;
 
-	public void setTicketRegistry(TicketRegistry ticketRegistry) {
-		this.ticketRegistry = ticketRegistry;
-	}
+    public void afterReturning(final Object returnObject, final Method method,
+        final Object[] args, final Object target) throws Throwable {
 
-	public void afterPropertiesSet() throws Exception {
-		if (this.ticketRegistry == null) {
-			throw new IllegalStateException("ticketRegistry cannot be null on " + this.getClass().getName());
-		}
-		
-		if (this.singleSignoutMapping == null) {
-			throw new IllegalStateException("singleSignoutMapping cannot be null on " + this.getClass().getName());
-		}
-	}
+        final Ticket ticket = (Ticket) args[0];
+
+        if (!(ticket instanceof ServiceTicket)) {
+            return;
+        }
+
+        final ServiceTicket serviceTicket = (ServiceTicket) ticket;
+        final TicketGrantingTicket ticketGrantingTicket = serviceTicket
+            .getGrantingTicket();
+
+        synchronized (this.singleSignoutMapping) {
+
+            if (this.singleSignoutMapping.containsKey(ticketGrantingTicket
+                .getId())) {
+                Set serviceTickets = (Set) this.singleSignoutMapping
+                    .get(ticketGrantingTicket);
+                serviceTickets.add(serviceTicket);
+            }
+            else {
+                Set serviceTickets = new HashSet();
+                serviceTickets.add(serviceTicket);
+                this.singleSignoutMapping.put(ticketGrantingTicket.getId(),
+                    serviceTickets);
+            }
+        }
+    }
+
+    public void setSingleSignoutMapping(Map singleSignoutMapping) {
+        this.singleSignoutMapping = singleSignoutMapping;
+    }
+
+    public void setTicketRegistry(TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if (this.ticketRegistry == null) {
+            throw new IllegalStateException("ticketRegistry cannot be null on "
+                + this.getClass().getName());
+        }
+
+        if (this.singleSignoutMapping == null) {
+            throw new IllegalStateException(
+                "singleSignoutMapping cannot be null on "
+                    + this.getClass().getName());
+        }
+    }
 }

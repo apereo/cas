@@ -49,7 +49,7 @@ public abstract class LdapUtils {
         }
 
         for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
-            String key = (String)iter.next();
+            String key = (String) iter.next();
             String value = properties.getProperty(key, "");
 
             newFilter = newFilter.replaceFirst(key, value); // TODO: should this

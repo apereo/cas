@@ -29,14 +29,14 @@ public class TicketException extends Exception {
     private String description;
 
     /**
-     *  
+     * 
      */
     public TicketException() {
         super();
     }
 
     /**
-     *  
+     * 
      */
     public TicketException(TicketExceptionCode code, final String description) {
         this.code = code;

@@ -10,9 +10,10 @@ package org.jasig.cas.services;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
+ * 
  */
 public interface SingleSignoutCallback {
 
-	boolean sendSingleSignoutRequest(AuthenticatedService authenticatedService, String serviceTicketId);
+    boolean sendSingleSignoutRequest(AuthenticatedService authenticatedService,
+        String serviceTicketId);
 }

@@ -93,7 +93,7 @@ public class NestedJavaBeanMappingServicePostProcessor implements
 
         if (this.beans != null) {
             for (Iterator iter = this.beans.iterator(); iter.hasNext();) {
-                final String bean = (String)iter.next();
+                final String bean = (String) iter.next();
                 try {
                     final Class clazz = Class.forName(bean);
                     this.addJavaBeanToMap(mapping, clazz);

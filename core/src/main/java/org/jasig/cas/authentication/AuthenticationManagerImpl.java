@@ -40,7 +40,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager,
 
         for (Iterator iter = this.authenticationHandlers.iterator(); iter
             .hasNext();) {
-            final AuthenticationHandler handler = (AuthenticationHandler)iter
+            final AuthenticationHandler handler = (AuthenticationHandler) iter
                 .next();
 
             try {
@@ -66,7 +66,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager,
 
         for (Iterator resolvers = this.credentialsToPrincipalResolvers
             .iterator(); resolvers.hasNext();) {
-            final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers
+            final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver) resolvers
                 .next();
 
             if (resolver.supports(credentials)) {
