@@ -37,16 +37,19 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
         for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();) {
             final AuthenticationHandler handler = (AuthenticationHandler)iter.next();
 
-            if (handler.supports(request) && handler.authenticate(request)) {
-                for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
-                    final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
+            try {
+                if (handler.authenticate(request)) {
+                    for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
+                        final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
 
-                    if (resolver.supports(request))
-                        return resolver.resolvePrincipal(request);
+                        if (resolver.supports(request))
+                            return resolver.resolvePrincipal(request);
+                    }
+                    return null;
                 }
-                return null;
+            } catch (UnsupportedCredentialsException e) {
+                // ignore this asnd try the next one
             }
-
         }
         return null;
     }

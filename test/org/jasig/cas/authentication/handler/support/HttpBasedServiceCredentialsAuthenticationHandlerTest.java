@@ -34,11 +34,21 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTest extends TestCa
 	}
 
 	public void testSupportsProperUserCredentials() {
-		assertTrue(this.authenticationHandler.supports(new HttpBasedServiceCredentials(this.httpBackedUrl)));
+        try {
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(this.httpsInproperCertificateUrl);
+        	this.authenticationHandler.authenticate(c);
+        } catch (AuthenticationException e) {
+            fail("AuthenticationException caught.");
+        }
 	}
 
 	public void testDoesntSupportBadUserCredentials() {
-		assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
+        try {
+        	this.authenticationHandler.authenticate(new UsernamePasswordCredentials());
+        } catch (AuthenticationException e) {
+        	return;
+        }
+        fail("AuthenticationException expected.");
 	}
 
 	public void testAcceptsProperCertificateCredentials() {

@@ -4,10 +4,13 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.adaptors.cas.LegacyCasTrustedCredentials;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
@@ -23,11 +26,29 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
     private AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
 
     public void testSupportsProperUserCredentials() {
-        assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        
+        c.setUserName("test");
+        c.setPassword("test");
+        try {
+        	this.authenticationHandler.authenticate(c);
+        } catch (UnsupportedCredentialsException e) {
+            fail("UnsupportedCredentialsException caught");
+        } catch (AuthenticationException e) {
+            fail("AuthenticationException caught.");
+        }
     }
     
     public void testDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(new LegacyCasTrustedCredentials()));
+        try {
+        	this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu")));
+        } catch (MalformedURLException e) {
+            fail("Could not resolve URL.");
+        } catch (UnsupportedCredentialsException e) {
+            // this is okay
+        } catch (AuthenticationException e) {
+            fail("AuthenticationException caught.");
+        }
     }
     
     public void testValidUsernamePassword() {

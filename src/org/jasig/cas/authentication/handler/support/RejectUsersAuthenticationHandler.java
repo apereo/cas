@@ -6,6 +6,7 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.util.Collection;
 
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -22,7 +23,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials credentials) {
+    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
         
         if (usernamePasswordCredentials.getUserName() == null)

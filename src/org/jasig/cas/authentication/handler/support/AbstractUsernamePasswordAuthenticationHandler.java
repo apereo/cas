@@ -6,7 +6,6 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,14 +16,14 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Scott Battaglia
  * @version $Id$
  */
-public abstract class AbstractUsernamePasswordAuthenticationHandler implements AuthenticationHandler, InitializingBean {
+public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractAuthenticationHandler implements InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public final boolean supports(final Credentials credentials) {
+    protected final boolean supports(final Credentials credentials) {
         return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }
 

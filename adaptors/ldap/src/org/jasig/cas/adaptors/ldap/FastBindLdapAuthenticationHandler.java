@@ -6,11 +6,10 @@ package org.jasig.cas.adaptors.ldap;
 
 import javax.naming.directory.DirContext;
 
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
-import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the normal two step binding process to determine validity by providing
@@ -19,14 +18,14 @@ import org.springframework.ldap.core.support.LdapDaoSupport;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class FastBindLdapAuthenticationHandler extends LdapDaoSupport implements AuthenticationHandler {
+public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticationHandler {
 
     private String filter;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
+    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         
         DirContext dirContext = this.getContextSource().getDirContext(LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
@@ -50,7 +49,7 @@ public class FastBindLdapAuthenticationHandler extends LdapDaoSupport implements
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean supports(Credentials credentials) {
+    protected boolean supports(Credentials credentials) {
         return credentials == null && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
 

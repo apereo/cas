@@ -6,6 +6,7 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.util.Map;
 
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -25,7 +26,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
+    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String cachedPassword;
 

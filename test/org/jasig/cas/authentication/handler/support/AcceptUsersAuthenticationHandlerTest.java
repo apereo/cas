@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -38,14 +39,28 @@ public class AcceptUsersAuthenticationHandlerTest extends TestCase {
     }
     
     public void testSupportsProperUserCredentials() {
-        assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        
+        c.setUserName("scott");
+        c.setPassword("rutgers");
+        try {
+        	this.authenticationHandler.authenticate(c);
+        } catch (UnsupportedCredentialsException e) {
+            fail("UnsupportedCredentialsException caught");
+        } catch (AuthenticationException e) {
+            fail("AuthenticationException caught.");
+        }
     }
     
     public void testDoesntSupportBadUserCredentials() {
         try {
-        	assertFalse(this.authenticationHandler.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
+        	this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu")));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
+        } catch (UnsupportedCredentialsException e) {
+            // this is okay
+        } catch (AuthenticationException e) {
+            fail("AuthenticationException caught.");
         }
     }
     

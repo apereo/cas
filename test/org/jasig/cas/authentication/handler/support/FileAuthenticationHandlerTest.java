@@ -4,10 +4,13 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import junit.framework.TestCase;
-import org.jasig.cas.adaptors.cas.LegacyCasTrustedCredentials;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 
@@ -30,11 +33,30 @@ public class FileAuthenticationHandlerTest extends TestCase {
 
 	}
     public void testSupportsProperUserCredentials() {
-        assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        
+        c.setUserName("scott");
+        c.setPassword("rutgers");
+        try {
+        	this.authenticationHandler.authenticate(c);
+        } catch (UnsupportedCredentialsException e) {
+            fail("UnsupportedCredentialsException caught");
+        } catch (AuthenticationException e) {
+            fail("AuthenticationException caught.");
+        }
     }
     
     public void testDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(new LegacyCasTrustedCredentials()));
+        try {
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"));
+        	this.authenticationHandler.authenticate(c);
+        } catch (MalformedURLException e) {
+            fail("MalformedURLException caught.");
+        } catch (UnsupportedCredentialsException e) {
+            // this is okay
+        } catch (AuthenticationException e) {
+            fail("AuthenticationException caught.");
+        }
     }
     
     public void testAuthenticatesUserInFileWithDefaultSeparator() {
