@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -25,20 +26,14 @@ public class SimpleService implements Service {
 		return this.id;
 	}
     
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     public boolean equals(Object o) {
-        
-        if (!(o instanceof SimpleService))
+        if (o == null || !this.getClass().equals(o.getClass()))
             return false;
         
-        SimpleService s = (SimpleService) o;
-
-        return this.getId().equals(s.getId());
+       return EqualsBuilder.reflectionEquals(this, o);
     }
     
     public String toString() {
-    	return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this);
     }
 }

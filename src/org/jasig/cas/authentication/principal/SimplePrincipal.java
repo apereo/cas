@@ -4,9 +4,11 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
+ * Simplest implementation of a Principal.
  * @author Scott Battaglia
  * @version $Id$
  */
@@ -29,16 +31,13 @@ public class SimplePrincipal implements Principal {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof SimplePrincipal))
+        if (o == null || !this.getClass().equals(o.getClass()))
             return false;
-
-        SimplePrincipal test = (SimplePrincipal)o;
-
-        return this.id.equals(test.getId());
+        
+       return EqualsBuilder.reflectionEquals(this, o);
     }
     
     public String toString() {
     	return ToStringBuilder.reflectionToString(this);
     }
-
 }
