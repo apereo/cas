@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.Ticket;
 
 /**
@@ -38,8 +37,7 @@ public final class DefaultTicketRegistry implements TicketRegistry {
         this.cache.put(ticket.getId(), ticket);
     }
 
-    public Ticket getTicket(final String ticketId, final Class clazz)
-        throws InvalidTicketClassException {
+    public Ticket getTicket(final String ticketId, final Class clazz) {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null");
         }
@@ -51,7 +49,7 @@ public final class DefaultTicketRegistry implements TicketRegistry {
         }
 
         if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new InvalidTicketClassException("Ticket [" + ticket.getId()
+            throw new ClassCastException("Ticket [" + ticket.getId()
                 + " is of type " + ticket.getClass()
                 + " when we were expecting " + clazz);
         }

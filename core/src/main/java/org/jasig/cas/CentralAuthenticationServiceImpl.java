@@ -14,12 +14,13 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketNotFoundException;
+import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
@@ -67,95 +68,83 @@ public final class CentralAuthenticationServiceImpl implements
         }
 
         synchronized (this.ticketRegistry) {
-            try {
-                log.debug("Removing ticket [" + ticketGrantingTicketId
-                    + "] from registry.");
-                final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
-                    .getTicket(ticketGrantingTicketId,
-                        TicketGrantingTicket.class);
+            log.debug("Removing ticket [" + ticketGrantingTicketId
+                + "] from registry.");
+            final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
+                .getTicket(ticketGrantingTicketId,
+                    TicketGrantingTicket.class);
 
-                if (ticket != null) {
-                    log.debug("Ticket found.  Expiring and then deleting.");
-                    ticket.expire();
-                    this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
-                }
-            } catch (InvalidTicketClassException ite) {
-                log.debug("Invalid request to remove ticket ["
-                    + ticketGrantingTicketId
-                    + "].  Ticket not a valid TicketGrantingTicket.");
-                throw new IllegalArgumentException(
-                    "ticketGrantingTicketId must be the ID of a TicketGrantingTicket");
+            if (ticket != null) {
+                log.debug("Ticket found.  Expiring and then deleting.");
+                ticket.expire();
+                this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
             }
         }
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
-        throws TicketCreationException {
-        
+        throws TicketException {
+
         if (ticketGrantingTicketId == null || service == null) {
-            throw new IllegalArgumentException("ticketGrantingTicketId, credentials and service are required fields.");
+            throw new IllegalArgumentException(
+                "ticketGrantingTicketId, credentials and service are required fields.");
         }
 
-        try {
-            final TicketGrantingTicket ticketGrantingTicket;
-            synchronized (this.ticketRegistry) {
-                ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
-                    .getTicket(ticketGrantingTicketId,
-                        TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket;
+        synchronized (this.ticketRegistry) {
+            ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
+                .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
-                if (ticketGrantingTicket == null
-                    || ticketGrantingTicket.isExpired()) {
-                    throw new TicketCreationException("ticketGrantingTicket not found or expired.");
-                }
+            if (ticketGrantingTicket == null
+                || ticketGrantingTicket.isExpired()) {
+                throw new TicketNotFoundException();
+            }
 
-                if (credentials != null) {
-                    try {
-                        Authentication authentication = this.authenticationManager
+            if (credentials != null) {
+                try {
+                    Authentication authentication = this.authenticationManager
                         .authenticate(credentials);
 
-                        Principal originalPrincipal = ticketGrantingTicket
-                            .getAuthentication().getPrincipal();
-                        Principal newPrincipal = authentication.getPrincipal();
-    
-                        if (!newPrincipal.equals(originalPrincipal)) {
-                            return null;
-                        }
-                    } catch (AuthenticationException e) {
-                        throw new TicketCreationException(e);
+                    Principal originalPrincipal = ticketGrantingTicket
+                        .getAuthentication().getPrincipal();
+                    Principal newPrincipal = authentication.getPrincipal();
+
+                    if (!newPrincipal.equals(originalPrincipal)) {
+                        return null;
                     }
                 }
-
-                final ServiceTicket serviceTicket = ticketGrantingTicket
-                    .grantServiceTicket(this.uniqueTicketIdGenerator
-                        .getNewTicketId(ServiceTicket.PREFIX), service,
-                        this.serviceTicketExpirationPolicy);
-
-                // TODO we need a better way of handling this
-                if (credentials != null) {
-                    serviceTicket.setFromNewLogin(true);
+                catch (AuthenticationException e) {
+                    throw new TicketCreationException(e);
                 }
-
-                this.ticketRegistry.addTicket(serviceTicket);
-
-                log.info("Granted service ticket ["
-                    + serviceTicket.getId()
-                    + "] for service ["
-                    + service.getId()
-                    + "] for user ["
-                    + serviceTicket.getGrantingTicket().getAuthentication()
-                        .getPrincipal().getId() + "]");
-
-                return serviceTicket.getId();
             }
-        } catch (InvalidTicketClassException ite) {
-            throw new TicketCreationException(
-                "Unable to retrieve TicketGrantingTicket to grant service ticket.");
+
+            final ServiceTicket serviceTicket = ticketGrantingTicket
+                .grantServiceTicket(this.uniqueTicketIdGenerator
+                    .getNewTicketId(ServiceTicket.PREFIX), service,
+                    this.serviceTicketExpirationPolicy);
+
+            // TODO we need a better way of handling this
+            if (credentials != null) {
+                serviceTicket.setFromNewLogin(true);
+            }
+
+            this.ticketRegistry.addTicket(serviceTicket);
+
+            log.info("Granted service ticket ["
+                + serviceTicket.getId()
+                + "] for service ["
+                + service.getId()
+                + "] for user ["
+                + serviceTicket.getGrantingTicket().getAuthentication()
+                    .getPrincipal().getId() + "]");
+
+            return serviceTicket.getId();
         }
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service) throws TicketCreationException {
+        final Service service) throws TicketException {
             return this.grantServiceTicket(ticketGrantingTicketId, service,
                 null);
     }
@@ -177,7 +166,7 @@ public final class CentralAuthenticationServiceImpl implements
                     serviceTicketId, ServiceTicket.class);
 
                 if (serviceTicket == null || serviceTicket.isExpired()) {
-                    throw new TicketException("serviceTicket was not found or expired.");
+                    throw new TicketNotFoundException();
                 }
 
                 TicketGrantingTicket ticketGrantingTicket = serviceTicket
@@ -210,15 +199,13 @@ public final class CentralAuthenticationServiceImpl implements
             if (serviceTicket == null) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] does not exist.");
-                throw new TicketException(TicketException.INVALID_TICKET,
-                    "ticket '" + serviceTicketId + "' not recognized");
+                throw new TicketNotFoundException();
             }
 
             if (serviceTicket.isExpired()) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] has expired.");
-                throw new TicketException(TicketException.INVALID_TICKET,
-                    "ticket '" + serviceTicketId + "' not recognized");
+                throw new TicketValidationException();
             }
 
             serviceTicket.incrementCountOfUses();
@@ -227,9 +214,7 @@ public final class CentralAuthenticationServiceImpl implements
             if (!service.equals(serviceTicket.getService())) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] does not match supplied service.");
-                throw new TicketException(TicketException.INVALID_SERVICE,
-                    "ticket '" + serviceTicketId
-                        + "' does not match supplied service");
+                throw new TicketValidationException();
             }
 
             return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()

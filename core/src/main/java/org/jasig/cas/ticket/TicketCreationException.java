@@ -17,32 +17,14 @@ public class TicketCreationException extends TicketException {
     /** Serializable ID for unique id. */
     private static final long serialVersionUID = 5501212207531289993L;
 
-    /**
-     * 
-     */
+    /** Code description. */
+    private static final String CODE = "CREATION_ERROR";
+    
     public TicketCreationException() {
-        super();
+        super(CODE);
     }
-
-    /**
-     * @param message
-     */
-    public TicketCreationException(final String message) {
-        super(message);
-    }
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public TicketCreationException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * @param cause
-     */
-    public TicketCreationException(final Throwable cause) {
-        super(cause);
+    
+    public TicketCreationException(Throwable throwable) {
+        super(CODE, throwable);
     }
 }

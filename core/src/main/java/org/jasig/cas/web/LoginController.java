@@ -192,7 +192,7 @@ public final class LoginController extends SimpleFormController implements
                     ticketGrantingTicketId = this.centralAuthenticationService
                     .createTicketGrantingTicket(credentials);
                     } catch (TicketException e1) {
-                        errors.reject(e1.getCode(), e1.getDescription());
+                        errors.reject(e1.getCode(), getMessageSourceAccessor().getMessage(e1.getCode()));
                         return super.processFormSubmission(request, response, command, errors);
                     }
                 }
@@ -217,7 +217,7 @@ public final class LoginController extends SimpleFormController implements
                         .grantServiceTicket(ticketGrantingTicketId,
                             new SimpleService(service));
                 } catch (TicketException e) {
-                    errors.reject(e.getCode(), e.getDescription());
+                    errors.reject(e.getCode(), getMessageSourceAccessor().getMessage(e.getCode()));
                     return super.processFormSubmission(request, response, command, errors);
                 }
 
