@@ -57,59 +57,64 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
      * @see org.jasig.cas.CentralAuthenticationService#destroyTicketGrantingTicket(java.lang.String)
      */
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
-        try {
-            log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
-            final TicketGrantingTicket ticket = (TicketGrantingTicket)this.ticketRegistry.getTicket(ticketGrantingTicketId,
-                TicketGrantingTicket.class);
+        synchronized (this.ticketRegistry) {
+            try {
+                log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
+                final TicketGrantingTicket ticket = (TicketGrantingTicket)this.ticketRegistry.getTicket(ticketGrantingTicketId,
+                    TicketGrantingTicket.class);
 
-            if (ticket != null) {
-                log.debug("Ticket found.  Expiring and then deleting.");
-                ticket.expire();
-                this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+                if (ticket != null) {
+                    log.debug("Ticket found.  Expiring and then deleting.");
+                    ticket.expire();
+                    this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+                }
             }
-        }
-        catch (InvalidTicketClassException ite) {
-            log.debug("Invalid request to remove ticket [" + ticketGrantingTicketId + "].  Ticket not a valid TicketGrantingTicket.");
-            throw new IllegalArgumentException("ticketGrantingTicketId must be the ID of a TicketGrantingTicket");
+            catch (InvalidTicketClassException ite) {
+                log.debug("Invalid request to remove ticket [" + ticketGrantingTicketId + "].  Ticket not a valid TicketGrantingTicket.");
+                throw new IllegalArgumentException("ticketGrantingTicketId must be the ID of a TicketGrantingTicket");
+            }
         }
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, Credentials credentials)
         throws AuthenticationException, TicketCreationException {
+
         try {
-            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket)this.ticketRegistry.getTicket(ticketGrantingTicketId,
-                TicketGrantingTicket.class);
+            final TicketGrantingTicket ticketGrantingTicket;
+            synchronized (this.ticketRegistry) {
+                ticketGrantingTicket = (TicketGrantingTicket)this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
-            if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired())
-                return null;
-
-            if (credentials != null) {
-                Authentication authentication = this.authenticationManager.authenticateAndResolveCredentials(credentials);
-                
-                if (authentication == null) {
+                if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired())
                     return null;
+
+                if (credentials != null) {
+                    Authentication authentication = this.authenticationManager.authenticateAndResolveCredentials(credentials);
+
+                    if (authentication == null) {
+                        return null;
+                    }
+
+                    Principal originalPrincipal = ticketGrantingTicket.getAuthentication().getPrincipal();
+                    Principal newPrincipal = authentication.getPrincipal();
+
+                    if (!newPrincipal.equals(originalPrincipal))
+                        return null;
                 }
 
-                Principal originalPrincipal = ticketGrantingTicket.getAuthentication().getPrincipal();
-                Principal newPrincipal = authentication.getPrincipal();
+                final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(service);
 
-                if (!newPrincipal.equals(originalPrincipal))
-                    return null;
+                // TODO we need a better way of handling this
+                if (credentials != null) {
+                    serviceTicket.setFromNewLogin(true);
+                }
+
+                this.ticketRegistry.addTicket(serviceTicket);
+
+                log.info("Granted service ticket [" + serviceTicket.getId() + "] for service [" + service.getId() + "] for user ["
+                    + serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId() + "]");
+
+                return serviceTicket.getId();
             }
-
-            final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(service);
-            
-            // TODO we need a better way of handling this
-            if (credentials != null) {
-                serviceTicket.setFromNewLogin(true);
-            }
-
-            this.ticketRegistry.addTicket(serviceTicket);
-
-            log.info("Granted service ticket [" + serviceTicket.getId() + "] for service [" + service.getId() + "] for user ["
-                + serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId() + "]");
-
-            return serviceTicket.getId();
         }
         catch (InvalidTicketClassException ite) {
             throw new TicketCreationException("Unable to retrieve TicketGrantingTicket to grant service ticket.");
@@ -135,16 +140,19 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
             return null;
         }
 
-        final ServiceTicket serviceTicket = (ServiceTicket)this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
-        
-        if (serviceTicket == null || serviceTicket.isExpired())
-            return null;
+        final ServiceTicket serviceTicket;
+        synchronized (this.ticketRegistry) {
+            serviceTicket = (ServiceTicket)this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
-        TicketGrantingTicket ticketGrantingTicket = serviceTicket.grantTicketGrantingTicket(authentication);
+            if (serviceTicket == null || serviceTicket.isExpired())
+                return null;
 
-        this.ticketRegistry.addTicket(ticketGrantingTicket);
+            TicketGrantingTicket ticketGrantingTicket = serviceTicket.grantTicketGrantingTicket(authentication);
 
-        return ticketGrantingTicket.getId();
+            this.ticketRegistry.addTicket(ticketGrantingTicket);
+
+            return ticketGrantingTicket.getId();
+        }
     }
 
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
@@ -152,14 +160,14 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
             throw new IllegalArgumentException("serviceTicketId, service and authenticationSpecification cannot be null.");
         }
 
-        final ServiceTicket serviceTicket = (ServiceTicket)this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        synchronized (this.ticketRegistry) {
+            final ServiceTicket serviceTicket = (ServiceTicket)this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
-        if (serviceTicket == null) {
-            log.debug("ServiceTicket [" + serviceTicketId + "] does not exist.");
-            throw new TicketException(TicketException.INVALID_TICKET, "ticket '" + serviceTicketId + "' not recognized");
-        }
+            if (serviceTicket == null) {
+                log.debug("ServiceTicket [" + serviceTicketId + "] does not exist.");
+                throw new TicketException(TicketException.INVALID_TICKET, "ticket '" + serviceTicketId + "' not recognized");
+            }
 
-        synchronized (serviceTicket) {
             serviceTicket.incrementCountOfUses();
             serviceTicket.updateLastTimeUsed();
 
@@ -172,9 +180,9 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 log.debug("ServiceTicket [" + serviceTicketId + "] does not match supplied service.");
                 throw new TicketException(TicketException.INVALID_SERVICE, "ticket '" + serviceTicketId + "' does not match supplied service");
             }
-        }
 
-        return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals(), serviceTicket.isFromNewLogin());
+            return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals(), serviceTicket.isFromNewLogin());
+        }
     }
 
     public String createTicketGrantingTicket(final Credentials credentials) throws AuthenticationException {
@@ -184,12 +192,14 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
         if (authentication == null)
             return null;
 
-        ticketGrantingTicket = new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), authentication,
-            this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.serviceTicketExpirationPolicy);
+        synchronized (this.ticketRegistry) {
+            ticketGrantingTicket = new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
+                authentication, this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.serviceTicketExpirationPolicy);
 
-        this.ticketRegistry.addTicket(ticketGrantingTicket);
+            this.ticketRegistry.addTicket(ticketGrantingTicket);
 
-        return ticketGrantingTicket.getId();
+            return ticketGrantingTicket.getId();
+        }
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
