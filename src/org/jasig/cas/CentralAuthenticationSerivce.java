@@ -43,9 +43,9 @@ public interface CentralAuthenticationSerivce {
       * 
       * @param ticket Proof of prior authentication.
       * @param service Service wishing to validate a prior authentication.
-      * @return ServiceTicket if valid for the service and satisifies AuthenticationSpecification.
+      * @return ServiceTicket if valid for the service.
       */
-     public ServiceTicket validateServiceTicket(String serviceTicketId, Service service, AuthenticationSpecification authspec);
+     public ServiceTicket validateServiceTicket(String serviceTicketId, Service service);
      
      /**
       * Destroy a TicketGrantingTicket.  This has the effect of invalidating
