@@ -77,7 +77,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     public boolean isExpired() {
-        return super.isExpired() || this.expired;
+        return super.isExpired() || this.expired || (this.getGrantingTicket() != null && this.getGrantingTicket().isExpired());
     }
 
     public List getChainedPrincipals() {

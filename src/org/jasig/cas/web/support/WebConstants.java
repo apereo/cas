@@ -27,6 +27,10 @@ public abstract class WebConstants {
     public static final String DESC = "description";
 
     public static final String PGTIOU = "pgtIou";
+   
+    public static final String PROXY_GRANTING_TICKET = "pgt";
+    
+    public static final String TARGET_SERVICE = "targetService";
 
     public static final String LOGIN_TOKEN = "loginToken";
 
