@@ -17,4 +17,6 @@ public interface ServiceTicket extends Ticket {
     boolean isFromNewLogin();
 
     TicketGrantingTicket getGrantor();
+    
+    ProxyGrantingTicket grantProxyGrantingTicket();
 }

@@ -16,8 +16,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * CentralAuthenticationService (CAS) is the published public interface/service facade.
  * CAS has the following responsibilities:
  * <ol>
- *   <li>Authenticate credentials and resolve principals</li>
- *   <li>Grant, find, and validate tickets</li>
+ *   <li>Create, grant, find, and validate tickets</li>
  * </ol>
  * 
  * 
@@ -25,24 +24,14 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  */
 public interface CentralAuthenticationSerivce {
     
-    /********** Authenticate **********/
-    /**
-     * Authenticate credentials and resolve to a Principal.
-     * 
-     * @param credentials Used to authenticate a principal.
-     * @return the authenticated principal.
-     */
-    public Principal authenticate(Credentials credentials);
-
-    
     /********** Grant Tickets **********/
     /**
-     * Grant a TicketGrantingTicket to a Principal.
+     * Create TicketGrantingTicket to a Principal if Credentials authenticate.
      * Principals are the root of all Tickets.
      * 
-     * @return the TicketGrantingTicket granted to the prinicipal.
+     * @return the TicketGrantingTicket created for the prinicipal.
      */
-     public TicketGrantingTicket grantTicketGrantingTicket(Principal principal);
+     public TicketGrantingTicket createTicketGrantingTicket(Credentials credentials);
 
      /**
       * Grant a ServiceTicket for a Service.
