@@ -9,8 +9,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 import org.springframework.dao.DataAccessException;
@@ -37,8 +37,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePassword
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final AuthenticationRequest request) {
-        final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest)request;
+    public boolean authenticate(final Credentials request) {
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
         final String encryptedPassword = this.passwordTranslator.translate(password);

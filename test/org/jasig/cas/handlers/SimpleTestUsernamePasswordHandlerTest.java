@@ -1,8 +1,8 @@
 package org.jasig.cas.handlers;
 
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
 
@@ -17,7 +17,7 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
     private AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
 
     public void testValidUsernamePassword() {
-        UsernamePasswordAuthenticationRequest authRequest = new UsernamePasswordAuthenticationRequest();
+        UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
         authRequest.setUserName("test");
         authRequest.setPassword("test");
 
@@ -25,7 +25,7 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
     }
 
     public void testInvalidUsernamePassword() {
-        UsernamePasswordAuthenticationRequest authRequest = new UsernamePasswordAuthenticationRequest();
+        UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
         authRequest.setUserName("test");
         authRequest.setPassword("test2");
 
@@ -33,7 +33,7 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
     }
 
     public void testNullUsernamePassword() {
-        UsernamePasswordAuthenticationRequest authRequest = new UsernamePasswordAuthenticationRequest();
+        UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
         authRequest.setUserName(null);
         authRequest.setPassword(null);
 

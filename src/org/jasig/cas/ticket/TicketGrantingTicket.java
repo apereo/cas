@@ -4,7 +4,6 @@
  */
 package org.jasig.cas.ticket;
 
-import org.jasig.cas.Service;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
@@ -21,12 +20,4 @@ public interface TicketGrantingTicket extends Ticket {
      * @return the username
      */
     Principal getPrincipal();
-    
-    /**
-     * Grant a ServiceTicket for a specific service
-     * 
-     * @param service The service for which we are granting a ticket
-     * @return
-     */
-    ServiceTicket grantServiceTicket(Service service);
 }

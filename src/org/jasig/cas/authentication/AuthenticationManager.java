@@ -4,6 +4,7 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
@@ -20,5 +21,5 @@ public interface AuthenticationManager {
      * @param request the authentication credentials
      * @return the Principal the credentials authenticate.
      */
-    public Principal authenticateUser(final AuthenticationRequest request);
+    public Principal authenticateCredentials(final Credentials credentials);
 }

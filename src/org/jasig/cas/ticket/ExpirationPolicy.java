@@ -13,5 +13,5 @@ package org.jasig.cas.ticket;
  */
 public interface ExpirationPolicy {
 
-    public boolean isExpired(AbstractTicket ticket);
+    public boolean isExpired(InternalTicket ticket);
 }

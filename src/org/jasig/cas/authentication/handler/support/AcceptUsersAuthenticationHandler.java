@@ -6,8 +6,8 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.util.Map;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is a small list of users that we wish to allow. An example use case may
@@ -25,8 +25,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final AuthenticationRequest request) {
-        final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest)request;
+    public boolean authenticate(final Credentials request) {
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String cachedPassword;
 
         if (!this.users.containsKey(uRequest.getUserName()))

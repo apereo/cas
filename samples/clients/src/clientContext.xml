@@ -39,7 +39,7 @@
 		</property>
 		<property name="javaBeans">
 			<list>
-				<value>org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest</value>
+				<value>org.jasig.cas.authentication.UsernamePasswordCredentials</value>
 			</list>
 		</property>
 	</bean>

@@ -11,8 +11,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 import org.springframework.beans.factory.DisposableBean;
@@ -58,8 +58,8 @@ public class NisAuthenticationHandler extends AbstractUsernamePasswordAuthentica
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final AuthenticationRequest request) {
-        final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest)request;
+    public boolean authenticate(final Credentials request) {
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         try {
             final String nisEntry = this.initialContext.lookup("system/" + this.map + "/" + uRequest.getUserName()).toString();
             final String nisFields[] = nisEntry.split(":");

@@ -6,8 +6,8 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.util.Collection;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
  * Class to provide a list of users to automatically reject.
@@ -22,8 +22,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final AuthenticationRequest request) {
-        final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest)request;
+    public boolean authenticate(final Credentials request) {
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
         return !this.users.contains(uRequest.getUserName());
     }

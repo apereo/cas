@@ -4,11 +4,13 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.io.Serializable;
+
 /**
  * Marker interface for credentials required to authenticate a principal.
  * 
  * @author William G. Thompson, Jr.
  */
-public interface Credentials {
+public interface Credentials extends Serializable {
 
 }

@@ -4,6 +4,7 @@
  */
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.Service;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
@@ -12,7 +13,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
+public class TicketGrantingTicketImpl extends AbstractTicket implements InternalTicketGrantingTicket {
 
     private static final long serialVersionUID = -8673232562725683059L;
     private Principal principal;
@@ -30,4 +31,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public Principal getPrincipal() {
         return this.principal;
     }
+    
+	/**
+	 * @see org.jasig.cas.ticket.InternalTicketGrantingTicket#grantServiceTicket(org.jasig.cas.Service)
+	 */
+	public ServiceTicket grantServiceTicket(Service service) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

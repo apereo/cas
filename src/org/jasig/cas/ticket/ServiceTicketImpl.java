@@ -11,7 +11,7 @@ package org.jasig.cas.ticket;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
+public class ServiceTicketImpl extends AbstractTicket implements InternalServiceTicket {
 
     private static final long serialVersionUID = 1296808733190507408L;
 
@@ -58,4 +58,11 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     public boolean isExpired() {
         return super.isExpired() || this.grantor.isExpired();
     }
+	/**
+	 * @see org.jasig.cas.ticket.InternalServiceTicket#grantTicketGrantingTicket()
+	 */
+	public TicketGrantingTicket grantTicketGrantingTicket() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -4,11 +4,20 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.ticket.Ticket;
+
 /**
  * Marker Interface for authentication specifications.
  * 
  * @author William G. Thompson, Jr.
+ * @version $Id$
  */
 public interface AuthenticationSpecification {
-
+	
+	/**
+	 * 
+	 * @param ticket The ticket we want to check if it satifies this specification.
+	 * @return true if it satisfies it, false otherwise.
+	 */
+	boolean isSatisfiedBy(Ticket ticket);
 }

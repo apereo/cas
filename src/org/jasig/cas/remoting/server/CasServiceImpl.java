@@ -5,7 +5,7 @@
 package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.AuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.remoting.CasService;
 import org.jasig.cas.ticket.CasAttributes;
@@ -53,12 +53,12 @@ public class CasServiceImpl implements CasService {
     /**
      * @see org.jasig.cas.remoting.CasService#getTicketGrantingTicket(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public String getTicketGrantingTicket(final AuthenticationRequest request) {
+    public String getTicketGrantingTicket(final Credentials request) {
         // TODO validation
         final Principal principal;
         final TicketGrantingTicket ticket;
         
-        principal = this.authenticationManager.authenticateUser(request);
+        principal = this.authenticationManager.authenticateCredentials(request);
         
         if (principal == null)
             return null;

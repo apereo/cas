@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.remoting;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
 
 /**
  * Interface for the services exposed by CAS remote services. These services can be either SOAP, RMI, etc. The CasService does not care.
@@ -14,7 +14,7 @@ import org.jasig.cas.authentication.AuthenticationRequest;
  */
 public interface CasService {
     
-    String getTicketGrantingTicket(final AuthenticationRequest request);
+    String getTicketGrantingTicket(final Credentials request);
     
     String getServiceTicket(final String ticketGrantingTicketId, final String service);
 }

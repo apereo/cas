@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.samples.clients.remote.jaxrpc;
 
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.remoting.CasService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -24,7 +24,7 @@ public class JaxRpcSOAPWebServiceClient {
 
     public void invokeCasService() {
         CasService casService = (CasService)this.beanFactory.getBean("casService");
-        UsernamePasswordAuthenticationRequest authRequest = new UsernamePasswordAuthenticationRequest();
+        UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
 
         authRequest.setUserName("test");
         authRequest.setPassword("test");

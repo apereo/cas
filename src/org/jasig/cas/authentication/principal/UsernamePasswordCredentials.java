@@ -2,7 +2,7 @@
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.authentication.principal;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class UsernamePasswordAuthenticationRequest implements AuthenticationRequest {
+public class UsernamePasswordCredentials implements Credentials {
 
     private static final long serialVersionUID = -8343864967200862794L;
 
