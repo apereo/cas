@@ -75,8 +75,7 @@ public final class CentralAuthenticationServiceImpl implements
                     ticket.expire();
                     this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
                 }
-            }
-            catch (InvalidTicketClassException ite) {
+            } catch (InvalidTicketClassException ite) {
                 log.debug("Invalid request to remove ticket ["
                     + ticketGrantingTicketId
                     + "].  Ticket not a valid TicketGrantingTicket.");
@@ -135,8 +134,7 @@ public final class CentralAuthenticationServiceImpl implements
 
                 return serviceTicket.getId();
             }
-        }
-        catch (InvalidTicketClassException ite) {
+        } catch (InvalidTicketClassException ite) {
             throw new TicketCreationException(
                 "Unable to retrieve TicketGrantingTicket to grant service ticket.");
         }
@@ -147,8 +145,7 @@ public final class CentralAuthenticationServiceImpl implements
         try {
             return this.grantServiceTicket(ticketGrantingTicketId, service,
                 null);
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this should not happen as authentication is never done from here.
             log.error(e);
             return null;
@@ -166,8 +163,9 @@ public final class CentralAuthenticationServiceImpl implements
             serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(
                 serviceTicketId, ServiceTicket.class);
 
-            if (serviceTicket == null || serviceTicket.isExpired())
+            if (serviceTicket == null || serviceTicket.isExpired()) {
                 return null;
+            }
 
             TicketGrantingTicket ticketGrantingTicket = serviceTicket
                 .grantTicketGrantingTicket(authentication);

@@ -14,42 +14,9 @@ package org.jasig.cas.authentication;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class AuthenticationException extends Exception {
-
-    private static final String CODE = "AUTH_ERROR";
+public abstract class AuthenticationException extends Exception {
 
     private static final long serialVersionUID = 3906648604830611762L;
 
-    /**
-     * 
-     */
-    public AuthenticationException() {
-        super();
-    }
-
-    /**
-     * @param arg0
-     */
-    public AuthenticationException(String arg0) {
-        super(arg0);
-    }
-
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public AuthenticationException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
-
-    /**
-     * @param arg0
-     */
-    public AuthenticationException(Throwable arg0) {
-        super(arg0);
-    }
-
-    public String getCode() {
-        return CODE;
-    }
+    public abstract String getCode();
 }

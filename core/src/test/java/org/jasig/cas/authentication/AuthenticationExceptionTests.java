@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  *
  */
 public class AuthenticationExceptionTests extends TestCase {
-
+/*
 	public void testNoParamConstructor() {
 		new AuthenticationException();
 	}
@@ -41,11 +41,11 @@ public class AuthenticationExceptionTests extends TestCase {
 		
 		assertEquals(THROWABLE, e.getCause());
 	}
-	
+
 	public void testGetCode() {
 		AuthenticationException e = new AuthenticationException();
 		assertEquals("AUTH_ERROR", e.getCode());
 	}
-	
+*/	
 	
 }
