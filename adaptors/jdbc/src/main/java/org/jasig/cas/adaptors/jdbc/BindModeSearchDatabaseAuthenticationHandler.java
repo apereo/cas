@@ -23,9 +23,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 public class BindModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcAuthenticationHandler {
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
-     */
+
     protected boolean authenticateInternal(final Credentials request)
         throws UnsupportedCredentialsException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
@@ -44,9 +42,6 @@ public class BindModeSearchDatabaseAuthenticationHandler extends
         }
     }
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
-     */
     protected boolean supports(Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials
