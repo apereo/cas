@@ -40,7 +40,7 @@
 	</bean>
 
 	<!-- Ticket Factories -->
-	<bean id="ticketFactory" class="org.jasig.cas.domain.support.DefaultTicketFactoryImpl">
+	<bean id="ticketFactory" class="org.jasig.cas.domain.support.DefaultTicketFactory">
 		<property name="ticketHelpers">
 			<list>
 				<ref local="proxyGrantingTicketCreator" />
