@@ -8,7 +8,6 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.Collection;
 
-import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.Ticket;
 
 /**
@@ -37,8 +36,7 @@ public interface TicketRegistry {
      * @throws InvalidTicketClassException if the ticket does not match the
      * class provided.
      */
-    Ticket getTicket(String ticketId, Class clazz)
-        throws InvalidTicketClassException;
+    Ticket getTicket(String ticketId, Class clazz);
 
     /**
      * Retrieve a ticket from the registry.

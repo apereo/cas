@@ -105,8 +105,11 @@ public final class ServiceValidateController extends AbstractController
             if (!authenticationSpecification.isSatisfiedBy(assertion)) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] does not satisfy authentication specification.");
-                throw new TicketException(TicketException.INVALID_TICKET,
-                    "ticket not backed by initial CAS login, as requested");
+                
+                // internationalize this.
+                model.put(WebConstants.CODE, "INVALID_TICKET");
+                model.put(WebConstants.DESC, "ticket not backed by initial CAS login, as requested");
+                return new ModelAndView(this.failureView, model);
             }
 
             if (StringUtils.hasText(pgtUrl)) {
@@ -137,7 +140,7 @@ public final class ServiceValidateController extends AbstractController
             return new ModelAndView(this.successView, model);
         } catch (TicketException te) {
             model.put(WebConstants.CODE, te.getCode());
-            model.put(WebConstants.DESC, te.getDescription());
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(te.getCode()));
             return new ModelAndView(this.failureView, model);
         }
     }

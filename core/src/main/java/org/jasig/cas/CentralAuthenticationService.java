@@ -34,7 +34,7 @@ public interface CentralAuthenticationService {
      * @throws TicketCreationException if ticket cannot be created
      */
     String createTicketGrantingTicket(Credentials credentials)
-        throws TicketCreationException;
+        throws TicketException;
 
     /**
      * Grant a ServiceTicket for a Service.
@@ -45,7 +45,7 @@ public interface CentralAuthenticationService {
      * @throws TicketCreationException if the ticket could not be created.
      */
     String grantServiceTicket(String ticketGrantingTicketId, Service service)
-        throws TicketCreationException;
+        throws TicketException;
 
     /**
      * Grant a ServiceTicket for a Service *if* the principal resolved from the
@@ -60,7 +60,7 @@ public interface CentralAuthenticationService {
      * @throws TicketCreationException if the ticket could not be created.
      */
     String grantServiceTicket(String ticketGrantingTicketId, Service service,
-        Credentials credentials) throws TicketCreationException;
+        Credentials credentials) throws TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.

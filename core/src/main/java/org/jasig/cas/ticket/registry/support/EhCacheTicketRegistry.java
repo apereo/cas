@@ -16,7 +16,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
@@ -55,8 +54,7 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
         this.cache.put(new Element(ticket.getId(), ticket));
     }
 
-    public Ticket getTicket(final String ticketId, final Class clazz)
-        throws InvalidTicketClassException {
+    public Ticket getTicket(final String ticketId, final Class clazz) {
         if (clazz == null) {
             throw new IllegalArgumentException(
                 "clazz argument must not be null.");
@@ -69,7 +67,7 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
         }
 
         if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new InvalidTicketClassException("Ticket [" + ticket.getId()
+            throw new ClassCastException("Ticket [" + ticket.getId()
                 + "] is of type " + ticket.getClass()
                 + " when we were expecting " + clazz);
         }
