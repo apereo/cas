@@ -24,6 +24,9 @@ import org.springframework.remoting.jaxrpc.JaxRpcPortProxyFactoryBean;
  * currently designed to ignore any java.* or javax.* class. It also assumes that the types are JavaBeans. It does not actually check. A more
  * sophisticated version would be able to check if a class was a valid JavaBean and only register valid JavaBeans.
  * 
+ * Also allows you to specify a list of JavaBeans to register manually.  This needs to be here incase one of the
+ * parameters to a method is an interface and you need to register the implementing class.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
@@ -35,7 +38,7 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
 
     private static final String PACKAGE_NAME_JAVAX = "javax.";
     
-    private List beans = new ArrayList();
+    private List beans;
 
     protected void registerBeans(TypeMapping mapping, List registeredBeans, Class clazz) {
         if (registeredBeans.contains(clazz) || clazz.getName().startsWith(PACKAGE_NAME_JAVA) || clazz.getName().startsWith(PACKAGE_NAME_JAVAX))
@@ -71,15 +74,16 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
 
         registerBeans(mapping, new ArrayList(), serviceInterface);
         
-        for (Iterator iter = this.beans.iterator(); iter.hasNext();) {
-            final String bean = (String) iter.next();
-            try {
-                final Class clazz = Class.forName(bean);
-                this.addJavaBeanToMap(mapping, clazz);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("bean of class " + bean + "not found.");
-            }
-            
+        if (this.beans != null) {
+	        for (Iterator iter = this.beans.iterator(); iter.hasNext();) {
+	            final String bean = (String) iter.next();
+	            try {
+	                final Class clazz = Class.forName(bean);
+	                this.addJavaBeanToMap(mapping, clazz);
+	            } catch (Exception e) {
+	                throw new IllegalArgumentException("bean of class " + bean + "not found.");
+	            }
+	        }
         }
 
         registry.register("http://schemas.xmlsoap.org/soap/encoding/", mapping);
