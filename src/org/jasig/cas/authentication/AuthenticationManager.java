@@ -5,7 +5,6 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * Interface for processing a request for authentication.
@@ -21,5 +20,5 @@ public interface AuthenticationManager {
      * @param request the authentication credentials
      * @return the Principal the credentials authenticate.
      */
-    public Principal authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException;
+    public Authentication authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException;
 }

@@ -8,11 +8,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Assertion;
 import org.jasig.cas.authentication.AssertionImpl;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -84,7 +84,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
             this.ticketRegistry.addTicket(serviceTicket);
 
             log.info("Granted service ticket [" + serviceTicket.getId() + "] for service [" + service.getId() + "] for user ["
-                + serviceTicket.getGrantingTicket().getPrincipal().getId() + "]");
+                + serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId() + "]");
 
             return serviceTicket.getId();
         } catch (InvalidTicketClassException ite) {
@@ -96,15 +96,15 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
      * @see org.jasig.cas.CentralAuthenticationService#grantTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
      */
     public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials) throws AuthenticationException, TicketException {
-        final Principal principal = this.authenticationManager.authenticateAndResolveCredentials(credentials);
+        final Authentication authentication = this.authenticationManager.authenticateAndResolveCredentials(credentials);
         
-        if (principal == null) {
+        if (authentication == null) {
             return null;
         }
         
         final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
         
-        TicketGrantingTicket ticketGrantingTicket = serviceTicket.grantTicketGrantingTicket(principal);
+        TicketGrantingTicket ticketGrantingTicket = serviceTicket.grantTicketGrantingTicket(authentication);
         
         this.ticketRegistry.addTicket(ticketGrantingTicket);
         
@@ -147,13 +147,13 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
      * @see org.jasig.cas.CentralAuthenticationService#grantTicketGrantingTicket(org.jasig.cas.authentication.principal.Principal)
      */
     public String createTicketGrantingTicket(final Credentials credentials) throws AuthenticationException {
-        final Principal principal = this.authenticationManager.authenticateAndResolveCredentials(credentials);
+        final Authentication authentication = this.authenticationManager.authenticateAndResolveCredentials(credentials);
         final TicketGrantingTicket ticketGrantingTicket;
 
-        if (principal == null)
+        if (authentication == null)
             return null;
-
-        ticketGrantingTicket = new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), principal,
+            
+        ticketGrantingTicket = new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), authentication,
             this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.serviceTicketExpirationPolicy);
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);

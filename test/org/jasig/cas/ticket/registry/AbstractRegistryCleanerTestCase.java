@@ -4,7 +4,9 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -41,7 +43,7 @@ public abstract class AbstractRegistryCleanerTestCase extends TestCase {
     
     public void testCleanRegistryOfExpiredTicketsAllExpired() {
         for (int i = 0; i < 10; i++) {
-            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, new SimplePrincipal("test"), new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
+            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, new ImmutableAuthentication(new UsernamePasswordCredentials(), new SimplePrincipal("test"), null), new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
         }
@@ -53,12 +55,12 @@ public abstract class AbstractRegistryCleanerTestCase extends TestCase {
     
     public void testCleanRegistryOneNonExpired() {
         for (int i = 0; i < 10; i++) {
-            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, new SimplePrincipal("test"), new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
+            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, new ImmutableAuthentication(new UsernamePasswordCredentials(), new SimplePrincipal("test"), null), new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
         }
         
-        TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", new SimplePrincipal("test"), new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", new ImmutableAuthentication(new UsernamePasswordCredentials(), new SimplePrincipal("test"), null), new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
         
         this.registryCleaner.clean();

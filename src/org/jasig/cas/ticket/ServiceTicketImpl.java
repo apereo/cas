@@ -6,8 +6,8 @@ package org.jasig.cas.ticket;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Service;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
@@ -72,8 +72,8 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     /**
      * @see org.jasig.cas.ticket.InternalServiceTicket#grantTicketGrantingTicket()
      */
-    public TicketGrantingTicket grantTicketGrantingTicket(final Principal principal) {
-        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), this.getGrantingTicket(), principal, this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+    public TicketGrantingTicket grantTicketGrantingTicket(final Authentication authentication) {
+        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), this.getGrantingTicket(), authentication, this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
     }
 
 }
