@@ -6,13 +6,14 @@ package org.jasig.cas.stat;
 
 
 /**
+ * TicketStatistics is the API to obtain various stats about <i>Tickets</i> in the CAS server.
  * @@org.springframework.jmx.metadata.support.ManagedResource(description="CAS Ticket Statistics", objectName="cas:bean=stats")
  * 
  * @author Scott Battaglia
  * @version $Id$
  *
  */
-public interface TicketStats {
+public interface TicketStatistics {
        
     /**
      * @@org.springframework.jmx.metadata.support.ManagedAttribute(description="The number of proxy tickets vended since the last reboot.")
@@ -54,11 +55,4 @@ public interface TicketStats {
      */
     public double getProxyGrantingTicketsPerSecond();
     
-    public void incrementNumberOfProxyGrantingTicketsVended();
-    
-    public void incrementNumberOfProxyTicketsVended();
-    
-    public void incrementNumberOfServiceTicketsVended();
-    
-    public void incrementNumberOfTicketGrantingTicketsVended();
 }

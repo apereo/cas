@@ -4,15 +4,17 @@
  */
 package org.jasig.cas.stat.support;
 
-import org.jasig.cas.stat.TicketStats;
+import org.jasig.cas.stat.TicketStatistics;
+import org.jasig.cas.stat.TicketStatisticsManager;
 
 /**
  * 
  * @author Scott Battaglia
+ * @author Dmitriy Kopylenko
  * @version $Id$
  *
  */
-public class TicketStatsImpl implements TicketStats {
+public class TicketStatsImpl implements TicketStatistics, TicketStatisticsManager {
     private int numberOfProxyTicketsVended;
     private int numberOfServiceTicketsVended;
     private int numberOfTicketGrantingTicketsVended;
