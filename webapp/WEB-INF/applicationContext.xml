@@ -67,9 +67,9 @@
 
 				<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 					<property name="jobDetail">
-						<bean id="methodInvokingRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+						<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 							<property name="targetObject">
-								<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner">
+								<bean class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner">
 									<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
 								</bean>
 							</property>
@@ -84,7 +84,7 @@
 					<property name="jobDetail">
 						<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 							<property name="targetObject">
-								<bean class="org.jasig.cas.services.cron.ReloadServiceContextCronJob">
+								<bean class="org.jasig.cas.services.cron.DefaultReloadServiceContextCronJob">
 									<property name="serviceRegistryManager"><ref bean="serviceRegistry" /></property>
 								</bean>
 							</property>
