@@ -16,9 +16,6 @@ import org.jasig.cas.ticket.Ticket;
  */
 public class NeverExpiresExpirationPolicy implements ExpirationPolicy {
 
-    /**
-     * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.ticket.AbstractTicket)
-     */
     public boolean isExpired(final Ticket ticket) {
         return false;
     }

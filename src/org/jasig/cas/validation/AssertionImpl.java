@@ -2,7 +2,7 @@
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.validation;
 
 import java.util.List;
 
@@ -30,16 +30,10 @@ public class AssertionImpl implements Assertion {
         this.fromNewLogin = fromNewLogin;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Assertion#getChainedPrincipals()
-     */
     public List getChainedPrincipals() {
         return this.principals;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Assertion#isFromNewLogin()
-     */
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }

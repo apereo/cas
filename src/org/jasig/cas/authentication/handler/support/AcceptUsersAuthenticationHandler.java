@@ -22,9 +22,6 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     private Map users;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#authenticateInternal(org.jasig.cas.authentication.principal.Credentials)
-     */
     public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String cachedPassword;
@@ -38,9 +35,6 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         return (cachedPassword.equals(uRequest.getPassword()));
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.users == null) {
             throw new IllegalStateException("users must be set on " + this.getClass().getName());

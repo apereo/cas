@@ -38,7 +38,7 @@
 							<value>org.jasig.cas.authentication.principal.SimplePrincipal</value>
 							<value>org.jasig.cas.authentication.SimpleService</value>
 							<value>org.jasig.cas.authentication.Cas20ProtocolAuthenticationSpecification</value>
-							<value>org.jasig.cas.authentication.AssertionImpl</value>
+							<value>org.jasig.cas.validation.AssertionImpl</value>
 							<value>org.jasig.cas.ticket.ExpirationPolicy</value>
 						</list>
 					</property>

@@ -25,9 +25,6 @@ public class SimpleService implements Service {
         this.id = id;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Service#getName()
-     */
     public String getId() {
         return this.id;
     }

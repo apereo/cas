@@ -27,9 +27,6 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     private TicketRegistry ticketRegistry;
 
-    /**
-     * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
-     */
     public void clean() {
         final List ticketsToRemove = new ArrayList();
         log.info("Starting cleaning of expired tickets from ticket registry at [" + new Date() + "]");

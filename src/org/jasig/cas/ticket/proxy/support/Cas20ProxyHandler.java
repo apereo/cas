@@ -31,9 +31,6 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    /**
-     * @see org.jasig.cas.ticket.proxy.ProxyHandler#handle(org.jasig.cas.authentication.principal.Credentials)
-     */
     public String handle(Credentials credentials, String proxyGrantingTicketId) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
         final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
@@ -75,9 +72,6 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.uniqueTicketIdGenerator == null) {
             this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();

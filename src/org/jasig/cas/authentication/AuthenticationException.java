@@ -48,16 +48,10 @@ public class AuthenticationException extends Exception {
         super(arg0);
     }
 
-    /**
-     * @return the code representation of this exception
-     */
     public String getCode() {
         return CODE;
     }
 
-    /**
-     * @return the text description of this exception.
-     */
     public String getDescription() {
         return DESCRIPTION;
     }

@@ -13,14 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.Assertion;
-import org.jasig.cas.authentication.AuthenticationSpecification;
-import org.jasig.cas.authentication.Cas20ProtocolAuthenticationSpecification;
 import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.validation.Assertion;
+import org.jasig.cas.validation.ValidationSpecification;
+import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
@@ -49,16 +49,13 @@ public class ServiceValidateController extends AbstractController implements Ini
 
     private String failureView;
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
             throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
         }
 
         if (this.authenticationSpecificationClass == null) {
-            this.authenticationSpecificationClass = Cas20ProtocolAuthenticationSpecification.class;
+            this.authenticationSpecificationClass = Cas20ProtocolValidationSpecification.class;
             log.info("No authentication specification class set.  Defaulting to " + this.authenticationSpecificationClass.getName());
         }
 
@@ -73,15 +70,11 @@ public class ServiceValidateController extends AbstractController implements Ini
         }
     }
 
-    /**
-     * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse)
-     */
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final String serviceTicketId = request.getParameter(WebConstants.TICKET);
         final String service = request.getParameter(WebConstants.SERVICE);
         final Map model = new HashMap();
-        final AuthenticationSpecification authenticationSpecification = this.getCommandClass();
+        final ValidationSpecification authenticationSpecification = this.getCommandClass();
         final Assertion assertion;
         final String pgtUrl = request.getParameter(WebConstants.PGTURL);
         BindUtils.bind(request, authenticationSpecification, "authenticationSpecification");
@@ -119,9 +112,9 @@ public class ServiceValidateController extends AbstractController implements Ini
         }
     }
 
-    private AuthenticationSpecification getCommandClass() {
+    private ValidationSpecification getCommandClass() {
         try {
-            return (AuthenticationSpecification)this.authenticationSpecificationClass.newInstance();
+            return (ValidationSpecification)this.authenticationSpecificationClass.newInstance();
         }
         catch (Exception e) {
             throw new RuntimeException(e);

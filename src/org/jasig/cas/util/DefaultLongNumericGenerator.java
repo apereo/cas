@@ -37,30 +37,18 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
         this.count = initialValue;
     }
 
-    /**
-     * @see org.jasig.cas.util.LongNumericGenerator#getNextLong()
-     */
     public long getNextLong() {
         return this.getNextValue();
     }
 
-    /**
-     * @see org.jasig.cas.util.NumericGenerator#getNextNumberAsString()
-     */
     public String getNextNumberAsString() {
         return new Long(this.getNextValue()).toString();
     }
 
-    /**
-     * @see org.jasig.cas.util.NumericGenerator#maxLength()
-     */
     public int maxLength() {
         return DefaultLongNumericGenerator.MAX_STRING_LENGTH;
     }
 
-    /**
-     * @see org.jasig.cas.util.NumericGenerator#minLength()
-     */
     public int minLength() {
         return DefaultLongNumericGenerator.MIN_STRING_LENGTH;
     }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.validation.AssertionImpl;
 
 import junit.framework.TestCase;
 

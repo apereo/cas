@@ -28,23 +28,14 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
         this.MAX_RANDOM_LENGTH = maxRandomLength;
     }
 
-    /**
-     * @see org.jasig.cas.util.RandomStringGenerator#getMinLength()
-     */
     public int getMinLength() {
         return this.MAX_RANDOM_LENGTH;
     }
 
-    /**
-     * @see org.jasig.cas.util.RandomStringGenerator#getMaxLength()
-     */
     public int getMaxLength() {
         return this.MAX_RANDOM_LENGTH;
     }
 
-    /**
-     * @see org.jasig.cas.util.RandomStringGenerator#getNewString()
-     */
     public synchronized String getNewString() {
         final byte[] random = new byte[this.MAX_RANDOM_LENGTH];
 

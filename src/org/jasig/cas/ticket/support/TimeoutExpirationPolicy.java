@@ -21,9 +21,6 @@ public class TimeoutExpirationPolicy implements ExpirationPolicy {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.ticket.AbstractTicket)
-     */
     public boolean isExpired(final Ticket ticket) {
         return System.currentTimeMillis() - ticket.getLastTimeUsed() > this.timeToKillInMilliSeconds;
     }

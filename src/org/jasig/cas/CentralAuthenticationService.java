@@ -4,12 +4,12 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.Assertion;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.validation.Assertion;
 
 /**
  * CentralAuthenticationService (CAS) is the published public interface/service facade. CAS has the following responsibilities:
@@ -41,10 +41,10 @@ public interface CentralAuthenticationService {
      * @throws TicketCreationException
      */
     String grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketCreationException;
-    
+
     /**
-     * Grant a ServiceTicket for a Service *if* the principal resolved from the credentials matches the principal
-     * associated with the TicketGrantingTicket.
+     * Grant a ServiceTicket for a Service *if* the principal resolved from the credentials matches the principal associated with the
+     * TicketGrantingTicket.
      * 
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
@@ -52,7 +52,8 @@ public interface CentralAuthenticationService {
      * @return the ServiceTicket for target Service.
      * @throws TicketCreationException
      */
-    String grantServiceTicket(String ticketGrantingTicketId, Service service, Credentials credentials) throws AuthenticationException, TicketCreationException;
+    String grantServiceTicket(String ticketGrantingTicketId, Service service, Credentials credentials) throws AuthenticationException,
+        TicketCreationException;
 
     /**
      * Validate a ServiceTicket for a particular Service

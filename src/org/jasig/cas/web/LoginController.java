@@ -61,9 +61,6 @@ public class LoginController extends SimpleFormController implements Initializin
         this.setSuccessView(ViewNames.CONST_LOGON_SUCCESS);
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (this.loginTokens == null || this.centralAuthenticationService == null) {
             throw new IllegalStateException("You must set loginTokens and centralAuthenticationService on " + this.getClass());
@@ -91,9 +88,6 @@ public class LoginController extends SimpleFormController implements Initializin
         }
     }
 
-    /**
-     * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
-     */
     protected Map referenceData(final HttpServletRequest request) throws Exception {
         final Map referenceData = new HashMap();
 
@@ -102,10 +96,6 @@ public class LoginController extends SimpleFormController implements Initializin
         return referenceData;
     }
 
-    /**
-     * @see org.springframework.web.servlet.mvc.AbstractFormController#showForm(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse, org.springframework.validation.BindException)
-     */
     protected ModelAndView showForm(final HttpServletRequest request, final HttpServletResponse response, final BindException errors)
         throws Exception {
         final String ticketGrantingTicketId = this.getCookieValue(request, WebConstants.COOKIE_TGC_ID);
@@ -141,24 +131,21 @@ public class LoginController extends SimpleFormController implements Initializin
         return super.showForm(request, response, errors);
     }
 
-    /**
-     * @see org.springframework.web.servlet.mvc.AbstractFormController#processFormSubmission(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
-     */
-    protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object command, final BindException errors) throws Exception {
-        final Credentials credentials = (Credentials) command;
+    protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object command,
+        final BindException errors) throws Exception {
+        final Credentials credentials = (Credentials)command;
         final boolean renew = this.convertValueToBoolean(request.getParameter(WebConstants.RENEW));
         final boolean warn = StringUtils.hasText(request.getParameter(WebConstants.WARN));
         final String service = request.getParameter(WebConstants.SERVICE);
         String serviceTicketId = null;
         String ticketGrantingTicketId = getCookieValue(request, WebConstants.COOKIE_TGC_ID);
-        
+
         this.credentialsBinder.bind(request, credentials);
-        
+
         if (renew && StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service)) {
             serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
         }
-        
+
         if (serviceTicketId == null) {
             ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
         }

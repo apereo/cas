@@ -17,19 +17,12 @@ import org.springframework.validation.Validator;
  */
 public class BasicCredentialsValidator implements Validator {
 
-    /**
-     * @see org.springframework.validation.Validator#supports(java.lang.Class)
-     */
     public boolean supports(Class clazz) {
         return UsernamePasswordCredentials.class.isAssignableFrom(clazz);
     }
 
-    /**
-     * @see org.springframework.validation.Validator#validate(java.lang.Object, org.springframework.validation.Errors)
-     */
     public void validate(Object o, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName", "required.username", null);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "required.password", null);
     }
-
 }

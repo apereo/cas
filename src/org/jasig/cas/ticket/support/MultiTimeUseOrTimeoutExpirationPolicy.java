@@ -24,9 +24,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
         this.numberOfUses = numberOfUses;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.ticket.AbstractTicket)
-     */
     public boolean isExpired(final Ticket ticket) {
         return (ticket.getCountOfUses() > this.numberOfUses || System.currentTimeMillis() - ticket.getLastTimeUsed() > this.timeToKillInMilliSeconds);
     }

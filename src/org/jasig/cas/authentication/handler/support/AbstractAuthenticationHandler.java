@@ -19,9 +19,6 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
-     */
     public final boolean authenticate(Credentials credentials) throws AuthenticationException {
         if (!this.supports(credentials)) {
             throw new UnsupportedCredentialsException();

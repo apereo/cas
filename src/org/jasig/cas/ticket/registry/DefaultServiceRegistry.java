@@ -34,16 +34,10 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         this.services.addAll(services);
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.ServiceRegistry#addService(java.lang.String)
-     */
     public void addService(final String service) {
         this.services.add(service);
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.ServiceRegistry#serviceExists(java.lang.String)
-     */
     public boolean serviceExists(final String service) {
         log.debug("Attempting to determine if service [" + service + "] exists.");
 
@@ -67,18 +61,11 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         return false;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.ServiceRegistry#deleteService(java.lang.String)
-     */
     public void deleteService(final String service) {
         this.services.remove(service);
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.ServiceRegistry#getServices()
-     */
     public List getServices() {
         return Collections.unmodifiableList(this.services);
     }
-
 }

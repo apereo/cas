@@ -38,9 +38,6 @@ public abstract class AbstractTicket implements Ticket {
         this.ticketGrantingTicket = ticket;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.Ticket#getId()
-     */
     public final String getId() {
         return this.id;
     }
@@ -68,9 +65,6 @@ public abstract class AbstractTicket implements Ticket {
         return this.ticketGrantingTicket;
     }
 
-    /**
-     * @see org.jasig.cas.ticket.Ticket#isExpired()
-     */
     public boolean isExpired() {
         return this.expirationPolicy.isExpired(this);
     }

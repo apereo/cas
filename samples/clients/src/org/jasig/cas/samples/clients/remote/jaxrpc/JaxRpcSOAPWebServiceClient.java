@@ -5,13 +5,13 @@
 package org.jasig.cas.samples.clients.remote.jaxrpc;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.Assertion;
-import org.jasig.cas.authentication.AuthenticationSpecification;
-import org.jasig.cas.authentication.Cas10ProtocolAuthenticationSpecification;
 import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.validation.Assertion;
+import org.jasig.cas.validation.ValidationSpecification;
+import org.jasig.cas.validation.Cas10ProtocolValidationSpecification;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,7 +31,7 @@ public class JaxRpcSOAPWebServiceClient {
     public void invokeCasService() {
         CentralAuthenticationService centralAuthenticationService = (CentralAuthenticationService)this.beanFactory.getBean("casService");
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
-        AuthenticationSpecification authenticationSpecification = new Cas10ProtocolAuthenticationSpecification(false);
+        ValidationSpecification authenticationSpecification = new Cas10ProtocolValidationSpecification(false);
 
         authRequest.setUserName("test");
         authRequest.setPassword("test");
