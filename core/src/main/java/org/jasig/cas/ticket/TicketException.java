@@ -1,8 +1,11 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
+
+import java.io.Serializable;
 
 /**
  * Generic ticket exception. Top of the TicketException heirarchy.
@@ -105,7 +108,9 @@ public class TicketException extends Exception {
         return this.description;
     }
 
-    protected static class TicketExceptionCode {
+    protected static class TicketExceptionCode implements Serializable {
+
+        private static final long serialVersionUID = 3258413923983045424L;
 
         private String code;
 

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas;
@@ -12,10 +13,11 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 
 /**
- * The main runtime interface between a Java application and CAS. This is the central public API class abstracting the notion of an authentication
- * service.
+ * The main runtime interface between a Java application and CAS. This is the
+ * central public API class abstracting the notion of an authentication service.
  * <p>
- * The main function of the CentralAuthenticationService is to offer create, grant, find and validate operations for instances CAS tickets.
+ * The main function of the CentralAuthenticationService is to offer create,
+ * grant, find and validate operations for instances CAS tickets.
  * 
  * @author William G. Thompson, Jr.
  * @author Dmitry Kopylenko
@@ -46,12 +48,14 @@ public interface CentralAuthenticationService {
         throws TicketCreationException;
 
     /**
-     * Grant a ServiceTicket for a Service *if* the principal resolved from the credentials matches the principal associated with the
+     * Grant a ServiceTicket for a Service *if* the principal resolved from the
+     * credentials matches the principal associated with the
      * TicketGrantingTicket.
      * 
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
-     * @param credentials the Credentials to present to receive the ServiceTicket
+     * @param credentials the Credentials to present to receive the
+     * ServiceTicket
      * @return the ServiceTicket for target Service.
      * @throws TicketCreationException
      * @throws AuthenticationException
@@ -72,18 +76,23 @@ public interface CentralAuthenticationService {
         throws TicketException;
 
     /**
-     * Destroy a TicketGrantingTicket. This has the effect of invalidating any Ticket that was derived from the TicketGrantingTicket being destroyed.
+     * Destroy a TicketGrantingTicket. This has the effect of invalidating any
+     * Ticket that was derived from the TicketGrantingTicket being destroyed.
      * 
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      */
     void destroyTicketGrantingTicket(String ticketGrantingTicketId);
 
     /**
-     * Delegate a TicketGrantingTicket to a Service for proxying authentication to other Services.
+     * Delegate a TicketGrantingTicket to a Service for proxying authentication
+     * to other Services.
      * 
-     * @param serviceTicketId The service ticket that will delegate to a TicketGrantingTicket
-     * @param credentials The credentials of the service that wishes to have a TicketGrantingTicket delegated to it.
-     * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
+     * @param serviceTicketId The service ticket that will delegate to a
+     * TicketGrantingTicket
+     * @param credentials The credentials of the service that wishes to have a
+     * TicketGrantingTicket delegated to it.
+     * @return TicketGrantingTicket that can grant ServiceTickets that proxy
+     * authentication.
      * @throws TicketException
      * @throws AuthenticationException
      */

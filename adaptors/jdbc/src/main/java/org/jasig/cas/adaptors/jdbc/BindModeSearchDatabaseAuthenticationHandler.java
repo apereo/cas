@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.jdbc;
@@ -12,16 +13,18 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
- * This class attempts to authenticate the user by opening a connection to the database with the provided username and password. Servers are provided
- * as a Properties class with the key being the URL and the property being the type of database driver needed.
+ * This class attempts to authenticate the user by opening a connection to the
+ * database with the provided username and password. Servers are provided as a
+ * Properties class with the key being the URL and the property being the type
+ * of database driver needed.
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Id$
+ * @version $Id: BindModeSearchDatabaseAuthenticationHandler.java,v 1.6
+ * 2005/03/07 21:00:05 sbattaglia Exp $
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcAuthenticationHandler {
-
 
     protected boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util.support;
@@ -11,11 +12,13 @@ import java.security.NoSuchAlgorithmException;
 import org.jasig.cas.util.PasswordTranslator;
 
 /**
- * Implementation of the password handler that returns the MD5 hash of any plaintext password passed into the translator. Returns the equivalent Md5
+ * Implementation of the password handler that returns the MD5 hash of any
+ * plaintext password passed into the translator. Returns the equivalent Md5
  * Hash you would get from a PHP hash.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: Md5PasswordTranslator.java,v 1.2 2005/02/27 05:49:26 sbattaglia
+ * Exp $
  */
 public class Md5PasswordTranslator implements PasswordTranslator {
 

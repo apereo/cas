@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry;
@@ -20,7 +21,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: AbstractTicketRegistryTests.java,v 1.2 2005/02/27 05:49:26
+ * sbattaglia Exp $
  */
 public abstract class AbstractTicketRegistryTests extends TestCase {
 
@@ -44,14 +46,16 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     }
 
     /**
-     * Abstract method to retrieve a new ticket registry. Implementing classes return the TicketRegistry they wish to test.
+     * Abstract method to retrieve a new ticket registry. Implementing classes
+     * return the TicketRegistry they wish to test.
      * 
      * @return the TicketRegistry we wish to test
      */
     public abstract TicketRegistry getNewTicketRegistry() throws Exception;
 
     /**
-     * Method to add a null to the ticket cache. This should cause an illegal state exception.
+     * Method to add a null to the ticket cache. This should cause an illegal
+     * state exception.
      */
     public void testAddNullTicketToCache() {
         try {
@@ -64,7 +68,8 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     }
 
     /**
-     * Method to add a TicketGrantingTicket to the ticket cache. This should add the ticket and return. Failure upon any exception.
+     * Method to add a TicketGrantingTicket to the ticket cache. This should add
+     * the ticket and return. Failure upon any exception.
      */
     public void testAddTicketToCache() {
         try {

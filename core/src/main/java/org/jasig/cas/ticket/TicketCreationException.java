@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
@@ -8,7 +9,8 @@ package org.jasig.cas.ticket;
  * Exception thrown if there is an error creating a ticket.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: TicketCreationException.java,v 1.1 2005/02/15 05:06:38
+ * sbattaglia Exp $
  */
 public class TicketCreationException extends TicketException {
 

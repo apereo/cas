@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
@@ -10,13 +11,19 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Utilities class for generic functions related to URLs
  * 
  * @author Scott Battaglia
  * @version $Id$
+ * @since 3.0
  */
 public class UrlUtils {
+
+    protected static final Log log = LogFactory.getLog(UrlUtils.class);
 
     /**
      * Method to retrieve the response from a HTTP request for a specific URL.
@@ -41,7 +48,7 @@ public class UrlUtils {
             }
         }
         catch (Exception e) {
-            // can't do anything
+            log.error(e);
         }
         finally {
             try {
@@ -50,7 +57,7 @@ public class UrlUtils {
                 }
             }
             catch (IOException e) {
-                // ignore, nothing we can do about it
+                log.error(e);
             }
         }
         return buf.toString().length() > 0 ? buf.toString() : null;

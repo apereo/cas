@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
@@ -18,7 +19,8 @@ import junit.framework.TestCase;
  * Test of the simple username/password handler
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: SimpleTestUsernamePasswordHandlerTests.java,v 1.3 2005/02/27
+ * 05:49:26 sbattaglia Exp $
  */
 public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 

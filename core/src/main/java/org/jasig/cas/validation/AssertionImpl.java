@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.validation;
@@ -11,7 +12,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Default implementation of the Assertion interface which returns the minimum number of attributes required to conform to the CAS 2 protocol.
+ * Default implementation of the Assertion interface which returns the minimum
+ * number of attributes required to conform to the CAS 2 protocol.
  * 
  * @author Scott Battaglia
  * @version $Id$

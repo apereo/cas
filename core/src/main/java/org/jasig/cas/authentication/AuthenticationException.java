@@ -1,15 +1,18 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
 
 /**
- * The most generic type of authentication exception when one cannot determine why the authentication actually failed. Top of the tree of all other
+ * The most generic type of authentication exception when one cannot determine
+ * why the authentication actually failed. Top of the tree of all other
  * AuthenticationExceptions
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: AuthenticationException.java,v 1.2 2005/02/27 05:49:26
+ * sbattaglia Exp $
  */
 public class AuthenticationException extends Exception {
 

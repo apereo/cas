@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
@@ -11,11 +12,13 @@ import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.UrlUtils;
 
 /**
- * Class to validate the credentials presented by communicating with the web server and checking the certificate that is returned against the
- * hostname, etc.
+ * Class to validate the credentials presented by communicating with the web
+ * server and checking the certificate that is returned against the hostname,
+ * etc.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: HttpBasedServiceCredentialsAuthenticationHandler.java,v 1.3
+ * 2005/03/07 21:00:05 sbattaglia Exp $
  */
 public class HttpBasedServiceCredentialsAuthenticationHandler extends
     AbstractAuthenticationHandler {
@@ -39,7 +42,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends
                 .getCallbackUrl());
         }
         catch (Exception e) {
-            // ignore error
+            log.error(e);
         }
         return response != null;
     }

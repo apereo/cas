@@ -1,25 +1,22 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
- * Domain object representing a Service Ticket. A service ticket grants specific access to a particular service. It will only work for a particular
- * service.
+ * Domain object representing a Service Ticket. A service ticket grants specific
+ * access to a particular service. It will only work for a particular service.
  * 
  * @author Scott Battaglia
  * @version $Id$
  */
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
-
-    protected final Log log = LogFactory.getLog(this.getClass());
 
     private static final long serialVersionUID = 1296808733190507408L;
 

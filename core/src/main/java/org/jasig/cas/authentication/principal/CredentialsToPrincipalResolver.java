@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.principal;
@@ -8,7 +9,8 @@ package org.jasig.cas.authentication.principal;
  * Strategy interface to resolve <code>Principal</code> s
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: CredentialsToPrincipalResolver.java,v 1.1 2005/02/15 05:06:39
+ * sbattaglia Exp $
  * @see org.jasig.cas.authentication.principal.Principal
  * @see org.jasig.cas.authentication.principal.Credentials
  */
@@ -23,7 +25,8 @@ public interface CredentialsToPrincipalResolver {
     Principal resolvePrincipal(Credentials credentials);
 
     /**
-     * Determine if a credentials type is supported by this resolver. This is checked before calling resolve principal.
+     * Determine if a credentials type is supported by this resolver. This is
+     * checked before calling resolve principal.
      * 
      * @param credentials
      * @return true if we support these credentials, false otherwise.

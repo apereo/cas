@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
@@ -9,7 +10,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Abstract implementation of a ticket that handles all ticket state for policies. Also incorporates properties common among all tickets.
+ * Abstract implementation of a ticket that handles all ticket state for
+ * policies. Also incorporates properties common among all tickets.
  * 
  * @author Scott Battaglia
  * @version $Id$

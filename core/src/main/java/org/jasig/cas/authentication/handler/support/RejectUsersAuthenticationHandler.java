@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
@@ -12,7 +13,8 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * Class to provide a list of users to automatically reject.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: RejectUsersAuthenticationHandler.java,v 1.3 2005/03/07 21:00:05
+ * sbattaglia Exp $
  */
 public class RejectUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {

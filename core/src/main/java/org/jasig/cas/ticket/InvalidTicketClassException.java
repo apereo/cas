@@ -1,14 +1,17 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
 /**
- * Exception that is thrown when a ticket retrieval from the registry does not match the expected class.
+ * Exception that is thrown when a ticket retrieval from the registry does not
+ * match the expected class.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: InvalidTicketClassException.java,v 1.1 2005/02/15 05:06:38
+ * sbattaglia Exp $
  */
 public class InvalidTicketClassException extends TicketException {
 

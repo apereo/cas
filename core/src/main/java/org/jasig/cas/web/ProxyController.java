@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
@@ -76,7 +77,8 @@ public class ProxyController extends AbstractController implements
     }
 
     /**
-     * @param centralAuthenticationService The centralAuthenticationService to set.
+     * @param centralAuthenticationService The centralAuthenticationService to
+     * set.
      */
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {

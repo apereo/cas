@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.validation;
@@ -14,7 +15,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: UsernamePasswordCredentialsValidatorTests.java,v 1.1 2005/02/15
+ * 05:06:39 sbattaglia Exp $
  */
 public class UsernamePasswordCredentialsValidatorTests extends TestCase {
 

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
@@ -13,13 +14,17 @@ import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 
 /**
- * Class designed to read data from a file in the format of USERNAME SEPARATOR PASSWORD that will go line by line and look for the username. If it
- * finds the username it will compare the supplied password (first put through a PasswordTranslator) that is compared to the password provided in the
- * file. If there is a match, the user is authenticated. Note that the default password translator is a plaintext password translator and the defeault
- * separator is "::" (without quotes).
+ * Class designed to read data from a file in the format of USERNAME SEPARATOR
+ * PASSWORD that will go line by line and look for the username. If it finds the
+ * username it will compare the supplied password (first put through a
+ * PasswordTranslator) that is compared to the password provided in the file. If
+ * there is a match, the user is authenticated. Note that the default password
+ * translator is a plaintext password translator and the defeault separator is
+ * "::" (without quotes).
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: FileAuthenticationHandler.java,v 1.5 2005/03/07 21:00:05
+ * sbattaglia Exp $
  */
 public class FileAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
@@ -71,7 +76,7 @@ public class FileAuthenticationHandler extends
                 }
             }
             catch (IOException e) {
-                // can't do anything about this
+                log.error(e);
             }
 
         }

@@ -6,7 +6,8 @@ import javax.servlet.ServletRequest;
 public interface TrustHandler extends AuthHandler {
 
     /**
-     * Allows arbitrary logic to compute an authenticated user from a ServletRequest.
+     * Allows arbitrary logic to compute an authenticated user from a
+     * ServletRequest.
      */
     String getUsername(ServletRequest request);
 

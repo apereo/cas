@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util.support;
@@ -16,10 +17,12 @@ import org.springframework.beans.factory.InitializingBean;
 import sun.misc.BASE64Encoder;
 
 /**
- * Implementation of a password handler that encrypts a password using DES. Requires a key to have been created already and stored as a String.
+ * Implementation of a password handler that encrypts a password using DES.
+ * Requires a key to have been created already and stored as a String.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: DesPasswordTranslator.java,v 1.2 2005/02/27 05:49:26 sbattaglia
+ * Exp $
  */
 public class DesPasswordTranslator implements PasswordTranslator,
     InitializingBean {

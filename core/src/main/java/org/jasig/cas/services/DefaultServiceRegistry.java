@@ -1,6 +1,7 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services;
 
@@ -13,9 +14,9 @@ import org.apache.commons.logging.LogFactory;
 
 public class DefaultServiceRegistry implements ServiceRegistry,
     ServiceRegistryManager {
-    
+
     private final Log log = LogFactory.getLog(this.getClass());
-    
+
     final private Map services = new HashMap();
 
     public boolean serviceExists(final String serviceId) {
@@ -27,18 +28,31 @@ public class DefaultServiceRegistry implements ServiceRegistry,
     }
 
     public void addService(final AuthenticatedService service) {
+        log
+            .debug("Adding service [" + service.getId()
+                + "] to serviceRegistry");
         this.services.put(service.getId(), service);
     }
 
     public boolean deleteService(final String serviceId) {
+        log.debug("Deleting service[" + serviceId + "] from Service Registry.");
         return this.services.remove(serviceId) != null;
     }
 
     public AuthenticatedService getService(final String serviceId) {
-        return (AuthenticatedService) this.services.get(serviceId);
+        AuthenticatedService authenticatedService = (AuthenticatedService)this.services
+            .get(serviceId);
+        log.debug("Attempting to retrieve service [" + serviceId
+            + "] from Service Registry");
+        if (authenticatedService != null) {
+            log.debug("Successfully retrieved service [" + serviceId
+                + "] from Service Registry.");
+        }
+        return authenticatedService;
     }
 
     public void clear() {
+        log.debug("Clearing all entries from Service Registry");
         this.services.clear();
     }
 }

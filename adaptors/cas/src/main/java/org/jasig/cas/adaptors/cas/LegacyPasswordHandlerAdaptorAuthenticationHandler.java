@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.cas;
@@ -11,10 +12,12 @@ import org.springframework.beans.factory.InitializingBean;
 import edu.yale.its.tp.cas.auth.PasswordHandler;
 
 /**
- * Adaptor class to adapt the legacy CAS PasswordHandler to the new AuthenticationHandler
+ * Adaptor class to adapt the legacy CAS PasswordHandler to the new
+ * AuthenticationHandler
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: LegacyPasswordHandlerAdaptorAuthenticationHandler.java,v 1.3
+ * 2005/03/07 21:00:05 sbattaglia Exp $
  */
 public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
     AbstractAuthenticationHandler implements InitializingBean {

@@ -1,6 +1,7 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.advice;
 
@@ -14,31 +15,34 @@ import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Id$
- *
+ * @version $Id: ServiceAllowedMethodBeforeAdvice.java,v 1.2 2005/03/07 21:00:05
+ * sbattaglia Exp $
  */
-public class ServiceAllowedMethodBeforeAdvice implements
-    MethodBeforeAdvice, InitializingBean {
-    
+public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
+    InitializingBean {
+
     private ServiceRegistry serviceRegistry;
 
     /**
-     * @see org.springframework.aop.MethodBeforeAdvice#before(java.lang.reflect.Method, java.lang.Object[], java.lang.Object)
+     * @see org.springframework.aop.MethodBeforeAdvice#before(java.lang.reflect.Method,
+     * java.lang.Object[], java.lang.Object)
      */
-    public final void before(Method method, Object[] args, Object target) throws Throwable {
-        Service service = (Service) args[1];
-        AuthenticatedService authenticatedService = this.serviceRegistry.getService(service.getId());
-        
+    public final void before(Method method, Object[] args, Object target)
+        throws Throwable {
+        Service service = (Service)args[1];
+        AuthenticatedService authenticatedService = this.serviceRegistry
+            .getService(service.getId());
+
         if (authenticatedService == null) {
             throw new UnauthorizedServiceException();
         }
-        
+
         beforeInternal(method, args, target, authenticatedService);
     }
-    
-    protected void beforeInternal(Method method, Object[] args, Object target, AuthenticatedService service) throws Exception {
+
+    protected void beforeInternal(Method method, Object[] args, Object target,
+        AuthenticatedService service) throws Exception {
         // this will be overwritten by extending classes
     }
 
@@ -48,23 +52,27 @@ public class ServiceAllowedMethodBeforeAdvice implements
     public ServiceRegistry getServiceRegistry() {
         return this.serviceRegistry;
     }
+
     /**
      * @param serviceRegistry The serviceRegistry to set.
      */
     public void setServiceRegistry(ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
+
     /**
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public final void afterPropertiesSet() throws Exception {
         if (this.serviceRegistry == null) {
-            throw new IllegalStateException("ServiceRegistry cannot be null on " + this.getClass().getName());
+            throw new IllegalStateException(
+                "ServiceRegistry cannot be null on "
+                    + this.getClass().getName());
         }
-        
+
         afterPropertiesSetInternal();
     }
-    
+
     public void afterPropertiesSetInternal() throws Exception {
         // designed to be overwritten
     }

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.cas;
@@ -9,10 +10,12 @@ import javax.servlet.ServletRequest;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Credentials class that maps to the paramters required by the Legacy CAS password handler.
+ * Credentials class that maps to the paramters required by the Legacy CAS
+ * password handler.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: LegacyCasTrustedCredentials.java,v 1.1 2005/02/15 05:06:39
+ * sbattaglia Exp $
  */
 public class LegacyCasTrustedCredentials implements Credentials {
 

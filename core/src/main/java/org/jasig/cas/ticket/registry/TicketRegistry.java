@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 
@@ -26,7 +27,8 @@ public interface TicketRegistry {
     void addTicket(Ticket ticket);
 
     /**
-     * Retrieve a ticket from the registry. If the ticket retrieved does not match the expected class, an InvalidTicketException is thrown.
+     * Retrieve a ticket from the registry. If the ticket retrieved does not
+     * match the expected class, an InvalidTicketException is thrown.
      * 
      * @param ticketId the id of the ticket we wish to retrieve
      * @param clazz The expected class of the ticket we wish to retrieve.
@@ -48,14 +50,16 @@ public interface TicketRegistry {
      * Remove a specific ticket from the registry.
      * 
      * @param ticketId The id of the ticket to delete.
-     * @return true if the ticket was removed and false if the ticket did not exist.
+     * @return true if the ticket was removed and false if the ticket did not
+     * exist.
      */
     boolean deleteTicket(String ticketId);
 
     /**
      * Retrieve all tickets from the registry
      * 
-     * @return collection of tickets currently stored in the registry. Tickets might or might not be valid i.e. expired.
+     * @return collection of tickets currently stored in the registry. Tickets
+     * might or might not be valid i.e. expired.
      */
     Collection getTickets();
 }
