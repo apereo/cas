@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class Cas10ProtocolAuthenticationSpecificationTest extends TestCase {
+public class Cas10ProtocolAuthenticationSpecificationTests extends TestCase {
 
         public void testRenewGettersAndSettersFalse() {
             Cas10ProtocolAuthenticationSpecification s = new Cas10ProtocolAuthenticationSpecification();

@@ -25,7 +25,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public abstract class AbstractTicketRegistryTestCase extends TestCase {
+public abstract class AbstractTicketRegistryTests extends TestCase {
 	private static final int TICKETS_IN_REGISTRY = 10;
 	
 	private TicketRegistry ticketRegistry;

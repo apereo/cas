@@ -13,10 +13,10 @@ package org.jasig.cas.ticket.registry;
  * @version $Id$
  *
  */
-public class DefaultTicketRegistryTestCase extends AbstractTicketRegistryTestCase {
+public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
 
 	/**
-	 * @see org.jasig.cas.ticket.registry.AbstractTicketRegistryTestCase#getNewTicketRegistry()
+	 * @see org.jasig.cas.ticket.registry.AbstractTicketRegistryTests#getNewTicketRegistry()
 	 */
 	public TicketRegistry getNewTicketRegistry() throws Exception {
 		return new DefaultTicketRegistry();

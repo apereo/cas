@@ -21,7 +21,7 @@ import junit.framework.TestCase;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
+public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     private AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
 

@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import org.jasig.cas.ticket.registry.AbstractRegistryCleanerTestCase;
+import org.jasig.cas.ticket.registry.AbstractRegistryCleanerTests;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -14,9 +14,9 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @version $Id$
  *
  */
-public class DefaultTicketRegistryCleanerTestCase extends AbstractRegistryCleanerTestCase {
+public class DefaultTicketRegistryCleanerTests extends AbstractRegistryCleanerTests {
     /**
-     * @see org.jasig.cas.ticket.registry.AbstractTicketRegistryTestCase#getNewTicketRegistry()
+     * @see org.jasig.cas.ticket.registry.AbstractTicketRegistryTests#getNewTicketRegistry()
      */
     public RegistryCleaner getNewRegistryCleaner(final TicketRegistry ticketRegistry) {
         DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();

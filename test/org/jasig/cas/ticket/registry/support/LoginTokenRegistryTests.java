@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class LoginTokenRegistryTestCase extends TestCase {
+public class LoginTokenRegistryTests extends TestCase {
     private LoginTokenRegistryCleaner loginTokenRegistryCleaner = new LoginTokenRegistryCleaner();
     private Map loginTokens;
     

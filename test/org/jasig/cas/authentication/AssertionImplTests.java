@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class AssertionImplTest extends TestCase {
+public class AssertionImplTests extends TestCase {
     
     public void testNullParameters() {
         try {

@@ -16,7 +16,7 @@ import junit.framework.TestCase;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class HttpBasedServiceCredentialsToPrincipalResolverTest extends TestCase {
+public class HttpBasedServiceCredentialsToPrincipalResolverTests extends TestCase {
 
     private CredentialsToPrincipalResolver resolver = new HttpBasedServiceCredentialsToPrincipalResolver();
 

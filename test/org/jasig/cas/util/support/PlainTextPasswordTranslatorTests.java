@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class PlainTextPasswordTranslatorTest extends TestCase {
+public class PlainTextPasswordTranslatorTests extends TestCase {
 
     private final PasswordTranslator passwordTranslator = new PlainTextPasswordTranslator();
     

@@ -16,7 +16,7 @@ import junit.framework.TestCase;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class HttpBasedServiceCredentialsAuthenticationHandlerTest extends TestCase {
+public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends TestCase {
 
 	final private URL httpBackedUrl;
 
@@ -26,7 +26,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTest extends TestCa
 
 	final private AuthenticationHandler authenticationHandler;
 
-	public HttpBasedServiceCredentialsAuthenticationHandlerTest() throws MalformedURLException {
+	public HttpBasedServiceCredentialsAuthenticationHandlerTests() throws MalformedURLException {
 		this.httpBackedUrl = new URL("http://www.ja-sig.org");
 		this.httpsProperCertificateUrl = new URL("https://www.acs.rutgers.edu");
 		this.httpsInproperCertificateUrl = new URL("https://clue.acs.rutgers.edu/");
