@@ -128,5 +128,22 @@ public class UrlContextSource implements ContextSource {
                     "Cannot retrieve context", ex);
         }
     }
+    
+    public DirContext getDirContext(final String principal, final String password) {
+        Hashtable environment = (Hashtable) this.environment.clone();
+        
+        environment.put(Context.SECURITY_PRINCIPAL, principal);
+        environment.put(Context.SECURITY_CREDENTIALS, password);
+
+        try {
+            // TODO check whether there is a faster way to retrieve context,
+            // like lookup("") on a lazy initiated initial context
+            return (DirContext) new InitialDirContext(environment)
+                    .lookup(this.ldapUrl);
+        } catch (NamingException ex) {
+            throw new DataAccessResourceFailureException(
+                    "Cannot retrieve context", ex);
+        }
+    }
 
 }

@@ -8,30 +8,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.SearchResultCallbackHandler;
+import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
  * @author Scott Battaglia
  * @version $Id$
  */
-public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHandler {
+public class BindLdapAuthenticationHandler extends LdapDaoSupport implements AuthenticationHandler {
 
     private static final String[] RETURN_VALUES = new String[] {"cn"};
 
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
 
     private static final int DEFAULT_TIMEOUT = 1000;
-
-    private String bindUsername;
-
-    private String bindPassword;
 
     private String searchBase;
 
@@ -41,11 +40,11 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 
     private boolean scopeSubtree;
 
+    private String filter;
+
     private int maxNumberResults = DEFAULT_MAX_NUMBER_OF_RESULTS;
 
     private int timeout = DEFAULT_TIMEOUT;
-
-    private SearchControls constraints;
 
     private int scopeValue;
 
@@ -57,60 +56,40 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
     public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
-        for (Iterator iter = this.getServers().iterator(); iter.hasNext();) {
-            DirContext dirContext = null;
-            final String url = (String)iter.next();
-            final List results = new ArrayList();
-
-            try {
-                dirContext = this.getContext(this.bindUsername, this.bindPassword, url);
-
-                if (dirContext == null) {
-                    log.debug("Unable to authenticate LDAP user [" + this.bindUsername + "] for LDAP server [" + url + "]");
-                    return false;
-                }
-
-                NamingEnumeration namingEnumeration = dirContext.search(this.searchBase, LdapUtils.getFilterWithValues(this.getFilter(), uRequest
-                    .getUserName()), this.constraints);
-
-                if (!namingEnumeration.hasMoreElements()) {
-                    dirContext.close();
-                    return false;
-                }
-
-                while (namingEnumeration.hasMoreElements()) {
-                    String dn = (String)namingEnumeration.next();
-                    results.add(dn);
-                }
-
-                dirContext.close();
-
-                if (results.size() > 1 && !this.allowMultipleAccounts) {
-                    return false;
-                }
-
-                for (Iterator resultsIter = results.iterator(); iter.hasNext();) {
-                    String dn = (String)resultsIter.next();
-
-                    DirContext test = this.getContext(dn + "," + this.searchBase, uRequest.getPassword(), url);
-
-                    if (test != null) {
-                        test.close();
-                        return true;
-                    }
-                }
-
-                return false;
+        List values = (List)this.getLdapTemplate().search(this.searchBase, LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
+            this.getSearchControls(), new SearchResultCallbackHandler() {
+            private List cns = new ArrayList();
+            
+            public void processSearchResult(SearchResult searchResult) throws NamingException {
+                cns.add(searchResult.getAttributes().get("cn").get(0));
             }
-            catch (NamingException e) {
-                log.debug("LDAP ERROR: Unable to connect to LDAP server " + url + ".  Attempting to contact next server (if exists).");
+            
+            public Object getResult() {
+                return cns;
+            }
+        });
+
+        if (values == null || values.isEmpty())
+            return false;
+
+        if (values.size() > 1 && !this.allowMultipleAccounts)
+            return false;
+
+        for (Iterator iter = values.iterator(); iter.hasNext();) {
+            String dn = (String)iter.next();
+
+            DirContext test = this.getContextSource().getDirContext(dn + "," + this.searchBase, uRequest.getPassword());
+
+            if (test != null) {
+                org.springframework.ldap.support.LdapUtils.closeContext(test);
+                return true;
             }
         }
 
         return false;
     }
 
-    protected SearchControls initializeSearchControls() {
+    protected SearchControls getSearchControls() {
         SearchControls constraints = new SearchControls(this.scopeValue, this.maxNumberResults, this.timeout, RETURN_VALUES, false, false);
         constraints.setSearchScope(SearchControls.SUBTREE_SCOPE); // TODO why????
 
@@ -118,12 +97,9 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
     }
 
     /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     * @see org.springframework.ldap.core.support.LdapDaoSupport#initDao()
      */
-    public void afterPropertiesSet() throws Exception {
-        if (this.bindUsername == null || this.bindPassword == null)
-            throw new IllegalStateException("bindUsername and bindPassword must be set on " + this.getClass().getName());
-
+    public void initDao() throws Exception {
         if (!this.scopeOneLevel && !this.scopeObject && !this.scopeSubtree)
             throw new IllegalStateException("Either scopeOneLevel, scopeObject or scopeSubtree must be set to true on " + this.getClass().getName());
 
@@ -137,8 +113,10 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
             this.scopeValue = SearchControls.OBJECT_SCOPE;
         else
             this.scopeValue = SearchControls.SUBTREE_SCOPE;
-
-        this.constraints = initializeSearchControls();
+    }
+    
+    public boolean supports(Credentials credentials) {
+        return credentials != null && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
 
     /**
@@ -146,20 +124,6 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
      */
     public void setAllowMultipleAccounts(boolean allowMultipleAccounts) {
         this.allowMultipleAccounts = allowMultipleAccounts;
-    }
-
-    /**
-     * @param bindPassword The bindPassword to set.
-     */
-    public void setBindPassword(String bindPassword) {
-        this.bindPassword = bindPassword;
-    }
-
-    /**
-     * @param bindUsername The bindUsername to set.
-     */
-    public void setBindUsername(String bindUsername) {
-        this.bindUsername = bindUsername;
     }
 
     /**
@@ -202,5 +166,11 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
      */
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+    /**
+     * @param filter The filter to set.
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }
