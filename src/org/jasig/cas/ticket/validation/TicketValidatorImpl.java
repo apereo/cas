@@ -36,8 +36,8 @@ public class TicketValidatorImpl implements TicketValidator {
             }
         }
 
-        log.debug("No validator registered for [" + ticket.getClass().getName() + "].  Assuming no validation required.");
-        return true;
+        log.error("No validator registered for [" + ticket.getClass().getName() + "].  Assuming configuration error so rejecting ticket.");
+        return false;
     }
 
     /**
