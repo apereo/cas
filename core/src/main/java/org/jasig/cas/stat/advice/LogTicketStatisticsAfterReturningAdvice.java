@@ -20,11 +20,12 @@ import org.springframework.aop.AfterReturningAdvice;
 public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAdvice {
     private Map statsStateMutators = new HashMap();
     
-    
+    /*
     private static final String PROXY_GRANTING_TICKET_METHOD = "delegateTicketGrantingTicket";
     private static final String SERVICE_TICKET_METHOD = "grantServiceTicket";
     private static final String TICKET_GRANTING_TICKET_METHOD = "createTicketGrantingTicket";
     private static final String PROXY_TICKET_METHOD = "";
+    */
     
     private TicketStats ticketStats;
     /**
