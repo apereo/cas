@@ -24,7 +24,7 @@ import sun.misc.BASE64Encoder;
  * @version $Id$
  * 
  */
-public class DESPasswordTranslator implements PasswordTranslator, InitializingBean {
+public class DesPasswordTranslator implements PasswordTranslator, InitializingBean {
 	protected final Log logger = LogFactory.getLog(getClass());
 	private static final String ALGORITHM = "DES";
 	private SecretKey secretKey;
