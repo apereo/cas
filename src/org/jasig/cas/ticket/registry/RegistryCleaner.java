@@ -3,7 +3,7 @@
  * http://www.uportal.org/license.html
  */
 
-package org.jasig.cas.util;
+package org.jasig.cas.ticket.registry;
 
 /**
  * Interface to start the cleaning of a registry.
