@@ -35,7 +35,7 @@ public interface CentralAuthenticationService {
     /**
      * Grant a ServiceTicket for a Service.
      * 
-     * @param tgtid Proof of prior authentication.
+     * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
      * @return the ServiceTicket for target Service.
      * @throws TicketCreationException
@@ -48,7 +48,7 @@ public interface CentralAuthenticationService {
      * 
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
-     * @param credentials
+     * @param credentials the Credentials to present to receive the ServiceTicket
      * @return the ServiceTicket for target Service.
      * @throws TicketCreationException
      */
@@ -58,10 +58,9 @@ public interface CentralAuthenticationService {
     /**
      * Validate a ServiceTicket for a particular Service
      * 
-     * @param ticket Proof of prior authentication.
+     * @param serviceTicketId Proof of prior authentication.
      * @param service Service wishing to validate a prior authentication.
-     * @param authenticationSpecification The specification of the authentication parameters we have defined that the ticket must meet to be valid.
-     * @return ServiceTicket if valid for the service and satisifies AuthenticationSpecification.
+     * @return ServiceTicket if valid for the service
      */
     Assertion validateServiceTicket(String serviceTicketId, Service service) throws TicketException;
 
@@ -76,7 +75,6 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication to other Services.
      * 
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
-     * TODO: Rename the method name
      */
     String delegateTicketGrantingTicket(String serviceTicketId, Credentials credentials) throws TicketException, AuthenticationException;
 

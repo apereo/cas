@@ -30,7 +30,7 @@ public interface TicketGrantingTicket extends Ticket {
      * Grant a ServiceTicket for a specific service
      * 
      * @param service The service for which we are granting a ticket
-     * @return
+     * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
     ServiceTicket grantServiceTicket(Service service);
 
