@@ -47,22 +47,22 @@ public class ServiceValidateController extends AbstractController
 		ServiceTicket serviceTicket;
 		BindUtils.bind(request, validationRequest, "validationRequest");
 
-		this.log.info("Attempting to retrieve a valid ServiceTicket for [" + validationRequest.getTicket() + "]");
+		log.info("Attempting to retrieve a valid ServiceTicket for [" + validationRequest.getTicket() + "]");
 		serviceTicket = this.ticketManager.validateServiceTicket(validationRequest);
 		
 		if (serviceTicket == null)
 		{
-			this.log.info("ServiceTicket [" + validationRequest.getTicket() + "was invalid.");
+			log.info("ServiceTicket [" + validationRequest.getTicket() + "was invalid.");
 			model.put(WebConstants.CODE, "INVALID_TICKET");
 			model.put(WebConstants.DESC, "ticket '" + validationRequest.getTicket() + "' not recognized.");
 			return new ModelAndView(ViewNames.CONST_SERVICE_FAILURE, model);
 		}
 		else
 		{
-			this.log.info("ServiceTicket [" + validationRequest.getTicket() + "was valid.");
+			log.info("ServiceTicket [" + validationRequest.getTicket() + "was valid.");
 			if (validationRequest.getPgtUrl() != null)
 			{
-				this.log.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
+				log.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
 				ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(serviceTicket.getPrincipal(), casAttributes, serviceTicket);
 				model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
 			}

@@ -45,7 +45,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             throw new IllegalArgumentException("Cannot add null Ticket to the registry.");
         }
         
-        this.log.debug("Added ticket [" + ticket.getId() + "] to registry.");
+        log.debug("Added ticket [" + ticket.getId() + "] to registry.");
         this.cache.put(new Element(ticket.getId(), ticket));
     }
 
@@ -53,7 +53,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
     public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketException {
-    	this.log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+    	log.debug("Attempting to retrieve ticket [" + ticketId + "]");
    
         if (ticketId == null) {
             return null;
@@ -72,7 +72,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
                     throw new InvalidTicketException("Ticket [" + ticket.getId() + "] for user [" + ticket.getPrincipal() + "] is of type "
                         + ticket.getClass() + " when we were expecting " + clazz);
 
-                this.log.debug("Ticket [" + ticketId + "] found in registry.");
+                log.debug("Ticket [" + ticketId + "] found in registry.");
                 return ticket;
             }
         }
@@ -85,7 +85,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#deleteTicket(java.lang.String)
      */
     public boolean deleteTicket(final String ticketId) {
-    	this.log.debug("Removing ticket [" + ticketId + "] from registry");
+    	log.debug("Removing ticket [" + ticketId + "] from registry");
         return this.cache.remove(ticketId);
     }
 

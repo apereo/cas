@@ -40,7 +40,7 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
 			
 			return this.encoder.encode(encryptedAsBytes);
 		} catch (Exception e) {
-			this.log.debug(e);
+			log.debug(e);
 		}
 
 		return null;

@@ -42,7 +42,7 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticatio
 				return true;
 			}
 			catch (NamingException e) {
-				this.log.debug("LDAP ERROR: Unable to connect to LDAP server " + url + ".  Attempting to contact next server (if exists).");
+				log.debug("LDAP ERROR: Unable to connect to LDAP server " + url + ".  Attempting to contact next server (if exists).");
 			}
 		}
 		

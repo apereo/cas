@@ -41,7 +41,7 @@ public class ProxyGrantingTicketCreator implements TicketCreator {
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
         String pgtIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
 
-        this.log.debug("Creating ticket of type ProxyGrantingTicket with ID [" + ticketId + "]");
+        log.debug("Creating ticket of type ProxyGrantingTicket with ID [" + ticketId + "]");
         
         try {
 	        ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(ticketId, (ServiceTicket)grantingTicket, new URL(casAttributes.getCallbackUrl()), pgtIou, this.expirationPolicy);

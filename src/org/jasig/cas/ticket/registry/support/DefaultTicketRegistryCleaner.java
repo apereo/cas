@@ -29,7 +29,7 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
 	 * @see org.jasig.cas.util.RegistryCleaner#clean()
 	 */
 	public void clean() {
-		this.log.info("Starting cleaning of expired tickets from ticket registry at [" + new Date() + "]");
+		log.info("Starting cleaning of expired tickets from ticket registry at [" + new Date() + "]");
 		synchronized (this.ticketRegistry)
 		{
 			for (Iterator iter = this.ticketRegistry.getTickets().iterator(); iter.hasNext();)
@@ -40,7 +40,7 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
 					iter.remove();
 			}
 		}
-		this.log.info("Finished cleaning of expired tickets from ticket registry at [" + new Date() + "]");
+		log.info("Finished cleaning of expired tickets from ticket registry at [" + new Date() + "]");
 	}
 	/**
 	 * @param ticketRegistry The ticketRegistry to set.

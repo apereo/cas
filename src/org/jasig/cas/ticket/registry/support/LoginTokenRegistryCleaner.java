@@ -30,7 +30,7 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
 	public void clean()
 	{
 		final long currentTime = System.currentTimeMillis();
-		this.log.info("Started cleaning up login tokens at [" + new Date() + "]");
+		log.info("Started cleaning up login tokens at [" + new Date() + "]");
 		synchronized (this.loginTokens)
 		{
 			final Set keys = this.loginTokens.keySet();
@@ -44,7 +44,7 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
 					this.loginTokens.remove(key);
 			}
 		}
-		this.log.info("Finished cleaning up login tokens at [" + new Date() + "]");
+		log.info("Finished cleaning up login tokens at [" + new Date() + "]");
 	}
 
 	/**

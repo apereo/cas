@@ -46,10 +46,10 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      * @see org.jasig.cas.ticket.registry.ServiceRegistry#serviceExists(java.lang.String)
      */
     public boolean serviceExists(final String service) {
-    	this.log.debug("Attempting to determine if service [" + service + "] exists.");
+    	log.debug("Attempting to determine if service [" + service + "] exists.");
     	
         if (this.services.isEmpty()) {
-        	this.log.debug("Services List is empty.  Assuming service registry is not in use.");
+        	log.debug("Services List is empty.  Assuming service registry is not in use.");
             return true;        	
         }
 
@@ -61,11 +61,11 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             String validService = (String)iter.next();
 
             if (service.startsWith(validService)) {
-            	this.log.debug("Service [" + service + "] found in registry.");
+            	log.debug("Service [" + service + "] found in registry.");
                 return true;
             }
         }
-        this.log.debug("Unable to find service [" + service + "] in registry.");
+        log.debug("Unable to find service [" + service + "] in registry.");
         return false;
     }
 
