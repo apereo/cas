@@ -26,7 +26,9 @@ import org.jasig.cas.validation.AssertionImpl;
 import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
 
 /**
- * Implementation of a CentralAuthenticationService.
+ * Concrete implementation of a CentralAuthenticationService, and also the central, organizing component of CAS's internal implementation.
+ * <p>
+ * This class is threadsafe.
  * 
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
@@ -188,11 +190,6 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
         this.ticketRegistry.addTicket(ticketGrantingTicket);
 
         return ticketGrantingTicket.getId();
-    }
-
-    public String getVersion() {
-        // Fetches the "Implementation-Version" manifest attribute from the jar file.
-        return CasVersion.class.getPackage().getImplementationVersion();
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
