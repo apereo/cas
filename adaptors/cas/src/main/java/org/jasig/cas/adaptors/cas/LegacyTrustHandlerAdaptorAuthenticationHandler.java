@@ -38,7 +38,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
     }
 
     /**
-     * @param passwordHandler The passwordHandler to set.
+     * @param trustHandler The trustHandler to set.
      */
     public void setTrustHandler(final TrustHandler trustHandler) {
         this.trustHandler = trustHandler;
