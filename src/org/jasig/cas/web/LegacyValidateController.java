@@ -63,7 +63,12 @@ public class LegacyValidateController extends AbstractController implements Init
         log.info("Attempting to retrieve valid ServiceTicket for [" + serviceTicketId + "]");
 
         try {
-            assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service), authenticationSpecification);
+            assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service));
+            
+            if (!authenticationSpecification.isSatisfiedBy(assertion)) {
+                log.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy authentication specification.");
+                throw new TicketException(TicketException.INVALID_TICKET, "ticket not backed by initial CAS login, as requested");
+           }
 
             log.info("Successfully retrieved ServiceTicket for ticket id [" + serviceTicketId + "] and service [" + service + "]");
             out.print("yes\n" + ((Principal) assertion.getChainedPrincipals().get(0)).getId() + "\n");

@@ -4,10 +4,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-
-
 /**
  * A mapping of the Cas 1.0 protocol for authentication.
  * 
@@ -33,19 +29,15 @@ public class Cas10ProtocolAuthenticationSpecification implements AuthenticationS
     public boolean isRenew() {
         return renew;
     }
+
     /**
-     * @see org.jasig.cas.authentication.AuthenticationSpecification#isSatisfiedBy(org.jasig.cas.ticket.Ticket)
+     * @see org.jasig.cas.authentication.AuthenticationSpecification#isSatisfiedBy(org.jasig.cas.authentication.Assertion)
      */
-    public boolean isSatisfiedBy(Ticket ticket) {
-        if (!ServiceTicket.class.isAssignableFrom(ticket.getClass()))
-            return false;
-        
-        ServiceTicket serviceTicket = (ServiceTicket) ticket;
-        
+    public boolean isSatisfiedBy(Assertion assertion) {
         if (!this.renew)
             return true;
 
-        return serviceTicket.isFromNewLogin() && this.renew;
+        return assertion.isFromNewLogin() && this.renew;
     }
 
 }

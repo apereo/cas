@@ -10,7 +10,6 @@ import org.jasig.cas.authentication.Assertion;
 import org.jasig.cas.authentication.AssertionImpl;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.AuthenticationSpecification;
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
@@ -114,9 +113,8 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
      * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(java.lang.String, org.jasig.cas.Service,
      * org.jasig.cas.authentication.AuthenticationSpecification)
      */
-    public Assertion validateServiceTicket(final String serviceTicketId, final Service service,
-        final AuthenticationSpecification authenticationSpecification) throws TicketException {
-        if (serviceTicketId == null || service == null || authenticationSpecification == null) {
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
+        if (serviceTicketId == null || service == null) {
             throw new IllegalArgumentException("serviceTicketId, service and authenticationSpecification cannot be null.");
         }
 
@@ -138,15 +136,10 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
                 throw new TicketException(TicketException.INVALID_SERVICE, "ticket '" + serviceTicketId + "' does not match supplied service");
             }
     
-            if (!authenticationSpecification.isSatisfiedBy(serviceTicket)) {
-                log.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy authentication specification.");
-                throw new TicketException(TicketException.INVALID_TICKET, "ticket not backed by initial CAS login, as requested");
-            }
-            
             serviceTicket.incrementCountOfUses();
         }
 
-        return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals()); // TODO handle proxy case
+        return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals(), serviceTicket.isFromNewLogin()); // TODO handle proxy case
     }
 
     /**
