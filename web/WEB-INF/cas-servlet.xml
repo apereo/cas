@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- View Resolver -->
+	<bean id="viewResolver"  class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
+		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
+		<property name="suffix"><value>.jsp</value></property>
+	</bean>
+
+	<!-- Handler Mapping -->
+    <bean id="handlerMapping" 
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
+        <property name="mappings">
+            <props>
+                <prop key="/login">loginController</prop>
+				<prop key="/logout">logoutController</prop>
+				<prop key="/validate">legacyValidateController</prop>
+				<prop key="/serviceValidate">serviceValidateController</prop>
+				<prop key="/proxy">proxyController</prop>
+				<prop key="/proxyValidate">serviceValidateController</prop>
+            </props>
+        </property>
+    </bean>
+	
+	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController">
+		<property name="casValidationFailure"><value>casServiceValidationFailure</value></property>
+		<property name="casValidationSuccess"><value>casServiceValidationSuccess</value></property>
+		<property name="ticketManager"><ref bean="ticketManager" /></property>
+	</bean>
+	
+	<bean id="proxyController" class="org.jasig.cas.web.ProxyController">
+		<property name="casProxyFailure"><value>casProxyFailureView</value></property>
+		<property name="casProxySuccess"><value>casProxySuccessView</value></property>
+		<property name="ticketManager"><ref bean="ticketManager" /></property>
+	</bean>
+	
+	<bean id="logoutController" class="org.jasig.cas.web.LogoutController">
+		<property name="logoutView"><value>casLogoutView</value></property>
+		<property name="ticketManager"><ref bean="ticketManager" /></property>
+	</bean>
+	
+	<bean id="legacyValidateController" class="org.jasig.cas.web.LegacyValidateController">
+		<property name="ticketManager"><ref bean="ticketManager" /></property>
+	</bean>
+	
+	<bean id="loginController" class="org.jasig.cas.web.LoginController">
+		<property name="authenticationManager"><ref bean="authenticationManager" /></property>
+		<property name="confirmView"><value>casConfirmView</value></property>
+		<property name="formView"><value>casFailureView</value></property>
+		<property name="successView"><value>casGenericSuccess</value></property>
+		<property name="ticketManager"><ref bean="ticketManager" /></property>
+		<property name="commandClass"><value>org.jasig.cas.domain.UsernamePasswordAuthenticationRequest</value></property>
+		<property name="commandName"><value>authenticationRequest</value></property>
+		<property name="loginTokens"><ref bean="loginTokens" /></property>
+	</bean>
+</beans>

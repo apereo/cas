@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- The Authentication Manager
+		 Extension points for the Authentication Manager include:
+		 1.  credentialsToPrincipalResolver - this allows you to return a principal with any properties you want (i.e. a Person with a NetId, Person Type, Age, etc.)
+		     The default implementation uses SimplePrincipal which just includes an Id.
+		
+		 2. authenticationHandlers - provide a list of handlers that will attempt to process an authentication request.  Handlers are tried in order so if you want
+            one to execute before another, it must be placed higher on the list.
+	-->
+	<bean id="authenticationManager" class="org.jasig.cas.service.support.AuthenticationManagerImpl">
+		<property name="credentialsToPrincipalResolvers">
+			<list>
+				<bean class="org.jasig.cas.helper.support.DefaultCredentialsToPrincipalResolver" />
+			</list>
+		</property>
+		<property name="authenticationHandlers">
+			<list>
+				<bean class="org.jasig.cas.handlers.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- The Service Registry
+		 Extension point for allowing only certain services to be able to create service tickets.
+		 Default implementation takes a list of services as part of its constructor.
+	-->
+	<bean id="serviceRegistry" class="org.jasig.cas.registry.support.DefaultServiceRegistry" />
+</beans>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context for the remote OrderService client.
+	- Defines various OrderService proxies to be called by OrderServiceClient.
+	-->
+<beans>
+	<!-- Resolves ${...} placeholders from client.properties -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location"><value>client.properties</value></property>
+	</bean>
+	
+	<!-- Proxy for the JAX-RPC/Axis-exported OrderService -->
+	<bean id="casService" class="org.jasig.cas.webservice.client.NestedJavaBeanAxisPortProxyFactoryBean">
+		<property name="serviceInterface">
+			<value>org.jasig.cas.webservice.CasService</value>
+		</property>
+		<property name="portInterface">
+			<value>org.jasig.cas.webservice.RemoteCasService</value>
+		</property>
+		<property name="serviceFactoryClass">
+			<value>org.apache.axis.client.ServiceFactory</value>
+		</property>
+		<property name="wsdlDocumentUrl">
+			<value>http://${serverName}:${httpPort}${contextPath}/services/CasService?wsdl</value>
+		</property>
+		<property name="namespaceUri">
+			<value>http://${serverName}:${httpPort}${contextPath}/services/CasService</value>
+		</property>
+		<property name="serviceName">
+			<value>JaxRpcCasServiceService</value>
+		</property>
+		<property name="portName">
+			<value>CasService</value>
+		</property>
+		<property name="namespace">
+			<value>urn:CasService</value>
+		</property>
+	</bean>
+</beans>
