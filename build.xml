@@ -145,20 +145,20 @@
 
 	</target>
 
-	<target name="release" depends="war,javadoc" description="Generate release zip file">
+	<target name="release" depends="javadoc" description="Generate release zip file">
 
 		<delete file="${dist.dir}/${release.zip}"/>
 		<delete file="${dist.dir}/${release.gzip}"/>
 
 		<fileset id="release" dir=".">
-			<include name="dist/*.war"/>
+			<include name="target/*.war"/>
 			<include name="docs/**"/>
-			<include name="src/**"/>
-			<include name="test/**"/>
-			<include name="lib/**"/>
+			<include name="core/src/main/java/**"/>
+			<include name="core/src/test/java/**"/>
 			<include name="*.txt"/>
 			<include name="*.properties"/>
 			<include name="*.xml"/>
+			<include name="*.bat"/>
 		</fileset>
 
 		<zip zipfile="${dist.dir}/${release.zip}">
@@ -167,14 +167,13 @@
 		
 		<tar destfile="${dist.dir}/${release.tar}">
 			<tarfileset dir=".">
-				<include name="dist/*.war"/>
+				<include name="target/*.war"/>
 				<include name="docs/**"/>
-				<include name="src/**"/>
-				<include name="test/**"/>
-				<include name="lib/**"/>
+				<include name="core/src/main/java/**"/>
+				<include name="core/src/test/java/**"/>
 				<include name="*.txt"/>
 				<include name="*.properties"/>
-				<include name="*.xml"/>
+				<include name="*.bat"/>
 			</tarfileset>		
 		</tar>
 	
