@@ -145,6 +145,7 @@
 	<target name="release" depends="war,javadoc" description="Generate release zip file">
 
 		<delete file="${dist.dir}/${release.zip}"/>
+		<delete file="${dist.dir}/${release.gzip}"/>
 
 		<fileset id="release" dir=".">
 			<include name="dist/*.war"/>
@@ -160,6 +161,27 @@
 		<zip zipfile="${dist.dir}/${release.zip}">
 			<zipfileset refid="release" prefix="${release.path}"/>
 		</zip>
+		
+		<tar destfile="${dist.dir}/${release.tar}">
+			<tarfileset dir=".">
+				<include name="dist/*.war"/>
+				<include name="docs/**"/>
+				<include name="src/**"/>
+				<include name="test/**"/>
+				<include name="lib/**"/>
+				<include name="*.txt"/>
+				<include name="*.properties"/>
+				<include name="*.xml"/>
+			</tarfileset>		
+		</tar>
+	
+		<gzip
+			src="${dist.dir}/${release.tar}"
+			zipfile="${dist.dir}/${release.gzip}">
+		</gzip>
+		
+		<delete file="${dist.dir}/${release.tar}"/>
+		<delete file="${dist.dir}/cas.war"/>
 
 	</target>
 
