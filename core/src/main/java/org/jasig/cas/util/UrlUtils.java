@@ -15,28 +15,33 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Utilities class for generic functions related to URLs
+ * Utilities class for generic functions related to URLs.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class UrlUtils {
+public final class UrlUtils {
 
-    protected static final Log log = LogFactory.getLog(UrlUtils.class);
+    /** The instance of the logger. */
+    private static final Log LOG = LogFactory.getLog(UrlUtils.class);
 
+    private UrlUtils() {
+        // we do not want this able to be extended.
+    }
     /**
      * Method to retrieve the response from a HTTP request for a specific URL.
      * 
      * @param url The URL to contact.
      * @return the body of the response.
      */
-    public static String getResponseBodyFromUrl(URL url) {
-        URLConnection connection = null;
+    public static String getResponseBodyFromUrl(final URL url) {
         BufferedReader bufferedReader = null;
-        StringBuffer buf = new StringBuffer();
+        final StringBuffer buf = new StringBuffer();
+
         try {
-            connection = url.openConnection();
+            final URLConnection connection = url.openConnection();
+            
             connection.setRequestProperty("Connection", "close");
             bufferedReader = new BufferedReader(new InputStreamReader(
                 connection.getInputStream()));
@@ -46,18 +51,15 @@ public class UrlUtils {
                 buf.append("\n");
                 line = bufferedReader.readLine();
             }
-        }
-        catch (Exception e) {
-            log.error(e);
-        }
-        finally {
+        } catch (Exception e) {
+            LOG.error(e);
+        } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-            }
-            catch (IOException e) {
-                log.error(e);
+            } catch (IOException e) {
+                LOG.error(e);
             }
         }
         return buf.toString().length() > 0 ? buf.toString() : null;

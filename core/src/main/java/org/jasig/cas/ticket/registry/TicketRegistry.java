@@ -58,7 +58,7 @@ public interface TicketRegistry {
     boolean deleteTicket(String ticketId);
 
     /**
-     * Retrieve all tickets from the registry
+     * Retrieve all tickets from the registry.
      * 
      * @return collection of tickets currently stored in the registry. Tickets
      * might or might not be valid i.e. expired.

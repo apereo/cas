@@ -15,31 +15,29 @@ package org.jasig.cas.validation;
 public class Cas10ProtocolValidationSpecification implements
     ValidationSpecification {
 
-    private final static boolean DEFAULT_RENEW = false;
+    /** The default value for the renew attribute is false. */
+    private static final boolean DEFAULT_RENEW = false;
 
+    /** Denotes whether we should always authenticate or not. */
     private boolean renew;
 
     public Cas10ProtocolValidationSpecification() {
         this.renew = DEFAULT_RENEW;
     }
 
-    public Cas10ProtocolValidationSpecification(boolean renew) {
+    public Cas10ProtocolValidationSpecification(final boolean renew) {
         this.renew = renew;
     }
 
-    public void setRenew(boolean renew) {
+    public final void setRenew(final boolean renew) {
         this.renew = renew;
     }
 
-    public boolean isRenew() {
+    public final boolean isRenew() {
         return this.renew;
     }
 
-    public boolean isSatisfiedBy(Assertion assertion) {
-        if (!this.renew)
-            return true;
-
-        return assertion.isFromNewLogin() && this.renew;
+    public boolean isSatisfiedBy(final Assertion assertion) {
+        return (!this.renew) || (assertion.isFromNewLogin() && this.renew);
     }
-
 }

@@ -30,16 +30,18 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class EhCacheTicketRegistry implements TicketRegistry {
+public final class EhCacheTicketRegistry implements TicketRegistry {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** The Commons Logging log instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** The instance of an EhCache cache. */
     private Cache cache;
 
     /**
      * Set backed cache.
      */
-    public void setCache(Cache cache) {
+    public void setCache(final Cache cache) {
         this.cache = cache;
     }
 
@@ -62,18 +64,20 @@ public class EhCacheTicketRegistry implements TicketRegistry {
 
         final Ticket ticket = this.getTicket(ticketId);
 
-        if (ticket == null)
+        if (ticket == null) {
             return null;
+        }
 
-        if (!clazz.isAssignableFrom(ticket.getClass()))
+        if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new InvalidTicketClassException("Ticket [" + ticket.getId()
                 + "] is of type " + ticket.getClass()
                 + " when we were expecting " + clazz);
+        }
 
         return ticket;
     }
 
-    public Ticket getTicket(String ticketId) {
+    public Ticket getTicket(final String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         if (ticketId == null) {
             return null;
@@ -88,8 +92,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             Ticket ticket = (Ticket) element.getValue();
             log.debug("Ticket [" + ticketId + "] found in registry.");
             return ticket;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new IllegalStateException(
                 "Ticket registry threw an exception: " + ex.getMessage());
         }
@@ -111,8 +114,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
                 items.add(element.getValue());
             }
             return Collections.unmodifiableCollection(items);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -7,7 +7,6 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Service;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -25,17 +24,9 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     private boolean fromNewLogin;
 
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
-
-    private final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
-
-    private final ExpirationPolicy expirationPolicy;
-
-    public ServiceTicketImpl(final String id,
+    protected ServiceTicketImpl(final String id,
         final TicketGrantingTicket ticket, final Service service,
-        final boolean fromNewLogin, final ExpirationPolicy policy,
-        final UniqueTicketIdGenerator uniqueTicketIdGenerator,
-        final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+        final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
 
         if (ticket == null || service == null)
@@ -44,9 +35,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
         this.service = service;
         this.fromNewLogin = fromNewLogin;
-        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-        this.expirationPolicy = policy;
     }
 
     public boolean isFromNewLogin() {
@@ -65,13 +53,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         return super.isExpired() || this.getGrantingTicket().isExpired();
     }
 
-    public TicketGrantingTicket grantTicketGrantingTicket(
-        final Authentication authentication) {
-        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator
-            .getNewTicketId(TicketGrantingTicket.PREFIX), this
-            .getGrantingTicket(), authentication,
-            this.ticketGrantingTicketExpirationPolicy,
-            this.uniqueTicketIdGenerator, this.expirationPolicy);
+    public TicketGrantingTicket grantTicketGrantingTicket(final String id,
+        final Authentication authentication, final ExpirationPolicy expirationPolicy) {
+        return new TicketGrantingTicketImpl(id, this
+            .getGrantingTicket(), authentication, expirationPolicy);
     }
 
 }

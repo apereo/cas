@@ -16,9 +16,10 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Cas10ProxyHandler implements ProxyHandler {
+public final class Cas10ProxyHandler implements ProxyHandler {
 
-    public String handle(Credentials credentials, String proxyGrantingTicketId) {
+    public String handle(final Credentials credentials, 
+        final String proxyGrantingTicketId) {
         return null;
     }
 

@@ -19,7 +19,8 @@ import org.jasig.cas.authentication.Service;
  */
 public interface TicketGrantingTicket extends Ticket {
 
-    public static final String PREFIX = "TGT";
+    /** The prefix to use when generating an id for a TicketGrantingTicket. */
+    String PREFIX = "TGT";
 
     /**
      * Method to retrieve the authentication.
@@ -29,13 +30,15 @@ public interface TicketGrantingTicket extends Ticket {
     Authentication getAuthentication();
 
     /**
-     * Grant a ServiceTicket for a specific service
+     * Grant a ServiceTicket for a specific service.
      * 
+     * @param id The unique identifier for this ticket.
      * @param service The service for which we are granting a ticket
      * @return the service ticket granted to a specific service for the
      * principal of the TicketGrantingTicket
      */
-    ServiceTicket grantServiceTicket(Service service);
+    ServiceTicket grantServiceTicket(String id, Service service,
+        ExpirationPolicy expirationPolicy);
 
     /**
      * Explicitly expire a ticket.
@@ -52,7 +55,7 @@ public interface TicketGrantingTicket extends Ticket {
 
     /**
      * Method to retrieve the chained list of principals for this
-     * TicketGrantingTicket
+     * TicketGrantingTicket.
      * 
      * @return the list of principals
      */

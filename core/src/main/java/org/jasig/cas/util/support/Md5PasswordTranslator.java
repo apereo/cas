@@ -20,8 +20,14 @@ import org.jasig.cas.util.PasswordTranslator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Md5PasswordTranslator implements PasswordTranslator {
+public final class Md5PasswordTranslator implements PasswordTranslator {
 
+    /** The base we will use to convert the Integer to a String. */
+    private static final int BASE = 16;
+    
+    /** The name of the algorithm to use. */
+    private static final String ALGORITHM_NAME = "MD5";
+   
     public String translate(final String password) {
 
         if (password == null) {
@@ -29,12 +35,11 @@ public class Md5PasswordTranslator implements PasswordTranslator {
         }
 
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM_NAME);
 
             return new BigInteger(messageDigest.digest(password.getBytes()))
-                .toString(16);
-        }
-        catch (NoSuchAlgorithmException e) {
+                .toString(BASE);
+        } catch (NoSuchAlgorithmException e) {
             throw new SecurityException(e.getMessage());
         }
     }

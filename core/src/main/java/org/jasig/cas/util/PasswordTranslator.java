@@ -24,5 +24,5 @@ public interface PasswordTranslator {
      * @param password the password to translate
      * @return the transformed version of the password
      */
-    public String translate(String password);
+    String translate(String password);
 }

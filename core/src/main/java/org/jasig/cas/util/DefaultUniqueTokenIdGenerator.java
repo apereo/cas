@@ -6,15 +6,16 @@
 package org.jasig.cas.util;
 
 /**
- * Default implementation of {@link UniqueTokenIdGenerator}
+ * Default implementation of {@link UniqueTokenIdGenerator}.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DefaultUniqueTokenIdGenerator implements UniqueTokenIdGenerator {
+public final class DefaultUniqueTokenIdGenerator implements UniqueTokenIdGenerator {
 
-    final private RandomStringGenerator idGenerator;
+    /** The RandomStringGenerator to be used to generate tokens. */
+    private final RandomStringGenerator idGenerator;
 
     public DefaultUniqueTokenIdGenerator() {
         this.idGenerator = new DefaultRandomStringGenerator();

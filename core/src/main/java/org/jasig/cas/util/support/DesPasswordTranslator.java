@@ -24,17 +24,22 @@ import sun.misc.BASE64Encoder;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DesPasswordTranslator implements PasswordTranslator,
+public final class DesPasswordTranslator implements PasswordTranslator,
     InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** Logger. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** The algorithm to use. */
     private static final String ALGORITHM = "DES";
 
+    /** The key for the cipher. */
     private String key;
 
+    /** The actual cipher based on the algorithm name. */
     private Cipher cipher;
 
+    /** The encoder to do BASE64 encoding. */
     private BASE64Encoder encoder = new BASE64Encoder();
 
     public String translate(final String password) {
@@ -43,8 +48,7 @@ public class DesPasswordTranslator implements PasswordTranslator,
             byte[] encryptedAsBytes = this.cipher.doFinal(passwordAsBytes);
 
             return this.encoder.encode(encryptedAsBytes);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.debug(e);
         }
 
@@ -52,9 +56,10 @@ public class DesPasswordTranslator implements PasswordTranslator,
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.key == null)
+        if (this.key == null) {
             throw new IllegalStateException("key must be set on "
                 + this.getClass().getName());
+        }
 
         SecretKey secretKey = new SecretKeySpec(this.key.getBytes("UTF8"),
             ALGORITHM);
@@ -65,7 +70,7 @@ public class DesPasswordTranslator implements PasswordTranslator,
     /**
      * @param key The key to set.
      */
-    public void setKey(String key) {
+    public void setKey(final String key) {
         this.key = key;
     }
 }

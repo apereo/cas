@@ -22,7 +22,7 @@ public interface NumericGenerator {
     String getNextNumberAsString();
 
     /**
-     * The guaranteed maximum length of a String returned by this generator
+     * The guaranteed maximum length of a String returned by this generator.
      * 
      * @return the maximum length
      */

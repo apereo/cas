@@ -10,7 +10,6 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import junit.framework.TestCase;
 
@@ -26,10 +25,17 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
     private static final int NUMBER_OF_USES = 5;
 
     private ExpirationPolicy expirationPolicy;
+    
+    private Ticket ticket;
 
     protected void setUp() throws Exception {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(
             NUMBER_OF_USES, TIMEOUT);
+        
+        this.ticket = new TicketGrantingTicketImpl("test",
+            new ImmutableAuthentication(new SimplePrincipal("test"), null),
+            this.expirationPolicy);
+        
         super.setUp();
     }
 
@@ -38,21 +44,13 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
     }
 
     public void testTicketIsNotExpired() {
-        Ticket ticket = new TicketGrantingTicketImpl("test",
-            new ImmutableAuthentication(new SimplePrincipal("test"), null),
-            this.expirationPolicy, new DefaultUniqueTicketIdGenerator(),
-            this.expirationPolicy);
-        assertFalse(ticket.isExpired());
+        assertFalse(this.ticket.isExpired());
     }
 
     public void testTicketIsExpiredByTime() {
         try {
-            Ticket ticket = new TicketGrantingTicketImpl("test",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
-                this.expirationPolicy, new DefaultUniqueTicketIdGenerator(),
-                this.expirationPolicy);
             Thread.sleep(TIMEOUT + 15);
-            assertTrue(ticket.isExpired());
+            assertTrue(this.ticket.isExpired());
         }
         catch (InterruptedException e) {
             fail(e.getMessage());
@@ -60,14 +58,9 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
     }
 
     public void testTicketIsExpiredByCount() {
-        Ticket ticket = new TicketGrantingTicketImpl("test",
-            new ImmutableAuthentication(new SimplePrincipal("test"), null),
-            this.expirationPolicy, new DefaultUniqueTicketIdGenerator(),
-            this.expirationPolicy);
-
         for (int i = 0; i < NUMBER_OF_USES; i++)
-            ticket.incrementCountOfUses();
+            this.ticket.incrementCountOfUses();
 
-        assertTrue(ticket.isExpired());
+        assertTrue(this.ticket.isExpired());
     }
 }

@@ -20,27 +20,29 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ServiceThemeResolver extends AbstractThemeResolver {
+public final class ServiceThemeResolver extends AbstractThemeResolver {
 
+    /** Constant to define where we look for the service id in the request. */
     public static final String SERVICE_THEME_KEY = "service";
 
+    /** The ServiceRegistry to look up the service. */
     private ServiceRegistry serviceRegistry;
 
-    public String resolveThemeName(HttpServletRequest request) {
+    public String resolveThemeName(final HttpServletRequest request) {
         if (this.serviceRegistry == null) {
             return getDefaultThemeName();
         }
 
-        String serviceId = request.getParameter(SERVICE_THEME_KEY);
-        AuthenticatedService service = this.serviceRegistry
+        final String serviceId = request.getParameter(SERVICE_THEME_KEY);
+        final AuthenticatedService service = this.serviceRegistry
             .getService(serviceId);
 
         return service != null && service.getTheme() != null ? service
             .getTheme() : getDefaultThemeName();
     }
 
-    public void setThemeName(HttpServletRequest request,
-        HttpServletResponse response, String themeName) {
+    public void setThemeName(final HttpServletRequest request,
+        final HttpServletResponse response, final String themeName) {
         // nothing to do here
     }
 }

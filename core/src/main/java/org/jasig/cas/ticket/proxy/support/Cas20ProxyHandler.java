@@ -25,15 +25,18 @@ import org.springframework.beans.factory.InitializingBean;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
+public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** The Commons Logging instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** The PGTIOU ticket prefix. */
     private static final String PGTIOU_PREFIX = "PGTIOU";
 
+    /** Generate unique ids. */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    public String handle(Credentials credentials, String proxyGrantingTicketId) {
+    public String handle(final Credentials credentials, final String proxyGrantingTicketId) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         final String proxyIou = this.uniqueTicketIdGenerator
             .getNewTicketId(PGTIOU_PREFIX);
@@ -43,10 +46,11 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append(serviceCredentials.getCallbackUrl()
             .toExternalForm());
 
-        if (serviceCredentials.getCallbackUrl().getQuery() != null)
+        if (serviceCredentials.getCallbackUrl().getQuery() != null) {
             stringBuffer.append("&");
-        else
+        } else {
             stringBuffer.append("?");
+        }
 
         stringBuffer.append("pgtIou=");
         stringBuffer.append(proxyIou);
@@ -56,8 +60,7 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         try {
             response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer
                 .toString()));
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             log.debug(e);
         }
 
@@ -69,14 +72,13 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         log.info("Sent ProxyIou of " + proxyIou + " for service: "
             + serviceCredentials.getCallbackUrl());
         return proxyIou;
-
     }
 
     /**
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to set.
      */
     public void setUniqueTicketIdGenerator(
-        UniqueTicketIdGenerator uniqueTicketIdGenerator) {
+        final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 

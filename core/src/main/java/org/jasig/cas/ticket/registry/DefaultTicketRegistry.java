@@ -21,15 +21,18 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DefaultTicketRegistry implements TicketRegistry {
+public final class DefaultTicketRegistry implements TicketRegistry {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** The Commons Logging instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
-    final private Map cache = new HashMap();
+    /** The map to use as the cache. */
+    private final Map cache = new HashMap();
 
     public void addTicket(final Ticket ticket) {
-        if (ticket == null)
+        if (ticket == null) {
             throw new IllegalArgumentException("ticket cannot be null");
+        }
 
         log.debug("Added ticket [" + ticket.getId() + "] to registry.");
         this.cache.put(ticket.getId(), ticket);
@@ -37,28 +40,32 @@ public class DefaultTicketRegistry implements TicketRegistry {
 
     public Ticket getTicket(final String ticketId, final Class clazz)
         throws InvalidTicketClassException {
-        if (clazz == null)
+        if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null");
+        }
 
         final Ticket ticket = this.getTicket(ticketId);
 
-        if (ticket == null)
+        if (ticket == null) {
             return null;
+        }
 
-        if (!clazz.isAssignableFrom(ticket.getClass()))
+        if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new InvalidTicketClassException("Ticket [" + ticket.getId()
                 + " is of type " + ticket.getClass()
                 + " when we were expecting " + clazz);
+        }
 
         return ticket;
     }
 
-    public Ticket getTicket(String ticketId) {
+    public Ticket getTicket(final String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         final Ticket ticket = (Ticket) this.cache.get(ticketId);
 
-        if (ticket != null)
+        if (ticket != null) {
             log.debug("Ticket [" + ticketId + "] found in registry.");
+        }
 
         return ticket;
     }

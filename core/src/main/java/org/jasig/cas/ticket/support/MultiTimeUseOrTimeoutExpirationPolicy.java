@@ -16,13 +16,16 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
+public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
 
+    /** Serializable Unique ID. */
     private static final long serialVersionUID = 3257844372614558261L;
 
-    final private long timeToKillInMilliSeconds;
+    /** The time to kill in millseconds. */
+    private final long timeToKillInMilliSeconds;
 
-    final private int numberOfUses;
+    /** The maximum number of uses before expiration. */
+    private final int numberOfUses;
 
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
         final long timeToKillInMilliSeconds) {

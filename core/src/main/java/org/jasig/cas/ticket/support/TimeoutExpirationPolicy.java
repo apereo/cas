@@ -16,11 +16,13 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class TimeoutExpirationPolicy implements ExpirationPolicy {
+public final class TimeoutExpirationPolicy implements ExpirationPolicy {
 
+    /** Serializable ID. */
     private static final long serialVersionUID = 3545511790222979383L;
 
-    final private long timeToKillInMilliSeconds;
+    /** The time to kill in milliseconds. */
+    private final long timeToKillInMilliSeconds;
 
     public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
