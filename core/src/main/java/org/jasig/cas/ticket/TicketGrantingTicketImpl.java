@@ -61,9 +61,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements
             serviceExpirationPolicy);
     }
 
-    /**
-     * @return Returns the authentication object.
-     */
+
     public Authentication getAuthentication() {
         return this.authentication;
     }
