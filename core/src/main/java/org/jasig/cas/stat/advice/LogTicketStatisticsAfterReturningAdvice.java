@@ -28,28 +28,23 @@ public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAd
 
     private TicketStatisticsManager ticketStatsManager;
 
-    /**
-     * @see org.springframework.aop.AfterReturningAdvice#afterReturning(java.lang.Object, java.lang.reflect.Method, java.lang.Object[],
-     * java.lang.Object)
-     */
     public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
         if (returnValue == null) {
             return;
         }
 
         String statsStateMutatorMethodName = this.statsStateMutators.getProperty(method.getName());
+
         if (statsStateMutatorMethodName == null) {
             return;
         }
+
         Method statsStateMutatorMethod = this.ticketStatsManager.getClass().getMethod(statsStateMutatorMethodName, null);
         statsStateMutatorMethod.invoke(this.ticketStatsManager, null);
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
-        if (this.statsStateMutators == null | this.statsStateMutators.isEmpty()) {
+        if (this.statsStateMutators == null || this.statsStateMutators.isEmpty()) {
             throw new IllegalStateException("You must set the statsStateMutators on " + this.getClass().getName());
         }
 

@@ -8,6 +8,7 @@ import org.jasig.cas.stat.TicketStatistics;
 import org.jasig.cas.stat.TicketStatisticsManager;
 
 /**
+ * @@org.springframework.jmx.metadata.ManagedResource(description="CAS Ticket Statistics", objectName="cas:id=stats")
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
@@ -29,35 +30,59 @@ public class TicketStatisticsImpl implements TicketStatistics, TicketStatisticsM
         this.numberOfServiceTicketsVended = 0;
         this.numberOfTicketGrantingTicketsVended = 0;
     }
-    
+
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The number of proxy tickets vended since the last reboot.")
+     */
     public int getNumberOfProxyTicketsVended() {
         return this.numberOfProxyTicketsVended;
     }
 
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The number of service tickets vended since the last reboot.")
+     */
     public int getNumberOfServiceTicketsVended() {
         return this.numberOfServiceTicketsVended;
     }
 
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The number of ticket granting tickets vended since the last reboot.")
+     */
     public int getNumberOfTicketGrantingTicketsVended() {
         return this.numberOfTicketGrantingTicketsVended;
     }
 
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The number of proxy granting tickets vended since the last reboot.")
+     */
     public int getNumberOfProxyGrantingTicketsVended() {
         return this.numberOfProxyGrantingTicketsVended;
     }
 
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The average number of proxy tickets vended per second.")
+     */
     public double getProxyTicketsPerSecond() {
         return getTicketsPerSecond(this.numberOfProxyTicketsVended);
     }
 
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The average number of service tickets vended per second.")
+     */
     public double getServiceTicketsPerSecond() {
         return getTicketsPerSecond(this.numberOfServiceTicketsVended);
     }
 
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The average number of ticket granting tickets vended per second.")
+     */
     public double getTicketGrantingticketsPerSecond() {
         return getTicketsPerSecond(this.numberOfTicketGrantingTicketsVended);
     }
 
+    /**
+     * @@org.springframework.jmx.metadata.ManagedAttribute(description="The average number of proxy granting tickets vended per second.")
+     */
     public double getProxyGrantingTicketsPerSecond() {
         return getTicketsPerSecond(this.numberOfProxyGrantingTicketsVended);
     }
@@ -80,6 +105,7 @@ public class TicketStatisticsImpl implements TicketStatistics, TicketStatisticsM
     
     private double getTicketsPerSecond(int numberOfTickets) {
         long elapsedTime = (System.currentTimeMillis() - this.startUpTime) / 1000;
-        return (numberOfTickets / elapsedTime);
+        
+        return (elapsedTime == 0) ? 0.0 : (numberOfTickets / elapsedTime);
     }
 }

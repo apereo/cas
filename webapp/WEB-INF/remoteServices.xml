@@ -6,6 +6,13 @@
 		<property name="defaultDomain"><value>cas</value></property>
 	</bean>
 -->
+
+	<bean id="attributeSource" class="org.springframework.jmx.metadata.CommonsJmxAttributeSource" />
+
+	<bean id="assembler" class="org.springframework.jmx.assembler.MetadataModelMBeanInfoAssembler">
+		<property name="attributeSource"><ref local="attributeSource" /></property>
+	</bean>
+
 	<bean id="mbeanadapter" class="org.springframework.jmx.MBeanExporter">
 <!--	    <property name="server"><ref local="mbeanserver"/></property>-->
     	<property name="beans">
@@ -15,6 +22,9 @@
         		</entry>
 			</map>
     	</property>
+		<property name="assembler">
+			<ref local="assembler" />
+		</property>
 	</bean>
 <!--
 	<bean id="jmxconnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
