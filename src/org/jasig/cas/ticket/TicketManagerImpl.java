@@ -72,24 +72,24 @@ public class TicketManagerImpl implements TicketManager {
      * @see org.jasig.cas.ticket.TicketManager#createProxyGrantingTicket(org.jasig.cas.authentication.principal.Principal,
      * org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.ServiceTicket)
      */
-    public ProxyGrantingTicket createProxyGrantingTicket(final Principal principal, final CasAttributes casAttributes, final ServiceTicket ticket) {
-        return (ProxyGrantingTicket)this.createAndAddToRegistry(ProxyGrantingTicket.class, principal, casAttributes, ticket);
+    public ProxyGrantingTicket createProxyGrantingTicket(final CasAttributes casAttributes, final ServiceTicket ticket) {
+        return (ProxyGrantingTicket)this.createAndAddToRegistry(ProxyGrantingTicket.class, null, casAttributes, ticket);
     }
 
     /**
      * @see org.jasig.cas.ticket.TicketManager#createProxyTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes,
      * org.jasig.cas.ticket.ProxyGrantingTicket)
      */
-    public ProxyTicket createProxyTicket(final Principal principal, final CasAttributes casAttributes, final ProxyGrantingTicket ticket) {
-        return (ProxyTicket)this.createAndAddToRegistry(ProxyTicket.class, principal, casAttributes, ticket);
+    public ProxyTicket createProxyTicket(final CasAttributes casAttributes, final ProxyGrantingTicket ticket) {
+        return (ProxyTicket)this.createAndAddToRegistry(ProxyTicket.class, null, casAttributes, ticket);
     }
 
     /**
      * @see org.jasig.cas.ticket.TicketManager#createServiceTicket(org.jasig.cas.authentication.principal.Principal,
      * org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.TicketGrantingTicket)
      */
-    public ServiceTicket createServiceTicket(final Principal principal, final CasAttributes casAttributes, final TicketGrantingTicket ticket) {
-        return (ServiceTicket)this.createAndAddToRegistry(ServiceTicket.class, principal, casAttributes, ticket);
+    public ServiceTicket createServiceTicket(final CasAttributes casAttributes, final TicketGrantingTicket ticket) {
+        return (ServiceTicket)this.createAndAddToRegistry(ServiceTicket.class, null, casAttributes, ticket);
     }
 
     /**

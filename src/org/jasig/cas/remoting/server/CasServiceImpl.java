@@ -5,14 +5,13 @@
 package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.AuthenticationRequest;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.remoting.CasService;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketManager;
-import org.springframework.validation.DataBinder;
 
 /**
  * Default implementation of the CasService
@@ -27,28 +26,42 @@ public class CasServiceImpl implements CasService {
     private AuthenticationManager authenticationManager;
 
     /**
-     * @see org.jasig.cas.remoting.CasService#getServiceTicket(org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest, java.lang.String)
+     * @see org.jasig.cas.remoting.CasService#getServiceTicket(java.lang.String, java.lang.String)
      */
-    public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
-        final Principal principal;
-        final DataBinder dataBinder = new DataBinder(request, "basicAuthenticationRequest");
+    public String getServiceTicket(String ticketGrantingTicketId, String service) {
+        final TicketGrantingTicket ticket;
         final CasAttributes casAttributes = new CasAttributes();
-
-        casAttributes.setService(serviceUrl);
-
-        dataBinder.setRequiredFields(new String[] {"userName", "password"});
-
-        if (dataBinder.getErrors().hasErrors())
+        final ServiceTicket serviceTicket;
+        
+        ticket = ticketManager.validateTicketGrantingTicket(null); // TODO currently we don't support renew!
+        
+        if (ticket == null)
             return null;
-
-        if ((principal = this.authenticationManager.authenticateUser(request)) != null) {
-            TicketGrantingTicket tgt = this.ticketManager.createTicketGrantingTicket(principal, casAttributes);
-            ServiceTicket st = this.ticketManager.createServiceTicket(principal, casAttributes, tgt);
-
-            return st.getId();
-        }
-
-        return null;
+        
+        casAttributes.setService(service);
+        serviceTicket = ticketManager.createServiceTicket(casAttributes, ticket);
+        
+        if (serviceTicket == null)
+            return null;
+        
+        return serviceTicket.getId();
+    }
+    /**
+     * @see org.jasig.cas.remoting.CasService#getTicketGrantingTicket(org.jasig.cas.authentication.AuthenticationRequest)
+     */
+    public String getTicketGrantingTicket(AuthenticationRequest request) {
+        // TODO validation
+        final Principal principal;
+        final TicketGrantingTicket ticket;
+        
+        principal = authenticationManager.authenticateUser(request);
+        
+        if (principal == null)
+            return null;
+        
+        ticket = ticketManager.createTicketGrantingTicket(principal, null);
+        
+        return ticket.getId();
     }
 
     /**

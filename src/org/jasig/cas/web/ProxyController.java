@@ -57,7 +57,7 @@ public class ProxyController extends AbstractController {
 
         if (ticket != null) {
             log.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-            proxyTicket = this.ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
+            proxyTicket = this.ticketManager.createProxyTicket(casAttributes, ticket);
             model.put(WebConstants.TICKET, proxyTicket.getId());
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, model);
         }
