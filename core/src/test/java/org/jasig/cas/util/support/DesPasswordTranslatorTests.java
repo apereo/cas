@@ -6,7 +6,12 @@ package org.jasig.cas.util.support;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Id$
+ *
+ */
 public class DesPasswordTranslatorTests extends TestCase {
     private static final String KEY = "12345678";
     private static final String MESSAGE_TO_ENCODE = "rasmuslerdorf";
