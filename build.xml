@@ -159,6 +159,7 @@
 			<include name="*.properties"/>
 			<include name="*.xml"/>
 			<include name="*.bat"/>
+			<include name="${web.dir}/**" />
 		</fileset>
 
 		<zip zipfile="${dist.dir}/${release.zip}">
@@ -174,6 +175,7 @@
 				<include name="*.txt"/>
 				<include name="*.properties"/>
 				<include name="*.bat"/>
+				<include name="${web.dir}/**" />
 			</tarfileset>		
 		</tar>
 	
