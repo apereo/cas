@@ -16,12 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.BasicCredentialsValidator;
 import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
+import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
 import org.jasig.cas.web.support.ViewNames;
@@ -56,7 +56,7 @@ public class LoginController extends SimpleFormController implements Initializin
 
     public LoginController() {
         this.setCacheSeconds(0);
-        this.setValidator(new BasicCredentialsValidator());
+        this.setValidator(new UsernamePasswordCredentialsValidator());
         this.setFormView(ViewNames.CONST_LOGON);
         this.setSuccessView(ViewNames.CONST_LOGON_SUCCESS);
     }
