@@ -29,7 +29,7 @@ public final class ImmutableAuthentication implements Authentication {
     private static final long serialVersionUID = 3906647483978365235L;
 
     /** The principal this authentication object is valid for. */
-    private final Principal principal;
+    private final Principal principal; // TODO refactor to be an immutable proxy?
 
     /** The date/time this authentication object became valid. */
     private final Date authenticatedDate;
