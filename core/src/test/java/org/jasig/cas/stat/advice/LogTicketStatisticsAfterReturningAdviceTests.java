@@ -12,7 +12,6 @@ import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.stat.support.TicketStatisticsImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 
 import junit.framework.TestCase;
 
@@ -102,7 +101,7 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
 		advice.setStatsStateMutators(properties);
 		try {
 			
-			advice.afterReturning(null, advice.getClass().getDeclaredMethods()[0], null, null);
+			advice.afterReturning("test", advice.getClass().getDeclaredMethods()[0], null, null);
 		} catch (Throwable e) {
 			fail("Throwable not expected.");
 		}
