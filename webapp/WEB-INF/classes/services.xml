@@ -6,5 +6,7 @@
 		<constructor-arg index="1"><value>true</value></constructor-arg>
 		<constructor-arg index="2"><value>true</value></constructor-arg>
 		<constructor-arg index="3"><null /></constructor-arg>
+		<constructor-arg index="4"><null /></constructor-arg>
+		<constructor-arg index="5"><value>https://localhost:8443/contacts-cas/casProxy/receptor</value></constructor-arg>
 	</bean>
 </beans>

@@ -6,7 +6,10 @@
 package org.jasig.cas.services.advice;
 
 import java.lang.reflect.Method;
+import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.services.AuthenticatedService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -19,10 +22,14 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
+ * 
+ * //TODO this should be using proxyUrl???
  */
 public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     MethodBeforeAdvice, InitializingBean {
 
+	protected Log log = LogFactory.getLog(this.getClass());
+	
     private TicketRegistry ticketRegistry;
 
     private ServiceRegistry serviceRegistry;
@@ -48,11 +55,25 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     public void before(Method method, Object[] args, Object target)
         throws Exception {
         String serviceTicketId = (String)args[0];
+		boolean foundIt = false;
         ServiceTicket serviceTicket = (ServiceTicket)this.ticketRegistry
             .getTicket(serviceTicketId);
-        AuthenticatedService authenticatedService = this.serviceRegistry
-            .getService(serviceTicket.getService().getId());
-
+        AuthenticatedService authenticatedService = null;
+		
+		for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter.hasNext();) {
+			authenticatedService = (AuthenticatedService) iter.next();
+			if ((authenticatedService.getProxyUrl().toExternalForm().equals(serviceTicket.getService().getId())) || (authenticatedService.getId().equals(serviceTicket.getService().getId()))) {
+				foundIt = true;
+				break;
+			}
+				
+		}
+		
+		if (!foundIt) {
+			log.debug("Service [" + serviceTicket.getId() + "] not found in registry");
+			authenticatedService = null;
+		}
+			
         if ((authenticatedService == null)
             || (!authenticatedService.isAllowedToProxy())) {
             throw new UnauthorizedServiceException(

@@ -37,4 +37,8 @@ public class HttpBasedServiceCredentials implements Credentials {
     public URL getCallbackUrl() {
         return this.callbackUrl;
     }
+	
+	public String toString() {
+		return this.callbackUrl.toExternalForm();
+	}
 }
