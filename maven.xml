@@ -22,5 +22,9 @@
     <postGoal name="site">
         <attainGoal name="dashboard:report-single"/>
     </postGoal>
-
+    
+<!--    <preGoal name="war:war">
+    	<attainGoal name="jar:install" />
+    </preGoal>
+-->
 </project>

@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0-m1</currentVersion>
+	<currentVersion>3.0-m2-dev</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -25,8 +25,8 @@
 	</repository>
 	<versions>
 		<version>
-			<id>3.0M1</id>
-			<name>3.0M1</name>
+			<id>3.0-m1</id>
+			<name>3.0-m1</name>
 			<tag>cas-3-0-m1</tag>
 		</version>
 	</versions>
@@ -315,6 +315,7 @@
 			<version>2.5</version>
 			<type>plugin</type>
 		</dependency>
+		
 	</dependencies>
 	<build>
 		<sourceDirectory>${basedir}/core/src/main/java</sourceDirectory>
