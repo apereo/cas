@@ -66,15 +66,14 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             if (element == null) {
                 return null;
             }
-            else {
-                Ticket ticket = (Ticket)element.getValue();
-                if (!ticket.getClass().isAssignableFrom(clazz))
-                    throw new InvalidTicketException("Ticket [" + ticket.getId() + "] is of type "
-                        + ticket.getClass() + " when we were expecting " + clazz);
 
-                log.debug("Ticket [" + ticketId + "] found in registry.");
-                return ticket;
-            }
+            Ticket ticket = (Ticket)element.getValue();
+            if (!ticket.getClass().isAssignableFrom(clazz))
+                throw new InvalidTicketException("Ticket [" + ticket.getId() + "] is of type "
+                    + ticket.getClass() + " when we were expecting " + clazz);
+
+            log.debug("Ticket [" + ticketId + "] found in registry.");
+            return ticket;
         }
         catch (CacheException ex) {
             throw new TicketException("Ticket registry threw an exception", ex);

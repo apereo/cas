@@ -7,8 +7,6 @@ package org.jasig.cas.authentication.handler.support;
 import java.util.Iterator;
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
 import org.jasig.cas.authentication.AuthenticationRequest;
 import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -34,11 +32,10 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractUsernam
         final String password = uRequest.getPassword();
 
         for (Iterator iter = this.servers.keySet().iterator(); iter.hasNext();) {
-            final DataSource dataSource;
             final String url = (String)iter.next();
             final String driver = this.servers.getProperty(url);
             try {
-                dataSource = new DriverManagerDataSource(driver, url, username, password);
+            	new DriverManagerDataSource(driver, url, username, password);
                 return true;
             }
             catch (CannotGetJdbcConnectionException e) {
