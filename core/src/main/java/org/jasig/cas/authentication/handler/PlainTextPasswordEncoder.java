@@ -3,9 +3,8 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.util.support;
+package org.jasig.cas.authentication.handler;
 
-import org.jasig.cas.util.PasswordTranslator;
 
 /**
  * Default password translator for the case where no password translator is
@@ -15,9 +14,9 @@ import org.jasig.cas.util.PasswordTranslator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class PlainTextPasswordTranslator implements PasswordTranslator {
+public final class PlainTextPasswordEncoder implements PasswordEncoder {
 
-    public String translate(final String password) {
+    public String encode(final String password) {
         return password;
     }
 }

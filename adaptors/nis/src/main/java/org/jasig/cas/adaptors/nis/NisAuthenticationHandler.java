@@ -12,10 +12,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
 
+import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.PasswordTranslator;
-import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -38,7 +38,7 @@ public class NisAuthenticationHandler extends
 
     private static final String DEFAULT_SECURITY_AUTHENTICATION = "simple";
 
-    private static final PasswordTranslator DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordTranslator();
+    private static final PasswordEncoder DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordEncoder();
 
     private static final String DEFAULT_PROTOCOL = "nis://";
 
@@ -48,7 +48,7 @@ public class NisAuthenticationHandler extends
 
     private String map = DEFAULT_MAP;
 
-    private PasswordTranslator passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
+    private PasswordEncoder passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
 
     private String contextFactory = DEFAULT_CONTEXT_FACTORY;
 
@@ -70,7 +70,7 @@ public class NisAuthenticationHandler extends
             String nisEncryptedPassword = nisFields[1];
 
             return nisEncryptedPassword.matches(this.passwordTranslator
-                .translate(credentials.getPassword()));
+                .encode(credentials.getPassword()));
         }
         catch (NamingException e) {
             return false;
@@ -102,7 +102,7 @@ public class NisAuthenticationHandler extends
      * @param passwordTranslator The passwordTranslator to set.
      */
     public void setPasswordTranslator(
-        final PasswordTranslator passwordTranslator) {
+        final PasswordEncoder passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 

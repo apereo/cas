@@ -5,7 +5,8 @@
  */
 package org.jasig.cas.util.support;
 
-import org.jasig.cas.util.PasswordTranslator;
+import org.jasig.cas.authentication.handler.Md5PasswordEncoder;
+import org.jasig.cas.authentication.handler.PasswordEncoder;
 
 import junit.framework.TestCase;
 
@@ -16,14 +17,14 @@ import junit.framework.TestCase;
  */
 public class Md5PasswordTranslatorTests extends TestCase {
 
-    private PasswordTranslator passwordTranslator = new Md5PasswordTranslator();
+    private PasswordEncoder passwordTranslator = new Md5PasswordEncoder();
 
     public void testNullPassword() {
-        assertEquals(null, this.passwordTranslator.translate(null));
+        assertEquals(null, this.passwordTranslator.encode(null));
     }
 
     public void testHash() {
         assertEquals("1f3870be274f6c49b3e31a0c6728957f",
-            this.passwordTranslator.translate("apple"));
+            this.passwordTranslator.encode("apple"));
     }
 }

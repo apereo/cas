@@ -3,7 +3,7 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.util.support;
+package org.jasig.cas.authentication.handler;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -11,7 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.util.PasswordTranslator;
 import org.springframework.beans.factory.InitializingBean;
 
 import sun.misc.BASE64Encoder;
@@ -24,7 +23,7 @@ import sun.misc.BASE64Encoder;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DesPasswordTranslator implements PasswordTranslator,
+public final class DesPasswordEncoder implements PasswordEncoder,
     InitializingBean {
 
     /** Logger. */
@@ -42,7 +41,7 @@ public final class DesPasswordTranslator implements PasswordTranslator,
     /** The encoder to do BASE64 encoding. */
     private BASE64Encoder encoder = new BASE64Encoder();
 
-    public String translate(final String password) {
+    public String encode(final String password) {
         try {
             byte[] passwordAsBytes = password.getBytes("UTF8");
             byte[] encryptedAsBytes = this.cipher.doFinal(passwordAsBytes);
