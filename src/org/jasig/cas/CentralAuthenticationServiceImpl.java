@@ -211,7 +211,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
     }
 
     /**
-     * @param ticketGrantingTicketUniqueTicketIdGenerator The ticketGrantingTicketUniqueTicketIdGenerator to set.
+     * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to use
      */
     public void setUniqueTicketIdGenerator(final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
