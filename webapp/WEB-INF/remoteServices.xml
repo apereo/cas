@@ -32,7 +32,7 @@
 		</property>
 	</bean>
 -->
-	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatsImpl" />
+	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatisticsImpl" />
 	
 	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice">
 		<property name="ticketStatsManager"><ref local="statsBean" /></property>

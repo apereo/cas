@@ -14,7 +14,7 @@ import org.jasig.cas.stat.TicketStatisticsManager;
  * @version $Id$
  *
  */
-public class TicketStatsImpl implements TicketStatistics, TicketStatisticsManager {
+public class TicketStatisticsImpl implements TicketStatistics, TicketStatisticsManager {
     private int numberOfProxyTicketsVended;
     private int numberOfServiceTicketsVended;
     private int numberOfTicketGrantingTicketsVended;
@@ -22,7 +22,7 @@ public class TicketStatsImpl implements TicketStatistics, TicketStatisticsManage
     
     private long startUpTime;
     
-    public TicketStatsImpl() {
+    public TicketStatisticsImpl() {
         this.startUpTime = System.currentTimeMillis();
         this.numberOfProxyGrantingTicketsVended = 0;
         this.numberOfProxyTicketsVended = 0;
