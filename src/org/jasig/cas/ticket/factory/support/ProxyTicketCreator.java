@@ -22,7 +22,7 @@ import org.jasig.cas.ticket.factory.TicketCreator;
  * @version $Id$
  * @see org.jasig.cas.ticket.ProxyTicket
  */
-public class ProxyTicketCreator implements TicketCreator {
+public class ProxyTicketCreator extends AbstractTicketCreator implements TicketCreator {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -34,7 +34,8 @@ public class ProxyTicketCreator implements TicketCreator {
      * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal,
      * org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
-    public Ticket createTicket(final Principal principal, CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
+    public Ticket createTicket(final Principal principal, CasAttributes casAttributes, final Ticket grantingTicket) {
+        final String ticketId = this.getUniqueTicketIdGenerator().getNewTicketId(this.getPrefix());
         log.debug("Creating ProxyGrantingTicket with ID [" + ticketId + "]");
         return new ProxyTicketImpl(ticketId, (ProxyGrantingTicket)grantingTicket, casAttributes.getTargetService(), this.policy);
     }

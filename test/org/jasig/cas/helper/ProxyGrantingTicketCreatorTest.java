@@ -41,7 +41,7 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
 
     public void testNoParameters() {
         try {
-            ticketCreator.createTicket(principal, casAttributes, null, null);
+            ticketCreator.createTicket(principal, casAttributes, null);
         }
         catch (TicketCreationException e) {
             return;
@@ -58,7 +58,7 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
 
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
-        ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes, "test", serviceTicket);
+        ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes, serviceTicket);
 
         assertEquals(pgt.getProxyId().toString(), casAttributes.getCallbackUrl());
     }
@@ -69,7 +69,7 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
         try {
-            ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes, "test", serviceTicket);
+            ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes, serviceTicket);
         }
         catch (IllegalArgumentException e) {
             return;
@@ -84,7 +84,7 @@ public class ProxyGrantingTicketCreatorTest extends TestCase {
         ServiceTicket serviceTicket = new ServiceTicketImpl("test1", new TicketGrantingTicketImpl("test2", new SimplePrincipal("user"),
             new TimeoutExpirationPolicy(1000)), "service", true, new TimeoutExpirationPolicy(1000));
         try {
-            ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes, "test", serviceTicket);
+            ProxyGrantingTicket pgt = (ProxyGrantingTicket)ticketCreator.createTicket(principal, casAttributes,  serviceTicket);
         }
         catch (TicketCreationException e) {
             return;

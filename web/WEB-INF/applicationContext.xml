@@ -13,6 +13,12 @@
 	<!-- ID Generators -->
 	<bean id="uniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 	
+	<bean id="uniqueIdGenerator31Strength" class="org.jasig.cas.util.UserDefinedRandomLengthUniqueTicketIdGenerator">
+		<constructor-arg>
+			<value>31</value>
+		</constructor-arg>
+	</bean>
+	
 	<!-- Expiration policies -->
 	<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy">
 		<constructor-arg index="0"><value>${policy.expiration.service.numberOfUses}</value></constructor-arg>
@@ -26,17 +32,20 @@
 	<!-- Ticket Creators -->
 	<bean id="proxyGrantingTicketCreator" class="org.jasig.cas.ticket.factory.support.ProxyGrantingTicketCreator">
 		<property name="expirationPolicy"><ref local="grantingTicketExpirationPolicy" /></property>
-		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
+		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator31Strength" /></property>
 	</bean>
 	<bean id="proxyTicketCreator" class="org.jasig.cas.ticket.factory.support.ProxyTicketCreator">
 		<property name="policy"><ref local="serviceTicketExpirationPolicy" /></property>
+		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
 	</bean>
 	<bean id="serviceTicketCreator" class="org.jasig.cas.ticket.factory.support.ServiceTicketCreator">
 		<property name="policy"><ref local="serviceTicketExpirationPolicy" /></property>
 		<property name="serviceRegistry"><ref bean="serviceRegistry" /></property>
+		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
 	</bean>
 	<bean id="ticketGrantingTicketCreator" class="org.jasig.cas.ticket.factory.support.TicketGrantingTicketCreator">
 		<property name="policy"><ref local="grantingTicketExpirationPolicy" /></property>
+		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator31Strength" /></property>
 	</bean>
 
 	<!-- Ticket Factories -->
@@ -49,7 +58,6 @@
 				<ref local="ticketGrantingTicketCreator" />
 			</list>
 		</property>
-		<property name="uniqueIdGenerator"><ref local="uniqueIdGenerator" /></property>
 	</bean>
 	
 	<!-- Ticket Validators -->

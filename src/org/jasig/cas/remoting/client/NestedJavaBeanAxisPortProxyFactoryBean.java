@@ -6,6 +6,7 @@ package org.jasig.cas.remoting.client;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -29,10 +30,12 @@ import org.springframework.remoting.jaxrpc.JaxRpcPortProxyFactoryBean;
 public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFactoryBean {
 
     private String namespace;
-
+    
     private static final String PACKAGE_NAME_JAVA = "java.";
 
     private static final String PACKAGE_NAME_JAVAX = "javax.";
+    
+    private List beans = new ArrayList();
 
     protected void registerBeans(TypeMapping mapping, List registeredBeans, Class clazz) {
         if (registeredBeans.contains(clazz) || clazz.getName().startsWith(PACKAGE_NAME_JAVA) || clazz.getName().startsWith(PACKAGE_NAME_JAVAX))
@@ -62,11 +65,22 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
      * @see org.springframework.remoting.jaxrpc.JaxRpcPortClientInterceptor#postProcessJaxRpcService(javax.xml.rpc.Service)
      */
     protected void postProcessJaxRpcService(Service service) {
-        TypeMappingRegistry registry = service.getTypeMappingRegistry();
-        TypeMapping mapping = registry.createTypeMapping();
-        Class serviceInterface = this.getServiceInterface();
+        final TypeMappingRegistry registry = service.getTypeMappingRegistry();
+        final TypeMapping mapping = registry.createTypeMapping();
+        final Class serviceInterface = this.getServiceInterface();
 
         registerBeans(mapping, new ArrayList(), serviceInterface);
+        
+        for (Iterator iter = beans.iterator(); iter.hasNext();) {
+            final String bean = (String) iter.next();
+            try {
+                final Class clazz = Class.forName(bean);
+                this.addJavaBeanToMap(mapping, clazz);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("bean of class " + bean + "not found.");
+            }
+            
+        }
 
         registry.register("http://schemas.xmlsoap.org/soap/encoding/", mapping);
     }
@@ -82,5 +96,9 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
      */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+    
+    public void setJavaBeans(List beans) {
+        this.beans = beans;
     }
 }

@@ -16,8 +16,6 @@ import org.jasig.cas.ticket.ProxyGrantingTicketImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketCreationException;
-import org.jasig.cas.ticket.factory.TicketCreator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
  * TicketCreator for ProxyGrantingTicket
@@ -26,7 +24,7 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  * @version $Id$
  * @see ProxyGrantingTicketCreator
  */
-public class ProxyGrantingTicketCreator implements TicketCreator {
+public class ProxyGrantingTicketCreator extends AbstractTicketCreator {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -36,14 +34,13 @@ public class ProxyGrantingTicketCreator implements TicketCreator {
 
     private ExpirationPolicy expirationPolicy;
 
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator;
-
     /**
      * @see org.jasig.cas.ticket.factory.TicketCreator#createTicket(org.jasig.cas.authentication.principal.Principal,
      * org.jasig.cas.ticket.CasAttributes, java.lang.String, org.jasig.cas.ticket.Ticket)
      */
-    public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
-        String pgtIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
+    public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final Ticket grantingTicket) {
+        final String pgtIou = this.getUniqueTicketIdGenerator().getNewTicketId(PGTIOU_PREFIX);
+        final String ticketId = this.getUniqueTicketIdGenerator().getNewTicketId(this.getPrefix());
 
         log.debug("Creating ticket of type ProxyGrantingTicket with ID [" + ticketId + "]");
 
@@ -76,12 +73,5 @@ public class ProxyGrantingTicketCreator implements TicketCreator {
      */
     public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {
         this.expirationPolicy = expirationPolicy;
-    }
-
-    /**
-     * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to set.
-     */
-    public void setUniqueTicketIdGenerator(final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
-        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 }

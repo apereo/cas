@@ -12,7 +12,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketCreatorNotFoundException;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
  * Factory to create new tickets. It works by allowing the user to register a list of ticket creators. The factory will attempt to match the class
@@ -25,8 +24,6 @@ public class DefaultTicketFactory implements TicketFactory {
 
     private List ticketCreators = new ArrayList();
 
-    private UniqueTicketIdGenerator uniqueIdGenerator;
-
     /**
      * @see org.jasig.cas.ticket.factory.TicketFactory#getTicket(java.lang.Class, org.jasig.cas.authentication.principal.Principal,
      * org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.Ticket)
@@ -36,7 +33,7 @@ public class DefaultTicketFactory implements TicketFactory {
             TicketCreator ticketCreator = (TicketCreator)iter.next();
 
             if (ticketCreator.supports(clazz))
-                return ticketCreator.createTicket(principal, casAttributes, this.uniqueIdGenerator.getNewTicketId(ticketCreator.getPrefix()),
+                return ticketCreator.createTicket(principal, casAttributes,
                     parentTicket);
         }
 
@@ -48,12 +45,5 @@ public class DefaultTicketFactory implements TicketFactory {
      */
     public void setTicketCreators(List ticketCreators) {
         this.ticketCreators = ticketCreators;
-    }
-
-    /**
-     * @param uniqueIdGenerator The uniqueIdGenerator to set.
-     */
-    public void setUniqueIdGenerator(UniqueTicketIdGenerator uniqueIdGenerator) {
-        this.uniqueIdGenerator = uniqueIdGenerator;
     }
 }
