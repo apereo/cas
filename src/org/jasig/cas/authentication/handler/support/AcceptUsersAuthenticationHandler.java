@@ -5,7 +5,6 @@
 package org.jasig.cas.authentication.handler.support;
 
 import java.util.Map;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -30,8 +29,9 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String cachedPassword;
 
-        if (!this.users.containsKey(uRequest.getUserName()))
+        if (!this.users.containsKey(uRequest.getUserName())) {
             return false;
+        }
 
         cachedPassword = (String)this.users.get(uRequest.getUserName());
 

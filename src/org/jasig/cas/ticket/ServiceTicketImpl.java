@@ -20,7 +20,7 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     protected final Log log = LogFactory.getLog(this.getClass());
-    
+
     private static final long serialVersionUID = 1296808733190507408L;
 
     private final Service service;
@@ -73,7 +73,8 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @see org.jasig.cas.ticket.InternalServiceTicket#grantTicketGrantingTicket()
      */
     public TicketGrantingTicket grantTicketGrantingTicket(final Authentication authentication) {
-        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), this.getGrantingTicket(), authentication, this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), this.getGrantingTicket(),
+            authentication, this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
     }
 
 }

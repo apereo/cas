@@ -9,6 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Simplest implementation of a Principal.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
@@ -17,9 +18,9 @@ public class SimplePrincipal implements Principal {
     final private String id;
 
     public SimplePrincipal(final String id) {
-        if (id == null)
+        if (id == null) {
             throw new IllegalArgumentException("id is a required parameter.");
-
+        }
         this.id = id;
     }
 
@@ -31,13 +32,14 @@ public class SimplePrincipal implements Principal {
     }
 
     public boolean equals(Object o) {
-        if (o == null || !this.getClass().equals(o.getClass()))
+        if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
-        
-       return EqualsBuilder.reflectionEquals(this, o);
+        }
+
+        return EqualsBuilder.reflectionEquals(this, o);
     }
-    
+
     public String toString() {
-    	return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this);
     }
 }

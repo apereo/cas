@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
@@ -9,24 +9,23 @@ import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 
-
 /**
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
-	/**
-	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
-	 */
-	public final boolean authenticate(Credentials credentials) throws AuthenticationException {
-		if (!this.supports(credentials))
-		    throw new UnsupportedCredentialsException();
-		
-		return this.authenticateInternal(credentials);
-	}
-	
+    /**
+     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
+     */
+    public final boolean authenticate(Credentials credentials) throws AuthenticationException {
+        if (!this.supports(credentials)) {
+            throw new UnsupportedCredentialsException();
+        }
+
+        return this.authenticateInternal(credentials);
+    }
+
     /**
      * @param credentials The credentials we want to check if the handler supports.
      * @return true if the handler supports authenticating this type of credentials. False otherwise.
@@ -34,9 +33,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     protected abstract boolean supports(Credentials credentials);
 
     /**
-     * Template (abstract method) that inheriting classes should implement.  This gets called
-     * after the check to see if the credentials are supported.  This method will only be invoked with
-     * credentials such that (supports(credentials) == true).
+     * Template (abstract method) that inheriting classes should implement. This gets called after the check to see if the credentials are supported.
+     * This method will only be invoked with credentials such that (supports(credentials) == true).
      * 
      * @param credentials The credentials to check
      * @return true if the credentials are valid, false if they are not

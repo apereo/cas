@@ -60,25 +60,25 @@ public class EhCacheTicketRegistry implements TicketRegistry {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz argument must not be null.");
         }
-    	
-    	final Ticket ticket = this.getTicket(ticketId);
-    	
-    	if (ticket == null)
-    		return null;
+
+        final Ticket ticket = this.getTicket(ticketId);
+
+        if (ticket == null)
+            return null;
 
         if (!clazz.isAssignableFrom(ticket.getClass()))
-            throw new InvalidTicketClassException("Ticket [" + ticket.getId() + "] is of type "
-                + ticket.getClass() + " when we were expecting " + clazz);
+            throw new InvalidTicketClassException("Ticket [" + ticket.getId() + "] is of type " + ticket.getClass() + " when we were expecting "
+                + clazz);
 
         return ticket;
     }
 
-	/**
-	 * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
-	 */
-	public Ticket getTicket(String ticketId){
+    /**
+     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
+     */
+    public Ticket getTicket(String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
-		if (ticketId == null) {
+        if (ticketId == null) {
             return null;
         }
 
@@ -95,7 +95,8 @@ public class EhCacheTicketRegistry implements TicketRegistry {
         catch (CacheException ex) {
             throw new IllegalStateException("Ticket registry threw an exception: " + ex.getMessage());
         }
-	}
+    }
+
     /**
      * @see org.jasig.cas.ticket.registry.TicketRegistry#deleteTicket(java.lang.String)
      */
@@ -113,12 +114,13 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             Collection items = new ArrayList();
 
             for (Iterator iter = keys.iterator(); iter.hasNext();) {
-                Serializable key = (Serializable) iter.next();
+                Serializable key = (Serializable)iter.next();
                 Element element = this.cache.get(key);
                 items.add(element.getValue());
             }
             return Collections.unmodifiableCollection(items);
-        } catch (CacheException e) {
+        }
+        catch (CacheException e) {
             throw new RuntimeException(e);
         }
     }

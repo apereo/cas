@@ -21,7 +21,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
      * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#authenticateInternal(org.jasig.cas.authentication.principal.Credentials)
      */
     public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
-        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
+        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
         final String username = usernamePasswordCredentials.getUserName();
         final String password = usernamePasswordCredentials.getPassword();
 
@@ -31,6 +31,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         }
 
         log.debug("User [" + username + "] failed authentication");
+
         return false;
     }
 

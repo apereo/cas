@@ -4,7 +4,6 @@
  */
 package org.jasig.cas.util;
 
-
 /**
  * Default implementation of {@link UniqueTokenIdGenerator}
  * 

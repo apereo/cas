@@ -29,57 +29,60 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
     private List authenticationHandlers;
 
     private List credentialsToPrincipalResolvers;
-    
+
     /**
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.authentication.AuthenticationRequest)
      */
     public Authentication authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException {
         boolean authenticated = false;
-        
+
         for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();) {
             final AuthenticationHandler handler = (AuthenticationHandler)iter.next();
 
             try {
                 if (!handler.authenticate(credentials)) {
                     log.info("AuthenticationHandler: " + handler.getClass().getName() + " failed to authenticate the user.");
-                	return null;
+                    return null;
                 }
                 log.info("AuthenticationHandler: " + handler.getClass().getName() + " successfully authenticated the user.");
                 authenticated = true;
-				break;
-            } catch (UnsupportedCredentialsException e) {
+                break;
+            }
+            catch (UnsupportedCredentialsException e) {
                 continue;
             }
         }
-        
+
         if (!authenticated)
             return null;
-        
-		for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
-			final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
 
-			if (resolver.supports(credentials)) {
-				final Principal principal = resolver.resolvePrincipal(credentials);
-				
-				if (principal == null)
-				return null;
-				
-				return new ImmutableAuthentication(credentials, principal, null); 
-			}
-		}
+        for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
+            final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
 
-		log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
+            if (resolver.supports(credentials)) {
+                final Principal principal = resolver.resolvePrincipal(credentials);
+
+                if (principal == null)
+                    return null;
+
+                return new ImmutableAuthentication(credentials, principal, null);
+            }
+        }
+
+        log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
         return null;
     }
 
-	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	public void afterPropertiesSet() throws Exception {
-		if (this.authenticationHandlers == null || this.authenticationHandlers.isEmpty() || this.credentialsToPrincipalResolvers == null || this.credentialsToPrincipalResolvers.isEmpty()) {
-			throw new IllegalStateException("You must provide authenticationHandlers and credentialsToPrincipalResolvers for " + this.getClass().getName());
-		}
-	}
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (this.authenticationHandlers == null || this.authenticationHandlers.isEmpty() || this.credentialsToPrincipalResolvers == null
+            || this.credentialsToPrincipalResolvers.isEmpty()) {
+            throw new IllegalStateException("You must provide authenticationHandlers and credentialsToPrincipalResolvers for "
+                + this.getClass().getName());
+        }
+    }
 
     /**
      * @param authenticationHandlers The authenticationHandlers to set.

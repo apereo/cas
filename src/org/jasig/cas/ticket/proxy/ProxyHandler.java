@@ -6,13 +6,12 @@ package org.jasig.cas.ticket.proxy;
 
 import org.jasig.cas.authentication.principal.Credentials;
 
-
 /**
  * @author Scott Battaglia
  * @version $Id$
  *
  */
 public interface ProxyHandler {
-    
+
     String handle(Credentials credentials, String proxyGrantingTicketId);
 }

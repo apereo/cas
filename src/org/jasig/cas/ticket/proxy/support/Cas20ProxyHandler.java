@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.proxy.support;
 
@@ -22,10 +22,11 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
+
     protected final Log log = LogFactory.getLog(getClass());
+
     private static final String PGTIOU_PREFIX = "PGTIOU";
 
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
@@ -50,23 +51,23 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append(proxyIou);
         stringBuffer.append("&pgtId=");
         stringBuffer.append(proxyGrantingTicketId);
-        
-        try {
-        	response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer.toString()));
-        } catch (MalformedURLException e) {
-        	// can't do anything with this
-        }
-        
-        if (response == null) {
-        	log.info("Could not send ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
-        	return null;
-        }
-    	log.info("Sent ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
-    	return proxyIou;
 
+        try {
+            response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer.toString()));
+        }
+        catch (MalformedURLException e) {
+            // can't do anything with this
+        }
+
+        if (response == null) {
+            log.info("Could not send ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
+            return null;
+        }
+        log.info("Sent ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
+        return proxyIou;
 
     }
-    
+
     /**
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to set.
      */
@@ -80,7 +81,8 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     public void afterPropertiesSet() throws Exception {
         if (this.uniqueTicketIdGenerator == null) {
             this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-            log.info("No UniqueTicketIdGenerator specified for " + this.getClass().getName() + ".  Using " + this.uniqueTicketIdGenerator.getClass().getName());
+            log.info("No UniqueTicketIdGenerator specified for " + this.getClass().getName() + ".  Using "
+                + this.uniqueTicketIdGenerator.getClass().getName());
         }
     }
 }

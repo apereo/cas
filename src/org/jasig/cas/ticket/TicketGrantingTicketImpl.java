@@ -23,55 +23,59 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     private static final long serialVersionUID = -8673232562725683059L;
 
     private final Authentication authentication;
-    
+
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
-    
+
     private final ExpirationPolicy serviceExpirationPolicy;
-    
+
     private final ExpirationPolicy expirationPolicy;
-    
+
     private boolean expired = false;
 
-    public TicketGrantingTicketImpl(final String id, final TicketGrantingTicket ticketGrantingTicket, final Authentication authentication, final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
+    public TicketGrantingTicketImpl(final String id, final TicketGrantingTicket ticketGrantingTicket, final Authentication authentication,
+        final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
         super(id, ticketGrantingTicket, policy);
-        
+
         if (authentication == null || uniqueTicketIdGenerator == null || serviceExpirationPolicy == null) {
-            throw new IllegalArgumentException("authentication, uniqueTicketIdGenerator, and serviceExpirationPolicy cannot be null on " + this.getClass().getName());
+            throw new IllegalArgumentException("authentication, uniqueTicketIdGenerator, and serviceExpirationPolicy cannot be null on "
+                + this.getClass().getName());
         }
-        
+
         this.authentication = authentication;
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
         this.serviceExpirationPolicy = serviceExpirationPolicy;
         this.expirationPolicy = policy;
     }
-    
-    public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
+
+    public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy,
+        final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
         this(id, null, authentication, policy, uniqueTicketIdGenerator, serviceExpirationPolicy);
     }
-    
+
     /**
      * @return Returns the principal.
      */
     public Authentication getAuthentication() {
         return this.authentication;
     }
-    
-	/**
-	 * @see org.jasig.cas.ticket.InternalTicketGrantingTicket#grantServiceTicket(org.jasig.cas.Service)
-	 */
-	public synchronized ServiceTicket grantServiceTicket(Service service) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),this,service, this.getCountOfUses() == 0, this.serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
-        
+
+    /**
+     * @see org.jasig.cas.ticket.InternalTicketGrantingTicket#grantServiceTicket(org.jasig.cas.Service)
+     */
+    public synchronized ServiceTicket grantServiceTicket(Service service) {
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), this, service,
+            this.getCountOfUses() == 0, this.serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+
         return serviceTicket;
-	}
-    
+    }
+
     /**
      * @see org.jasig.cas.ticket.TicketGrantingTicket#isRoot()
      */
     public boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
-    
+
     /**
      * @see org.jasig.cas.ticket.TicketGrantingTicket#expire()
      */
@@ -91,15 +95,15 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     public List getChainedPrincipals() {
         final List list = new ArrayList();
-        
+
         if (this.getGrantingTicket() == null) {
             list.add(this.getAuthentication().getPrincipal());
             return Collections.unmodifiableList(list);
         }
-        
+
         list.addAll(this.getGrantingTicket().getChainedPrincipals());
         list.add(this.getAuthentication().getPrincipal());
-        
+
         return Collections.unmodifiableList(list);
     }
 }

@@ -26,5 +26,4 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     protected final boolean supports(final Credentials credentials) {
         return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }
-
 }

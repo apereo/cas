@@ -49,8 +49,7 @@ public interface CentralAuthenticationService {
      * @param authenticationSpecification The specification of the authentication parameters we have defined that the ticket must meet to be valid.
      * @return ServiceTicket if valid for the service and satisifies AuthenticationSpecification.
      */
-    Assertion validateServiceTicket(String serviceTicketId, Service service)
-        throws TicketException;
+    Assertion validateServiceTicket(String serviceTicketId, Service service) throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket.  This has the effect of invalidating

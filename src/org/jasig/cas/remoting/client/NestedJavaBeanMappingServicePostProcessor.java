@@ -19,13 +19,11 @@ import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.springframework.remoting.jaxrpc.JaxRpcServicePostProcessor;
 
 /**
- * Axis-specific JaxRpcServicePostProcessor that attempts to detect the JavaBeans it needs to register by inspecting the service interface's
- * return types and parameter types for each method. Nested version attempts to find beans nested within JavaBeans and register them also. It is
- * currently designed to ignore any java.* or javax.* class. It also assumes that the types are JavaBeans. It does not actually check. A more
- * sophisticated version would be able to check if a class was a valid JavaBean and only register valid JavaBeans.
- * 
- * Also allows you to specify a list of JavaBeans to register manually.  This needs to be here incase one of the
- * parameters to a method is an interface and you need to register the implementing class.
+ * Axis-specific JaxRpcServicePostProcessor that attempts to detect the JavaBeans it needs to register by inspecting the service interface's return
+ * types and parameter types for each method. Nested version attempts to find beans nested within JavaBeans and register them also. It is currently
+ * designed to ignore any java.* or javax.* class. It also assumes that the types are JavaBeans. It does not actually check. A more sophisticated
+ * version would be able to check if a class was a valid JavaBean and only register valid JavaBeans. Also allows you to specify a list of JavaBeans to
+ * register manually. This needs to be here incase one of the parameters to a method is an interface and you need to register the implementing class.
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
@@ -34,13 +32,13 @@ import org.springframework.remoting.jaxrpc.JaxRpcServicePostProcessor;
 public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServicePostProcessor {
 
     private String namespace;
-    
+
     private static final String PACKAGE_NAME_JAVA = "java.";
 
     private static final String PACKAGE_NAME_JAVAX = "javax.";
-    
+
     private List beans;
-    
+
     private Class serviceInterface;
 
     protected void registerBeans(TypeMapping mapping, List registeredBeans, Class clazz) {
@@ -56,7 +54,7 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
 
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            
+
             Class returnType = method.getReturnType();
             Class[] params = method.getParameterTypes();
 
@@ -77,17 +75,18 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
         final Class serviceInterface = this.serviceInterface;
 
         registerBeans(mapping, new ArrayList(), serviceInterface);
-        
+
         if (this.beans != null) {
-	        for (Iterator iter = this.beans.iterator(); iter.hasNext();) {
-	            final String bean = (String) iter.next();
-	            try {
-	                final Class clazz = Class.forName(bean);
-	                this.addJavaBeanToMap(mapping, clazz);
-	            } catch (Exception e) {
-	                throw new IllegalArgumentException("bean of class " + bean + "not found.");
-	            }
-	        }
+            for (Iterator iter = this.beans.iterator(); iter.hasNext();) {
+                final String bean = (String)iter.next();
+                try {
+                    final Class clazz = Class.forName(bean);
+                    this.addJavaBeanToMap(mapping, clazz);
+                }
+                catch (Exception e) {
+                    throw new IllegalArgumentException("bean of class " + bean + "not found.");
+                }
+            }
         }
 
         registry.register("http://schemas.xmlsoap.org/soap/encoding/", mapping);
@@ -105,11 +104,11 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
-    
+
     public void setJavaBeans(List beans) {
         this.beans = beans;
     }
-    
+
     /**
      * @param serviceInterface
      */

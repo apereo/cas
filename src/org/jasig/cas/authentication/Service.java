@@ -11,6 +11,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * Typically a web application or web service.
  * 
  * @author William G. Thompson, Jr.
+ * @version $Id$
  *
  */
 public interface Service extends Principal {

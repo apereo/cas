@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
 
@@ -37,20 +37,19 @@ import org.springframework.web.util.WebUtils;
 /**
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public class LoginController extends SimpleFormController implements InitializingBean {
 
-    /** LOGGING **/
+    /** LOGGING * */
     protected final Log log = LogFactory.getLog(this.getClass());
 
-    /** INSTANCE VARIABLES **/
+    /** INSTANCE VARIABLES * */
     private CentralAuthenticationService centralAuthenticationService;
 
     private UniqueTokenIdGenerator uniqueTokenIdGenerator = null;
 
     private Map loginTokens;
-    
+
     private CredentialsBinder credentialsBinder;
 
     public LoginController() {
@@ -79,14 +78,14 @@ public class LoginController extends SimpleFormController implements Initializin
             log.info("CommandClass not set, using default CommandClass of " + this.getCommandClass().getName() + " and name of "
                 + this.getCommandName());
         }
-        
+
         if (this.credentialsBinder == null) {
-        	this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
-        	log.info("CredentialsBinder not set.  Using default CredentialsBinder of " + this.credentialsBinder.getClass().getName());
-        	
-        	if (!this.credentialsBinder.supports(this.getCommandClass())) {
-        		throw new ServletException("CredentialsBinder does not support supplied Command Class: " + this.getCommandClass());
-        	}
+            this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
+            log.info("CredentialsBinder not set.  Using default CredentialsBinder of " + this.credentialsBinder.getClass().getName());
+
+            if (!this.credentialsBinder.supports(this.getCommandClass())) {
+                throw new ServletException("CredentialsBinder does not support supplied Command Class: " + this.getCommandClass());
+            }
         }
     }
 
@@ -102,7 +101,8 @@ public class LoginController extends SimpleFormController implements Initializin
     }
 
     /**
-     * @see org.springframework.web.servlet.mvc.AbstractFormController#showForm(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.validation.BindException)
+     * @see org.springframework.web.servlet.mvc.AbstractFormController#showForm(javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse, org.springframework.validation.BindException)
      */
     protected ModelAndView showForm(final HttpServletRequest request, final HttpServletResponse response, final BindException errors)
         throws Exception {
@@ -140,12 +140,13 @@ public class LoginController extends SimpleFormController implements Initializin
     }
 
     /**
-     * @see org.springframework.web.servlet.mvc.AbstractFormController#processFormSubmission(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
+     * @see org.springframework.web.servlet.mvc.AbstractFormController#processFormSubmission(javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
      */
     protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object object,
         final BindException errors) throws Exception {
         final Credentials credentials = (Credentials)object;
-        
+
         this.credentialsBinder.bind(request, credentials);
 
         final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
@@ -178,13 +179,13 @@ public class LoginController extends SimpleFormController implements Initializin
 
                 model.put(WebConstants.TICKET, serviceTicketId);
                 model.put(WebConstants.SERVICE, service);
-//                model.put(WebConstants.FIRST, "true");
+                //                model.put(WebConstants.FIRST, "true");
                 return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
             }
 
             final Map model = new HashMap();
             model.put(WebConstants.TICKET, serviceTicketId);
-//            model.put(WebConstants.FIRST, "true");
+            //            model.put(WebConstants.FIRST, "true");
 
             return new ModelAndView(new RedirectView(service), model);
         }
@@ -237,10 +238,11 @@ public class LoginController extends SimpleFormController implements Initializin
     public void setUniqueTokenIdGenerator(final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
         this.uniqueTokenIdGenerator = uniqueTokenIdGenerator;
     }
-	/**
-	 * @param credentialsBinder The credentialsBinder to set.
-	 */
-	public void setCredentialsBinder(CredentialsBinder credentialsBinder) {
-		this.credentialsBinder = credentialsBinder;
-	}
+
+    /**
+     * @param credentialsBinder The credentialsBinder to set.
+     */
+    public void setCredentialsBinder(CredentialsBinder credentialsBinder) {
+        this.credentialsBinder = credentialsBinder;
+    }
 }

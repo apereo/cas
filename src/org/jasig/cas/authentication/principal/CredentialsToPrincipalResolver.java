@@ -4,9 +4,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
-
 /**
- * Strategy interface to resolve <code>Principal</code>s
+ * Strategy interface to resolve <code>Principal</code> s
  * 
  * @author Scott Battaglia
  * @version $Id$
@@ -24,8 +23,7 @@ public interface CredentialsToPrincipalResolver {
     Principal resolvePrincipal(Credentials credentials);
 
     /**
-     * Determine if a credentials type is supported by this resolver.
-     * This is checked before calling resolve principal.
+     * Determine if a credentials type is supported by this resolver. This is checked before calling resolve principal.
      * 
      * @param credentials
      * @return true if we support these credentials, false otherwise.

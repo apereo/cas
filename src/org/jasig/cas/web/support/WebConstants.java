@@ -35,12 +35,12 @@ public abstract class WebConstants {
     public static final String FIRST = "first";
 
     public static final String WARN = "warn";
-    
+
     public static final String GATEWAY = "gateway";
-    
+
     public static final String RENEW = "renew";
-    
+
     public static final String PGTURL = "pgtUrl";
-    
+
     public static final String ASSERTION = "assertion";
 }

@@ -36,13 +36,13 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
         synchronized (this.ticketRegistry) {
             for (Iterator iter = this.ticketRegistry.getTickets().iterator(); iter.hasNext();) {
                 final Ticket ticket = (Ticket)iter.next();
-                
+
                 if (ticket.isExpired())
                     ticketsToRemove.add(ticket);
             }
-            
+
             for (Iterator iter = ticketsToRemove.iterator(); iter.hasNext();) {
-                final Ticket ticket = (Ticket) iter.next();
+                final Ticket ticket = (Ticket)iter.next();
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
         }

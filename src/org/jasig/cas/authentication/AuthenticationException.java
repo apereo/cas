@@ -9,8 +9,9 @@ package org.jasig.cas.authentication;
  * @version $Id$
  */
 public class AuthenticationException extends Exception {
+
     private static final String CODE = "AUTH_ERROR";
-    
+
     private static final String DESCRIPTION = "General Authentication Exception";
 
     private static final long serialVersionUID = 3906648604830611762L;
@@ -43,11 +44,11 @@ public class AuthenticationException extends Exception {
     public AuthenticationException(Throwable arg0) {
         super(arg0);
     }
-    
+
     public String getCode() {
         return CODE;
     }
-    
+
     public String getDescription() {
         return DESCRIPTION;
     }
