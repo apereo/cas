@@ -11,7 +11,7 @@
 	</bean>
 	
 	<!-- ID Generators -->
-	<bean id="uniqueIdGenerator" class="org.jasig.cas.helper.support.CommonsIdUniqueTicketIdGenerator" />
+	<bean id="uniqueIdGenerator" class="org.jasig.cas.helper.support.DefaultUniqueTicketIdGenerator" />
 	
 	<!-- Expiration policies -->
 	<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.strategy.MultiTimeUseOrTimeoutExpirationPolicy">
