@@ -33,24 +33,34 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
     /**
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public Principal authenticateAndResolveCredentials(final Credentials request) throws AuthenticationException {
+    public Authentication authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException {
         for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();) {
             final AuthenticationHandler handler = (AuthenticationHandler)iter.next();
 
             try {
-                if (handler.authenticate(request)) {
-                    for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
-                        final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
-
-                        if (resolver.supports(request))
-                            return resolver.resolvePrincipal(request);
-                    }
-                    return null;
+                if (!handler.authenticate(credentials)) {
+                	return null;
                 }
+				break;
             } catch (UnsupportedCredentialsException e) {
-                // ignore this asnd try the next one
+                continue;
             }
         }
+        
+		for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
+			final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
+
+			if (resolver.supports(credentials)) {
+				final Principal principal = resolver.resolvePrincipal(credentials);
+				
+				if (principal == null)
+				return null;
+				
+				return new ImmutableAuthentication(credentials, principal, null); 
+			}
+		}
+
+		log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
         return null;
     }
 

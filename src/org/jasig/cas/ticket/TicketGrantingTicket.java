@@ -6,8 +6,8 @@ package org.jasig.cas.ticket;
 
 import java.util.List;
 
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Service;
-import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * Interface for a ticket granting ticket.
@@ -19,11 +19,11 @@ public interface TicketGrantingTicket extends Ticket {
     public static final String PREFIX = "TGT";
 
     /**
-     * Method to retrieve the username.
+     * Method to retrieve the authentication.
      * 
-     * @return the username
+     * @return the authentication
      */
-    Principal getPrincipal();
+    Authentication getAuthentication();
     
     /**
      * Grant a ServiceTicket for a specific service
