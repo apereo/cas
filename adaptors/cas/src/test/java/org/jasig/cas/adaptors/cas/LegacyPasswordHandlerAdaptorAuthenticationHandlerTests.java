@@ -9,9 +9,9 @@ package org.jasig.cas.adaptors.cas;
 import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockPasswordHandler;
-import org.jasig.cas.adaptors.cas.mock.MockServletRequest;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;
 
@@ -85,7 +85,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         LegacyCasCredentials credentials = new LegacyCasCredentials();
         credentials.setUserName("testUser");
         credentials.setPassword("testPassword");
-        ServletRequest servletRequest = new MockServletRequest();
+        ServletRequest servletRequest = new MockHttpServletRequest();
         credentials.setServletRequest(servletRequest);
         
         assertTrue(this.lphaah.authenticate(credentials));
@@ -106,7 +106,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         LegacyCasCredentials credentials = new LegacyCasCredentials();
         credentials.setUserName("testUser");
         credentials.setPassword("testPassword");
-        ServletRequest servletRequest = new MockServletRequest();
+        ServletRequest servletRequest = new MockHttpServletRequest();
         credentials.setServletRequest(servletRequest);
         
         assertFalse(this.lphaah.authenticate(credentials));
