@@ -33,7 +33,7 @@ public class LegacyCasCredentialsBinder implements CredentialsBinder {
      * @see org.jasig.cas.web.bind.CredentialsBinder#supports(java.lang.Class)
      */
     public boolean supports(Class clazz) {
-        return clazz.equals(LegacyCasCredentials.class) || clazz.equals(LegacyCasTrustedCredentials.class);
+        return !(clazz==null) && (clazz.equals(LegacyCasCredentials.class) || clazz.equals(LegacyCasTrustedCredentials.class));
     }
 
 }

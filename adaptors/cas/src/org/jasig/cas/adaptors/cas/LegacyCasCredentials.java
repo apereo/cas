@@ -9,7 +9,7 @@ import javax.servlet.ServletRequest;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
- * Credentials class that maps to the paramters required by the Legacy CAS password handler.
+ * Credentials class that maps to the parameters required by the Legacy CAS password handler.
  * 
  * @author Scott Battaglia
  * @version $Id$
