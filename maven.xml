@@ -19,6 +19,10 @@
     <j:set var="rootdir">${rootdirname}</j:set>
     <echo>Using root dir: ${rootdir}</echo>
 
+	<preGoal name="site">
+		<attainGoal name="statcvs xdoc" />
+	</preGoal>
+
     <postGoal name="site">
         <attainGoal name="dashboard:report-single"/>
     </postGoal>
@@ -27,4 +31,8 @@
 		<attainGoal name="jar" />
 	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${maven.build.dir}/cas-server-${pom.currentVersion}.jar" />
 	</preGoal>
+	
+	<goal name="maven-multichanges-report:register">
+		<attainGoal name="multichanges:report" />
+	</goal>
 </project>
