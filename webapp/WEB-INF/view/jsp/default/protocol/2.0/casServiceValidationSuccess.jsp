@@ -1,7 +1,4 @@
-<%@ page session="false" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<?xml version="1.0"?>
+<%@ page session="false" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %><?xml version="1.0" encoding="UTF-8"?>
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
 <cas:authenticationSuccess>
 <cas:user>${assertion.chainedPrincipals[0].id}</cas:user>
