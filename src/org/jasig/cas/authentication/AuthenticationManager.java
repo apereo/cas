@@ -20,7 +20,7 @@ public interface AuthenticationManager
 	 * map those credentials to a principal.
 	 * 
 	 * @param request the authentication credentials
-	 * @return the Principal the credentials were supplied for.
+	 * @return the Principal the credentials authenticate.
 	 */
 	public Principal authenticateUser(AuthenticationRequest request);
 }
