@@ -7,7 +7,6 @@
 package org.jasig.cas.adaptors.cas.mock;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
 
 import edu.yale.its.tp.cas.auth.TrustHandler;
 
