@@ -10,7 +10,8 @@
 			/WEB-INF/applicationContext.xml,
 			/WEB-INF/userConfigContext.xml,
 			/WEB-INF/remoteServices.xml,
-			/WEB-INF/approvedServices.xml
+			/WEB-INF/approvedServices.xml,
+			classpath:org/codehaus/xfire/spring/xfire.xml
 		</param-value>
 	</context-param>
 	
@@ -53,10 +54,6 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	
-    <listener>
-        <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
-    </listener>
-	
 	<servlet>
 		<servlet-name>cas</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -66,21 +63,6 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
-	<servlet>
-		<servlet-name>AxisServlet</servlet-name>
-		<servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
-	</servlet>
-<!--
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/servlet/AxisServlet</url-pattern>
-	</servlet-mapping>
- -->
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/services/*</url-pattern>
-	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>
@@ -112,10 +94,16 @@
 		<url-pattern>/proxyValidate</url-pattern>
 	</servlet-mapping>
 		
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
+		<url-pattern>/CentralAuthenticationService</url-pattern>
+	</servlet-mapping>
+
 	<session-config>
 		<!-- Default to 5 minute session timeouts -->
 		<session-timeout>5</session-timeout>
 	</session-config>
+
 	<error-page>
 		<exception-type>java.lang.IllegalStateException</exception-type>
 		<location>/index.jsp</location>

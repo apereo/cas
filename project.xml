@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0-m2</currentVersion>
+	<currentVersion>3.0-m3-dev</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -149,46 +149,67 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+
+	<!-- XFIRE -->
 		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis</artifactId>
-			<version>1.2-RC2</version>
-			<type>jar</type>
-			<url>http://ws.apache.org/axis/</url>
+			<groupId>xfire</groupId>
+			<artifactId>xfire</artifactId>
+			<version>1.0-m4-dev</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
 		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-jaxrpc</artifactId>
-			<version>1.2-RC2</version>
-			<type>jar</type>
-			<url>http://ws.apache.org/axis/</url>
+			<groupId>xfire</groupId>
+			<artifactId>xfire-java</artifactId>
+			<version>1.0-m4-dev</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
 		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-saaj</artifactId>
-			<version>1.2-RC2</version>
-			<type>jar</type>
-			<url>http://ws.apache.org/axis/</url>
+			<groupId>xfire</groupId>
+			<artifactId>xfire-spring</artifactId>
+			<version>1.0-m4-dev</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>1.0</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.1.1-dev</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>1.4</version>
+            <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+        </dependency>
+		
 		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-wsdl4j</artifactId>
-			<version>1.2-RC2</version>
-			<type>jar</type>
-			<url>http://ws.apache.org/axis/</url>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.7.0</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+
 		<dependency>
 			<groupId>clover</groupId>
 			<artifactId>clover</artifactId>
