@@ -4,12 +4,9 @@
  */
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.AuthenticationSpecification;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
-import org.jasig.cas.ticket.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
@@ -39,7 +36,7 @@ public interface CentralAuthenticationSerivce {
       * @param service The target service of the ServiceTicket.
       * @return the ServiceTicket for target Service.
       */
-     public ServiceTicket grantServiceTicket(String tgtid, Service service);
+     public ServiceTicket grantServiceTicket(String ticketGrantingTicketId, Service service);
    
      /**
       * Validate a ServiceTicket for a particular Service
@@ -48,13 +45,13 @@ public interface CentralAuthenticationSerivce {
       * @param service Service wishing to validate a prior authentication.
       * @return ServiceTicket if valid for the service and satisifies AuthenticationSpecification.
       */
-     public ServiceTicket validateServiceTicket(String stid, Service service, AuthenticationSpecification authspec);
+     public ServiceTicket validateServiceTicket(String serviceTicketId, Service service, AuthenticationSpecification authspec);
      
      /**
       * Destroy a TicketGrantingTicket.  This has the effect of invalidating
       * any Ticket that was derived from the TicketGrantingTicket being destroyed.
       */
-     public void destroyTicketGrantingTicket(String tgtid);
+     public void destroyTicketGrantingTicket(String ticketGrantingTicketId);
      
      /**
       * Grant a TicketGrantingTicket to a Service for proxying authentication
@@ -62,7 +59,7 @@ public interface CentralAuthenticationSerivce {
       * 
       * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
       */
-     public TicketGrantingTicket grantTicketGrantingTicket(String stid, Credentials credentials);
+     public TicketGrantingTicket grantTicketGrantingTicket(String serviceTicketId, Credentials credentials);
 
      /**
       * Return the CAS version.

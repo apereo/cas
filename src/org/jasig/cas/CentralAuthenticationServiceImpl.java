@@ -6,16 +6,11 @@ package org.jasig.cas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.AuthenticationSpecification;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.ImmutableTicketProxyFactory;
-import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
-import org.jasig.cas.ticket.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.aop.framework.ProxyFactory;
@@ -33,7 +28,38 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     
     private ImmutableTicketProxyFactory immutableTicketProxyFactory = new SpringAOPImmutableTicketProxyFactory();
 
-    /* (non-Javadoc)
+    /**
+     * @see org.jasig.cas.CentralAuthenticationSerivce#destroyTicketGrantingTicket(java.lang.String)
+     */
+    public void destroyTicketGrantingTicket(String ticketGrantingTicketId) {
+        // TODO Auto-generated method stub
+
+    }
+    /**
+     * @see org.jasig.cas.CentralAuthenticationSerivce#grantServiceTicket(java.lang.String, org.jasig.cas.Service)
+     */
+    public ServiceTicket grantServiceTicket(String ticketGrantingTicketId,
+            Service service) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /**
+     * @see org.jasig.cas.CentralAuthenticationSerivce#grantTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
+     */
+    public TicketGrantingTicket grantTicketGrantingTicket(
+            String serviceTicketId, Credentials credentials) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /**
+     * @see org.jasig.cas.CentralAuthenticationSerivce#validateServiceTicket(java.lang.String, org.jasig.cas.Service, org.jasig.cas.authentication.AuthenticationSpecification)
+     */
+    public ServiceTicket validateServiceTicket(String serviceTicketId,
+            Service service, AuthenticationSpecification authspec) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /**
      * @see org.jasig.cas.CentralAuthenticationSerivce#grantTicketGrantingTicket(org.jasig.cas.authentication.principal.Principal)
      */
     public TicketGrantingTicket createTicketGrantingTicket(Credentials credentials) {
@@ -53,85 +79,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return st;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#grantProxyGrantingTicket(org.jasig.cas.ticket.ServiceTicket)
-     */
-    public ProxyGrantingTicket grantProxyGrantingTicket(final ServiceTicket st) {
-        final ProxyGrantingTicket pgt = st.grantProxyGrantingTicket();
-        this.ticketRegistry.addTicket(pgt);
-        return pgt;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#grantProxyGrantingTicket(org.jasig.cas.ticket.ProxyTicket)
-     */
-    public ProxyGrantingTicket grantProxyGrantingTicket(final ProxyTicket pt) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#grantProxyTicket(org.jasig.cas.ticket.ProxyGrantingTicket, org.jasig.cas.Service)
-     */
-    public ProxyTicket grantProxyTicket(ProxyGrantingTicket pgt, Service service) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#validate(org.jasig.cas.ticket.Ticket, org.jasig.cas.Service)
-     */
-    public boolean validate(Ticket ticket, Service service) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#lookupTicketGrantingTicketForId(java.lang.String)
-     */
-    public TicketGrantingTicket lookupTicketGrantingTicketForId(final String tgtid) {
-        return (TicketGrantingTicket)lookupTicketForId(tgtid, org.jasig.cas.ticket.TicketGrantingTicket.class);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#lookupServiceTicketForId(java.lang.String)
-     */
-    public ServiceTicket lookupServiceTicketForId(final String stid) {
-        return (ServiceTicket)lookupTicketForId(stid, org.jasig.cas.ticket.ServiceTicket.class);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#lookupProxyGrantingTicketForId(java.lang.String)
-     */
-    public ProxyGrantingTicket lookupProxyGrantingTicketForId(final String pgtid) {
-        return (ProxyGrantingTicket)lookupTicketForId(pgtid, org.jasig.cas.ticket.ProxyGrantingTicket.class);
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.cas.CentralAuthenticationSerivce#lookupProxyTicketForId(java.lang.String)
-     */
-    public ProxyTicket lookupProxyTicketForId(final String ptid) {
-        return (ProxyTicket)lookupTicketForId(ptid, org.jasig.cas.ticket.ProxyTicket.class);
-    }
-    
-    private Ticket lookupImmutableTicketForId(final String ticketId, final Class clazz) {
-        final Ticket ticket = lookupTicketForId(ticketId, clazz);
-        return this.immutableTicketProxyFactory.getProxyForTicket(ticket);
-    }
-
-    private Ticket lookupTicketForId(final String ticketId, final Class clazz) {
-        final Ticket ticket = this.ticketRegistry.getTicket(ticketId);
-        if (ticket == null) {
-            throw new InvalidTicketException("No ticket found for TicketId: " + ticketId);
-        } else if (!ticket.getClass().isAssignableFrom(clazz)) {
-            throw new InvalidTicketException("Ticket [" + ticket.getId() + "] is of type "
-                + ticket.getClass() + " when we were expecting " + clazz);
-        } else {
-            return ticket;
-        }
-    }
-
-    /* (non-Javadoc)
+    /**
      * @see org.jasig.cas.CentralAuthenticationSerivce#getVersion()
      */
     public String getVersion() {
