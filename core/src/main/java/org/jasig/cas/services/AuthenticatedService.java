@@ -11,6 +11,7 @@ package org.jasig.cas.services;
  *
  */
 public class AuthenticatedService {
+
     private String id;
 
     private boolean allowedToProxy;
@@ -20,8 +21,8 @@ public class AuthenticatedService {
     private String theme;
 
     public AuthenticatedService(final String id, final boolean allowedToProxy, final boolean forceAuthentication, final String theme) {
-        if (id == null || theme == null) {
-            throw new IllegalArgumentException("id and theme are required parameters.");
+        if (id == null) {
+            throw new IllegalArgumentException("id is a required parameter.");
         }
 
         this.id = id;
