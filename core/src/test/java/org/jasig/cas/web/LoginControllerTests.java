@@ -135,6 +135,24 @@ public class LoginControllerTests extends TestCase {
         assertTrue(this.loginController.showForm(request, new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getView() instanceof RedirectView);        
     }
     
+    public void testTicketGrantingTicketAndServiceWarn() throws Exception {
+        String ticketGrantingTicketId;
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        c.setUserName("test");
+        c.setPassword("test");
+        
+        ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
+        
+        Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId);
+        Cookie cookie2 = new Cookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE);
+        
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", "Test");
+        request.setCookies(new Cookie[] {cookie, cookie2});
+        
+        assertFalse(this.loginController.showForm(request, new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getView() instanceof RedirectView);        
+    }
+    
     public void testTicketGrantingTicketAndServiceWithRenew() throws Exception {
         String ticketGrantingTicketId;
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
