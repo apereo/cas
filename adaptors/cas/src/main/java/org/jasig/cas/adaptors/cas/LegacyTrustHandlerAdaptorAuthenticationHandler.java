@@ -25,7 +25,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
 
     private TrustHandler trustHandler;
 
-    public boolean authenticateInternal(final Credentials credentials) {
+    protected boolean authenticateInternal(final Credentials credentials) {
         final LegacyCasTrustedCredentials casCredentials = (LegacyCasTrustedCredentials)credentials;
 
         return StringUtils.hasText(this.trustHandler.getUsername(casCredentials
