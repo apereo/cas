@@ -6,3 +6,4 @@ bin
 doc
 build.properties
 velocity.log
+.clover
