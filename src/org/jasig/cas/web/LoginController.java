@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
@@ -142,46 +144,53 @@ public class LoginController extends SimpleFormController implements Initializin
 
         this.credentialsBinder.bind(request, credentials);
 
-        if (renew && StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service)) {
-            serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
-        }
-
-        if (serviceTicketId == null) {
-            ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
-        }
-
-        // the ticket was not created because invalid Credentials
-        if (ticketGrantingTicketId == null) {
-            errors.reject("bad.credentials", null);
-            return super.processFormSubmission(request, response, command, errors);
-        }
-
-        this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId, request, response);
-
-        if (warn)
-            this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
-        else
-            this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
-
-        if (StringUtils.hasText(service)) {
+        try {
+            if (renew && StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service)) {
+                serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
+            }
+    
             if (serviceTicketId == null) {
-                serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
+                ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
             }
-
-            if (warn) {
+    
+            // the ticket was not created because invalid Credentials
+            if (ticketGrantingTicketId == null) {
+                errors.reject("bad.credentials", null);
+                return super.processFormSubmission(request, response, command, errors);
+            }
+    
+            this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId, request, response);
+    
+            if (warn)
+                this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
+            else
+                this.createCookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+    
+            if (StringUtils.hasText(service)) {
+                if (serviceTicketId == null) {
+                    serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
+                }
+    
+                if (warn) {
+                    final Map model = new HashMap();
+    
+                    model.put(WebConstants.TICKET, serviceTicketId);
+                    model.put(WebConstants.SERVICE, service);
+                    // model.put(WebConstants.FIRST, "true");
+                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
+                }
+    
                 final Map model = new HashMap();
-
                 model.put(WebConstants.TICKET, serviceTicketId);
-                model.put(WebConstants.SERVICE, service);
                 // model.put(WebConstants.FIRST, "true");
-                return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
+    
+                return new ModelAndView(new RedirectView(service), model);
             }
-
-            final Map model = new HashMap();
-            model.put(WebConstants.TICKET, serviceTicketId);
-            // model.put(WebConstants.FIRST, "true");
-
-            return new ModelAndView(new RedirectView(service), model);
+        } catch (TicketException e) {
+            errors.reject("ticketException", e.getDescription());
+            
+        } catch (AuthenticationException e) {
+            errors.reject("authenticationException", e.getDescription());
         }
 
         return super.processFormSubmission(request, response, command, errors);
