@@ -6,6 +6,9 @@ package org.jasig.cas.authentication;
 
 import java.util.Date;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
@@ -15,6 +18,8 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Scott Battaglia
  */
 public final class ImmutableAuthentication implements Authentication {
+
+    private static final long serialVersionUID = 3906647483978365235L;
 
     private final Principal principal;
 
@@ -39,5 +44,16 @@ public final class ImmutableAuthentication implements Authentication {
     public Object getAttributes() {
         return this.attributes;
     }
+    
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
 
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }
