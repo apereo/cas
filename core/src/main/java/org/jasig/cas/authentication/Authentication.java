@@ -7,6 +7,7 @@ package org.jasig.cas.authentication;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
 
@@ -39,5 +40,5 @@ public interface Authentication extends Serializable {
      * 
      * @return any additional authentication information.
      */
-    Object getAttributes();
+    Map getAttributes();
 }

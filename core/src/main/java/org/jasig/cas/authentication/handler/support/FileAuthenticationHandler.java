@@ -8,9 +8,10 @@ package org.jasig.cas.authentication.handler.support;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.PasswordTranslator;
-import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -32,13 +33,13 @@ public final class FileAuthenticationHandler extends
     private static final String DEFAULT_SEPARATOR = "::";
 
     /** The default PasswordTranslator (PlainText). */
-    private static final PasswordTranslator DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordTranslator();
+    private static final PasswordEncoder DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordEncoder();
 
     /** The separator to use. */
     private String separator = DEFAULT_SEPARATOR;
 
     /** The PasswordTranslator to use. */
-    private PasswordTranslator passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
+    private PasswordEncoder passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
 
     /** The filename to read the list of usernames from. */
     private String fileName;
@@ -62,7 +63,7 @@ public final class FileAuthenticationHandler extends
                 final String password = lineFields[1];
 
                 if (credentials.getUserName().equals(userName)) {
-                    if (this.passwordTranslator.translate(
+                    if (this.passwordTranslator.encode(
                         credentials.getPassword()).equals(password)) {
                         bufferedReader.close();
                         return true;
@@ -105,7 +106,7 @@ public final class FileAuthenticationHandler extends
      * @param passwordTranslator The passwordTranslator to set.
      */
     public void setPasswordTranslator(
-        final PasswordTranslator passwordTranslator) {
+        final PasswordEncoder passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 
