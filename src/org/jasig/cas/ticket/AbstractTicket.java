@@ -41,30 +41,30 @@ public abstract class AbstractTicket implements Ticket {
     /**
      * @see org.jasig.cas.ticket.Ticket#getId()
      */
-    public String getId() {
+    public final String getId() {
         return this.id;
     }
 
-    public int getCountOfUses() {
+    public final int getCountOfUses() {
         return this.countOfUses;
     }
 
-    public long getLastTimeUsed() {
+    public final long getLastTimeUsed() {
         return this.lastTimeUsed;
     }
 
-    public void incrementCountOfUses() {
+    public final void incrementCountOfUses() {
         this.countOfUses++;
     }
 
-    public void updateLastTimeUsed() {
+    public final void updateLastTimeUsed() {
         this.lastTimeUsed = System.currentTimeMillis();
     }
 
 	/**
 	 * @return Returns the ticketGrantingTicket.
 	 */
-	public TicketGrantingTicket getGrantingTicket() {
+	public final TicketGrantingTicket getGrantingTicket() {
 		return this.ticketGrantingTicket;
 	}
     /**

@@ -36,7 +36,7 @@ public class DesPasswordTranslator implements PasswordTranslator, InitializingBe
     /**
      * @see org.jasig.cas.util.PasswordTranslator#translate(java.lang.String)
      */
-    public String translate(String password) {
+    public String translate(final String password) {
         try {
             byte[] passwordAsBytes = password.getBytes("UTF8");
             byte[] encryptedAsBytes = this.cipher.doFinal(passwordAsBytes);
