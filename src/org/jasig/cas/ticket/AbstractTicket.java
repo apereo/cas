@@ -16,16 +16,16 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public abstract class AbstractTicket implements Ticket {
 
-	final private ExpirationPolicy expirationPolicy;
+    final private ExpirationPolicy expirationPolicy;
 
     private long lastTimeUsed;
 
     private int countOfUses;
 
     final private String id;
-    
+
     final private TicketGrantingTicket ticketGrantingTicket;
-    
+
     public AbstractTicket(final String id, TicketGrantingTicket ticket, final ExpirationPolicy expirationPolicy) {
         if (expirationPolicy == null || id == null)
             throw new IllegalArgumentException("id and expirationPolicy are required parameters.");
@@ -34,7 +34,7 @@ public abstract class AbstractTicket implements Ticket {
         this.lastTimeUsed = System.currentTimeMillis();
 
         this.expirationPolicy = expirationPolicy;
-        
+
         this.ticketGrantingTicket = ticket;
     }
 
@@ -61,12 +61,13 @@ public abstract class AbstractTicket implements Ticket {
         this.lastTimeUsed = System.currentTimeMillis();
     }
 
-	/**
-	 * @return Returns the ticketGrantingTicket.
-	 */
-	public final TicketGrantingTicket getGrantingTicket() {
-		return this.ticketGrantingTicket;
-	}
+    /**
+     * @return Returns the ticketGrantingTicket.
+     */
+    public final TicketGrantingTicket getGrantingTicket() {
+        return this.ticketGrantingTicket;
+    }
+
     /**
      * @see org.jasig.cas.ticket.Ticket#isExpired()
      */

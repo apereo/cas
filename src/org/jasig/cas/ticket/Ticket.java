@@ -27,27 +27,28 @@ public interface Ticket extends Serializable {
      * @see org.jasig.cas.ticket.ExpirationPolicy
      */
     boolean isExpired();
-    
+
     /**
      * Method to retrive the TicketGrantingTicket that granted this ticket
      * 
      * @return the ticket or null if it has no parent
      */
     TicketGrantingTicket getGrantingTicket();
-    
+
     /**
      * Method to return the number of times a ticket was "used."
-     *
+     * 
      * @return the number of times the ticket was used.
      */
     int getCountOfUses();
-    
+
     /**
      * Method to return the last time a ticket was used.
+     * 
      * @return the time the ticket was used.
      */
     long getLastTimeUsed();
-    
+
     /**
      * Increment by one the number of uses.
      */

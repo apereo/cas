@@ -42,7 +42,7 @@ public interface TicketRegistry {
      * @return the requested ticket.
      */
     Ticket getTicket(String ticketId);
-    
+
     /**
      * Remove a specific ticket from the registry.
      * 

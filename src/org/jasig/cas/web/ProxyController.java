@@ -44,7 +44,7 @@ public class ProxyController extends AbstractController implements InitializingB
             throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
         }
     }
-    
+
     /**
      * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)

@@ -13,10 +13,11 @@ package org.jasig.cas.ticket;
  */
 public interface ExpirationPolicy {
 
-	/**
-	 * Method to determine if a Ticket has expired or not, based on the policy.
-	 * @param ticket The ticket to check.
-	 * @return true if the ticket is expired, false otherwise.
-	 */
+    /**
+     * Method to determine if a Ticket has expired or not, based on the policy.
+     * 
+     * @param ticket The ticket to check.
+     * @return true if the ticket is expired, false otherwise.
+     */
     public boolean isExpired(Ticket ticket);
 }

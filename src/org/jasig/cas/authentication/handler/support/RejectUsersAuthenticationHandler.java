@@ -5,7 +5,6 @@
 package org.jasig.cas.authentication.handler.support;
 
 import java.util.Collection;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -24,11 +23,10 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#authenticateInternal(org.jasig.cas.authentication.principal.Credentials)
      */
     public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
-        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
-        
+        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
+
         if (usernamePasswordCredentials.getUserName() == null)
             return false;
-
         return !this.users.contains(usernamePasswordCredentials.getUserName());
     }
 

@@ -16,6 +16,7 @@ import org.jasig.cas.authentication.Service;
  * @version $Id$
  */
 public interface TicketGrantingTicket extends Ticket {
+
     public static final String PREFIX = "TGT";
 
     /**
@@ -24,7 +25,7 @@ public interface TicketGrantingTicket extends Ticket {
      * @return the authentication
      */
     Authentication getAuthentication();
-    
+
     /**
      * Grant a ServiceTicket for a specific service
      * 
@@ -32,21 +33,22 @@ public interface TicketGrantingTicket extends Ticket {
      * @return
      */
     ServiceTicket grantServiceTicket(Service service);
-    
+
     /**
      * Explicitly expire a ticket.
-     *
      */
     void expire();
-    
+
     /**
-     * Convenience method to determine if the TicketGrantingTicket is the root of the heirachy of tickets. 
+     * Convenience method to determine if the TicketGrantingTicket is the root of the heirachy of tickets.
+     * 
      * @return true if it has no parent, false otherwise.
      */
     boolean isRoot();
-    
+
     /**
      * Method to retrieve the chained list of principals for this TicketGrantingTicket
+     * 
      * @return the list of principals
      */
     List getChainedPrincipals();

@@ -26,7 +26,7 @@ import org.springframework.web.util.WebUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class LogoutController extends AbstractController implements InitializingBean  {
+public class LogoutController extends AbstractController implements InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -40,6 +40,7 @@ public class LogoutController extends AbstractController implements Initializing
             throw new IllegalStateException("centralAuthenticationService must be set on " + this.getClass().getName());
         }
     }
+
     /**
      * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)

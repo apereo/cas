@@ -15,7 +15,7 @@ import java.util.List;
  *
  */
 public interface Assertion {
-	
+
     /**
      * Get a List of Principals which represent the owners of the GrantingTickets
      * which granted the ticket that was validated.
@@ -28,7 +28,7 @@ public interface Assertion {
      * @return a List of Principals
      */
     List getChainedPrincipals();
-    
+
     /**
      * True if the validated ticket was granted in the same transaction as that in
      * which its grantor GrantingTicket was originally issued.

@@ -97,8 +97,11 @@ public class ServiceValidateController extends AbstractController implements Ini
                     final Credentials serviceCredentials = new HttpBasedServiceCredentials(new URL(pgtUrl));
                     final String proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
                         serviceCredentials);
-                    final String proxyIou = this.proxyHandler.handle(serviceCredentials, proxyGrantingTicketId);
-                    model.put(WebConstants.PGTIOU, proxyIou);
+
+                    if (proxyGrantingTicketId != null) {
+                        final String proxyIou = this.proxyHandler.handle(serviceCredentials, proxyGrantingTicketId);
+                        model.put(WebConstants.PGTIOU, proxyIou);
+                    }
                 }
                 catch (MalformedURLException e) {
                     log.debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: " + pgtUrl);
@@ -152,10 +155,11 @@ public class ServiceValidateController extends AbstractController implements Ini
     public void setSuccessView(String successView) {
         this.successView = successView;
     }
-	/**
-	 * @param proxyHandler The proxyHandler to set.
-	 */
-	public void setProxyHandler(ProxyHandler proxyHandler) {
-		this.proxyHandler = proxyHandler;
-	}
+
+    /**
+     * @param proxyHandler The proxyHandler to set.
+     */
+    public void setProxyHandler(ProxyHandler proxyHandler) {
+        this.proxyHandler = proxyHandler;
+    }
 }

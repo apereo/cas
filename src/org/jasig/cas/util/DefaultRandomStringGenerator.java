@@ -6,7 +6,6 @@ package org.jasig.cas.util;
 
 import java.security.SecureRandom;
 
-
 /**
  * Implementation of the RandomStringGenerator that allows you to define the length of the random part.
  * 
@@ -24,7 +23,7 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
     public DefaultRandomStringGenerator() {
         this.MAX_RANDOM_LENGTH = 35;
     }
-    
+
     public DefaultRandomStringGenerator(final int maxRandomLength) {
         this.MAX_RANDOM_LENGTH = maxRandomLength;
     }

@@ -12,13 +12,13 @@ package org.jasig.cas.web.support;
  */
 public abstract class ViewNames {
 
-	/** View for if the creation of a "Proxy" Ticket Fails */
+    /** View for if the creation of a "Proxy" Ticket Fails */
     public static final String CONST_PROXY_FAILURE = "casProxyFailureView";
 
-	/** View for if the creation of a "Proxy" Ticket Succeeds */
+    /** View for if the creation of a "Proxy" Ticket Succeeds */
     public static final String CONST_PROXY_SUCCESS = "casProxySuccessView";
 
-	/** View for logging out of CAS */
+    /** View for logging out of CAS */
     public static final String CONST_LOGOUT = "casLogoutView";
 
     /** View for confirming logon (warn) of CAS */

@@ -21,7 +21,7 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
     private long count = 0;
 
     public DefaultLongNumericGenerator() {
-    	this.wrap = DEFAULT_WRAP;
+        this.wrap = DEFAULT_WRAP;
     }
 
     public DefaultLongNumericGenerator(boolean wrap) {

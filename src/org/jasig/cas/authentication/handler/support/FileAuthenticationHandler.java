@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -41,14 +40,13 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
-        
+
         if (uRequest.getUserName() == null || uRequest.getPassword() == null)
             return false;
 
         try {
             final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(this.fileName)));
             String line = null;
-
             while ((line = bufferedReader.readLine()) != null) {
                 final String[] lineFields = line.split(this.separator);
                 final String userName = lineFields[0];
@@ -62,9 +60,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     break;
                 }
             }
-
             bufferedReader.close();
-
         }
         catch (FileNotFoundException ffe) {
             System.out.println(ffe);
