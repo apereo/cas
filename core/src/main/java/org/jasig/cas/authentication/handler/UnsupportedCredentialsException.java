@@ -30,7 +30,7 @@ public final class UnsupportedCredentialsException extends
         super(CODE);
     }
     
-    public UnsupportedCredentialsException(Throwable throwable) {
+    public UnsupportedCredentialsException(final Throwable throwable) {
         super(CODE, throwable);
     }
 }

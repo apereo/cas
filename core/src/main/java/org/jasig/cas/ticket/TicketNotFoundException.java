@@ -1,6 +1,18 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.ticket;
 
-
+/**
+ * TicketException to alert that a Ticket was not found.
+ * 
+ * @author Scott Battaglia
+ * @version $Revison$ $Date$
+ * @since 3.0
+ *
+ */
 public class TicketNotFoundException extends TicketException {
     
     /** The Unique Serializable ID. */
@@ -13,7 +25,7 @@ public class TicketNotFoundException extends TicketException {
         super(CODE);
     }
     
-    public TicketNotFoundException(Throwable throwable) {
+    public TicketNotFoundException(final Throwable throwable) {
         super(CODE, throwable);
     }
 }

@@ -24,7 +24,7 @@ public class TicketCreationException extends TicketException {
         super(CODE);
     }
     
-    public TicketCreationException(Throwable throwable) {
+    public TicketCreationException(final Throwable throwable) {
         super(CODE, throwable);
     }
 }

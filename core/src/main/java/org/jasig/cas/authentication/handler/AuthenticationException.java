@@ -22,11 +22,11 @@ public abstract class AuthenticationException extends Exception {
     /** The code to return for resolving to a message description. */
     private String code;
 
-    public AuthenticationException(String code) {
+    public AuthenticationException(final String code) {
         this.code = code;
     }
     
-    public AuthenticationException(String code, Throwable throwable) {
+    public AuthenticationException(final String code, final Throwable throwable) {
         super(throwable);
         this.code = code;
     }

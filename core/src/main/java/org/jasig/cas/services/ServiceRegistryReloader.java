@@ -6,7 +6,7 @@
 package org.jasig.cas.services;
 
 /**
- * Strategy interface that is responsible for reloading service registries at runtime
+ * Strategy interface that is responsible for reloading service registries at runtime.
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko

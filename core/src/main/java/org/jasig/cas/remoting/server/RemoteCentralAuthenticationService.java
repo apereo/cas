@@ -1,3 +1,8 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.CentralAuthenticationService;
@@ -20,7 +25,7 @@ import org.springframework.validation.Validator;
  * @since 3.0
  *
  */
-public class RemoteCentralAuthenticationService implements CentralAuthenticationService, InitializingBean {
+public final class RemoteCentralAuthenticationService implements CentralAuthenticationService, InitializingBean {
 
     /** The CORE to delegate to. */
     private CentralAuthenticationService centralAuthenticationService;
@@ -83,21 +88,23 @@ public class RemoteCentralAuthenticationService implements CentralAuthentication
         return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
     }
     
-    private Errors validateCredentials(Credentials credentials) {
+    private Errors validateCredentials(final Credentials credentials) {
         final Errors errors = new BindException(credentials, "credentials");
         for (int i = 0; i < this.validators.length; i++) {
-            ValidationUtils.invokeValidator(this.validators[i], credentials, errors);
+            if (this.validators[i].supports(credentials.getClass())) {
+                ValidationUtils.invokeValidator(this.validators[i], credentials, errors);
+            }
         }
         
         return errors;
     }
 
     /**
-     * Set the CentralAuthenticationService
+     * Set the CentralAuthenticationService.
      * @param centralAuthenticationService The CentralAuthenticationService to set.
      */
     public void setCentralAuthenticationService(
-        CentralAuthenticationService centralAuthenticationService) {
+        final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -105,7 +112,7 @@ public class RemoteCentralAuthenticationService implements CentralAuthentication
      * Set the list of validators.
      * @param validators  The array of validators to use.
      */
-    public void setValidators(Validator[] validators) {
+    public void setValidators(final Validator[] validators) {
         this.validators = validators;
     }
 

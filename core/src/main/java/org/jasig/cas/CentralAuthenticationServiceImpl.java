@@ -15,6 +15,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -110,11 +111,11 @@ public final class CentralAuthenticationServiceImpl implements
                         .getAuthentication().getPrincipal();
                     Principal newPrincipal = authentication.getPrincipal();
 
+                    // XXX change from null to TicketException
                     if (!newPrincipal.equals(originalPrincipal)) {
-                        return null;
+                        throw new TicketCreationException();
                     }
-                }
-                catch (AuthenticationException e) {
+                } catch (AuthenticationException e) {
                     throw new TicketCreationException(e);
                 }
             }
@@ -179,8 +180,7 @@ public final class CentralAuthenticationServiceImpl implements
 
                 return ticketGrantingTicket.getId();
             }
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             throw new TicketCreationException(e);
         }
     }
