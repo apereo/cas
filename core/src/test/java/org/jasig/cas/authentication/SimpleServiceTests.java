@@ -31,4 +31,23 @@ public class SimpleServiceTests extends TestCase {
 
         assertEquals(id, service.getId());
     }
+    
+    public void testToString() {
+        final String id = "test";
+        SimpleService service = new SimpleService(id);
+        
+        assertEquals(service.getClass().getName()+"@"+ Integer.toHexString(service.hashCode())+"[id="+id+"]", service.toString());
+    }
+    
+    public void testEqualsWithNull() {
+        assertFalse(new SimpleService("test").equals(null));
+    }
+    
+    public void testEqualsWithBadClass() {
+        assertFalse(new SimpleService("test").equals("test"));
+    }
+    
+    public void testEquals() {
+        assertTrue(new SimpleService("test").equals(new SimpleService("test")));
+    }
 }

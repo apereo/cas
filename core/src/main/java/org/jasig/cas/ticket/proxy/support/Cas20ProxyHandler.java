@@ -53,7 +53,7 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
             response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer.toString()));
         }
         catch (MalformedURLException e) {
-            // can't do anything with this
+            log.debug(e);
         }
 
         if (response == null) {

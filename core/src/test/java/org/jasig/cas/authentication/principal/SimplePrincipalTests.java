@@ -4,6 +4,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import junit.framework.TestCase;
 
 /**
@@ -28,5 +30,24 @@ public class SimplePrincipalTests extends TestCase {
         SimplePrincipal principal = new SimplePrincipal(id);
 
         assertEquals(id, principal.getId());
+    }
+    
+    public void testEqualsWithNull() {
+        assertFalse(new SimplePrincipal("test").equals(null));
+    }
+    
+    public void testEqualsWithBadClass() {
+        assertFalse(new SimplePrincipal("test").equals("test"));
+    }
+    
+    public void testEquals() {
+        assertTrue(new SimplePrincipal("test").equals(new SimplePrincipal("test")));
+    }
+    
+    public void testToString() {
+        final String id = "test";
+        SimplePrincipal principal = new SimplePrincipal(id);
+        
+        assertEquals(ToStringBuilder.reflectionToString(principal), principal.toString());
     }
 }

@@ -7,6 +7,7 @@ package org.jasig.cas.validation;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -43,6 +44,10 @@ public class AssertionImpl implements Assertion {
             return false;
 
         return EqualsBuilder.reflectionEquals(this, o);
+    }
+    
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     public String toString() {

@@ -34,7 +34,7 @@ public class DefaultLongNumericGeneratorTests extends TestCase {
         
         try {
             long response = generator.getNextLong();
-            assertEquals(response, Long.MIN_VALUE);
+            assertEquals(response, 1);
         } catch (IllegalStateException e) {
             fail("Unexpected IllegalStateException");
         }
@@ -46,5 +46,26 @@ public class DefaultLongNumericGeneratorTests extends TestCase {
         long response = generator.getNextLong();
         
         assertEquals(10L+1, response);
+    }
+    
+    public void testIncrementWithNoWrap() {
+        LongNumericGenerator generator = new DefaultLongNumericGenerator();
+        
+        assertEquals(1, generator.getNextLong());
+    }
+    
+    public void testMinimumSize() {
+        LongNumericGenerator generator = new DefaultLongNumericGenerator();
+        assertEquals(1, generator.minLength());
+    }
+    
+    public void testMaximumLength() {
+        LongNumericGenerator generator = new DefaultLongNumericGenerator(false);
+        assertEquals(Long.toString(Long.MAX_VALUE).length(), generator.maxLength());
+    }
+    
+    public void testToString() {
+        LongNumericGenerator generator = new DefaultLongNumericGenerator(false);
+        assertEquals("1", generator.getNextNumberAsString());
     }
 }
