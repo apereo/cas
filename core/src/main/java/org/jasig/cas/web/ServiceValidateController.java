@@ -125,10 +125,7 @@ public class ServiceValidateController extends AbstractController implements
                     log.debug("Exception message was: " + e.getMessage());
                 }
                 catch (AuthenticationException e) {
-                    model.put(WebConstants.CODE, e.getCode());
-                    model.put(WebConstants.DESC, getMessageSourceAccessor()
-                        .getMessage(e.getCode()));
-                    return new ModelAndView(this.failureView, model);
+					log.info("AuthenticationException authenticating: " + pgtUrl);
                 }
             }
             model.put(WebConstants.ASSERTION, assertion);
