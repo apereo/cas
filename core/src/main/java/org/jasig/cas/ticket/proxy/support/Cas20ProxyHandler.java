@@ -34,7 +34,7 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     public String handle(Credentials credentials, String proxyGrantingTicketId) {
-        final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
+        final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         final String proxyIou = this.uniqueTicketIdGenerator
             .getNewTicketId(PGTIOU_PREFIX);
         final StringBuffer stringBuffer = new StringBuffer();

@@ -28,8 +28,8 @@ import org.springframework.beans.factory.InitializingBean;
 public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     MethodBeforeAdvice, InitializingBean {
 
-	protected Log log = LogFactory.getLog(this.getClass());
-	
+    protected Log log = LogFactory.getLog(this.getClass());
+
     private TicketRegistry ticketRegistry;
 
     private ServiceRegistry serviceRegistry;
@@ -54,26 +54,31 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
      */
     public void before(Method method, Object[] args, Object target)
         throws Exception {
-        String serviceTicketId = (String)args[0];
-		boolean foundIt = false;
-        ServiceTicket serviceTicket = (ServiceTicket)this.ticketRegistry
+        String serviceTicketId = (String) args[0];
+        boolean foundIt = false;
+        ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
             .getTicket(serviceTicketId);
         AuthenticatedService authenticatedService = null;
-		
-		for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter.hasNext();) {
-			authenticatedService = (AuthenticatedService) iter.next();
-			if ((authenticatedService.getProxyUrl().toExternalForm().equals(serviceTicket.getService().getId())) || (authenticatedService.getId().equals(serviceTicket.getService().getId()))) {
-				foundIt = true;
-				break;
-			}
-				
-		}
-		
-		if (!foundIt) {
-			log.debug("Service [" + serviceTicket.getId() + "] not found in registry");
-			authenticatedService = null;
-		}
-			
+
+        for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter
+            .hasNext();) {
+            authenticatedService = (AuthenticatedService) iter.next();
+            if ((authenticatedService.getProxyUrl().toExternalForm()
+                .equals(serviceTicket.getService().getId()))
+                || (authenticatedService.getId().equals(serviceTicket
+                    .getService().getId()))) {
+                foundIt = true;
+                break;
+            }
+
+        }
+
+        if (!foundIt) {
+            log.debug("Service [" + serviceTicket.getId()
+                + "] not found in registry");
+            authenticatedService = null;
+        }
+
         if ((authenticatedService == null)
             || (!authenticatedService.isAllowedToProxy())) {
             throw new UnauthorizedServiceException(

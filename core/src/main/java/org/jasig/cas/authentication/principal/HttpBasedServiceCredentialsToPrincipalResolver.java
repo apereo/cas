@@ -19,7 +19,7 @@ public class HttpBasedServiceCredentialsToPrincipalResolver implements
     CredentialsToPrincipalResolver {
 
     public Principal resolvePrincipal(Credentials credentials) {
-        HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
+        HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
 
         if (credentials == null) {
             throw new IllegalArgumentException("credentials cannot be null.");

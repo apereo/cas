@@ -14,30 +14,34 @@ import org.jasig.cas.services.SingleSignoutCallback;
 import org.jasig.cas.util.UrlUtils;
 
 /**
- * Single sign out callback class to allow single signout to a 
- * Campus Crusade for Christ modified CAS client.
+ * Single sign out callback class to allow single signout to a Campus Crusade
+ * for Christ modified CAS client.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
+ * 
  */
 public class CCCISingleSignoutCallback implements SingleSignoutCallback {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
-	public boolean sendSingleSignoutRequest(AuthenticatedService service, String serviceTicketId) {
-		try {
+    public boolean sendSingleSignoutRequest(AuthenticatedService service,
+        String serviceTicketId) {
+        try {
             URL callbackUrl = new URL(service.getId());
-            
-            callbackUrl = new URL(((callbackUrl.getQuery() != null) ? "&" : "?") + "ticket=~" + serviceTicketId);
-            
+
+            callbackUrl = new URL(
+                ((callbackUrl.getQuery() != null) ? "&" : "?") + "ticket=~"
+                    + serviceTicketId);
+
             UrlUtils.getResponseBodyFromUrl(callbackUrl);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error(e);
             return false;
         }
-		return true;
-	}
+        return true;
+    }
 
 }

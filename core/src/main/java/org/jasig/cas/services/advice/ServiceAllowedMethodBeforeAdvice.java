@@ -30,12 +30,13 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
      */
     public final void before(Method method, Object[] args, Object target)
         throws Throwable {
-        Service service = (Service)args[1];
+        Service service = (Service) args[1];
         AuthenticatedService authenticatedService = this.serviceRegistry
             .getService(service.getId());
 
         if (authenticatedService == null) {
-            throw new UnauthorizedServiceException("Service: [" + service.getId() + "] not found in registry.");
+            throw new UnauthorizedServiceException("Service: ["
+                + service.getId() + "] not found in registry.");
         }
 
         beforeInternal(method, args, target, authenticatedService);

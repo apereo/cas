@@ -168,7 +168,7 @@ public class LoginController extends SimpleFormController implements
     protected ModelAndView processFormSubmission(
         final HttpServletRequest request, final HttpServletResponse response,
         final Object command, final BindException errors) throws Exception {
-        final Credentials credentials = (Credentials)command;
+        final Credentials credentials = (Credentials) command;
         final boolean renew = this.convertValueToBoolean(request
             .getParameter(WebConstants.RENEW));
         final boolean warn = StringUtils.hasText(request

@@ -38,19 +38,25 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ServiceValidateController extends AbstractController implements
-    InitializingBean {
+public final class ServiceValidateController extends AbstractController
+    implements InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** Logger to log events and errors */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** The CORE which we will delegate all requests to. */
     private CentralAuthenticationService centralAuthenticationService;
 
+    /** The validation protocol we want to use. */
     private Class authenticationSpecificationClass;
 
+    /** The proxy handler we want to use with the controller. */
     private ProxyHandler proxyHandler;
 
+    /** The view to redirect to on a successful validation. */
     private String successView;
 
+    /** The view to redirect to on a validation failure. */
     private String failureView;
 
     public void afterPropertiesSet() throws Exception {
@@ -125,7 +131,8 @@ public class ServiceValidateController extends AbstractController implements
                     log.debug("Exception message was: " + e.getMessage());
                 }
                 catch (AuthenticationException e) {
-					log.info("AuthenticationException authenticating: " + pgtUrl);
+                    log.info("AuthenticationException authenticating: "
+                        + pgtUrl);
                 }
             }
             model.put(WebConstants.ASSERTION, assertion);
@@ -141,7 +148,7 @@ public class ServiceValidateController extends AbstractController implements
 
     private ValidationSpecification getCommandClass() {
         try {
-            return (ValidationSpecification)this.authenticationSpecificationClass
+            return (ValidationSpecification) this.authenticationSpecificationClass
                 .newInstance();
         }
         catch (Exception e) {
@@ -163,28 +170,28 @@ public class ServiceValidateController extends AbstractController implements
      * authenticationSpecificationClass to set.
      */
     public void setAuthenticationSpecificationClass(
-        Class authenticationSpecificationClass) {
+        final Class authenticationSpecificationClass) {
         this.authenticationSpecificationClass = authenticationSpecificationClass;
     }
 
     /**
      * @param failureView The failureView to set.
      */
-    public void setFailureView(String failureView) {
+    public void setFailureView(final String failureView) {
         this.failureView = failureView;
     }
 
     /**
      * @param successView The successView to set.
      */
-    public void setSuccessView(String successView) {
+    public void setSuccessView(final String successView) {
         this.successView = successView;
     }
 
     /**
      * @param proxyHandler The proxyHandler to set.
      */
-    public void setProxyHandler(ProxyHandler proxyHandler) {
+    public void setProxyHandler(final ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
     }
 }

@@ -23,7 +23,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 public abstract class AbstractAuthenticationHandler implements
     AuthenticationHandler {
 
-    public final boolean authenticate(Credentials credentials)
+    public final boolean authenticate(final Credentials credentials)
         throws AuthenticationException {
         if (!this.supports(credentials)) {
             throw new UnsupportedCredentialsException();
@@ -41,7 +41,7 @@ public abstract class AbstractAuthenticationHandler implements
      * @return true if the handler supports authenticating this type of
      * credentials. False otherwise.
      */
-    protected abstract boolean supports(Credentials credentials);
+    protected abstract boolean supports(final Credentials credentials);
 
     /**
      * Template (abstract method) that inheriting classes should implement. This
@@ -54,6 +54,6 @@ public abstract class AbstractAuthenticationHandler implements
      * @throws AuthenticationException if the validity of the credentials cannot
      * be determined.
      */
-    protected abstract boolean authenticateInternal(Credentials credentials)
-        throws AuthenticationException;
+    protected abstract boolean authenticateInternal(
+        final Credentials credentials) throws AuthenticationException;
 }

@@ -26,11 +26,11 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends
     protected final Log log = LogFactory.getLog(getClass());
 
     private static final String PROTOCOL_HTTPS = "https";
-	
-	private boolean allowNullResponses = false;
+
+    private boolean allowNullResponses = false;
 
     public boolean authenticateInternal(Credentials credentials) {
-        final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
+        final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         String response = null;
         if (!serviceCredentials.getCallbackUrl().getProtocol().equals(
             PROTOCOL_HTTPS)) {
@@ -42,22 +42,22 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends
         try {
             response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
                 .getCallbackUrl());
-			log.debug(response);
+            log.debug(response);
         }
         catch (Exception e) {
             log.error(e);
-			return false;
+            return false;
         }
-		
-		return this.allowNullResponses ? true : response != null;
+
+        return this.allowNullResponses ? true : response != null;
     }
 
     protected boolean supports(Credentials credentials) {
         return HttpBasedServiceCredentials.class.isAssignableFrom(credentials
             .getClass());
     }
-	
-	public void setAllowNullResponses(boolean allowNullResponses) {
-		this.allowNullResponses = allowNullResponses;
-	}
+
+    public void setAllowNullResponses(boolean allowNullResponses) {
+        this.allowNullResponses = allowNullResponses;
+    }
 }

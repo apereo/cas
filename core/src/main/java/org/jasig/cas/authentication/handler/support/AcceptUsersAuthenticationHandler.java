@@ -35,7 +35,7 @@ public class AcceptUsersAuthenticationHandler extends
             return false;
         }
 
-        cachedPassword = (String)this.users.get(credentials.getUserName());
+        cachedPassword = (String) this.users.get(credentials.getUserName());
 
         return (cachedPassword.equals(credentials.getPassword()));
     }

@@ -16,18 +16,19 @@ public class AuthenticatedService {
 
     final private String id;
 
-	final private boolean allowedToProxy;
+    final private boolean allowedToProxy;
 
-	final private boolean forceAuthentication;
+    final private boolean forceAuthentication;
 
-	final private String theme;
+    final private String theme;
 
-	final private SingleSignoutCallback singleSignoutCallback;
-	
-	final private URL proxyUrl;
+    final private SingleSignoutCallback singleSignoutCallback;
+
+    final private URL proxyUrl;
 
     public AuthenticatedService(final String id, final boolean allowedToProxy,
-        final boolean forceAuthentication, final String theme, final SingleSignoutCallback singleSignoutCallback, final URL proxyUrl) {
+        final boolean forceAuthentication, final String theme,
+        final SingleSignoutCallback singleSignoutCallback, final URL proxyUrl) {
         if (id == null) {
             throw new IllegalArgumentException("id is a required parameter.");
         }
@@ -36,8 +37,8 @@ public class AuthenticatedService {
         this.allowedToProxy = allowedToProxy;
         this.forceAuthentication = forceAuthentication;
         this.theme = theme;
-		this.singleSignoutCallback = singleSignoutCallback;
-		this.proxyUrl = proxyUrl;
+        this.singleSignoutCallback = singleSignoutCallback;
+        this.proxyUrl = proxyUrl;
     }
 
     /**
@@ -68,11 +69,11 @@ public class AuthenticatedService {
         return this.theme;
     }
 
-	public SingleSignoutCallback getSingleSignoutCallback() {
-		return this.singleSignoutCallback;
-	}
+    public SingleSignoutCallback getSingleSignoutCallback() {
+        return this.singleSignoutCallback;
+    }
 
-	public URL getProxyUrl() {
-		return this.proxyUrl;
-	}
+    public URL getProxyUrl() {
+        return this.proxyUrl;
+    }
 }

@@ -37,8 +37,10 @@ import org.jasig.cas.validation.AssertionImpl;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
+public final class CentralAuthenticationServiceImpl implements
+    CentralAuthenticationService {
 
+    /** Log instance for logging events, info, warnings, errors, etc. */
     private final Log log = LogFactory.getLog(this.getClass());
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
@@ -50,13 +52,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      */
     private AuthenticationManager authenticationManager;
 
-    /** UniqueTicketIdGenerator to generate ids for any tickets created */
+    /** UniqueTicketIdGenerator to generate ids for any tickets created. */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    /** Expiration policy for ticket granting tickets */
+    /** Expiration policy for ticket granting tickets. */
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
-    /** ExpirationPolicy for Service Tickets */
+    /** ExpirationPolicy for Service Tickets. */
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
@@ -64,7 +66,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             try {
                 log.debug("Removing ticket [" + ticketGrantingTicketId
                     + "] from registry.");
-                final TicketGrantingTicket ticket = (TicketGrantingTicket)this.ticketRegistry
+                final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
                     .getTicket(ticketGrantingTicketId,
                         TicketGrantingTicket.class);
 
@@ -85,19 +87,20 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, Credentials credentials)
+        final Service service, final Credentials credentials)
         throws AuthenticationException, TicketCreationException {
 
         try {
             final TicketGrantingTicket ticketGrantingTicket;
             synchronized (this.ticketRegistry) {
-                ticketGrantingTicket = (TicketGrantingTicket)this.ticketRegistry
+                ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
                     .getTicket(ticketGrantingTicketId,
                         TicketGrantingTicket.class);
 
                 if (ticketGrantingTicket == null
-                    || ticketGrantingTicket.isExpired())
+                    || ticketGrantingTicket.isExpired()) {
                     return null;
+                }
 
                 if (credentials != null) {
                     Authentication authentication = this.authenticationManager
@@ -107,8 +110,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                         .getAuthentication().getPrincipal();
                     Principal newPrincipal = authentication.getPrincipal();
 
-                    if (!newPrincipal.equals(originalPrincipal))
+                    if (!newPrincipal.equals(originalPrincipal)) {
                         return null;
+                    }
                 }
 
                 final ServiceTicket serviceTicket = ticketGrantingTicket
@@ -159,7 +163,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         final ServiceTicket serviceTicket;
         synchronized (this.ticketRegistry) {
-            serviceTicket = (ServiceTicket)this.ticketRegistry.getTicket(
+            serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(
                 serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired())
@@ -182,7 +186,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         }
 
         synchronized (this.ticketRegistry) {
-            final ServiceTicket serviceTicket = (ServiceTicket)this.ticketRegistry
+            final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
                 .getTicket(serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null) {
@@ -198,7 +202,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 throw new TicketException(TicketException.INVALID_TICKET,
                     "ticket '" + serviceTicketId + "' not recognized");
             }
-			
+
             serviceTicket.incrementCountOfUses();
             serviceTicket.updateLastTimeUsed();
 

@@ -31,10 +31,11 @@ public interface TicketRegistry {
      * Retrieve a ticket from the registry. If the ticket retrieved does not
      * match the expected class, an InvalidTicketException is thrown.
      * 
-     * @param ticketId the id of the ticket we wish to retrieve
+     * @param ticketId the id of the ticket we wish to retrieve.
      * @param clazz The expected class of the ticket we wish to retrieve.
      * @return the requested ticket.
-     * @throws InvalidTicketClassException
+     * @throws InvalidTicketClassException if the ticket does not match the
+     * class provided.
      */
     Ticket getTicket(String ticketId, Class clazz)
         throws InvalidTicketClassException;

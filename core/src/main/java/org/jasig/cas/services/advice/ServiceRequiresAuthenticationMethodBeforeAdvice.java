@@ -23,7 +23,7 @@ public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
         if (args.length != 3)
             return;
 
-        Credentials credentials = (Credentials)args[2];
+        Credentials credentials = (Credentials) args[2];
 
         if (service.isForceAuthentication() && credentials == null) {
             throw new IllegalStateException(

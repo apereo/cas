@@ -85,7 +85,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
                 return null;
             }
 
-            Ticket ticket = (Ticket)element.getValue();
+            Ticket ticket = (Ticket) element.getValue();
             log.debug("Ticket [" + ticketId + "] found in registry.");
             return ticket;
         }
@@ -106,7 +106,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             Collection items = new ArrayList();
 
             for (Iterator iter = keys.iterator(); iter.hasNext();) {
-                Serializable key = (Serializable)iter.next();
+                Serializable key = (Serializable) iter.next();
                 Element element = this.cache.get(key);
                 items.add(element.getValue());
             }

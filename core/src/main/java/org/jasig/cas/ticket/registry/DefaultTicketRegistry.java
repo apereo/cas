@@ -55,7 +55,7 @@ public class DefaultTicketRegistry implements TicketRegistry {
 
     public Ticket getTicket(String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
-        final Ticket ticket = (Ticket)this.cache.get(ticketId);
+        final Ticket ticket = (Ticket) this.cache.get(ticketId);
 
         if (ticket != null)
             log.debug("Ticket [" + ticketId + "] found in registry.");
