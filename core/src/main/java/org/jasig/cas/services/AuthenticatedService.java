@@ -20,8 +20,10 @@ public class AuthenticatedService {
 
     private String theme;
 
+	private SingleSignoutCallback singleSignoutCallback;
+
     public AuthenticatedService(final String id, final boolean allowedToProxy,
-        final boolean forceAuthentication, final String theme) {
+        final boolean forceAuthentication, final String theme, final SingleSignoutCallback singleSignoutCallback) {
         if (id == null) {
             throw new IllegalArgumentException("id is a required parameter.");
         }
@@ -30,6 +32,7 @@ public class AuthenticatedService {
         this.allowedToProxy = allowedToProxy;
         this.forceAuthentication = forceAuthentication;
         this.theme = theme;
+		this.singleSignoutCallback = singleSignoutCallback;
     }
 
     /**
@@ -87,4 +90,14 @@ public class AuthenticatedService {
     public void setTheme(String theme) {
         this.theme = theme;
     }
+
+	public SingleSignoutCallback getSingleSignoutCallback() {
+		return singleSignoutCallback;
+	}
+
+	public void setSingleSignoutCallback(final SingleSignoutCallback singleSignoutCallback) {
+		this.singleSignoutCallback = singleSignoutCallback;
+	}
+	
+
 }
