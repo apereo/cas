@@ -61,12 +61,12 @@ public class AuthenticationException extends Exception {
      * @return Returns the code.
      */
     public String getCode() {
-        return code;
+        return this.code;
     }
     /**
      * @return Returns the description.
      */
     public String getDescription() {
-        return description;
+        return this.description;
     }
 }

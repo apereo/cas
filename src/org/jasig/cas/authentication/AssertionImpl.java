@@ -32,6 +32,6 @@ public class AssertionImpl implements Assertion {
      * @return Returns the isFromNewLogin.
      */
     public boolean isFromNewLogin() {
-        return fromNewLogin;
+        return this.fromNewLogin;
     }
 }

@@ -69,7 +69,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 	 * @see org.jasig.cas.ticket.InternalTicketGrantingTicket#grantServiceTicket(org.jasig.cas.Service)
 	 */
 	public synchronized ServiceTicket grantServiceTicket(Service service) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),this,service, this.getCountOfUses() == 0, serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),this,service, this.getCountOfUses() == 0, this.serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
         
         return serviceTicket;
 	}

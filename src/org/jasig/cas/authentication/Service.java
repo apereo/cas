@@ -14,5 +14,5 @@ import org.jasig.cas.authentication.principal.Principal;
  *
  */
 public interface Service extends Principal {
-    
+    // marker interface for service.  No methods
 }

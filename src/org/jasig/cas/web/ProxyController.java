@@ -52,7 +52,7 @@ public class ProxyController extends AbstractController implements InitializingB
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String ticket = request.getParameter(WebConstants.TICKET);
         final Service service = new SimpleService(request.getParameter("targetService"));
-        final String serviceTicket = centralAuthenticationService.grantServiceTicket(ticket, service);
+        final String serviceTicket = this.centralAuthenticationService.grantServiceTicket(ticket, service);
 
         if (serviceTicket == null) {
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);

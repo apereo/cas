@@ -22,7 +22,7 @@ public class SimpleService implements Service {
 	 * @see org.jasig.cas.authentication.Service#getName()
 	 */
 	public String getId() {
-		return id;
+		return this.id;
 	}
     
     /**
