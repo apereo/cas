@@ -24,7 +24,6 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.AssertionImpl;
-import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -38,8 +37,7 @@ import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class CentralAuthenticationServiceImpl extends
-    ServletEndpointSupport implements CentralAuthenticationService {
+public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
