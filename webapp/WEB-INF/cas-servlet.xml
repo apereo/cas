@@ -21,25 +21,50 @@
 				<prop key="/validate">legacyValidateController</prop>
 				<prop key="/proxy">proxyController</prop>
 				<prop key="/proxyValidate">serviceValidateController</prop>
+				<prop key="/CentralAuthenticationService">xFireCentralAuthenticationService</prop>
             </props>
         </property>
     </bean>
 	
 	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
 		<property name="proxyHandler"><ref bean="proxy20Handler" /></property>
+		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
 	</bean>
 	
 	<bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
 		<property name="proxyHandler"><ref bean="proxy10Handler" /></property>
 		<property name="successView"><value>cas1ServiceSuccessView</value></property>
 		<property name="failureView"><value>cas1ServiceFailureView</value></property>
+		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
 	</bean>	
 	
-	<bean id="proxyController" class="org.jasig.cas.web.ProxyController" autowire="byType" />
+	<bean id="proxyController" class="org.jasig.cas.web.ProxyController" autowire="byType">
+		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
+	</bean>
 	
-	<bean id="logoutController" class="org.jasig.cas.web.LogoutController" autowire="byType" />
+	<bean id="logoutController" class="org.jasig.cas.web.LogoutController" autowire="byType">
+		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
+	</bean>
 	
 	<bean id="loginController" class="org.jasig.cas.web.LoginController" autowire="byType">
 		<property name="loginTokens"><ref bean="loginTokens" /></property>
+		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
 	</bean>
+
+
+  <bean id="xFireCentralAuthenticationService" class="org.codehaus.xfire.spring.XFireExporter">
+    <property name="service"><ref bean="remoteCentralAuthenticationService"/></property>
+    <property name="serviceInterface"><value>org.jasig.cas.CentralAuthenticationService</value></property>
+    <property name="serviceBuilder"><ref bean="xfire.serviceBuilder"/></property>
+    <property name="xfire"><ref bean="xfire"/></property>
+  </bean>
+
+  <bean id="remoteCentralAuthenticationService" class="org.jasig.cas.remoting.server.CentralAuthenticationServiceRemoteService">
+  	<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
+  	<property name="validators">
+  		<list>
+  			<bean class="org.jasig.cas.validation.UsernamePasswordCredentialsValidator" />
+  		</list>
+  	</property>
+  </bean>
 </beans>

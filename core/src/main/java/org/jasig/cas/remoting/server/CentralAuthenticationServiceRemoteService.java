@@ -1,14 +1,12 @@
 package org.jasig.cas.remoting.server;
 
-import java.util.List;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
-import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -23,14 +21,13 @@ import org.springframework.validation.Validator;
  * @since 3.0
  *
  */
-public class CentralAuthenticationServiceRemoteService extends
-    ServletEndpointSupport implements CentralAuthenticationService {
+public class CentralAuthenticationServiceRemoteService implements CentralAuthenticationService, InitializingBean {
 
     /** The CORE to delegate to. */
-    private CentralAuthenticationService centralAuthenticationService = (CentralAuthenticationService) getApplicationContext().getBean("centralAuthenticationService");
+    private CentralAuthenticationService centralAuthenticationService;
     
     /** The validators to check the Credentials. */
-    private Validator[] validators = (Validator[]) ((List) getApplicationContext().getBean("validators")).toArray();
+    private Validator[] validators;
 
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
@@ -94,5 +91,28 @@ public class CentralAuthenticationServiceRemoteService extends
         }
         
         return errors;
+    }
+
+    /**
+     * Set the CentralAuthenticationService
+     * @param centralAuthenticationService The CentralAuthenticationService to set.
+     */
+    public void setCentralAuthenticationService(
+        CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    /**
+     * Set the list of validators.
+     * @param validators  The array of validators to use.
+     */
+    public void setValidators(Validator[] validators) {
+        this.validators = validators;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if (this.validators == null || this.validators.length == 0 || this.centralAuthenticationService == null) {
+            throw new IllegalStateException("validators and centralAuthenticationService are required fields.");
+        }
     }
 }
