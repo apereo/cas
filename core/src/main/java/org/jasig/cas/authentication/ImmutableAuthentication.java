@@ -22,12 +22,16 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 public final class ImmutableAuthentication implements Authentication {
 
+    /** serialVersionID for serializability */
     private static final long serialVersionUID = 3906647483978365235L;
 
+    /** The principal we have authenticated. */
     private final Principal principal;
 
+    /** The Date timestamp that this authentication became valid. */
     private final Date authenticatedDate;
 
+    /** An additional object for holding arbitrary attributes. */
     private final Object attributes;
 
     public ImmutableAuthentication(final Principal principal,
@@ -49,7 +53,7 @@ public final class ImmutableAuthentication implements Authentication {
         return this.attributes;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
     }
 
