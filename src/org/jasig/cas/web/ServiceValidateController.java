@@ -59,7 +59,7 @@ public class ServiceValidateController extends AbstractController implements Ini
 
         if (this.authenticationSpecificationClass == null) {
             this.authenticationSpecificationClass = Cas20ProtocolAuthenticationSpecification.class;
-            log.info("No authentication specification class set.  Defaulting to " + this.authenticationSpecificationClass.getClass().getName());
+            log.info("No authentication specification class set.  Defaulting to " + this.authenticationSpecificationClass.getName());
         }
 
         if (this.successView == null) {
