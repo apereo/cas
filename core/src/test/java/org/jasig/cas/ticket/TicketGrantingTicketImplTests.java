@@ -11,10 +11,10 @@ import java.util.List;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -42,8 +42,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testGetAuthentication() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -52,8 +51,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testIsRootTrue() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -62,8 +60,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testIsRootFalse() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
         TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
@@ -74,8 +71,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
 
     public void testGetChainedPrincipalsWithOne() {
         Principal principal = new SimplePrincipal("Test");
-        Authentication authentication = new ImmutableAuthentication(principal,
-            null);
+        Authentication authentication = new MockAuthentication(principal);
         List principals = new ArrayList();
         principals.add(principal);
 
@@ -88,10 +84,8 @@ public class TicketGrantingTicketImplTests extends TestCase {
     public void testGetChainedPrincipalsWithTwo() {
         Principal principal = new SimplePrincipal("Test");
         Principal principal1 = new SimplePrincipal("Test1");
-        Authentication authentication = new ImmutableAuthentication(principal,
-            null);
-        Authentication authentication1 = new ImmutableAuthentication(
-            principal1, null);
+        Authentication authentication = new MockAuthentication(principal);
+        Authentication authentication1 = new MockAuthentication(principal1);
         List principals = new ArrayList();
         principals.add(principal1);
         principals.add(principal);
@@ -105,8 +99,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testServiceTicketAsFromInitialCredentials() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -117,8 +110,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testServiceTicketAsFromNotInitialCredentials() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -130,8 +122,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
     
     public void testHashCode() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -140,8 +131,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
     
     public void testToString() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -150,8 +140,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
     
     public void testIncrementTimeUpdated() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -161,8 +150,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
     
     public void testNoIdOrPolicy() {
-        Authentication authentication = new ImmutableAuthentication(
-            new SimplePrincipal("Test"), null);
+        Authentication authentication = new MockAuthentication();
         try {
             new TicketGrantingTicketImpl(null, null,
                 authentication, null);

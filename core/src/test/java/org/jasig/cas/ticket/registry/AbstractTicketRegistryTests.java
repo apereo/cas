@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -73,7 +72,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testAddTicketToCache() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
         }
         catch (Exception e) {
@@ -103,7 +102,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicketWithProperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
         }
@@ -116,7 +115,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicketWithNoClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", null);
         }
@@ -132,7 +131,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicketWithInproperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
         }
@@ -163,7 +162,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         }
@@ -175,7 +174,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testDeleteExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry
                 .deleteTicket("TEST"));
@@ -188,7 +187,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testDeleteNonExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry
                 .deleteTicket("TEST1"));
@@ -201,7 +200,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testDeleteNullTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new ImmutableAuthentication(new SimplePrincipal("test"), null),
+                new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry
                 .deleteTicket(null));
@@ -226,8 +225,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                "TEST" + i, new ImmutableAuthentication(new SimplePrincipal(
-                    "test"), null), new NeverExpiresExpirationPolicy());
+                "TEST" + i, new MockAuthentication(), new NeverExpiresExpirationPolicy());
             tickets.add(ticketGrantingTicket);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
         }

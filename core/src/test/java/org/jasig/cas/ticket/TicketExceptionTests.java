@@ -52,7 +52,7 @@ public class TicketExceptionTests extends TestCase {
         TicketException t = new TicketException(MESSAGE, THROWABLE, TicketException.INVALID_SERVICE, DESCRIPTION);
         
         assertEquals(MESSAGE, t.getMessage());
-        assertEquals(TicketException.INVALID_SERVICE.toString(), t.getCode());
+        assertEquals(THROWABLE.toString(), t.getCode());
         assertEquals(DESCRIPTION, t.getDescription());
         assertEquals(THROWABLE, t.getCause());
     }
@@ -63,7 +63,7 @@ public class TicketExceptionTests extends TestCase {
         
         TicketException t = new TicketException(THROWABLE, TicketException.INVALID_SERVICE, DESCRIPTION);
         
-        assertEquals(TicketException.INVALID_SERVICE.toString(), t.getCode());
+        assertEquals(THROWABLE.toString(), t.getCode());
         assertEquals(DESCRIPTION, t.getDescription());
         assertEquals(THROWABLE, t.getCause());
     }
