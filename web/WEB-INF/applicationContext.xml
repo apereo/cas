@@ -36,6 +36,9 @@
 		<property name="serviceTicketExpirationPolicy"><ref local="serviceTicketExpirationPolicy" /></property>
 	</bean>
 	
+	<!-- ProxyHandlers -->
+	<bean id="proxyHandler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler" autowire="byType" />
+	
 	<!-- Ticket Registry -->
 	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 	

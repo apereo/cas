@@ -26,11 +26,7 @@ public abstract class WebConstants {
 
     public static final String DESC = "description";
 
-    public static final String PRINCIPAL = "principal";
-
-    public static final String PGTIOU = "pgtiou";
-
-    public static final String PROXIES = "proxies";
+    public static final String PGTIOU = "pgtIou";
 
     public static final String LOGIN_TOKEN = "loginToken";
 
@@ -45,4 +41,6 @@ public abstract class WebConstants {
     public static final String RENEW = "renew";
     
     public static final String PGTURL = "pgtUrl";
+    
+    public static final String ASSERTION = "assertion";
 }
