@@ -15,7 +15,7 @@ import org.jasig.cas.util.PasswordTranslator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class PlainTextPasswordTranslator implements PasswordTranslator {
+public final class PlainTextPasswordTranslator implements PasswordTranslator {
 
     public String translate(final String password) {
         return password;

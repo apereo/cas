@@ -17,13 +17,13 @@ import org.springframework.validation.Validator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class UsernamePasswordCredentialsValidator implements Validator {
+public final class UsernamePasswordCredentialsValidator implements Validator {
 
-    public boolean supports(Class clazz) {
+    public boolean supports(final Class clazz) {
         return UsernamePasswordCredentials.class.isAssignableFrom(clazz);
     }
 
-    public void validate(Object o, Errors errors) {
+    public void validate(final Object o, final Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "userName",
             "required.username", null);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password",

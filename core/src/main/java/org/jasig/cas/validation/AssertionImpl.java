@@ -21,11 +21,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class AssertionImpl implements Assertion {
 
-    final private List principals;
+    /** The list of principals. */
+    private final List principals;
 
-    final private boolean fromNewLogin;
+    /** Was this the result of a new login. */
+    private final boolean fromNewLogin;
 
-    public AssertionImpl(final List principals, boolean fromNewLogin) {
+    public AssertionImpl(final List principals, final boolean fromNewLogin) {
         if (principals == null || principals.isEmpty()) {
             throw new IllegalArgumentException(
                 "principals cannot be null or empty.");
@@ -35,17 +37,18 @@ public class AssertionImpl implements Assertion {
         this.fromNewLogin = fromNewLogin;
     }
 
-    public List getChainedPrincipals() {
+    public final List getChainedPrincipals() {
         return this.principals;
     }
 
-    public boolean isFromNewLogin() {
+    public final boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
 
-    public boolean equals(Object o) {
-        if (o == null || !this.getClass().equals(o.getClass()))
+    public boolean equals(final Object o) {
+        if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
+        }
 
         return EqualsBuilder.reflectionEquals(this, o);
     }

@@ -6,7 +6,7 @@
 package org.jasig.cas.util;
 
 /**
- * Strategy for generating unique tokens
+ * Strategy for generating unique tokens.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

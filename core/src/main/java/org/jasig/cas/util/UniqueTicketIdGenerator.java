@@ -20,5 +20,5 @@ public interface UniqueTicketIdGenerator {
      * @param prefix The prefix we want attached to the ticket.
      * @return the unique ticket id
      */
-    public String getNewTicketId(String prefix);
+    String getNewTicketId(String prefix);
 }

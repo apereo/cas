@@ -15,40 +15,46 @@ import java.security.SecureRandom;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DefaultRandomStringGenerator implements RandomStringGenerator {
+public final class DefaultRandomStringGenerator implements RandomStringGenerator {
 
+    /** The array of printable characters to be used in our random string. */
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679"
         .toCharArray();
+    
+    /** The default maximum length. */
+    private static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 
+    /** An instance of secure random to ensure randomness is secure. */
     private SecureRandom randomizer = new SecureRandom();
 
-    private final int MAX_RANDOM_LENGTH;
+    /** The maximum length the random string can be. */
+    private final int maximumRandomLength;
 
     public DefaultRandomStringGenerator() {
-        this.MAX_RANDOM_LENGTH = 35;
+        this.maximumRandomLength = DEFAULT_MAX_RANDOM_LENGTH;
     }
 
     public DefaultRandomStringGenerator(final int maxRandomLength) {
-        this.MAX_RANDOM_LENGTH = maxRandomLength;
+        this.maximumRandomLength = maxRandomLength;
     }
 
     public int getMinLength() {
-        return this.MAX_RANDOM_LENGTH;
+        return this.maximumRandomLength;
     }
 
     public int getMaxLength() {
-        return this.MAX_RANDOM_LENGTH;
+        return this.maximumRandomLength;
     }
 
     public synchronized String getNewString() {
-        final byte[] random = new byte[this.MAX_RANDOM_LENGTH];
+        final byte[] random = new byte[this.maximumRandomLength];
 
         this.randomizer.nextBytes(random);
 
         return convertBytesToString(random);
     }
 
-    private String convertBytesToString(byte[] random) {
+    private String convertBytesToString(final byte[] random) {
         final char[] output = new char[random.length];
         for (int i = 0; i < random.length; i++) {
             final int index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);

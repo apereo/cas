@@ -6,7 +6,7 @@
 package org.jasig.cas.validation;
 
 /**
- * A mapping of the CAS 2.0 protocol for authentication
+ * A mapping of the CAS 2.0 protocol for authentication.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -19,7 +19,7 @@ public class Cas20ProtocolValidationSpecification extends
         super();
     }
 
-    public Cas20ProtocolValidationSpecification(boolean renew) {
+    public Cas20ProtocolValidationSpecification(final boolean renew) {
         super(renew);
     }
 }

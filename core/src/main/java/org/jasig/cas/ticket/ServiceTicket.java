@@ -46,8 +46,9 @@ public interface ServiceTicket extends Ticket {
      * Method to grant a TicketGrantingTicket from this service to the
      * authentication. Analogous to the ProxyGrantingTicket.
      * 
+     * @param id The unique identifier for this ticket.
      * @param authentication The Authentication we wish to grant a ticket for.
      * @return The ticket granting ticket.
      */
-    TicketGrantingTicket grantTicketGrantingTicket(Authentication authentication);
+    TicketGrantingTicket grantTicketGrantingTicket(String id, Authentication authentication, ExpirationPolicy expirationPolicy);
 }

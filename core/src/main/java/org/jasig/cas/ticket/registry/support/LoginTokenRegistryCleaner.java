@@ -22,12 +22,15 @@ import org.jasig.cas.ticket.registry.RegistryCleaner;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LoginTokenRegistryCleaner implements RegistryCleaner {
+public final class LoginTokenRegistryCleaner implements RegistryCleaner {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** Instance of Commons logging. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** the map containing the login tokens and timestamp. */
     private Map loginTokens;
 
+    /** The timeout value. */
     private long timeOut;
 
     public void clean() {
@@ -38,15 +41,17 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
         synchronized (this.loginTokens) {
             final Set keys = this.loginTokens.keySet();
 
-            for (Iterator iter = keys.iterator(); iter.hasNext();) {
+            for (final Iterator iter = keys.iterator(); iter.hasNext();) {
                 final String key = (String) iter.next();
                 final Date lastUsed = (Date) loginTokens.get(key);
 
-                if ((currentTime - lastUsed.getTime()) > this.timeOut)
+                if ((currentTime - lastUsed.getTime()) > this.timeOut) {
                     tokensToDelete.add(key);
+                }
             }
 
-            for (Iterator iter = tokensToDelete.iterator(); iter.hasNext();) {
+            for (final Iterator iter = tokensToDelete.iterator();
+                iter.hasNext();) {
                 final String key = (String) iter.next();
                 this.loginTokens.remove(key);
             }
@@ -57,14 +62,14 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
     /**
      * @param loginTokens The loginTokens to set.
      */
-    public void setLoginTokens(Map loginTokens) {
+    public void setLoginTokens(final Map loginTokens) {
         this.loginTokens = loginTokens;
     }
 
     /**
      * @param timeOut The timeOut to set.
      */
-    public void setTimeOut(long timeOut) {
+    public void setTimeOut(final long timeOut) {
         this.timeOut = timeOut;
     }
 }

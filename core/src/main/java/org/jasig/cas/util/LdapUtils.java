@@ -15,8 +15,12 @@ import java.util.Properties;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public abstract class LdapUtils {
+public final class LdapUtils {
 
+    private LdapUtils() {
+        // private constructor so that no one can instanciate.
+    }
+    
     /**
      * Utility method to replace the placeholders in the filter with the proper
      * values from the userName.

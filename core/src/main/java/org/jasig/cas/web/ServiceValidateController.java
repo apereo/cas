@@ -41,7 +41,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class ServiceValidateController extends AbstractController
     implements InitializingBean {
 
-    /** Logger to log events and errors */
+    /** Logger to log events and errors. */
     private final Log log = LogFactory.getLog(getClass());
 
     /** The CORE which we will delegate all requests to. */
@@ -123,14 +123,12 @@ public final class ServiceValidateController extends AbstractController
                             serviceCredentials, proxyGrantingTicketId);
                         model.put(WebConstants.PGTIOU, proxyIou);
                     }
-                }
-                catch (MalformedURLException e) {
+                } catch (MalformedURLException e) {
                     log
                         .debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: "
                             + pgtUrl);
                     log.debug("Exception message was: " + e.getMessage());
-                }
-                catch (AuthenticationException e) {
+                } catch (AuthenticationException e) {
                     log.info("AuthenticationException authenticating: "
                         + pgtUrl);
                 }
@@ -138,8 +136,7 @@ public final class ServiceValidateController extends AbstractController
             model.put(WebConstants.ASSERTION, assertion);
 
             return new ModelAndView(this.successView, model);
-        }
-        catch (TicketException te) {
+        } catch (TicketException te) {
             model.put(WebConstants.CODE, te.getCode());
             model.put(WebConstants.DESC, te.getDescription());
             return new ModelAndView(this.failureView, model);
@@ -150,8 +147,7 @@ public final class ServiceValidateController extends AbstractController
         try {
             return (ValidationSpecification) this.authenticationSpecificationClass
                 .newInstance();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -29,11 +29,13 @@ import org.springframework.web.util.WebUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LogoutController extends AbstractController implements
+public final class LogoutController extends AbstractController implements
     InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** The log instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** The CORE to which we delegate for all CAS functionality. */
     private CentralAuthenticationService centralAuthenticationService;
 
     public void afterPropertiesSet() throws Exception {
@@ -65,6 +67,7 @@ public class LogoutController extends AbstractController implements
 
     private void destroyTicketGrantingTicketCookie(
         final HttpServletRequest request, final HttpServletResponse response) {
+        log.debug("Destroying TicketGrantingTicket cookie.");
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "");
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());

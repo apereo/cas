@@ -13,6 +13,7 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 import junit.framework.TestCase;
 
@@ -25,16 +26,14 @@ public class ServiceTicketImplTests extends TestCase {
 
     private TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
         "test", new ImmutableAuthentication(new SimplePrincipal("test"), null),
-        new NeverExpiresExpirationPolicy(),
-        new DefaultUniqueTicketIdGenerator(),
         new NeverExpiresExpirationPolicy());
+    
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     public void testNoService() {
         try {
             new ServiceTicketImpl("stest1", this.ticketGrantingTicket, null,
-                true, new NeverExpiresExpirationPolicy(),
-                new DefaultUniqueTicketIdGenerator(),
-                new NeverExpiresExpirationPolicy());
+                true, new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
         }
         catch (Exception e) {
@@ -45,9 +44,7 @@ public class ServiceTicketImplTests extends TestCase {
     public void testNoTicket() {
         try {
             new ServiceTicketImpl("stest1", null, new SimpleService("test"),
-                true, new NeverExpiresExpirationPolicy(),
-                new DefaultUniqueTicketIdGenerator(),
-                new NeverExpiresExpirationPolicy());
+                true, new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
         }
         catch (Exception e) {
@@ -58,8 +55,6 @@ public class ServiceTicketImplTests extends TestCase {
     public void testIsFromNewLoginTrue() {
         ServiceTicket s = new ServiceTicketImpl("stest1",
             this.ticketGrantingTicket, new SimpleService("test"), true,
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
             new NeverExpiresExpirationPolicy());
         assertTrue(s.isFromNewLogin());
     }
@@ -67,8 +62,6 @@ public class ServiceTicketImplTests extends TestCase {
     public void testIsFromNewLoginFalse() {
         ServiceTicket s = new ServiceTicketImpl("stest1",
             this.ticketGrantingTicket, new SimpleService("test"), false,
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
             new NeverExpiresExpirationPolicy());
         assertFalse(s.isFromNewLogin());
     }
@@ -76,8 +69,6 @@ public class ServiceTicketImplTests extends TestCase {
     public void testIsFromNewLoginFalseManualSet() {
         ServiceTicket s = new ServiceTicketImpl("stest1",
             this.ticketGrantingTicket, new SimpleService("test"), false,
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
             new NeverExpiresExpirationPolicy());
         s.setFromNewLogin(false);
         assertFalse(s.isFromNewLogin());
@@ -86,8 +77,6 @@ public class ServiceTicketImplTests extends TestCase {
     public void testIsFromNewLoginFalseManualSetTrue() {
         ServiceTicket s = new ServiceTicketImpl("stest1",
             this.ticketGrantingTicket, new SimpleService("test"), false,
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
             new NeverExpiresExpirationPolicy());
         s.setFromNewLogin(true);
         assertTrue(s.isFromNewLogin());
@@ -97,8 +86,6 @@ public class ServiceTicketImplTests extends TestCase {
         Service simpleService = new SimpleService("test");
         ServiceTicket s = new ServiceTicketImpl("stest1",
             this.ticketGrantingTicket, simpleService, false,
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
             new NeverExpiresExpirationPolicy());
         assertEquals(simpleService, s.getService());
     }
@@ -107,8 +94,6 @@ public class ServiceTicketImplTests extends TestCase {
         Service simpleService = new SimpleService("test");
         ServiceTicket s = new ServiceTicketImpl("stest1",
             this.ticketGrantingTicket, simpleService, false,
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
             new NeverExpiresExpirationPolicy());
         assertEquals(this.ticketGrantingTicket, s.getGrantingTicket());
     }
@@ -116,10 +101,8 @@ public class ServiceTicketImplTests extends TestCase {
     public void testIsExpiredTrueBecauseOfRoot() {
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
             new ImmutableAuthentication(new SimplePrincipal("test"), null),
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
             new NeverExpiresExpirationPolicy());
-        ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),new SimpleService("test"), new NeverExpiresExpirationPolicy());
         t.expire();
 
         assertTrue(s.isExpired());
@@ -128,10 +111,8 @@ public class ServiceTicketImplTests extends TestCase {
     public void testIsExpiredTrueBecauseOfCount() {
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
             new ImmutableAuthentication(new SimplePrincipal("test"), null),
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
-        ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
+            new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
         s.incrementCountOfUses();
         assertTrue(s.isExpired());
     }
@@ -139,10 +120,8 @@ public class ServiceTicketImplTests extends TestCase {
     public void testIsExpiredFalse() {
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
             new ImmutableAuthentication(new SimplePrincipal("test"), null),
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
-        ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
+            new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
         assertFalse(s.isExpired());
     }
 
@@ -151,11 +130,9 @@ public class ServiceTicketImplTests extends TestCase {
             "test"), null);
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
             new ImmutableAuthentication(new SimplePrincipal("test"), null),
-            new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
-        ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
-        TicketGrantingTicket t1 = s.grantTicketGrantingTicket(a);
+            new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),new SimpleService("test"),new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
+        TicketGrantingTicket t1 = s.grantTicketGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),a,new NeverExpiresExpirationPolicy());
 
         assertEquals(a, t1.getAuthentication());
     }

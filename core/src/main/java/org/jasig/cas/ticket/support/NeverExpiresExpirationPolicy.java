@@ -17,8 +17,9 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class NeverExpiresExpirationPolicy implements ExpirationPolicy {
+public final class NeverExpiresExpirationPolicy implements ExpirationPolicy {
 
+    /** Serializable Unique ID. */
     private static final long serialVersionUID = 3833747698242303540L;
 
     public boolean isExpired(final Ticket ticket) {

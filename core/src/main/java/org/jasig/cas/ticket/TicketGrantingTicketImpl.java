@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Service;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
  * Domain object to model a ticket granting ticket.
@@ -20,59 +19,46 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class TicketGrantingTicketImpl extends AbstractTicket implements
+public final class TicketGrantingTicketImpl extends AbstractTicket implements
     TicketGrantingTicket {
 
+    /** The Unique ID for serializing. */
     private static final long serialVersionUID = -8673232562725683059L;
 
+    /** The authenticated object for which this ticket was generated for. */
     private final Authentication authentication;
 
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
-
-    private final ExpirationPolicy serviceExpirationPolicy;
-
-    private final ExpirationPolicy expirationPolicy;
-
+    /** Flag to enforce manual expiration. */
     private boolean expired = false;
 
     public TicketGrantingTicketImpl(final String id,
         final TicketGrantingTicket ticketGrantingTicket,
-        final Authentication authentication, final ExpirationPolicy policy,
-        final UniqueTicketIdGenerator uniqueTicketIdGenerator,
-        final ExpirationPolicy serviceExpirationPolicy) {
+        final Authentication authentication, final ExpirationPolicy policy) {
         super(id, ticketGrantingTicket, policy);
 
-        if (authentication == null || uniqueTicketIdGenerator == null
-            || serviceExpirationPolicy == null) {
+        if (authentication == null) {
             throw new IllegalArgumentException(
-                "authentication, uniqueTicketIdGenerator, and serviceExpirationPolicy cannot be null on "
+                "authentication cannot be null on "
                     + this.getClass().getName());
         }
 
         this.authentication = authentication;
-        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
-        this.serviceExpirationPolicy = serviceExpirationPolicy;
-        this.expirationPolicy = policy;
     }
 
     public TicketGrantingTicketImpl(final String id,
-        final Authentication authentication, final ExpirationPolicy policy,
-        final UniqueTicketIdGenerator uniqueTicketIdGenerator,
-        final ExpirationPolicy serviceExpirationPolicy) {
-        this(id, null, authentication, policy, uniqueTicketIdGenerator,
-            serviceExpirationPolicy);
+        final Authentication authentication, final ExpirationPolicy policy) {
+        this(id, null, authentication, policy);
     }
 
     public Authentication getAuthentication() {
         return this.authentication;
     }
 
-    public synchronized ServiceTicket grantServiceTicket(Service service) {
+    public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(
-            this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+            id,
             this, service, this.getCountOfUses() == 0,
-            this.serviceExpirationPolicy, this.uniqueTicketIdGenerator,
-            this.expirationPolicy);
+            expirationPolicy);
 
         this.incrementCountOfUses();
 

@@ -44,19 +44,22 @@ import org.springframework.web.util.WebUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LoginController extends SimpleFormController implements
+public final class LoginController extends SimpleFormController implements
     InitializingBean {
 
-    /** LOGGING * */
-    protected final Log log = LogFactory.getLog(this.getClass());
+    /** Logging. */
+    private final Log log = LogFactory.getLog(this.getClass());
 
-    /** INSTANCE VARIABLES * */
+    /** CORE to delegate all non-web tier concerns to. */
     private CentralAuthenticationService centralAuthenticationService;
 
+    /** Token Generator for generating login tokens. */
     private UniqueTokenIdGenerator uniqueTokenIdGenerator = null;
 
+    /** Map to hold the login tokens. */
     private Map loginTokens;
 
+    /** CredentialsBinder to provide additional bindings besides normal Spring Binding. */
     private CredentialsBinder credentialsBinder;
 
     public LoginController() {
@@ -107,14 +110,7 @@ public class LoginController extends SimpleFormController implements
         throws Exception {
         final Map referenceData = new HashMap();
 
-        referenceData.put(WebConstants.LOGIN_TOKEN, this.getLoginToken()); // a
-        // unique
-        // token
-        // to
-        // solve
-        // browser
-        // back
-        // issues
+        referenceData.put(WebConstants.LOGIN_TOKEN, this.getLoginToken());
 
         return referenceData;
     }
@@ -158,8 +154,9 @@ public class LoginController extends SimpleFormController implements
         }
 
         // if we are being used as a gateway just bounce!
-        if (gateway && StringUtils.hasText(service))
+        if (gateway && StringUtils.hasText(service)) {
             return new ModelAndView(new RedirectView(service));
+        }
 
         // otherwise display the logon form
         return super.showForm(request, response, errors);
@@ -196,14 +193,15 @@ public class LoginController extends SimpleFormController implements
             this.createCookie(WebConstants.COOKIE_TGC_ID,
                 ticketGrantingTicketId, request, response);
 
-            if (warn)
+            if (warn) {
                 this
                     .createCookie(WebConstants.COOKIE_PRIVACY,
                         WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request,
                         response);
-            else
+            } else {
                 this.createCookie(WebConstants.COOKIE_PRIVACY,
                     WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+            }
 
             if (StringUtils.hasText(service)) {
                 if (serviceTicketId == null) {
@@ -225,12 +223,10 @@ public class LoginController extends SimpleFormController implements
                 return new ModelAndView(new RedirectView(service),
                     WebConstants.TICKET, serviceTicketId);
             }
-        }
-        catch (TicketException e) {
+        } catch (TicketException e) {
             errors.reject("ticketException", e.getDescription());
 
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             errors.reject(e.getCode(), "");
         }
 
@@ -291,7 +287,7 @@ public class LoginController extends SimpleFormController implements
     /**
      * @param credentialsBinder The credentialsBinder to set.
      */
-    public void setCredentialsBinder(CredentialsBinder credentialsBinder) {
+    public void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
 }

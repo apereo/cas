@@ -29,11 +29,13 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ProxyController extends AbstractController implements
+public final class ProxyController extends AbstractController implements
     InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** Log instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** CORE to delegate all non-web tier functionality to. */
     private CentralAuthenticationService centralAuthenticationService;
 
     public ProxyController() {
@@ -48,8 +50,8 @@ public class ProxyController extends AbstractController implements
         }
     }
 
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-        HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+        final HttpServletResponse response) throws Exception {
         final String ticket = request
             .getParameter(WebConstants.PROXY_GRANTING_TICKET);
         final Service service = new SimpleService(request
@@ -68,8 +70,7 @@ public class ProxyController extends AbstractController implements
 
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS,
                 WebConstants.TICKET, serviceTicket);
-        }
-        catch (TicketException e) {
+        } catch (TicketException e) {
             final Map model = new HashMap();
             model.put(WebConstants.CODE, e.getCode());
             model.put(WebConstants.DESC, e.getDescription());

@@ -23,10 +23,12 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DefaultTicketRegistryCleaner implements RegistryCleaner {
+public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** The Commons Logging instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** The instance of the TicketRegistry to clean. */
     private TicketRegistry ticketRegistry;
 
     public void clean() {
@@ -35,15 +37,17 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
             .info("Starting cleaning of expired tickets from ticket registry at ["
                 + new Date() + "]");
         synchronized (this.ticketRegistry) {
-            for (Iterator iter = this.ticketRegistry.getTickets().iterator(); iter
-                .hasNext();) {
+            for (final Iterator iter = this.ticketRegistry.getTickets().iterator();
+                iter.hasNext();) {
                 final Ticket ticket = (Ticket) iter.next();
 
-                if (ticket.isExpired())
+                if (ticket.isExpired()) {
                     ticketsToRemove.add(ticket);
+                }
             }
 
-            for (Iterator iter = ticketsToRemove.iterator(); iter.hasNext();) {
+            for (final Iterator iter = ticketsToRemove.iterator(); 
+                iter.hasNext();) {
                 final Ticket ticket = (Ticket) iter.next();
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }

@@ -17,6 +17,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 import junit.framework.TestCase;
 
@@ -26,38 +27,12 @@ import junit.framework.TestCase;
  * sbattaglia Exp $
  */
 public class TicketGrantingTicketImplTests extends TestCase {
+    
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     public void testNullAuthentication() {
         try {
             new TicketGrantingTicketImpl("test", null, null,
-                new NeverExpiresExpirationPolicy(),
-                new DefaultUniqueTicketIdGenerator(),
-                new NeverExpiresExpirationPolicy());
-            fail("Exception expected.");
-        }
-        catch (Exception e) {
-            // this is okay
-        }
-    }
-
-    public void testNullServiceExpirationPolicy() {
-        try {
-            new TicketGrantingTicketImpl("test", null,
-                new ImmutableAuthentication(new SimplePrincipal("Test"), null),
-                new NeverExpiresExpirationPolicy(),
-                new DefaultUniqueTicketIdGenerator(), null);
-            fail("Exception expected.");
-        }
-        catch (Exception e) {
-            // this is okay
-        }
-    }
-
-    public void testNullUniqueTicketIdGenerator() {
-        try {
-            new TicketGrantingTicketImpl("test", null,
-                new ImmutableAuthentication(new SimplePrincipal("Test"), null),
-                new NeverExpiresExpirationPolicy(), null,
                 new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
         }
@@ -71,9 +46,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
 
         assertEquals(t.getAuthentication(), authentication);
     }
@@ -83,9 +56,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
 
         assertTrue(t.isRoot());
     }
@@ -94,13 +65,9 @@ public class TicketGrantingTicketImplTests extends TestCase {
         Authentication authentication = new ImmutableAuthentication(
             new SimplePrincipal("Test"), null);
         TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
 
         assertFalse(t.isRoot());
     }
@@ -113,9 +80,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
         principals.add(principal);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
 
         assertEquals(principals, t.getChainedPrincipals());
     }
@@ -132,13 +97,9 @@ public class TicketGrantingTicketImplTests extends TestCase {
         principals.add(principal);
 
         TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
-            authentication1, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication1, new NeverExpiresExpirationPolicy());
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
 
         assertEquals(principals, t.getChainedPrincipals());
     }
@@ -148,10 +109,8 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
-        ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
+            authentication, new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"), new NeverExpiresExpirationPolicy());
 
         assertTrue(s.isFromNewLogin());
         assertEquals(t.getCountOfUses(), 1);
@@ -162,11 +121,9 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
-        ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
-        s = t.grantServiceTicket(new SimpleService("test"));
+            authentication, new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"), new NeverExpiresExpirationPolicy());
+        s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"), new NeverExpiresExpirationPolicy());
 
         assertFalse(s.isFromNewLogin());
         assertEquals(t.getCountOfUses(), 2);
@@ -177,9 +134,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
         
         assertEquals(HashCodeBuilder.reflectionHashCode(t), t.hashCode());
     }
@@ -189,9 +144,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
         
         assertEquals(ToStringBuilder.reflectionToString(t), t.toString());
     }
@@ -201,9 +154,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy(),
-            new DefaultUniqueTicketIdGenerator(),
-            new NeverExpiresExpirationPolicy());
+            authentication, new NeverExpiresExpirationPolicy());
         
             t.updateLastTimeUsed();
             assertEquals(t.getLastTimeUsed(), System.currentTimeMillis());
@@ -214,9 +165,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new SimplePrincipal("Test"), null);
         try {
             new TicketGrantingTicketImpl(null, null,
-                authentication, null,
-                new DefaultUniqueTicketIdGenerator(),
-                new NeverExpiresExpirationPolicy());
+                authentication, null);
             
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
