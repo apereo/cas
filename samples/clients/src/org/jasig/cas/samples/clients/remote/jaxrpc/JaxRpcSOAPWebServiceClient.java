@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.samples.clients.remote.jaxrpc;
 
-import org.jasig.cas.domain.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.webservice.CasService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;

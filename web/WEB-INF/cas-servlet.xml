@@ -23,34 +23,34 @@
         </property>
     </bean>
 	
-	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController">
+	<bean id="serviceValidateController" class="org.jasig.cas.ticket.web.ServiceValidateController">
 		<property name="casValidationFailure"><value>casServiceValidationFailure</value></property>
 		<property name="casValidationSuccess"><value>casServiceValidationSuccess</value></property>
 		<property name="ticketManager"><ref bean="ticketManager" /></property>
 	</bean>
 	
-	<bean id="proxyController" class="org.jasig.cas.web.ProxyController">
+	<bean id="proxyController" class="org.jasig.cas.ticket.web.ProxyController">
 		<property name="casProxyFailure"><value>casProxyFailureView</value></property>
 		<property name="casProxySuccess"><value>casProxySuccessView</value></property>
 		<property name="ticketManager"><ref bean="ticketManager" /></property>
 	</bean>
 	
-	<bean id="logoutController" class="org.jasig.cas.web.LogoutController">
+	<bean id="logoutController" class="org.jasig.cas.ticket.web.LogoutController">
 		<property name="logoutView"><value>casLogoutView</value></property>
 		<property name="ticketManager"><ref bean="ticketManager" /></property>
 	</bean>
 	
-	<bean id="legacyValidateController" class="org.jasig.cas.web.LegacyValidateController">
+	<bean id="legacyValidateController" class="org.jasig.cas.ticket.web.LegacyValidateController">
 		<property name="ticketManager"><ref bean="ticketManager" /></property>
 	</bean>
 	
-	<bean id="loginController" class="org.jasig.cas.web.LoginController">
+	<bean id="loginController" class="org.jasig.cas.authentication.web.LoginController">
 		<property name="authenticationManager"><ref bean="authenticationManager" /></property>
 		<property name="confirmView"><value>casConfirmView</value></property>
 		<property name="formView"><value>casFailureView</value></property>
 		<property name="successView"><value>casGenericSuccess</value></property>
 		<property name="ticketManager"><ref bean="ticketManager" /></property>
-		<property name="commandClass"><value>org.jasig.cas.domain.UsernamePasswordAuthenticationRequest</value></property>
+		<property name="commandClass"><value>org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest</value></property>
 		<property name="commandName"><value>authenticationRequest</value></property>
 		<property name="loginTokens"><ref bean="loginTokens" /></property>
 	</bean>

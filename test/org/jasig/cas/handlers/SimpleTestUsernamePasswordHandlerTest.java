@@ -1,8 +1,8 @@
 package org.jasig.cas.handlers;
 
-import org.jasig.cas.domain.UsernamePasswordAuthenticationRequest;
-import org.jasig.cas.handlers.AuthenticationHandler;
-import org.jasig.cas.handlers.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 
 import junit.framework.TestCase;
 

@@ -17,7 +17,7 @@
 			<value>org.jasig.cas.webservice.CasService</value>
 		</property>
 		<property name="portInterface">
-			<value>org.jasig.cas.webservice.RemoteCasService</value>
+			<value>org.jasig.cas.webservice.server.RemoteCasService</value>
 		</property>
 		<property name="serviceFactoryClass">
 			<value>org.apache.axis.client.ServiceFactory</value>

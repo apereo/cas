@@ -1,16 +1,16 @@
 package org.jasig.cas.helper;
 
-import org.jasig.cas.domain.CasAttributes;
-import org.jasig.cas.domain.Principal;
-import org.jasig.cas.domain.ProxyGrantingTicket;
-import org.jasig.cas.domain.ServiceTicket;
-import org.jasig.cas.domain.TicketCreationException;
-import org.jasig.cas.domain.support.ServiceTicketImpl;
-import org.jasig.cas.domain.support.SimplePrincipal;
-import org.jasig.cas.domain.support.TicketGrantingTicketImpl;
-import org.jasig.cas.helper.support.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.helper.support.ProxyGrantingTicketCreator;
-import org.jasig.cas.strategy.TimeoutExpirationPolicy;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.ticket.CasAttributes;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.ServiceTicketImpl;
+import org.jasig.cas.ticket.TicketCreationException;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.factory.support.ProxyGrantingTicketCreator;
+import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
+import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import junit.framework.TestCase;
 

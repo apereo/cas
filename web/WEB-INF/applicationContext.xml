@@ -11,36 +11,36 @@
 	</bean>
 	
 	<!-- ID Generators -->
-	<bean id="uniqueIdGenerator" class="org.jasig.cas.helper.support.DefaultUniqueTicketIdGenerator" />
+	<bean id="uniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 	
 	<!-- Expiration policies -->
-	<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.strategy.MultiTimeUseOrTimeoutExpirationPolicy">
+	<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy">
 		<constructor-arg index="0"><value>${policy.expiration.service.numberOfUses}</value></constructor-arg>
 		<constructor-arg index="1"><value>${policy.expiration.service.timeOut}</value></constructor-arg>
 	</bean>
 	
-	<bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.strategy.TimeoutExpirationPolicy">
+	<bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy">
 		<constructor-arg index="0"><value>${policy.expiration.granting.timeOut}</value></constructor-arg>
 	</bean>
 
 	<!-- Ticket Creators -->
-	<bean id="proxyGrantingTicketCreator" class="org.jasig.cas.helper.support.ProxyGrantingTicketCreator">
+	<bean id="proxyGrantingTicketCreator" class="org.jasig.cas.ticket.factory.support.ProxyGrantingTicketCreator">
 		<property name="expirationPolicy"><ref local="grantingTicketExpirationPolicy" /></property>
 		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
 	</bean>
-	<bean id="proxyTicketCreator" class="org.jasig.cas.helper.support.ProxyTicketCreator">
+	<bean id="proxyTicketCreator" class="org.jasig.cas.ticket.factory.support.ProxyTicketCreator">
 		<property name="policy"><ref local="serviceTicketExpirationPolicy" /></property>
 	</bean>
-	<bean id="serviceTicketCreator" class="org.jasig.cas.helper.support.ServiceTicketCreator">
+	<bean id="serviceTicketCreator" class="org.jasig.cas.ticket.factory.support.ServiceTicketCreator">
 		<property name="policy"><ref local="serviceTicketExpirationPolicy" /></property>
 		<property name="serviceRegistry"><ref bean="serviceRegistry" /></property>
 	</bean>
-	<bean id="ticketGrantingTicketCreator" class="org.jasig.cas.helper.support.TicketGrantingTicketCreator">
+	<bean id="ticketGrantingTicketCreator" class="org.jasig.cas.ticket.factory.support.TicketGrantingTicketCreator">
 		<property name="policy"><ref local="grantingTicketExpirationPolicy" /></property>
 	</bean>
 
 	<!-- Ticket Factories -->
-	<bean id="ticketFactory" class="org.jasig.cas.domain.support.DefaultTicketFactory">
+	<bean id="ticketFactory" class="org.jasig.cas.ticket.factory.DefaultTicketFactory">
 		<property name="ticketHelpers">
 			<list>
 				<ref local="proxyGrantingTicketCreator" />
@@ -53,20 +53,20 @@
 	</bean>
 	
 	<!-- Ticket Validators -->
-	<bean id="ticketValidator" class="org.jasig.cas.helper.support.TicketValidatorImpl">
+	<bean id="ticketValidator" class="org.jasig.cas.ticket.validation.TicketValidatorImpl">
 		<property name="ticketValidatorHelpers">
 			<list>
-				<bean class="org.jasig.cas.helper.support.DefaultTicketValidatorHelper" />
-				<bean class="org.jasig.cas.helper.support.ServiceTicketValidatorHelper" />
-				<bean class="org.jasig.cas.helper.support.TicketGrantingTicketValidatorHelper" />
+				<bean class="org.jasig.cas.ticket.validation.support.DefaultTicketValidatorHelper" />
+				<bean class="org.jasig.cas.ticket.validation.support.ServiceTicketValidatorHelper" />
+				<bean class="org.jasig.cas.ticket.validation.support.TicketGrantingTicketValidatorHelper" />
 			</list>
 		</property>
 	</bean>
 	
 	<!-- Ticket Registry -->
-	<bean id="ticketRegistry" class="org.jasig.cas.registry.support.DefaultTicketRegistry" />
+	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 	
-	<bean id="ticketManager" class="org.jasig.cas.service.support.TicketManagerImpl">
+	<bean id="ticketManager" class="org.jasig.cas.ticket.TicketManagerImpl">
 		<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
 		<property name="ticketFactory"><ref local="ticketFactory" /></property>
 		<property name="ticketValidator"><ref local="ticketValidator" /></property>
@@ -83,7 +83,7 @@
 					<property name="jobDetail">
 						<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 							<property name="targetObject">
-								<bean class="org.jasig.cas.registry.support.LoginTokenRegistryCleaner">
+								<bean class="org.jasig.cas.ticket.registry.support.LoginTokenRegistryCleaner">
 									<property name="loginTokens"><ref local="loginTokens" /></property>
 									<property name="timeOut"><value>${web.token.login.timeout}</value></property>
 								</bean>
@@ -99,7 +99,7 @@
 					<property name="jobDetail">
 						<bean id="methodInvokingRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 							<property name="targetObject">
-								<bean id="ticketRegistryCleaner" class="org.jasig.cas.registry.support.DefaultTicketRegistryCleaner">
+								<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.DefaultTicketRegistryCleaner">
 									<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
 								</bean>
 							</property>

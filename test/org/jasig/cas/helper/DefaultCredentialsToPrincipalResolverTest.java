@@ -1,9 +1,9 @@
 package org.jasig.cas.helper;
 
-import org.jasig.cas.domain.Principal;
-import org.jasig.cas.domain.UsernamePasswordAuthenticationRequest;
-import org.jasig.cas.helper.CredentialsToPrincipalResolver;
-import org.jasig.cas.helper.support.DefaultCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.Principal;
 
 import junit.framework.TestCase;
 

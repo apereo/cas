@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.webservice;
 
-import org.jasig.cas.domain.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 
 /**
  * Interface for the services exposed by CAS remote services.  These services
