@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
 
@@ -21,8 +21,8 @@ import org.springframework.beans.factory.InitializingBean;
  * return the principal for the first one that can validate the request.
  * 
  * @author Scott Battaglia
- * @version $Id: AuthenticationManagerImpl.java,v 1.2 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 
 public class AuthenticationManagerImpl implements AuthenticationManager,

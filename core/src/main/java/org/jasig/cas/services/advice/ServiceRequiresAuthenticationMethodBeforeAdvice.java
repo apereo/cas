@@ -1,4 +1,8 @@
-/* Copyright 2004 The JA-SIG Collaborative. All rights reserved. */
+/*
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
+ */
 package org.jasig.cas.services.advice;
 
 import java.lang.reflect.Method;
@@ -8,8 +12,8 @@ import org.jasig.cas.services.AuthenticatedService;
 
 /**
  * @author Scott Battaglia
- * @version $Id: ServiceRequiresAuthenticationMethodBeforeAdvice.java,v 1.1
- * 2005/03/08 20:39:23 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
     ServiceAllowedMethodBeforeAdvice {

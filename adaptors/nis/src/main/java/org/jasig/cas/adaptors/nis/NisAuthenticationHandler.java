@@ -13,7 +13,6 @@ import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
@@ -26,8 +25,8 @@ import org.springframework.beans.factory.DisposableBean;
  * PlainTextPasswordTranslator protocol = nis://
  * 
  * @author Scott Battaglia
- * @version $Id: NisAuthenticationHandler.java,v 1.4 2005/03/07 21:00:05
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 // TODO: can we keep the context open?
 public class NisAuthenticationHandler extends
@@ -61,16 +60,17 @@ public class NisAuthenticationHandler extends
 
     private InitialContext initialContext;
 
-    public boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+    public boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials) {
         try {
             final String nisEntry = this.initialContext.lookup(
-                "system/" + this.map + "/" + uRequest.getUserName()).toString();
+                "system/" + this.map + "/" + credentials.getUserName())
+                .toString();
             final String nisFields[] = nisEntry.split(":");
             String nisEncryptedPassword = nisFields[1];
 
             return nisEncryptedPassword.matches(this.passwordTranslator
-                .translate(uRequest.getPassword()));
+                .translate(credentials.getPassword()));
         }
         catch (NamingException e) {
             return false;

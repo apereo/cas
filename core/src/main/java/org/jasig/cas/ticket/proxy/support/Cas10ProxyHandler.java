@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.proxy.support;
 
@@ -13,7 +13,8 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
  * 1.0 has no proxying capabilities.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class Cas10ProxyHandler implements ProxyHandler {
 

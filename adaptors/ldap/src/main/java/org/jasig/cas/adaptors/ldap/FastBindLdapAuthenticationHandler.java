@@ -17,8 +17,8 @@ import org.jasig.cas.util.LdapUtils;
  * hand the path to the uid.
  * 
  * @author Scott Battaglia
- * @version $Id: FastBindLdapAuthenticationHandler.java,v 1.5 2005/03/07
- * 21:00:05 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class FastBindLdapAuthenticationHandler extends
     AbstractLdapAuthenticationHandler {

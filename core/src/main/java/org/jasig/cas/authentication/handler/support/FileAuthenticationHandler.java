@@ -1,14 +1,13 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
@@ -23,8 +22,8 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * "::" (without quotes).
  * 
  * @author Scott Battaglia
- * @version $Id: FileAuthenticationHandler.java,v 1.5 2005/03/07 21:00:05
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class FileAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
@@ -39,11 +38,12 @@ public class FileAuthenticationHandler extends
 
     private String fileName;
 
-    public boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+    public boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials) {
         BufferedReader bufferedReader = null;
 
-        if (uRequest.getUserName() == null || uRequest.getPassword() == null)
+        if (credentials.getUserName() == null
+            || credentials.getPassword() == null)
             return false;
 
         try {
@@ -55,9 +55,9 @@ public class FileAuthenticationHandler extends
                 final String userName = lineFields[0];
                 final String password = lineFields[1];
 
-                if (uRequest.getUserName().equals(userName)) {
+                if (credentials.getUserName().equals(userName)) {
                     if (this.passwordTranslator.translate(
-                        uRequest.getPassword()).equals(password)) {
+                        credentials.getPassword()).equals(password)) {
                         bufferedReader.close();
                         return true;
                     }

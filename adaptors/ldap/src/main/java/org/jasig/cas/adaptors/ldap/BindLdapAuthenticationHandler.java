@@ -24,8 +24,8 @@ import org.springframework.ldap.core.SearchResultCallbackHandler;
  * Handler to do LDAP bind.
  * 
  * @author Scott Battaglia
- * @version $Id: BindLdapAuthenticationHandler.java,v 1.4 2005/03/07 21:00:05
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class BindLdapAuthenticationHandler extends
     AbstractLdapAuthenticationHandler {

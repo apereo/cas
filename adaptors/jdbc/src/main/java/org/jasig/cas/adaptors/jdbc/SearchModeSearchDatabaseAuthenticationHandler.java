@@ -21,8 +21,8 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Id: SearchModeSearchDatabaseAuthenticationHandler.java,v 1.6
- * 2005/03/07 21:00:05 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 
 public class SearchModeSearchDatabaseAuthenticationHandler extends

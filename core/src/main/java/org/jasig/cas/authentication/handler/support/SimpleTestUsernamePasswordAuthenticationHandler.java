@@ -1,11 +1,10 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.util.StringUtils;
 
@@ -14,16 +13,16 @@ import org.springframework.util.StringUtils;
  * the username and password match.
  * 
  * @author Scott Battaglia
- * @version $Id: SimpleTestUsernamePasswordAuthenticationHandler.java,v 1.3
- * 2005/03/07 21:00:05 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class SimpleTestUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
-    public boolean authenticateInternal(final Credentials credentials) {
-        final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
-        final String username = usernamePasswordCredentials.getUserName();
-        final String password = usernamePasswordCredentials.getPassword();
+    public boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials) {
+        final String username = credentials.getUserName();
+        final String password = credentials.getPassword();
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(password)) {

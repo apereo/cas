@@ -15,8 +15,8 @@ import org.springframework.ldap.core.support.LdapDaoSupport;
  * Abstract class that duplicates functionality of AbstractHandler
  * 
  * @author Scott Battaglia
- * @version $Id: AbstractLdapAuthenticationHandler.java,v 1.3 2005/03/04
- * 20:26:30 apetro Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public abstract class AbstractLdapAuthenticationHandler extends LdapDaoSupport
     implements AuthenticationHandler {

@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.proxy.support;
 
@@ -22,7 +22,8 @@ import org.springframework.beans.factory.InitializingBean;
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 

@@ -14,8 +14,8 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * password handler.
  * 
  * @author Scott Battaglia
- * @version $Id: LegacyCasCredentials.java,v 1.1 2005/02/15 05:06:39 sbattaglia
- * Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class LegacyCasCredentials extends UsernamePasswordCredentials {
 

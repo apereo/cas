@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry.support;
 
@@ -19,8 +19,8 @@ import org.jasig.cas.ticket.registry.RegistryCleaner;
  * Class to determine if a loginToken is ready to be removed.
  * 
  * @author Scott Battaglia
- * @version $Id: LoginTokenRegistryCleaner.java,v 1.1 2005/02/15 05:06:39
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class LoginTokenRegistryCleaner implements RegistryCleaner {
 

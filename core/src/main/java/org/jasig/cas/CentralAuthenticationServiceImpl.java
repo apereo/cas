@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas;
 
@@ -35,7 +35,8 @@ import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
- * @version $Id$
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl extends
     ServletEndpointSupport implements CentralAuthenticationService {

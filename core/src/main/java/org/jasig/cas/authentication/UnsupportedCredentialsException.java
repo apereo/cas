@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
 
@@ -11,16 +11,14 @@ package org.jasig.cas.authentication;
  * do with the credentials presented.
  * 
  * @author Scott Battaglia
- * @version $Id: UnsupportedCredentialsException.java,v 1.2 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class UnsupportedCredentialsException extends AuthenticationException {
 
     private static final long serialVersionUID = 3977861752513837361L;
 
     private static final String CODE = "error.authentication.credentials.unsupported";
-
-    private static final String DESCRIPTION = "Credentials not supported by this handler.";
 
     /**
      * 
@@ -53,9 +51,5 @@ public class UnsupportedCredentialsException extends AuthenticationException {
 
     public String getCode() {
         return CODE;
-    }
-
-    public String getDescription() {
-        return DESCRIPTION;
     }
 }

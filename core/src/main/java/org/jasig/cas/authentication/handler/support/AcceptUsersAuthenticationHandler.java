@@ -1,12 +1,11 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
 import java.util.Map;
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
@@ -20,25 +19,25 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * retrieved from doing map.get(KEY).
  * 
  * @author Scott Battaglia
- * @version $Id: AcceptUsersAuthenticationHandler.java,v 1.3 2005/03/07 21:00:05
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class AcceptUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     private Map users;
 
-    public boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+    public boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials) {
         final String cachedPassword;
 
-        if (!this.users.containsKey(uRequest.getUserName())) {
+        if (!this.users.containsKey(credentials.getUserName())) {
             return false;
         }
 
-        cachedPassword = (String)this.users.get(uRequest.getUserName());
+        cachedPassword = (String)this.users.get(credentials.getUserName());
 
-        return (cachedPassword.equals(uRequest.getPassword()));
+        return (cachedPassword.equals(credentials.getPassword()));
     }
 
     public void afterPropertiesSet() throws Exception {

@@ -1,7 +1,7 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
 
@@ -12,8 +12,8 @@ package org.jasig.cas.util;
  * encrypted password.
  * 
  * @author Scott Battaglia
- * @version $Id: PasswordTranslator.java,v 1.1 2005/02/15 05:06:38 sbattaglia
- * Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public interface PasswordTranslator {
 
