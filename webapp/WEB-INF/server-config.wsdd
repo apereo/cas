@@ -32,7 +32,7 @@
  </service>
  <service name="CentralAuthenticationService" provider="java:RPC">
   <parameter name="allowedMethods" value="createTicketGrantingTicket,delegateTicketGrantingTicket,destroyTicketGrantingTicket,grantServiceTicket,validateServiceTicket"/>
-  <parameter name="className" value="org.jasig.cas.remoting.server.CentralAuthenticationServiceRemoteService"/>
+  <parameter name="className" value="org.jasig.cas.remoting.server.RemoteCentralAuthenticationService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.UsernamePasswordCredentials" qname="ns:UsernamePasswordCredentials" xmlns:ns="urn:CentralAuthenticationService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.SimplePrincipal" qname="ns:SimplePrincipal" xmlns:ns="urn:CentralAuthenticationService"/>
 	<beanMapping languageSpecificType="java:org.jasig.cas.authentication.principal.SimpleService" qname="ns:SimpleService" xmlns:ns="urn:CentralAuthenticationService"/>
