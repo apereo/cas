@@ -5,7 +5,6 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketCreationException;
@@ -32,11 +31,10 @@ public interface CentralAuthenticationService {
      * 
      * @param credentials The credentials to create the ticket for
      * @return The String identifier of the ticket.
-     * @throws AuthenticationException if credentials do not authenticate
      * @throws TicketCreationException if ticket cannot be created
      */
     String createTicketGrantingTicket(Credentials credentials)
-        throws AuthenticationException, TicketCreationException;
+        throws TicketCreationException;
 
     /**
      * Grant a ServiceTicket for a Service.
@@ -60,12 +58,9 @@ public interface CentralAuthenticationService {
      * ServiceTicket
      * @return the ServiceTicket for target Service.
      * @throws TicketCreationException if the ticket could not be created.
-     * @throws AuthenticationException if there was an error authenticating the
-     * credentials.
      */
     String grantServiceTicket(String ticketGrantingTicketId, Service service,
-        Credentials credentials) throws AuthenticationException,
-        TicketCreationException;
+        Credentials credentials) throws TicketCreationException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -97,10 +92,7 @@ public interface CentralAuthenticationService {
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy
      * authentication.
      * @throws TicketException if there was an error creating the ticket
-     * @throws AuthenticationException if there was an error authenticating the
-     * credentials.
      */
     String delegateTicketGrantingTicket(String serviceTicketId,
-        Credentials credentials) throws TicketException,
-        AuthenticationException;
+        Credentials credentials) throws TicketException;
 }

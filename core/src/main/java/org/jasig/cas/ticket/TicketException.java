@@ -104,7 +104,7 @@ public class TicketException extends Exception {
      * @return Returns the code.
      */
     public String getCode() {
-        return this.code.toString();
+        return (this.getCause() != null) ? this.getCause().toString() : this.code.toString();
     }
 
     /**

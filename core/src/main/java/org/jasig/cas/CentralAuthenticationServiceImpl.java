@@ -87,7 +87,7 @@ public final class CentralAuthenticationServiceImpl implements
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
-        throws AuthenticationException, TicketCreationException {
+        throws TicketCreationException {
 
         try {
             final TicketGrantingTicket ticketGrantingTicket;
@@ -102,15 +102,19 @@ public final class CentralAuthenticationServiceImpl implements
                 }
 
                 if (credentials != null) {
-                    Authentication authentication = this.authenticationManager
+                    try {
+                        Authentication authentication = this.authenticationManager
                         .authenticate(credentials);
 
-                    Principal originalPrincipal = ticketGrantingTicket
-                        .getAuthentication().getPrincipal();
-                    Principal newPrincipal = authentication.getPrincipal();
-
-                    if (!newPrincipal.equals(originalPrincipal)) {
-                        return null;
+                        Principal originalPrincipal = ticketGrantingTicket
+                            .getAuthentication().getPrincipal();
+                        Principal newPrincipal = authentication.getPrincipal();
+    
+                        if (!newPrincipal.equals(originalPrincipal)) {
+                            return null;
+                        }
+                    } catch (AuthenticationException e) {
+                        throw new TicketCreationException(e);
                     }
                 }
 
@@ -144,39 +148,38 @@ public final class CentralAuthenticationServiceImpl implements
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketCreationException {
-        try {
             return this.grantServiceTicket(ticketGrantingTicketId, service,
                 null);
-        } catch (AuthenticationException e) {
-            // this should not happen as authentication is never done from here.
-            log.error(e);
-            return null;
-        }
     }
 
     public String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials credentials) throws AuthenticationException,
-        TicketException {
-        final Authentication authentication = this.authenticationManager
-            .authenticate(credentials);
+        final Credentials credentials) throws TicketException {
+        try {
+            final Authentication authentication = this.authenticationManager
+                .authenticate(credentials);
 
-        final ServiceTicket serviceTicket;
-        synchronized (this.ticketRegistry) {
-            serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(
-                serviceTicketId, ServiceTicket.class);
+            final ServiceTicket serviceTicket;
+            synchronized (this.ticketRegistry) {
+                serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(
+                    serviceTicketId, ServiceTicket.class);
 
-            if (serviceTicket == null || serviceTicket.isExpired()) {
-                return null;
+                if (serviceTicket == null || serviceTicket.isExpired()) {
+                    return null;
+                }
+
+                TicketGrantingTicket ticketGrantingTicket = serviceTicket
+                    .grantTicketGrantingTicket(this.uniqueTicketIdGenerator
+                        .getNewTicketId(TicketGrantingTicket.PREFIX),
+                        authentication,
+                        this.ticketGrantingTicketExpirationPolicy);
+
+                this.ticketRegistry.addTicket(ticketGrantingTicket);
+
+                return ticketGrantingTicket.getId();
             }
-
-            TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                .grantTicketGrantingTicket(this.uniqueTicketIdGenerator
-                    .getNewTicketId(TicketGrantingTicket.PREFIX),
-                    authentication, this.ticketGrantingTicketExpirationPolicy);
-
-            this.ticketRegistry.addTicket(ticketGrantingTicket);
-
-            return ticketGrantingTicket.getId();
+        }
+        catch (AuthenticationException e) {
+            throw new TicketCreationException(e);
         }
     }
 
@@ -222,20 +225,24 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     public String createTicketGrantingTicket(final Credentials credentials)
-        throws AuthenticationException {
-        final Authentication authentication = this.authenticationManager
-            .authenticate(credentials);
-        final TicketGrantingTicket ticketGrantingTicket;
-
-        synchronized (this.ticketRegistry) {
-            ticketGrantingTicket = new TicketGrantingTicketImpl(
-                this.uniqueTicketIdGenerator
-                    .getNewTicketId(TicketGrantingTicket.PREFIX),
-                authentication, this.ticketGrantingTicketExpirationPolicy);
-
-            this.ticketRegistry.addTicket(ticketGrantingTicket);
-
-            return ticketGrantingTicket.getId();
+        throws TicketCreationException {
+        try {
+            final Authentication authentication = this.authenticationManager
+                .authenticate(credentials);
+            final TicketGrantingTicket ticketGrantingTicket;
+    
+            synchronized (this.ticketRegistry) {
+                ticketGrantingTicket = new TicketGrantingTicketImpl(
+                    this.uniqueTicketIdGenerator
+                        .getNewTicketId(TicketGrantingTicket.PREFIX),
+                    authentication, this.ticketGrantingTicketExpirationPolicy);
+    
+                this.ticketRegistry.addTicket(ticketGrantingTicket);
+    
+                return ticketGrantingTicket.getId();
+            }
+        } catch (AuthenticationException e) {
+            throw new TicketCreationException(e);
         }
     }
 
