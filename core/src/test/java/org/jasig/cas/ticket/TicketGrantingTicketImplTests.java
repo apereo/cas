@@ -8,6 +8,8 @@ package org.jasig.cas.ticket;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.SimpleService;
@@ -169,5 +171,56 @@ public class TicketGrantingTicketImplTests extends TestCase {
         assertFalse(s.isFromNewLogin());
         assertEquals(t.getCountOfUses(), 2);
     }
+    
+    public void testHashCode() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
 
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+        
+        assertEquals(HashCodeBuilder.reflectionHashCode(t), t.hashCode());
+    }
+    
+    public void testToString() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+        
+        assertEquals(ToStringBuilder.reflectionToString(t), t.toString());
+    }
+    
+    public void testIncrementTimeUpdated() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+        
+            t.updateLastTimeUsed();
+            assertEquals(t.getLastTimeUsed(), System.currentTimeMillis());
+    }
+    
+    public void testNoIdOrPolicy() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+        try {
+            new TicketGrantingTicketImpl(null, null,
+                authentication, null,
+                new DefaultUniqueTicketIdGenerator(),
+                new NeverExpiresExpirationPolicy());
+            
+            fail("IllegalArgumentException expected.");
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+    }
 }
