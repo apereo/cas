@@ -73,7 +73,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /**
      * @see org.jasig.cas.CentralAuthenticationSerivce#validateServiceTicket(java.lang.String, org.jasig.cas.Service, org.jasig.cas.authentication.AuthenticationSpecification)
      */
-    public ServiceTicket validateServiceTicket(String serviceTicketId, Service service, AuthenticationSpecification authspec) {
+    public ServiceTicket validateServiceTicket(String serviceTicketId, Service service) {
         // TODO Auto-generated method stub
         return null;
     }
