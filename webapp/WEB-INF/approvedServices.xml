@@ -19,9 +19,6 @@
 		<property name="ticketRegistry"><ref bean="ticketRegistry" /></property>
 	</bean>
 
-	<!-- ADVISORS -->	
-	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
-
 	<!-- ADVISE TO CHECK IF A SERVICE IS EVEN ALLOWED TO ACCESS THE SYSTEM -->
 	<bean id="serviceAllowedMethodBeforeAdviceAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
 		<constructor-arg><ref local="serviceAllowedMethodBeforeAdvice" /></constructor-arg>
