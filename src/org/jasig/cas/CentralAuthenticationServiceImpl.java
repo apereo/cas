@@ -109,8 +109,6 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
         this.ticketRegistry.addTicket(ticketGrantingTicket);
         
         return ticketGrantingTicket.getId();
-        
-        //TODO match up serviceTicket.service to actual service (via Credentials having "Service" ?)
     }
 
     /**
