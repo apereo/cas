@@ -16,7 +16,12 @@ package org.jasig.cas.authentication;
  */
 public abstract class AuthenticationException extends Exception {
 
+    /** serialVersionID for serializability. */
     private static final long serialVersionUID = 3906648604830611762L;
 
+    /**
+     * Method to retrieve the code describing this exception.
+     * @return the String code describing this exception.
+     */
     public abstract String getCode();
 }

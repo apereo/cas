@@ -25,13 +25,16 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.0
  */
 
-public class AuthenticationManagerImpl implements AuthenticationManager,
+public final class AuthenticationManagerImpl implements AuthenticationManager,
     InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** Logger for logging events, errors, warnings, etc. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    /** List of authentication handlers. */
     private List authenticationHandlers;
 
+    /** List of CredentialsToPrincipalResolvers. */
     private List credentialsToPrincipalResolvers;
 
     public Authentication authenticateAndResolveCredentials(
@@ -55,14 +58,14 @@ public class AuthenticationManagerImpl implements AuthenticationManager,
                     + " successfully authenticated the user.");
                 authenticated = true;
                 break;
-            }
-            catch (UnsupportedCredentialsException e) {
+            } catch (UnsupportedCredentialsException e) {
                 continue;
             }
         }
 
-        if (!authenticated)
+        if (!authenticated) {
             throw new UnsupportedCredentialsException();
+        }
 
         for (Iterator resolvers = this.credentialsToPrincipalResolvers
             .iterator(); resolvers.hasNext();) {
@@ -109,7 +112,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager,
      * credentialsToPrincipalResolvers to set.
      */
     public void setCredentialsToPrincipalResolvers(
-        List credentialsToPrincipalResolvers) {
+        final List credentialsToPrincipalResolvers) {
         this.credentialsToPrincipalResolvers = credentialsToPrincipalResolvers;
     }
 }
