@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  * @version $Id$
  *
  */
-public class Cas10ProxyHandlerTestCase extends TestCase {
+public class Cas10ProxyHandlerTest extends TestCase {
     private ProxyHandler proxyHandler = new Cas10ProxyHandler();
     
     public void testNoCredentialsOrProxy() {

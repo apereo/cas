@@ -110,12 +110,8 @@ public class LoginController extends SimpleFormController implements Initializin
         final boolean warn = this.convertValueToBoolean(this.getCookieValue(request, WebConstants.COOKIE_PRIVACY));
         final boolean gateway = StringUtils.hasText(request.getParameter(WebConstants.GATEWAY));
         final String service = request.getParameter(WebConstants.SERVICE);
-        final boolean renew = StringUtils.hasText(request.getParameter(WebConstants.RENEW));
+        final boolean renew = this.convertValueToBoolean(request.getParameter(WebConstants.RENEW));
 
-        System.out.println("COOKIE VALUE: " + this.getCookieValue(request,WebConstants.COOKIE_PRIVACY));
-        System.out.println("COOKIE VALUE: " + warn);
-        
-        
         // if we managed to find an existing ticketGrantingTicketId
         if (StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service) && !renew) {
             // we have a service and no request for renew
@@ -219,7 +215,7 @@ public class LoginController extends SimpleFormController implements Initializin
     }
 
     private boolean convertValueToBoolean(final String value) {
-        return Boolean.getBoolean(value);
+        return Boolean.valueOf(value).booleanValue();
     }
 
     /**
