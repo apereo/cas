@@ -16,10 +16,10 @@ import javax.xml.rpc.encoding.TypeMappingRegistry;
 
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.springframework.remoting.jaxrpc.JaxRpcPortProxyFactoryBean;
+import org.springframework.remoting.jaxrpc.JaxRpcServicePostProcessor;
 
 /**
- * Convenience extension of JaxrpcPorProxyFactoryBean that attempts to detect the JavaBeans it needs to register by inspecting the service interface's
+ * Axis-specific JaxRpcServicePostProcessor that attempts to detect the JavaBeans it needs to register by inspecting the service interface's
  * return types and parameter types for each method. Nested version attempts to find beans nested within JavaBeans and register them also. It is
  * currently designed to ignore any java.* or javax.* class. It also assumes that the types are JavaBeans. It does not actually check. A more
  * sophisticated version would be able to check if a class was a valid JavaBean and only register valid JavaBeans.
@@ -28,9 +28,10 @@ import org.springframework.remoting.jaxrpc.JaxRpcPortProxyFactoryBean;
  * parameters to a method is an interface and you need to register the implementing class.
  * 
  * @author Scott Battaglia
+ * @author Dmitriy Kopylenko
  * @version $Id$
  */
-public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFactoryBean {
+public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServicePostProcessor {
 
     private String namespace;
     
@@ -39,12 +40,14 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
     private static final String PACKAGE_NAME_JAVAX = "javax.";
     
     private List beans;
+    
+    private Class serviceInterface;
 
     protected void registerBeans(TypeMapping mapping, List registeredBeans, Class clazz) {
         if (registeredBeans.contains(clazz) || clazz.getName().startsWith(PACKAGE_NAME_JAVA) || clazz.getName().startsWith(PACKAGE_NAME_JAVAX))
             return;
 
-        if (!clazz.equals(this.getServiceInterface())) {
+        if (!clazz.equals(this.serviceInterface)) {
             registeredBeans.add(clazz);
             addJavaBeanToMap(mapping, clazz);
         }
@@ -67,10 +70,10 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
     /**
      * @see org.springframework.remoting.jaxrpc.JaxRpcPortClientInterceptor#postProcessJaxRpcService(javax.xml.rpc.Service)
      */
-    protected void postProcessJaxRpcService(Service service) {
+    public void postProcessJaxRpcService(Service service) {
         final TypeMappingRegistry registry = service.getTypeMappingRegistry();
         final TypeMapping mapping = registry.createTypeMapping();
-        final Class serviceInterface = this.getServiceInterface();
+        final Class serviceInterface = this.serviceInterface;
 
         registerBeans(mapping, new ArrayList(), serviceInterface);
         
@@ -104,5 +107,12 @@ public class NestedJavaBeanAxisPortProxyFactoryBean extends JaxRpcPortProxyFacto
     
     public void setJavaBeans(List beans) {
         this.beans = beans;
+    }
+    
+    /**
+     * @param serviceInterface
+     */
+    public void setServiceInterface(Class serviceInterface) {
+        this.serviceInterface = serviceInterface;
     }
 }

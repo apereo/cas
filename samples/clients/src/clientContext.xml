@@ -12,7 +12,7 @@
 	</bean>
 	
 	<!-- Proxy for the JAX-RPC/Axis-exported OrderService -->
-	<bean id="casService" class="org.jasig.cas.remoting.client.NestedJavaBeanAxisPortProxyFactoryBean">
+	<bean id="casService" class="org.jasig.cas.remoting.client.NestedJavaBeanMappingServicePostProcessor">
 		<property name="serviceInterface">
 			<value>org.jasig.cas.remoting.CasService</value>
 		</property>
