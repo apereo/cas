@@ -309,7 +309,7 @@
 		<dependency>
 			<groupId>springframework</groupId>
 			<artifactId>spring</artifactId>
-			<version>1.2-dev-1</version>
+			<version>1.2-dev-build.226-20050316</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
