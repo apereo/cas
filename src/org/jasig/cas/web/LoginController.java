@@ -144,12 +144,7 @@ public class LoginController extends SimpleFormController implements Initializin
         this.credentialsBinder.bind(request, credentials);
 
         if (renew && StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service)) {
-            try {
-                serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
-            } catch (AuthenticationException e) {
-                errors.reject("bad.credentials", null);
-                return super.processFormSubmission(request, response, command, errors);
-            }
+            serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service), credentials);
         }
 
         if (serviceTicketId == null) {
