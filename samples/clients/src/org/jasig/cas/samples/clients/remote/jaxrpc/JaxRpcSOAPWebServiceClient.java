@@ -6,6 +6,7 @@ package org.jasig.cas.samples.clients.remote.jaxrpc;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Assertion;
+import org.jasig.cas.authentication.AuthenticationSpecification;
 import org.jasig.cas.authentication.Cas10ProtocolAuthenticationSpecification;
 import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.Principal;
@@ -30,13 +31,19 @@ public class JaxRpcSOAPWebServiceClient {
     public void invokeCasService() {
         CentralAuthenticationService centralAuthenticationService = (CentralAuthenticationService)this.beanFactory.getBean("casService");
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
+        AuthenticationSpecification authenticationSpecification = new Cas10ProtocolAuthenticationSpecification(false);
 
         authRequest.setUserName("test");
         authRequest.setPassword("test");
         try {
             String ticketGrantingTicketId = centralAuthenticationService.createTicketGrantingTicket(authRequest);
             String serviceTicket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService("http://www.rutgers.edu"));
-            Assertion assertion = centralAuthenticationService.validateServiceTicket(serviceTicket, new SimpleService("http://www.rutgers.edu"), new Cas10ProtocolAuthenticationSpecification(false));
+            Assertion assertion = centralAuthenticationService.validateServiceTicket(serviceTicket, new SimpleService("http://www.rutgers.edu"));
+            
+            if (!authenticationSpecification.isSatisfiedBy(assertion)) {
+                throw new TicketException(TicketException.INVALID_TICKET, "ticket not backed by initial CAS login, as requested");
+            }
+            
             System.out.println(serviceTicket);
             System.out.println(((Principal) assertion.getChainedPrincipals().get(0)).getId());
         } catch (TicketException tce) {

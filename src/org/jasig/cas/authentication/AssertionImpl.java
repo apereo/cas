@@ -10,10 +10,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  *
  */
 public class AssertionImpl implements Assertion {
-	private List principals;
+	final private List principals;
+    final private boolean fromNewLogin;
 	
-	public AssertionImpl(final List principals) {
+	public AssertionImpl(final List principals, boolean fromNewLogin) {
 		this.principals = principals;
+        this.fromNewLogin = fromNewLogin;
 	}
 
 	/**
@@ -26,4 +28,10 @@ public class AssertionImpl implements Assertion {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+    /**
+     * @return Returns the isFromNewLogin.
+     */
+    public boolean isFromNewLogin() {
+        return fromNewLogin;
+    }
 }

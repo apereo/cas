@@ -6,7 +6,6 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.Assertion;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationSpecification;
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.ticket.TicketCreationException;
@@ -50,7 +49,7 @@ public interface CentralAuthenticationService {
      * @param authenticationSpecification The specification of the authentication parameters we have defined that the ticket must meet to be valid.
      * @return ServiceTicket if valid for the service and satisifies AuthenticationSpecification.
      */
-    Assertion validateServiceTicket(String serviceTicketId, Service service, AuthenticationSpecification authenticationSpecification)
+    Assertion validateServiceTicket(String serviceTicketId, Service service)
         throws TicketException;
 
     /**

@@ -17,5 +17,7 @@ import java.util.List;
 public interface Assertion {
 	
     List getChainedPrincipals();
+    
+    boolean isFromNewLogin();
 
 }

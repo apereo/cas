@@ -61,8 +61,13 @@ public class ServiceValidateController extends AbstractController implements Ini
         final Assertion assertion;
 
         try {
-            assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service), authenticationSpecification);
+            assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service));
 
+           if (!authenticationSpecification.isSatisfiedBy(assertion)) {
+                log.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy authentication specification.");
+                throw new TicketException(TicketException.INVALID_TICKET, "ticket not backed by initial CAS login, as requested");
+           }
+            
             model.put(WebConstants.PRINCIPAL, assertion.getChainedPrincipals().get(0));
             
             if (assertion.getChainedPrincipals().size() > 1) {
