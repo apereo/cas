@@ -110,12 +110,12 @@ public class ServiceValidateController extends AbstractController implements Ini
             }
             model.put(WebConstants.ASSERTION, assertion);
 
-            return new ModelAndView(ViewNames.CONST_SERVICE_SUCCESS, model);
+            return new ModelAndView(this.successView, model);
         }
         catch (TicketException te) {
             model.put(WebConstants.CODE, te.getCode());
             model.put(WebConstants.DESC, te.getDescription());
-            return new ModelAndView(ViewNames.CONST_SERVICE_FAILURE, model);
+            return new ModelAndView(this.failureView, model);
         }
     }
 
