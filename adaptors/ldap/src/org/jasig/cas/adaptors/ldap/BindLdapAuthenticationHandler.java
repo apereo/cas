@@ -93,7 +93,7 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements Aut
 
     protected SearchControls getSearchControls() {
         SearchControls constraints = new SearchControls(this.scopeValue, this.maxNumberResults, this.timeout, RETURN_VALUES, false, false);
-        constraints.setSearchScope(SearchControls.SUBTREE_SCOPE); // TODO why????
+        constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         return constraints;
     }

@@ -112,8 +112,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
     }
 
     /**
-     * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(java.lang.String, org.jasig.cas.Service,
-     * org.jasig.cas.authentication.AuthenticationSpecification)
+     * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(java.lang.String, org.jasig.cas.authentication.Service)
      */
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         if (serviceTicketId == null || service == null) {
@@ -141,7 +140,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
             serviceTicket.incrementCountOfUses();
         }
 
-        return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals(), serviceTicket.isFromNewLogin()); // TODO handle proxy case
+        return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals(), serviceTicket.isFromNewLogin());
     }
 
     /**
