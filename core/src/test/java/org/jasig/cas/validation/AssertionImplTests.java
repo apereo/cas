@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.validation.AssertionImpl;
+import org.jasig.cas.validation.ImmutableAssertionImpl;
 
 import junit.framework.TestCase;
 
@@ -23,7 +23,7 @@ public class AssertionImplTests extends TestCase {
 
     public void testNullParameters() {
         try {
-            new AssertionImpl(null, false);
+            new ImmutableAssertionImpl(null, false);
         }
         catch (IllegalArgumentException e) {
             return;
@@ -34,7 +34,7 @@ public class AssertionImplTests extends TestCase {
 
     public void testEmptyParameters() {
         try {
-            new AssertionImpl(new ArrayList(), false);
+            new ImmutableAssertionImpl(new ArrayList(), false);
         }
         catch (IllegalArgumentException e) {
             return;
@@ -50,7 +50,7 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test1"));
         list.add(new SimplePrincipal("test2"));
 
-        final AssertionImpl assertion = new AssertionImpl(list, true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, true);
 
         assertEquals(list, assertion.getChainedPrincipals());
     }
@@ -60,7 +60,7 @@ public class AssertionImplTests extends TestCase {
 
         list.add(new SimplePrincipal("test"));
 
-        final AssertionImpl assertion = new AssertionImpl(list, false);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, false);
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -70,7 +70,7 @@ public class AssertionImplTests extends TestCase {
 
         list.add(new SimplePrincipal("test"));
 
-        final AssertionImpl assertion = new AssertionImpl(list, true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, true);
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -79,7 +79,7 @@ public class AssertionImplTests extends TestCase {
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
 
-        final AssertionImpl assertion = new AssertionImpl(list, true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, true);
 
         assertFalse(assertion.equals(null));
     }
@@ -88,7 +88,7 @@ public class AssertionImplTests extends TestCase {
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
 
-        final AssertionImpl assertion = new AssertionImpl(list, true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, true);
 
         assertFalse(assertion.equals("test"));
     }
@@ -99,8 +99,8 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test"));
         list1.add(new SimplePrincipal("test"));
 
-        final AssertionImpl assertion = new AssertionImpl(list, true);
-        final AssertionImpl assertion1 = new AssertionImpl(list1, true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, true);
+        final ImmutableAssertionImpl assertion1 = new ImmutableAssertionImpl(list1, true);
 
         assertTrue(assertion.equals(assertion1));
     }
@@ -110,7 +110,7 @@ public class AssertionImplTests extends TestCase {
 
         list.add(new SimplePrincipal("test"));
 
-        final AssertionImpl assertion = new AssertionImpl(list, true);
+        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(list, true);
         assertEquals(ToStringBuilder.reflectionToString(assertion), assertion
             .toString());
     }

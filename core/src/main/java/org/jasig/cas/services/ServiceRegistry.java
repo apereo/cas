@@ -28,7 +28,13 @@ public interface ServiceRegistry {
      */
     boolean serviceExists(String serviceId);
 
-    AuthenticatedService getService(String serviceId);
+    /**
+     * Retrieve a service from the registry.
+     * 
+     * @param serviceId the id of the service to retrieve.
+     * @return the service if found, null otherwise.
+     */
+    RegisteredService getService(String serviceId);
 
     /**
      * Method to return the list of services in the registry.

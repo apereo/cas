@@ -6,12 +6,22 @@
 package org.jasig.cas.services;
 
 /**
+ * Strategy to implement a callback to a service for the purposes
+ * of logging out.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
 public interface SingleSignoutCallback {
 
-    boolean sendSingleSignoutRequest(AuthenticatedService authenticatedService,
+    /**
+     * Method to initiate a sign out request.
+     * 
+     * @param authenticatedService the service we are signing out of
+     * @param serviceTicketId The service ticket.
+     * @return true if we signed out, false otherwise.
+     */
+    boolean signOut(RegisteredService authenticatedService,
         String serviceTicketId);
 }

@@ -8,7 +8,7 @@ package org.jasig.cas.services.advice;
 import java.lang.reflect.Method;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.AuthenticatedService;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.springframework.aop.MethodBeforeAdvice;
@@ -32,7 +32,7 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
     public final void before(final Method method, final Object[] args,
         final Object target) throws Throwable {
         final Service service = (Service) args[1];
-        final AuthenticatedService authenticatedService = this.serviceRegistry
+        final RegisteredService authenticatedService = this.serviceRegistry
             .getService(service.getId());
 
         if (authenticatedService == null) {
@@ -44,7 +44,7 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
     }
 
     protected void beforeInternal(final Method method, final Object[] args,
-        final Object target, final AuthenticatedService service)
+        final Object target, final RegisteredService service)
         throws Exception {
         // this will be overwritten by extending classes
     }

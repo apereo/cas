@@ -23,7 +23,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.AssertionImpl;
+import org.jasig.cas.validation.ImmutableAssertionImpl;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -103,7 +103,7 @@ public final class CentralAuthenticationServiceImpl implements
 
                 if (credentials != null) {
                     Authentication authentication = this.authenticationManager
-                        .authenticateAndResolveCredentials(credentials);
+                        .authenticate(credentials);
 
                     Principal originalPrincipal = ticketGrantingTicket
                         .getAuthentication().getPrincipal();
@@ -158,7 +158,7 @@ public final class CentralAuthenticationServiceImpl implements
         final Credentials credentials) throws AuthenticationException,
         TicketException {
         final Authentication authentication = this.authenticationManager
-            .authenticateAndResolveCredentials(credentials);
+            .authenticate(credentials);
 
         final ServiceTicket serviceTicket;
         synchronized (this.ticketRegistry) {
@@ -216,7 +216,7 @@ public final class CentralAuthenticationServiceImpl implements
                         + "' does not match supplied service");
             }
 
-            return new AssertionImpl(serviceTicket.getGrantingTicket()
+            return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
                 .getChainedPrincipals(), serviceTicket.isFromNewLogin());
         }
     }
@@ -224,7 +224,7 @@ public final class CentralAuthenticationServiceImpl implements
     public String createTicketGrantingTicket(final Credentials credentials)
         throws AuthenticationException {
         final Authentication authentication = this.authenticationManager
-            .authenticateAndResolveCredentials(credentials);
+            .authenticate(credentials);
         final TicketGrantingTicket ticketGrantingTicket;
 
         synchronized (this.ticketRegistry) {

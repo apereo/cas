@@ -5,7 +5,9 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -38,7 +40,7 @@ public final class ImmutableAuthentication implements Authentication {
     public ImmutableAuthentication(final Principal principal,
         final Map attributes) {
         this.principal = principal;
-        this.attributes = attributes;
+        this.attributes = Collections.unmodifiableMap(attributes == null ? new HashMap() : attributes);
         this.authenticatedDate = new Date();
     }
 

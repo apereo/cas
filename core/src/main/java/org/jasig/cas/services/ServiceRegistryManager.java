@@ -6,6 +6,9 @@
 package org.jasig.cas.services;
 
 /**
+ * Interface to a class that can manage the registry for 
+ * services.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
@@ -17,7 +20,7 @@ public interface ServiceRegistryManager {
      * 
      * @param service The service to add.
      */
-    void addService(AuthenticatedService service);
+    void addService(RegisteredService service);
 
     /**
      * Method to delete a service from the list. Return value indicates whether
@@ -30,5 +33,8 @@ public interface ServiceRegistryManager {
      */
     boolean deleteService(String serviceId);
 
+    /**
+     * Method to clear the registry of all entries.
+     */
     void clear();
 }

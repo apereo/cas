@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
@@ -40,5 +42,13 @@ public class ImmutableAuthenticationTests extends TestCase {
     
     public void testAuthenticatedDate() {
         assertEquals(new Date(), this.authentication.getAuthenticatedDate());
+    }
+    
+    public void testHashCode() {
+        assertEquals(HashCodeBuilder.reflectionHashCode(this.authentication), this.authentication.hashCode());
+    }
+    
+    public void testToString() {
+        assertEquals(ToStringBuilder.reflectionToString(this.authentication), this.authentication.toString());
     }
 }

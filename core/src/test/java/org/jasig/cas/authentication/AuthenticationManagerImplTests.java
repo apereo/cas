@@ -78,9 +78,18 @@ public class AuthenticationManagerImplTests extends TestCase {
 		try {
 			this.manager.afterPropertiesSet();
 		} catch (Exception e) {
-			fail("Exception expected.");
+			fail("Exception not expected.");
 		}
 	}
+    
+    public void testNoPopulators() {
+        setUpManager2(this.manager);
+        try {
+            this.manager.afterPropertiesSet();
+        } catch (Exception e) {
+            fail("Exception not expected.");
+        } 
+    }
     
     public void testSuccessfulAuthentication() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
@@ -90,7 +99,7 @@ public class AuthenticationManagerImplTests extends TestCase {
         
         setUpManager(this.manager);
         try {
-            Authentication authentication = this.manager.authenticateAndResolveCredentials(c);
+            Authentication authentication = this.manager.authenticate(c);
             assertEquals(p, authentication.getPrincipal());
         } catch (AuthenticationException e) {
             fail(e.getMessage());
@@ -104,7 +113,7 @@ public class AuthenticationManagerImplTests extends TestCase {
         
         setUpManager(this.manager);
         try {
-            this.manager.authenticateAndResolveCredentials(c);
+            this.manager.authenticate(c);
             fail("Authentication should have failed.");
         } catch (AuthenticationException e) {
             return;
@@ -114,7 +123,7 @@ public class AuthenticationManagerImplTests extends TestCase {
 	public void testNoHandlerFound() {
         setUpManager(this.manager);
         try {
-            this.manager.authenticateAndResolveCredentials(new TestCredentials());
+            this.manager.authenticate(new TestCredentials());
             fail("Authentication should have failed.");
         } catch (UnsupportedCredentialsException e) {
             return;
@@ -129,7 +138,7 @@ public class AuthenticationManagerImplTests extends TestCase {
         c.setUserName("test");
         c.setPassword("test");
         try {
-            this.manager.authenticateAndResolveCredentials(c);
+            this.manager.authenticate(c);
             fail("Authentication should have failed.");
         } catch (UnsupportedCredentialsException e) {
             return;

@@ -34,7 +34,7 @@ public final class DefaultServiceRegistry implements ServiceRegistry,
         return this.services.values();
     }
 
-    public void addService(final AuthenticatedService service) {
+    public void addService(final RegisteredService service) {
         log
             .debug("Adding service [" + service.getId()
                 + "] to serviceRegistry");
@@ -46,8 +46,8 @@ public final class DefaultServiceRegistry implements ServiceRegistry,
         return this.services.remove(serviceId) != null;
     }
 
-    public AuthenticatedService getService(final String serviceId) {
-        AuthenticatedService authenticatedService = (AuthenticatedService) this.services
+    public RegisteredService getService(final String serviceId) {
+        RegisteredService authenticatedService = (RegisteredService) this.services
             .get(serviceId);
         log.debug("Attempting to retrieve service [" + serviceId
             + "] from Service Registry");
