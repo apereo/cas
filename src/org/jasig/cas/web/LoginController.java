@@ -10,8 +10,6 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
@@ -43,8 +41,6 @@ import org.springframework.web.util.WebUtils;
  * @version $Id$
  */
 public class LoginController extends AbstractFormController {
-
-    protected final Log log = LogFactory.getLog(getClass());
 
     private TicketManager ticketManager;
 
@@ -83,7 +79,7 @@ public class LoginController extends AbstractFormController {
         String loginToken = request.getParameter(WebConstants.TICKET);
 
         if (!this.loginTokens.containsKey(loginToken)) {
-            log.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
+            logger.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
             errors.reject("error.invalid.loginticket", null);
             return showForm(request, response, errors);
         }
@@ -93,12 +89,12 @@ public class LoginController extends AbstractFormController {
         principal = this.authenticationManager.authenticateCredentials(authRequest);
 
         if (principal != null) {
-            log.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");
+            logger.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");
 
             TicketGrantingTicket ticket = getTicketGrantingTicket(request, principal, validationRequest);
 
             if (ticket == null) {
-                log.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
+                logger.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
                 ticket = this.ticketManager.createTicketGrantingTicket(principal, casAttributes);
                 createCookie(WebConstants.COOKIE_TGC_ID, ticket.getId(), request, response);
             }
