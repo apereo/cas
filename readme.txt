@@ -39,7 +39,7 @@ The "dist" directory contains the following distinct jar files and wars:
 4.   DEPENDENCIES
 * EhCache 1.0
 * J2EE Servlet 2.3+
-* Spring 1.1.2
+* Spring 1.1.4
 * Servlet Container that can handle JSP 2.0 (i.e. Tomcat 5.0.28)
 
 

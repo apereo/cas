@@ -21,6 +21,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
+import org.jasig.cas.web.bind.CredentialsBinder;
+import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
@@ -47,6 +49,8 @@ public class LoginController extends SimpleFormController implements Initializin
     private UniqueTokenIdGenerator uniqueTokenIdGenerator = null;
 
     private Map loginTokens;
+    
+    private CredentialsBinder credentialsBinder;
 
     public LoginController() {
         this.setCacheSeconds(0);
@@ -73,6 +77,11 @@ public class LoginController extends SimpleFormController implements Initializin
             this.setCommandClass(UsernamePasswordCredentials.class);
             log.info("CommandClass not set, using default CommandClass of " + this.getCommandClass().getName() + " and name of "
                 + this.getCommandName());
+        }
+        
+        if (this.credentialsBinder == null) {
+        	this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
+        	log.info("CredentialsBinder not set.  Using default CredentialsBinder of " + this.credentialsBinder.getClass().getName());
         }
     }
 
@@ -131,6 +140,9 @@ public class LoginController extends SimpleFormController implements Initializin
     protected ModelAndView processFormSubmission(final HttpServletRequest request, final HttpServletResponse response, final Object object,
         final BindException errors) throws Exception {
         final Credentials credentials = (Credentials)object;
+        
+        this.credentialsBinder.bind(request, credentials);
+
         final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
         final String service = request.getParameter(WebConstants.SERVICE);
         final boolean warn = StringUtils.hasText(request.getParameter(WebConstants.WARN));
@@ -220,4 +232,10 @@ public class LoginController extends SimpleFormController implements Initializin
     public void setUniqueTokenIdGenerator(final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
         this.uniqueTokenIdGenerator = uniqueTokenIdGenerator;
     }
+	/**
+	 * @param credentialsBinder The credentialsBinder to set.
+	 */
+	public void setCredentialsBinder(CredentialsBinder credentialsBinder) {
+		this.credentialsBinder = credentialsBinder;
+	}
 }
