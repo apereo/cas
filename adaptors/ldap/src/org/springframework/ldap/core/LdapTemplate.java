@@ -227,7 +227,7 @@ public class LdapTemplate {
      * @throws NamingException
      *             raised for any LDAP problem
      */
-    private Object parseNamingEnumeration(NamingEnumeration namingEnumeration,
+    protected Object parseNamingEnumeration(NamingEnumeration namingEnumeration,
             SearchResultCallbackHandler callback) throws NamingException {
         try {
             while (namingEnumeration.hasMore()) {

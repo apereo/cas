@@ -4,34 +4,27 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import java.util.Iterator;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
- * Class that if provided a query that returns a password (paramater of query must be username) will compare that password to a translated version of
- * the password provided by the user. If they match, then authentication succeeds. Default password translator is plaintext translator. Note that this
- * class provides failover if provided multiple datasources. On DataAccessResourceFailureException, the next datasource will be tried.
+ * Class that if provided a query that returns a password (parameter of query must be username) will compare that password to a translated version of
+ * the password provided by the user. If they match, then authentication succeeds. Default password translator is plaintext translator.
  * 
  * @author Scott Battaglia
  * @version $Id$
  */
-// TODO: efficient???
-public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public class QueryDatabaseAuthenticationHandler extends JdbcDaoSupport implements AuthenticationHandler {
 
-    private PasswordTranslator passwordTranslator = new PlainTextPasswordTranslator();
+    protected final Log log = LogFactory.getLog(getClass());
 
-    private List dataSources;
+    private PasswordTranslator passwordTranslator;
 
     private String sql;
 
@@ -43,40 +36,29 @@ public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePassword
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
         final String encryptedPassword = this.passwordTranslator.translate(password);
+        final String dbPassword = (String)this.getJdbcTemplate().queryForObject(this.sql, new Object[] {username}, String.class);
+        return dbPassword.equals(encryptedPassword);
+    }
 
-        for (Iterator iter = this.dataSources.iterator(); iter.hasNext();) {
-            try {
-                final DataSource dataSource = (DataSource)iter.next();
-                final JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-                final String dbPassword = (String)jdbcTemplate.queryForObject(this.sql, new Object[] {username}, String.class);
-
-                if (dbPassword.equals(encryptedPassword))
-                    return true;
-            }
-            catch (DataAccessResourceFailureException e) {
-                // this means the server failed!!!
-            }
-            catch (DataAccessException dae) {
-                return false;
-            }
-        }
-        return false;
+    /**
+     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
+     */
+    public boolean supports(Credentials credentials) {
+        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
     }
 
     /**
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
-    public void afterPropertiesSet() throws Exception {
-        if (this.dataSources == null || this.sql == null || this.passwordTranslator == null) {
-            throw new IllegalStateException("dataSources, sql, and passwordTranslator must be set on " + this.getClass().getName());
+    public void initDao() throws Exception {
+        if (this.sql == null) {
+            throw new IllegalStateException("sql must be set on " + this.getClass().getName());
         }
-    }
-
-    /**
-     * @param dataSources The dataSources to set.
-     */
-    public void setDataSources(final List dataSources) {
-        this.dataSources = dataSources;
+        if (this.passwordTranslator == null) {
+            this.passwordTranslator = new PlainTextPasswordTranslator();
+            log.info("No passwordTranslator set for " + this.getClass().getName() + ".  Using default of "
+                + this.passwordTranslator.getClass().getName());
+        }
     }
 
     /**
@@ -87,10 +69,10 @@ public class QueryDatabaseAuthenticationHandler extends AbstractUsernamePassword
     }
 
     /**
-     * @param sql The sql to set.
+     * @param sql
+     *            The sql to set.
      */
     public void setSql(final String sql) {
         this.sql = sql;
     }
-
 }
