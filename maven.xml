@@ -29,10 +29,12 @@
     </postGoal>
 
 	<preGoal name="war:init">
+		<attainGoal name="clean" />
 		<attainGoal name="jar" />
-	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${maven.build.dir}/cas-server-${pom.currentVersion}.jar" />
-	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${basedir}/lib/jmxremote_optional.jar" />
-	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${basedir}/lib/jmxremote.jar" />
+		<j:set var="maven.test.skip">true</j:set>
+	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${basedir}/lib/jmxremote_optional.jar" />
+	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${basedir}/lib/jmxremote.jar" />
 	</preGoal>
 	
 	<goal name="maven-multichanges-report:register">
