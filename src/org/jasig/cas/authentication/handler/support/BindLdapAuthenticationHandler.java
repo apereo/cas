@@ -13,8 +13,8 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
 
 /**
@@ -54,8 +54,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final AuthenticationRequest request) {
-        final UsernamePasswordAuthenticationRequest uRequest = (UsernamePasswordAuthenticationRequest)request;
+    public boolean authenticate(final Credentials request) {
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
         for (Iterator iter = this.getServers().iterator(); iter.hasNext();) {
             DirContext dirContext = null;

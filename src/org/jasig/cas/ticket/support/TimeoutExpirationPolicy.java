@@ -4,8 +4,8 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.ticket.AbstractTicket;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.InternalTicket;
 
 /**
  * Expiration policy that is based on a certain time period for a ticket to exist.
@@ -24,7 +24,7 @@ public class TimeoutExpirationPolicy implements ExpirationPolicy {
     /**
      * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.ticket.AbstractTicket)
      */
-    public boolean isExpired(final AbstractTicket ticket) {
-        return System.currentTimeMillis() - ticket.getLastUsedTime() > this.timeToKillInMilliSeconds;
+    public boolean isExpired(final InternalTicket ticket) {
+        return System.currentTimeMillis() - ticket.getLastTimeUsed() > this.timeToKillInMilliSeconds;
     }
 }

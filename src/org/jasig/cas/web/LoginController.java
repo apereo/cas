@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketManager;
@@ -58,7 +58,7 @@ public class LoginController extends AbstractFormController {
         setCacheSeconds(0);
         this.setValidator(new BasicAuthenticationRequestValidator());
         this.setCommandName("authenticationRequest");
-        this.setCommandClass(UsernamePasswordAuthenticationRequest.class);
+        this.setCommandClass(UsernamePasswordCredentials.class);
     }
 
     /**
@@ -67,7 +67,7 @@ public class LoginController extends AbstractFormController {
      */
     protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
         throws Exception {
-        final AuthenticationRequest authRequest = (AuthenticationRequest)command;
+        final Credentials authRequest = (Credentials)command;
         final CasAttributes casAttributes = new CasAttributes();
         final ValidationRequest validationRequest = new ValidationRequest();
         BindUtils.bind(request, authRequest, this.getCommandName());
@@ -90,7 +90,7 @@ public class LoginController extends AbstractFormController {
 
         this.loginTokens.remove(loginToken);
 
-        principal = this.authenticationManager.authenticateUser(authRequest);
+        principal = this.authenticationManager.authenticateCredentials(authRequest);
 
         if (principal != null) {
             log.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");

@@ -53,14 +53,28 @@ public class EhCacheTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
     public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketException {
-        log.debug("Attempting to retrieve ticket [" + ticketId + "]");
-
-        if (ticketId == null) {
-            return null;
-        }
         if (clazz == null) {
             throw new IllegalArgumentException("clazz argument must not be null.");
         }
+    	
+    	final Ticket ticket = this.getTicket(ticketId);
+
+        if (!ticket.getClass().isAssignableFrom(clazz))
+            throw new InvalidTicketException("Ticket [" + ticket.getId() + "] is of type "
+                + ticket.getClass() + " when we were expecting " + clazz);
+
+        return ticket;
+    }
+
+	/**
+	 * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
+	 */
+	public Ticket getTicket(String ticketId) {
+        log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+		if (ticketId == null) {
+            return null;
+        }
+
         try {
             Element element = this.cache.get(ticketId);
             if (element == null) {
@@ -68,18 +82,13 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             }
 
             Ticket ticket = (Ticket)element.getValue();
-            if (!ticket.getClass().isAssignableFrom(clazz))
-                throw new InvalidTicketException("Ticket [" + ticket.getId() + "] is of type "
-                    + ticket.getClass() + " when we were expecting " + clazz);
-
             log.debug("Ticket [" + ticketId + "] found in registry.");
             return ticket;
         }
         catch (CacheException ex) {
             throw new TicketException("Ticket registry threw an exception", ex);
         }
-    }
-
+	}
     /**
      * @see org.jasig.cas.ticket.registry.TicketRegistry#deleteTicket(java.lang.String)
      */

@@ -14,13 +14,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Scott Battaglia
  * @version $Id$
  */
-public abstract class AbstractTicket implements Ticket {
+public abstract class AbstractTicket implements InternalTicket {
 
-    final private ExpirationPolicy expirationPolicy;
+	final private ExpirationPolicy expirationPolicy;
 
     private long lastTimeUsed;
 
-    private int count;
+    private int countOfUses;
 
     final private String id;
 
@@ -42,15 +42,15 @@ public abstract class AbstractTicket implements Ticket {
     }
 
     public int getCountOfUses() {
-        return this.count;
+        return this.countOfUses;
     }
 
-    public long getLastUsedTime() {
+    public long getLastTimeUsed() {
         return this.lastTimeUsed;
     }
 
     public void incrementCount() {
-        this.count++;
+        this.countOfUses++;
     }
 
     public void updateLastUse() {

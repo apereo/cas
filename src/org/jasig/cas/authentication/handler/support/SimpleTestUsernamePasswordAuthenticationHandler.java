@@ -4,8 +4,8 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.util.StringUtils;
 
 /**
@@ -19,8 +19,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final AuthenticationRequest request) {
-        final UsernamePasswordAuthenticationRequest authRequest = (UsernamePasswordAuthenticationRequest)request;
+    public boolean authenticate(final Credentials request) {
+        final UsernamePasswordCredentials authRequest = (UsernamePasswordCredentials)request;
         final String username = authRequest.getUserName();
         final String password = authRequest.getPassword();
 

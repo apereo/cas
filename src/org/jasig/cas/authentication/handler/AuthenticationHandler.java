@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
+import org.jasig.cas.authentication.principal.Credentials;
 
 /**
  * Interface for the handlers that validate requests for authentication. Developers deploying CAS supply an AuthenticationHandler and plug it into the
@@ -21,11 +21,11 @@ public interface AuthenticationHandler {
      * @param request the request to authenticate
      * @return true if the request is valid, false otherwise.
      */
-    boolean authenticate(final AuthenticationRequest request);
+    boolean authenticate(final Credentials credentials);
 
     /**
      * @param request The request we want to check if the handler supports.
      * @return true if the handler supports authenticating this type of request. False otherwise.
      */
-    boolean supports(final AuthenticationRequest request);
+    boolean supports(final Credentials credentials);
 }

@@ -1,9 +1,9 @@
 package org.jasig.cas.helper;
 
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
 
@@ -16,7 +16,7 @@ public class DefaultCredentialsToPrincipalResolverTest extends TestCase {
     private CredentialsToPrincipalResolver resolver = new DefaultCredentialsToPrincipalResolver();
 
     public void testValidCredentials() {
-        UsernamePasswordAuthenticationRequest request = new UsernamePasswordAuthenticationRequest();
+        UsernamePasswordCredentials request = new UsernamePasswordCredentials();
         request.setUserName("test");
         Principal p = this.resolver.resolvePrincipal(request);
 
@@ -24,7 +24,7 @@ public class DefaultCredentialsToPrincipalResolverTest extends TestCase {
     }
 
     public void testInvalidCredentials() {
-        UsernamePasswordAuthenticationRequest request = new UsernamePasswordAuthenticationRequest();
+        UsernamePasswordCredentials request = new UsernamePasswordCredentials();
         request.setUserName(null);
         try {
             this.resolver.resolvePrincipal(request);

@@ -37,8 +37,7 @@ public class DefaultTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
     public Ticket getTicket(final String ticketId, final Class clazz) {
-        log.debug("Attempting to retrieve ticket [" + ticketId + "]");
-        final Ticket ticket = (Ticket)this.cache.get(ticketId);
+    	final Ticket ticket = this.getTicket(ticketId);
 
         if (ticket == null)
             return null;
@@ -47,10 +46,21 @@ public class DefaultTicketRegistry implements TicketRegistry {
             throw new InvalidTicketException("Ticket [" + ticket.getId() + " is of type "
                 + ticket.getClass() + " when we were expecting " + clazz);
 
-        log.debug("Ticket [" + ticketId + "] found in registry.");
         return ticket;
     }
 
+	/**
+	 * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
+	 */
+	public Ticket getTicket(String ticketId) {
+        log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+        final Ticket ticket = (Ticket)this.cache.get(ticketId);
+
+        if (ticket != null)
+        	log.debug("Ticket [" + ticketId + "] found in registry.");
+
+        return ticket;
+	}
     /**
      * @see org.jasig.cas.ticket.registry.TicketRegistry#deleteTicket(java.lang.String)
      */

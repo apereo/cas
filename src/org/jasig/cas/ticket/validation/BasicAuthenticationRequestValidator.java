@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.ticket.validation;
 
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -19,7 +19,7 @@ public class BasicAuthenticationRequestValidator implements Validator {
      * @see org.springframework.validation.Validator#supports(java.lang.Class)
      */
     public boolean supports(Class clazz) {
-        return UsernamePasswordAuthenticationRequest.class.isAssignableFrom(clazz);
+        return UsernamePasswordCredentials.class.isAssignableFrom(clazz);
     }
 
     /**

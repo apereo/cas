@@ -4,8 +4,8 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.ticket.AbstractTicket;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.InternalTicket;
 
 /**
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is expired. Use this policy when you want a Ticket to live forever, or at
@@ -19,7 +19,7 @@ public class NeverExpiresExpirationPolicy implements ExpirationPolicy {
     /**
      * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.ticket.AbstractTicket)
      */
-    public boolean isExpired(final AbstractTicket ticket) {
+    public boolean isExpired(final InternalTicket ticket) {
         return false;
     }
 }

@@ -6,13 +6,13 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Abstract class to override supports so that we don't need to duplicate the check for UsernamePasswordAuthenticationRequest.
+ * Abstract class to override supports so that we don't need to duplicate the check for UsernamePasswordCredentials.
  * 
  * @author Scott Battaglia
  * @version $Id$
@@ -24,8 +24,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements A
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean supports(final AuthenticationRequest request) {
-        return request instanceof UsernamePasswordAuthenticationRequest;
+    public boolean supports(final Credentials request) {
+        return request instanceof UsernamePasswordCredentials;
     }
 
 }

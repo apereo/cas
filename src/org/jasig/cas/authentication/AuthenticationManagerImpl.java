@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 
@@ -31,7 +32,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     /**
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public Principal authenticateUser(final AuthenticationRequest request) {
+    public Principal authenticateCredentials(final Credentials request) {
         for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();) {
             final AuthenticationHandler handler = (AuthenticationHandler)iter.next();
 

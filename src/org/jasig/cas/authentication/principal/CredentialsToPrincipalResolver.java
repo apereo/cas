@@ -4,7 +4,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.authentication.AuthenticationRequest;
 
 /**
  * Strategy interface to resolve <code>Principal</code> s
@@ -21,7 +20,7 @@ public interface CredentialsToPrincipalResolver {
      * @param authenticationRequest from which to resolve Principal
      * @return resolved Principal
      */
-    Principal resolvePrincipal(AuthenticationRequest authenticationRequest);
+    Principal resolvePrincipal(Credentials authenticationRequest);
 
-    boolean supports(AuthenticationRequest request);
+    boolean supports(Credentials request);
 }
