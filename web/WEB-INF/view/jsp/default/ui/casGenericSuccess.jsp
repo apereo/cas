@@ -10,7 +10,7 @@
 	
 		<!-- KEYWORDS AND DESCRIPTIONS GO INTO THIS SECTION -->
 	
-		<meta name="keywords" content="Central Authentication Service,Rutgers University,CAS" />
+		<meta name="keywords" content="Central Authentication Service,JA-SIG,CAS" />
 	
 		<!-- THIS CODE PROVIDES THE FORMATTING FOR THE TEXT - PLEASE LEAVE INTACT -->
 		<link rel="stylesheet" href="css/acs.css" type="text/css" media="all" />
@@ -21,11 +21,9 @@
 
   <body onload="init();">
 	<!-- HEADER -->
-
 	<div id="header">
-		<a id="top">Rutgers, The State University of New Jersey</a>
-		<h1>Rutgers  Central  Authentication  Service</h1>
-
+		<a id="top">Java Architecture Special Interest Group</a>
+		<h1>JA-SIG Central  Authentication  Service</h1>
 	</div>
 	<!-- END HEADER -->
 
@@ -46,20 +44,9 @@
 	<!-- FOOTER -->
    	<div id="footer">
 		<hr />
-		<img src="images/logo_gray.gif" width="142" height="44" alt="" title="" style="float:right; margin-top: 10px;" />
 		<p style="margin-top:1em;">
-
-			Links to campus web sites: 
-			  <a href="http://camden-www.rutgers.edu/" target="_blank">Camden</a>, 
-			  <a href="http://rutgers-newark.rutgers.edu/" target="_blank">Newark</a>, 
-			  <a href="http://nbp.rutgers.edu/" target="_blank">New Brunswick/Piscataway</a>, 
-			  <a href="http://www.rutgers.edu" target="_blank">Rutgers University</a>.
-			<br />For assistance, contact the Help Desks in: 
-			  <a href="http://rucs.camden.rutgers.edu/" target="_blank">Camden</a>, 
-			  <a href="http://www.ncs.rutgers.edu/helpdesk/" target="_blank">Newark</a>, 
-			  or <a href="http://www.nbcs.rutgers.edu/helpdesk/index.php3" target="_blank">New Brunswick/Piscataway</a>.
+			Copyright &copy; 2004 JA-SIG.  All rights reserved.
 		</p>
-
 	</div>
 	<!-- END FOOTER -->
 

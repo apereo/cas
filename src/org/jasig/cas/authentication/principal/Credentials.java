@@ -10,6 +10,7 @@ import java.io.Serializable;
  * Marker interface for credentials required to authenticate a principal.
  * 
  * @author William G. Thompson, Jr.
+ * @version $Id$
  */
 public interface Credentials extends Serializable {
 

@@ -32,13 +32,15 @@ public abstract class WebConstants {
 
     public static final String PROXIES = "proxies";
 
-    public static final String LOGIN_TICKET = "loginTicket";
-
-    public static final String AUTHENTICATION_REQUEST = "authenticationRequest";
+    public static final String LOGIN_TOKEN = "loginToken";
 
     public static final String SERVICE = "service";
 
     public static final String FIRST = "first";
 
-    public static final String CAS_ATTRIBUTES = "casAttributes";
+    public static final String WARN = "warn";
+    
+    public static final String GATEWAY = "gateway";
+    
+    public static final String RENEW = "renew";
 }

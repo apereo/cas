@@ -56,6 +56,7 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
 
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
+            
             Class returnType = method.getReturnType();
             Class[] params = method.getParameterTypes();
 

@@ -29,6 +29,9 @@ public class DefaultTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
      */
     public void addTicket(final Ticket ticket) {
+        if (ticket == null)
+            throw new IllegalArgumentException("ticket cannot be null");
+
         log.debug("Added ticket [" + ticket.getId() + "] to registry.");
         this.cache.put(ticket.getId(), ticket);
     }
@@ -36,7 +39,7 @@ public class DefaultTicketRegistry implements TicketRegistry {
     /**
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
-    public Ticket getTicket(final String ticketId, final Class clazz) {
+    public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketException {
     	final Ticket ticket = this.getTicket(ticketId);
 
         if (ticket == null)

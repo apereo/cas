@@ -4,8 +4,9 @@
  */
 package org.jasig.cas.ticket;
 
-import org.jasig.cas.Service;
+import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
  * Domain object to model a ticket granting ticket.
@@ -13,16 +14,44 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class TicketGrantingTicketImpl extends AbstractTicket implements InternalTicketGrantingTicket {
+public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     private static final long serialVersionUID = -8673232562725683059L;
-    private Principal principal;
 
-    public TicketGrantingTicketImpl(final String id, final Principal principal, final ExpirationPolicy policy) {
-        super(id, policy);
+    private final Principal principal;
+    
+    private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
+    
+    private final ExpirationPolicy serviceExpirationPolicy;
+    
+    private final ExpirationPolicy expirationPolicy;
+    
+    private boolean expired = false;
+
+    public TicketGrantingTicketImpl(final String id, final TicketGrantingTicket ticketGrantingTicket, final Principal principal, final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
+        super(id, ticketGrantingTicket, policy);
         
-        if (principal == null)
+        if (principal == null || uniqueTicketIdGenerator == null || serviceExpirationPolicy == null) {
+            throw new IllegalArgumentException("principal, uniqueTicketIdGenerator, and serviceExpirationPolicy cannot be null on " + this.getClass().getName());
+        }
+        
+        this.principal = principal;
+        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
+        this.serviceExpirationPolicy = serviceExpirationPolicy;
+        this.expirationPolicy = policy;
+    }
+    
+    public TicketGrantingTicketImpl(final String id, final Principal principal, final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator, final ExpirationPolicy serviceExpirationPolicy) {
+        super(id, null, policy);
+        
+        if (principal == null) {
             throw new IllegalArgumentException("principal cannot be null on " + this.getClass().getName());
+        }
+        
+        this.principal = principal;
+        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
+        this.serviceExpirationPolicy = serviceExpirationPolicy;
+        this.expirationPolicy = policy;
     }
     
     /**
@@ -35,8 +64,30 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements Internal
 	/**
 	 * @see org.jasig.cas.ticket.InternalTicketGrantingTicket#grantServiceTicket(org.jasig.cas.Service)
 	 */
-	public ServiceTicket grantServiceTicket(Service service) {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized ServiceTicket grantServiceTicket(Service service) {
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),this,service, this.getCountOfUses() == 0, serviceExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+        
+        return serviceTicket;
 	}
+    
+    /**
+     * @see org.jasig.cas.ticket.TicketGrantingTicket#isRoot()
+     */
+    public boolean isRoot() {
+        return this.getGrantingTicket() == null;
+    }
+    
+    /**
+     * @see org.jasig.cas.ticket.TicketGrantingTicket#expire()
+     */
+    public void expire() {
+        this.expired = true;
+    }
+
+    /**
+     * @see org.jasig.cas.ticket.Ticket#isExpired()
+     */
+    public boolean isExpired() {
+        return super.isExpired() || this.expired;
+    }
 }

@@ -16,7 +16,7 @@ public interface AuthenticationSpecification {
 	
 	/**
 	 * 
-	 * @param ticket The ticket we want to check if it satifies this specification.
+	 * @param ticket The ticket we want to check if it satisfies this specification.
 	 * @return true if it satisfies it, false otherwise.
 	 */
 	boolean isSatisfiedBy(Ticket ticket);

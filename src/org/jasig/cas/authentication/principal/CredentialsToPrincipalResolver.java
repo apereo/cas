@@ -15,12 +15,12 @@ package org.jasig.cas.authentication.principal;
 public interface CredentialsToPrincipalResolver {
 
     /**
-     * Resolve Principal for a given AuthenticationRequest
+     * Resolve Principal for a given Credentials
      * 
-     * @param authenticationRequest from which to resolve Principal
+     * @param credentials from which to resolve Principal
      * @return resolved Principal
      */
-    Principal resolvePrincipal(Credentials authenticationRequest);
+    Principal resolvePrincipal(Credentials credentials);
 
     boolean supports(Credentials request);
 }

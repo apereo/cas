@@ -10,9 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.TicketManager;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -25,22 +26,30 @@ import org.springframework.web.util.WebUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class LogoutController extends AbstractController {
+public class LogoutController extends AbstractController implements InitializingBean  {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    private TicketManager ticketManager;
+    private CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (this.centralAuthenticationService == null) {
+            throw new IllegalStateException("centralAuthenticationService must be set on " + this.getClass().getName());
+        }
+    }
     /**
      * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
         String service = request.getParameter(WebConstants.SERVICE);
 
         if (cookie != null) {
-            this.ticketManager.deleteTicket(cookie.getValue());
+            this.centralAuthenticationService.destroyTicketGrantingTicket(cookie.getValue());
             destroyTicketGrantingTicketCookie(request, response);
         }
 
@@ -51,7 +60,7 @@ public class LogoutController extends AbstractController {
         return new ModelAndView(ViewNames.CONST_LOGOUT);
     }
 
-    private void destroyTicketGrantingTicketCookie(HttpServletRequest request, HttpServletResponse response) {
+    private void destroyTicketGrantingTicketCookie(final HttpServletRequest request, final HttpServletResponse response) {
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE);
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());
@@ -60,9 +69,9 @@ public class LogoutController extends AbstractController {
     }
 
     /**
-     * @param ticketManager The ticketManager to set.
+     * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setTicketManager(TicketManager ticketManager) {
-        this.ticketManager = ticketManager;
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }

@@ -12,6 +12,7 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Default implementation of AuthenticationManager. Default implementation accepts a list of handlers. It will iterate through the list of handlers
@@ -21,7 +22,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @version $Id$
  */
 
-public class AuthenticationManagerImpl implements AuthenticationManager {
+public class AuthenticationManagerImpl implements AuthenticationManager, InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -32,7 +33,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
     /**
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticateUser(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public Principal authenticateCredentials(final Credentials request) {
+    public Principal authenticateAndResolveCredentials(final Credentials request) throws AuthenticationException {
         for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();) {
             final AuthenticationHandler handler = (AuthenticationHandler)iter.next();
 
@@ -49,6 +50,15 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
         }
         return null;
     }
+
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		if (this.authenticationHandlers == null || this.authenticationHandlers.isEmpty() || this.credentialsToPrincipalResolvers == null || this.credentialsToPrincipalResolvers.isEmpty()) {
+			throw new IllegalStateException("You must provide authenticationHandlers and credentialsToPrincipalResolvers for " + this.getClass().getName());
+		}
+	}
 
     /**
      * @param authenticationHandlers The authenticationHandlers to set.

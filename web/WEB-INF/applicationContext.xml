@@ -13,7 +13,7 @@
 	<!-- ID Generators -->
 	<bean id="uniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 	
-	<bean id="uniqueIdGenerator31Strength" class="org.jasig.cas.util.UserDefinedRandomLengthUniqueTicketIdGenerator">
+	<bean id="uniqueIdGenerator31Strength" class="org.jasig.cas.util.support.UserDefinedRandomLengthUniqueTicketIdGenerator">
 		<constructor-arg index="0"><value>31</value></constructor-arg>
 	</bean>
 	
@@ -27,56 +27,17 @@
 		<constructor-arg index="0"><value>${policy.expiration.granting.timeOut}</value></constructor-arg>
 	</bean>
 
-	<!-- Ticket Creators -->
-	<bean id="proxyGrantingTicketCreator" class="org.jasig.cas.ticket.factory.support.ProxyGrantingTicketCreator">
-		<property name="expirationPolicy"><ref local="grantingTicketExpirationPolicy" /></property>
+	<!-- CentralAuthenticationService -->
+	<bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
+		<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
+		<property name="authenticationManager"><ref bean="authenticationManager" /></property>
 		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator31Strength" /></property>
-	</bean>
-	<bean id="proxyTicketCreator" class="org.jasig.cas.ticket.factory.support.ProxyTicketCreator">
-		<property name="policy"><ref local="serviceTicketExpirationPolicy" /></property>
-		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
-	</bean>
-	<bean id="serviceTicketCreator" class="org.jasig.cas.ticket.factory.support.ServiceTicketCreator">
-		<property name="policy"><ref local="serviceTicketExpirationPolicy" /></property>
-		<property name="serviceRegistry"><ref bean="serviceRegistry" /></property>
-		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
-	</bean>
-	<bean id="ticketGrantingTicketCreator" class="org.jasig.cas.ticket.factory.support.TicketGrantingTicketCreator">
-		<property name="policy"><ref local="grantingTicketExpirationPolicy" /></property>
-		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator31Strength" /></property>
-	</bean>
-
-	<!-- Ticket Factories -->
-	<bean id="ticketFactory" class="org.jasig.cas.ticket.factory.DefaultTicketFactory">
-		<property name="ticketCreators">
-			<list>
-				<ref local="proxyGrantingTicketCreator" />
-				<ref local="proxyTicketCreator" />
-				<ref local="serviceTicketCreator" />
-				<ref local="ticketGrantingTicketCreator" />
-			</list>
-		</property>
-	</bean>
-	
-	<!-- Ticket Validators -->
-	<bean id="ticketValidator" class="org.jasig.cas.ticket.validation.TicketValidatorImpl">
-		<property name="ticketValidatorHelpers">
-			<list>
-				<bean class="org.jasig.cas.ticket.validation.support.DefaultTicketValidatorHelper" />
-				<bean class="org.jasig.cas.ticket.validation.support.ServiceTicketValidatorHelper" />
-				<bean class="org.jasig.cas.ticket.validation.support.TicketGrantingTicketValidatorHelper" />
-			</list>
-		</property>
+		<property name="ticketGrantingTicketExpirationPolicy"><ref local="grantingTicketExpirationPolicy" /></property>
+		<property name="serviceTicketExpirationPolicy"><ref local="serviceTicketExpirationPolicy" /></property>
 	</bean>
 	
 	<!-- Ticket Registry -->
 	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
-	
-	<bean id="ticketManager" class="org.jasig.cas.ticket.TicketManagerImpl">
-		<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
-		<property name="ticketFactory"><ref local="ticketFactory" /></property>
-		<property name="ticketValidator"><ref local="ticketValidator" /></property>
-	</bean>
 	
 	<!-- Tokens -->
 	<bean id="loginTokens" class="java.util.HashMap" />
