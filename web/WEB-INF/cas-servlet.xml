@@ -13,13 +13,22 @@
                 <prop key="/login">loginController</prop>
 				<prop key="/logout">logoutController</prop>
 				<prop key="/serviceValidate">serviceValidateController</prop>
+				<prop key="/validate">legacyValidateController</prop>
 				<prop key="/proxy">proxyController</prop>
 				<prop key="/proxyValidate">serviceValidateController</prop>
             </props>
         </property>
     </bean>
 	
-	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType" />
+	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
+		<property name="proxyHandler"><ref bean="proxy20Handler" /></property>
+	</bean>
+	
+	<bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
+		<property name="proxyHandler"><ref bean="proxy10Handler" /></property>
+		<property name="successView"><value>cas1ServiceSuccessView</value></property>
+		<property name="failureView"><value>cas1ServiceFailureView</value></property>
+	</bean>	
 	
 	<bean id="proxyController" class="org.jasig.cas.web.ProxyController" autowire="byType" />
 	
