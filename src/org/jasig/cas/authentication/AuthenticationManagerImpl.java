@@ -37,7 +37,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
             if (handler.supports(request) && handler.authenticate(request)) {
                 for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
-                    CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
+                    final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
 
                     if (resolver.supports(request))
                         return resolver.resolvePrincipal(request);
