@@ -2,11 +2,12 @@
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.handler.support;
+package org.jasig.cas.adaptors.ldap;
 
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;

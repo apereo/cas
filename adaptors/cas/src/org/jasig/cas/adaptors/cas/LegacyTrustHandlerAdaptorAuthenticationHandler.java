@@ -29,7 +29,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandler implements Authentic
     public boolean authenticate(final Credentials credentials) throws AuthenticationException {
         final LegacyCasTrustedCredentials casCredentials = (LegacyCasTrustedCredentials)credentials;
 
-        return StringUtils.hasText(trustHandler.getUsername(casCredentials.getServletRequest()));
+        return StringUtils.hasText(this.trustHandler.getUsername(casCredentials.getServletRequest()));
     }
 
     /**
