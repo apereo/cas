@@ -32,6 +32,14 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * @return true if the handler supports authenticating this type of credentials. False otherwise.
      */
     protected abstract boolean supports(Credentials credentials);
-    
+
+    /**
+     * Template (abstract method) that inheriting classes should implement.  This gets called
+     * after the check to see if the credentials are supported.
+     * 
+     * @param credentials The credentials to check
+     * @return true if the credentials are valid, false if they are not
+     * @throws AuthenticationException if the validity of the credentials cannot be determined.
+     */
     protected abstract boolean authenticateInternal(Credentials credentials) throws AuthenticationException;
 }

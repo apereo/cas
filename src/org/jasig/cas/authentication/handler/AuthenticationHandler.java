@@ -19,7 +19,7 @@ public interface AuthenticationHandler {
     /**
      * Method to determine if the credentials supplied can be authenticated.
      * @param credentials The credentials to authenticate
-     * @return true if authenticated and false otherwise
+     * @return true if authenticated and false they are not
      * @throws AuthenticationException An AuthenticationException can contain details about why
      * a particular authentication request failed.  AuthenticationExceptions contain code/desc.
      */

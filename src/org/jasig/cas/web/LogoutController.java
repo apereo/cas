@@ -61,7 +61,7 @@ public class LogoutController extends AbstractController implements Initializing
     }
 
     private void destroyTicketGrantingTicketCookie(final HttpServletRequest request, final HttpServletResponse response) {
-        Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, WebConstants.COOKIE_DEFAULT_EMPTY_VALUE);
+        Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "");
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());
         cookie.setSecure(true);

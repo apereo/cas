@@ -55,11 +55,13 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
      */
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         try {
+            log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
             final TicketGrantingTicket ticket = (TicketGrantingTicket)this.ticketRegistry.getTicket(ticketGrantingTicketId,
                 TicketGrantingTicket.class);
 
-            log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
+            
             if (ticket != null) {
+                log.debug("Ticket found.  Expiring and then deleting.");
                 ticket.expire();
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
             }

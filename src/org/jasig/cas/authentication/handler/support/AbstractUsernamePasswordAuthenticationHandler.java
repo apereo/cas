@@ -21,7 +21,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     protected final Log log = LogFactory.getLog(getClass());
 
     /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.AuthenticationRequest)
+     * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected final boolean supports(final Credentials credentials) {
         return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
