@@ -32,14 +32,15 @@ public class UrlUtils {
             connection = url.openConnection();
             connection.setRequestProperty("Connection", "close");
             bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
+            String line = bufferedReader.readLine();
+            while (line != null) {
                 buf.append(line);
                 buf.append("\n");
+                line = bufferedReader.readLine();
             }
         }
         catch (Exception e) {
-            // can't do anything about this
+            // can't do anything
         }
         finally {
             try {

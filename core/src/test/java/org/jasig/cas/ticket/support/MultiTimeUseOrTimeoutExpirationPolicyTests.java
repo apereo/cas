@@ -46,7 +46,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
     public void testTicketIsExpiredByCount() {
         Ticket ticket = new TicketGrantingTicketImpl("test", new ImmutableAuthentication(new SimplePrincipal("test"), null), this.expirationPolicy, new DefaultUniqueTicketIdGenerator(), this.expirationPolicy);
         
-        for (int i =0; i < TIMEOUT; i++)
+        for (int i =0; i < NUMBER_OF_USES; i++)
             ticket.incrementCountOfUses();
         
         assertTrue(ticket.isExpired());

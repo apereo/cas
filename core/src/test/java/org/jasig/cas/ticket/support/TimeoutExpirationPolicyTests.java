@@ -35,7 +35,7 @@ public class TimeoutExpirationPolicyTests extends TestCase {
     public void testTicketIsExpired() {
         try {
             Ticket ticket = new TicketGrantingTicketImpl("test", new ImmutableAuthentication(new SimplePrincipal("test"), null), this.expirationPolicy, new DefaultUniqueTicketIdGenerator(), this.expirationPolicy);
-            Thread.sleep(TIMEOUT+1); // this failed when it was only +1...not accurate??
+            Thread.sleep(TIMEOUT+10); // this failed when it was only +1...not accurate??
             assertTrue(ticket.isExpired());
         } catch (InterruptedException e) {
             fail(e.getMessage());

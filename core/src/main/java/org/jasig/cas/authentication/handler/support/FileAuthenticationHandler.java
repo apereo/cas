@@ -43,8 +43,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(this.fileName)));
-            String line = null;
-            while ((line = bufferedReader.readLine()) != null) {
+            String line = bufferedReader.readLine();
+            while (line != null) {
                 final String[] lineFields = line.split(this.separator);
                 final String userName = lineFields[0];
                 final String password = lineFields[1];
@@ -56,6 +56,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     }
                     break;
                 }
+                line = bufferedReader.readLine();
             }
         }
         catch (Exception e) {
