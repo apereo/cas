@@ -5,9 +5,36 @@
   </properties>
   <body>
 
-    <release version="3.0-m2" date="in CVS">
-      <action dev="sbattaglia" type="add" issue="CAS-35">
-        Test Case: org.jasig.cas.util.support.Md5PasswordTranslator
+    <release version="3.0-m2" date="2005-03-28">
+
+      <action dev="sbattaglia" type="add">
+		Ability to allow services to skin (theme) views.
+      </action> 
+
+      <action dev="sbattaglia" type="add">
+		Ability to pass arbitrary attributes to view.
+      </action> 
+
+      <action dev="sbattaglia" type="add">
+		Services White List
+      </action> 
+
+      <action dev="sbattaglia" type="add" issue="CAS-56">
+		Expose Ticket Statistics via JMX
+      </action> 
+
+      <action dev="sbattaglia" type="add" issue="CAS-85">
+        Easier use of attributes in Authentication by introduction of Map.
+      </action> 
+
+      <action dev="sbattaglia" type="add" issue="CAS-14">
+        Project Management using Maven
+      </action> 
+      <action dev="sbattaglia" type="add" issue="CAS-76">
+        Ability to do Single Sign Out (example of CCCI sign out)
+      </action> 
+      <action dev="sbattaglia" type="add">
+        Test Coverage increased to 56+%
       </action>              
     </release>
 
