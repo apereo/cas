@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import org.springframework.aop.AfterReturningAdvice;
 
 /**
- * Class to advice the ServiceRegistry.  In this implementation, any entry added to the
+ * Class to advise the ServiceRegistry.  In this implementation, any entry added to the
  * ServiceRegistry is automatically persisted in the XML file.
  * 
  * @author Scott Battaglia
