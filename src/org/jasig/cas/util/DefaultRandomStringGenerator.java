@@ -16,13 +16,13 @@ public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
     private static final int MAX_RANDOM_LENGTH = 12;
 
-    private static final int MIN_LENGTH = MAX_TIMESTAMP_LENGTH + MAX_RANDOM_LENGTH + 1;
+    private static final int MIN_LENGTH = MAX_TIMESTAMP_LENGTH + MAX_RANDOM_LENGTH + MAX_RANDOM_LENGTH + 1;
 
     private static final int DEFAULT_BASE = 36;
 
     private static final int MAX_ALPHANUMERIC_VALUE_LENGTH = Integer.toString(Integer.MAX_VALUE, DEFAULT_BASE).length();
 
-    private static final int MAX_LENGTH = MAX_TIMESTAMP_LENGTH + MAX_RANDOM_LENGTH + MAX_ALPHANUMERIC_VALUE_LENGTH;
+    private static final int MAX_LENGTH = MAX_TIMESTAMP_LENGTH + MAX_RANDOM_LENGTH + MAX_RANDOM_LENGTH + MAX_ALPHANUMERIC_VALUE_LENGTH;
 
     private static final int DEFAULT_LENGTH = 15;
 
