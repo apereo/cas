@@ -2,7 +2,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.ticket.registry.proxy.support;
+package org.jasig.cas.ticket.proxy.support;
 
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
