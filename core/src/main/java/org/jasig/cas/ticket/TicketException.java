@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -16,16 +16,21 @@ import java.io.Serializable;
  */
 public class TicketException extends Exception {
 
+    /** Serializable Unique ID */
     private static final long serialVersionUID = -6000583436059919480L;
 
+    /** Exception code to denote invalid ticket. */
     public static final TicketExceptionCode INVALID_TICKET = new TicketExceptionCode(
         "INVALID_TICKET");
 
+    /** Excepton code to denote invalid service. */
     public static final TicketExceptionCode INVALID_SERVICE = new TicketExceptionCode(
         "INVALID_SERVICE");
 
+    /** The specific code for this exception instance. */
     private TicketExceptionCode code;
 
+    /** An additional textual description of the code. */
     private String description;
 
     /**
@@ -111,8 +116,10 @@ public class TicketException extends Exception {
 
     protected static class TicketExceptionCode implements Serializable {
 
+        /** Serializable Unique ID */
         private static final long serialVersionUID = 3258413923983045424L;
 
+        /** Code of the exception. */
         private String code;
 
         protected TicketExceptionCode(String code) {

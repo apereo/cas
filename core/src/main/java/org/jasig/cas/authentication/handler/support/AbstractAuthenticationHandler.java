@@ -1,13 +1,15 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.UnsupportedCredentialsException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
@@ -22,7 +24,14 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public abstract class AbstractAuthenticationHandler implements
     AuthenticationHandler {
+    
+    /** Log instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
+    public final Log getLog() {
+        return this.log;
+    }
+    
     public final boolean authenticate(final Credentials credentials)
         throws AuthenticationException {
         if (!this.supports(credentials)) {

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
@@ -16,7 +16,7 @@ import org.springframework.util.StringUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class SimpleTestUsernamePasswordAuthenticationHandler extends
+public final class SimpleTestUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     public boolean authenticateUsernamePasswordInternal(
@@ -26,18 +26,19 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(password)) {
-            log.debug("User [" + username //$NON-NLS-1$
-                + "] was successfully authenticated."); //$NON-NLS-1$
+            getLog()
+                .debug("User [" + username
+                    + "] was successfully authenticated.");
             return true;
         }
 
-        log.debug("User [" + username + "] failed authentication"); //$NON-NLS-2$
+        getLog().debug("User [" + username + "] failed authentication");
 
         return false;
     }
 
     public void afterPropertiesSet() throws Exception {
-        log
+        getLog()
             .warn(this.getClass().getName()
                 + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }

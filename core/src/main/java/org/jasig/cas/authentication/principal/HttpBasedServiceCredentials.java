@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.principal;
 
@@ -16,14 +16,16 @@ import java.net.URL;
  */
 public class HttpBasedServiceCredentials implements Credentials {
 
+    /** Unique Serializable ID. */
     private static final long serialVersionUID = 3904681574350991665L;
 
-    final private URL callbackUrl;
+    /** The callbackURL to check. */
+    private final URL callbackUrl;
 
     /**
      * @param callbackUrl the URL representing the service
      */
-    public HttpBasedServiceCredentials(URL callbackUrl) {
+    public HttpBasedServiceCredentials(final URL callbackUrl) {
         if (callbackUrl == null) {
             throw new IllegalArgumentException("callbackUrl must be set on "
                 + this.getClass().getName());
@@ -34,11 +36,11 @@ public class HttpBasedServiceCredentials implements Credentials {
     /**
      * @return Returns the callbackUrl.
      */
-    public URL getCallbackUrl() {
+    public final URL getCallbackUrl() {
         return this.callbackUrl;
     }
 
-    public String toString() {
+    public final String toString() {
         return this.callbackUrl.toExternalForm();
     }
 }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.advice;
 
@@ -24,13 +24,14 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  */
-public class MonitorServiceTicketsAfterReturningAdvice implements
+public final class MonitorServiceTicketsAfterReturningAdvice implements
     AfterReturningAdvice, InitializingBean {
 
+    /** The registry containing the tickets. */
     private TicketRegistry ticketRegistry;
 
+    /** The map to hold the mappings of TicketGrantingTickets to ServiceTickets. */
     private Map singleSignoutMapping;
 
     public void afterReturning(final Object returnObject, final Method method,
@@ -53,8 +54,7 @@ public class MonitorServiceTicketsAfterReturningAdvice implements
                 Set serviceTickets = (Set) this.singleSignoutMapping
                     .get(ticketGrantingTicket);
                 serviceTickets.add(serviceTicket);
-            }
-            else {
+            } else {
                 Set serviceTickets = new HashSet();
                 serviceTickets.add(serviceTicket);
                 this.singleSignoutMapping.put(ticketGrantingTicket.getId(),
@@ -63,11 +63,11 @@ public class MonitorServiceTicketsAfterReturningAdvice implements
         }
     }
 
-    public void setSingleSignoutMapping(Map singleSignoutMapping) {
+    public void setSingleSignoutMapping(final Map singleSignoutMapping) {
         this.singleSignoutMapping = singleSignoutMapping;
     }
 
-    public void setTicketRegistry(TicketRegistry ticketRegistry) {
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
 

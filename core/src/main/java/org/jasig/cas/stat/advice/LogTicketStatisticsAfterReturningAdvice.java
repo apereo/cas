@@ -1,14 +1,14 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.stat.advice;
 
 import java.lang.reflect.Method;
 import java.util.Properties;
 
-import org.jasig.cas.authentication.Service;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.stat.TicketStatisticsManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -30,19 +30,23 @@ import org.springframework.beans.factory.InitializingBean;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LogTicketStatisticsAfterReturningAdvice implements
+public final class LogTicketStatisticsAfterReturningAdvice implements
     AfterReturningAdvice, InitializingBean {
 
-    private Properties statsStateMutators = new Properties();
-
-    private TicketStatisticsManager ticketStatsManager;
-
-    private TicketRegistry ticketRegistry;
-
+    /** The method to monitor for proxy tickets. */
     private static final String PROXY_TICKET_METHOD = "grantServiceTicket";
 
-    public void afterReturning(Object returnValue, Method method,
-        Object[] args, Object target) throws Throwable {
+    /** The mapping of CAS methods to TicketStatistics methods. */
+    private Properties statsStateMutators = new Properties();
+
+    /** The TicketStatisticsManager to update the statistics. */
+    private TicketStatisticsManager ticketStatsManager;
+
+    /** The registry to monitor. */
+    private TicketRegistry ticketRegistry;
+
+    public void afterReturning(final Object returnValue, final Method method,
+        final Object[] args, final Object target) throws Throwable {
         if (returnValue == null) {
             return;
         }
@@ -96,22 +100,22 @@ public class LogTicketStatisticsAfterReturningAdvice implements
     /**
      * @param ticketStatsManager The TicketStatisticsManager to set.
      */
-    public void setTicketStatsManager(TicketStatisticsManager ticketStatsManager) {
+    public void setTicketStatsManager(
+        final TicketStatisticsManager ticketStatsManager) {
         this.ticketStatsManager = ticketStatsManager;
     }
 
     /**
      * @param statsStateMutators The statsStateMutators to set.
      */
-    public void setStatsStateMutators(Properties statsStateMutators) {
+    public void setStatsStateMutators(final Properties statsStateMutators) {
         this.statsStateMutators = statsStateMutators;
     }
 
     /**
      * @param ticketRegistry the TicketRegistry to set.
      */
-    public void setTicketRegistry(TicketRegistry ticketRegistry) {
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
-
 }

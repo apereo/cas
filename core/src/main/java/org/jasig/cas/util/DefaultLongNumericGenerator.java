@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
 
@@ -26,7 +26,7 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
 
     /** The default initial value of 0. */
     private static final long DEFAULT_INTITIAL_VALUE = 0;
-    
+
     /** Whether to wrap or not when we reach the maximum value. */
     private boolean wrap;
 
@@ -41,7 +41,8 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
         this(DEFAULT_INTITIAL_VALUE, wrap);
     }
 
-    public DefaultLongNumericGenerator(final long initialValue, final boolean wrap) {
+    public DefaultLongNumericGenerator(final long initialValue,
+        final boolean wrap) {
         this.wrap = wrap;
         this.count = initialValue;
     }

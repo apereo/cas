@@ -1,13 +1,13 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.advice;
 
 import java.lang.reflect.Method;
 
-import org.jasig.cas.authentication.Service;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.AuthenticatedService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -22,16 +22,17 @@ import org.springframework.beans.factory.InitializingBean;
 public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
     InitializingBean {
 
+    /** The registry containing the list of services. */
     private ServiceRegistry serviceRegistry;
 
     /**
      * @see org.springframework.aop.MethodBeforeAdvice#before(java.lang.reflect.Method,
      * java.lang.Object[], java.lang.Object)
      */
-    public final void before(Method method, Object[] args, Object target)
-        throws Throwable {
-        Service service = (Service) args[1];
-        AuthenticatedService authenticatedService = this.serviceRegistry
+    public final void before(final Method method, final Object[] args,
+        final Object target) throws Throwable {
+        final Service service = (Service) args[1];
+        final AuthenticatedService authenticatedService = this.serviceRegistry
             .getService(service.getId());
 
         if (authenticatedService == null) {
@@ -42,22 +43,23 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
         beforeInternal(method, args, target, authenticatedService);
     }
 
-    protected void beforeInternal(Method method, Object[] args, Object target,
-        AuthenticatedService service) throws Exception {
+    protected void beforeInternal(final Method method, final Object[] args,
+        final Object target, final AuthenticatedService service)
+        throws Exception {
         // this will be overwritten by extending classes
     }
 
     /**
      * @return Returns the serviceRegistry.
      */
-    public ServiceRegistry getServiceRegistry() {
+    public final ServiceRegistry getServiceRegistry() {
         return this.serviceRegistry;
     }
 
     /**
      * @param serviceRegistry The serviceRegistry to set.
      */
-    public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+    public final void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 

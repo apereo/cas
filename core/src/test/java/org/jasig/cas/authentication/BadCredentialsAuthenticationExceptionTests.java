@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
+
 import junit.framework.TestCase;
 
 /**

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.advice;
 
@@ -26,17 +26,18 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  * @see org.jasig.cas.services.SingleSignoutCallback
  * @see org.jasig.cas.services.ServiceRegistry
  * @see org.jasig.cas.services.AuthenticatedService
  * @see org.jasig.cas.ticket.registry.TicketRegistry
  */
-public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvice
+public final class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvice
     implements AfterReturningAdvice, InitializingBean {
 
+    /** The registry containing the list of services. */
     private ServiceRegistry serviceRegistry;
 
+    /** The mapping of TicketGrantingTickets to service tickets. */
     private Map singleSignoutMapping;
 
     public void afterReturning(final Object returnValue, final Method method,
@@ -69,11 +70,11 @@ public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvi
         }
     }
 
-    public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
-    public void setSingleSignoutMapping(Map singleSignoutMapping) {
+    public void setSingleSignoutMapping(final Map singleSignoutMapping) {
         this.singleSignoutMapping = singleSignoutMapping;
     }
 
@@ -90,5 +91,4 @@ public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvi
                     + this.getClass().getName());
         }
     }
-
 }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.advice;
 
@@ -18,12 +18,17 @@ import org.jasig.cas.services.AuthenticatedService;
 public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
     ServiceAllowedMethodBeforeAdvice {
 
-    protected void beforeInternal(Method method, Object[] args, Object target,
-        AuthenticatedService service) throws Exception {
-        if (args.length != 3)
-            return;
+    /** The number of arguments we are expecting to process. */
+    private static final int NUMBER_OF_ARGS = 3;
 
-        Credentials credentials = (Credentials) args[2];
+    protected void beforeInternal(final Method method, final Object[] args,
+        final Object target, final AuthenticatedService service)
+        throws Exception {
+        if (args.length != NUMBER_OF_ARGS) {
+            return;
+        }
+
+        final Credentials credentials = (Credentials) args[2];
 
         if (service.isForceAuthentication() && credentials == null) {
             throw new IllegalStateException(

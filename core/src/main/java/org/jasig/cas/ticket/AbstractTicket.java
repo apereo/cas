@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -19,27 +19,31 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public abstract class AbstractTicket implements Ticket {
 
-    final private ExpirationPolicy expirationPolicy;
+    /** The ExpirationPolicy this ticket will be following. */
+    private final ExpirationPolicy expirationPolicy;
 
+    /** The unique identifier for this ticket. */
+    private final String id;
+
+    /** The TicketGrantingTicket this is associated with. */
+    private final TicketGrantingTicket ticketGrantingTicket;
+
+    /** The last time this ticket was used. */
     private long lastTimeUsed;
 
+    /** The number of times this was used. */
     private int countOfUses;
 
-    final private String id;
-
-    final private TicketGrantingTicket ticketGrantingTicket;
-
-    public AbstractTicket(final String id, TicketGrantingTicket ticket,
+    public AbstractTicket(final String id, final TicketGrantingTicket ticket,
         final ExpirationPolicy expirationPolicy) {
-        if (expirationPolicy == null || id == null)
+        if (expirationPolicy == null || id == null) {
             throw new IllegalArgumentException(
                 "id and expirationPolicy are required parameters.");
+        }
 
         this.id = id;
         this.lastTimeUsed = System.currentTimeMillis();
-
         this.expirationPolicy = expirationPolicy;
-
         this.ticketGrantingTicket = ticket;
     }
 
@@ -70,19 +74,21 @@ public abstract class AbstractTicket implements Ticket {
         return this.ticketGrantingTicket;
     }
 
-    public boolean isExpired() {
-        return this.expirationPolicy.isExpired(this);
+    public final boolean isExpired() {
+        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
     }
 
-    public boolean equals(Object o) {
+    protected abstract boolean isExpiredInternal();
+
+    public final boolean equals(final Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
     }
 
-    public int hashCode() {
+    public final int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
-    public String toString() {
+    public final String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.cron;
 
@@ -26,21 +26,28 @@ import org.springframework.core.io.ResourceLoader;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DefaultReloadServiceContextCronJob implements
+public final class DefaultReloadServiceContextCronJob implements
     ReloadServiceContextCronJob, InitializingBean, ResourceLoaderAware {
 
-    private final static String DEFAULT_FILE_NAME = "services.xml";
+    /** The default file name for our services file. */
+    private static final String DEFAULT_FILE_NAME = "services.xml";
 
+    /** The log instance. */
     private final Log log = LogFactory.getLog(this.getClass());
 
+    /** Allows you to add services to the registry. */
     private ServiceRegistryManager serviceRegistryManager;
 
+    /** The actual file handle to the file. */
     private File serviceRegistryFile;
 
+    /** The filename, if not the default. */
     private String fileName;
 
+    /** The last time the file was modified. */
     private long timeLastModified = 0L;
 
+    /** The resourceloader to find the file. */
     private ResourceLoader resourceLoader;
 
     public void reloadServiceRegistry() {
@@ -101,20 +108,19 @@ public class DefaultReloadServiceContextCronJob implements
         }
     }
 
-    public void setFileName(String fileName) {
+    public void setFileName(final String fileName) {
         this.fileName = fileName;
     }
 
     public void setServiceRegistryManager(
-        ServiceRegistryManager serviceRegistryManager) {
+        final ServiceRegistryManager serviceRegistryManager) {
         this.serviceRegistryManager = serviceRegistryManager;
     }
 
     /**
      * @param resourceLoader The resourceLoader to set.
      */
-    public void setResourceLoader(ResourceLoader resourceLoader) {
+    public void setResourceLoader(final ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
-
 }

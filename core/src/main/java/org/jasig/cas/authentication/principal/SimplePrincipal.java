@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.principal;
 
@@ -18,9 +18,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class SimplePrincipal implements Principal {
 
+    /** Unique ID for serialization. */
     private static final long serialVersionUID = 3977857358779396149L;
 
-    final private String id;
+    /** The unique identifier for the principal. */
+    private final String id;
 
     public SimplePrincipal(final String id) {
         if (id == null) {
@@ -29,11 +31,11 @@ public class SimplePrincipal implements Principal {
         this.id = id;
     }
 
-    public String getId() {
+    public final String getId() {
         return this.id;
     }
 
-    public boolean equals(Object o) {
+    public final boolean equals(final Object o) {
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }
@@ -41,11 +43,11 @@ public class SimplePrincipal implements Principal {
         return EqualsBuilder.reflectionEquals(this, o);
     }
 
-    public String toString() {
+    public final String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public int hashCode() {
+    public final int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 }

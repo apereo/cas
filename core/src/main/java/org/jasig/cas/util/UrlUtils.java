@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
 
@@ -29,6 +29,7 @@ public final class UrlUtils {
     private UrlUtils() {
         // we do not want this able to be extended.
     }
+
     /**
      * Method to retrieve the response from a HTTP request for a specific URL.
      * 
@@ -41,7 +42,7 @@ public final class UrlUtils {
 
         try {
             final URLConnection connection = url.openConnection();
-            
+
             connection.setRequestProperty("Connection", "close");
             bufferedReader = new BufferedReader(new InputStreamReader(
                 connection.getInputStream()));

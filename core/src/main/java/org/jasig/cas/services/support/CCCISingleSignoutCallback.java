@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.support;
 
@@ -20,14 +20,14 @@ import org.jasig.cas.util.UrlUtils;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  */
-public class CCCISingleSignoutCallback implements SingleSignoutCallback {
+public final class CCCISingleSignoutCallback implements SingleSignoutCallback {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** The log to log errors. */
+    private final Log log = LogFactory.getLog(CCCISingleSignoutCallback.class);
 
-    public boolean sendSingleSignoutRequest(AuthenticatedService service,
-        String serviceTicketId) {
+    public boolean sendSingleSignoutRequest(final AuthenticatedService service,
+        final String serviceTicketId) {
         try {
             URL callbackUrl = new URL(service.getId());
 
@@ -36,12 +36,10 @@ public class CCCISingleSignoutCallback implements SingleSignoutCallback {
                     + serviceTicketId);
 
             UrlUtils.getResponseBodyFromUrl(callbackUrl);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error(e);
             return false;
         }
         return true;
     }
-
 }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
 
@@ -15,12 +15,13 @@ import java.security.SecureRandom;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultRandomStringGenerator implements RandomStringGenerator {
+public final class DefaultRandomStringGenerator implements
+    RandomStringGenerator {
 
     /** The array of printable characters to be used in our random string. */
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679"
         .toCharArray();
-    
+
     /** The default maximum length. */
     private static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 

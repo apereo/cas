@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
@@ -25,17 +25,22 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class FileAuthenticationHandler extends
+public final class FileAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
+    /** The default separator in the file. */
     private static final String DEFAULT_SEPARATOR = "::";
 
+    /** The default PasswordTranslator (PlainText). */
     private static final PasswordTranslator DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordTranslator();
 
+    /** The separator to use. */
     private String separator = DEFAULT_SEPARATOR;
 
+    /** The PasswordTranslator to use. */
     private PasswordTranslator passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
 
+    /** The filename to read the list of usernames from. */
     private String fileName;
 
     public boolean authenticateUsernamePasswordInternal(
@@ -43,8 +48,9 @@ public class FileAuthenticationHandler extends
         BufferedReader bufferedReader = null;
 
         if (credentials.getUserName() == null
-            || credentials.getPassword() == null)
+            || credentials.getPassword() == null) {
             return false;
+        }
 
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(this
@@ -65,20 +71,16 @@ public class FileAuthenticationHandler extends
                 }
                 line = bufferedReader.readLine();
             }
-        }
-        catch (Exception e) {
-            log.error(e);
-        }
-        finally {
+        } catch (Exception e) {
+            getLog().error(e);
+        } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
+            } catch (IOException e) {
+                getLog().error(e);
             }
-            catch (IOException e) {
-                log.error(e);
-            }
-
         }
         return false;
     }
@@ -95,21 +97,22 @@ public class FileAuthenticationHandler extends
     /**
      * @param fileName The fileName to set.
      */
-    public void setFileName(String fileName) {
+    public void setFileName(final String fileName) {
         this.fileName = fileName;
     }
 
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(PasswordTranslator passwordTranslator) {
+    public void setPasswordTranslator(
+        final PasswordTranslator passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 
     /**
      * @param separator The separator to set.
      */
-    public void setSeparator(String separator) {
+    public void setSeparator(final String separator) {
         this.separator = separator;
     }
 }

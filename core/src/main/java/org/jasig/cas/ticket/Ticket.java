@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -32,14 +32,14 @@ public interface Ticket extends Serializable {
     boolean isExpired();
 
     /**
-     * Method to retrive the TicketGrantingTicket that granted this ticket
+     * Method to retrive the TicketGrantingTicket that granted this ticket.
      * 
      * @return the ticket or null if it has no parent
      */
     TicketGrantingTicket getGrantingTicket();
 
     /**
-     * Method to return the number of times a ticket was "used."
+     * Method to return the number of times a ticket was "used".
      * 
      * @return the number of times the ticket was used.
      */

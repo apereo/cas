@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
 
@@ -9,7 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
+import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
@@ -28,13 +31,13 @@ import org.springframework.beans.factory.InitializingBean;
 public final class AuthenticationManagerImpl implements AuthenticationManager,
     InitializingBean {
 
-    /** Logger for logging events, errors, warnings, etc. */
+    /** Log instance for logging events, errors, warnigs, etc. */
     private final Log log = LogFactory.getLog(getClass());
 
-    /** List of authentication handlers. */
+    /** A list of authentication handlers. */
     private List authenticationHandlers;
 
-    /** List of CredentialsToPrincipalResolvers. */
+    /** A list of CredentialsToPrincipalResolvers. */
     private List credentialsToPrincipalResolvers;
 
     public Authentication authenticateAndResolveCredentials(
@@ -67,7 +70,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
             throw new UnsupportedCredentialsException();
         }
 
-        for (Iterator resolvers = this.credentialsToPrincipalResolvers
+        for (final Iterator resolvers = this.credentialsToPrincipalResolvers
             .iterator(); resolvers.hasNext();) {
             final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver) resolvers
                 .next();

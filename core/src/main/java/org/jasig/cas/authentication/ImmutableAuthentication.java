@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
 
@@ -22,16 +22,16 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 public final class ImmutableAuthentication implements Authentication {
 
-    /** serialVersionID for serializability */
+    /** UID for serializing. */
     private static final long serialVersionUID = 3906647483978365235L;
 
-    /** The principal we have authenticated. */
+    /** The principal this authentication object is valid for. */
     private final Principal principal;
 
-    /** The Date timestamp that this authentication became valid. */
+    /** The date/time this authentication object became valid. */
     private final Date authenticatedDate;
 
-    /** An additional object for holding arbitrary attributes. */
+    /** An arbitrary object to hold additional attributes. */
     private final Object attributes;
 
     public ImmutableAuthentication(final Principal principal,

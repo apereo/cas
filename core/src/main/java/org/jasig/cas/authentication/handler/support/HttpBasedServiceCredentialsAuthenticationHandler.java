@@ -1,12 +1,10 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.UrlUtils;
@@ -20,44 +18,43 @@ import org.jasig.cas.util.UrlUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class HttpBasedServiceCredentialsAuthenticationHandler extends
+public final class HttpBasedServiceCredentialsAuthenticationHandler extends
     AbstractAuthenticationHandler {
 
-    protected final Log log = LogFactory.getLog(getClass());
-
+    /** The string represetning the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
 
+    /** Do we allow null responses. Usually indicates a redirect or not */
     private boolean allowNullResponses = false;
 
-    public boolean authenticateInternal(Credentials credentials) {
+    public boolean authenticateInternal(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         String response = null;
         if (!serviceCredentials.getCallbackUrl().getProtocol().equals(
             PROTOCOL_HTTPS)) {
             return false;
         }
-        log
+        getLog()
             .debug("Attempting to resolve credentials for "
                 + serviceCredentials);
         try {
             response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
                 .getCallbackUrl());
-            log.debug(response);
-        }
-        catch (Exception e) {
-            log.error(e);
+            getLog().debug(response);
+        } catch (Exception e) {
+            getLog().error(e);
             return false;
         }
 
         return this.allowNullResponses ? true : response != null;
     }
 
-    protected boolean supports(Credentials credentials) {
+    protected boolean supports(final Credentials credentials) {
         return HttpBasedServiceCredentials.class.isAssignableFrom(credentials
             .getClass());
     }
 
-    public void setAllowNullResponses(boolean allowNullResponses) {
+    public void setAllowNullResponses(final boolean allowNullResponses) {
         this.allowNullResponses = allowNullResponses;
     }
 }

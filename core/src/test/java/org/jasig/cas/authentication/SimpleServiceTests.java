@@ -7,7 +7,7 @@ package org.jasig.cas.authentication;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.jasig.cas.authentication.SimpleService;
+import org.jasig.cas.authentication.principal.SimpleService;
 
 import junit.framework.TestCase;
 

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
 
@@ -12,7 +12,8 @@ package org.jasig.cas.util;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
+public final class DefaultUniqueTicketIdGenerator implements
+    UniqueTicketIdGenerator {
 
     /** The numeric generator to generate the static part of the id. */
     private final NumericGenerator numericGenerator;

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry.support;
 
@@ -50,8 +50,8 @@ public final class LoginTokenRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            for (final Iterator iter = tokensToDelete.iterator();
-                iter.hasNext();) {
+            for (final Iterator iter = tokensToDelete.iterator(); iter
+                .hasNext();) {
                 final String key = (String) iter.next();
                 this.loginTokens.remove(key);
             }
