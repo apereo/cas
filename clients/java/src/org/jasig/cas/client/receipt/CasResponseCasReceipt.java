@@ -7,8 +7,9 @@ import org.jasig.cas.authentication.principal.Principal;
  * @version $Id$
  */
 public class CasResponseCasReceipt implements CasReceipt {
+	private static final long serialVersionUID = 2854289693272618786L;
 
-    private Principal principal = null;
+	private Principal principal = null;
 
     private String errorCode;
 
@@ -20,7 +21,7 @@ public class CasResponseCasReceipt implements CasReceipt {
      * @return Returns the errorCode.
      */
     public String getErrorCode() {
-        return errorCode;
+        return this.errorCode;
     }
 
     /**
@@ -34,7 +35,7 @@ public class CasResponseCasReceipt implements CasReceipt {
      * @return Returns the errorMessage.
      */
     public String getErrorMessage() {
-        return errorMessage;
+        return this.errorMessage;
     }
 
     /**
@@ -48,7 +49,7 @@ public class CasResponseCasReceipt implements CasReceipt {
      * @return Returns the pgtIou.
      */
     public String getPgtIou() {
-        return pgtIou;
+        return this.pgtIou;
     }
 
     /**
@@ -62,7 +63,7 @@ public class CasResponseCasReceipt implements CasReceipt {
      * @return Returns the principal.
      */
     public Principal getPrincipal() {
-        return principal;
+        return this.principal;
     }
 
     /**

@@ -7,8 +7,9 @@ import org.jasig.cas.authentication.principal.Principal;
  * @version $Id$
  */
 public class ErrorCasReceipt implements CasReceipt {
+	private static final long serialVersionUID = -665459435091909512L;
 
-    /**
+	/**
      * @see org.jasig.cas.client.receipt.AbstractCasReceipt#getErrorCode()
      */
     public String getErrorCode() {

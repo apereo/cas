@@ -6,7 +6,6 @@ package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationRequest;
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.remoting.CasService;
 import org.jasig.cas.ticket.CasAttributes;
