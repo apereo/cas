@@ -35,7 +35,9 @@
 	</bean>
 	
 	<!-- ProxyHandlers -->
-	<bean id="proxyHandler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler" autowire="byType" />
+	<bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler" autowire="byType" />
+	
+	<bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler" autowire="byType" />
 	
 	<!-- Ticket Registry -->
 	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
