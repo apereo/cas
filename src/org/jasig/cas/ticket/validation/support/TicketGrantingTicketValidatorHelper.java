@@ -25,8 +25,10 @@ public class TicketGrantingTicketValidatorHelper extends AbstractTicketValidator
     protected boolean isValidForRequestInternal(final Ticket ticket, final ValidationRequest request) {
         if (!request.isRenew())
             return true;
+        
+        TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
 
-        return (ticket.getPrincipal().equals(request.getPrincipal()));
+        return (tgt.getPrincipal().equals(request.getPrincipal()));
     }
 
     /**

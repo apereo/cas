@@ -15,8 +15,19 @@ import org.jasig.cas.authentication.principal.Principal;
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     private static final long serialVersionUID = -8673232562725683059L;
+    private Principal principal;
 
-    public TicketGrantingTicketImpl(final String id, final Principal person, final ExpirationPolicy policy) {
-        super(id, person, policy);
+    public TicketGrantingTicketImpl(final String id, final Principal principal, final ExpirationPolicy policy) {
+        super(id, policy);
+        
+        if (principal == null)
+            throw new IllegalArgumentException("principal cannot be null on " + this.getClass().getName());
+    }
+    
+    /**
+     * @return Returns the principal.
+     */
+    public Principal getPrincipal() {
+        return principal;
     }
 }

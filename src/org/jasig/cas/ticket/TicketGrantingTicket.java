@@ -4,6 +4,8 @@
  */
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.authentication.principal.Principal;
+
 /**
  * Interface for a ticket granting ticket.
  * 
@@ -11,4 +13,11 @@ package org.jasig.cas.ticket;
  * @version $Id$
  */
 public interface TicketGrantingTicket extends Ticket {
+    
+    /**
+     * Method to retrieve the username.
+     * 
+     * @return the username
+     */
+    Principal getPrincipal();
 }
