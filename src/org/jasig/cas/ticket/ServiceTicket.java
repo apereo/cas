@@ -4,6 +4,8 @@
  */
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.authentication.Service;
+
 /**
  * Interface for a Service Ticket. A service ticket is used to grant access to a specific service.
  * 
@@ -11,10 +13,24 @@ package org.jasig.cas.ticket;
  * @version $Id$
  */
 public interface ServiceTicket extends Ticket {
+	public static final String PREFIX = "ST";
+	
+	/**
+	 * Retrieve the service this ticket was given for.
+	 * 
+	 * @return the server.
+	 */
+    Service getService();
 
-    String getService();
-
+    /**
+     * Determine if this ticket was created at the same time as a TicketGrantingTicket 
+     * @return true if it is, false otherwise.
+     */
     boolean isFromNewLogin();
-
-    TicketGrantingTicket getGrantor();
+    
+    /**
+     * 
+     * @return
+     */
+    TicketGrantingTicket grantTicketGrantingTicket();
 }

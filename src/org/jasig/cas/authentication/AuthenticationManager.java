@@ -21,5 +21,5 @@ public interface AuthenticationManager {
      * @param request the authentication credentials
      * @return the Principal the credentials authenticate.
      */
-    public Principal authenticateCredentials(final Credentials credentials);
+    public Principal authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException;
 }

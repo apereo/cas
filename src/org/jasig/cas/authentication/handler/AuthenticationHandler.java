@@ -4,10 +4,11 @@
  */
 package org.jasig.cas.authentication.handler;
 
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Interface for the handlers that validate requests for authentication. Developers deploying CAS supply an AuthenticationHandler and plug it into the
+ * Interface for the handlers that validate credentials for authentication. Developers deploying CAS supply an AuthenticationHandler and plug it into the
  * AuthenticationManager. Implementations of this interface might be backed by such things as LDAP servers, Kerberos realms, RDBMS tables, etc.
  * 
  * @author Scott Battaglia
@@ -16,15 +17,16 @@ import org.jasig.cas.authentication.principal.Credentials;
 public interface AuthenticationHandler {
 
     /**
-     * Method to authenticate a request.
-     * 
-     * @param request the request to authenticate
-     * @return true if the request is valid, false otherwise.
+     * Method to determine if the credentials supplied can be authenticated.
+     * @param credentials The credentials to authenticate
+     * @return true if authenticated and false otherwise
+     * @throws AuthenticationException An AuthenticationException can contain details about why
+     * a particular authentication request failed.  AuthenticationExceptions contain code/desc.
      */
-    boolean authenticate(final Credentials credentials);
+    boolean authenticate(final Credentials credentials) throws AuthenticationException;
 
     /**
-     * @param request The request we want to check if the handler supports.
+     * @param request The credentials we want to check if the handler supports.
      * @return true if the handler supports authenticating this type of request. False otherwise.
      */
     boolean supports(final Credentials credentials);

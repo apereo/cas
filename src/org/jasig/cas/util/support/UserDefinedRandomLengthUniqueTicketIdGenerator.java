@@ -2,10 +2,15 @@
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.util;
+package org.jasig.cas.util.support;
+
+import org.jasig.cas.util.DefaultLongNumericGenerator;
+import org.jasig.cas.util.NumericGenerator;
+import org.jasig.cas.util.RandomStringGenerator;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
- * Default implementation of {@link UniqueTicketIdGenerator}
+ * implementation of {@link UniqueTicketIdGenerator}that allows you to define the length of the random part of the unique ticket id.
  * 
  * @author Scott Battaglia
  * @version $Id$

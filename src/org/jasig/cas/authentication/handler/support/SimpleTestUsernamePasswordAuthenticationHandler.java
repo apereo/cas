@@ -19,8 +19,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    public boolean authenticate(final Credentials request) {
-        final UsernamePasswordCredentials authRequest = (UsernamePasswordCredentials)request;
+    public boolean authenticate(final Credentials credentials) {
+        final UsernamePasswordCredentials authRequest = (UsernamePasswordCredentials) credentials;
         final String username = authRequest.getUserName();
         final String password = authRequest.getPassword();
 

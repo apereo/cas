@@ -11,27 +11,40 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketManager;
-import org.jasig.cas.ticket.validation.ValidationRequest;
-import org.springframework.web.bind.BindUtils;
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Assertion;
+import org.jasig.cas.authentication.Cas10ProtocolAuthenticationSpecification;
+import org.jasig.cas.authentication.SimpleService;
+import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.web.support.WebConstants;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * Controller to handle legacy validation (1.0??)
+ * Controller to handle legacy validation (1.0)
  * 
  * @author Scott Battaglia
  * @version $Id$
  */
-public class LegacyValidateController extends AbstractController {
+public class LegacyValidateController extends AbstractController implements InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    private TicketManager ticketManager;
+    private CentralAuthenticationService centralAuthenticationService;
 
     public LegacyValidateController() {
         setCacheSeconds(0);
+    }
+
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (this.centralAuthenticationService == null) {
+            throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
+        }
     }
 
     /**
@@ -39,24 +52,24 @@ public class LegacyValidateController extends AbstractController {
      * javax.servlet.http.HttpServletResponse)
      */
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ValidationRequest validationRequest = new ValidationRequest();
-        PrintWriter out = response.getWriter();
-        ServiceTicket serviceTicket;
+        final String serviceTicketId = request.getParameter(WebConstants.TICKET);
+        final String service = request.getParameter(WebConstants.SERVICE);
+        final PrintWriter out = response.getWriter();
+        final Assertion assertion;
+        final Cas10ProtocolAuthenticationSpecification authenticationSpecification = new Cas10ProtocolAuthenticationSpecification(StringUtils
+            .hasText(request.getParameter(WebConstants.RENEW)));
 
-        BindUtils.bind(request, validationRequest, "validationRequest");
+        log.info("Attempting to retrieve valid ServiceTicket for [" + serviceTicketId + "]");
 
-        log.info("Attempting to retrieve valid ServiceTicket for [" + validationRequest.getTicket());
-        serviceTicket = this.ticketManager.validateServiceTicket(validationRequest);
+        try {
+            assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service), authenticationSpecification);
 
-        if (serviceTicket == null) {
-            log.info("Unable to retrieve ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service ["
-                + validationRequest.getService() + "]");
-            out.print("no\n\n");
+            log.info("Successfully retrieved ServiceTicket for ticket id [" + serviceTicketId + "] and service [" + service + "]");
+            out.print("yes\n" + assertion.getPrincipal().getId() + "\n");
         }
-        else {
-            log.info("Successfully retrieved ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service ["
-                + validationRequest.getService() + "]");
-            out.print("yes\n" + serviceTicket.getGrantor().getPrincipal().getId() + "\n");
+        catch (TicketException te) {
+            log.info("Unable to retrieve ServiceTicket for ticket id [" + serviceTicketId + "] and service [" + service + "]");
+            out.print("no\n\n");
         }
 
         out.flush();
@@ -65,9 +78,9 @@ public class LegacyValidateController extends AbstractController {
     }
 
     /**
-     * @param ticketManager The ticketManager to set.
+     * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setTicketManager(TicketManager ticketManager) {
-        this.ticketManager = ticketManager;
+    public void setCentralAuthenticationService(CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }

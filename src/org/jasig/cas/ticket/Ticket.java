@@ -27,5 +27,14 @@ public interface Ticket extends Serializable {
      * @see org.jasig.cas.ticket.ExpirationPolicy
      */
     boolean isExpired();
-
+    
+    TicketGrantingTicket getGrantingTicket();
+    
+    int getCountOfUses();
+    
+    long getLastTimeUsed();
+    
+    void incrementCountOfUses();
+    
+    void updateLastTimeUsed();
 }

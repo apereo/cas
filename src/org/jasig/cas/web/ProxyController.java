@@ -6,18 +6,17 @@ package org.jasig.cas.web;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.CasAttributes;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
-import org.jasig.cas.ticket.ProxyTicket;
-import org.jasig.cas.ticket.TicketManager;
-import org.jasig.cas.ticket.validation.ValidationRequest;
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Service;
+import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
-import org.springframework.web.bind.BindUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -27,51 +26,48 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class ProxyController extends AbstractController {
+public class ProxyController extends AbstractController implements InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    private TicketManager ticketManager;
+    private CentralAuthenticationService centralAuthenticationService;
 
     public ProxyController() {
         setCacheSeconds(0);
     }
 
     /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        if (this.centralAuthenticationService == null) {
+            throw new IllegalStateException("centralAuthenticationService cannot be null on " + this.getClass().getName());
+        }
+    }
+    
+    /**
      * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse)
      */
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ValidationRequest validationRequest = new ValidationRequest();
-        CasAttributes casAttributes = new CasAttributes();
-        ProxyGrantingTicket ticket;
-        ProxyTicket proxyTicket;
-        Map model = new HashMap();
+        final String ticket = request.getParameter(WebConstants.TICKET);
+        final Service service = new SimpleService(request.getParameter("targetService"));
+        final String serviceTicket = centralAuthenticationService.grantServiceTicket(ticket, service);
 
-        BindUtils.bind(request, validationRequest, "validationRequest");
-        BindUtils.bind(request, casAttributes, "casAttributes");
-        validationRequest.setTicket(validationRequest.getPgt());
-
-        log.info("Attempting to retrieve valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-        ticket = this.ticketManager.validateProxyGrantingTicket(validationRequest);
-
-        if (ticket != null) {
-            log.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
-            proxyTicket = this.ticketManager.createProxyTicket(casAttributes, ticket);
-            model.put(WebConstants.TICKET, proxyTicket.getId());
-            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, model);
+        if (serviceTicket == null) {
+            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);
         }
 
-        log.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+        final Map model = new HashMap();
         model.put(WebConstants.CODE, "BAD_PGT");
-        model.put(WebConstants.DESC, "unrecognized pgt: " + validationRequest.getTicket());
+        model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
         return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
     }
 
     /**
-     * @param ticketManager The ticketManager to set.
+     * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setTicketManager(TicketManager ticketManager) {
-        this.ticketManager = ticketManager;
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }

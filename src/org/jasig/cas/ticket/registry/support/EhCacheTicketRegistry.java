@@ -4,12 +4,17 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
 import net.sf.ehcache.Cache;
@@ -69,7 +74,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
 	/**
 	 * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
 	 */
-	public Ticket getTicket(String ticketId) {
+	public Ticket getTicket(String ticketId){
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
 		if (ticketId == null) {
             return null;
@@ -86,7 +91,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             return ticket;
         }
         catch (CacheException ex) {
-            throw new TicketException("Ticket registry threw an exception", ex);
+            throw new IllegalStateException("Ticket registry threw an exception: " + ex.getMessage());
         }
 	}
     /**
@@ -101,7 +106,17 @@ public class EhCacheTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTickets()
      */
     public Collection getTickets() {
-        // TODO Implement
-        return null;
+        List keys = this.cache.getKeys();
+        Collection items = new ArrayList();
+        try {
+            for (Iterator iter = keys.iterator(); iter.hasNext();) {
+                Serializable key = (Serializable) iter.next();
+                Element element = cache.get(key);
+                items.add(element.getValue());
+            }
+            return Collections.unmodifiableCollection(items);
+        } catch (CacheException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

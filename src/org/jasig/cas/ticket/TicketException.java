@@ -10,9 +10,17 @@ package org.jasig.cas.ticket;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class TicketException extends RuntimeException {
+public class TicketException extends Exception {
 
     private static final long serialVersionUID = -6000583436059919480L;
+
+    public static final TicketExceptionCode INVALID_TICKET = new TicketExceptionCode("INVALID_TICKET");
+
+    public static final TicketExceptionCode INVALID_SERVICE = new TicketExceptionCode("INVALID_SERVICE");
+
+    private TicketExceptionCode code;
+
+    private String description;
 
     /**
      *  
@@ -22,9 +30,17 @@ public class TicketException extends RuntimeException {
     }
 
     /**
+     *  
+     */
+    public TicketException(TicketExceptionCode code, final String description) {
+        this.code = code;
+        this.description = description;
+    }
+
+    /**
      * @param message
      */
-    public TicketException(String message) {
+    public TicketException(final String message) {
         super(message);
     }
 
@@ -32,14 +48,68 @@ public class TicketException extends RuntimeException {
      * @param message
      * @param cause
      */
-    public TicketException(String message, Throwable cause) {
+    public TicketException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
     /**
      * @param cause
      */
-    public TicketException(Throwable cause) {
+    public TicketException(final Throwable cause) {
         super(cause);
+    }
+
+    public TicketException(final String message, final TicketExceptionCode code, final String description) {
+        super(message);
+        this.code = code;
+        this.description = description;
+    }
+
+    /**
+     * @param message
+     * @param cause
+     */
+    public TicketException(final String message, final Throwable cause, final TicketExceptionCode code, final String description) {
+        super(message, cause);
+        this.code = code;
+        this.description = description;
+
+    }
+
+    /**
+     * @param cause
+     */
+    public TicketException(final Throwable cause, final TicketExceptionCode code, final String description) {
+        super(cause);
+        this.code = code;
+        this.description = description;
+
+    }
+
+    /**
+     * @return Returns the code.
+     */
+    public String getCode() {
+        return code.toString();
+    }
+
+    /**
+     * @return Returns the description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    protected static class TicketExceptionCode {
+
+        private String code;
+
+        protected TicketExceptionCode(String code) {
+            this.code = code;
+        }
+
+        public String toString() {
+            return this.code;
+        }
     }
 }

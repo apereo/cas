@@ -4,8 +4,12 @@
  */
 package org.jasig.cas.samples.clients.remote.jaxrpc;
 
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Assertion;
+import org.jasig.cas.authentication.Cas10ProtocolAuthenticationSpecification;
+import org.jasig.cas.authentication.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.remoting.CasService;
+import org.jasig.cas.ticket.TicketException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -23,16 +27,22 @@ public class JaxRpcSOAPWebServiceClient {
     }
 
     public void invokeCasService() {
-        CasService casService = (CasService)this.beanFactory.getBean("casService");
+        CentralAuthenticationService centralAuthenticationService = (CentralAuthenticationService)this.beanFactory.getBean("casService");
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
 
         authRequest.setUserName("test");
         authRequest.setPassword("test");
-        
-        String ticketGrantingTicketId = casService.getTicketGrantingTicket(authRequest);
-        String serviceTicket = casService.getServiceTicket(ticketGrantingTicketId, "http://www.rutgers.edu");
-
-        System.out.println(serviceTicket);
+        try {
+            String ticketGrantingTicketId = centralAuthenticationService.createTicketGrantingTicket(authRequest);
+            String serviceTicket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService("http://www.rutgers.edu"));
+            Assertion assertion = centralAuthenticationService.validateServiceTicket(serviceTicket, new SimpleService("http://www.rutgers.edu"), new Cas10ProtocolAuthenticationSpecification(false));
+            System.out.println(serviceTicket);
+            System.out.println(assertion.getPrincipal().getId());
+        } catch (TicketException tce) {
+            System.out.println("Error getting Ticket:" + tce);
+        } catch (org.jasig.cas.authentication.AuthenticationException ae) {
+            System.out.println("Error authenticating: " + ae);
+        }
     }
 
     public static void main(String[] args) {

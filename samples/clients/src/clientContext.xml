@@ -11,36 +11,45 @@
 		<property name="location"><value>client.properties</value></property>
 	</bean>
 	
+	
 	<!-- Proxy for the JAX-RPC/Axis-exported OrderService -->
-	<bean id="casService" class="org.jasig.cas.remoting.client.NestedJavaBeanMappingServicePostProcessor">
-		<property name="serviceInterface">
-			<value>org.jasig.cas.remoting.CasService</value>
-		</property>
-		<property name="portInterface">
-			<value>org.jasig.cas.remoting.server.RemoteCasService</value>
-		</property>
+	<bean id="jaxRpcProxy" class="org.springframework.remoting.jaxrpc.JaxRpcPortProxyFactoryBean">
 		<property name="serviceFactoryClass">
 			<value>org.apache.axis.client.ServiceFactory</value>
 		</property>
 		<property name="wsdlDocumentUrl">
-			<value>http://${serverName}:${httpPort}${contextPath}/services/CasService?wsdl</value>
+			<value>http://${serverName}:${httpPort}${contextPath}/services/CentralAuthenticationService?wsdl</value>
 		</property>
 		<property name="namespaceUri">
-			<value>http://${serverName}:${httpPort}${contextPath}/services/CasService</value>
+			<value>http://${serverName}:${httpPort}${contextPath}/services/CentralAuthenticationService</value>
 		</property>
 		<property name="serviceName">
-			<value>JaxRpcCasServiceService</value>
+			<value>JaxRpcCentralAuthenticationServiceService</value>
 		</property>
-		<property name="portName">
-			<value>CasService</value>
-		</property>
-		<property name="namespace">
-			<value>urn:CasService</value>
-		</property>
-		<property name="javaBeans">
+		<property name="servicePostProcessors">
 			<list>
-				<value>org.jasig.cas.authentication.UsernamePasswordCredentials</value>
+				<bean class="org.jasig.cas.remoting.client.NestedJavaBeanMappingServicePostProcessor">
+					<property name="namespace">
+						<value>urn:CentralAuthenticationService</value>
+					</property>
+					<property name="javaBeans">
+						<list>
+							<value>org.jasig.cas.authentication.principal.UsernamePasswordCredentials</value>
+							<value>org.jasig.cas.authentication.principal.SimplePrincipal</value>
+							<value>org.jasig.cas.authentication.SimpleService</value>
+							<value>org.jasig.cas.authentication.Cas20ProtocolAuthenticationSpecification</value>
+							<value>org.jasig.cas.authentication.AssertionImpl</value>
+							<value>org.jasig.cas.ticket.ExpirationPolicy</value>
+						</list>
+					</property>
+				</bean>
 			</list>
 		</property>
-	</bean>
+		<property name="portName">
+			<value>CentralAuthenticationService</value>
+		</property>
+		<property name="serviceInterface">
+			<value>org.jasig.cas.CentralAuthenticationService</value>
+		</property>
+	</bean>	
 </beans>

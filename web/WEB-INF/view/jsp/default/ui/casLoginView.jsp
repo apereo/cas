@@ -7,12 +7,12 @@
 		<!-- $Id: casFailureView.jsp,v 1.1 2004/12/09 16:10:20 dkopylen Exp $ -->
 	
 		<!-- DOCUMENT TITLE: CHANGE TO NEW TITLE -->
-		<title>Rutgers  Central  Authentication  Service (CAS)</title>
+		<title>JA-SIG  Central  Authentication  Service (CAS)</title>
 		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 	
 		<!-- KEYWORDS AND DESCRIPTIONS GO INTO THIS SECTION -->
 	
-		<meta name="keywords" content="Central Authentication Service,Rutgers University,CAS" />
+		<meta name="keywords" content="Central Authentication Service,JA-SIG,CAS" />
 	
 		<!-- THIS CODE PROVIDES THE FORMATTING FOR THE TEXT - PLEASE LEAVE INTACT -->
 		<link rel="stylesheet" href="css/acs.css" type="text/css" media="all" />
@@ -23,16 +23,13 @@
 
   <body onload="init();">
 	<!-- HEADER -->
-
 	<div id="header">
-		<a id="top">Rutgers, The State University of New Jersey</a>
-		<h1>Rutgers  Central  Authentication  Service</h1>
-
+		<a id="top">Java Architecture Special Interest Group</a>
+		<h1>JA-SIG Central  Authentication  Service</h1>
 	</div>
 	<!-- END HEADER -->
 
 	<!-- CONTENT -->
-	<!-- $Id: casFailureView.jsp,v 1.1 2004/12/09 16:10:20 dkopylen Exp $ -->
 	<div id="content">
 
 		<div class="dataset clear" style="position: relative;">
@@ -41,20 +38,20 @@
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 			
                
-                     You may establish Rutgers authentication now in order to access protected services later.
+                     You may establish JA-SIG authentication now in order to access protected services later.
                
               This is not a public network and explicit authorization is required.
 			  For security reasons, please Log Out and Exit your web browser when you are done accessing services that require authentication!
 			</p>
 
 			<form method="post">
-			<spring:bind path="authenticationRequest.*">
+			<spring:bind path="credentials.*">
 			  <c:forEach var="error" items="${status.errorMessages}">
 			      <br /><c:out value="${error}"/>
 			  </c:forEach>
 			</spring:bind>
 				<fieldset>
-					<legend><strong>Enter your Rutgers NetID and Password</strong></legend>
+					<legend><strong>Enter your JA-SIG NetID and Password</strong></legend>
 					<div style="margin-left:25%;">
 						<div>
 
@@ -82,37 +79,15 @@
 					</div>
 				</fieldset>
 			</form>
-			
-			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
-				<strong>NetID:</strong>
-				Most RUCS applications are now using the Rutgers NetID for authentication. 
-				If you have a NetID and do not remember what it is you may look it up using the 
-				<a href="https://www.acs.rutgers.edu:8889/netid/index.jsp">NetID Lookup</a> application.
-				If you do not yet have a NetID you may 
-				<a href="http://rucs.rutgers.edu/services/account/quick.html">Create a RUCS Account and NetID</a>.
-			</p>
-
-			
 		</div>
 	</div><!-- END CONTENT -->
 
 	<!-- FOOTER -->
    	<div id="footer">
 		<hr />
-		<img src="images/logo_gray.gif" width="142" height="44" alt="" title="" style="float:right; margin-top: 10px;" />
 		<p style="margin-top:1em;">
-
-			Links to campus web sites: 
-			  <a href="http://camden-www.rutgers.edu/" target="_blank">Camden</a>, 
-			  <a href="http://rutgers-newark.rutgers.edu/" target="_blank">Newark</a>, 
-			  <a href="http://nbp.rutgers.edu/" target="_blank">New Brunswick/Piscataway</a>, 
-			  <a href="http://www.rutgers.edu" target="_blank">Rutgers University</a>.
-			<br />For assistance, contact the Help Desks in: 
-			  <a href="http://rucs.camden.rutgers.edu/" target="_blank">Camden</a>, 
-			  <a href="http://www.ncs.rutgers.edu/helpdesk/" target="_blank">Newark</a>, 
-			  or <a href="http://www.nbcs.rutgers.edu/helpdesk/index.php3" target="_blank">New Brunswick/Piscataway</a>.
+			Copyright &copy; 2004 JA-SIG.  All rights reserved.
 		</p>
-
 	</div>
 	<!-- END FOOTER -->
 

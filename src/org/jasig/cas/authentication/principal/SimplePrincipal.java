@@ -4,6 +4,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * @author Scott Battaglia
  * @version $Id$
@@ -33,6 +35,10 @@ public class SimplePrincipal implements Principal {
         SimplePrincipal test = (SimplePrincipal)o;
 
         return this.id.equals(test.getId());
+    }
+    
+    public String toString() {
+    	return ToStringBuilder.reflectionToString(this);
     }
 
 }

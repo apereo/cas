@@ -5,7 +5,7 @@
 package org.jasig.cas.ticket;
 
 /**
- * Exception that is thrown when a ticket retrievel from the registry does not match the expected class.
+ * Exception that is thrown when a ticket retrieval from the registry does not match the expected class.
  * 
  * @author Scott Battaglia
  * @version $Id$

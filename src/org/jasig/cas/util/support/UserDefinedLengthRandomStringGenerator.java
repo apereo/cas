@@ -2,16 +2,22 @@
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.util;
+package org.jasig.cas.util.support;
 
 import java.security.SecureRandom;
 
+import org.jasig.cas.util.RandomStringGenerator;
+
 /**
+ * Implementation of the RandomStringGenerator that allows you to define the length of the random part.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
 public class UserDefinedLengthRandomStringGenerator implements RandomStringGenerator {
+
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
+
     private static final int MAX_TIMESTAMP_LENGTH = 10;
 
     private static final int DEFAULT_BASE = 36;
@@ -29,7 +35,7 @@ public class UserDefinedLengthRandomStringGenerator implements RandomStringGener
     private SecureRandom randomizer = new SecureRandom();
 
     private final int MAX_RANDOM_LENGTH;
-    
+
     public UserDefinedLengthRandomStringGenerator(final int maxRandomLength) {
         this.MAX_RANDOM_LENGTH = maxRandomLength;
     }
@@ -55,8 +61,8 @@ public class UserDefinedLengthRandomStringGenerator implements RandomStringGener
         long currentTime = System.currentTimeMillis();
         long count = 0;
         final byte[] random = new byte[this.MAX_RANDOM_LENGTH];
-        StringBuffer buffer = new StringBuffer(DEFAULT_LENGTH);
-        
+        final StringBuffer buffer = new StringBuffer(DEFAULT_LENGTH);
+
         this.randomizer.nextBytes(random);
 
         if (currentTime == this.lastTimeUsed)
@@ -75,14 +81,14 @@ public class UserDefinedLengthRandomStringGenerator implements RandomStringGener
 
         return buffer.toString();
     }
-    
+
     private String convertBytesToString(byte[] random) {
-        char[] output = new char[random.length];
+        final char[] output = new char[random.length];
         for (int i = 0; i < random.length; i++) {
             final int index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
             output[i] = PRINTABLE_CHARACTERS[index];
         }
-        
+
         return new String(output);
     }
 }

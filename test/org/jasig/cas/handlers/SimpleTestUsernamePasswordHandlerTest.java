@@ -1,5 +1,6 @@
 package org.jasig.cas.handlers;
 
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -21,7 +22,11 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         authRequest.setUserName("test");
         authRequest.setPassword("test");
 
-        assertTrue(this.authenticationHandler.authenticate(authRequest));
+        try {
+            assertTrue(this.authenticationHandler.authenticate(authRequest));
+        } catch (AuthenticationException ae) {
+            fail();
+        }
     }
 
     public void testInvalidUsernamePassword() {
@@ -29,7 +34,11 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         authRequest.setUserName("test");
         authRequest.setPassword("test2");
 
-        assertFalse(this.authenticationHandler.authenticate(authRequest));
+        try {
+            assertFalse(this.authenticationHandler.authenticate(authRequest));
+        } catch (AuthenticationException ae) {
+            fail();
+        }
     }
 
     public void testNullUsernamePassword() {
@@ -37,6 +46,10 @@ public class SimpleTestUsernamePasswordHandlerTest extends TestCase {
         authRequest.setUserName(null);
         authRequest.setPassword(null);
 
-        assertFalse(this.authenticationHandler.authenticate(authRequest));
+        try {
+            assertFalse(this.authenticationHandler.authenticate(authRequest));
+        } catch (AuthenticationException ae) {
+            fail();
+        }
     }
 }

@@ -4,6 +4,11 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.Service;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
+
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific access to a particular service. It will only work for a particular
  * service.
@@ -11,24 +16,35 @@ package org.jasig.cas.ticket;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class ServiceTicketImpl extends AbstractTicket implements InternalServiceTicket {
+public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
+    protected final Log log = LogFactory.getLog(this.getClass());
+    
     private static final long serialVersionUID = 1296808733190507408L;
 
-    final private TicketGrantingTicket grantor;
+    private final Service service;
 
-    final private String service;
+    private final boolean fromNewLogin;
 
-    final private boolean fromNewLogin;
+    private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    public ServiceTicketImpl(final String id, final TicketGrantingTicket ticket, final String service, final boolean fromNewLogin,
-        final ExpirationPolicy policy) {
-        super(id, policy);
+    private final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+
+    private final ExpirationPolicy expirationPolicy;
+
+    public ServiceTicketImpl(final String id, final TicketGrantingTicket ticket, final Service service, final boolean fromNewLogin,
+        final ExpirationPolicy policy, final UniqueTicketIdGenerator uniqueTicketIdGenerator,
+        final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+        super(id, ticket, policy);
+
         if (ticket == null || service == null)
             throw new IllegalArgumentException("ticket and service are required parameters");
-        this.grantor = ticket;
+
         this.service = service;
         this.fromNewLogin = fromNewLogin;
+        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
+        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
+        this.expirationPolicy = policy;
     }
 
     /**
@@ -39,16 +55,9 @@ public class ServiceTicketImpl extends AbstractTicket implements InternalService
     }
 
     /**
-     * @return Returns the grantor.
-     */
-    public TicketGrantingTicket getGrantor() {
-        return this.grantor;
-    }
-
-    /**
      * @return Returns the service.
      */
-    public String getService() {
+    public Service getService() {
         return this.service;
     }
 
@@ -56,13 +65,23 @@ public class ServiceTicketImpl extends AbstractTicket implements InternalService
      * @see org.jasig.cas.ticket.Ticket#isExpired()
      */
     public boolean isExpired() {
-        return super.isExpired() || this.grantor.isExpired();
+        if (super.isExpired()) {
+            log.debug("ServiceTicket [" + this.getId() + "] is expired.");
+        }
+        
+        if (this.getGrantingTicket().isExpired()) {
+            log.debug("TicketGrantingTicket [" + this.getGrantingTicket().getId() + "] is expired for ServiceTicket [" + this.getId() + "].");
+        }
+            
+        return super.isExpired() || this.getGrantingTicket().isExpired();
     }
-	/**
-	 * @see org.jasig.cas.ticket.InternalServiceTicket#grantTicketGrantingTicket()
-	 */
-	public TicketGrantingTicket grantTicketGrantingTicket() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+
+    /**
+     * @see org.jasig.cas.ticket.InternalServiceTicket#grantTicketGrantingTicket()
+     */
+    public TicketGrantingTicket grantTicketGrantingTicket() {
+        return new TicketGrantingTicketImpl(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), this.getGrantingTicket(), this
+            .getService(), this.ticketGrantingTicketExpirationPolicy, this.uniqueTicketIdGenerator, this.expirationPolicy);
+    }
+
 }
