@@ -106,7 +106,7 @@ public final class CentralAuthenticationServiceImpl implements
 
                 if (ticketGrantingTicket == null
                     || ticketGrantingTicket.isExpired()) {
-                    return null;
+                    throw new TicketCreationException("ticketGrantingTicket not found or expired.");
                 }
 
                 if (credentials != null) {
@@ -177,7 +177,7 @@ public final class CentralAuthenticationServiceImpl implements
                     serviceTicketId, ServiceTicket.class);
 
                 if (serviceTicket == null || serviceTicket.isExpired()) {
-                    return null;
+                    throw new TicketException("serviceTicket was not found or expired.");
                 }
 
                 TicketGrantingTicket ticketGrantingTicket = serviceTicket

@@ -134,11 +134,11 @@ public final class LoginController extends SimpleFormController implements
         if (StringUtils.hasText(ticketGrantingTicketId)
             && StringUtils.hasText(service) && !renew) {
             // we have a service and no request for renew
-            final String serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
-                    service));
-
-            if (serviceTicketId != null) {
+            
+            try {
+                final String serviceTicketId = this.centralAuthenticationService
+                    .grantServiceTicket(ticketGrantingTicketId,
+                        new SimpleService(service));
 
                 if (warn) {
                     final Map model = new HashMap();
@@ -150,8 +150,9 @@ public final class LoginController extends SimpleFormController implements
                 }
 
                 return new ModelAndView(new RedirectView(service),
-                    WebConstants.TICKET, serviceTicketId); // assume first =
-                // false?
+                    WebConstants.TICKET, serviceTicketId);
+            } catch (TicketException e) {
+                // nothing to do with this // TODO refactor???
             }
         }
 
@@ -179,17 +180,22 @@ public final class LoginController extends SimpleFormController implements
 
         this.credentialsBinder.bind(request, credentials);
 
-        try {
             if (renew && StringUtils.hasText(ticketGrantingTicketId)
                 && StringUtils.hasText(service)) {
-                serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId,
-                        new SimpleService(service), credentials);
-            }
-
-            if (serviceTicketId == null) {
-                ticketGrantingTicketId = this.centralAuthenticationService
+                
+                try {
+                    serviceTicketId = this.centralAuthenticationService
+                        .grantServiceTicket(ticketGrantingTicketId,
+                            new SimpleService(service), credentials);
+                } catch (TicketException e) {
+                    try {
+                    ticketGrantingTicketId = this.centralAuthenticationService
                     .createTicketGrantingTicket(credentials);
+                    } catch (TicketException e1) {
+                        errors.reject(e1.getCode(), e1.getDescription());
+                        return super.processFormSubmission(request, response, command, errors);
+                    }
+                }
             }
 
             this.createCookie(WebConstants.COOKIE_TGC_ID,
@@ -206,10 +212,13 @@ public final class LoginController extends SimpleFormController implements
             }
 
             if (StringUtils.hasText(service)) {
-                if (serviceTicketId == null) {
+                try {
                     serviceTicketId = this.centralAuthenticationService
                         .grantServiceTicket(ticketGrantingTicketId,
                             new SimpleService(service));
+                } catch (TicketException e) {
+                    errors.reject(e.getCode(), e.getDescription());
+                    return super.processFormSubmission(request, response, command, errors);
                 }
 
                 if (warn) {
@@ -217,7 +226,6 @@ public final class LoginController extends SimpleFormController implements
 
                     model.put(WebConstants.TICKET, serviceTicketId);
                     model.put(WebConstants.SERVICE, service);
-                    // model.put(WebConstants.FIRST, "true");
                     return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM,
                         model);
                 }
@@ -225,9 +233,6 @@ public final class LoginController extends SimpleFormController implements
                 return new ModelAndView(new RedirectView(service),
                     WebConstants.TICKET, serviceTicketId);
             }
-        } catch (TicketException e) {
-            errors.reject(e.getCode(), e.getDescription());
-        }
 
         return super.processFormSubmission(request, response, command, errors);
     }
