@@ -3,10 +3,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
-
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
+package org.jasig.cas.authentication.handler;
 
 import junit.framework.TestCase;
 
@@ -21,5 +18,6 @@ public class BadCredentialsAuthenticationExceptionTests extends TestCase {
 	public void testGetCode() {
 		AuthenticationException e = new BadCredentialsAuthenticationException();
 		assertEquals("error.authentication.credentials.bad", e.getCode());
+        assertEquals("error.authentication.credentials.bad", e.toString());
 	}
 }

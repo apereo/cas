@@ -3,10 +3,7 @@
  * See license distributed with this file and
  * available online at http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
-
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
+package org.jasig.cas.authentication.handler;
 
 import junit.framework.TestCase;
 

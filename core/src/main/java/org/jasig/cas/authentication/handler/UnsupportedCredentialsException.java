@@ -27,7 +27,10 @@ public final class UnsupportedCredentialsException extends
      * 
      */
     public UnsupportedCredentialsException() {
-        super();
-        setCode(CODE);
+        super(CODE);
+    }
+    
+    public UnsupportedCredentialsException(Throwable throwable) {
+        super(CODE, throwable);
     }
 }
