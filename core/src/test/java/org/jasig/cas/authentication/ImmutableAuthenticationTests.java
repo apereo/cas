@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.Date;
+
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
@@ -32,5 +34,9 @@ public class ImmutableAuthenticationTests extends TestCase {
     public void testGetters() {
         assertEquals(this.authentication.getPrincipal(), this.principal);
         assertEquals(this.authentication.getAttributes(), this.obj);
+    }
+    
+    public void testAuthenticatedDate() {
+        assertEquals(new Date(), this.authentication.getAuthenticatedDate());
     }
 }

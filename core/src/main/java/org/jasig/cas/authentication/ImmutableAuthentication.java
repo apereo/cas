@@ -42,7 +42,7 @@ public final class ImmutableAuthentication implements Authentication {
     }
 
     public Date getAuthenticatedDate() {
-        return this.authenticatedDate;
+        return new Date(this.authenticatedDate.getTime());
     }
 
     public Object getAttributes() {

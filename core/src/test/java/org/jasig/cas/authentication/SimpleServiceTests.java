@@ -6,6 +6,7 @@
 package org.jasig.cas.authentication;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.SimpleService;
 
 import junit.framework.TestCase;
@@ -35,12 +36,20 @@ public class SimpleServiceTests extends TestCase {
         assertEquals(id, service.getId());
     }
 
-    public void testToString() {
+    public void testHashCode() {
         final String id = "test";
         SimpleService service = new SimpleService(id);
 
         assertEquals(HashCodeBuilder.reflectionHashCode(service), service
             .hashCode());
+    }
+    
+    public void testToString() {
+        final String id = "test";
+        SimpleService service = new SimpleService(id);
+
+        assertEquals(ToStringBuilder.reflectionToString(service), service
+            .toString());
     }
 
     public void testEqualsWithNull() {
