@@ -8,6 +8,8 @@
 	
 	@author: Scott Battaglia
 	@version $Id$
+	
+	NOTE: This is a draft.
 -->
 <!ELEMENT serviceResponse ((authenticationFailure?, authenticationSuccess?, proxyFailure?, proxySuccess?))>
 
