@@ -37,14 +37,8 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends
         getLog()
             .debug("Attempting to resolve credentials for "
                 + serviceCredentials);
-        try {
             response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
                 .getCallbackUrl());
-            getLog().debug(response);
-        } catch (Exception e) {
-            getLog().error(e);
-            return false;
-        }
 
         return this.allowNullResponses ? true : response != null;
     }
