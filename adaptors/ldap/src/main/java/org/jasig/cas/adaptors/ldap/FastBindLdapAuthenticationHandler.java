@@ -23,9 +23,6 @@ public class FastBindLdapAuthenticationHandler extends
 
     private String filter;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
-     */
     public boolean authenticateInternal(final Credentials request)
         throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
@@ -49,9 +46,6 @@ public class FastBindLdapAuthenticationHandler extends
         this.filter = filter;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
-     */
     protected boolean supports(Credentials credentials) {
         return credentials != null
             && credentials.getClass().equals(UsernamePasswordCredentials.class);

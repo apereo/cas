@@ -53,9 +53,6 @@ public class BindLdapAuthenticationHandler extends
 
     private boolean allowMultipleAccounts;
 
-    /**
-     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
-     */
     public boolean authenticateInternal(final Credentials request)
         throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
@@ -106,9 +103,6 @@ public class BindLdapAuthenticationHandler extends
         return constraints;
     }
 
-    /**
-     * @see org.springframework.ldap.core.support.LdapDaoSupport#initDao()
-     */
     public void initDao() throws Exception {
         if (!this.scopeOneLevel && !this.scopeObject && !this.scopeSubtree)
             throw new IllegalStateException(
