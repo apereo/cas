@@ -57,11 +57,7 @@ public class RelativeContextSource implements ContextSource, InitializingBean {
         this.relativeName = relativeName;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.ldap.support.ContextSourceInterface#getDirContext()
-     */
+
     public DirContext getDirContext() {
         try {
             return (DirContext)getBaseContextSource().getDirContext().lookup(
@@ -102,9 +98,6 @@ public class RelativeContextSource implements ContextSource, InitializingBean {
         }
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
         if (getBaseContextSource() == null) {
             logger.error("baseContextSource null");
