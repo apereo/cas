@@ -15,7 +15,7 @@ public class SimplePrincipal implements Principal {
 	
 	public SimplePrincipal(final String id) {
 		if (id == null)
-			throw new IllegalArgumentException("id is a required parameters.");
+			throw new IllegalArgumentException("id is a required parameter.");
 
 		this.id = id;
 	}
