@@ -4,13 +4,15 @@
  */
 package org.jasig.cas.stat;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Scott Battaglia
  * @version $Id$
  *
  */
-public interface TicketStatsMBean {
+public interface TicketStatsMBean extends Serializable {
     
     int getNumberOfProxyTicketsVended();
     
@@ -20,12 +22,19 @@ public interface TicketStatsMBean {
     
     int getNumberOfProxyGrantingTicketsVended();
     
-    int getProxyTicketsPerSecond();
+    double getProxyTicketsPerSecond();
     
-    int getServiceTicketsPerSecond();
+    double getServiceTicketsPerSecond();
     
-    int getTicketGrantingticketsPerSecond();
+    double getTicketGrantingticketsPerSecond();
     
-    int getProxyGrantingTicketsPerSecond();
-
+    double getProxyGrantingTicketsPerSecond();
+    
+    void incrementNumberOfProxyTicketsVended();
+    
+    void incrementNumberOfServiceTicketsVended();
+    
+    void incrementNumberOfTicketGrantingTicketsVended();
+    
+    void incrementNumberOfProxyGrantingTicketsVended();
 }

@@ -1,8 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
+ave a<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-    <bean id="casService" class="org.jasig.cas.remoting.server.CasServiceImpl">
-        <property name="ticketManager"><ref bean="ticketManager" /></property>
-        <property name="authenticationManager"><ref bean="authenticationManager" /></property>
-    </bean>
+	<bean id="mbeanserver" class="org.springframework.jmx.support.MBeanServerFactoryBean">
+		<property name="defaultDomain"><value>cas</value></property>
+	</bean>
+
+	<bean id="mbeanadapter" class="org.springframework.jmx.MBeanExporter">
+	    <property name="server"><ref local="mbeanserver"/></property>
+    	<property name="beans">
+	      	<map>
+    	    	<entry key="cas:id=stats">
+        	  		<ref bean="statsBean"/>
+        		</entry>
+			</map>
+    	</property>
+	</bean>
+
+	<bean id="jmxconnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
+		<property name="server">
+			<ref local="mbeanserver" />
+		</property>
+	    <!-- This is the default URL anyway -->
+		<property name="serviceUrl">
+			<value>service:jmx:jmxmp://localhost:9876</value>
+		</property>
+		<property name="threaded">
+			<value>true</value>
+		</property>
+	    <!-- Ensure the connector thread doesn't keep the servlet container running -->
+		<property name="daemon">
+			<value>true</value>
+		</property>
+	</bean>
+
+	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatsMBeanImpl" />
 </beans>

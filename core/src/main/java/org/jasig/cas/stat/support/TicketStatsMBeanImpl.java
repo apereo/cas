@@ -8,6 +8,8 @@ import org.jasig.cas.stat.TicketStatsMBean;
 
 
 public class TicketStatsMBeanImpl implements TicketStatsMBean {
+    private static final int MILLISECONDS_IN_A_SECOND = 1000;
+    
     private int numberOfProxyTicketsVended;
     private int numberOfServiceTicketesVended;
     private int numberOfTicketGrantingTicketsVended;
@@ -39,24 +41,20 @@ public class TicketStatsMBeanImpl implements TicketStatsMBean {
         return this.numberOfProxyGrantingTicketsVended;
     }
 
-    public int getProxyTicketsPerSecond() {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getProxyTicketsPerSecond() {
+        return getNumberOfTicketsPerSecond(this.numberOfProxyTicketsVended);
     }
 
-    public int getServiceTicketsPerSecond() {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getServiceTicketsPerSecond() {
+        return getNumberOfTicketsPerSecond(this.numberOfServiceTicketesVended);
     }
 
-    public int getTicketGrantingticketsPerSecond() {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getTicketGrantingticketsPerSecond() {
+        return getNumberOfTicketsPerSecond(this.numberOfTicketGrantingTicketsVended);
     }
 
-    public int getProxyGrantingTicketsPerSecond() {
-        // TODO Auto-generated method stub
-        return 0;
+    public double getProxyGrantingTicketsPerSecond() {
+        return getNumberOfTicketsPerSecond(this.numberOfProxyGrantingTicketsVended);
     }
     
     public void incrementNumberOfProxyGrantingTicketsVended() {
@@ -73,5 +71,12 @@ public class TicketStatsMBeanImpl implements TicketStatsMBean {
     
     public void incrementNumberOfTicketGrantingTicketsVended() {
         this.numberOfTicketGrantingTicketsVended++;
+    }
+    
+    private double getNumberOfTicketsPerSecond(int numberOfTickets) {
+        final long timeElapsed = System.currentTimeMillis() - this.startUpTime;
+        final long timeElapsedInSeconds = timeElapsed / MILLISECONDS_IN_A_SECOND;
+        
+        return numberOfTickets / timeElapsedInSeconds;
     }
 }
