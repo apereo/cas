@@ -16,7 +16,7 @@ public class SimplePrincipalTest extends TestCase {
 
     public void testNullId() {
         try {
-            final SimplePrincipal principal = new SimplePrincipal(null);
+            new SimplePrincipal(null);
         } catch (IllegalArgumentException e) {
             return;
         }

@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class HttpBasedServiceCredentialsTest extends TestCase {
     public void testNullURL() {
         try {
-            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(null);
+            new HttpBasedServiceCredentials(null);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -32,7 +32,7 @@ public class HttpBasedServiceCredentialsTest extends TestCase {
             
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(url);
             
-            assertEquals(url, url);
+            assertEquals(url, c.getCallbackUrl());
         } catch (MalformedURLException e) {
             fail("MalformedUrlException caught.");
         }

@@ -18,7 +18,7 @@ public class SimpleServiceTest extends TestCase {
 
     public void testNullId() {
         try {
-            final SimpleService service = new SimpleService(null);
+            new SimpleService(null);
         } catch (IllegalArgumentException e) {
             return;
         }

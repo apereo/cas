@@ -4,8 +4,10 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
@@ -31,7 +33,9 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
      */
     public void clean() {
         final long currentTime = System.currentTimeMillis();
+        final List tokensToDelete = new ArrayList();
         log.info("Started cleaning up login tokens at [" + new Date() + "]");
+
         synchronized (this.loginTokens) {
             final Set keys = this.loginTokens.keySet();
 
@@ -39,8 +43,13 @@ public class LoginTokenRegistryCleaner implements RegistryCleaner {
                 final String key = (String)iter.next();
                 final Date lastUsed = (Date)loginTokens.get(key);
 
-                if ((lastUsed.getTime() - currentTime) > this.timeOut)
-                    this.loginTokens.remove(key);
+                if ((currentTime - lastUsed.getTime()) > this.timeOut)
+                    tokensToDelete.add(key);
+            }
+            
+            for (Iterator iter = tokensToDelete.iterator(); iter.hasNext();) {
+                final String key = (String) iter.next();
+                this.loginTokens.remove(key);
             }
         }
         log.info("Finished cleaning up login tokens at [" + new Date() + "]");
