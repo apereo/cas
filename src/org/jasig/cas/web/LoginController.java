@@ -113,7 +113,7 @@ public class LoginController extends SimpleFormController implements Initializin
         final boolean renew = StringUtils.hasText(request.getParameter(WebConstants.RENEW));
 
         // if we managed to find an existing ticketGrantingTicketId
-        if (ticketGrantingTicketId != null && StringUtils.hasText(service) && !renew) {
+        if (StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service) && !renew) {
             // we have a service and no request for renew
             final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService(service));
 
@@ -178,13 +178,13 @@ public class LoginController extends SimpleFormController implements Initializin
 
                 model.put(WebConstants.TICKET, serviceTicketId);
                 model.put(WebConstants.SERVICE, service);
-                model.put(WebConstants.FIRST, "true");
+//                model.put(WebConstants.FIRST, "true");
                 return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
             }
 
             final Map model = new HashMap();
             model.put(WebConstants.TICKET, serviceTicketId);
-            model.put(WebConstants.FIRST, "true");
+//            model.put(WebConstants.FIRST, "true");
 
             return new ModelAndView(new RedirectView(service), model);
         }
