@@ -34,7 +34,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     InitializingBean {
 
     /** Log instance for logging events, errors, warnigs, etc. */
-    private static final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
+    private final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
 
     /** A list of authentication handlers. */
     private List authenticationHandlers;

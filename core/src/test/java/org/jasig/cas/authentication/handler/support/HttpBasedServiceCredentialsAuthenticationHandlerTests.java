@@ -93,4 +93,16 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
             // this is okay.
         }
     }
+    
+    public void testAllowNullResponse() {
+        try {
+            ((HttpBasedServiceCredentialsAuthenticationHandler) this.authenticationHandler).setAllowNullResponses(true);
+            assertTrue(this.authenticationHandler
+                .authenticate(new HttpBasedServiceCredentials(
+                    this.httpsProperCertificateUrl)));
+        }
+        catch (AuthenticationException e) {
+            fail("We should not have gotten an error.");
+        }
+    }
 }
