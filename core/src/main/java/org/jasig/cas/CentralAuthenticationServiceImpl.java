@@ -55,9 +55,6 @@ public final class CentralAuthenticationServiceImpl extends
     /** ExpirationPolicy for Service Tickets */
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
-    /**
-     * @see org.jasig.cas.CentralAuthenticationService#destroyTicketGrantingTicket(java.lang.String)
-     */
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         synchronized (this.ticketRegistry) {
             try {
