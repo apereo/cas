@@ -24,15 +24,15 @@ public class AssertionImpl implements Assertion {
         this.fromNewLogin = fromNewLogin;
     }
 
-    /**
-     * @see org.jasig.cas.authentication.Assertion#getPrincipal()
+    /*
+     * @see org.jasig.cas.authentication.Assertion#getChainedPrincipals()
      */
     public List getChainedPrincipals() {
         return this.principals;
     }
 
-    /**
-     * @return Returns the isFromNewLogin.
+    /*
+     * @see org.jasig.cas.authentication.Assertion#isFromNewLogin()
      */
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
