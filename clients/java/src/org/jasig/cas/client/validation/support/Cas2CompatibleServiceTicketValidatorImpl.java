@@ -17,17 +17,16 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * @author Scott Battaglia
  * @version $Id$
- * TODO is HttpClient threadsafe???
  */
 public class Cas2CompatibleServiceTicketValidatorImpl extends
         AbstractServiceTicketValidator {
     private static final String XML_CAS_AUTHENTICATION_FAILURE = "cas:authenticationFailure";
+    private final HttpClient client = new HttpClient();
 
     /**
      * @see org.jasig.cas.client.validation.support.AbstractServiceTicketValidator#validateInternal(java.lang.String)
      */
     public CasReceipt validateInternal(String ticketId) {
-        HttpClient client = new HttpClient();
         String response;
         GetMethod getMethod = new GetMethod(getCasValidateUrl().toString());
         getMethod.setQueryString(getNameValuePairs(ticketId));
