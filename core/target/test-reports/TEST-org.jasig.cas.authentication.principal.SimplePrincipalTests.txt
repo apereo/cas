@@ -1,3 +1,0 @@
-Testsuite: org.jasig.cas.authentication.principal.SimplePrincipalTests
-Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0 sec
-
