@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.ServiceRegistry;
+import org.jasig.cas.ticket.registry.ServiceRegistry;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
