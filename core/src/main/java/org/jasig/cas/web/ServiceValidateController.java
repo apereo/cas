@@ -58,9 +58,6 @@ public final class ServiceValidateController extends AbstractController
 
     /** The view to redirect to on a validation failure. */
     private String failureView;
-    
-    /** Boolean to indicate whether this controller allows proxying. */
-    private boolean allowedToProxy;
 
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
@@ -118,12 +115,6 @@ public final class ServiceValidateController extends AbstractController
                 // TODO internationalize this.
                 model.put(WebConstants.CODE, "INVALID_TICKET");
                 model.put(WebConstants.DESC, "ticket not backed by initial CAS login, as requested");
-                return new ModelAndView(this.failureView, model);
-            }
-            
-            if (!this.allowedToProxy && assertion.getChainedPrincipals().size() > 1) {
-                model.put(WebConstants.CODE, "INVALID_TICKET");
-                model.put(WebConstants.DESC, "we do not accept proxy tickets");
                 return new ModelAndView(this.failureView, model);
             }
 
@@ -203,9 +194,5 @@ public final class ServiceValidateController extends AbstractController
      */
     public void setProxyHandler(final ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
-    }
-    
-    public void setAllowedToProxy(final boolean allowedToProxy) {
-        this.allowedToProxy = allowedToProxy;
     }
 }

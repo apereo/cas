@@ -174,9 +174,17 @@ public final class LoginController extends SimpleFormController implements
         final boolean warn = StringUtils.hasText(request
             .getParameter(WebConstants.WARN));
         final String service = request.getParameter(WebConstants.SERVICE);
+        final String loginToken = request.getParameter(WebConstants.LOGIN_TOKEN);
         String serviceTicketId = null;
         String ticketGrantingTicketId = getCookieValue(request,
             WebConstants.COOKIE_TGC_ID);
+        
+        // check for a login ticket
+        if (loginToken == null || !this.loginTokens.containsKey(loginToken)) {
+            return super.showForm(request, response, errors);
+        }
+        
+        this.loginTokens.remove(loginToken);
 
         this.credentialsBinder.bind(request, credentials);
 

@@ -24,6 +24,7 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
+import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -177,7 +178,7 @@ public class LoginControllerTests extends TestCase {
         request.addParameter("service", "Test");
         request.setCookies(new Cookie[] {cookie, cookie2});
         
-        assertFalse(this.loginController.showForm(request, new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getView() instanceof RedirectView);        
+        assertEquals(ViewNames.CONST_LOGON_CONFIRM, this.loginController.showForm(request, new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getViewName());        
     }
     
     public void testTicketGrantingTicketAndServiceWithRenew() throws Exception {
@@ -195,13 +196,15 @@ public class LoginControllerTests extends TestCase {
         request.addParameter("renew", "true");
         request.setCookies(new Cookie[] {cookie});
         
-        assertFalse(this.loginController.showForm(request, new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getView() instanceof RedirectView);        
+        assertEquals(ViewNames.CONST_LOGON, this.loginController.showForm(request, new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getViewName());        
     }
     
     public void testNoCredentials() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("loginToken", (String) this.loginController.showForm(new MockHttpServletRequest(), new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
         try {
             Credentials c= new UsernamePasswordCredentials();
-            this.loginController.processFormSubmission(new MockHttpServletRequest(), new MockHttpServletResponse(), c, new BindException(c, "credentials"));
+            this.loginController.processFormSubmission(request, new MockHttpServletResponse(), c, new BindException(c, "credentials"));
             fail("TicketException expected.");
         } catch (TicketException e) {
             return;
@@ -212,13 +215,14 @@ public class LoginControllerTests extends TestCase {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("userName", "test");
         request.addParameter("password", "test");
-        
+        request.addParameter("loginToken", (String) this.loginController.showForm(new MockHttpServletRequest(), new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
+
         UsernamePasswordCredentials c= new UsernamePasswordCredentials();
         
         c.setUserName("test");
         c.setPassword("test");
         
-        assertFalse(this.loginController.processFormSubmission(new MockHttpServletRequest(), new MockHttpServletResponse(), c, new BindException(c, "credentials")).getView() instanceof RedirectView);
+        assertEquals(ViewNames.CONST_LOGON_SUCCESS, this.loginController.processFormSubmission(request, new MockHttpServletResponse(), c, new BindException(c, "credentials")).getViewName());
     }
     
     public void testValidCredentialsWithService() throws Exception {
@@ -226,6 +230,7 @@ public class LoginControllerTests extends TestCase {
         request.addParameter("userName", "test");
         request.addParameter("password", "test");
         request.addParameter("service", "test");
+        request.addParameter("loginToken", (String) this.loginController.showForm(new MockHttpServletRequest(), new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
         
         UsernamePasswordCredentials c= new UsernamePasswordCredentials();
         
@@ -241,13 +246,14 @@ public class LoginControllerTests extends TestCase {
         request.addParameter("password", "test");
         request.addParameter("service", "test");
         request.addParameter("warn", "test");
+        request.addParameter("loginToken", (String) this.loginController.showForm(new MockHttpServletRequest(), new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
         
         UsernamePasswordCredentials c= new UsernamePasswordCredentials();
         
         c.setUserName("test");
         c.setPassword("test");
         
-        assertFalse(this.loginController.processFormSubmission(request, new MockHttpServletResponse(), c, new BindException(c, "credentials")).getView() instanceof RedirectView);
+        assertEquals(ViewNames.CONST_LOGON_CONFIRM, this.loginController.processFormSubmission(request, new MockHttpServletResponse(), c, new BindException(c, "credentials")).getViewName());
     }
     
     public void testValidCredentialsWithServiceAndRenew() throws Exception {
@@ -257,6 +263,7 @@ public class LoginControllerTests extends TestCase {
         request.addParameter("password", "test");
         request.addParameter("service", "test");
         request.addParameter("renew", "true");
+        request.addParameter("loginToken", (String) this.loginController.showForm(new MockHttpServletRequest(), new MockHttpServletResponse(), new BindException(new UsernamePasswordCredentials(), "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
         
         UsernamePasswordCredentials c= new UsernamePasswordCredentials();
         
@@ -268,5 +275,10 @@ public class LoginControllerTests extends TestCase {
         request.setCookies(new Cookie[] {cookie});
         
         assertTrue(this.loginController.processFormSubmission(request, new MockHttpServletResponse(), c, new BindException(c, "credentials")).getView() instanceof RedirectView);
+    }
+    
+    public void testNoLoginToken() throws Exception {
+        Credentials c = new UsernamePasswordCredentials();
+        assertNotNull(this.loginController.processFormSubmission(new MockHttpServletRequest(), new MockHttpServletResponse(), c, new BindException(c, "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
     }
 }

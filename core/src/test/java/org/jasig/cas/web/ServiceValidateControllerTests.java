@@ -4,7 +4,6 @@
  */
 package org.jasig.cas.web;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import org.jasig.cas.authentication.DefaultAuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -101,7 +99,6 @@ public class ServiceValidateControllerTests extends TestCase {
         this.serviceValidateController.setFailureView("test");
         this.serviceValidateController.setSuccessView("test");
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
-        this.serviceValidateController.setAllowedToProxy(true);
         this.serviceValidateController.afterPropertiesSet();
     }
     
@@ -131,22 +128,6 @@ public class ServiceValidateControllerTests extends TestCase {
         request.addParameter(WebConstants.SERVICE, "test");
         request.addParameter(WebConstants.TICKET, sId2);
         request.addParameter(WebConstants.RENEW, "true");
-        
-        assertEquals(ViewNames.CONST_SERVICE_FAILURE, this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getViewName());
-    }
-    
-    public void testValidServiceTicketChainedPrincipals() throws Exception {
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setPassword("test");
-        c.setUserName("test");
-        final String tId = this.centralAuthenticationService.createTicketGrantingTicket(c);
-        final String sId = this.centralAuthenticationService.grantServiceTicket(tId, new SimpleService("test"));
-        final String tId2 = this.centralAuthenticationService.delegateTicketGrantingTicket(sId, new HttpBasedServiceCredentials(new URL("https://www.acs.rutgers.edu")));
-        final String sId2 = this.centralAuthenticationService.grantServiceTicket(tId2, new SimpleService("test"));
-        
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, "test");
-        request.addParameter(WebConstants.TICKET, sId2);
         
         assertEquals(ViewNames.CONST_SERVICE_FAILURE, this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getViewName());
     }
