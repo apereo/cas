@@ -26,5 +26,9 @@
 <!--    <preGoal name="war:war">
     	<attainGoal name="jar:install" />
     </preGoal>
--->
+-->    
+	<preGoal name="war:init">
+		<attainGoal name="jar" />
+	    <copy todir="${maven.build.dir}/cas-server/WEB-INF/lib" file="${maven.build.dir}/cas-server-${pom.currentVersion}.jar" />
+	</preGoal>
 </project>
