@@ -427,6 +427,13 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>maven</groupId>
+			<artifactId>commons-attributes-plugin</artifactId>
+			<version>2.1</version>
+			<type>plugin</type>
+		</dependency>
+		
+		<dependency>
 		  <groupId>statcvs</groupId>
 		  <artifactId>maven-statcvs-plugin</artifactId>
 		  <version>2.5</version>
