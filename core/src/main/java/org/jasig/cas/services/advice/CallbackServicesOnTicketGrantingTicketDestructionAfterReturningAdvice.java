@@ -59,7 +59,7 @@ public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvi
 			final SingleSignoutCallback callback = service.getSingleSignoutCallback();
 			
 			if (callback != null ){
-				callback.sendSingleSignoutRequest(serviceTicket.getId());
+				callback.sendSingleSignoutRequest(service, serviceTicket.getId());
 			}
 		}
 	}
