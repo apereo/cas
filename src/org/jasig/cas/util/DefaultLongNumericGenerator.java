@@ -53,7 +53,7 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
         return DefaultLongNumericGenerator.MIN_STRING_LENGTH;
     }
 
-    protected synchronized long getNextValue() {
+    protected synchronized long getNextValue() throws IllegalStateException {
         if (!this.wrap && this.count == Long.MAX_VALUE)
             throw new IllegalStateException("Maximum value reached for this number generator.");
 
