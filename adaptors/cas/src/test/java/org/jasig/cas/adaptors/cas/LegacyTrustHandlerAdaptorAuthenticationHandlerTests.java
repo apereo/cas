@@ -10,8 +10,8 @@ import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockServletRequest;
 import org.jasig.cas.adaptors.cas.mock.MockTrustHandler;
-import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.UnsupportedCredentialsException;
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 
 import junit.framework.TestCase;
 
