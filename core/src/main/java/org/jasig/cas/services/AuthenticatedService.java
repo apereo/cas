@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.services;
 
+import java.net.URL;
+
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -12,18 +14,20 @@ package org.jasig.cas.services;
  */
 public class AuthenticatedService {
 
-    private String id;
+    final private String id;
 
-    private boolean allowedToProxy;
+	final private boolean allowedToProxy;
 
-    private boolean forceAuthentication;
+	final private boolean forceAuthentication;
 
-    private String theme;
+	final private String theme;
 
-	private SingleSignoutCallback singleSignoutCallback;
+	final private SingleSignoutCallback singleSignoutCallback;
+	
+	final private URL proxyUrl;
 
     public AuthenticatedService(final String id, final boolean allowedToProxy,
-        final boolean forceAuthentication, final String theme, final SingleSignoutCallback singleSignoutCallback) {
+        final boolean forceAuthentication, final String theme, final SingleSignoutCallback singleSignoutCallback, final URL proxyUrl) {
         if (id == null) {
             throw new IllegalArgumentException("id is a required parameter.");
         }
@@ -33,6 +37,7 @@ public class AuthenticatedService {
         this.forceAuthentication = forceAuthentication;
         this.theme = theme;
 		this.singleSignoutCallback = singleSignoutCallback;
+		this.proxyUrl = proxyUrl;
     }
 
     /**
@@ -43,24 +48,10 @@ public class AuthenticatedService {
     }
 
     /**
-     * @param allowedToProxy The allowedToProxy to set.
-     */
-    public void setAllowedToProxy(boolean allowedToProxy) {
-        this.allowedToProxy = allowedToProxy;
-    }
-
-    /**
      * @return Returns the forceAuthentication.
      */
     public boolean isForceAuthentication() {
         return this.forceAuthentication;
-    }
-
-    /**
-     * @param forceAuthentication The forceAuthentication to set.
-     */
-    public void setForceAuthentication(boolean forceAuthentication) {
-        this.forceAuthentication = forceAuthentication;
     }
 
     /**
@@ -71,33 +62,17 @@ public class AuthenticatedService {
     }
 
     /**
-     * @param id The id to set.
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
      * @return Returns the theme.
      */
     public String getTheme() {
         return this.theme;
     }
 
-    /**
-     * @param theme The theme to set.
-     */
-    public void setTheme(String theme) {
-        this.theme = theme;
-    }
-
 	public SingleSignoutCallback getSingleSignoutCallback() {
 		return singleSignoutCallback;
 	}
 
-	public void setSingleSignoutCallback(final SingleSignoutCallback singleSignoutCallback) {
-		this.singleSignoutCallback = singleSignoutCallback;
+	public URL getProxyUrl() {
+		return proxyUrl;
 	}
-	
-
 }

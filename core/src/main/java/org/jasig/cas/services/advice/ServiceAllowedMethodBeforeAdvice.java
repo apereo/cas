@@ -35,7 +35,7 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
             .getService(service.getId());
 
         if (authenticatedService == null) {
-            throw new UnauthorizedServiceException();
+            throw new UnauthorizedServiceException("Service: [" + service.getId() + "] not found in registry.");
         }
 
         beforeInternal(method, args, target, authenticatedService);

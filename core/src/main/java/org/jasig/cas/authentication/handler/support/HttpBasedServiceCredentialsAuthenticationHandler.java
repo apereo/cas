@@ -40,6 +40,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends
         try {
             response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
                 .getCallbackUrl());
+			log.debug(response);
         }
         catch (Exception e) {
             log.error(e);

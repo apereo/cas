@@ -5,22 +5,26 @@
 		<property name="defaultDomain"><value>cas</value></property>
 	</bean>
 
-	<bean id="attributeSource" class="org.springframework.jmx.metadata.CommonsJmxAttributeSource" />
+	<bean id="attributeSource" class="org.springframework.jmx.export.metadata.AttributesJmxAttributeSource">
+		<property name="attributes"><bean class="org.springframework.metadata.commons.CommonsAttributes" /></property>
+	</bean>
 
-	<bean id="assembler" class="org.springframework.jmx.assembler.MetadataModelMBeanInfoAssembler">
+	<bean id="assembler" class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
 		<property name="attributeSource"><ref local="attributeSource" /></property>
 	</bean>
 
-	<bean id="mbeanadapter" class="org.springframework.jmx.MBeanExporter">
+	<bean id="mbeanadapter" class="org.springframework.jmx.export.MBeanExporter">
 		<property name="server"><ref local="mbeanserver"/></property>
+		<property name="namingStrategy">
+			<bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+				<property name="attributeSource"><ref local="attributeSource" /></property>
+			</bean>
+		</property>
     	<property name="beans">
 	      	<map>
     	    	<entry key="cas:id=stats">
         	  		<ref bean="statsBean"/>
         		</entry>
- <!--   	    	<entry key="cas:id=policies">
-        	  		<ref bean="centralAuthenticationService" />
-        		</entry>-->
 			</map>
     	</property>
 		<property name="assembler">
@@ -40,6 +44,9 @@
 		</property>
 		<property name="daemon">
 			<value>true</value>
+		</property>
+		<property name="objectName">
+			<value>cas:server=server</value>
 		</property>
 	</bean>
 
