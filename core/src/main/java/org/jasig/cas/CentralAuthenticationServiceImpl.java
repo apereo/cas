@@ -62,6 +62,10 @@ public final class CentralAuthenticationServiceImpl implements
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+        if (ticketGrantingTicketId == null) {
+            throw new IllegalArgumentException("ticketGrantingTicketId cannot be null");
+        }
+
         synchronized (this.ticketRegistry) {
             try {
                 log.debug("Removing ticket [" + ticketGrantingTicketId
@@ -88,6 +92,10 @@ public final class CentralAuthenticationServiceImpl implements
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketCreationException {
+        
+        if (ticketGrantingTicketId == null || service == null) {
+            throw new IllegalArgumentException("ticketGrantingTicketId, credentials and service are required fields.");
+        }
 
         try {
             final TicketGrantingTicket ticketGrantingTicket;
@@ -154,6 +162,11 @@ public final class CentralAuthenticationServiceImpl implements
 
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
+        
+        if (serviceTicketId == null || credentials == null) {
+            throw new IllegalArgumentException("serviceTicketId and credentials are required fields.");
+        }
+
         try {
             final Authentication authentication = this.authenticationManager
                 .authenticate(credentials);
@@ -226,6 +239,10 @@ public final class CentralAuthenticationServiceImpl implements
 
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
+        if (credentials == null) {
+            throw new IllegalArgumentException("credentials is a required field.");
+        }
+        
         try {
             final Authentication authentication = this.authenticationManager
                 .authenticate(credentials);
