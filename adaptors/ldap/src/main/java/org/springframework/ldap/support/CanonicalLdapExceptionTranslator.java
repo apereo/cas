@@ -19,11 +19,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 public class CanonicalLdapExceptionTranslator implements
     LdapExceptionTranslator {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.ldap.support.LdapExceptionTranslater#translate(java.lang.String, javax.naming.NamingException)
-     */
     public DataAccessException translate(String task, NamingException namingex) {
         // TODO: implement real code there
         return new DataIntegrityViolationException(task, namingex);
