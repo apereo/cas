@@ -86,10 +86,6 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                 final Principal principal = resolver
                     .resolvePrincipal(credentials);
 
-                if (principal == null) {
-                    throw new UnsupportedCredentialsException();
-                }
-
                 authentication = new ImmutableAuthentication(principal, new HashMap());
                 break;
             }
