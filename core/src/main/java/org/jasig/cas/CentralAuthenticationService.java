@@ -28,7 +28,8 @@ public interface CentralAuthenticationService {
      * 
      * @param credentials The credentials to create the ticket for
      * @return The String identifier of the ticket.
-     * @throws AuthenticationException
+     * @throws AuthenticationException if credentials do not authenticate
+     * @throws TicketCreationException if ticket cannot be created
      */
     String createTicketGrantingTicket(Credentials credentials)
         throws AuthenticationException, TicketCreationException;
@@ -81,7 +82,7 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication to other Services.
      * 
      * @param serviceTicketId The service ticket that will delegate to a TicketGrantingTicket
-     * @param Credentials The credentials of the service that wishes to have a TicketGrantingTicket delegated to it.
+     * @param credentials The credentials of the service that wishes to have a TicketGrantingTicket delegated to it.
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
      * @throws TicketException
      * @throws AuthenticationException
