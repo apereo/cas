@@ -25,9 +25,6 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
 
     private  ServiceRegistry serviceRegistry;
 
-    /**
-     * @see org.springframework.web.servlet.ThemeResolver#resolveThemeName(javax.servlet.http.HttpServletRequest)
-     */
     public String resolveThemeName(HttpServletRequest request) {
         String serviceId = request.getParameter(SERVICE_THEME_KEY);
         AuthenticatedService service = this.serviceRegistry.getService(serviceId);
@@ -35,9 +32,6 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
         return service != null ? service.getTheme() : getDefaultThemeName();
     }
 
-    /**
-     * @see org.springframework.web.servlet.ThemeResolver#setThemeName(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String)
-     */
     public void setThemeName(HttpServletRequest request, HttpServletResponse response, String themeName) {
         // nothing to do here
     }
