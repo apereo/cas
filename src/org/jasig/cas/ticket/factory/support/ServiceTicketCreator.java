@@ -37,12 +37,12 @@ public class ServiceTicketCreator implements TicketCreator {
      */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
     	final String service = casAttributes.getService();
-        this.log.debug("Attempting to resolve service id via Service Registry for Service [" + service + "]");
+        log.debug("Attempting to resolve service id via Service Registry for Service [" + service + "]");
         
         if (!this.serviceRegistry.serviceExists(service))
             throw new TicketCreationException("A valid service is required to create a service ticket.");
 
-        this.log.debug("Creating ServiceTicket for ID [" + ticketId + "]");
+        log.debug("Creating ServiceTicket for ID [" + ticketId + "]");
         return new ServiceTicketImpl(ticketId, (TicketGrantingTicket) grantingTicket, service, casAttributes.isFirst(), this.policy);
     }
 

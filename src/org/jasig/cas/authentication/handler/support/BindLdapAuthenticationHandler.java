@@ -57,7 +57,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 				dirContext = this.getContext(this.bindUsername, this.bindPassword, url);
 				
 				if (dirContext == null) {
-					this.log.debug("Unable to authenticate LDAP user [" + this.bindUsername + "] for LDAP server [" + url + "]");
+					log.debug("Unable to authenticate LDAP user [" + this.bindUsername + "] for LDAP server [" + url + "]");
 					return false;					
 				}
 				

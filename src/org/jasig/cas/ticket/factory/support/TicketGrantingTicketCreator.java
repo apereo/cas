@@ -40,7 +40,7 @@ public class TicketGrantingTicketCreator implements TicketCreator {
 	 */
     public Ticket createTicket(final Principal principal, final CasAttributes casAttributes, final String ticketId, final Ticket grantingTicket) {
 
-        this.log.debug("Creating TicketGrantingTicket for ID [" + ticketId + "]");
+        log.debug("Creating TicketGrantingTicket for ID [" + ticketId + "]");
         return new TicketGrantingTicketImpl(ticketId, principal, this.policy);
     }
 

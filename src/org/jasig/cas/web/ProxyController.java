@@ -54,16 +54,16 @@ public class ProxyController extends AbstractController {
         BindUtils.bind(request, casAttributes, "casAttributes");
         validationRequest.setTicket(validationRequest.getPgt());
 
-        this.log.info("Attempting to retrieve valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+        log.info("Attempting to retrieve valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
         ticket = this.ticketManager.validateProxyGrantingTicket(validationRequest);
 
         if (ticket != null) {
-            this.log.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+            log.info("Obtained valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
             proxyTicket = this.ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
             model.put(WebConstants.TICKET, proxyTicket.getId());
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, model);
         } else {
-            this.log.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
+            log.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
             model.put(WebConstants.CODE, "BAD_PGT");
             model.put(WebConstants.DESC, "unrecognized pgt: " + validationRequest.getTicket());
             return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);

@@ -26,17 +26,17 @@ public class TicketValidatorImpl implements TicketValidator {
      * @see org.jasig.cas.ticket.validation.TicketValidator#validate(org.jasig.cas.ticket.Ticket, org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public boolean validate(final Ticket ticket, final ValidationRequest request) {
-    	this.log.debug("Attempting to find validator for ticket of type [" + ticket.getClass().getName() + "]");
+    	log.debug("Attempting to find validator for ticket of type [" + ticket.getClass().getName() + "]");
         for (Iterator iter = this.ticketValidatorHelpers.iterator(); iter.hasNext();) {
             final TicketValidatorHelper helper = (TicketValidatorHelper) iter.next();
 
             if (helper.supports(ticket)) {
-            	this.log.debug("Found validator of type [" + helper.getClass().getName() + "] for [" + ticket.getClass().getName() + "]");
+            	log.debug("Found validator of type [" + helper.getClass().getName() + "] for [" + ticket.getClass().getName() + "]");
             	return (helper.validateForRequest(ticket, request));
             }
         }
             
-        this.log.debug("No validator registered for [" + ticket.getClass().getName() + "].  Assuming no validation required.");
+        log.debug("No validator registered for [" + ticket.getClass().getName() + "].  Assuming no validation required.");
         return true;
     }
 

@@ -67,13 +67,13 @@ public class LoginController extends AbstractFormController {
 	 * @see org.springframework.web.servlet.mvc.AbstractFormController#processFormSubmission(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.validation.BindException)
 	 */
 	protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-		AuthenticationRequest authRequest = (AuthenticationRequest) command;
-		CasAttributes casAttributes = new CasAttributes();
-		ValidationRequest validationRequest = new ValidationRequest();
+		final AuthenticationRequest authRequest = (AuthenticationRequest) command;
+		final CasAttributes casAttributes = new CasAttributes();
+		final ValidationRequest validationRequest = new ValidationRequest();
 		BindUtils.bind(request, authRequest, this.getCommandName());
 		BindUtils.bind(request, validationRequest, "validationRequest");
 		BindUtils.bind(request, casAttributes, "casAttributes");
-		Principal principal;
+		final Principal principal;
 		
 		/*
 		TicketGrantingTicket ticket = getTicketGrantingTicket(request, validationRequest);
@@ -85,7 +85,7 @@ public class LoginController extends AbstractFormController {
 		String loginToken = request.getParameter(WebConstants.TICKET);
 
 		if (!this.loginTokens.containsKey(loginToken)) {
-			this.log.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
+			log.info("Duplicate login detected for Authentication Request [" + authRequest + "]");
 			errors.reject("error.invalid.loginticket", null);
 			return showForm(request, response, errors);
 		} else
@@ -94,12 +94,12 @@ public class LoginController extends AbstractFormController {
 		principal = this.authenticationManager.authenticateUser(authRequest);
 
 		if (principal != null) {
-			this.log.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");
+			log.info("Successfully authenticated user [" + authRequest + "] to principal with Id [" + principal.getId() + "]");
 
 			TicketGrantingTicket ticket = getTicketGrantingTicket(request, principal, validationRequest);
 			
 			if (ticket == null) {
-				this.log.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
+				log.info("Creating new ticket granting ticket for principal [" + principal.getId() + "]");
 				ticket = this.ticketManager.createTicketGrantingTicket(principal, casAttributes);
 				createCookie(WebConstants.COOKIE_TGC_ID, ticket.getId(), request, response);
 			}
@@ -120,8 +120,8 @@ public class LoginController extends AbstractFormController {
 	 * @see org.springframework.web.servlet.mvc.AbstractFormController#referenceData(javax.servlet.http.HttpServletRequest, java.lang.Object, org.springframework.validation.Errors)
 	 */
 	protected Map referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
-		Map map = new HashMap();
-		String newToken = this.idGenerator.getNewTokenId();
+		final Map map = new HashMap();
+		final String newToken = this.idGenerator.getNewTokenId();
 		this.loginTokens.put(newToken, new Date());
 		map.put(WebConstants.LOGIN_TICKET, newToken);
 		return map;
@@ -132,14 +132,14 @@ public class LoginController extends AbstractFormController {
 	 */
 	protected ModelAndView showForm(HttpServletRequest request, HttpServletResponse response, BindException errors) throws Exception {
 
-		ValidationRequest validationRequest = new ValidationRequest();
-		CasAttributes casAttributes = new CasAttributes();
-		Map model = new HashMap();
+		final ValidationRequest validationRequest = new ValidationRequest();
+		final CasAttributes casAttributes = new CasAttributes();
+		final Map model = new HashMap();
 
 		BindUtils.bind(request, validationRequest, "validationRequest");
 		BindUtils.bind(request, casAttributes, "casAttributes");
-		TicketGrantingTicket ticket = getTicketGrantingTicket(request, null, validationRequest); // assume no principal since we haven't posted to the form  yet.
-		ModelAndView mv = getViewToForwardTo(request, ticket, casAttributes, validationRequest);
+		final TicketGrantingTicket ticket = getTicketGrantingTicket(request, null, validationRequest); // assume no principal since we haven't posted to the form  yet.
+		final ModelAndView mv = getViewToForwardTo(request, ticket, casAttributes, validationRequest);
 
 		if (mv != null)
 			return mv;
@@ -161,7 +161,7 @@ public class LoginController extends AbstractFormController {
 	}
 
 	private void createCookie(String id, String value, HttpServletRequest request, HttpServletResponse response) {
-		Cookie cookie = new Cookie(id, value);
+		final Cookie cookie = new Cookie(id, value);
 		cookie.setSecure(true);
 		cookie.setMaxAge(-1);
 		cookie.setPath(request.getContextPath());
@@ -169,11 +169,11 @@ public class LoginController extends AbstractFormController {
 	}
 
 	private ModelAndView grantForService(final HttpServletRequest request, final TicketGrantingTicket ticket, CasAttributes casAttributes) {
-		Map model = new HashMap();
-		String service = casAttributes.getService();
-		boolean first = casAttributes.isFirst();
+		final Map model = new HashMap();
+		final String service = casAttributes.getService();
+		final boolean first = casAttributes.isFirst();
 		if (StringUtils.hasText(service)) {
-			String token = this.ticketManager.createServiceTicket(ticket.getPrincipal(), casAttributes, ticket).getId();
+			final String token = this.ticketManager.createServiceTicket(ticket.getPrincipal(), casAttributes, ticket).getId();
 			model.put(WebConstants.TICKET, token);
 			model.put(WebConstants.SERVICE, service);
 			model.put(WebConstants.FIRST, new Boolean(first).toString());
@@ -191,14 +191,14 @@ public class LoginController extends AbstractFormController {
 	}
 
 	private boolean privacyRequested(HttpServletRequest request) {
-		Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_PRIVACY);
+		final Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_PRIVACY);
 		if (cookie == null)
 			return false;
 		return Boolean.getBoolean(cookie.getValue());
 	}
 
 	private TicketGrantingTicket getTicketGrantingTicket(final HttpServletRequest request, final Principal principal, final ValidationRequest validationRequest) {
-		Cookie tgt = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
+		final Cookie tgt = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
 		validationRequest.setPrincipal(principal);
 		TicketGrantingTicket ticket = null;
 		if (tgt != null) {

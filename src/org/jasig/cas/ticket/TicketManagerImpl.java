@@ -156,7 +156,7 @@ public class TicketManagerImpl implements TicketManager {
 
         synchronized (ticket) {
             if (this.ticketValidator.validate(ticket, request)) {
-            	this.log.debug("Successful validation.  Updating state for ticket [" + ticket.getId() + "]");
+            	log.debug("Successful validation.  Updating state for ticket [" + ticket.getId() + "]");
                 AbstractTicket t = (AbstractTicket) ticket;
                 t.incrementCount();
                 t.updateLastUse();

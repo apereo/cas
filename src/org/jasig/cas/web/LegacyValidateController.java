@@ -44,15 +44,15 @@ public class LegacyValidateController extends AbstractController {
 
 		BindUtils.bind(request, validationRequest, "validationRequest");
 		
-		this.log.info("Attempting to retrieve valid ServiceTicket for [" + validationRequest.getTicket());
+		log.info("Attempting to retrieve valid ServiceTicket for [" + validationRequest.getTicket());
 		serviceTicket = this.ticketManager.validateServiceTicket(validationRequest);
 		
 		if (serviceTicket == null) {
-			this.log.info("Unable to retrieve ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
+			log.info("Unable to retrieve ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
 			out.print("no\n\n");
 		}
 		else {
-			this.log.info("Successfully retrieved ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
+			log.info("Successfully retrieved ServiceTicket for ticket id [" + validationRequest.getTicket() + "] and service [" + validationRequest.getService() + "]");
 			out.print("yes\n" + serviceTicket.getPrincipal().getId()+"\n");
 		}
 		

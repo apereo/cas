@@ -26,7 +26,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      * @see org.jasig.cas.util.UniqueTicketIdGenerator#getNewTicketId(java.lang.String)
      */
     public String getNewTicketId(final String prefix) {
-    	StringBuffer buffer = new StringBuffer();
+    	final StringBuffer buffer = new StringBuffer();
     	buffer.append(prefix);
     	buffer.append("-");
     	buffer.append(this.numericGenerator.getNextNumberAsString());

@@ -26,7 +26,7 @@ public class DefaultCredentialsToPrincipalResolver implements CredentialsToPrinc
 	 */
     public Principal resolvePrincipal(final AuthenticationRequest authenticationRequest) {
     	final UsernamePasswordAuthenticationRequest basicAuthenticationRequest = (UsernamePasswordAuthenticationRequest) authenticationRequest;
-    	this.log.debug("Creating SimplePrincipal for [" + basicAuthenticationRequest.getUserName() + "]");
+    	log.debug("Creating SimplePrincipal for [" + basicAuthenticationRequest.getUserName() + "]");
         return new SimplePrincipal(basicAuthenticationRequest.getUserName());
     }
 
