@@ -4,7 +4,11 @@
  */
 package org.jasig.cas.web;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,8 +63,21 @@ public class ServiceValidateController extends AbstractController implements Ini
         try {
             assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service), authenticationSpecification);
 
-            model.put(WebConstants.PRINCIPAL, assertion.getPrincipal());
-
+            model.put(WebConstants.PRINCIPAL, assertion.getChainedPrincipals().get(0));
+            
+            if (assertion.getChainedPrincipals().size() > 1) {
+                final List proxies = new ArrayList();
+                
+                final Iterator iter = assertion.getChainedPrincipals().iterator();
+                iter.next();
+                
+                while (iter.hasNext()) {
+                    proxies.add(iter.next());
+                }
+                
+                model.put(WebConstants.PROXIES, Collections.unmodifiableList(proxies));
+            }
+            
             return new ModelAndView(ViewNames.CONST_SERVICE_SUCCESS, model);
         }
         catch (TicketException te) {
@@ -77,11 +94,6 @@ public class ServiceValidateController extends AbstractController implements Ini
          ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(casAttributes,
          serviceTicket);
          model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
-         }
-
-         if (serviceTicket instanceof ProxyTicket) {
-         ProxyTicket p = (ProxyTicket)serviceTicket;
-         model.put(WebConstants.PROXIES, p.getProxies());
          }
          */
         // TODO implement

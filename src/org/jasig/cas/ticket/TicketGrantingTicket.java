@@ -4,6 +4,8 @@
  */
 package org.jasig.cas.ticket;
 
+import java.util.List;
+
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Principal;
 
@@ -42,4 +44,10 @@ public interface TicketGrantingTicket extends Ticket {
      * @return true if it has no parent, false otherwise.
      */
     boolean isRoot();
+    
+    /**
+     * Method to retrieve the chained list of principals for this TicketGrantingTicket
+     * @return the list of principals
+     */
+    List getChainedPrincipals();
 }

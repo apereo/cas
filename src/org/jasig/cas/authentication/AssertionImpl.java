@@ -1,8 +1,8 @@
 package org.jasig.cas.authentication;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.jasig.cas.authentication.principal.Principal;
+import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * @author Scott Battaglia
@@ -10,21 +10,17 @@ import org.jasig.cas.authentication.principal.Principal;
  *
  */
 public class AssertionImpl implements Assertion {
-	private Principal principal;
+	private List principals;
 	
-	public AssertionImpl() {
-		this.principal = null;
-	}
-	
-	public AssertionImpl(final Principal principal) {
-		this.principal = principal;
+	public AssertionImpl(final List principals) {
+		this.principals = principals;
 	}
 
 	/**
 	 * @see org.jasig.cas.authentication.Assertion#getPrincipal()
 	 */
-	public Principal getPrincipal() {
-		return this.principal;
+	public List getChainedPrincipals() {
+		return this.principals;
 	}
 	
 	public String toString() {

@@ -15,6 +15,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Assertion;
 import org.jasig.cas.authentication.Cas10ProtocolAuthenticationSpecification;
 import org.jasig.cas.authentication.SimpleService;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
@@ -65,7 +66,7 @@ public class LegacyValidateController extends AbstractController implements Init
             assertion = centralAuthenticationService.validateServiceTicket(serviceTicketId, new SimpleService(service), authenticationSpecification);
 
             log.info("Successfully retrieved ServiceTicket for ticket id [" + serviceTicketId + "] and service [" + service + "]");
-            out.print("yes\n" + assertion.getPrincipal().getId() + "\n");
+            out.print("yes\n" + ((Principal) assertion.getChainedPrincipals().get(0)).getId() + "\n");
         }
         catch (TicketException te) {
             log.info("Unable to retrieve ServiceTicket for ticket id [" + serviceTicketId + "] and service [" + service + "]");
