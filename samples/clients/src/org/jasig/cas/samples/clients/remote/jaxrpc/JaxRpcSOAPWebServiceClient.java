@@ -8,6 +8,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Assertion;
 import org.jasig.cas.authentication.Cas10ProtocolAuthenticationSpecification;
 import org.jasig.cas.authentication.SimpleService;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.springframework.beans.factory.BeanFactory;
@@ -37,7 +38,7 @@ public class JaxRpcSOAPWebServiceClient {
             String serviceTicket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, new SimpleService("http://www.rutgers.edu"));
             Assertion assertion = centralAuthenticationService.validateServiceTicket(serviceTicket, new SimpleService("http://www.rutgers.edu"), new Cas10ProtocolAuthenticationSpecification(false));
             System.out.println(serviceTicket);
-            System.out.println(assertion.getPrincipal().getId());
+            System.out.println(((Principal) assertion.getChainedPrincipals().get(0)).getId());
         } catch (TicketException tce) {
             System.out.println("Error getting Ticket:" + tce);
         } catch (org.jasig.cas.authentication.AuthenticationException ae) {

@@ -4,6 +4,10 @@
  */
 package org.jasig.cas.ticket;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -89,5 +93,22 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     public boolean isExpired() {
         return super.isExpired() || this.expired;
+    }
+
+    /**
+     * @see org.jasig.cas.ticket.TicketGrantingTicket#getChainedPrincipals()
+     */
+    public List getChainedPrincipals() {
+        final List list = new ArrayList();
+        
+        if (this.getGrantingTicket() == null) {
+            list.add(this.getPrincipal());
+            return Collections.unmodifiableList(list);
+        }
+        
+        list.addAll(this.getGrantingTicket().getChainedPrincipals());
+        list.add(this.getPrincipal());
+        
+        return Collections.unmodifiableList(list);
     }
 }

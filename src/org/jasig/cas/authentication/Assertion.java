@@ -4,8 +4,7 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.principal.Principal;
-
+import java.util.List;
 
 /**
  * Interface for returning the results of a validation attempt
@@ -17,6 +16,6 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 public interface Assertion {
 	
-    Principal getPrincipal();
+    List getChainedPrincipals();
 
 }

@@ -146,7 +146,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
             serviceTicket.incrementCountOfUses();
         }
 
-        return new AssertionImpl(serviceTicket.getGrantingTicket().getPrincipal()); // TODO handle proxy case
+        return new AssertionImpl(serviceTicket.getGrantingTicket().getChainedPrincipals()); // TODO handle proxy case
     }
 
     /**
