@@ -26,6 +26,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-collections/jars/commons-collections-3.1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2-dev-build.226-20050316.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2-rc1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

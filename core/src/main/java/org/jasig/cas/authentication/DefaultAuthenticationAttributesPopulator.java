@@ -8,8 +8,10 @@ package org.jasig.cas.authentication;
 /**
  * Default AuthenticationAttributesPopulator which adds no additional attributes
  * to the Authentication object.
+ * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Revision$ $Date$
+ * @since 3.0
  *
  */
 public final class DefaultAuthenticationAttributesPopulator implements

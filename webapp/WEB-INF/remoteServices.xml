@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
+	<bean id="validators" class="java.util.ArrayList">
+		<constructor-arg index="0">
+			<list>
+				<bean class="org.jasig.cas.validation.UsernamePasswordCredentialsValidator" />
+			</list>
+		</constructor-arg>
+	</bean>
+
 	<bean id="mbeanserver" class="org.springframework.jmx.support.MBeanServerFactoryBean">
 		<property name="defaultDomain"><value>cas</value></property>
 	</bean>
