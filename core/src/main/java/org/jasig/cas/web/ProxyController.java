@@ -64,7 +64,7 @@ public final class ProxyController extends AbstractController implements
         } catch (TicketException e) {
             final Map model = new HashMap();
             model.put(WebConstants.CODE, e.getCode());
-            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(e.getCode()));
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(e.getCode(), e.getCode()));
             return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
         }
     }
