@@ -19,7 +19,7 @@ public class Cas2CompatibleServiceTicketValidatorImpl extends AbstractServiceTic
 
     private static final String XML_CAS_AUTHENTICATION_FAILURE = "cas:authenticationFailure";
 
-   //  private final HttpClient client = new HttpClient();
+    // private final HttpClient client = new HttpClient();
 
     /**
      * @see org.jasig.cas.client.validation.support.AbstractServiceTicketValidator#validateInternal(java.lang.String)
@@ -30,7 +30,7 @@ public class Cas2CompatibleServiceTicketValidatorImpl extends AbstractServiceTic
         // getMethod.setQueryString(getNameValuePairs(ticketId));
 
         try {
-            //this.client.executeMethod(getMethod);
+            // this.client.executeMethod(getMethod);
             // response = getMethod.getResponseBodyAsString();
 
             // return getCasReceipt(response);
@@ -41,17 +41,13 @@ public class Cas2CompatibleServiceTicketValidatorImpl extends AbstractServiceTic
         }
         return null;
     }
-/*
-    protected NameValuePair[] getNameValuePairs(String ticketId) {
-        NameValuePair pairs[] = new NameValuePair[4];
 
-        pairs[0] = new NameValuePair("ticket", ticketId);
-        pairs[1] = new NameValuePair("renew", Boolean.toString(this.isRenew()));
-        pairs[2] = new NameValuePair("service", this.getService().toString());
-        pairs[3] = new NameValuePair("pgtUrl", this.getProxyCallbackUrl().toString());
-        return pairs;
-    }
-*/
+    /*
+     * protected NameValuePair[] getNameValuePairs(String ticketId) { NameValuePair pairs[] = new NameValuePair[4]; pairs[0] = new
+     * NameValuePair("ticket", ticketId); pairs[1] = new NameValuePair("renew", Boolean.toString(this.isRenew())); pairs[2] = new
+     * NameValuePair("service", this.getService().toString()); pairs[3] = new NameValuePair("pgtUrl", this.getProxyCallbackUrl().toString()); return
+     * pairs; }
+     */
     protected CasReceipt getCasReceipt(String response) throws Exception {
         CasResponseCasReceipt casReceipt = new CasResponseCasReceipt();
         XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();

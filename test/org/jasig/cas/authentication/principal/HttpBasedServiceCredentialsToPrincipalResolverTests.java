@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.principal;
 
@@ -23,27 +23,29 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends TestCas
     public void testInValidSupportsCredentials() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
     }
-    
+
     public void testNullSupportsCredentials() {
         assertFalse(this.resolver.supports(null));
     }
-    
+
     public void testValidSupportsCredentials() {
         try {
-        	assertTrue(this.resolver.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
-        } catch (MalformedURLException e) {
+            assertTrue(this.resolver.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
+        }
+        catch (MalformedURLException e) {
             fail("Invalid URL supplied.");
         }
     }
-    
+
     public void testValidCredentials() {
         try {
-	        HttpBasedServiceCredentials request = new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"));
-	        
-	        Principal p = this.resolver.resolvePrincipal(request);
-	
-	        assertEquals(p.getId(), request.getCallbackUrl().toExternalForm());
-        } catch (MalformedURLException e) {
+            HttpBasedServiceCredentials request = new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"));
+
+            Principal p = this.resolver.resolvePrincipal(request);
+
+            assertEquals(p.getId(), request.getCallbackUrl().toExternalForm());
+        }
+        catch (MalformedURLException e) {
             fail("Invalid URL supplied.");
         }
     }

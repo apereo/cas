@@ -7,7 +7,7 @@ package org.jasig.cas.authentication.principal;
 import org.jasig.cas.authentication.SimpleService;
 
 /**
- * Resolver to resolve the credentials presented for an HTTP-based service to a principal. 
+ * Resolver to resolve the credentials presented for an HTTP-based service to a principal.
  * 
  * @author Scott Battaglia
  * @version $Id$

@@ -59,9 +59,9 @@ public class ProxyController extends AbstractController implements InitializingB
             model.put(WebConstants.CODE, "BAD_PGT");
             model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
             return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
-            
+
         }
-        
+
         return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);
     }
 

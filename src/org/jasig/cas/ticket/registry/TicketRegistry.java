@@ -19,7 +19,7 @@ import org.jasig.cas.ticket.Ticket;
 public interface TicketRegistry {
 
     /**
-     * Add a ticket to the registry. Ticket storage is based on the ticket id. 
+     * Add a ticket to the registry. Ticket storage is based on the ticket id.
      * 
      * @param ticket The ticket we wish to add to the cache.
      */

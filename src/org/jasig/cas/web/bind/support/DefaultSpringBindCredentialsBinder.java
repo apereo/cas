@@ -9,8 +9,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
 
 /**
- * The default custom binder for credentials.  It doesn't do anything as it assumes you're using the
- * Spring bind capabilties.
+ * The default custom binder for credentials. It doesn't do anything as it assumes you're using the Spring bind capabilties.
  * 
  * @author Scott Battaglia
  * @version $Id$

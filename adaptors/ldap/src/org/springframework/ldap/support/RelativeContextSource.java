@@ -1,17 +1,8 @@
 /*
- * Copyright 2002-2004 the original author or authors.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2002-2004 the original author or authors. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+ * applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package org.springframework.ldap.support;
 
@@ -24,14 +15,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
- * DirContext provider which creates new DirContext by finding a sub object from
- * a base DirContext. It is thus parametized by a ContextSource and a relative
- * name.
+ * DirContext provider which creates new DirContext by finding a sub object from a base DirContext. It is thus parametized by a ContextSource and a
+ * relative name.
  * 
  * @author Olivier Jolly
  */
-public class RelativeContextSource implements ContextSource,
-        InitializingBean {
+public class RelativeContextSource implements ContextSource, InitializingBean {
 
     private ContextSource baseContextSource = null;
 
@@ -47,8 +36,7 @@ public class RelativeContextSource implements ContextSource,
     }
 
     /**
-     * @param baseContextSource
-     *            The baseContextSource to set.
+     * @param baseContextSource The baseContextSource to set.
      */
 
     public void setBaseContextSource(ContextSource baseContextSource) {
@@ -63,8 +51,7 @@ public class RelativeContextSource implements ContextSource,
     }
 
     /**
-     * @param relativeName
-     *            The relativeName to set.
+     * @param relativeName The relativeName to set.
      */
     public void setRelativeName(String relativeName) {
         this.relativeName = relativeName;
@@ -77,41 +64,39 @@ public class RelativeContextSource implements ContextSource,
      */
     public DirContext getDirContext() {
         try {
-            return (DirContext) getBaseContextSource().getDirContext().lookup(
-                    getRelativeName());
-        } catch (NamingException e) {
-            String baseName = "Can not get basename";
-            try {
-                baseName = getBaseContextSource().getDirContext()
-                        .getNameInNamespace();
-            } catch (NamingException ex) {
-                logger.warn("Can not get basename", ex);
-            }
-            throw new DataAccessResourceFailureException(
-                    "Can not get relative context (base = " + baseName
-                            + " , relative name = " + getRelativeName(), e);
+            return (DirContext)getBaseContextSource().getDirContext().lookup(getRelativeName());
         }
-    }
-    
-    public DirContext getDirContext(String principal, String password) {
-        try {
-            return (DirContext) getBaseContextSource().getDirContext(principal, password).lookup(
-                    getRelativeName());
-        } catch (NamingException e) {
+        catch (NamingException e) {
             String baseName = "Can not get basename";
             try {
-                baseName = getBaseContextSource().getDirContext(principal, password)
-                        .getNameInNamespace();
-            } catch (NamingException ex) {
+                baseName = getBaseContextSource().getDirContext().getNameInNamespace();
+            }
+            catch (NamingException ex) {
                 logger.warn("Can not get basename", ex);
             }
-            throw new DataAccessResourceFailureException(
-                    "Can not get relative context (base = " + baseName
-                            + " , relative name = " + getRelativeName(), e);
+            throw new DataAccessResourceFailureException("Can not get relative context (base = " + baseName + " , relative name = "
+                + getRelativeName(), e);
         }
     }
 
-     /** 
+    public DirContext getDirContext(String principal, String password) {
+        try {
+            return (DirContext)getBaseContextSource().getDirContext(principal, password).lookup(getRelativeName());
+        }
+        catch (NamingException e) {
+            String baseName = "Can not get basename";
+            try {
+                baseName = getBaseContextSource().getDirContext(principal, password).getNameInNamespace();
+            }
+            catch (NamingException ex) {
+                logger.warn("Can not get basename", ex);
+            }
+            throw new DataAccessResourceFailureException("Can not get relative context (base = " + baseName + " , relative name = "
+                + getRelativeName(), e);
+        }
+    }
+
+    /**
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {

@@ -7,9 +7,10 @@ import org.jasig.cas.authentication.principal.Principal;
  * @version $Id$
  */
 public class CasResponseCasReceipt implements CasReceipt {
-	private static final long serialVersionUID = 2854289693272618786L;
 
-	private Principal principal = null;
+    private static final long serialVersionUID = 2854289693272618786L;
+
+    private Principal principal = null;
 
     private String errorCode;
 

@@ -27,7 +27,7 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticatio
      */
     public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
-        
+
         DirContext dirContext = this.getContextSource().getDirContext(LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
             uRequest.getPassword());
 

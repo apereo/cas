@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.principal;
 
@@ -24,19 +24,20 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
     public void testValidSupportsCredentials() {
         assertTrue(this.resolver.supports(new UsernamePasswordCredentials()));
     }
-    
+
     public void testNullSupportsCredentials() {
         assertFalse(this.resolver.supports(null));
     }
-    
+
     public void testInvalidSupportsCredentials() {
         try {
-        	assertFalse(this.resolver.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
-        } catch (MalformedURLException e) {
+            assertFalse(this.resolver.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
+        }
+        catch (MalformedURLException e) {
             fail("Invalid URL supplied.");
         }
     }
-    
+
     public void testValidCredentials() {
         UsernamePasswordCredentials request = new UsernamePasswordCredentials();
         request.setUserName("test");
@@ -57,7 +58,7 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
 
         fail("IllegalArgumentException expected.");
     }
-    
+
     public void testNullCredentials() {
         try {
             this.resolver.resolvePrincipal(null);

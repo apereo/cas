@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.cas;
 
@@ -17,7 +17,6 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
  * 
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public class LegacyTrustHandlerAdaptorAuthenticationHandler extends AbstractAuthenticationHandler implements InitializingBean {
 

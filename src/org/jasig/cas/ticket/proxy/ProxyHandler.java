@@ -1,19 +1,17 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.proxy;
 
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Abstraction for what needs to be done to handle proxies.  Useful because the generic
- * flow for all authentication is similar the actions taken for proxying are different.
- * One can swap in/out implementations but keep the flow of events the same.
+ * Abstraction for what needs to be done to handle proxies. Useful because the generic flow for all authentication is similar the actions taken for
+ * proxying are different. One can swap in/out implementations but keep the flow of events the same.
  * 
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public interface ProxyHandler {
 
