@@ -78,7 +78,7 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
             final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket)this.ticketRegistry.getTicket(ticketGrantingTicketId,
                 TicketGrantingTicket.class);
 
-            if (ticketGrantingTicket == null)
+            if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired())
                 return null;
 
             if (credentials != null) {
@@ -91,6 +91,11 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
             }
 
             final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(service);
+            
+            // TODO we need a better way of handling this
+            if (credentials != null) {
+                serviceTicket.setFromNewLogin(true);
+            }
 
             this.ticketRegistry.addTicket(serviceTicket);
 
@@ -124,6 +129,9 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
         }
 
         final ServiceTicket serviceTicket = (ServiceTicket)this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        
+        if (serviceTicket == null || serviceTicket.isExpired())
+            return null;
 
         TicketGrantingTicket ticketGrantingTicket = serviceTicket.grantTicketGrantingTicket(authentication);
 
