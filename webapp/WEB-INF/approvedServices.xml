@@ -1,4 +1,28 @@
 <beans>
-	<bean>
+	<!-- SERVICE REGISTRY -->
+	<bean id="serviceRegistry" class="org.jasig.cas.services.DefaultServiceRegistry" />
+
+	<!-- ADVICE -->
+	
+	<bean id="serviceAllowedMethodBeforeAdvice" class="org.jasig.cas.services.advice.ServiceAllowedMethodBeforeAdvice">
+		<property name="serviceRegistry"><ref local="serviceRegistry" />
+	</bean>
+
+
+	<!-- ADVISORS -->	
+	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+
+	<!-- ADVISE TO CHECK IF A SERVICE IS EVEN ALLOWED TO 	
+	<bean id="serviceAllowedMethodBeforeAdviceAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<constructor-arg><ref local="serviceAllowedMethodBeforeAdvice" /></constructor-arg>
+		<property name="patterns">
+			<list>
+				<value>.*CentralAuthenticationService.grantServiceTicket.*</value>
+				<value>.*CentralAuthenticationService.validateServiceTicket.*</value>
+			</list>
+		</property>
+        <property name="perl5">
+            <value>false</value>
+        </property>
 	</bean>
 </beans>

@@ -4,7 +4,6 @@
  */
 package org.jasig.cas.adaptors.cas;
 
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,8 +25,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticateInternal(final Credentials credentials)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials) {
         final LegacyCasTrustedCredentials casCredentials = (LegacyCasTrustedCredentials)credentials;
 
         return StringUtils.hasText(this.trustHandler.getUsername(casCredentials

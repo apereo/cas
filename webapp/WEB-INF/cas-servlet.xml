@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
+	<!-- Theme Resolver -->
+	<bean id="themeResolver" class="org.jasig.cas.web.ServiceThemeResolver" />
+
 	<!-- View Resolver -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
 		<property name="basename"><value>default_views</value></property>

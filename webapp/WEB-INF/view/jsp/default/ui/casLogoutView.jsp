@@ -1,4 +1,5 @@
 <%@ page session="false" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -14,8 +15,7 @@
 		<meta name="keywords" content="Central Authentication Service,JA-SIG,CAS" />
 	
 		<!-- THIS CODE PROVIDES THE FORMATTING FOR THE TEXT - PLEASE LEAVE INTACT -->
-		<link rel="stylesheet" href="css/acs.css" type="text/css" media="all" />
-		<link rel="stylesheet" href="css/cas.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="<spring:theme code="css"/>" type="text/css" media="all" />
 		<script src="js/common.js" type="text/javascript"></script>
 	</head>
 

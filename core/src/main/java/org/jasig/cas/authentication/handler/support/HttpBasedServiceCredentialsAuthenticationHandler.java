@@ -6,7 +6,6 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.UrlUtils;
@@ -25,8 +24,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends
 
     private static final String PROTOCOL_HTTPS = "https";
 
-    public boolean authenticateInternal(Credentials credentials)
-        throws AuthenticationException {
+    public boolean authenticateInternal(Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
         String response = null;
         if (!serviceCredentials.getCallbackUrl().getProtocol().equals(

@@ -7,7 +7,6 @@ package org.jasig.cas.authentication.handler.support;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
@@ -35,8 +34,7 @@ public class FileAuthenticationHandler extends
 
     private String fileName;
 
-    public boolean authenticateInternal(final Credentials request)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         BufferedReader bufferedReader = null;
 

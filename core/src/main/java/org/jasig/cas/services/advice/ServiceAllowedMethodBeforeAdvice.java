@@ -11,6 +11,7 @@ import org.jasig.cas.services.AuthenticatedService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.springframework.aop.MethodBeforeAdvice;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * 
@@ -19,7 +20,7 @@ import org.springframework.aop.MethodBeforeAdvice;
  *
  */
 public class ServiceAllowedMethodBeforeAdvice implements
-    MethodBeforeAdvice {
+    MethodBeforeAdvice, InitializingBean {
     
     private ServiceRegistry serviceRegistry;
 
@@ -34,11 +35,37 @@ public class ServiceAllowedMethodBeforeAdvice implements
             throw new UnauthorizedServiceException();
         }
         
-        beforeInternal(authenticatedService);
+        beforeInternal(method, args, target, authenticatedService);
     }
     
-    protected void beforeInternal(AuthenticatedService service) throws Exception {
+    protected void beforeInternal(Method method, Object[] args, Object target, AuthenticatedService service) throws Exception {
         // this will be overwritten by extending classes
     }
 
+    /**
+     * @return Returns the serviceRegistry.
+     */
+    public ServiceRegistry getServiceRegistry() {
+        return this.serviceRegistry;
+    }
+    /**
+     * @param serviceRegistry The serviceRegistry to set.
+     */
+    public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
+    }
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public final void afterPropertiesSet() throws Exception {
+        if (this.serviceRegistry == null) {
+            throw new IllegalStateException("ServiceRegistry cannot be null on " + this.getClass().getName());
+        }
+        
+        afterPropertiesSetInternal();
+    }
+    
+    public void afterPropertiesSetInternal() throws Exception {
+        // designed to be overwritten
+    }
 }

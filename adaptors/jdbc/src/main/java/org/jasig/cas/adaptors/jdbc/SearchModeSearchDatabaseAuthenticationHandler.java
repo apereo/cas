@@ -7,7 +7,6 @@ package org.jasig.cas.adaptors.jdbc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
@@ -39,8 +38,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected boolean authenticateInternal(final Credentials request)
-        throws AuthenticationException {
+    protected boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String encyptedPassword = this.passwordTranslator
             .translate(uRequest.getPassword());

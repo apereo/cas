@@ -6,7 +6,6 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.PasswordTranslator;
@@ -29,8 +28,7 @@ public class QueryDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected boolean authenticateInternal(final Credentials request)
-        throws UnsupportedCredentialsException {
+    protected boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();

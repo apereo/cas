@@ -4,7 +4,6 @@
  */
 package org.jasig.cas.adaptors.cas;
 
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
@@ -25,8 +24,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticateInternal(final Credentials credentials)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials) {
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials)credentials;
 
         return this.passwordHandler.authenticate(casCredentials
@@ -56,7 +54,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
      */
     public void afterPropertiesSet() throws Exception {
         if (this.passwordHandler == null) {
-            throw new IllegalStateException("passwordHandler must be set on "
+            throw new IllegalStateException("passwordHandler must be set on " //$NON-NLS-1$
                 + this.getClass().getName());
         }
     }

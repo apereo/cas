@@ -5,7 +5,6 @@
 package org.jasig.cas.authentication.handler.support;
 
 import java.util.Map;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -23,8 +22,7 @@ public class AcceptUsersAuthenticationHandler extends
 
     private Map users;
 
-    public boolean authenticateInternal(final Credentials request)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String cachedPassword;
 

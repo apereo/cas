@@ -7,7 +7,6 @@ package org.jasig.cas.adaptors.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jasig.cas.authentication.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -24,8 +23,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcAuthenticationHandler {
 
 
-    protected boolean authenticateInternal(final Credentials request)
-        throws UnsupportedCredentialsException {
+    protected boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();

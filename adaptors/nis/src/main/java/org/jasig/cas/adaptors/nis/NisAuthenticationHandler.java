@@ -11,7 +11,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
 
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -58,8 +57,7 @@ public class NisAuthenticationHandler extends
 
     private InitialContext initialContext;
 
-    public boolean authenticateInternal(final Credentials request)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         try {
             final String nisEntry = this.initialContext.lookup(

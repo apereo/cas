@@ -13,7 +13,6 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
@@ -53,8 +52,7 @@ public class BindLdapAuthenticationHandler extends
 
     private boolean allowMultipleAccounts;
 
-    public boolean authenticateInternal(final Credentials request)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
         List values = (List)this.getLdapTemplate().search(this.searchBase,

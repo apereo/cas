@@ -8,8 +8,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class DefaultServiceRegistry implements ServiceRegistry,
     ServiceRegistryManager {
+    
+    private final Log log = LogFactory.getLog(this.getClass());
     
     final private Map services = new HashMap();
 
@@ -31,5 +36,9 @@ public class DefaultServiceRegistry implements ServiceRegistry,
 
     public AuthenticatedService getService(final String serviceId) {
         return (AuthenticatedService) this.services.get(serviceId);
+    }
+
+    public void clear() {
+        this.services.clear();
     }
 }
