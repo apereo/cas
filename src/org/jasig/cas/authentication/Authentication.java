@@ -6,7 +6,6 @@ package org.jasig.cas.authentication;
 
 import java.util.Date;
 
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
@@ -16,13 +15,6 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Scott Battaglia
  */
 public interface Authentication {
-
-    /**
-     * Retrieve the credentials used to authenticate the principal.
-     * 
-     * @return the credentials that were used to authenticate the principal.
-     */
-    Credentials getCredentials();
 
     /**
      * Retrieve the principal that was authenticated.
