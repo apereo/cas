@@ -58,7 +58,7 @@ public class ServiceValidateController extends AbstractController {
             log.info("ServiceTicket [" + validationRequest.getTicket() + "was valid.");
             if (validationRequest.getPgtUrl() != null) {
                 log.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
-                ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(serviceTicket.getGrantor().getPrincipal(), casAttributes,
+                ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(casAttributes,
                     serviceTicket);
                 model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
             }

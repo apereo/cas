@@ -28,8 +28,9 @@ public class JaxRpcSOAPWebServiceClient {
 
         authRequest.setUserName("test");
         authRequest.setPassword("test");
-
-        String serviceTicket = casService.getServiceTicket(authRequest, "http://www.rutgers.edu");
+        
+        String ticketGrantingTicketId = casService.getTicketGrantingTicket(authRequest);
+        String serviceTicket = casService.getServiceTicket(ticketGrantingTicketId, "http://www.rutgers.edu");
 
         System.out.println(serviceTicket);
     }

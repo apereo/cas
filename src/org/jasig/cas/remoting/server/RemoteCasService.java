@@ -7,7 +7,7 @@ package org.jasig.cas.remoting.server;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.AuthenticationRequest;
 
 /**
  * Remote CasService interface required for JAX-RPC
@@ -17,12 +17,7 @@ import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
  */
 public interface RemoteCasService extends Remote {
 
-    /**
-     * Method that if provided the proper credentials will return a service ticket.
-     * 
-     * @param request The authentication request to retrieve a CAS service ticket
-     * @return A CAS service ticket or null.
-     * @throws RemoteException
-     */
-    String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) throws RemoteException;
+    String getTicketGrantingTicket(final AuthenticationRequest request) throws RemoteException;
+    
+    String getServiceTicket(final String ticketGrantingTicketId, final String service) throws RemoteException;
 }

@@ -4,7 +4,7 @@
  */
 package org.jasig.cas.remoting.server;
 
-import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
+import org.jasig.cas.authentication.AuthenticationRequest;
 import org.jasig.cas.remoting.CasService;
 import org.springframework.remoting.jaxrpc.ServletEndpointSupport;
 
@@ -25,10 +25,15 @@ public class JaxRpcCasService extends ServletEndpointSupport implements CasServi
     }
 
     /**
-     * @see org.jasig.cas.remoting.server.RemoteCasService#getServiceTicket(org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest,
-     * java.lang.String)
+     * @see org.jasig.cas.remoting.CasService#getServiceTicket(java.lang.String, java.lang.String)
      */
-    public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
-        return this.casService.getServiceTicket(request, serviceUrl);
+    public String getServiceTicket(final String ticketGrantingTicketId, final String service) {
+        return this.casService.getServiceTicket(ticketGrantingTicketId, service);
+    }
+    /**
+     * @see org.jasig.cas.remoting.CasService#getTicketGrantingTicket(org.jasig.cas.authentication.AuthenticationRequest)
+     */
+    public String getTicketGrantingTicket(final AuthenticationRequest request) {
+        return this.getTicketGrantingTicket(request);
     }
 }

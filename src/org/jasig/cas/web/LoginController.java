@@ -177,7 +177,7 @@ public class LoginController extends AbstractFormController {
         final String service = casAttributes.getService();
         final boolean first = casAttributes.isFirst();
         if (StringUtils.hasText(service)) {
-            final String token = this.ticketManager.createServiceTicket(ticket.getPrincipal(), casAttributes, ticket).getId();
+            final String token = this.ticketManager.createServiceTicket(casAttributes, ticket).getId();
             model.put(WebConstants.TICKET, token);
             model.put(WebConstants.SERVICE, service);
             model.put(WebConstants.FIRST, new Boolean(first).toString());

@@ -23,7 +23,7 @@ public interface TicketManager {
      * @param ticket The parent ticket of the ProxyGrantingTicket
      * @return the ticket created.
      */
-    ProxyGrantingTicket createProxyGrantingTicket(Principal principal, CasAttributes casAttributes, ServiceTicket ticket);
+    ProxyGrantingTicket createProxyGrantingTicket(CasAttributes casAttributes, ServiceTicket ticket);
 
     /**
      * Method to create a proxy ticket and add it to the registry.
@@ -32,7 +32,7 @@ public interface TicketManager {
      * @param ticket The parent ticket of the ProxyTicket
      * @return the ticket created.
      */
-    ProxyTicket createProxyTicket(Principal principal, CasAttributes casAttributes, ProxyGrantingTicket ticket);
+    ProxyTicket createProxyTicket(CasAttributes casAttributes, ProxyGrantingTicket ticket);
 
     /**
      * Method to create a service ticket and add it to the registry.
@@ -41,7 +41,7 @@ public interface TicketManager {
      * @param ticket The parent ticket of the ServiceTIcket
      * @return the ticket created.
      */
-    ServiceTicket createServiceTicket(Principal principal, CasAttributes casAttributes, TicketGrantingTicket ticket);
+    ServiceTicket createServiceTicket(CasAttributes casAttributes, TicketGrantingTicket ticket);
 
     /**
      * Method to create a a ticket granting ticket and add it to the registry.
