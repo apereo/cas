@@ -3,7 +3,7 @@
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
 <cas:authenticationSuccess>
 <cas:user>${assertion.chainedPrincipals[0].id}</cas:user>
-<c:if test="${empty pgtIou}">
+<c:if test="${not empty pgtIou}">
 	<cas:proxyGrantingTicket>${pgtIou}</cas:proxyGrantingTicket>
 </c:if>
 <c:if test="${fn:length(assertion.chainedPrincipals) > 1}">
