@@ -33,11 +33,15 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticatio
 
 			try {
 				dirContext = this.getContext(LdapUtils.getFilterWithValues(this.getFilter(), uRequest.getUserName()), uRequest.getPassword(), url);
+				
+				if (dirContext == null)
+					return false;
+
 				dirContext.close();
 				return true;
 			}
 			catch (NamingException e) {
-				// could not connect therefore not a valid user
+				logger.debug("LDAP ERROR: Unable to connect to LDAP server " + url + ".  Attempting to contact next server (if exists).");
 			}
 		}
 		
