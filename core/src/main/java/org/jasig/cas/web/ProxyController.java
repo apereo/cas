@@ -59,18 +59,8 @@ public final class ProxyController extends AbstractController implements
             .getParameter(WebConstants.TARGET_SERVICE));
 
         try {
-            final String serviceTicket = this.centralAuthenticationService
-                .grantServiceTicket(ticket, service);
-
-            if (serviceTicket == null) {
-                final Map model = new HashMap();
-                model.put(WebConstants.CODE, "BAD_PGT");
-                model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
-                return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
-            }
-
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS,
-                WebConstants.TICKET, serviceTicket);
+                WebConstants.TICKET, this.centralAuthenticationService.grantServiceTicket(ticket, service));
         } catch (TicketException e) {
             final Map model = new HashMap();
             model.put(WebConstants.CODE, e.getCode());
