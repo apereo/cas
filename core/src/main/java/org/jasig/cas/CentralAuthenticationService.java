@@ -7,7 +7,6 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 

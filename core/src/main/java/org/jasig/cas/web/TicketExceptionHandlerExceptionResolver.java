@@ -24,15 +24,15 @@ import org.springframework.web.servlet.ModelAndView;
  * ExceptionResolver to map TicketExceptions to a view with
  * the proper error model.
  * 
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  *
  */
-public class TicketExceptionHandlerExceptionResolver implements
+public final class TicketExceptionHandlerExceptionResolver implements
     HandlerExceptionResolver {
     
+    /** Logger instance. */
     private final Log log = LogFactory.getLog(TicketExceptionHandlerExceptionResolver.class);
 
     public TicketExceptionHandlerExceptionResolver() {

@@ -32,7 +32,7 @@ public abstract class TicketException extends Exception {
      /**
      * @return Returns the code.
      */
-    public String getCode() {
+    public final String getCode() {
         return (this.getCause() != null) ? this.getCause().toString() : this.code;
     }
 }

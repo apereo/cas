@@ -1,6 +1,17 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.ticket;
 
-
+/**
+ * Exception to alert that there was an error validating the ticket.
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ *
+ */
 public class TicketValidationException extends TicketException {
 
     /** Unique Serial ID. */
@@ -13,7 +24,7 @@ public class TicketValidationException extends TicketException {
         super(CODE);
     }
     
-    public TicketValidationException(Throwable throwable) {
+    public TicketValidationException(final Throwable throwable) {
         super(CODE, throwable);
     }
     

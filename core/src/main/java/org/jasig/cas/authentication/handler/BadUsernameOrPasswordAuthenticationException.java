@@ -29,7 +29,7 @@ public class BadUsernameOrPasswordAuthenticationException extends
         super(CODE);
     }
     
-    public BadUsernameOrPasswordAuthenticationException(Throwable throwable) {
+    public BadUsernameOrPasswordAuthenticationException(final Throwable throwable) {
         super(CODE, throwable);
     }
     
