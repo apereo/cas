@@ -1,7 +1,6 @@
 package org.jasig.cas.authentication.principal;
 
 import java.net.URL;
-import org.jasig.cas.authentication.Service;
 
 /**
  * @author Scott Battaglia
@@ -11,12 +10,10 @@ import org.jasig.cas.authentication.Service;
 public class HttpBasedServiceCredentials implements Credentials {
 	final private URL callbackUrl;
 	final private String proxyIou;
-	final private Service service;
 	
-	public HttpBasedServiceCredentials(URL callbackUrl, String proxyIou, Service service) {
+	public HttpBasedServiceCredentials(URL callbackUrl, String proxyIou) {
 		this.callbackUrl = callbackUrl;
 		this.proxyIou    = proxyIou;
-		this.service     = service;
 	}
 
 	/**
@@ -31,12 +28,5 @@ public class HttpBasedServiceCredentials implements Credentials {
 	 */
 	public String getProxyIou() {
 		return this.proxyIou;
-	}
-
-	/**
-	 * @return Returns the service.
-	 */
-	public Service getService() {
-		return this.service;
 	}
 }

@@ -27,6 +27,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,10 +44,13 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public class ServiceValidateController extends AbstractController implements InitializingBean {
 
+    private static final String PGTIOU_PREFIX = "PGTIOU";
+    
 	protected final Log log = LogFactory.getLog(getClass());
 	private CentralAuthenticationService centralAuthenticationService;
 	private boolean cas10protocol = false;
 	private Class authenticationSpecificationClass;
+	private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
 	/**
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -90,10 +94,12 @@ public class ServiceValidateController extends AbstractController implements Ini
 			}
 			if (StringUtils.hasText(pgtUrl)) {
 				try {
-					// TODO get proxyIou
-					final String proxyIou = "PROXYIOU";
-					final Credentials serviceCredentials = new HttpBasedServiceCredentials(new URL(pgtUrl), proxyIou, new SimpleService(service));
+					final String proxyIou = uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
+					final Credentials serviceCredentials = new HttpBasedServiceCredentials(new URL(pgtUrl), proxyIou);
 					final String proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, serviceCredentials);
+					
+					model.put(WebConstants.PGTIOU, proxyIou);
+					// TODO send proxyIou back!! -- AuthenticationHandler and a Principal to AuthenticateService
 					
 					
 				} catch (MalformedURLException e) {
@@ -124,16 +130,6 @@ public class ServiceValidateController extends AbstractController implements Ini
 			model.put(WebConstants.DESC, te.getDescription());
 			return new ModelAndView(ViewNames.CONST_SERVICE_FAILURE, model);
 		}
-		/*
-
-		 if (validationRequest.getPgtUrl() != null) {
-		 log.info("Creating ProxyGranting Ticket for ServiceTicket [" + validationRequest.getTicket() + ".");
-		 ProxyGrantingTicket proxyGrantingTicket = this.ticketManager.createProxyGrantingTicket(casAttributes,
-		 serviceTicket);
-		 model.put(WebConstants.PGTIOU, proxyGrantingTicket.getProxyIou());
-		 }
-		 */
-		// TODO implement
 	}
 
 	private AuthenticationSpecification getCommandClass() {
