@@ -8,7 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.UnsupportedCredentialsException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -23,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
-    private AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
+    private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
 
     public void testSupportsProperUserCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
@@ -92,6 +91,14 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
         }
         catch (AuthenticationException ae) {
             // this is okay
+        }
+    }
+    
+    public void testAfterPropertiesSet() {
+        try {
+            this.authenticationHandler.afterPropertiesSet();
+        } catch (Exception e) {
+            fail("Exception caught but none should have been thrown.");
         }
     }
 }

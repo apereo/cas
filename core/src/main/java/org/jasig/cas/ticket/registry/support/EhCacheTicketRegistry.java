@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,7 +82,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             log.debug("Ticket [" + ticketId + "] found in registry.");
             return ticket;
         }
-        catch (CacheException ex) {
+        catch (Exception ex) {
             throw new IllegalStateException("Ticket registry threw an exception: " + ex.getMessage());
         }
     }
@@ -105,7 +104,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             }
             return Collections.unmodifiableCollection(items);
         }
-        catch (CacheException e) {
+        catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -33,6 +33,31 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
         this.ticketRegistry = new EhCacheTicketRegistry();
         this.ticketRegistry.setCache(this.cache);
     }
+    
+    public void testBadCacheGetTicket() {
+        Cache cache = new Cache("test1", 1, true, false, 5, 2);
+        
+        this.ticketRegistry.setCache(cache);
+        
+        try {
+            this.ticketRegistry.getTicket("testTicket");
+            fail("Exception expected.");
+        } catch (Exception e) {
+            // this is okay
+        }
+    }
+    public void testBadCacheGetTickets() {
+        Cache cache = new Cache("test2", 1, true, false, 5, 2);
+        
+        this.ticketRegistry.setCache(cache);
+        
+        try {
+            this.ticketRegistry.getTickets();
+            fail("Exception expected.");
+        } catch (Exception e) {
+            // this is okay
+        }
+    }
 
     /**
      * @see org.jasig.cas.ticket.registry.AbstractTicketRegistryTests#getNewTicketRegistry()

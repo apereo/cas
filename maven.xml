@@ -20,7 +20,8 @@
     <echo>Using root dir: ${rootdir}</echo>
 
 	<preGoal name="site">
-		<attainGoal name="statcvs xdoc" />
+		<attainGoal name="statcvs" />
+		<attainGoal name="xdoc" />
 	</preGoal>
 
     <postGoal name="site">

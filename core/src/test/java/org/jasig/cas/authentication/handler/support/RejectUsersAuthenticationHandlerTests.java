@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.UnsupportedCredentialsException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import junit.framework.TestCase;
@@ -23,7 +22,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
     final private Collection users;
 
-    final private AuthenticationHandler authenticationHandler;
+    final private RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() {
         this.users = new ArrayList();
@@ -34,7 +33,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
         this.authenticationHandler = new RejectUsersAuthenticationHandler();
 
-        ((RejectUsersAuthenticationHandler)this.authenticationHandler).setUsers(this.users);
+        this.authenticationHandler.setUsers(this.users);
     }
 
     public void testSupportsProperUserCredentials() {
@@ -121,6 +120,25 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         }
         catch (AuthenticationException e) {
             // this is okay because it means the test failed.
+        }
+    }
+    
+    public void testAfterPropertiesSetWithNullUsers() {
+        try {
+            this.authenticationHandler.setUsers(null);
+            this.authenticationHandler.afterPropertiesSet();
+            fail("Exception expected.");
+        } catch (Exception e) {
+            return;
+        }
+    }
+    
+    public void testAfterPropertiesSetWithNonNullUsers() {
+        try {
+            this.authenticationHandler.afterPropertiesSet();
+
+        } catch (Exception e) {
+            fail("Exception not expected.");
         }
     }
 }
