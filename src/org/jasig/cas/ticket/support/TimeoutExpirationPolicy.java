@@ -22,7 +22,8 @@ public class TimeoutExpirationPolicy implements ExpirationPolicy {
     }
 
     /**
-     * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.domain.support.AbstractTicket)
+     * 
+     * @see org.jasig.cas.ticket.ExpirationPolicy#isExpired(org.jasig.cas.ticket.AbstractTicket)
      */
     public boolean isExpired(final AbstractTicket ticket) {
         return System.currentTimeMillis() - ticket.getLastUsedTime() > timeToKillInMilliSeconds;

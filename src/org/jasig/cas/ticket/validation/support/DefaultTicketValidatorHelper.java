@@ -18,10 +18,10 @@ import org.jasig.cas.ticket.validation.ValidationRequest;
  */
 public class DefaultTicketValidatorHelper extends AbstractTicketValidatorHelper {
 
-    /**
-     * @see org.jasig.cas.ticket.validation.AbstractTicketValidatorHelper#isValidForRequestInternal(org.jasig.cas.domain.Ticket,
-     * org.jasig.cas.domain.ValidationRequest)
-     */
+	/**
+	 * 
+	 * @see org.jasig.cas.ticket.validation.AbstractTicketValidatorHelper#isValidForRequestInternal(org.jasig.cas.ticket.Ticket, org.jasig.cas.ticket.validation.ValidationRequest)
+	 */
     protected boolean isValidForRequestInternal(final Ticket ticket, final ValidationRequest request) {
         // only uses expiration test from abstract
         return true;

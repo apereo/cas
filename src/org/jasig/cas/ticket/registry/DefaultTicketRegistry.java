@@ -26,7 +26,8 @@ public class DefaultTicketRegistry implements TicketRegistry {
 	final private Map cache = new HashMap();
 
 	/**
-	 * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.domain.Ticket)
+	 * 
+	 * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
 	 */
 	public void addTicket(final Ticket ticket) {
         logger.debug("Added ticket [" + ticket.getId() + "] to registry.");
@@ -34,6 +35,7 @@ public class DefaultTicketRegistry implements TicketRegistry {
 	}
 
 	/**
+	 * 
 	 * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
 	 */
 	public Ticket getTicket(final String ticketId, final Class clazz) {
@@ -51,6 +53,7 @@ public class DefaultTicketRegistry implements TicketRegistry {
 	}
 
 	/**
+	 * 
 	 * @see org.jasig.cas.ticket.registry.TicketRegistry#deleteTicket(java.lang.String)
 	 */
 	public boolean deleteTicket(final String ticketId) {
@@ -59,6 +62,7 @@ public class DefaultTicketRegistry implements TicketRegistry {
 	}
 
 	/**
+	 * 
 	 * @see org.jasig.cas.ticket.registry.TicketRegistry#getTickets()
 	 */
 	public Collection getTickets() {

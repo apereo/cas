@@ -27,7 +27,8 @@ public class CasServiceImpl implements CasService {
 	private AuthenticationManager authenticationManager;
 
 	/**
-	 * @see org.jasig.cas.remoting.CasService#getServiceTicket(org.jasig.cas.domain.AuthenticationRequest)
+	 * 
+	 * @see org.jasig.cas.remoting.CasService#getServiceTicket(org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest, java.lang.String)
 	 */
 	public String getServiceTicket(UsernamePasswordAuthenticationRequest request, String serviceUrl) {
 		final Principal principal;

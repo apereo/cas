@@ -17,10 +17,11 @@ import org.jasig.cas.ticket.validation.ValidationRequest;
  * @see org.jasig.cas.ticket.TicketGrantingTicket
  */
 public class TicketGrantingTicketValidatorHelper extends AbstractTicketValidatorHelper {
+
 	/**
-     * @see org.jasig.cas.ticket.validation.AbstractTicketValidatorHelper#isValidForRequestInternal(org.jasig.cas.domain.Ticket,
-     * org.jasig.cas.domain.ValidationRequest)
-     */
+	 * 
+	 * @see org.jasig.cas.ticket.validation.AbstractTicketValidatorHelper#isValidForRequestInternal(org.jasig.cas.ticket.Ticket, org.jasig.cas.ticket.validation.ValidationRequest)
+	 */
     protected boolean isValidForRequestInternal(final Ticket ticket, final ValidationRequest request) {
         if (!request.isRenew())
             return true;
@@ -29,7 +30,8 @@ public class TicketGrantingTicketValidatorHelper extends AbstractTicketValidator
     }
 
     /**
-     * @see org.jasig.cas.ticket.validation.TicketValidatorHelper#supports(org.jasig.cas.domain.Ticket)
+     * 
+     * @see org.jasig.cas.ticket.validation.TicketValidatorHelper#supports(org.jasig.cas.ticket.Ticket)
      */
     public boolean supports(final Ticket ticket) {
         return ticket.getClass().equals(TicketGrantingTicket.class);
