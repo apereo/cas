@@ -37,6 +37,15 @@ public interface TicketRegistry {
     Ticket getTicket(String ticketId, Class clazz) throws InvalidTicketException;
 
     /**
+     * Retrieve a ticket from the registry.
+     * 
+     * @param ticketId the id of the ticket we wish to retrieve
+     * @return the requested ticket.
+     * @throws InvalidTicketException
+     */
+    Ticket getTicket(String ticketId);
+    
+    /**
      * Remove a specific ticket from the registry.
      * 
      * @param ticketId The id of the ticket to delete.
