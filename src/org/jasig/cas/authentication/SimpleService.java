@@ -8,6 +8,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
+ * The simplest implementation of a representation of a service.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */

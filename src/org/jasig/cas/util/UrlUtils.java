@@ -11,11 +11,18 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
+ * Utilities class for generic functions related to URLs
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
 public class UrlUtils {
 
+    /**
+     * Method to retrieve the response from a HTTP request for a specific URL.
+     * @param url The URL to contact.
+     * @return the body of the response.
+     */
     public static String getResponseBodyFromUrl(URL url) {
         URLConnection connection = null;
         BufferedReader bufferedReader = null;

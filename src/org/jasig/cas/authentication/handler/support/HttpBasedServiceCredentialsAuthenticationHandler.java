@@ -12,6 +12,9 @@ import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.UrlUtils;
 
 /**
+ * Class to validate the credentials presented by communicating with the web server and checking
+ * the certificate that is returned against the hostname, etc.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */

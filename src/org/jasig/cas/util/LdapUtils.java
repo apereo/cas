@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.Properties;
 
 /**
+ * Utilities related to LDAP functions.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */

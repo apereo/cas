@@ -35,6 +35,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
 
 /**
+ * Controller that handles the default two-stage form login.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */

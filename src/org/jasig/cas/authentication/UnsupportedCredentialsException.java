@@ -5,6 +5,9 @@
 package org.jasig.cas.authentication;
 
 /**
+ * The exception thrown when a Handler does not know how to determine the validity of the credentials
+ * based on the fact that it does not know what to do with the credentials presented.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
@@ -45,10 +48,16 @@ public class UnsupportedCredentialsException extends AuthenticationException {
         super(arg0);
     }
 
+    /**
+     * @see org.jasig.cas.authentication.AuthenticationException#getCode()
+     */
     public String getCode() {
         return CODE;
     }
 
+    /**
+     * @see org.jasig.cas.authentication.AuthenticationException#getDescription()
+     */
     public String getDescription() {
         return DESCRIPTION;
     }

@@ -10,6 +10,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
+ * Interface representing the results of a valid request for Authentication.
+ * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
  */

@@ -10,6 +10,12 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
+ * Abstract handler that manages the flow of validating credentials by first checking if these
+ * credentials can be checked and then delegating to a method that can determine the validity
+ * of the credentials.
+ * 
+ * Classes that extend this class are required to implement authenticateInternal and supports.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
@@ -27,6 +33,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     }
 
     /**
+     * Method to determine whether the credentials presented can be checked by this handler.
+     * 
      * @param credentials The credentials we want to check if the handler supports.
      * @return true if the handler supports authenticating this type of credentials. False otherwise.
      */
