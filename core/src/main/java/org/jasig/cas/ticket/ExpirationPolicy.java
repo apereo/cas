@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -23,5 +23,5 @@ public interface ExpirationPolicy extends Serializable {
      * @param ticket The ticket to check.
      * @return true if the ticket is expired, false otherwise.
      */
-    public boolean isExpired(Ticket ticket);
+    boolean isExpired(Ticket ticket);
 }

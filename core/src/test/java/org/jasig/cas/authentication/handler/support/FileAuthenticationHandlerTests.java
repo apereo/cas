@@ -8,8 +8,9 @@ package org.jasig.cas.authentication.handler.support;
 import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.TestCase;
-import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.UnsupportedCredentialsException;
+
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 

@@ -5,9 +5,9 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.UnsupportedCredentialsException;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.ldap.core.support.LdapDaoSupport;
 

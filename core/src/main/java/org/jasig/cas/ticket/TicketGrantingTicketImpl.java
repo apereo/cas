@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.Service;
+import org.jasig.cas.authentication.principal.Service;
 
 /**
  * Domain object to model a ticket granting ticket.
@@ -38,8 +38,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
 
         if (authentication == null) {
             throw new IllegalArgumentException(
-                "authentication cannot be null on "
-                    + this.getClass().getName());
+                "authentication cannot be null on " + this.getClass().getName());
         }
 
         this.authentication = authentication;
@@ -54,11 +53,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         return this.authentication;
     }
 
-    public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(
-            id,
-            this, service, this.getCountOfUses() == 0,
-            expirationPolicy);
+    public synchronized ServiceTicket grantServiceTicket(final String id,
+        final Service service, final ExpirationPolicy expirationPolicy) {
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
+            service, this.getCountOfUses() == 0, expirationPolicy);
 
         this.incrementCountOfUses();
 
@@ -73,9 +71,8 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         this.expired = true;
     }
 
-    public boolean isExpired() {
-        return super.isExpired()
-            || this.expired
+    public boolean isExpiredInternal() {
+        return this.expired
             || (this.getGrantingTicket() != null && this.getGrantingTicket()
                 .isExpired());
     }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.proxy.support;
 
@@ -36,7 +36,8 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     /** Generate unique ids. */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
-    public String handle(final Credentials credentials, final String proxyGrantingTicketId) {
+    public String handle(final Credentials credentials,
+        final String proxyGrantingTicketId) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         final String proxyIou = this.uniqueTicketIdGenerator
             .getNewTicketId(PGTIOU_PREFIX);

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.remoting.client;
 
@@ -36,17 +36,22 @@ import org.springframework.remoting.jaxrpc.JaxRpcServicePostProcessor;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class NestedJavaBeanMappingServicePostProcessor implements
+public final class NestedJavaBeanMappingServicePostProcessor implements
     JaxRpcServicePostProcessor {
 
+    /** The namespace for the service. */
     private String namespace;
 
+    /** The start of the package name for Java packages. */
     private static final String PACKAGE_NAME_JAVA = "java.";
 
+    /** The start of the package name for Java Extension packages. */
     private static final String PACKAGE_NAME_JAVAX = "javax.";
 
-    private List beans;
+    /** The list of beans. */
+    private List javaBeans;
 
+    /** The service interface. */
     private Class serviceInterface;
 
     /**
@@ -54,27 +59,28 @@ public class NestedJavaBeanMappingServicePostProcessor implements
      * @param registeredBeans The list of beans registered so far.
      * @param clazz The class to loop through looking for beans to add.
      */
-    protected void registerBeans(TypeMapping mapping, List registeredBeans,
-        Class clazz) {
+    protected void registerBeans(final TypeMapping mapping,
+        final List registeredBeans, final Class clazz) {
         if (registeredBeans.contains(clazz)
             || clazz.getName().startsWith(PACKAGE_NAME_JAVA)
-            || clazz.getName().startsWith(PACKAGE_NAME_JAVAX))
+            || clazz.getName().startsWith(PACKAGE_NAME_JAVAX)) {
             return;
+        }
 
         if (!clazz.equals(this.serviceInterface)) {
             registeredBeans.add(clazz);
             addJavaBeanToMap(mapping, clazz);
         }
 
-        Method[] methods = clazz.getDeclaredMethods(); // TODO
+        final Method[] methods = clazz.getDeclaredMethods(); // TODO
         // getDeclaredMethods or
         // getMethods ??
 
         for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+            final Method method = methods[i];
 
-            Class returnType = method.getReturnType();
-            Class[] params = method.getParameterTypes();
+            final Class returnType = method.getReturnType();
+            final Class[] params = method.getParameterTypes();
 
             registerBeans(mapping, registeredBeans, returnType);
 
@@ -84,21 +90,19 @@ public class NestedJavaBeanMappingServicePostProcessor implements
         }
     }
 
-    public void postProcessJaxRpcService(Service service) {
+    public void postProcessJaxRpcService(final Service service) {
         final TypeMappingRegistry registry = service.getTypeMappingRegistry();
         final TypeMapping mapping = registry.createTypeMapping();
-        // final Class serviceInterface = this.serviceInterface;
 
         registerBeans(mapping, new ArrayList(), this.serviceInterface);
 
-        if (this.beans != null) {
-            for (Iterator iter = this.beans.iterator(); iter.hasNext();) {
+        if (this.javaBeans != null) {
+            for (Iterator iter = this.javaBeans.iterator(); iter.hasNext();) {
                 final String bean = (String) iter.next();
                 try {
                     final Class clazz = Class.forName(bean);
                     this.addJavaBeanToMap(mapping, clazz);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new IllegalArgumentException("bean of class " + bean
                         + "not found.");
                 }
@@ -112,7 +116,7 @@ public class NestedJavaBeanMappingServicePostProcessor implements
      * @param mapping The TypeMapping to register the bean to.
      * @param clazz The JavaBean class to register.
      */
-    protected void addJavaBeanToMap(TypeMapping mapping, Class clazz) {
+    protected void addJavaBeanToMap(final TypeMapping mapping, final Class clazz) {
         String name = clazz.getName().substring(
             clazz.getName().lastIndexOf(".") + 1);
         QName qName = new QName(this.namespace, name);
@@ -123,21 +127,21 @@ public class NestedJavaBeanMappingServicePostProcessor implements
     /**
      * @param namespace The namespace.
      */
-    public void setNamespace(String namespace) {
+    public void setNamespace(final String namespace) {
         this.namespace = namespace;
     }
 
     /**
-     * @param beans The additional JavaBeans to add to the registry.
+     * @param javaBeans The additional JavaBeans to add to the registry.
      */
-    public void setJavaBeans(List beans) {
-        this.beans = beans;
+    public void setJavaBeans(final List javaBeans) {
+        this.javaBeans = javaBeans;
     }
 
     /**
      * @param serviceInterface
      */
-    public void setServiceInterface(Class serviceInterface) {
+    public void setServiceInterface(final Class serviceInterface) {
         this.serviceInterface = serviceInterface;
     }
 }

@@ -1,11 +1,10 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * A Service providing service to an authenticated principal. Typically a web

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.stat.support;
 
@@ -16,17 +16,22 @@ import org.jasig.cas.stat.TicketStatisticsManager;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class TicketStatisticsImpl implements TicketStatistics,
+public final class TicketStatisticsImpl implements TicketStatistics,
     TicketStatisticsManager {
 
+    /** The number of proxy tickets vended. */
     private int numberOfProxyTicketsVended;
 
+    /** The number of service tickets vended. */
     private int numberOfServiceTicketsVended;
 
+    /** The number of TicketGrantingTickets vended. */
     private int numberOfTicketGrantingTicketsVended;
 
+    /** The number of ProxyGrantingTickets vended. */
     private int numberOfProxyGrantingTicketsVended;
 
+    /** The time the TicketStatisticsManager was started. */
     private long startUpTime;
 
     public TicketStatisticsImpl() {
@@ -118,8 +123,10 @@ public class TicketStatisticsImpl implements TicketStatistics,
         this.numberOfTicketGrantingTicketsVended++;
     }
 
-    private double getTicketsPerSecond(int numberOfTickets) {
-        long elapsedTime = (System.currentTimeMillis() - this.startUpTime) / 1000;
+    private double getTicketsPerSecond(final int numberOfTickets) {
+        final int numberOfMillisecondsInASecond = 1000;
+        final long elapsedTime = (System.currentTimeMillis() - this.startUpTime)
+            / numberOfMillisecondsInASecond;
 
         return (elapsedTime == 0) ? 0.0 : (numberOfTickets / elapsedTime);
     }

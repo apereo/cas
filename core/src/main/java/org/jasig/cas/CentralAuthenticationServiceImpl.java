@@ -1,18 +1,18 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.Service;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -115,7 +115,9 @@ public final class CentralAuthenticationServiceImpl implements
                 }
 
                 final ServiceTicket serviceTicket = ticketGrantingTicket
-                    .grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), service, this.serviceTicketExpirationPolicy);
+                    .grantServiceTicket(this.uniqueTicketIdGenerator
+                        .getNewTicketId(ServiceTicket.PREFIX), service,
+                        this.serviceTicketExpirationPolicy);
 
                 // TODO we need a better way of handling this
                 if (credentials != null) {
@@ -168,7 +170,9 @@ public final class CentralAuthenticationServiceImpl implements
             }
 
             TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                .grantTicketGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), authentication, this.ticketGrantingTicketExpirationPolicy);
+                .grantTicketGrantingTicket(this.uniqueTicketIdGenerator
+                    .getNewTicketId(TicketGrantingTicket.PREFIX),
+                    authentication, this.ticketGrantingTicketExpirationPolicy);
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.advice;
 
@@ -21,17 +21,18 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
- * 
- * //TODO this should be using proxyUrl???
+ * @since 3.0 //TODO this should be using proxyUrl???
  */
 public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     MethodBeforeAdvice, InitializingBean {
 
-    protected Log log = LogFactory.getLog(this.getClass());
+    /** Log instance. */
+    private Log log = LogFactory.getLog(this.getClass());
 
+    /** The TicketRegistry that stores the tickets. */
     private TicketRegistry ticketRegistry;
 
+    /** The registry that stores services. */
     private ServiceRegistry serviceRegistry;
 
     public void afterPropertiesSet() throws Exception {
@@ -47,13 +48,8 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
         }
     }
 
-    /**
-     * @see org.jasig.cas.services.advice.ServiceAllowedMethodBeforeAdvice#beforeInternal(java.lang.reflect.Method,
-     * java.lang.Object[], java.lang.Object,
-     * org.jasig.cas.services.AuthenticatedService)
-     */
-    public void before(Method method, Object[] args, Object target)
-        throws Exception {
+    public void before(final Method method, final Object[] args,
+        final Object target) throws Exception {
         String serviceTicketId = (String) args[0];
         boolean foundIt = false;
         ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
@@ -89,14 +85,14 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     /**
      * @param serviceRegistry The serviceRegistry to set.
      */
-    public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
     /**
      * @param ticketRegistry The ticketRegistry to set.
      */
-    public void setTicketRegistry(TicketRegistry ticketRegistry) {
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
 

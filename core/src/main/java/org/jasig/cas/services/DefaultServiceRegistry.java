@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services;
 
@@ -17,12 +17,14 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class DefaultServiceRegistry implements ServiceRegistry,
+public final class DefaultServiceRegistry implements ServiceRegistry,
     ServiceRegistryManager {
 
+    /** Logging instance. */
     private final Log log = LogFactory.getLog(this.getClass());
 
-    final private Map services = new HashMap();
+    /** The map containing the services. */
+    private final Map services = new HashMap();
 
     public boolean serviceExists(final String serviceId) {
         return this.services.containsKey(serviceId);

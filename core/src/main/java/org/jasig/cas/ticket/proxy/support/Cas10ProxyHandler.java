@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.proxy.support;
 
@@ -18,7 +18,7 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
  */
 public final class Cas10ProxyHandler implements ProxyHandler {
 
-    public String handle(final Credentials credentials, 
+    public String handle(final Credentials credentials,
         final String proxyGrantingTicketId) {
         return null;
     }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
 
@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.Service;
-import org.jasig.cas.authentication.SimpleService;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
@@ -50,8 +50,9 @@ public final class ProxyController extends AbstractController implements
         }
     }
 
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(
+        final HttpServletRequest request, final HttpServletResponse response)
+        throws Exception {
         final String ticket = request
             .getParameter(WebConstants.PROXY_GRANTING_TICKET);
         final Service service = new SimpleService(request

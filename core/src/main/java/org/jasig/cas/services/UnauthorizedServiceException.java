@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services;
 
@@ -12,21 +12,23 @@ package org.jasig.cas.services;
  */
 public class UnauthorizedServiceException extends Exception {
 
+    /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
 
     public UnauthorizedServiceException() {
         super();
     }
 
-    public UnauthorizedServiceException(String message, Throwable cause) {
+    public UnauthorizedServiceException(final String message,
+        final Throwable cause) {
         super(message, cause);
     }
 
-    public UnauthorizedServiceException(String message) {
+    public UnauthorizedServiceException(final String message) {
         super(message);
     }
 
-    public UnauthorizedServiceException(Throwable cause) {
+    public UnauthorizedServiceException(final Throwable cause) {
         super(cause);
     }
 }

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry.support;
 
@@ -37,8 +37,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
             .info("Starting cleaning of expired tickets from ticket registry at ["
                 + new Date() + "]");
         synchronized (this.ticketRegistry) {
-            for (final Iterator iter = this.ticketRegistry.getTickets().iterator();
-                iter.hasNext();) {
+            for (final Iterator iter = this.ticketRegistry.getTickets()
+                .iterator(); iter.hasNext();) {
                 final Ticket ticket = (Ticket) iter.next();
 
                 if (ticket.isExpired()) {
@@ -46,8 +46,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            for (final Iterator iter = ticketsToRemove.iterator(); 
-                iter.hasNext();) {
+            for (final Iterator iter = ticketsToRemove.iterator(); iter
+                .hasNext();) {
                 final Ticket ticket = (Ticket) iter.next();
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }

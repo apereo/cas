@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.stat;
 
@@ -15,20 +15,20 @@ package org.jasig.cas.stat;
  */
 public interface TicketStatistics {
 
-    public int getNumberOfProxyTicketsVended();
+    int getNumberOfProxyTicketsVended();
 
-    public int getNumberOfServiceTicketsVended();
+    int getNumberOfServiceTicketsVended();
 
-    public int getNumberOfTicketGrantingTicketsVended();
+    int getNumberOfTicketGrantingTicketsVended();
 
-    public int getNumberOfProxyGrantingTicketsVended();
+    int getNumberOfProxyGrantingTicketsVended();
 
-    public double getProxyTicketsPerSecond();
+    double getProxyTicketsPerSecond();
 
-    public double getServiceTicketsPerSecond();
+    double getServiceTicketsPerSecond();
 
-    public double getTicketGrantingticketsPerSecond();
+    double getTicketGrantingticketsPerSecond();
 
-    public double getProxyGrantingTicketsPerSecond();
+    double getProxyGrantingTicketsPerSecond();
 
 }

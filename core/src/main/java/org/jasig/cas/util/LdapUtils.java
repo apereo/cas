@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
 
@@ -20,7 +20,7 @@ public final class LdapUtils {
     private LdapUtils() {
         // private constructor so that no one can instanciate.
     }
-    
+
     /**
      * Utility method to replace the placeholders in the filter with the proper
      * values from the userName.

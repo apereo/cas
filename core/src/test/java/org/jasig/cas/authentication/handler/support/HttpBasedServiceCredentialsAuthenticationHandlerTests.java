@@ -7,7 +7,8 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.jasig.cas.authentication.AuthenticationException;
+
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;

@@ -1,7 +1,7 @@
 /*
- * Copyright 2005 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services;
 
@@ -12,19 +12,25 @@ import java.net.URL;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class AuthenticatedService {
+public final class AuthenticatedService {
 
-    final private String id;
+    /** The unique String to identify this service. */
+    private final String id;
 
-    final private boolean allowedToProxy;
+    /** Is this service allowed to do proxying? */
+    private final boolean allowedToProxy;
 
-    final private boolean forceAuthentication;
+    /** Does this service always enforce renew = true. */
+    private final boolean forceAuthentication;
 
-    final private String theme;
+    /** The theme name for this service. */
+    private final String theme;
 
-    final private SingleSignoutCallback singleSignoutCallback;
+    /** The callback for single sign out. */
+    private final SingleSignoutCallback singleSignoutCallback;
 
-    final private URL proxyUrl;
+    /** The proxyUrl of the service if it needs one. */
+    private final URL proxyUrl;
 
     public AuthenticatedService(final String id, final boolean allowedToProxy,
         final boolean forceAuthentication, final String theme,
