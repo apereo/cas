@@ -32,5 +32,7 @@ public interface ContextSource {
      * @return a DirContext
      */
     public DirContext getDirContext();
+    
+    public DirContext getDirContext(String principal, String password);
 
 }

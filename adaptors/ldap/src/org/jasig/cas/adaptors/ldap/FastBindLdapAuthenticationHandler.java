@@ -4,45 +4,64 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import java.util.Iterator;
-
-import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
+ * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the normal two step binding process to determine validity by providing
+ * before hand the path to the uid.
+ * 
  * @author Scott Battaglia
  * @version $Id$
  */
-public class FastBindLdapAuthenticationHandler extends AbstractLdapAuthenticationHandler {
+public class FastBindLdapAuthenticationHandler extends LdapDaoSupport implements AuthenticationHandler {
+
+    private String filter;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
     public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+        
+        DirContext dirContext = this.getContextSource().getDirContext(LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
+            uRequest.getPassword());
 
-        for (Iterator iter = this.getServers().iterator(); iter.hasNext();) {
-            DirContext dirContext = null;
-            final String url = (String)iter.next();
-
-            try {
-                dirContext = this.getContext(LdapUtils.getFilterWithValues(this.getFilter(), uRequest.getUserName()), uRequest.getPassword(), url);
-
-                if (dirContext == null)
-                    return false;
-
-                dirContext.close();
-                return true;
-            }
-            catch (NamingException e) {
-                log.debug("LDAP ERROR: Unable to connect to LDAP server " + url + ".  Attempting to contact next server (if exists).");
-            }
+        if (dirContext == null) {
+            return false;
         }
 
-        return false;
+        org.springframework.ldap.support.LdapUtils.closeContext(dirContext);
+        return true;
+    }
+
+    /**
+     * @param filter The filter to set.
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    /**
+     * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
+     */
+    public boolean supports(Credentials credentials) {
+        return credentials == null && credentials.getClass().equals(UsernamePasswordCredentials.class);
+    }
+
+    /**
+     * @see org.springframework.ldap.core.support.LdapDaoSupport#initDao()
+     */
+    protected void initDao() throws Exception {
+        super.initDao();
+
+        if (this.filter == null) {
+            throw new IllegalStateException("filter must be set on " + this.getClass().getName());
+        }
     }
 }
