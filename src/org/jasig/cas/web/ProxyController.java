@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
 
@@ -22,14 +22,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * 
  * Controller to return a valid proxy ticket upon request.
  * 
  * @author Scott Battaglia
  * @version $Id$
- *  
  */
 public class ProxyController extends AbstractController {
+
     protected final Log log = LogFactory.getLog(getClass());
 
     private TicketManager ticketManager;
@@ -40,10 +39,9 @@ public class ProxyController extends AbstractController {
 
     /**
      * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
+     * javax.servlet.http.HttpServletResponse)
      */
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ValidationRequest validationRequest = new ValidationRequest();
         CasAttributes casAttributes = new CasAttributes();
         ProxyGrantingTicket ticket;
@@ -62,7 +60,8 @@ public class ProxyController extends AbstractController {
             proxyTicket = this.ticketManager.createProxyTicket(ticket.getPrincipal(), casAttributes, ticket);
             model.put(WebConstants.TICKET, proxyTicket.getId());
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, model);
-        } else {
+        }
+        else {
             log.info("Unable to obtain valid ProxyGrantingTicket for ticket id [" + validationRequest.getTicket() + "]");
             model.put(WebConstants.CODE, "BAD_PGT");
             model.put(WebConstants.DESC, "unrecognized pgt: " + validationRequest.getTicket());

@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry;
 
@@ -12,7 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.registry.ServiceRegistry;
 
-
 /**
  * Default Implementation of the {@link ServiceRegistry}
  * 
@@ -21,7 +20,9 @@ import org.jasig.cas.ticket.registry.ServiceRegistry;
  * @see org.jasig.cas.ticket.registry.ServiceRegistry
  */
 public class DefaultServiceRegistry implements ServiceRegistry {
-	protected final Log log = LogFactory.getLog(getClass());
+
+    protected final Log log = LogFactory.getLog(getClass());
+
     final private List services;
 
     public DefaultServiceRegistry() {
@@ -34,7 +35,6 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.registry.ServiceRegistry#addService(java.lang.String)
      */
     public void addService(final String service) {
@@ -42,17 +42,15 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.registry.ServiceRegistry#serviceExists(java.lang.String)
      */
     public boolean serviceExists(final String service) {
-    	log.debug("Attempting to determine if service [" + service + "] exists.");
-    	
-        if (this.services.isEmpty()) {
-        	log.debug("Services List is empty.  Assuming service registry is not in use.");
-            return true;        	
-        }
+        log.debug("Attempting to determine if service [" + service + "] exists.");
 
+        if (this.services.isEmpty()) {
+            log.debug("Services List is empty.  Assuming service registry is not in use.");
+            return true;
+        }
 
         if (service == null)
             return false;
@@ -61,7 +59,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
             String validService = (String)iter.next();
 
             if (service.startsWith(validService)) {
-            	log.debug("Service [" + service + "] found in registry.");
+                log.debug("Service [" + service + "] found in registry.");
                 return true;
             }
         }
@@ -70,7 +68,6 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.registry.ServiceRegistry#deleteService(java.lang.String)
      */
     public void deleteService(final String service) {
@@ -78,7 +75,6 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.registry.ServiceRegistry#getServices()
      */
     public List getServices() {

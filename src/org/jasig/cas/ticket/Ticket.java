@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -14,7 +14,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Scott Battaglia
  * @version $Id$
  */
-public interface Ticket extends Serializable{
+public interface Ticket extends Serializable {
 
     /**
      * Method to retrieve the username.
@@ -31,8 +31,8 @@ public interface Ticket extends Serializable{
     String getId();
 
     /**
-     * Determines if the ticket is expired.
-     * Most common implementations might collaborate with <i>ExpirationPolicy</i> strategy.
+     * Determines if the ticket is expired. Most common implementations might collaborate with <i>ExpirationPolicy </i> strategy.
+     * 
      * @see org.jasig.cas.ticket.ExpirationPolicy
      */
     boolean isExpired();

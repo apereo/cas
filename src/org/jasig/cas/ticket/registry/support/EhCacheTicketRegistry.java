@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry.support;
 
@@ -19,14 +19,15 @@ import net.sf.ehcache.Element;
 /**
  * Ticket registry backed by EHCache caching subsystem.
  * <p>
- * Note: assumes that <code>Cache</code> instances will be injected via setter method, typically by some kind of IoC
- * container.
+ * Note: assumes that <code>Cache</code> instances will be injected via setter method, typically by some kind of IoC container.
  * 
  * @author Dmitriy Kopylenko
  * @version $Id$
  */
 public class EhCacheTicketRegistry implements TicketRegistry {
-	protected final Log log = LogFactory.getLog(getClass());
+
+    protected final Log log = LogFactory.getLog(getClass());
+
     private Cache cache;
 
     /**
@@ -37,14 +38,13 @@ public class EhCacheTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
      */
     public void addTicket(final Ticket ticket) {
         if (ticket == null) {
             throw new IllegalArgumentException("Cannot add null Ticket to the registry.");
         }
-        
+
         log.debug("Added ticket [" + ticket.getId() + "] to registry.");
         this.cache.put(new Element(ticket.getId(), ticket));
     }
@@ -53,8 +53,8 @@ public class EhCacheTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      */
     public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketException {
-    	log.debug("Attempting to retrieve ticket [" + ticketId + "]");
-   
+        log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+
         if (ticketId == null) {
             return null;
         }
@@ -85,7 +85,7 @@ public class EhCacheTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#deleteTicket(java.lang.String)
      */
     public boolean deleteTicket(final String ticketId) {
-    	log.debug("Removing ticket [" + ticketId + "] from registry");
+        log.debug("Removing ticket [" + ticketId + "] from registry");
         return this.cache.remove(ticketId);
     }
 

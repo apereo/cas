@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.validation;
 
@@ -8,12 +8,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
 
-
 /**
  * Skeletal implementation of <code>TicketValidatorHelper</code>.
  * <p>
- * Captures common validation behavior such as determining if a ticket is expired, deferring the more concrete
- * validation for different types of tickets to subclasses.
+ * Captures common validation behavior such as determining if a ticket is expired, deferring the more concrete validation for different types of
+ * tickets to subclasses.
  * <p>
  * Uses Template Method design pattern.
  * 
@@ -21,7 +20,9 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Id$
  */
 public abstract class AbstractTicketValidatorHelper implements TicketValidatorHelper {
-	protected final Log log = LogFactory.getLog(getClass());
+
+    protected final Log log = LogFactory.getLog(getClass());
+
     /**
      * A Template method
      * 

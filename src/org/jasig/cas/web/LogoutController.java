@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
 
@@ -19,25 +19,21 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
 
 /**
- * 
- * Controller to delete ticket granting ticket cookie in order to log out of
- * single sign on.
- * 
- * This controller implements the idea of the ESUP Portail's Logout patch to
- * allow for redirecting to a url on logout.
+ * Controller to delete ticket granting ticket cookie in order to log out of single sign on. This controller implements the idea of the ESUP Portail's
+ * Logout patch to allow for redirecting to a url on logout.
  * 
  * @author Scott Battaglia
  * @version $Id$
- *  
  */
 public class LogoutController extends AbstractController {
+
     protected final Log log = LogFactory.getLog(getClass());
 
     private TicketManager ticketManager;
 
     /**
      * @see org.springframework.web.servlet.mvc.AbstractController#handleRequestInternal(javax.servlet.http.HttpServletRequest,
-     *      javax.servlet.http.HttpServletResponse)
+     * javax.servlet.http.HttpServletResponse)
      */
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
@@ -50,7 +46,8 @@ public class LogoutController extends AbstractController {
 
         if (service != null) {
             return new ModelAndView(new RedirectView(service));
-        } else {
+        }
+        else {
             return new ModelAndView(ViewNames.CONST_LOGOUT);
         }
     }
@@ -64,8 +61,7 @@ public class LogoutController extends AbstractController {
     }
 
     /**
-     * @param ticketManager
-     *            The ticketManager to set.
+     * @param ticketManager The ticketManager to set.
      */
     public void setTicketManager(TicketManager ticketManager) {
         this.ticketManager = ticketManager;

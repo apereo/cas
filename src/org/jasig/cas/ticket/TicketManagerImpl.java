@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -13,20 +13,17 @@ import org.jasig.cas.ticket.validation.TicketValidator;
 import org.jasig.cas.ticket.validation.ValidationRequest;
 import org.springframework.aop.framework.ProxyFactory;
 
-
 /**
- * Default implementation of the TicketManager. Maintains tickets in a TicketRegistry, and uses a TicketFactory to
- * create tickets. Validation is done by a TicketValidator.
+ * Default implementation of the TicketManager. Maintains tickets in a TicketRegistry, and uses a TicketFactory to create tickets. Validation is done
+ * by a TicketValidator.
  * <p>
- * Note that any ticket returned by the ticket manager will be wrapped in the "protective proxy" using
- * <code>ImmutableTicketProxyFactory</code> strategy, so that clients of the TicketManager do not have access (would
- * not be able to cast it to the internal implemantation class) to the methods that can modify the internal state of the
- * ticket. Only this factory is allowed to change the state of a Ticket by working directly with the internal
- * implementation of a Ticket -<code>AbstractTicket</code>
+ * Note that any ticket returned by the ticket manager will be wrapped in the "protective proxy" using <code>ImmutableTicketProxyFactory</code>
+ * strategy, so that clients of the TicketManager do not have access (would not be able to cast it to the internal implemantation class) to the
+ * methods that can modify the internal state of the ticket. Only this factory is allowed to change the state of a Ticket by working directly with the
+ * internal implementation of a Ticket -<code>AbstractTicket</code>
  * <p>
- * Note that the default <code>ImmutableTicketProxyFactory</code> strategy used by this factory is SpringAOP proxy
- * built on top of JDK1.3+ dynamic proxy but could easily be replaced by different implementation by any IoC container
- * via Dependency Injection.
+ * Note that the default <code>ImmutableTicketProxyFactory</code> strategy used by this factory is SpringAOP proxy built on top of JDK1.3+ dynamic
+ * proxy but could easily be replaced by different implementation by any IoC container via Dependency Injection.
  * 
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
@@ -38,15 +35,19 @@ import org.springframework.aop.framework.ProxyFactory;
  * @see org.jasig.cas.ticket.AbstractTicket
  */
 public class TicketManagerImpl implements TicketManager {
-	protected final Log log = LogFactory.getLog(getClass());
+
+    protected final Log log = LogFactory.getLog(getClass());
+
     private TicketFactory ticketFactory;
+
     private TicketRegistry ticketRegistry;
+
     private TicketValidator ticketValidator;
+
     private ImmutableTicketProxyFactory immutableTicketProxyFactory = new SpringAOPImmutableTicketProxyFactory();
 
     /**
-     * All public ticket creation requests fall into this private method which calls the factory and then adds the
-     * ticket to the registry.
+     * All public ticket creation requests fall into this private method which calls the factory and then adds the ticket to the registry.
      * 
      * @param clazz The class of ticket we want to make
      * @param ticketCreationAttributes the initial ticket parameters.
@@ -60,88 +61,82 @@ public class TicketManagerImpl implements TicketManager {
     }
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.TicketManager#createTicketGrantingTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes)
+     * @see org.jasig.cas.ticket.TicketManager#createTicketGrantingTicket(org.jasig.cas.authentication.principal.Principal,
+     * org.jasig.cas.ticket.CasAttributes)
      */
     public TicketGrantingTicket createTicketGrantingTicket(final Principal principal, final CasAttributes casAttributes) {
-        return (TicketGrantingTicket) this.createAndAddToRegistry(TicketGrantingTicket.class, principal, casAttributes, null);
+        return (TicketGrantingTicket)this.createAndAddToRegistry(TicketGrantingTicket.class, principal, casAttributes, null);
     }
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.TicketManager#createProxyGrantingTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.ServiceTicket)
+     * @see org.jasig.cas.ticket.TicketManager#createProxyGrantingTicket(org.jasig.cas.authentication.principal.Principal,
+     * org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.ServiceTicket)
      */
     public ProxyGrantingTicket createProxyGrantingTicket(final Principal principal, final CasAttributes casAttributes, final ServiceTicket ticket) {
-        return (ProxyGrantingTicket) this.createAndAddToRegistry(ProxyGrantingTicket.class,principal, casAttributes, ticket);
+        return (ProxyGrantingTicket)this.createAndAddToRegistry(ProxyGrantingTicket.class, principal, casAttributes, ticket);
     }
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.TicketManager#createProxyTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.ProxyGrantingTicket)
+     * @see org.jasig.cas.ticket.TicketManager#createProxyTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes,
+     * org.jasig.cas.ticket.ProxyGrantingTicket)
      */
     public ProxyTicket createProxyTicket(final Principal principal, final CasAttributes casAttributes, final ProxyGrantingTicket ticket) {
-        return (ProxyTicket) this.createAndAddToRegistry(ProxyTicket.class, principal, casAttributes, ticket);
+        return (ProxyTicket)this.createAndAddToRegistry(ProxyTicket.class, principal, casAttributes, ticket);
     }
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.TicketManager#createServiceTicket(org.jasig.cas.authentication.principal.Principal, org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.TicketGrantingTicket)
+     * @see org.jasig.cas.ticket.TicketManager#createServiceTicket(org.jasig.cas.authentication.principal.Principal,
+     * org.jasig.cas.ticket.CasAttributes, org.jasig.cas.ticket.TicketGrantingTicket)
      */
     public ServiceTicket createServiceTicket(final Principal principal, final CasAttributes casAttributes, final TicketGrantingTicket ticket) {
-        return (ServiceTicket) this.createAndAddToRegistry(ServiceTicket.class, principal, casAttributes, ticket);
+        return (ServiceTicket)this.createAndAddToRegistry(ServiceTicket.class, principal, casAttributes, ticket);
     }
 
     /**
      * @see org.jasig.cas.ticket.TicketManager#deleteTicket(java.lang.String)
      */
     public boolean deleteTicket(final String ticketId) {
-    	return (ticketId == null) ? false : this.ticketRegistry.deleteTicket(ticketId);
+        return (ticketId == null) ? false : this.ticketRegistry.deleteTicket(ticketId);
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.TicketManager#deleteTicket(org.jasig.cas.ticket.Ticket)
      */
     public boolean deleteTicket(final Ticket ticket) {
-    	return (ticket == null) ? false : this.ticketRegistry.deleteTicket(ticket.getId());
+        return (ticket == null) ? false : this.ticketRegistry.deleteTicket(ticket.getId());
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.TicketManager#validateProxyGrantingTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ProxyGrantingTicket validateProxyGrantingTicket(final ValidationRequest validationRequest) {
-        return (ProxyGrantingTicket) this.retrieveValidTicket(validationRequest, ProxyGrantingTicket.class);
+        return (ProxyGrantingTicket)this.retrieveValidTicket(validationRequest, ProxyGrantingTicket.class);
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.TicketManager#validateProxyTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ProxyTicket validateProxyTicket(ValidationRequest validationRequest) {
-        return (ProxyTicket) this.retrieveValidTicket(validationRequest, ProxyTicket.class);
+        return (ProxyTicket)this.retrieveValidTicket(validationRequest, ProxyTicket.class);
 
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.TicketManager#validateServiceTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public ServiceTicket validateServiceTicket(final ValidationRequest validationRequest) {
-        return (ServiceTicket) this.retrieveValidTicket(validationRequest, ServiceTicket.class);
+        return (ServiceTicket)this.retrieveValidTicket(validationRequest, ServiceTicket.class);
     }
 
     /**
-     * 
      * @see org.jasig.cas.ticket.TicketManager#validateTicketGrantingTicket(org.jasig.cas.ticket.validation.ValidationRequest)
      */
     public TicketGrantingTicket validateTicketGrantingTicket(final ValidationRequest validationRequest) {
-        return (TicketGrantingTicket) this.retrieveValidTicket(validationRequest, TicketGrantingTicket.class);
+        return (TicketGrantingTicket)this.retrieveValidTicket(validationRequest, TicketGrantingTicket.class);
     }
 
     /**
-     * Method to retrieve the ticket from the registry and call the validator. If the validation is a success, the
-     * internal state is updated.
+     * Method to retrieve the ticket from the registry and call the validator. If the validation is a success, the internal state is updated.
      * 
      * @param ticketId the id of the ticket we want to retrieve.
      * @param request the validation request parameters.
@@ -156,8 +151,8 @@ public class TicketManagerImpl implements TicketManager {
 
         synchronized (ticket) {
             if (this.ticketValidator.validate(ticket, request)) {
-            	log.debug("Successful validation.  Updating state for ticket [" + ticket.getId() + "]");
-                AbstractTicket t = (AbstractTicket) ticket;
+                log.debug("Successful validation.  Updating state for ticket [" + ticket.getId() + "]");
+                AbstractTicket t = (AbstractTicket)ticket;
                 t.incrementCount();
                 t.updateLastUse();
                 return this.immutableTicketProxyFactory.getProxyForTicket(ticket);
@@ -204,9 +199,9 @@ public class TicketManagerImpl implements TicketManager {
             if (ticketImpl == null) {
                 throw new IllegalArgumentException("Cannot create a proxy for null object.");
             }
-            //Create SpringAOP factory wrapping the target
+            // Create SpringAOP factory wrapping the target
             ProxyFactory pf = new ProxyFactory(ticketImpl);
-            //Prevent the Proxy to be castable to Advised
+            // Prevent the Proxy to be castable to Advised
             pf.setOpaque(true);
             return (Ticket)pf.getProxy();
         }
