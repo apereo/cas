@@ -11,7 +11,7 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ReloadServiceContext;
+import org.jasig.cas.services.ServiceRegistryReloader;
 import org.jasig.cas.services.ServiceRegistryManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
@@ -20,15 +20,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * Class to reload the ServiceRegistry from an XML file based on the Spring Bean
+ * ServiceRegistryReloader that reloads the ServiceRegistry from an XML file based on the Spring Bean
  * Factory.
  * 
  * @author Scott Battaglia
+ * @author Dmitriy Kopylenko
  * @version $Revision$ $Date$
  * @since 3.0
+ * @see org.jasig.cas.services.ServiceRegistryReloader
  */
-public final class DefaultReloadServiceContext implements
-    ReloadServiceContext, InitializingBean, ResourceLoaderAware {
+public final class SpringApplicationContextServiceRegistryReloader implements
+    ServiceRegistryReloader, InitializingBean, ResourceLoaderAware {
 
     /** The default file name for our services file. */
     private static final String DEFAULT_FILE_NAME = "services.xml";
