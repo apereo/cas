@@ -24,7 +24,6 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  */
 public interface CentralAuthenticationSerivce {
     
-    /********** Grant Tickets **********/
     /**
      * Create TicketGrantingTicket to a Principal if Credentials authenticate.
      * Principals are the root of all Tickets.
@@ -36,83 +35,35 @@ public interface CentralAuthenticationSerivce {
      /**
       * Grant a ServiceTicket for a Service.
       * 
-      * @param tgt Proof of prior authentication.
+      * @param tgtid Proof of prior authentication.
       * @param service The target service of the ServiceTicket.
       * @return the ServiceTicket for target Service.
       */
-     public ServiceTicket grantServiceTicket(TicketGrantingTicket tgt, Service service);
-     
+     public ServiceTicket grantServiceTicket(String tgtid, Service service);
+   
      /**
-      * Grant a ProxyGrantingTicket for a Service.
-      * 
-      * @param st ServiceTicket issued for service requesting to proxy authentication.
-      * @return the ProxyGrantingTicket for the service wishing to proxy authentication.
-      */
-     public ProxyGrantingTicket grantProxyGrantingTicket(ServiceTicket st);
-
-     /**
-      * Grant a ProxyGrantingTicket for a Service.
-      * 
-      * @param pgt ProxyTicket issued for service requesting proxy authentication.
-      * @return the ProxyGrantingTicket for the service wishing to proxy authentication.
-      */
-     public ProxyGrantingTicket grantProxyGrantingTicket(ProxyTicket pt);
-
-     /**
-      * Grant a ProxyTicket for a Service.
-      * 
-      * @param pgt Proof of prior delegated authentication.
-      * @return a ProxyTicket for the Service.
-      */
-     public ProxyTicket grantProxyTicket(ProxyGrantingTicket pgt, Service service);
-          
-     
-     /********** Validate Tickets for Services **********/
-     /**
-      * Validate a Ticket for a particular Service
+      * Validate a ServiceTicket for a particular Service
       * 
       * @param ticket Proof of prior authentication.
       * @param service Service wishing to validate a prior authentication.
-      * @return true if Ticket is valid for the service, otherwise false.
+      * @return ServiceTicket if valid for the service and satisifies AuthenticationSpecification.
       */
-     boolean validate(Ticket ticket, Service service);
+     public ServiceTicket validateServiceTicket(String stid, Service service, AuthenticationSpecification authspec);
      
-     
-     /********* Finder Methods **********/
      /**
-      * Finder method for TicketGrantingTickets
-      * 
-      * @param pgtid Id of a ProxyGrantingTicket.
-      * @return the ProxyGrantingTicket for the Id.
+      * Destroy a TicketGrantingTicket.  This has the effect of invalidating
+      * any Ticket that was derived from the TicketGrantingTicket being destroyed.
       */
-     public TicketGrantingTicket lookupTicketGrantingTicketForId(String tgtid);
+     public void destroyTicketGrantingTicket(String tgtid);
+     
+     /**
+      * Grant a TicketGrantingTicket to a Service for proxying authentication
+      * to other Services.
+      * 
+      * @return TicketGrantingTicket that can grant ServiceTickets that proxy authentication.
+      */
+     public TicketGrantingTicket grantTicketGrantingTicket(String stid, Credentials credentials);
 
-     /**
-      * Finder method for ServiceTickets
-      * 
-      * @param stid Id of a ServiceTicket.
-      * @return the ServiceTicket for the Id.
-      */
-     public ServiceTicket lookupServiceTicketForId(String stid);
-
-     /**
-      * Finder method for ProxyGrantingTickets
-      * 
-      * @param pgtid Id of a ProxyGrantingTicket.
-      * @return the ProxyGrantingTicket for the Id.
-      */
-     public ProxyGrantingTicket lookupProxyGrantingTicketForId(String pgtid);
-
-     /**
-      * Finder method for ProxyTickets
-      * 
-      * @param ptid Id of a ProxyTicket.
-      * @return the ProxyTicket for the Id.
-      */
-     public ProxyTicket lookupProxyTicketForId(String ptid);
-     
-     
-     /********** Version Method **********/
      /**
       * Return the CAS version.
       * 
