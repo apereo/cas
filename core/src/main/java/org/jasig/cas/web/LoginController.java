@@ -99,12 +99,12 @@ public final class LoginController extends SimpleFormController implements
             log
                 .info("CredentialsBinder not set.  Using default CredentialsBinder of "
                     + this.credentialsBinder.getClass().getName());
-
-            if (!this.credentialsBinder.supports(this.getCommandClass())) {
-                throw new ServletException(
-                    "CredentialsBinder does not support supplied Command Class: "
-                        + this.getCommandClass());
-            }
+        }
+        
+        if (!this.credentialsBinder.supports(this.getCommandClass())) {
+            throw new ServletException(
+                "CredentialsBinder does not support supplied Command Class: "
+                    + this.getCommandClass());
         }
     }
 

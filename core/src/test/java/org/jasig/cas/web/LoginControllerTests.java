@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
@@ -21,6 +22,7 @@ import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
+import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -81,6 +83,31 @@ public class LoginControllerTests extends TestCase {
 
         this.loginController.setCommandClass(UsernamePasswordCredentials.class);
         this.loginController.afterPropertiesSet();
+    }
+    
+    public void testAfterPropertiesSetWithBadCredentialsBinder() throws Exception {
+        this.loginController.setCredentialsBinder(new CredentialsBinder() {
+
+            public void bind(HttpServletRequest request, Credentials credentials) {
+                return;
+            }
+
+            public boolean supports(Class clazz) {
+                return false;
+            }
+        });
+        this.loginController.setUniqueTokenIdGenerator(new DefaultUniqueTokenIdGenerator());
+        this.loginController.setFormView("test");
+        this.loginController.setSuccessView("test");
+
+        this.loginController.setCommandClass(UsernamePasswordCredentials.class);
+
+        try {
+            this.loginController.afterPropertiesSet();
+            fail("Exception expected.");
+        } catch (Exception e) {
+            return;
+        }
     }
     
     public void testAfterPropertiesSetNoLoginTokens() {
@@ -221,5 +248,25 @@ public class LoginControllerTests extends TestCase {
         c.setPassword("test");
         
         assertFalse(this.loginController.processFormSubmission(request, new MockHttpServletResponse(), c, new BindException(c, "credentials")).getView() instanceof RedirectView);
+    }
+    
+    public void testValidCredentialsWithServiceAndRenew() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        
+        request.addParameter("userName", "test");
+        request.addParameter("password", "test");
+        request.addParameter("service", "test");
+        request.addParameter("renew", "true");
+        
+        UsernamePasswordCredentials c= new UsernamePasswordCredentials();
+        
+        c.setUserName("test");
+        c.setPassword("test");
+
+        Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, this.centralAuthenticationService.createTicketGrantingTicket(c));
+        
+        request.setCookies(new Cookie[] {cookie});
+        
+        assertTrue(this.loginController.processFormSubmission(request, new MockHttpServletResponse(), c, new BindException(c, "credentials")).getView() instanceof RedirectView);
     }
 }
