@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.util.support;
 
+import org.jasig.cas.authentication.handler.DesPasswordEncoder;
+
 import junit.framework.TestCase;
 
 /**
@@ -21,7 +23,7 @@ public class DesPasswordTranslatorTests extends TestCase {
     // Is this what we want? Base64 Response????
     private static final String ENCODED_MESSAGE = "WS0WSKNr+IX/xpcQnKpC2g==";
 
-    private DesPasswordTranslator passwordTranslator = new DesPasswordTranslator();
+    private DesPasswordEncoder passwordTranslator = new DesPasswordEncoder();
 
     /**
      * @see junit.framework.TestCase#setUp()
@@ -33,11 +35,11 @@ public class DesPasswordTranslatorTests extends TestCase {
 
     public void testEncryptedMessage() {
         assertEquals(ENCODED_MESSAGE, this.passwordTranslator
-            .translate(MESSAGE_TO_ENCODE));
+            .encode(MESSAGE_TO_ENCODE));
     }
 
     public void testNullMessage() {
-        assertEquals(null, this.passwordTranslator.translate(null));
+        assertEquals(null, this.passwordTranslator.encode(null));
     }
 
     public void testAfterPropertiesSetBad() {

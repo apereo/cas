@@ -14,9 +14,9 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.jasig.cas.adaptors.ldap.util.LdapUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.LdapUtils;
 import org.springframework.ldap.core.AttributeHelper;
 import org.springframework.ldap.core.SearchResultCallbackHandler;
 

@@ -7,9 +7,9 @@ package org.jasig.cas.adaptors.ldap;
 
 import javax.naming.directory.DirContext;
 
+import org.jasig.cas.adaptors.ldap.util.LdapUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.LdapUtils;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the

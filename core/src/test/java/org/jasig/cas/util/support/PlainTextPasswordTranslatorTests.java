@@ -5,7 +5,8 @@
  */
 package org.jasig.cas.util.support;
 
-import org.jasig.cas.util.PasswordTranslator;
+import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 
 import junit.framework.TestCase;
 
@@ -16,15 +17,15 @@ import junit.framework.TestCase;
  */
 public class PlainTextPasswordTranslatorTests extends TestCase {
 
-    private final PasswordTranslator passwordTranslator = new PlainTextPasswordTranslator();
+    private final PasswordEncoder passwordTranslator = new PlainTextPasswordEncoder();
 
     public void testNullValueToTranslate() {
-        assertEquals(null, this.passwordTranslator.translate(null));
+        assertEquals(null, this.passwordTranslator.encode(null));
     }
 
     public void testValueToTranslate() {
         assertEquals("CAS IS COOL", this.passwordTranslator
-            .translate("CAS IS COOL"));
+            .encode("CAS IS COOL"));
     }
 
 }

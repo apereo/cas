@@ -8,10 +8,10 @@ package org.jasig.cas.adaptors.jdbc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.PasswordTranslator;
-import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -38,14 +38,14 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String tableUsers;
 
-    private PasswordTranslator passwordTranslator;
+    private PasswordEncoder passwordTranslator;
 
     private String sql;
 
     protected boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String encyptedPassword = this.passwordTranslator
-            .translate(uRequest.getPassword());
+            .encode(uRequest.getPassword());
 
         final int count = getJdbcTemplate().queryForInt(this.sql,
             new Object[] {uRequest.getUserName(), encyptedPassword});
@@ -68,7 +68,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
         }
 
         if (this.passwordTranslator == null) {
-            this.passwordTranslator = new PlainTextPasswordTranslator();
+            this.passwordTranslator = new PlainTextPasswordEncoder();
             log
                 .info("PasswordTranslator not set.  Using default PasswordTranslator of class "
                     + this.passwordTranslator.getClass().getName());
@@ -96,7 +96,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
      * @param passwordTranslator The passwordTranslator to set.
      */
     public void setPasswordTranslator(
-        final PasswordTranslator passwordTranslator) {
+        final PasswordEncoder passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 
