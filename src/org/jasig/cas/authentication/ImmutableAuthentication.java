@@ -6,7 +6,6 @@ package org.jasig.cas.authentication;
 
 import java.util.Date;
 
-import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
@@ -17,23 +16,16 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 public final class ImmutableAuthentication implements Authentication {
 
-    private final Credentials credentials;
-
     private final Principal principal;
 
     private final Date authenticatedDate;
 
     private final Object attributes;
 
-    public ImmutableAuthentication(final Credentials credentials, final Principal principal, final Object attributes) {
-        this.credentials = credentials;
+    public ImmutableAuthentication(final Principal principal, final Object attributes) {
         this.principal = principal;
         this.attributes = attributes;
         this.authenticatedDate = new Date();
-    }
-
-    public Credentials getCredentials() {
-        return this.credentials;
     }
 
     public Principal getPrincipal() {

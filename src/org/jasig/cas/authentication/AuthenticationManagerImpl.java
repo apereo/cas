@@ -62,7 +62,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
                 if (principal == null)
                     return null;
 
-                return new ImmutableAuthentication(credentials, principal, null);
+                return new ImmutableAuthentication(principal, null);
             }
         }
 
