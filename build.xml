@@ -290,8 +290,8 @@ TODO: need this?  Building CAS requires J2SE 1.4; the "dist" JARs are built with
 
 			<!-- Must go first to ensure any jndi.properties files etc take precedence  -->
 			<classpath location="${target.testclasses.dir}"/>
-			<classpath location="${target.mockclasses.dir}"/>
-			<classpath location="${target.classes.dir}"/>
+			<classpath location="${lib.dir}" />
+			<classpath location="$target.classes.dir}" />
 
 			<!-- Need files loaded as resources -->
 			<classpath location="${test.dir}"/>
@@ -304,29 +304,9 @@ TODO: need this?  Building CAS requires J2SE 1.4; the "dist" JARs are built with
 			<batchtest fork="yes" todir="${reports.dir}">
 				<fileset dir="${target.testclasses.dir}"
 							includes="${test.includes}"
-							excludes="${test.excludes}">
-					<exclude name="**/JmsTemplate102Tests.class"/>
-					<exclude name="**/JmsTemplate11Tests.class"/>
-					<exclude name="**/TransactionTestSuite.class"/>
-				</fileset>
-
-			</batchtest>
-			<batchtest fork="yes" todir="${reports.dir}">
-				<fileset dir="${target.testclasses.dir}"
-						includes="**/JmsTemplate102Tests.class"
-						excludes="${test.excludes}"/>
-			</batchtest>
-			<batchtest fork="yes" todir="${reports.dir}">
-				<fileset dir="${target.testclasses.dir}"
-						includes="**/JmsTemplate11Tests.class"
-						excludes="${test.excludes}"/>
-			</batchtest>
-			<batchtest fork="yes" todir="${reports.dir}">
-				<fileset dir="${target.testclasses.dir}"
-						includes="**/TransactionTestSuite.class"/>
+							excludes="${test.excludes}" />
 			</batchtest>
 		</junit>
-
 	</target>
 
 
