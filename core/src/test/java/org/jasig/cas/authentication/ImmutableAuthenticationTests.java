@@ -44,6 +44,10 @@ public class ImmutableAuthenticationTests extends TestCase {
         assertEquals(new Date(), this.authentication.getAuthenticatedDate());
     }
     
+    public void testNullHashMap() {
+        assertNotNull(new ImmutableAuthentication(new SimplePrincipal("test"), null).getAttributes());
+    }
+    
     public void testHashCode() {
         assertEquals(HashCodeBuilder.reflectionHashCode(this.authentication), this.authentication.hashCode());
     }

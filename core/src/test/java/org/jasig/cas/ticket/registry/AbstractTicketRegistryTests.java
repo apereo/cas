@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.jasig.cas.mock.MockAuthentication;
-import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -118,14 +117,11 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
                 new MockAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", null);
+            fail("IllegalArgumentException expected.");
         }
         catch (IllegalArgumentException e) {
             return;
         }
-        catch (InvalidTicketClassException e) {
-            // we should not have one of these
-        }
-        fail("IllegalArgumentException expected.");
     }
 
     public void testGetExistingTicketWithInproperClass() {
@@ -135,10 +131,10 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
                 new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
         }
-        catch (InvalidTicketClassException e) {
+        catch (ClassCastException e) {
             return;
         }
-        fail("InvalidTicketClassException expected.");
+        fail("ClassCastException expected.");
     }
 
     public void testGetNullTicketWithoutClass() {
