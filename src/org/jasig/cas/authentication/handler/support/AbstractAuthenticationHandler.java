@@ -35,7 +35,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
     /**
      * Template (abstract method) that inheriting classes should implement.  This gets called
-     * after the check to see if the credentials are supported.
+     * after the check to see if the credentials are supported.  This method will only be invoked with
+     * credentials such that (supports(credentials) == true).
      * 
      * @param credentials The credentials to check
      * @return true if the credentials are valid, false if they are not
