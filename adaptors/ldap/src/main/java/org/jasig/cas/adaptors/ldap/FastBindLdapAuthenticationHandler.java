@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.ldap;
@@ -11,11 +12,13 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
 
 /**
- * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the normal two step binding process to determine validity by providing
- * before hand the path to the uid.
+ * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
+ * normal two step binding process to determine validity by providing before
+ * hand the path to the uid.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: FastBindLdapAuthenticationHandler.java,v 1.5 2005/03/07
+ * 21:00:05 sbattaglia Exp $
  */
 public class FastBindLdapAuthenticationHandler extends
     AbstractLdapAuthenticationHandler {

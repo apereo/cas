@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
@@ -11,7 +12,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: SimpleServiceTests.java,v 1.4 2005/03/01 05:04:58 sbattaglia
+ * Exp $
  */
 public class SimpleServiceTests extends TestCase {
 
@@ -36,8 +38,9 @@ public class SimpleServiceTests extends TestCase {
     public void testToString() {
         final String id = "test";
         SimpleService service = new SimpleService(id);
-        
-        assertEquals(HashCodeBuilder.reflectionHashCode(service), service.hashCode());
+
+        assertEquals(HashCodeBuilder.reflectionHashCode(service), service
+            .hashCode());
     }
 
     public void testEqualsWithNull() {

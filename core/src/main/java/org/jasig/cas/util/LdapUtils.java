@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
@@ -16,7 +17,8 @@ import java.util.Properties;
 public abstract class LdapUtils {
 
     /**
-     * Utility method to replace the placeholders in the filter with the proper values from the userName.
+     * Utility method to replace the placeholders in the filter with the proper
+     * values from the userName.
      * 
      * @param filter
      * @param userName
@@ -49,7 +51,9 @@ public abstract class LdapUtils {
             String key = (String)iter.next();
             String value = properties.getProperty(key, "");
 
-            newFilter = newFilter.replaceFirst(key, value); // TODO: should this be replaceAll ????
+            newFilter = newFilter.replaceFirst(key, value); // TODO: should this
+            // be replaceAll
+            // ????
         }
 
         return newFilter;

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.nis;
@@ -19,11 +20,14 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
- * Class to authenticate users by connecting to an NIS server. Defaults are: map = paswd.byname contextFactory = com.sun.jndi.nis.NISCtxFactory
- * securityAuthentication = simple passwordTranslator = PlainTextPasswordTranslator protocol = nis://
+ * Class to authenticate users by connecting to an NIS server. Defaults are: map =
+ * paswd.byname contextFactory = com.sun.jndi.nis.NISCtxFactory
+ * securityAuthentication = simple passwordTranslator =
+ * PlainTextPasswordTranslator protocol = nis://
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: NisAuthenticationHandler.java,v 1.4 2005/03/07 21:00:05
+ * sbattaglia Exp $
  */
 // TODO: can we keep the context open?
 public class NisAuthenticationHandler extends

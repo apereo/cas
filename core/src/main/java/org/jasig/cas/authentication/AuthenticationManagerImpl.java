@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication;
@@ -15,11 +16,13 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Default implementation of AuthenticationManager. Default implementation accepts a list of handlers. It will iterate through the list of handlers
- * and return the principal for the first one that can validate the request.
+ * Default implementation of AuthenticationManager. Default implementation
+ * accepts a list of handlers. It will iterate through the list of handlers and
+ * return the principal for the first one that can validate the request.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: AuthenticationManagerImpl.java,v 1.2 2005/02/27 05:49:26
+ * sbattaglia Exp $
  */
 
 public class AuthenticationManagerImpl implements AuthenticationManager,
@@ -102,7 +105,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager,
     }
 
     /**
-     * @param credentialsToPrincipalResolvers The credentialsToPrincipalResolvers to set.
+     * @param credentialsToPrincipalResolvers The
+     * credentialsToPrincipalResolvers to set.
      */
     public void setCredentialsToPrincipalResolvers(
         List credentialsToPrincipalResolvers) {

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
@@ -9,10 +10,12 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.util.StringUtils;
 
 /**
- * Simple test implementation of a AuthenticationHandler that returns a true if the username and password match.
+ * Simple test implementation of a AuthenticationHandler that returns a true if
+ * the username and password match.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: SimpleTestUsernamePasswordAuthenticationHandler.java,v 1.3
+ * 2005/03/07 21:00:05 sbattaglia Exp $
  */
 public class SimpleTestUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
@@ -24,9 +27,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(password)) {
-            log
-                .debug("User [" + username //$NON-NLS-1$
-                    + "] was successfully authenticated."); //$NON-NLS-1$
+            log.debug("User [" + username //$NON-NLS-1$
+                + "] was successfully authenticated."); //$NON-NLS-1$
             return true;
         }
 

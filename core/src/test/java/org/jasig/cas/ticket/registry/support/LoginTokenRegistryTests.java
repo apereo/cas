@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry.support;
@@ -11,7 +12,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: LoginTokenRegistryTests.java,v 1.2 2005/02/19 23:42:36
+ * sbattaglia Exp $
  */
 public class LoginTokenRegistryTests extends TestCase {
 

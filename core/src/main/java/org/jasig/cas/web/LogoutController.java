@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
@@ -20,7 +21,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.WebUtils;
 
 /**
- * Controller to delete ticket granting ticket cookie in order to log out of single sign on. This controller implements the idea of the ESUP Portail's
+ * Controller to delete ticket granting ticket cookie in order to log out of
+ * single sign on. This controller implements the idea of the ESUP Portail's
  * Logout patch to allow for redirecting to a url on logout.
  * 
  * @author Scott Battaglia
@@ -70,7 +72,8 @@ public class LogoutController extends AbstractController implements
     }
 
     /**
-     * @param centralAuthenticationService The centralAuthenticationService to set.
+     * @param centralAuthenticationService The centralAuthenticationService to
+     * set.
      */
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {

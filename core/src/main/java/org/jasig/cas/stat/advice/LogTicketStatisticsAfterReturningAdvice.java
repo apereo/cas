@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.stat.advice;
@@ -12,15 +13,19 @@ import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * After returning AOP advice which updates <code>TicketStatistics</code> state at the specific target's object joinpoints.
+ * After returning AOP advice which updates <code>TicketStatistics</code>
+ * state at the specific target's object joinpoints.
  * <p>
- * Note: the joinpoints captured by a pointcut are assumed to be the ones that deal with <code>Ticket's</code> state. Those joinpoints (method
- * invocation names) should be properly configured as keys in the <b>statsStateMutators </b> property and must be mapped to the appropriate ticket
- * statistics mutator method names of the <code>TicketStatisticsManager</code>
+ * Note: the joinpoints captured by a pointcut are assumed to be the ones that
+ * deal with <code>Ticket's</code> state. Those joinpoints (method invocation
+ * names) should be properly configured as keys in the <b>statsStateMutators
+ * </b> property and must be mapped to the appropriate ticket statistics mutator
+ * method names of the <code>TicketStatisticsManager</code>
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Id$
+ * @version $Id: LogTicketStatisticsAfterReturningAdvice.java,v 1.9 2005/02/27
+ * 05:49:26 sbattaglia Exp $
  */
 public class LogTicketStatisticsAfterReturningAdvice implements
     AfterReturningAdvice, InitializingBean {

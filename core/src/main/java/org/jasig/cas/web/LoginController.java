@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
@@ -105,7 +106,14 @@ public class LoginController extends SimpleFormController implements
         throws Exception {
         final Map referenceData = new HashMap();
 
-        referenceData.put(WebConstants.LOGIN_TOKEN, this.getLoginToken()); // a unique token to solve browser back issues
+        referenceData.put(WebConstants.LOGIN_TOKEN, this.getLoginToken()); // a
+        // unique
+        // token
+        // to
+        // solve
+        // browser
+        // back
+        // issues
 
         return referenceData;
     }
@@ -143,7 +151,8 @@ public class LoginController extends SimpleFormController implements
                 }
 
                 return new ModelAndView(new RedirectView(service),
-                    WebConstants.TICKET, serviceTicketId); // assume first = false?
+                    WebConstants.TICKET, serviceTicketId); // assume first =
+                // false?
             }
         }
 
@@ -255,7 +264,8 @@ public class LoginController extends SimpleFormController implements
     }
 
     /**
-     * @param centralAuthenticationService The centralAuthenticationService to set.
+     * @param centralAuthenticationService The centralAuthenticationService to
+     * set.
      */
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {

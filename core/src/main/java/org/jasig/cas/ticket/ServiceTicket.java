@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
@@ -8,7 +9,8 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Service;
 
 /**
- * Interface for a Service Ticket. A service ticket is used to grant access to a specific service.
+ * Interface for a Service Ticket. A service ticket is used to grant access to a
+ * specific service.
  * 
  * @author Scott Battaglia
  * @version $Id$
@@ -25,7 +27,8 @@ public interface ServiceTicket extends Ticket {
     Service getService();
 
     /**
-     * Determine if this ticket was created at the same time as a TicketGrantingTicket
+     * Determine if this ticket was created at the same time as a
+     * TicketGrantingTicket
      * 
      * @return true if it is, false otherwise.
      */
@@ -39,7 +42,8 @@ public interface ServiceTicket extends Ticket {
     void setFromNewLogin(boolean fromNewLogin);
 
     /**
-     * Method to grant a TicketGrantingTicket from this service to the authentication. Analogous to the ProxyGrantingTicket.
+     * Method to grant a TicketGrantingTicket from this service to the
+     * authentication. Analogous to the ProxyGrantingTicket.
      * 
      * @param authentication The Authentication we wish to grant a ticket for.
      * @return The ticket granting ticket.

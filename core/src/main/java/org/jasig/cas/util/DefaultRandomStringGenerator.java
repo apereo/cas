@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.util;
@@ -7,10 +8,12 @@ package org.jasig.cas.util;
 import java.security.SecureRandom;
 
 /**
- * Implementation of the RandomStringGenerator that allows you to define the length of the random part.
+ * Implementation of the RandomStringGenerator that allows you to define the
+ * length of the random part.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: DefaultRandomStringGenerator.java,v 1.2 2005/02/27 05:49:26
+ * sbattaglia Exp $
  */
 public class DefaultRandomStringGenerator implements RandomStringGenerator {
 

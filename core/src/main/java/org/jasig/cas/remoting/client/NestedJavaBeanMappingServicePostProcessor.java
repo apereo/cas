@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.remoting.client;
@@ -19,15 +20,21 @@ import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.springframework.remoting.jaxrpc.JaxRpcServicePostProcessor;
 
 /**
- * Axis-specific JaxRpcServicePostProcessor that attempts to detect the JavaBeans it needs to register by inspecting the service interface's return
- * types and parameter types for each method. Nested version attempts to find beans nested within JavaBeans and register them also. It is currently
- * designed to ignore any java.* or javax.* class. It also assumes that the types are JavaBeans. It does not actually check. A more sophisticated
- * version would be able to check if a class was a valid JavaBean and only register valid JavaBeans. Also allows you to specify a list of JavaBeans to
- * register manually. This needs to be here incase one of the parameters to a method is an interface and you need to register the implementing class.
+ * Axis-specific JaxRpcServicePostProcessor that attempts to detect the
+ * JavaBeans it needs to register by inspecting the service interface's return
+ * types and parameter types for each method. Nested version attempts to find
+ * beans nested within JavaBeans and register them also. It is currently
+ * designed to ignore any java.* or javax.* class. It also assumes that the
+ * types are JavaBeans. It does not actually check. A more sophisticated version
+ * would be able to check if a class was a valid JavaBean and only register
+ * valid JavaBeans. Also allows you to specify a list of JavaBeans to register
+ * manually. This needs to be here incase one of the parameters to a method is
+ * an interface and you need to register the implementing class.
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Id$
+ * @version $Id: NestedJavaBeanMappingServicePostProcessor.java,v 1.3 2005/02/27
+ * 05:49:26 sbattaglia Exp $
  */
 public class NestedJavaBeanMappingServicePostProcessor implements
     JaxRpcServicePostProcessor {
@@ -59,7 +66,9 @@ public class NestedJavaBeanMappingServicePostProcessor implements
             addJavaBeanToMap(mapping, clazz);
         }
 
-        Method[] methods = clazz.getDeclaredMethods(); // TODO getDeclaredMethods or getMethods ??
+        Method[] methods = clazz.getDeclaredMethods(); // TODO
+        // getDeclaredMethods or
+        // getMethods ??
 
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];

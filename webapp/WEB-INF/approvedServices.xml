@@ -13,6 +13,11 @@
 	<bean id="serviceRequiresAuthenticationMethodBeforeAdvice" class="org.jasig.cas.services.advice.ServiceRequiresAuthenticationMethodBeforeAdvice">
 		<property name="serviceRegistry"><ref local="serviceRegistry" /></property>
 	</bean>
+	
+	<bean id="serviceAllowedToProxyMethodBeforeAdvice" class="org.jasig.cas.services.advice.ServiceAllowedToProxyMethodBeforeAdvice">
+		<property name="serviceRegistry"><ref local="serviceRegistry" /></property>
+		<property name="ticketRegistry"><ref bean="ticketRegistry" /></property>
+	</bean>
 
 	<!-- ADVISORS -->	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
@@ -41,5 +46,45 @@
         <property name="perl5">
             <value>false</value>
         </property>
+	</bean>
+	
+	<bean id="serviceAllowedToProxyMethodBeforeAdviceAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<constructor-arg><ref local="serviceAllowedToProxyMethodBeforeAdvice" /></constructor-arg>
+		<property name="patterns">
+			<list>
+				<value>.*CentralAuthenticationService.delegateTicketGrantingTicket.*</value>
+			</list>
+		</property>
+        <property name="perl5">
+            <value>false</value>
+        </property>
+	</bean>
+	
+	<!--  SERVICE REGISTRY -->
+	<bean id="serviceRegistryJob" class="org.jasig.cas.services.cron.DefaultReloadServiceContextCronJob">
+		<property name="serviceRegistryManager"><ref bean="serviceRegistry" /></property>
+	</bean>
+	
+	<bean id="jobDetailServiceRegistry" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="serviceRegistryJob" />
+		</property>
+		<property name="targetMethod"><value>reloadServiceRegistry</value></property>
+	</bean>
+	
+	<bean id="triggerJobDetailServiceRegistry" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref local="jobDetailServiceRegistry" />
+		</property>
+		<property name="startDelay"><value>20000</value></property>
+		<property name="repeatInterval"><value>100000</value></property>
+	</bean>
+	
+	<bean id="scheduler2" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref local="triggerJobDetailServiceRegistry" />
+			</list>
+		</property>
 	</bean>
 </beans>

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.support;
@@ -8,10 +9,12 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 
 /**
- * Expiration policy that is based on a certain time period for a ticket to exist.
+ * Expiration policy that is based on a certain time period for a ticket to
+ * exist.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: TimeoutExpirationPolicy.java,v 1.4 2005/03/01 05:04:58
+ * sbattaglia Exp $
  */
 public class TimeoutExpirationPolicy implements ExpirationPolicy {
 

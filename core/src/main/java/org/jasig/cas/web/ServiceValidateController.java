@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.web;
@@ -34,7 +35,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * Controller to validate ServiceTickets and ProxyTickets.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: ServiceValidateController.java,v 1.2 2005/02/27 05:49:26
+ * sbattaglia Exp $
  */
 public class ServiceValidateController extends AbstractController implements
     InitializingBean {
@@ -151,7 +153,8 @@ public class ServiceValidateController extends AbstractController implements
     }
 
     /**
-     * @param centralAuthenticationService The centralAuthenticationService to set.
+     * @param centralAuthenticationService The centralAuthenticationService to
+     * set.
      */
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
@@ -159,7 +162,8 @@ public class ServiceValidateController extends AbstractController implements
     }
 
     /**
-     * @param authenticationSpecificationClass The authenticationSpecificationClass to set.
+     * @param authenticationSpecificationClass The
+     * authenticationSpecificationClass to set.
      */
     public void setAuthenticationSpecificationClass(
         Class authenticationSpecificationClass) {

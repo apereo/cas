@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.jdbc;
@@ -13,12 +14,15 @@ import org.jasig.cas.util.PasswordTranslator;
 import org.jasig.cas.util.support.PlainTextPasswordTranslator;
 
 /**
- * Class that given a table, username field and password field will query a database table with the provided encryption technique to see if the user
- * exists. This class defaults to a PasswordTranslator of PlainTextPasswordTranslator.
+ * Class that given a table, username field and password field will query a
+ * database table with the provided encryption technique to see if the user
+ * exists. This class defaults to a PasswordTranslator of
+ * PlainTextPasswordTranslator.
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Id$
+ * @version $Id: SearchModeSearchDatabaseAuthenticationHandler.java,v 1.6
+ * 2005/03/07 21:00:05 sbattaglia Exp $
  */
 
 public class SearchModeSearchDatabaseAuthenticationHandler extends

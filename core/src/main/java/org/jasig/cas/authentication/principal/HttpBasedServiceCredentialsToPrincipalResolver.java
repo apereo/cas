@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.principal;
@@ -7,10 +8,12 @@ package org.jasig.cas.authentication.principal;
 import org.jasig.cas.authentication.SimpleService;
 
 /**
- * Resolver to resolve the credentials presented for an HTTP-based service to a principal.
+ * Resolver to resolve the credentials presented for an HTTP-based service to a
+ * principal.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: HttpBasedServiceCredentialsToPrincipalResolver.java,v 1.2
+ * 2005/02/27 05:49:26 sbattaglia Exp $
  */
 public class HttpBasedServiceCredentialsToPrincipalResolver implements
     CredentialsToPrincipalResolver {

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.ldap;
@@ -23,7 +24,8 @@ import org.springframework.ldap.core.SearchResultCallbackHandler;
  * Handler to do LDAP bind.
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: BindLdapAuthenticationHandler.java,v 1.4 2005/03/07 21:00:05
+ * sbattaglia Exp $
  */
 public class BindLdapAuthenticationHandler extends
     AbstractLdapAuthenticationHandler {

@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.cas;
@@ -10,15 +11,18 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
 
 /**
- * Custom Binder to populate the Legacy CAS Credentials with the required ServletRequest.
+ * Custom Binder to populate the Legacy CAS Credentials with the required
+ * ServletRequest.
  * 
  * @author Scott
- * @version $Id$
+ * @version $Id: LegacyCasCredentialsBinder.java,v 1.2 2005/02/27 05:49:26
+ * sbattaglia Exp $
  */
 public class LegacyCasCredentialsBinder implements CredentialsBinder {
 
     /**
-     * @see org.jasig.cas.web.bind.CredentialsBinder#bind(javax.servlet.http.HttpServletRequest, org.jasig.cas.authentication.principal.Credentials)
+     * @see org.jasig.cas.web.bind.CredentialsBinder#bind(javax.servlet.http.HttpServletRequest,
+     * org.jasig.cas.authentication.principal.Credentials)
      */
     public void bind(final HttpServletRequest request,
         final Credentials credentials) {

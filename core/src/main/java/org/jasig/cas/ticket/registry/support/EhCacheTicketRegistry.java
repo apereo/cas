@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket.registry.support;
@@ -22,10 +23,12 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 /**
  * Ticket registry backed by EHCache caching subsystem.
  * <p>
- * Note: assumes that <code>Cache</code> instances will be injected via setter method, typically by some kind of IoC container.
+ * Note: assumes that <code>Cache</code> instances will be injected via setter
+ * method, typically by some kind of IoC container.
  * 
  * @author Dmitriy Kopylenko
- * @version $Id$
+ * @version $Id: EhCacheTicketRegistry.java,v 1.3 2005/02/27 05:49:26 sbattaglia
+ * Exp $
  */
 public class EhCacheTicketRegistry implements TicketRegistry {
 

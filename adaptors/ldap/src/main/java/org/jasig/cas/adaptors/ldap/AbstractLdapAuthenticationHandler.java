@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.ldap;
@@ -14,7 +15,8 @@ import org.springframework.ldap.core.support.LdapDaoSupport;
  * Abstract class that duplicates functionality of AbstractHandler
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: AbstractLdapAuthenticationHandler.java,v 1.3 2005/03/04
+ * 20:26:30 apetro Exp $
  */
 public abstract class AbstractLdapAuthenticationHandler extends LdapDaoSupport
     implements AuthenticationHandler {
@@ -28,8 +30,10 @@ public abstract class AbstractLdapAuthenticationHandler extends LdapDaoSupport
     }
 
     /**
-     * @param credentials The credentials we want to check if the handler supports.
-     * @return true if the handler supports authenticating this type of credentials. False otherwise.
+     * @param credentials The credentials we want to check if the handler
+     * supports.
+     * @return true if the handler supports authenticating this type of
+     * credentials. False otherwise.
      */
     protected abstract boolean supports(Credentials credentials);
 

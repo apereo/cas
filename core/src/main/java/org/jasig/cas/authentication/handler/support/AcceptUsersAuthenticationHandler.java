@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.handler.support;
@@ -9,13 +10,18 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
- * Handler that contains a list of valid users and passwords. Useful if there is a small list of users that we wish to allow. An example use case may
- * be if there are existing handlers that make calls to LDAP, etc. but there is a need for additional users we don't want in LDAP. With the chain of
- * command processing of handlers, this handler could be added to check before LDAP and provide the list of additional users. The list of acceptable
- * users is stored in a map. The key of the map is the username and the password is the object retrieved from doing map.get(KEY).
+ * Handler that contains a list of valid users and passwords. Useful if there is
+ * a small list of users that we wish to allow. An example use case may be if
+ * there are existing handlers that make calls to LDAP, etc. but there is a need
+ * for additional users we don't want in LDAP. With the chain of command
+ * processing of handlers, this handler could be added to check before LDAP and
+ * provide the list of additional users. The list of acceptable users is stored
+ * in a map. The key of the map is the username and the password is the object
+ * retrieved from doing map.get(KEY).
  * 
  * @author Scott Battaglia
- * @version $Id$
+ * @version $Id: AcceptUsersAuthenticationHandler.java,v 1.3 2005/03/07 21:00:05
+ * sbattaglia Exp $
  */
 public class AcceptUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {

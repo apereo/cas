@@ -1,5 +1,6 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
@@ -22,7 +23,8 @@ public interface Ticket extends Serializable {
     String getId();
 
     /**
-     * Determines if the ticket is expired. Most common implementations might collaborate with <i>ExpirationPolicy </i> strategy.
+     * Determines if the ticket is expired. Most common implementations might
+     * collaborate with <i>ExpirationPolicy </i> strategy.
      * 
      * @see org.jasig.cas.ticket.ExpirationPolicy
      */
