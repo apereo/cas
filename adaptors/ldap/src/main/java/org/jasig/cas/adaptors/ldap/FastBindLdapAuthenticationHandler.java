@@ -6,7 +6,6 @@ package org.jasig.cas.adaptors.ldap;
 
 import javax.naming.directory.DirContext;
 
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
@@ -23,8 +22,7 @@ public class FastBindLdapAuthenticationHandler extends
 
     private String filter;
 
-    public boolean authenticateInternal(final Credentials request)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
 
         DirContext dirContext = this.getContextSource().getDirContext(

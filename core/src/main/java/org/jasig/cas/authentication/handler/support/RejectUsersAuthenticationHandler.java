@@ -5,7 +5,6 @@
 package org.jasig.cas.authentication.handler.support;
 
 import java.util.Collection;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -20,8 +19,7 @@ public class RejectUsersAuthenticationHandler extends
 
     private Collection users;
 
-    public boolean authenticateInternal(final Credentials credentials)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
 
         if (usernamePasswordCredentials.getUserName() == null)

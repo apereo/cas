@@ -26,6 +26,10 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
     private  ServiceRegistry serviceRegistry;
 
     public String resolveThemeName(HttpServletRequest request) {
+		if (this.serviceRegistry == null) {
+			return getDefaultThemeName();
+		}
+
         String serviceId = request.getParameter(SERVICE_THEME_KEY);
         AuthenticatedService service = this.serviceRegistry.getService(serviceId);
         

@@ -4,7 +4,6 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.util.StringUtils;
@@ -18,8 +17,7 @@ import org.springframework.util.StringUtils;
 public class SimpleTestUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
-    public boolean authenticateInternal(final Credentials credentials)
-        throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
         final String username = usernamePasswordCredentials.getUserName();
         final String password = usernamePasswordCredentials.getPassword();
@@ -27,12 +25,12 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(password)) {
             log
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
+                .debug("User [" + username //$NON-NLS-1$
+                    + "] was successfully authenticated."); //$NON-NLS-1$
             return true;
         }
 
-        log.debug("User [" + username + "] failed authentication");
+        log.debug("User [" + username + "] failed authentication"); //$NON-NLS-2$
 
         return false;
     }

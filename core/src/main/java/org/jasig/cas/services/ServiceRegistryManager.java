@@ -29,4 +29,6 @@ public interface ServiceRegistryManager {
      * @return true if method invocation resulted in a change, false otherwise
      */
     boolean deleteService(String serviceId);
+    
+    void clear();
 }
