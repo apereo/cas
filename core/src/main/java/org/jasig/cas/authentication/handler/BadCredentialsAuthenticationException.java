@@ -20,7 +20,10 @@ public class BadCredentialsAuthenticationException extends
     private static final String CODE = "error.authentication.credentials.bad";
 
     public BadCredentialsAuthenticationException() {
-        super();
-        setCode(CODE);
+        super(CODE);
+    }
+    
+    public BadCredentialsAuthenticationException(Throwable throwable) {
+        super(CODE, throwable);
     }
 }
