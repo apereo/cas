@@ -1,2 +1,2 @@
 <%@ page session="false" %>
-please confirm
+<p>Click <a href="${service}?ticket=${ticket}">here</a> to go to the application.</p>

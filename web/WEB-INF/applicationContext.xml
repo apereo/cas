@@ -11,7 +11,7 @@
 	</bean>
 	
 	<!-- ID Generators -->
-	<bean id="uniqueIdGenerator31Strength" class="org.jasig.cas.util.support.UserDefinedRandomLengthUniqueTicketIdGenerator">
+	<bean id="uniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg index="0"><value>31</value></constructor-arg>
 	</bean>
 	
@@ -29,7 +29,7 @@
 	<bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
 		<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
 		<property name="authenticationManager"><ref bean="authenticationManager" /></property>
-		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator31Strength" /></property>
+		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
 		<property name="ticketGrantingTicketExpirationPolicy"><ref local="grantingTicketExpirationPolicy" /></property>
 		<property name="serviceTicketExpirationPolicy"><ref local="serviceTicketExpirationPolicy" /></property>
 	</bean>

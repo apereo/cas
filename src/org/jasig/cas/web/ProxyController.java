@@ -55,13 +55,14 @@ public class ProxyController extends AbstractController implements InitializingB
         final String serviceTicket = this.centralAuthenticationService.grantServiceTicket(ticket, service);
 
         if (serviceTicket == null) {
-            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);
+            final Map model = new HashMap();
+            model.put(WebConstants.CODE, "BAD_PGT");
+            model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
+            return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
+            
         }
-
-        final Map model = new HashMap();
-        model.put(WebConstants.CODE, "BAD_PGT");
-        model.put(WebConstants.DESC, "unrecognized pgt: " + ticket);
-        return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
+        
+        return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS, WebConstants.TICKET, serviceTicket);
     }
 
     /**

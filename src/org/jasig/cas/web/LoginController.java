@@ -112,6 +112,10 @@ public class LoginController extends SimpleFormController implements Initializin
         final String service = request.getParameter(WebConstants.SERVICE);
         final boolean renew = StringUtils.hasText(request.getParameter(WebConstants.RENEW));
 
+        System.out.println("COOKIE VALUE: " + this.getCookieValue(request,WebConstants.COOKIE_PRIVACY));
+        System.out.println("COOKIE VALUE: " + warn);
+        
+        
         // if we managed to find an existing ticketGrantingTicketId
         if (StringUtils.hasText(ticketGrantingTicketId) && StringUtils.hasText(service) && !renew) {
             // we have a service and no request for renew
@@ -156,7 +160,7 @@ public class LoginController extends SimpleFormController implements Initializin
         // the ticket was not created because invalid Credentials
         if (ticketGrantingTicketId == null) {
             errors.reject("bad.credentials", null);
-            super.processFormSubmission(request, response, object, errors);
+            return super.processFormSubmission(request, response, object, errors);
         }
 
         final String oldTicketGrantingTicketId = getCookieValue(request, WebConstants.COOKIE_TGC_ID);
