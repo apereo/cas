@@ -7,10 +7,10 @@ package org.jasig.cas.authentication.handler;
 import org.jasig.cas.authentication.AuthenticationRequest;
 
 /**
- * Interface for the handlers that will authenticate a user against a resource.
- * CAS Developers would implement their own AuthenticationHandler and plug it into the 
- * AuthenticationManager to authenticate users against their own resources such as
- * a database table.
+ * Interface for the handlers that validate requests for authentication.  Developers
+ * deploying CAS supply an AuthenticationHandler and plug it into the
+ * AuthenticationManager.  Implementations of this interface might be backed by
+ * such things as LDAP servers, Kerberos realms, RDBMS tables, etc.
  * 
  * @author Scott Battaglia
  * @version $Id$
