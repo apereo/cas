@@ -79,6 +79,21 @@
 					<property name="startDelay"><value>${web.token.ticket.cleanup.start}</value></property>
 					<property name="repeatInterval"><value>${web.token.ticket.cleanup.repeat}</value></property>
 				</bean>
+				
+				<bean class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+					<property name="jobDetail">
+						<bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+							<property name="targetObject">
+								<bean class="org.jasig.cas.services.cron.ReloadServiceContextCronJob">
+									<property name="serviceRegistryManager"><ref bean="serviceRegistry" /></property>
+								</bean>
+							</property>
+							<property name="targetMethod"><value>reloadServiceRegistry</value></property>
+						</bean>
+					</property>
+					<property name="startDelay"><value>20000</value></property>
+					<property name="repeatInterval"><value>100000</value></property>
+				</bean>
 			</list>
 		</property>
 	</bean>

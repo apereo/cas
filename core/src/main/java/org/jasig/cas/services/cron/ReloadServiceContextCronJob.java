@@ -61,6 +61,10 @@ public class ReloadServiceContextCronJob implements InitializingBean {
     }
     
     public void afterPropertiesSet() throws Exception {
+		if (this.serviceRegistryManager == null) {
+			throw new IllegalStateException("ServiceRegistryManager cannot be null on " + this.getClass().getName());
+		}
+		
         if (this.fileName == null) {
             log.info("No fileName provided for " + this.getClass().getName() + ".  Using default file name: " + DEFAULT_FILE_NAME);
             this.fileName = DEFAULT_FILE_NAME;
@@ -68,4 +72,13 @@ public class ReloadServiceContextCronJob implements InitializingBean {
         
         this.serviceRegistryFile = new File(this.fileName);
     }
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public void setServiceRegistryManager(
+			ServiceRegistryManager serviceRegistryManager) {
+		this.serviceRegistryManager = serviceRegistryManager;
+	}
 }
