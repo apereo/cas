@@ -45,9 +45,6 @@
 		<property name="daemon">
 			<value>true</value>
 		</property>
-		<property name="objectName">
-			<value>cas:server=server</value>
-		</property>
 	</bean>
 
 	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatisticsImpl" />

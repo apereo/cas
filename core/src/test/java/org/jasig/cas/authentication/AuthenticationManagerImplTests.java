@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
@@ -35,6 +36,18 @@ public class AuthenticationManagerImplTests extends TestCase {
 	private void setUpManager(AuthenticationManagerImpl a) {
 		List resolvers = new ArrayList();
 		resolvers.add(new DefaultCredentialsToPrincipalResolver());
+		resolvers.add(new HttpBasedServiceCredentialsToPrincipalResolver());
+		a.setCredentialsToPrincipalResolvers(resolvers);
+		
+		List handlers = new ArrayList();
+		handlers.add(new SimpleTestUsernamePasswordAuthenticationHandler());
+		handlers.add(new HttpBasedServiceCredentialsAuthenticationHandler());
+		
+		a.setAuthenticationHandlers(handlers);
+	}
+	
+	private void setUpManager2(AuthenticationManagerImpl a) {
+		List resolvers = new ArrayList();
 		resolvers.add(new HttpBasedServiceCredentialsToPrincipalResolver());
 		a.setCredentialsToPrincipalResolvers(resolvers);
 		
@@ -80,7 +93,6 @@ public class AuthenticationManagerImplTests extends TestCase {
     
     public void testFailedAuthentication() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        Principal p = new SimplePrincipal("test");
         c.setUserName("test");
         c.setPassword("tt");
         
@@ -92,4 +104,37 @@ public class AuthenticationManagerImplTests extends TestCase {
             return;
         }
     }
+	
+	public void testNoHandlerFound() {
+        setUpManager(this.manager);
+        try {
+            this.manager.authenticateAndResolveCredentials(new TestCredentials());
+            fail("Authentication should have failed.");
+        } catch (UnsupportedCredentialsException e) {
+            return;
+        } catch (AuthenticationException e) {
+			fail("UnsupportedCredentialsException expected.");
+        }
+	}
+	
+	public void testNoResolverFound() {
+        setUpManager2(this.manager);
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        c.setUserName("test");
+        c.setPassword("test");
+        try {
+            this.manager.authenticateAndResolveCredentials(c);
+            fail("Authentication should have failed.");
+        } catch (UnsupportedCredentialsException e) {
+            return;
+        } catch (AuthenticationException e) {
+			fail("UnsupportedCredentialsException expected.");
+        }
+	}
+	
+	protected static class TestCredentials implements Credentials {
+
+		private static final long serialVersionUID = 3258413949803246388L;
+		
+	}
 }
