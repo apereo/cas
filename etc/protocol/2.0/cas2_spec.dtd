@@ -7,13 +7,14 @@
 	clients to be able to validate the response returned via the CAS server.
 	
 	@author: Scott Battaglia
+	@author: Drew Mazurek
 	@version $Id$
 	
 	NOTE: This is a draft.
 -->
-<!ELEMENT serviceResponse ((authenticationFailure?, authenticationSuccess?, proxyFailure?, proxySuccess?))>
+<!ELEMENT serviceResponse ((authenticationFailure|authenticationSuccess|proxyFailure|proxySuccess))>
 
-<!ELEMENT authenticationSuccess (user, (proxyGrantingTicket, proxies)?)>
+<!ELEMENT authenticationSuccess (user, proxyGrantingTicket?, proxies?)>
 
 <!ELEMENT proxies (proxy+)>
 
@@ -31,6 +32,6 @@
 
 <!ELEMENT proxyTicket (#PCDATA)>
 
-<!ATTLIST authenticationFailure code (INVALID_TICKET|BAD_PGT) "INVALID_TICKET">
+<!ATTLIST authenticationFailure code PCDATA #REQUIRED>
 
-<!ATTLIST proxyFailure code (INVALID_TICKET|BAD_PGT) "INVALID_TICKET">
+<!ATTLIST proxyFailure code PCDATA #REQUIRED>
