@@ -115,7 +115,7 @@ public final class CentralAuthenticationServiceImpl implements
                 }
 
                 final ServiceTicket serviceTicket = ticketGrantingTicket
-                    .grantServiceTicket(service);
+                    .grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), service, this.serviceTicketExpirationPolicy);
 
                 // TODO we need a better way of handling this
                 if (credentials != null) {
@@ -168,7 +168,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
 
             TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                .grantTicketGrantingTicket(authentication);
+                .grantTicketGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), authentication, this.ticketGrantingTicketExpirationPolicy);
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
@@ -227,9 +227,7 @@ public final class CentralAuthenticationServiceImpl implements
             ticketGrantingTicket = new TicketGrantingTicketImpl(
                 this.uniqueTicketIdGenerator
                     .getNewTicketId(TicketGrantingTicket.PREFIX),
-                authentication, this.ticketGrantingTicketExpirationPolicy,
-                this.uniqueTicketIdGenerator,
-                this.serviceTicketExpirationPolicy);
+                authentication, this.ticketGrantingTicketExpirationPolicy);
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
