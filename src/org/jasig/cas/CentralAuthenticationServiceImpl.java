@@ -66,7 +66,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /**
      * @see org.jasig.cas.CentralAuthenticationSerivce#grantTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
      */
-    public TicketGrantingTicket grantTicketGrantingTicket(String serviceTicketId, Credentials credentials) {
+    public TicketGrantingTicket delegateTicketGrantingTicket(String serviceTicketId, Credentials credentials) {
         // TODO Auto-generated method stub
         return null;
     }
