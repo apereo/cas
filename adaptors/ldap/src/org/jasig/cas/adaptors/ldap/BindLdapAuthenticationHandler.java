@@ -63,11 +63,11 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements Aut
                 private List cns = new ArrayList();
 
                 public void processSearchResult(SearchResult searchResult) throws NamingException {
-                    cns.add(AttributeHelper.getAttributeAsString(searchResult, "cn"));
+                    this.cns.add(AttributeHelper.getAttributeAsString(searchResult, "cn"));
                 }
 
                 public Object getResult() {
-                    return cns;
+                    return this.cns;
                 }
             });
 

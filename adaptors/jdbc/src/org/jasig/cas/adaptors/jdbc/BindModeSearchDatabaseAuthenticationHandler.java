@@ -4,14 +4,14 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import java.util.Iterator;
-import java.util.Properties;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
  * This class attempts to authenticate the user by opening a connection to the database with the provided username and password. Servers are provided
@@ -20,10 +20,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-    private Properties servers;
-
+public class BindModeSearchDatabaseAuthenticationHandler extends JdbcDaoSupport implements AuthenticationHandler {
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
@@ -31,34 +28,20 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractUsernam
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
-
-        for (Iterator iter = this.servers.keySet().iterator(); iter.hasNext();) {
-            final String url = (String)iter.next();
-            final String driver = this.servers.getProperty(url);
-            try {
-            	new DriverManagerDataSource(driver, url, username, password);
-                return true;
-            }
-            catch (CannotGetJdbcConnectionException e) {
-                // log ....user could not connect to db or was
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-        if (this.servers == null) {
-            throw new IllegalStateException("The drivers and urls must be set on " + this.getClass().getName());
+        
+        try {
+        	Connection c = this.getDataSource().getConnection(username, password);
+        	DataSourceUtils.closeConnectionIfNecessary(c, this.getDataSource());
+        	return true;
+        } catch (SQLException e) {
+        	return false;
         }
     }
-
-    /**
-     * @param servers The servers to set.
-     */
-    public void setServers(final Properties servers) {
-        this.servers = servers;
-    }
+    
+	/**
+	 * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
+	 */
+	public boolean supports(Credentials credentials) {
+		return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+	}
 }

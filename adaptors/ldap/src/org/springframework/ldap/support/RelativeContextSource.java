@@ -111,9 +111,7 @@ public class RelativeContextSource implements ContextSource,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+     /** 
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
