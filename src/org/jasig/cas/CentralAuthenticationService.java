@@ -38,8 +38,21 @@ public interface CentralAuthenticationService {
      * @param tgtid Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
      * @return the ServiceTicket for target Service.
+     * @throws TicketCreationException
      */
     String grantServiceTicket(String ticketGrantingTicketId, Service service) throws TicketCreationException;
+    
+    /**
+     * Grant a ServiceTicket for a Service *if* the principal resolved from the credentials matches the principal
+     * associated with the TicketGrantingTicket.
+     * 
+     * @param ticketGrantingTicketId Proof of prior authentication.
+     * @param service The target service of the ServiceTicket.
+     * @param credentials
+     * @return the ServiceTicket for target Service.
+     * @throws TicketCreationException
+     */
+    String grantServiceTicket(String ticketGrantingTicketId, Service service, Credentials credentials) throws AuthenticationException, TicketCreationException;
 
     /**
      * Validate a ServiceTicket for a particular Service

@@ -13,6 +13,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.Service;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketClassException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -74,13 +75,22 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
     /**
      * @see org.jasig.cas.CentralAuthenticationService#grantServiceTicket(java.lang.String, org.jasig.cas.Service)
      */
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketCreationException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, Credentials credentials) throws AuthenticationException, TicketCreationException {
         try {
             final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket)this.ticketRegistry.getTicket(ticketGrantingTicketId,
                 TicketGrantingTicket.class);
 
             if (ticketGrantingTicket == null)
                 return null;
+            
+            if (credentials != null) {
+                Authentication authentication = this.authenticationManager.authenticateAndResolveCredentials(credentials);
+                Principal originalPrincipal = ticketGrantingTicket.getAuthentication().getPrincipal();
+                Principal newPrincipal = authentication.getPrincipal();
+                
+                if (!newPrincipal.equals(originalPrincipal))
+                    return null;
+            }
 
             final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(service);
 
@@ -96,6 +106,18 @@ public final class CentralAuthenticationServiceImpl extends ServletEndpointSuppo
         }
     }
 
+    /**
+     * @see org.jasig.cas.CentralAuthenticationService#grantServiceTicket(java.lang.String, org.jasig.cas.authentication.Service)
+     */
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketCreationException {
+        try {
+            return this.grantServiceTicket(ticketGrantingTicketId, service, null);
+        } catch (AuthenticationException e) {
+            // this should not happen as authentication is never done from here.
+            log.error(e);
+            return null;
+        }
+    }
     /**
      * @see org.jasig.cas.CentralAuthenticationService#grantTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
      */
