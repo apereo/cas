@@ -21,7 +21,12 @@ public interface ServiceRegistryManager {
     /**
      * Method to delete a service from the list.
      * 
+     * Return value indicates whether the serviceid mapped to a Service which
+     *  was registered and is now as a result of this method invocation unregistered
+     *  (true) or the serviceId did not map to a registered service (false).
+     * 
      * @param serviceId The service to delete
+     * @return true if method invocation resulted in a change, false otherwise
      */
     boolean deleteService(String serviceId);
 }
