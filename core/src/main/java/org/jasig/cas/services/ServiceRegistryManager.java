@@ -23,5 +23,5 @@ public interface ServiceRegistryManager {
      * 
      * @param serviceId The service to delete
      */
-    void deleteService(String serviceId);
+    boolean deleteService(String serviceId);
 }

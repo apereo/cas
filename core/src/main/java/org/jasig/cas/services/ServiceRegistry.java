@@ -5,7 +5,7 @@
 
 package org.jasig.cas.services;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Registry that contains a list of valid services that service tickets must use for validation. If a service ticket does not exist in the registry
@@ -24,11 +24,13 @@ public interface ServiceRegistry {
      * @return true if the service exists. False otherwise.
      */
     boolean serviceExists(String serviceId);
+    
+    AuthenticatedService getService(String serviceId);
 
     /**
      * Method to return the list of services in the registry.
      * 
      * @return A list of services
      */
-    List getServices();
+    Collection getServices();
 }
