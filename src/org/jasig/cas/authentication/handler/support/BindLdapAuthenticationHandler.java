@@ -85,7 +85,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapAuthenticationHan
 
                 dirContext.close();
 
-                if (results.size() > 1 && !allowMultipleAccounts) {
+                if (results.size() > 1 && !this.allowMultipleAccounts) {
                     return false;
                 }
 

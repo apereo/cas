@@ -6,12 +6,14 @@ package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationRequest;
+import org.jasig.cas.authentication.UsernamePasswordAuthenticationRequest;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.remoting.CasService;
 import org.jasig.cas.ticket.CasAttributes;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketManager;
+import org.jasig.cas.ticket.validation.ValidationRequest;
 
 /**
  * Default implementation of the CasService
@@ -32,14 +34,17 @@ public class CasServiceImpl implements CasService {
         final TicketGrantingTicket ticket;
         final CasAttributes casAttributes = new CasAttributes();
         final ServiceTicket serviceTicket;
+        final ValidationRequest validationRequest = new ValidationRequest();
         
-        ticket = ticketManager.validateTicketGrantingTicket(null); // TODO currently we don't support renew!
+        validationRequest.setTicket(ticketGrantingTicketId);
+   
+        ticket = this.ticketManager.validateTicketGrantingTicket(validationRequest); // TODO currently we don't support renew!
         
         if (ticket == null)
             return null;
         
         casAttributes.setService(service);
-        serviceTicket = ticketManager.createServiceTicket(casAttributes, ticket);
+        serviceTicket = this.ticketManager.createServiceTicket(casAttributes, ticket);
         
         if (serviceTicket == null)
             return null;
@@ -54,12 +59,12 @@ public class CasServiceImpl implements CasService {
         final Principal principal;
         final TicketGrantingTicket ticket;
         
-        principal = authenticationManager.authenticateUser(request);
+        principal = this.authenticationManager.authenticateUser(request);
         
         if (principal == null)
             return null;
         
-        ticket = ticketManager.createTicketGrantingTicket(principal, null);
+        ticket = this.ticketManager.createTicketGrantingTicket(principal, null);
         
         return ticket.getId();
     }

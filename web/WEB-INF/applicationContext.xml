@@ -14,9 +14,7 @@
 	<bean id="uniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 	
 	<bean id="uniqueIdGenerator31Strength" class="org.jasig.cas.util.UserDefinedRandomLengthUniqueTicketIdGenerator">
-		<constructor-arg>
-			<value>31</value>
-		</constructor-arg>
+		<constructor-arg index="0"><value>31</value></constructor-arg>
 	</bean>
 	
 	<!-- Expiration policies -->

@@ -78,7 +78,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      * @see org.jasig.cas.ticket.registry.ServiceRegistry#getServices()
      */
     public List getServices() {
-        return Collections.unmodifiableList(services);
+        return Collections.unmodifiableList(this.services);
     }
 
 }

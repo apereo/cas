@@ -19,7 +19,7 @@ public abstract class AbstractTicketCreator implements TicketCreator {
      * @return Returns the uniqueTicketIdGenerator.
      */
     public UniqueTicketIdGenerator getUniqueTicketIdGenerator() {
-        return uniqueTicketIdGenerator;
+        return this.uniqueTicketIdGenerator;
     }
     /**
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to set.
