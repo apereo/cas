@@ -95,4 +95,8 @@
 			</list>
 		</property>
 	</bean>
+	
+	<!-- ADVISORS -->	
+	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+
 </beans>
