@@ -16,7 +16,7 @@ import org.springframework.beans.factory.InitializingBean;
  * <p>
  * Note: the joinpoints captured by a pointcut are assumed to be the ones that deal with <code>Ticket's</code> state. Those joinpoints (method
  * invocation names) should be properly configured as keys in the <b>statsStateMutators </b> property and must be mapped to the appropriate ticket
- * statistics mutator method names on the <code>TicketStatisticsManager</code>
+ * statistics mutator method names of the <code>TicketStatisticsManager</code>
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
