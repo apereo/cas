@@ -29,7 +29,8 @@ import org.springframework.remoting.jaxrpc.JaxRpcServicePostProcessor;
  * @author Dmitriy Kopylenko
  * @version $Id$
  */
-public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServicePostProcessor {
+public class NestedJavaBeanMappingServicePostProcessor implements
+    JaxRpcServicePostProcessor {
 
     private String namespace;
 
@@ -46,8 +47,11 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
      * @param registeredBeans The list of beans registered so far.
      * @param clazz The class to loop through looking for beans to add.
      */
-    protected void registerBeans(TypeMapping mapping, List registeredBeans, Class clazz) {
-        if (registeredBeans.contains(clazz) || clazz.getName().startsWith(PACKAGE_NAME_JAVA) || clazz.getName().startsWith(PACKAGE_NAME_JAVAX))
+    protected void registerBeans(TypeMapping mapping, List registeredBeans,
+        Class clazz) {
+        if (registeredBeans.contains(clazz)
+            || clazz.getName().startsWith(PACKAGE_NAME_JAVA)
+            || clazz.getName().startsWith(PACKAGE_NAME_JAVAX))
             return;
 
         if (!clazz.equals(this.serviceInterface)) {
@@ -74,7 +78,7 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
     public void postProcessJaxRpcService(Service service) {
         final TypeMappingRegistry registry = service.getTypeMappingRegistry();
         final TypeMapping mapping = registry.createTypeMapping();
-//        final Class serviceInterface = this.serviceInterface;
+        // final Class serviceInterface = this.serviceInterface;
 
         registerBeans(mapping, new ArrayList(), this.serviceInterface);
 
@@ -86,7 +90,8 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
                     this.addJavaBeanToMap(mapping, clazz);
                 }
                 catch (Exception e) {
-                    throw new IllegalArgumentException("bean of class " + bean + "not found.");
+                    throw new IllegalArgumentException("bean of class " + bean
+                        + "not found.");
                 }
             }
         }
@@ -99,9 +104,11 @@ public class NestedJavaBeanMappingServicePostProcessor implements JaxRpcServiceP
      * @param clazz The JavaBean class to register.
      */
     protected void addJavaBeanToMap(TypeMapping mapping, Class clazz) {
-        String name = clazz.getName().substring(clazz.getName().lastIndexOf(".") + 1);
+        String name = clazz.getName().substring(
+            clazz.getName().lastIndexOf(".") + 1);
         QName qName = new QName(this.namespace, name);
-        mapping.register(clazz, qName, new BeanSerializerFactory(clazz, qName), new BeanDeserializerFactory(clazz, qName));
+        mapping.register(clazz, qName, new BeanSerializerFactory(clazz, qName),
+            new BeanDeserializerFactory(clazz, qName));
     }
 
     /**

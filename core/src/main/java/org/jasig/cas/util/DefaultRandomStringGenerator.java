@@ -14,7 +14,8 @@ import java.security.SecureRandom;
  */
 public class DefaultRandomStringGenerator implements RandomStringGenerator {
 
-    private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
+    private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679"
+        .toCharArray();
 
     private SecureRandom randomizer = new SecureRandom();
 

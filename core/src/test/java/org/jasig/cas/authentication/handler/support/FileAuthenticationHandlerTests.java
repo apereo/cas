@@ -48,7 +48,8 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"));
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
+                new URL("http://www.rutgers.edu"));
             this.authenticationHandler.authenticate(c);
         }
         catch (MalformedURLException e) {
@@ -165,7 +166,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
             // this is okay because it means the test failed.
         }
     }
-    
+
     public void testFailsGoodUsernameBadPassword() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -182,60 +183,65 @@ public class FileAuthenticationHandlerTests extends TestCase {
             // this is okay because it means the test failed.
         }
     }
-    
+
     public void testAfterPropertiesSetNoPasswordTranslator() {
         this.authenticationHandler.setPasswordTranslator(null);
-        
+
         try {
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is good
         }
     }
-    
+
     public void testAfterProperties() {
-        
+
         try {
             this.authenticationHandler.afterPropertiesSet();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             fail("No Exception expected.");
         }
     }
-    
+
     public void testAfterPropertiesSetNoFileName() {
         this.authenticationHandler.setFileName(null);
-        
+
         try {
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is good
         }
     }
-    
+
     public void testAfterPropertiesSetNoSeperator() {
         this.authenticationHandler.setSeparator(null);
-        
+
         try {
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is good
         }
     }
-    
+
     public void testAuthenticateNoFileName() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         this.authenticationHandler.setFileName("fff");
-        
+
         c.setUserName("scott");
         c.setPassword("rutgers");
-        
+
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is good
         }
     }

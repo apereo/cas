@@ -28,15 +28,20 @@ public class AttributeHelper {
         // make construction private
     }
 
-    public static boolean isInstanceOf(SearchResult searchResult, String className) throws NamingException {
-        return getAttributeAsStringCollection(searchResult, "objectclass").contains(className);
+    public static boolean isInstanceOf(SearchResult searchResult,
+        String className) throws NamingException {
+        return getAttributeAsStringCollection(searchResult, "objectclass")
+            .contains(className);
     }
 
-    public static Collection getAttributeAsStringCollection(SearchResult searchResult, String attributeName) throws NamingException {
-        return getAttributeAsStringCollection(searchResult.getAttributes(), attributeName);
+    public static Collection getAttributeAsStringCollection(
+        SearchResult searchResult, String attributeName) throws NamingException {
+        return getAttributeAsStringCollection(searchResult.getAttributes(),
+            attributeName);
     }
 
-    public static Collection getAttributeAsStringCollection(Attributes attributes, String attributeName) throws NamingException {
+    public static Collection getAttributeAsStringCollection(
+        Attributes attributes, String attributeName) throws NamingException {
         Collection result = new ArrayList();
         Attribute attribute = attributes.get(attributeName);
 
@@ -55,21 +60,27 @@ public class AttributeHelper {
         return result;
     }
 
-    public static String[] getAttributeAsStringArray(SearchResult searchResult, String attributeName) throws NamingException {
-        Collection result = getAttributeAsStringCollection(searchResult, attributeName);
+    public static String[] getAttributeAsStringArray(SearchResult searchResult,
+        String attributeName) throws NamingException {
+        Collection result = getAttributeAsStringCollection(searchResult,
+            attributeName);
         return (String[])result.toArray(new String[result.size()]);
     }
 
-    public static String[] getAttributeAsStringArray(Attributes attributes, String attributeName) throws NamingException {
-        Collection result = getAttributeAsStringCollection(attributes, attributeName);
+    public static String[] getAttributeAsStringArray(Attributes attributes,
+        String attributeName) throws NamingException {
+        Collection result = getAttributeAsStringCollection(attributes,
+            attributeName);
         return (String[])result.toArray(new String[result.size()]);
     }
 
-    public static String getAttributeAsString(SearchResult searchResult, String attributeName) throws NamingException {
+    public static String getAttributeAsString(SearchResult searchResult,
+        String attributeName) throws NamingException {
         return getAttributeAsString(searchResult.getAttributes(), attributeName);
     }
 
-    public static String getAttributeAsString(Attributes attributes, String attributeName) throws NamingException {
+    public static String getAttributeAsString(Attributes attributes,
+        String attributeName) throws NamingException {
         Attribute attribute = attributes.get(attributeName);
         if (attribute == null) {
             return null;
@@ -77,11 +88,14 @@ public class AttributeHelper {
         return (String)attribute.get();
     }
 
-    public static String getAttributeAsNonNullString(SearchResult searchResult, String attributeName) throws NamingException {
-        return getAttributeAsNonNullString(searchResult.getAttributes(), attributeName);
+    public static String getAttributeAsNonNullString(SearchResult searchResult,
+        String attributeName) throws NamingException {
+        return getAttributeAsNonNullString(searchResult.getAttributes(),
+            attributeName);
     }
 
-    public static String getAttributeAsNonNullString(Attributes attributes, String attributeName) throws NamingException {
+    public static String getAttributeAsNonNullString(Attributes attributes,
+        String attributeName) throws NamingException {
         String result = getAttributeAsString(attributes, attributeName);
         if (result == null) {
             result = "";

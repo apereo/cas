@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.ticket.registry.ServiceRegistry;
 
 /**
  * Default Implementation of the {@link ServiceRegistry}
@@ -39,10 +38,12 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     }
 
     public boolean serviceExists(final String service) {
-        log.debug("Attempting to determine if service [" + service + "] exists.");
+        log.debug("Attempting to determine if service [" + service
+            + "] exists.");
 
         if (this.services.isEmpty()) {
-            log.debug("Services List is empty.  Assuming service registry is not in use.");
+            log
+                .debug("Services List is empty.  Assuming service registry is not in use.");
             return true;
         }
 

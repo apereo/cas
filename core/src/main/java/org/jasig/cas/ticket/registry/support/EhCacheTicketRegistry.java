@@ -42,16 +42,19 @@ public class EhCacheTicketRegistry implements TicketRegistry {
 
     public void addTicket(final Ticket ticket) {
         if (ticket == null) {
-            throw new IllegalArgumentException("Cannot add null Ticket to the registry.");
+            throw new IllegalArgumentException(
+                "Cannot add null Ticket to the registry.");
         }
 
         log.debug("Added ticket [" + ticket.getId() + "] to registry.");
         this.cache.put(new Element(ticket.getId(), ticket));
     }
 
-    public Ticket getTicket(final String ticketId, final Class clazz) throws InvalidTicketClassException {
+    public Ticket getTicket(final String ticketId, final Class clazz)
+        throws InvalidTicketClassException {
         if (clazz == null) {
-            throw new IllegalArgumentException("clazz argument must not be null.");
+            throw new IllegalArgumentException(
+                "clazz argument must not be null.");
         }
 
         final Ticket ticket = this.getTicket(ticketId);
@@ -60,8 +63,9 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             return null;
 
         if (!clazz.isAssignableFrom(ticket.getClass()))
-            throw new InvalidTicketClassException("Ticket [" + ticket.getId() + "] is of type " + ticket.getClass() + " when we were expecting "
-                + clazz);
+            throw new InvalidTicketClassException("Ticket [" + ticket.getId()
+                + "] is of type " + ticket.getClass()
+                + " when we were expecting " + clazz);
 
         return ticket;
     }
@@ -83,7 +87,8 @@ public class EhCacheTicketRegistry implements TicketRegistry {
             return ticket;
         }
         catch (Exception ex) {
-            throw new IllegalStateException("Ticket registry threw an exception: " + ex.getMessage());
+            throw new IllegalStateException(
+                "Ticket registry threw an exception: " + ex.getMessage());
         }
     }
 

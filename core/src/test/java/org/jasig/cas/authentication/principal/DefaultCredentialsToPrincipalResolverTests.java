@@ -31,7 +31,8 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
 
     public void testInvalidSupportsCredentials() {
         try {
-            assertFalse(this.resolver.supports(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu"))));
+            assertFalse(this.resolver.supports(new HttpBasedServiceCredentials(
+                new URL("http://www.rutgers.edu"))));
         }
         catch (MalformedURLException e) {
             fail("Invalid URL supplied.");

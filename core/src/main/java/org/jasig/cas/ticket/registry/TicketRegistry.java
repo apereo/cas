@@ -33,7 +33,8 @@ public interface TicketRegistry {
      * @return the requested ticket.
      * @throws InvalidTicketClassException
      */
-    Ticket getTicket(String ticketId, Class clazz) throws InvalidTicketClassException;
+    Ticket getTicket(String ticketId, Class clazz)
+        throws InvalidTicketClassException;
 
     /**
      * Retrieve a ticket from the registry.

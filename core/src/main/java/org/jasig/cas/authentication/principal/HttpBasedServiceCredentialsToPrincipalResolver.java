@@ -12,7 +12,8 @@ import org.jasig.cas.authentication.SimpleService;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class HttpBasedServiceCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
+public class HttpBasedServiceCredentialsToPrincipalResolver implements
+    CredentialsToPrincipalResolver {
 
     public Principal resolvePrincipal(Credentials credentials) {
         HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
@@ -21,10 +22,13 @@ public class HttpBasedServiceCredentialsToPrincipalResolver implements Credentia
             throw new IllegalArgumentException("credentials cannot be null.");
         }
 
-        return new SimpleService(serviceCredentials.getCallbackUrl().toExternalForm());
+        return new SimpleService(serviceCredentials.getCallbackUrl()
+            .toExternalForm());
     }
 
     public boolean supports(Credentials credentials) {
-        return credentials != null && HttpBasedServiceCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null
+            && HttpBasedServiceCredentials.class.isAssignableFrom(credentials
+                .getClass());
     }
 }

@@ -21,7 +21,8 @@ public class PlainTextPasswordTranslatorTests extends TestCase {
     }
 
     public void testValueToTranslate() {
-        assertEquals("CAS IS COOL", this.passwordTranslator.translate("CAS IS COOL"));
+        assertEquals("CAS IS COOL", this.passwordTranslator
+            .translate("CAS IS COOL"));
     }
 
 }

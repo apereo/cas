@@ -30,7 +30,8 @@ public abstract class LdapDaoSupport implements InitializingBean {
     }
 
     public final ContextSource getContextSource() {
-        return this.ldapTemplate != null ? this.ldapTemplate.getContextSource() : null;
+        return this.ldapTemplate != null ? this.ldapTemplate.getContextSource()
+            : null;
     }
 
     /**
@@ -49,7 +50,8 @@ public abstract class LdapDaoSupport implements InitializingBean {
 
     public final void afterPropertiesSet() throws Exception {
         if (this.ldapTemplate == null) {
-            throw new IllegalArgumentException("dataSource or ldapTemplate is required");
+            throw new IllegalArgumentException(
+                "dataSource or ldapTemplate is required");
         }
         initDao();
     }

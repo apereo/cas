@@ -72,25 +72,25 @@ public class AssertionImplTests extends TestCase {
 
         assertTrue(assertion.isFromNewLogin());
     }
-    
+
     public void testEqualsWithNull() {
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
 
         final AssertionImpl assertion = new AssertionImpl(list, true);
-        
+
         assertFalse(assertion.equals(null));
     }
-    
+
     public void testEqualsWithInvalidObject() {
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
 
         final AssertionImpl assertion = new AssertionImpl(list, true);
-        
+
         assertFalse(assertion.equals("test"));
     }
-    
+
     public void testEqualsWithValidObject() {
         final List list = new ArrayList();
         final List list1 = new ArrayList();
@@ -99,16 +99,17 @@ public class AssertionImplTests extends TestCase {
 
         final AssertionImpl assertion = new AssertionImpl(list, true);
         final AssertionImpl assertion1 = new AssertionImpl(list1, true);
-        
+
         assertTrue(assertion.equals(assertion1));
     }
-    
+
     public void testToString() {
         final List list = new ArrayList();
 
         list.add(new SimplePrincipal("test"));
 
         final AssertionImpl assertion = new AssertionImpl(list, true);
-        assertEquals(ToStringBuilder.reflectionToString(assertion), assertion.toString());
+        assertEquals(ToStringBuilder.reflectionToString(assertion), assertion
+            .toString());
     }
 }

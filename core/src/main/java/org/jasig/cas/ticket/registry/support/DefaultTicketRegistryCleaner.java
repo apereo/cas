@@ -29,9 +29,12 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     public void clean() {
         final List ticketsToRemove = new ArrayList();
-        log.info("Starting cleaning of expired tickets from ticket registry at [" + new Date() + "]");
+        log
+            .info("Starting cleaning of expired tickets from ticket registry at ["
+                + new Date() + "]");
         synchronized (this.ticketRegistry) {
-            for (Iterator iter = this.ticketRegistry.getTickets().iterator(); iter.hasNext();) {
+            for (Iterator iter = this.ticketRegistry.getTickets().iterator(); iter
+                .hasNext();) {
                 final Ticket ticket = (Ticket)iter.next();
 
                 if (ticket.isExpired())
@@ -43,7 +46,9 @@ public class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
         }
-        log.info("Finished cleaning of expired tickets from ticket registry at [" + new Date() + "]");
+        log
+            .info("Finished cleaning of expired tickets from ticket registry at ["
+                + new Date() + "]");
     }
 
     /**

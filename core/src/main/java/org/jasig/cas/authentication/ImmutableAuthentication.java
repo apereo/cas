@@ -27,7 +27,8 @@ public final class ImmutableAuthentication implements Authentication {
 
     private final Object attributes;
 
-    public ImmutableAuthentication(final Principal principal, final Object attributes) {
+    public ImmutableAuthentication(final Principal principal,
+        final Object attributes) {
         this.principal = principal;
         this.attributes = attributes;
         this.authenticatedDate = new Date();
@@ -44,7 +45,7 @@ public final class ImmutableAuthentication implements Authentication {
     public Object getAttributes() {
         return this.attributes;
     }
-    
+
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o);
     }

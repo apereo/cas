@@ -20,19 +20,23 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @author Dmitriy Kopylenko
  * @version $Id$
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
-    
+public class BindModeSearchDatabaseAuthenticationHandler extends
+    AbstractJdbcAuthenticationHandler {
+
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    protected boolean authenticateInternal(final Credentials request) throws UnsupportedCredentialsException {
+    protected boolean authenticateInternal(final Credentials request)
+        throws UnsupportedCredentialsException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
 
         try {
-            Connection c = this.getJdbcTemplate().getDataSource().getConnection(username, password);
-            DataSourceUtils.closeConnectionIfNecessary(c, this.getJdbcTemplate().getDataSource());
+            Connection c = this.getJdbcTemplate().getDataSource()
+                .getConnection(username, password);
+            DataSourceUtils.closeConnectionIfNecessary(c, this
+                .getJdbcTemplate().getDataSource());
             return true;
         }
         catch (SQLException e) {
@@ -44,7 +48,9 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcAut
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected boolean supports(Credentials credentials) {
-        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null
+            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
+                .getClass());
     }
-    
+
 }

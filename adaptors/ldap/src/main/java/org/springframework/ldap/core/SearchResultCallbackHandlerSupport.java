@@ -12,7 +12,8 @@ package org.springframework.ldap.core;
  * 
  * @author Olivier Jolly
  */
-public abstract class SearchResultCallbackHandlerSupport implements SearchResultCallbackHandler {
+public abstract class SearchResultCallbackHandlerSupport implements
+    SearchResultCallbackHandler {
 
     /**
      * Basic implementation returning nothing useful

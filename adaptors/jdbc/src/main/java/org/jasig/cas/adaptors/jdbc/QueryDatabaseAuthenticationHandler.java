@@ -20,7 +20,8 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * @author Dmitriy Kopylenko
  * @version $Id$
  */
-public class QueryDatabaseAuthenticationHandler extends AbstractJdbcAuthenticationHandler {
+public class QueryDatabaseAuthenticationHandler extends
+    AbstractJdbcAuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -31,13 +32,15 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcAuthenticati
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.AuthenticationRequest)
      */
-    protected boolean authenticateInternal(final Credentials request) throws UnsupportedCredentialsException {
+    protected boolean authenticateInternal(final Credentials request)
+        throws UnsupportedCredentialsException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
-        final String encryptedPassword = this.passwordTranslator.translate(password);
-        final String dbPassword = (String) getJdbcTemplate().queryForObject(this.sql, new Object[] {username},
-            String.class);
+        final String encryptedPassword = this.passwordTranslator
+            .translate(password);
+        final String dbPassword = (String)getJdbcTemplate().queryForObject(
+            this.sql, new Object[] {username}, String.class);
         return dbPassword.equals(encryptedPassword);
     }
 
@@ -45,17 +48,21 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcAuthenticati
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected boolean supports(Credentials credentials) {
-        return credentials != null && UsernamePasswordCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null
+            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
+                .getClass());
     }
 
     protected void initHandler() throws Exception {
         if (this.sql == null) {
-            throw new IllegalStateException("sql must be set on " + this.getClass().getName());
+            throw new IllegalStateException("sql must be set on "
+                + this.getClass().getName());
         }
 
         if (this.passwordTranslator == null) {
             this.passwordTranslator = new PlainTextPasswordTranslator();
-            log.info("No passwordTranslator set for " + this.getClass().getName() + ".  Using default of "
+            log.info("No passwordTranslator set for "
+                + this.getClass().getName() + ".  Using default of "
                 + this.passwordTranslator.getClass().getName());
         }
     }
@@ -63,7 +70,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcAuthenticati
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(final PasswordTranslator passwordTranslator) {
+    public void setPasswordTranslator(
+        final PasswordTranslator passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 

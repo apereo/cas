@@ -1,6 +1,6 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.ticket;
 
@@ -18,110 +18,154 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Id$
- *
  */
 public class TicketGrantingTicketImplTests extends TestCase {
 
     public void testNullAuthentication() {
         try {
-            new TicketGrantingTicketImpl("test", null, null, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
+            new TicketGrantingTicketImpl("test", null, null,
+                new NeverExpiresExpirationPolicy(),
+                new DefaultUniqueTicketIdGenerator(),
+                new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is okay
         }
     }
-    
+
     public void testNullServiceExpirationPolicy() {
         try {
-            new TicketGrantingTicketImpl("test", null, new ImmutableAuthentication(new SimplePrincipal("Test"), null), new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), null);
+            new TicketGrantingTicketImpl("test", null,
+                new ImmutableAuthentication(new SimplePrincipal("Test"), null),
+                new NeverExpiresExpirationPolicy(),
+                new DefaultUniqueTicketIdGenerator(), null);
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is okay
         }
     }
-    
+
     public void testNullUniqueTicketIdGenerator() {
         try {
-            new TicketGrantingTicketImpl("test", null, new ImmutableAuthentication(new SimplePrincipal("Test"), null), new NeverExpiresExpirationPolicy(), null, new NeverExpiresExpirationPolicy());
+            new TicketGrantingTicketImpl("test", null,
+                new ImmutableAuthentication(new SimplePrincipal("Test"), null),
+                new NeverExpiresExpirationPolicy(), null,
+                new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // this is okay
         }
     }
-    
-    public void testGetAuthentication() {
-        Authentication authentication = new ImmutableAuthentication(new SimplePrincipal("Test"), null);
 
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
-        
+    public void testGetAuthentication() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+
         assertEquals(t.getAuthentication(), authentication);
     }
-    
-    public void testIsRootTrue() {
-        Authentication authentication = new ImmutableAuthentication(new SimplePrincipal("Test"), null);
 
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
-        
+    public void testIsRootTrue() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+
         assertTrue(t.isRoot());
     }
-    
+
     public void testIsRootFalse() {
-        Authentication authentication = new ImmutableAuthentication(new SimplePrincipal("Test"), null);
-        TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
-        
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+        TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+
         assertFalse(t.isRoot());
     }
-    
+
     public void testGetChainedPrincipalsWithOne() {
         Principal principal = new SimplePrincipal("Test");
-        Authentication authentication = new ImmutableAuthentication(principal, null);
+        Authentication authentication = new ImmutableAuthentication(principal,
+            null);
         List principals = new ArrayList();
         principals.add(principal);
 
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
-        
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+
         assertEquals(principals, t.getChainedPrincipals());
     }
-    
+
     public void testGetChainedPrincipalsWithTwo() {
         Principal principal = new SimplePrincipal("Test");
         Principal principal1 = new SimplePrincipal("Test1");
-        Authentication authentication = new ImmutableAuthentication(principal, null);
-        Authentication authentication1 = new ImmutableAuthentication(principal1, null);
+        Authentication authentication = new ImmutableAuthentication(principal,
+            null);
+        Authentication authentication1 = new ImmutableAuthentication(
+            principal1, null);
         List principals = new ArrayList();
         principals.add(principal1);
         principals.add(principal);
 
-        TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null, authentication1, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
+            authentication1, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
 
-        
         assertEquals(principals, t.getChainedPrincipals());
     }
-    
-    public void testServiceTicketAsFromInitialCredentials() {
-        Authentication authentication = new ImmutableAuthentication(new SimplePrincipal("Test"), null);
 
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
+    public void testServiceTicketAsFromInitialCredentials() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
-        
+
         assertTrue(s.isFromNewLogin());
         assertEquals(t.getCountOfUses(), 1);
     }
-    
-    public void testServiceTicketAsFromNotInitialCredentials() {
-        Authentication authentication = new ImmutableAuthentication(new SimplePrincipal("Test"), null);
 
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, authentication, new NeverExpiresExpirationPolicy(), new DefaultUniqueTicketIdGenerator(), new NeverExpiresExpirationPolicy());
+    public void testServiceTicketAsFromNotInitialCredentials() {
+        Authentication authentication = new ImmutableAuthentication(
+            new SimplePrincipal("Test"), null);
+
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy(),
+            new DefaultUniqueTicketIdGenerator(),
+            new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(new SimpleService("test"));
         s = t.grantServiceTicket(new SimpleService("test"));
-        
+
         assertFalse(s.isFromNewLogin());
         assertEquals(t.getCountOfUses(), 2);
     }
-    
+
 }

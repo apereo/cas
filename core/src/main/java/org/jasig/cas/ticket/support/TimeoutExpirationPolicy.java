@@ -22,6 +22,7 @@ public class TimeoutExpirationPolicy implements ExpirationPolicy {
     }
 
     public boolean isExpired(final Ticket ticket) {
-        return (ticket == null) || (System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
+        return (ticket == null)
+            || (System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
     }
 }

@@ -30,7 +30,8 @@ public class HttpBasedServiceCredentialsTests extends TestCase {
         try {
             final URL url = new URL("http://www.rutgers.edu");
 
-            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(url);
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
+                url);
 
             assertEquals(url, c.getCallbackUrl());
         }

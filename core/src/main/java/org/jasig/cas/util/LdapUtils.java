@@ -22,7 +22,8 @@ public abstract class LdapUtils {
      * @param userName
      * @return the filtered string populated with the username
      */
-    public static String getFilterWithValues(final String filter, final String userName) {
+    public static String getFilterWithValues(final String filter,
+        final String userName) {
         Properties properties = new Properties();
         String[] userDomain;
         String newFilter = filter;
@@ -39,7 +40,8 @@ public abstract class LdapUtils {
             String[] dcArray = userDomain[1].split("\\.");
 
             for (int i = 0; i < dcArray.length; i++) {
-                properties.setProperty("%" + (i + 1), dcArray[dcArray.length - 1 - i]);
+                properties.setProperty("%" + (i + 1), dcArray[dcArray.length
+                    - 1 - i]);
             }
         }
 

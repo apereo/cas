@@ -16,12 +16,14 @@ import org.springframework.ldap.core.support.LdapDaoSupport;
  * @author Scott Battaglia
  * @version $Id$
  */
-public abstract class AbstractLdapAuthenticationHandler extends LdapDaoSupport implements AuthenticationHandler {
+public abstract class AbstractLdapAuthenticationHandler extends LdapDaoSupport
+    implements AuthenticationHandler {
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticate(Credentials credentials) throws AuthenticationException {
+    public boolean authenticate(Credentials credentials)
+        throws AuthenticationException {
         if (!this.supports(credentials))
             throw new UnsupportedCredentialsException();
 
@@ -34,5 +36,6 @@ public abstract class AbstractLdapAuthenticationHandler extends LdapDaoSupport i
      */
     protected abstract boolean supports(Credentials credentials);
 
-    protected abstract boolean authenticateInternal(Credentials credentials) throws AuthenticationException;
+    protected abstract boolean authenticateInternal(Credentials credentials)
+        throws AuthenticationException;
 }

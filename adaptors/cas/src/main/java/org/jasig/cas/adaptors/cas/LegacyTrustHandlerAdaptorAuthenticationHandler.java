@@ -18,24 +18,28 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class LegacyTrustHandlerAdaptorAuthenticationHandler extends AbstractAuthenticationHandler implements InitializingBean {
+public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
+    AbstractAuthenticationHandler implements InitializingBean {
 
     private TrustHandler trustHandler;
 
     /**
      * @see org.jasig.cas.authentication.handler.AuthenticationHandler#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
-    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials)
+        throws AuthenticationException {
         final LegacyCasTrustedCredentials casCredentials = (LegacyCasTrustedCredentials)credentials;
 
-        return StringUtils.hasText(this.trustHandler.getUsername(casCredentials.getServletRequest()));
+        return StringUtils.hasText(this.trustHandler.getUsername(casCredentials
+            .getServletRequest()));
     }
 
     /**
      * @see org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler#supports(org.jasig.cas.authentication.principal.Credentials)
      */
     protected boolean supports(final Credentials credentials) {
-        return credentials != null && LegacyCasTrustedCredentials.class.equals(credentials.getClass());
+        return credentials != null
+            && LegacyCasTrustedCredentials.class.equals(credentials.getClass());
     }
 
     /**
@@ -50,7 +54,8 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandler extends AbstractAuth
      */
     public void afterPropertiesSet() throws Exception {
         if (this.trustHandler == null) {
-            throw new IllegalStateException("trustHandler must be set on " + this.getClass().getName());
+            throw new IllegalStateException("trustHandler must be set on "
+                + this.getClass().getName());
         }
     }
 }

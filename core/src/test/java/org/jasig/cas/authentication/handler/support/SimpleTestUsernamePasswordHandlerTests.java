@@ -42,7 +42,9 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu")));
+            this.authenticationHandler
+                .authenticate(new HttpBasedServiceCredentials(new URL(
+                    "http://www.rutgers.edu")));
         }
         catch (MalformedURLException e) {
             fail("Could not resolve URL.");
@@ -93,11 +95,12 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
             // this is okay
         }
     }
-    
+
     public void testAfterPropertiesSet() {
         try {
             this.authenticationHandler.afterPropertiesSet();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             fail("Exception caught but none should have been thrown.");
         }
     }

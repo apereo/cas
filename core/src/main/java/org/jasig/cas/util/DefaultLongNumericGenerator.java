@@ -10,7 +10,8 @@ package org.jasig.cas.util;
  */
 public class DefaultLongNumericGenerator implements LongNumericGenerator {
 
-    private static final int MAX_STRING_LENGTH = Long.toString(Long.MAX_VALUE).length();
+    private static final int MAX_STRING_LENGTH = Long.toString(Long.MAX_VALUE)
+        .length();
 
     private static final int MIN_STRING_LENGTH = 1;
 
@@ -42,7 +43,7 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
     }
 
     public String getNextNumberAsString() {
-        return new Long(this.getNextValue()).toString();
+        return Long.toString(this.getNextValue());
     }
 
     public int maxLength() {
@@ -55,8 +56,9 @@ public class DefaultLongNumericGenerator implements LongNumericGenerator {
 
     protected synchronized long getNextValue() throws IllegalStateException {
         if (!this.wrap && this.count == Long.MAX_VALUE)
-            throw new IllegalStateException("Maximum value reached for this number generator.");
-        
+            throw new IllegalStateException(
+                "Maximum value reached for this number generator.");
+
         if (this.count == Long.MAX_VALUE) {
             this.count = 0;
         }

@@ -33,11 +33,13 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     public String handle(Credentials credentials, String proxyGrantingTicketId) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
-        final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
+        final String proxyIou = this.uniqueTicketIdGenerator
+            .getNewTicketId(PGTIOU_PREFIX);
         final StringBuffer stringBuffer = new StringBuffer();
         String response = null;
 
-        stringBuffer.append(serviceCredentials.getCallbackUrl().toExternalForm());
+        stringBuffer.append(serviceCredentials.getCallbackUrl()
+            .toExternalForm());
 
         if (serviceCredentials.getCallbackUrl().getQuery() != null)
             stringBuffer.append("&");
@@ -50,17 +52,20 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append(proxyGrantingTicketId);
 
         try {
-            response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer.toString()));
+            response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer
+                .toString()));
         }
         catch (MalformedURLException e) {
             log.debug(e);
         }
 
         if (response == null) {
-            log.info("Could not send ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
+            log.info("Could not send ProxyIou of " + proxyIou
+                + " for service: " + serviceCredentials.getCallbackUrl());
             return null;
         }
-        log.info("Sent ProxyIou of " + proxyIou + " for service: " + serviceCredentials.getCallbackUrl());
+        log.info("Sent ProxyIou of " + proxyIou + " for service: "
+            + serviceCredentials.getCallbackUrl());
         return proxyIou;
 
     }
@@ -68,14 +73,16 @@ public class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     /**
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to set.
      */
-    public void setUniqueTicketIdGenerator(UniqueTicketIdGenerator uniqueTicketIdGenerator) {
+    public void setUniqueTicketIdGenerator(
+        UniqueTicketIdGenerator uniqueTicketIdGenerator) {
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 
     public void afterPropertiesSet() throws Exception {
         if (this.uniqueTicketIdGenerator == null) {
             this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-            log.info("No UniqueTicketIdGenerator specified for " + this.getClass().getName() + ".  Using "
+            log.info("No UniqueTicketIdGenerator specified for "
+                + this.getClass().getName() + ".  Using "
                 + this.uniqueTicketIdGenerator.getClass().getName());
         }
     }

@@ -54,7 +54,9 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            this.authenticationHandler.authenticate(new HttpBasedServiceCredentials(new URL("http://www.rutgers.edu")));
+            this.authenticationHandler
+                .authenticate(new HttpBasedServiceCredentials(new URL(
+                    "http://www.rutgers.edu")));
         }
         catch (MalformedURLException e) {
             fail("Could not resolve URL.");
@@ -136,22 +138,24 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
             // this is okay because it means the test failed.
         }
     }
-    
+
     public void testAfterPropertiesSetWithNullUsers() {
         try {
             this.authenticationHandler.setUsers(null);
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return;
         }
     }
-    
+
     public void testAfterPropertiesSetWithNonNullUsers() {
         try {
             this.authenticationHandler.afterPropertiesSet();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             fail("Exception not expected.");
         }
     }

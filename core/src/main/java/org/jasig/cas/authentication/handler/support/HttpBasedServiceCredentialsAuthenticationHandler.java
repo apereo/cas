@@ -18,21 +18,27 @@ import org.jasig.cas.util.UrlUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
+public class HttpBasedServiceCredentialsAuthenticationHandler extends
+    AbstractAuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
     private static final String PROTOCOL_HTTPS = "https";
 
-    public boolean authenticateInternal(Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(Credentials credentials)
+        throws AuthenticationException {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials)credentials;
         String response = null;
-        if (!serviceCredentials.getCallbackUrl().getProtocol().equals(PROTOCOL_HTTPS)) {
+        if (!serviceCredentials.getCallbackUrl().getProtocol().equals(
+            PROTOCOL_HTTPS)) {
             return false;
         }
-        log.debug("Attempting to resolve credentials for " + serviceCredentials);
+        log
+            .debug("Attempting to resolve credentials for "
+                + serviceCredentials);
         try {
-            response = UrlUtils.getResponseBodyFromUrl(serviceCredentials.getCallbackUrl());
+            response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
+                .getCallbackUrl());
         }
         catch (Exception e) {
             // ignore error
@@ -41,6 +47,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     protected boolean supports(Credentials credentials) {
-        return HttpBasedServiceCredentials.class.isAssignableFrom(credentials.getClass());
+        return HttpBasedServiceCredentials.class.isAssignableFrom(credentials
+            .getClass());
     }
 }

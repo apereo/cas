@@ -24,7 +24,8 @@ public class AssertionImpl implements Assertion {
 
     public AssertionImpl(final List principals, boolean fromNewLogin) {
         if (principals == null || principals.isEmpty()) {
-            throw new IllegalArgumentException("principals cannot be null or empty.");
+            throw new IllegalArgumentException(
+                "principals cannot be null or empty.");
         }
 
         this.principals = principals;
@@ -45,7 +46,7 @@ public class AssertionImpl implements Assertion {
 
         return EqualsBuilder.reflectionEquals(this, o);
     }
-    
+
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
     }

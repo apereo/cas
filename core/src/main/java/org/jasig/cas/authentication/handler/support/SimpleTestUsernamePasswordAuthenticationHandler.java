@@ -15,15 +15,20 @@ import org.springframework.util.StringUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public class SimpleTestUsernamePasswordAuthenticationHandler extends
+    AbstractUsernamePasswordAuthenticationHandler {
 
-    public boolean authenticateInternal(final Credentials credentials) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials credentials)
+        throws AuthenticationException {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials)credentials;
         final String username = usernamePasswordCredentials.getUserName();
         final String password = usernamePasswordCredentials.getPassword();
 
-        if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
-            log.debug("User [" + username + "] was successfully authenticated.");
+        if (StringUtils.hasText(username) && StringUtils.hasText(password)
+            && username.equals(password)) {
+            log
+                .debug("User [" + username
+                    + "] was successfully authenticated.");
             return true;
         }
 
@@ -33,6 +38,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     }
 
     public void afterPropertiesSet() throws Exception {
-        log.warn(this.getClass().getName() + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+        log
+            .warn(this.getClass().getName()
+                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }
 }

@@ -19,12 +19,15 @@ public class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy {
 
     final private int numberOfUses;
 
-    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKillInMilliSeconds) {
+    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
+        final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
         this.numberOfUses = numberOfUses;
     }
 
     public boolean isExpired(final Ticket ticket) {
-        return (ticket == null) || (ticket.getCountOfUses() >= this.numberOfUses) || (System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
+        return (ticket == null)
+            || (ticket.getCountOfUses() >= this.numberOfUses)
+            || (System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
     }
 }

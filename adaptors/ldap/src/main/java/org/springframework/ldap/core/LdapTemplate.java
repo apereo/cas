@@ -102,7 +102,8 @@ public class LdapTemplate {
     /**
      * @param exceptionTranslator The exceptionTranslator to set.
      */
-    public void setExceptionTranslator(LdapExceptionTranslator exceptionTranslator) {
+    public void setExceptionTranslator(
+        LdapExceptionTranslator exceptionTranslator) {
         this.exceptionTranslator = exceptionTranslator;
     }
 
@@ -124,7 +125,8 @@ public class LdapTemplate {
             return result;
         }
         catch (NamingException ex) {
-            throw getExceptionTranslator().translate("executing OperationCallback", ex);
+            throw getExceptionTranslator().translate(
+                "executing OperationCallback", ex);
         }
         finally {
             LdapUtils.closeContext(context);
@@ -134,35 +136,47 @@ public class LdapTemplate {
     /*
      * Access method for Context queries with callback handler
      */
-    public Object search(final String name, final String filter, final SearchControls searchControls, final SearchResultCallbackHandler callback) {
-        return this.execute(new OperationCallback(){
-
-            public Object doInAction(DirContext context) throws NamingException, DataAccessException {
-                return parseNamingEnumeration(context.search(name, filter, searchControls), callback);
-            }
-        });
-    }
-
-    public Object search(final String name, final String filterExpr, final Object[] filterArgs, final SearchControls cons,
+    public Object search(final String name, final String filter,
+        final SearchControls searchControls,
         final SearchResultCallbackHandler callback) {
         return this.execute(new OperationCallback(){
 
-            public Object doInAction(DirContext context) throws NamingException, DataAccessException {
-                return parseNamingEnumeration(context.search(name, filterExpr, filterArgs, cons), callback);
+            public Object doInAction(DirContext context)
+                throws NamingException, DataAccessException {
+                return parseNamingEnumeration(context.search(name, filter,
+                    searchControls), callback);
             }
         });
     }
 
-    public Object search(final String name, final Attributes matchingAttributes, final SearchResultCallbackHandler callback) {
+    public Object search(final String name, final String filterExpr,
+        final Object[] filterArgs, final SearchControls cons,
+        final SearchResultCallbackHandler callback) {
+        return this.execute(new OperationCallback(){
+
+            public Object doInAction(DirContext context)
+                throws NamingException, DataAccessException {
+                return parseNamingEnumeration(context.search(name, filterExpr,
+                    filterArgs, cons), callback);
+            }
+        });
+    }
+
+    public Object search(final String name,
+        final Attributes matchingAttributes,
+        final SearchResultCallbackHandler callback) {
         return search(name, matchingAttributes, null, callback);
     }
 
-    public Object search(final String name, final Attributes matchingAttributes, final String[] attributesToReturn,
+    public Object search(final String name,
+        final Attributes matchingAttributes, final String[] attributesToReturn,
         final SearchResultCallbackHandler callback) {
         return this.execute(new OperationCallback(){
 
-            public Object doInAction(DirContext context) throws NamingException, DataAccessException {
-                return parseNamingEnumeration(context.search(name, matchingAttributes, attributesToReturn), callback);
+            public Object doInAction(DirContext context)
+                throws NamingException, DataAccessException {
+                return parseNamingEnumeration(context.search(name,
+                    matchingAttributes, attributesToReturn), callback);
             }
         });
     }
@@ -178,10 +192,13 @@ public class LdapTemplate {
      * @return the result value of the callback getResult() method
      * @throws NamingException raised for any LDAP problem
      */
-    protected Object parseNamingEnumeration(NamingEnumeration namingEnumeration, SearchResultCallbackHandler callback) throws NamingException {
+    protected Object parseNamingEnumeration(
+        NamingEnumeration namingEnumeration,
+        SearchResultCallbackHandler callback) throws NamingException {
         try {
             while (namingEnumeration.hasMore()) {
-                callback.processSearchResult((SearchResult)namingEnumeration.next());
+                callback.processSearchResult((SearchResult)namingEnumeration
+                    .next());
             }
             return callback.getResult();
         }

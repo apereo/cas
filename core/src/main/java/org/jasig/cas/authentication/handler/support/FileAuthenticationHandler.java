@@ -22,7 +22,8 @@ import org.jasig.cas.util.support.PlainTextPasswordTranslator;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public class FileAuthenticationHandler extends
+    AbstractUsernamePasswordAuthenticationHandler {
 
     private static final String DEFAULT_SEPARATOR = "::";
 
@@ -34,7 +35,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     private String fileName;
 
-    public boolean authenticateInternal(final Credentials request) throws AuthenticationException {
+    public boolean authenticateInternal(final Credentials request)
+        throws AuthenticationException {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
         BufferedReader bufferedReader = null;
 
@@ -42,7 +44,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             return false;
 
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream(this.fileName)));
+            bufferedReader = new BufferedReader(new InputStreamReader(this
+                .getClass().getResourceAsStream(this.fileName)));
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);
@@ -50,7 +53,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 final String password = lineFields[1];
 
                 if (uRequest.getUserName().equals(userName)) {
-                    if (this.passwordTranslator.translate(uRequest.getPassword()).equals(password)) {
+                    if (this.passwordTranslator.translate(
+                        uRequest.getPassword()).equals(password)) {
                         bufferedReader.close();
                         return true;
                     }
@@ -61,22 +65,27 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         catch (Exception e) {
             log.error(e);
-        } finally {
+        }
+        finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 // can't do anything about this
             }
-                
+
         }
         return false;
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.fileName == null || this.passwordTranslator == null || this.separator == null) {
-            throw new IllegalStateException("fileName, passwordTranslator and separator must be set on " + this.getClass().getName());
+        if (this.fileName == null || this.passwordTranslator == null
+            || this.separator == null) {
+            throw new IllegalStateException(
+                "fileName, passwordTranslator and separator must be set on "
+                    + this.getClass().getName());
         }
     }
 

@@ -9,7 +9,11 @@ package org.jasig.cas;
  * 
  * @author Dmitriy Kopylenko
  */
-public class CasVersion {
+public final class CasVersion {
+
+    protected CasVersion() {
+        // hidden constructor so that no one can extend
+    }
 
     /**
      * Return the full CAS version string.
@@ -19,5 +23,4 @@ public class CasVersion {
     public static String getVersion() {
         return CasVersion.class.getPackage().getImplementationVersion();
     }
-
 }

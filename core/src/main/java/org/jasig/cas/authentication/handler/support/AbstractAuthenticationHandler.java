@@ -17,9 +17,11 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @author Scott Battaglia
  * @version $Id$
  */
-public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
+public abstract class AbstractAuthenticationHandler implements
+    AuthenticationHandler {
 
-    public final boolean authenticate(Credentials credentials) throws AuthenticationException {
+    public final boolean authenticate(Credentials credentials)
+        throws AuthenticationException {
         if (!this.supports(credentials)) {
             throw new UnsupportedCredentialsException();
         }
@@ -43,5 +45,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * @return true if the credentials are valid, false if they are not
      * @throws AuthenticationException if the validity of the credentials cannot be determined.
      */
-    protected abstract boolean authenticateInternal(Credentials credentials) throws AuthenticationException;
+    protected abstract boolean authenticateInternal(Credentials credentials)
+        throws AuthenticationException;
 }

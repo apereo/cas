@@ -22,7 +22,8 @@ import org.springframework.beans.factory.InitializingBean;
  * @version $Id$
  */
 
-public class AuthenticationManagerImpl implements AuthenticationManager, InitializingBean {
+public class AuthenticationManagerImpl implements AuthenticationManager,
+    InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -30,18 +31,25 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
 
     private List credentialsToPrincipalResolvers;
 
-    public Authentication authenticateAndResolveCredentials(final Credentials credentials) throws AuthenticationException {
+    public Authentication authenticateAndResolveCredentials(
+        final Credentials credentials) throws AuthenticationException {
         boolean authenticated = false;
 
-        for (Iterator iter = this.authenticationHandlers.iterator(); iter.hasNext();) {
-            final AuthenticationHandler handler = (AuthenticationHandler)iter.next();
+        for (Iterator iter = this.authenticationHandlers.iterator(); iter
+            .hasNext();) {
+            final AuthenticationHandler handler = (AuthenticationHandler)iter
+                .next();
 
             try {
                 if (!handler.authenticate(credentials)) {
-                    log.info("AuthenticationHandler: " + handler.getClass().getName() + " failed to authenticate the user.");
-                    return null;
+                    log.info("AuthenticationHandler: "
+                        + handler.getClass().getName()
+                        + " failed to authenticate the user.");
+                    throw new BadCredentialsAuthenticationException();
                 }
-                log.info("AuthenticationHandler: " + handler.getClass().getName() + " successfully authenticated the user.");
+                log.info("AuthenticationHandler: "
+                    + handler.getClass().getName()
+                    + " successfully authenticated the user.");
                 authenticated = true;
                 break;
             }
@@ -51,30 +59,38 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
         }
 
         if (!authenticated)
-            return null;
+            throw new UnsupportedCredentialsException();
 
-        for (Iterator resolvers = this.credentialsToPrincipalResolvers.iterator(); resolvers.hasNext();) {
-            final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers.next();
+        for (Iterator resolvers = this.credentialsToPrincipalResolvers
+            .iterator(); resolvers.hasNext();) {
+            final CredentialsToPrincipalResolver resolver = (CredentialsToPrincipalResolver)resolvers
+                .next();
 
             if (resolver.supports(credentials)) {
-                final Principal principal = resolver.resolvePrincipal(credentials);
+                final Principal principal = resolver
+                    .resolvePrincipal(credentials);
 
-                if (principal == null)
-                    return null;
+                if (principal == null) {
+                    throw new UnsupportedCredentialsException();
+                }
 
                 return new ImmutableAuthentication(principal, null);
             }
         }
 
-        log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
-        return null;
+        log.error("CredentialsToPrincipalResolver not found for "
+            + credentials.getClass().getName());
+        throw new UnsupportedCredentialsException();
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.authenticationHandlers == null || this.authenticationHandlers.isEmpty() || this.credentialsToPrincipalResolvers == null
+        if (this.authenticationHandlers == null
+            || this.authenticationHandlers.isEmpty()
+            || this.credentialsToPrincipalResolvers == null
             || this.credentialsToPrincipalResolvers.isEmpty()) {
-            throw new IllegalStateException("You must provide authenticationHandlers and credentialsToPrincipalResolvers for "
-                + this.getClass().getName());
+            throw new IllegalStateException(
+                "You must provide authenticationHandlers and credentialsToPrincipalResolvers for "
+                    + this.getClass().getName());
         }
     }
 
@@ -88,7 +104,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager, Initial
     /**
      * @param credentialsToPrincipalResolvers The credentialsToPrincipalResolvers to set.
      */
-    public void setCredentialsToPrincipalResolvers(List credentialsToPrincipalResolvers) {
+    public void setCredentialsToPrincipalResolvers(
+        List credentialsToPrincipalResolvers) {
         this.credentialsToPrincipalResolvers = credentialsToPrincipalResolvers;
     }
 }

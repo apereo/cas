@@ -22,39 +22,48 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Dmitriy Kopylenko
  * @version $Id$
  */
-public class LogTicketStatisticsAfterReturningAdvice implements AfterReturningAdvice, InitializingBean {
+public class LogTicketStatisticsAfterReturningAdvice implements
+    AfterReturningAdvice, InitializingBean {
 
     private Properties statsStateMutators = new Properties();
 
     private TicketStatisticsManager ticketStatsManager;
 
-    public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
+    public void afterReturning(Object returnValue, Method method,
+        Object[] args, Object target) throws Throwable {
         if (returnValue == null) {
             return;
         }
 
-        String statsStateMutatorMethodName = this.statsStateMutators.getProperty(method.getName());
+        String statsStateMutatorMethodName = this.statsStateMutators
+            .getProperty(method.getName());
 
         if (statsStateMutatorMethodName == null) {
             return;
         }
 
-        Method statsStateMutatorMethod = this.ticketStatsManager.getClass().getMethod(statsStateMutatorMethodName, null);
+        Method statsStateMutatorMethod = this.ticketStatsManager.getClass()
+            .getMethod(statsStateMutatorMethodName, null);
         statsStateMutatorMethod.invoke(this.ticketStatsManager, null);
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.statsStateMutators == null || this.statsStateMutators.isEmpty()) {
-            throw new IllegalStateException("You must set the statsStateMutators on " + this.getClass().getName());
+        if (this.statsStateMutators == null
+            || this.statsStateMutators.isEmpty()) {
+            throw new IllegalStateException(
+                "You must set the statsStateMutators on "
+                    + this.getClass().getName());
         }
 
         if (this.ticketStatsManager == null) {
-            throw new IllegalStateException("You must set the ticketStatsManager bean on " + this.getClass().getName());
+            throw new IllegalStateException(
+                "You must set the ticketStatsManager bean on "
+                    + this.getClass().getName());
         }
     }
 
     /**
-     * @param ticketStats The ticketStats to set.
+     * @param ticketStatsManager The TicketStatisticsManager to set.
      */
     public void setTicketStatsManager(TicketStatisticsManager ticketStatsManager) {
         this.ticketStatsManager = ticketStatsManager;

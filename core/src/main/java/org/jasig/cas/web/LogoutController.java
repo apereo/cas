@@ -26,7 +26,8 @@ import org.springframework.web.util.WebUtils;
  * @author Scott Battaglia
  * @version $Id$
  */
-public class LogoutController extends AbstractController implements InitializingBean {
+public class LogoutController extends AbstractController implements
+    InitializingBean {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -34,16 +35,21 @@ public class LogoutController extends AbstractController implements Initializing
 
     public void afterPropertiesSet() throws Exception {
         if (this.centralAuthenticationService == null) {
-            throw new IllegalStateException("centralAuthenticationService must be set on " + this.getClass().getName());
+            throw new IllegalStateException(
+                "centralAuthenticationService must be set on "
+                    + this.getClass().getName());
         }
     }
 
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(
+        final HttpServletRequest request, final HttpServletResponse response)
+        throws Exception {
         Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
         String service = request.getParameter(WebConstants.SERVICE);
 
         if (cookie != null) {
-            this.centralAuthenticationService.destroyTicketGrantingTicket(cookie.getValue());
+            this.centralAuthenticationService
+                .destroyTicketGrantingTicket(cookie.getValue());
             destroyTicketGrantingTicketCookie(request, response);
         }
 
@@ -54,7 +60,8 @@ public class LogoutController extends AbstractController implements Initializing
         return new ModelAndView(ViewNames.CONST_LOGOUT);
     }
 
-    private void destroyTicketGrantingTicketCookie(final HttpServletRequest request, final HttpServletResponse response) {
+    private void destroyTicketGrantingTicketCookie(
+        final HttpServletRequest request, final HttpServletResponse response) {
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "");
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());
@@ -65,7 +72,8 @@ public class LogoutController extends AbstractController implements Initializing
     /**
      * @param centralAuthenticationService The centralAuthenticationService to set.
      */
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 }
