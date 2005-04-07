@@ -100,7 +100,7 @@ public final class LoginController extends SimpleFormController implements
                 .info("CredentialsBinder not set.  Using default CredentialsBinder of "
                     + this.credentialsBinder.getClass().getName());
         }
-        
+
         if (!this.credentialsBinder.supports(this.getCommandClass())) {
             throw new ServletException(
                 "CredentialsBinder does not support supplied Command Class: "
@@ -134,7 +134,7 @@ public final class LoginController extends SimpleFormController implements
         if (StringUtils.hasText(ticketGrantingTicketId)
             && StringUtils.hasText(service) && !renew) {
             // we have a service and no request for renew
-            
+
             try {
                 final String serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketId,
@@ -174,68 +174,66 @@ public final class LoginController extends SimpleFormController implements
         final boolean warn = StringUtils.hasText(request
             .getParameter(WebConstants.WARN));
         final String service = request.getParameter(WebConstants.SERVICE);
-        final String loginToken = request.getParameter(WebConstants.LOGIN_TOKEN);
+        final String loginToken = request
+            .getParameter(WebConstants.LOGIN_TOKEN);
         String serviceTicketId = null;
         String ticketGrantingTicketId = getCookieValue(request,
             WebConstants.COOKIE_TGC_ID);
-        
+
         // check for a login ticket
         if (loginToken == null || !this.loginTokens.containsKey(loginToken)) {
             return super.showForm(request, response, errors);
         }
-        
+
         this.loginTokens.remove(loginToken);
 
         this.credentialsBinder.bind(request, credentials);
 
-            if (renew && StringUtils.hasText(ticketGrantingTicketId)
-                && StringUtils.hasText(service)) {
-                
-                try {
-                    serviceTicketId = this.centralAuthenticationService
-                        .grantServiceTicket(ticketGrantingTicketId,
-                            new SimpleService(service), credentials);
-                } catch (TicketException e) {
-                    // nothing to do here....move on.
-                }
-            }
-            
-            if (serviceTicketId == null) {
-                ticketGrantingTicketId = this.centralAuthenticationService
-                .createTicketGrantingTicket(credentials);
-            }
+        if (renew && StringUtils.hasText(ticketGrantingTicketId)
+            && StringUtils.hasText(service)) {
 
-            this.createCookie(WebConstants.COOKIE_TGC_ID,
-                ticketGrantingTicketId, request, response);
+            try {
+                serviceTicketId = this.centralAuthenticationService
+                    .grantServiceTicket(ticketGrantingTicketId,
+                        new SimpleService(service), credentials);
+            } catch (TicketException e) {
+                // nothing to do here....move on.
+            }
+        }
+
+        if (serviceTicketId == null) {
+            ticketGrantingTicketId = this.centralAuthenticationService
+                .createTicketGrantingTicket(credentials);
+        }
+
+        this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId,
+            request, response);
+
+        if (warn) {
+            this.createCookie(WebConstants.COOKIE_PRIVACY,
+                WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
+        } else {
+            this.createCookie(WebConstants.COOKIE_PRIVACY,
+                WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+        }
+
+        if (StringUtils.hasText(service)) {
+            // the exception thrown here is handled externally
+            serviceTicketId = this.centralAuthenticationService
+                .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
+                    service));
 
             if (warn) {
-                this
-                    .createCookie(WebConstants.COOKIE_PRIVACY,
-                        WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request,
-                        response);
-            } else {
-                this.createCookie(WebConstants.COOKIE_PRIVACY,
-                    WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+                final Map model = new HashMap();
+
+                model.put(WebConstants.TICKET, serviceTicketId);
+                model.put(WebConstants.SERVICE, service);
+                return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM, model);
             }
 
-            if (StringUtils.hasText(service)) {
-                // the exception thrown here is handled externally
-                    serviceTicketId = this.centralAuthenticationService
-                        .grantServiceTicket(ticketGrantingTicketId,
-                            new SimpleService(service));
-
-                if (warn) {
-                    final Map model = new HashMap();
-
-                    model.put(WebConstants.TICKET, serviceTicketId);
-                    model.put(WebConstants.SERVICE, service);
-                    return new ModelAndView(ViewNames.CONST_LOGON_CONFIRM,
-                        model);
-                }
-
-                return new ModelAndView(new RedirectView(service),
-                    WebConstants.TICKET, serviceTicketId);
-            }
+            return new ModelAndView(new RedirectView(service),
+                WebConstants.TICKET, serviceTicketId);
+        }
 
         return super.processFormSubmission(request, response, command, errors);
     }

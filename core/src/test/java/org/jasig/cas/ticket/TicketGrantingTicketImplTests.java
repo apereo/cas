@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * sbattaglia Exp $
  */
 public class TicketGrantingTicketImplTests extends TestCase {
-    
+
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     public void testNullAuthentication() {
@@ -35,8 +35,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new TicketGrantingTicketImpl("test", null, null,
                 new NeverExpiresExpirationPolicy());
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is okay
         }
     }
@@ -103,7 +102,9 @@ public class TicketGrantingTicketImplTests extends TestCase {
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
-        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"), new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
+            new NeverExpiresExpirationPolicy());
 
         assertTrue(s.isFromNewLogin());
         assertEquals(t.getCountOfUses(), 1);
@@ -114,47 +115,50 @@ public class TicketGrantingTicketImplTests extends TestCase {
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
-        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"), new NeverExpiresExpirationPolicy());
-        s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"), new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
+            new NeverExpiresExpirationPolicy());
+        s = t.grantServiceTicket(this.uniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
+            new NeverExpiresExpirationPolicy());
 
         assertFalse(s.isFromNewLogin());
         assertEquals(t.getCountOfUses(), 2);
     }
-    
+
     public void testHashCode() {
         Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
-        
+
         assertEquals(HashCodeBuilder.reflectionHashCode(t), t.hashCode());
     }
-    
+
     public void testToString() {
         Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
-        
+
         assertEquals(ToStringBuilder.reflectionToString(t), t.toString());
     }
-    
+
     public void testIncrementTimeUpdated() {
         Authentication authentication = new MockAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
-        
-            t.updateLastTimeUsed();
-            assertEquals(t.getLastTimeUsed(), System.currentTimeMillis());
+
+        t.updateLastTimeUsed();
+        assertEquals(t.getLastTimeUsed(), System.currentTimeMillis());
     }
-    
+
     public void testNoIdOrPolicy() {
         Authentication authentication = new MockAuthentication();
         try {
-            new TicketGrantingTicketImpl(null, null,
-                authentication, null);
-            
+            new TicketGrantingTicketImpl(null, null, authentication, null);
+
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
             return;

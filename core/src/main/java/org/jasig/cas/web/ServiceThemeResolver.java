@@ -46,7 +46,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         // nothing to do here
     }
 
-    public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 }

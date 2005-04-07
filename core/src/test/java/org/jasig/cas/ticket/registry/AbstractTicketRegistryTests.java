@@ -58,8 +58,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
         try {
             this.ticketRegistry.addTicket(null);
             fail("IllegalargumentException expected.");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // don't need to do anything
         }
     }
@@ -71,10 +70,8 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testAddTicketToCache() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
-        }
-        catch (Exception e) {
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
+        } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -82,8 +79,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetNullTicket() {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Exception caught.  None expected.");
         }
     }
@@ -92,8 +88,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL",
                 TicketGrantingTicket.class);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Exception caught.  None expected.");
         }
     }
@@ -101,11 +96,9 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicketWithProperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
@@ -114,12 +107,10 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicketWithNoClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", null);
             fail("IllegalArgumentException expected.");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return;
         }
     }
@@ -127,11 +118,9 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicketWithInproperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
-        }
-        catch (ClassCastException e) {
+        } catch (ClassCastException e) {
             return;
         }
         fail("ClassCastException expected.");
@@ -140,8 +129,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetNullTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket(null);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Exception caught.  None expected.");
         }
     }
@@ -149,8 +137,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetNonExistingTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Exception caught.  None expected.");
         }
     }
@@ -158,11 +145,9 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testGetExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -170,12 +155,10 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testDeleteExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry
                 .deleteTicket("TEST"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -183,12 +166,10 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testDeleteNonExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry
                 .deleteTicket("TEST1"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -196,12 +177,10 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public void testDeleteNullTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                new MockAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+                new MockAuthentication(), new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry
                 .deleteTicket(null));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -210,8 +189,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
         try {
             assertEquals("The size of the empty registry is not zero.",
                 this.ticketRegistry.getTickets().size(), 0);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -221,7 +199,8 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                "TEST" + i, new MockAuthentication(), new NeverExpiresExpirationPolicy());
+                "TEST" + i, new MockAuthentication(),
+                new NeverExpiresExpirationPolicy());
             tickets.add(ticketGrantingTicket);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
         }
@@ -233,15 +212,14 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
                 ticketRegistryTickets.size(), tickets.size());
 
             for (Iterator iter = tickets.iterator(); iter.hasNext();) {
-                final TicketGrantingTicket ticket = (TicketGrantingTicket)iter
+                final TicketGrantingTicket ticket = (TicketGrantingTicket) iter
                     .next();
 
                 if (!ticketRegistryTickets.contains(ticket)) {
                     fail("Ticket was added to registry but was not found in retrieval of collection of all tickets.");
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }

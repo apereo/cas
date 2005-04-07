@@ -56,8 +56,7 @@ public class AttributeHelper {
                 while (namingEnumeration.hasMore()) {
                     result.add(namingEnumeration.next());
                 }
-            }
-            finally {
+            } finally {
                 namingEnumeration.close();
             }
         }
@@ -69,14 +68,14 @@ public class AttributeHelper {
         String attributeName) throws NamingException {
         Collection result = getAttributeAsStringCollection(searchResult,
             attributeName);
-        return (String[])result.toArray(new String[result.size()]);
+        return (String[]) result.toArray(new String[result.size()]);
     }
 
     public static String[] getAttributeAsStringArray(Attributes attributes,
         String attributeName) throws NamingException {
         Collection result = getAttributeAsStringCollection(attributes,
             attributeName);
-        return (String[])result.toArray(new String[result.size()]);
+        return (String[]) result.toArray(new String[result.size()]);
     }
 
     public static String getAttributeAsString(SearchResult searchResult,
@@ -90,7 +89,7 @@ public class AttributeHelper {
         if (attribute == null) {
             return null;
         }
-        return (String)attribute.get();
+        return (String) attribute.get();
     }
 
     public static String getAttributeAsNonNullString(SearchResult searchResult,

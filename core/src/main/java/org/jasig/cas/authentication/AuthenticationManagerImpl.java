@@ -41,12 +41,12 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
 
     /** A list of CredentialsToPrincipalResolvers. */
     private List credentialsToPrincipalResolvers;
-    
+
     /** A list of AuthenticationAttributesPopulators. */
     private List authenticationAttributesPopulators;
 
-    public Authentication authenticate(
-        final Credentials credentials) throws AuthenticationException {
+    public Authentication authenticate(final Credentials credentials)
+        throws AuthenticationException {
         boolean authenticated = false;
 
         for (Iterator iter = this.authenticationHandlers.iterator(); iter
@@ -74,7 +74,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         if (!authenticated) {
             throw new UnsupportedCredentialsException();
         }
-        
+
         Authentication authentication = null;
 
         for (final Iterator resolvers = this.credentialsToPrincipalResolvers
@@ -86,22 +86,26 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                 final Principal principal = resolver
                     .resolvePrincipal(credentials);
 
-                authentication = new ImmutableAuthentication(principal, new HashMap());
+                authentication = new ImmutableAuthentication(principal,
+                    new HashMap());
                 break;
             }
         }
-        
+
         if (authentication == null) {
             log.error("CredentialsToPrincipalResolver not found for "
                 + credentials.getClass().getName());
             throw new UnsupportedCredentialsException();
         }
-        
-        for (final Iterator populators = this.authenticationAttributesPopulators.iterator(); populators.hasNext();) {
-            final AuthenticationAttributesPopulator populator = (AuthenticationAttributesPopulator) populators.next();
-            authentication = populator.populateAttributes(authentication, credentials);
+
+        for (final Iterator populators = this.authenticationAttributesPopulators
+            .iterator(); populators.hasNext();) {
+            final AuthenticationAttributesPopulator populator = (AuthenticationAttributesPopulator) populators
+                .next();
+            authentication = populator.populateAttributes(authentication,
+                credentials);
         }
-        
+
         return authentication;
     }
 
@@ -114,10 +118,12 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                 "You must provide authenticationHandlers and credentialsToPrincipalResolvers for "
                     + this.getClass().getName());
         }
-        
-        if (this.authenticationAttributesPopulators == null || this.authenticationAttributesPopulators.isEmpty()) {
+
+        if (this.authenticationAttributesPopulators == null
+            || this.authenticationAttributesPopulators.isEmpty()) {
             this.authenticationAttributesPopulators = new ArrayList();
-            this.authenticationAttributesPopulators.add(new DefaultAuthenticationAttributesPopulator());
+            this.authenticationAttributesPopulators
+                .add(new DefaultAuthenticationAttributesPopulator());
         }
     }
 
@@ -138,7 +144,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     }
 
     /**
-     * @param authenticationAttributesPopulators the authenticationAttributesPopulators to set.
+     * @param authenticationAttributesPopulators the
+     * authenticationAttributesPopulators to set.
      */
     public void setAuthenticationAttributesPopulators(
         final List authenticationAttributesPopulators) {

@@ -43,8 +43,7 @@ public class LoginTokenRegistryTests extends TestCase {
             this.loginTokens.put("test" + i, new Date());
         try {
             Thread.sleep(15);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             fail("InterruptedException caught");
         }
 
@@ -60,8 +59,7 @@ public class LoginTokenRegistryTests extends TestCase {
             this.loginTokens.put("test" + i, new Date());
         try {
             Thread.sleep(30);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             fail("InterruptedException caught");
         }
 
@@ -78,8 +76,7 @@ public class LoginTokenRegistryTests extends TestCase {
 
         try {
             Thread.sleep(60);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             fail("InterruptedException caught");
         }
 

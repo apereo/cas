@@ -84,10 +84,11 @@ public final class ServiceValidateController extends AbstractController
             log.info("No failureView specified.  Using default of "
                 + this.failureView);
         }
-        
+
         if (this.proxyHandler == null) {
             this.proxyHandler = new Cas20ProxyHandler();
-            log.info("No proxyHandler specified.  Defaulting to " + this.proxyHandler.getClass().getName());
+            log.info("No proxyHandler specified.  Defaulting to "
+                + this.proxyHandler.getClass().getName());
         }
     }
 
@@ -111,10 +112,11 @@ public final class ServiceValidateController extends AbstractController
             if (!authenticationSpecification.isSatisfiedBy(assertion)) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] does not satisfy authentication specification.");
-                
+
                 // TODO internationalize this.
                 model.put(WebConstants.CODE, "INVALID_TICKET");
-                model.put(WebConstants.DESC, "ticket not backed by initial CAS login, as requested");
+                model.put(WebConstants.DESC,
+                    "ticket not backed by initial CAS login, as requested");
                 return new ModelAndView(this.failureView, model);
             }
 
@@ -143,7 +145,8 @@ public final class ServiceValidateController extends AbstractController
             return new ModelAndView(this.successView, model);
         } catch (TicketException te) {
             model.put(WebConstants.CODE, te.getCode());
-            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(te.getCode(), te.getCode()));
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
+                te.getCode(), te.getCode()));
             return new ModelAndView(this.failureView, model);
         }
     }

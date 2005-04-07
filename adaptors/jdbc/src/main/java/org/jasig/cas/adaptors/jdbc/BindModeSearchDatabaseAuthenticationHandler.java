@@ -27,7 +27,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcAuthenticationHandler {
 
     protected boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
 
@@ -37,8 +37,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends
             DataSourceUtils.closeConnectionIfNecessary(c, this
                 .getJdbcTemplate().getDataSource());
             return true;
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             return false;
         }
     }

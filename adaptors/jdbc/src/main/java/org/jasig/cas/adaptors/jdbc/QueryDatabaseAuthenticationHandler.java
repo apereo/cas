@@ -33,12 +33,12 @@ public class QueryDatabaseAuthenticationHandler extends
     private String sql;
 
     protected boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
         final String encryptedPassword = this.passwordTranslator
             .encode(password);
-        final String dbPassword = (String)getJdbcTemplate().queryForObject(
+        final String dbPassword = (String) getJdbcTemplate().queryForObject(
             this.sql, new Object[] {username}, String.class);
         return dbPassword.equals(encryptedPassword);
     }
@@ -66,8 +66,7 @@ public class QueryDatabaseAuthenticationHandler extends
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(
-        final PasswordEncoder passwordTranslator) {
+    public void setPasswordTranslator(final PasswordEncoder passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 

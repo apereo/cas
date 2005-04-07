@@ -6,13 +6,12 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * Exception to represent credentials that have been blocked
- * for a reason such as Locked account.
+ * Exception to represent credentials that have been blocked for a reason such
+ * as Locked account.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class BlockedCredentialsAuthenticationException extends
     AuthenticationException {
@@ -26,11 +25,11 @@ public class BlockedCredentialsAuthenticationException extends
     public BlockedCredentialsAuthenticationException() {
         super(CODE);
     }
-    
+
     public BlockedCredentialsAuthenticationException(final Throwable throwable) {
         super(CODE, throwable);
     }
-    
+
     public BlockedCredentialsAuthenticationException(final String code) {
         super(code);
     }

@@ -20,13 +20,12 @@ import junit.framework.TestCase;
  * @since 3.0
  */
 public class Cas20WithoutProxyingValidationSpecificationTests extends TestCase {
+
     private Cas20WithoutProxyingValidationSpecification validationSpecification;
-    
 
     protected void setUp() throws Exception {
         this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
     }
-
 
     public void testSatisfiesSpecOfTrue() {
         final List list = new ArrayList();

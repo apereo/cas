@@ -24,17 +24,16 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
     private static final int NUMBER_OF_USES = 5;
 
     private ExpirationPolicy expirationPolicy;
-    
+
     private Ticket ticket;
 
     protected void setUp() throws Exception {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(
             NUMBER_OF_USES, TIMEOUT);
-        
+
         this.ticket = new TicketGrantingTicketImpl("test",
-            new MockAuthentication(),
-            this.expirationPolicy);
-        
+            new MockAuthentication(), this.expirationPolicy);
+
         super.setUp();
     }
 
@@ -50,8 +49,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
         try {
             Thread.sleep(TIMEOUT + 15);
             assertTrue(this.ticket.isExpired());
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             fail(e.getMessage());
         }
     }

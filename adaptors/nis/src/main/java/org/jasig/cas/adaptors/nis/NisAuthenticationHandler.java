@@ -71,8 +71,7 @@ public class NisAuthenticationHandler extends
 
             return nisEncryptedPassword.matches(this.passwordTranslator
                 .encode(credentials.getPassword()));
-        }
-        catch (NamingException e) {
+        } catch (NamingException e) {
             return false;
         }
     }
@@ -101,8 +100,7 @@ public class NisAuthenticationHandler extends
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(
-        final PasswordEncoder passwordTranslator) {
+    public void setPasswordTranslator(final PasswordEncoder passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 

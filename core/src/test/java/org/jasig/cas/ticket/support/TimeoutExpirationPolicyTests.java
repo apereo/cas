@@ -22,15 +22,14 @@ public class TimeoutExpirationPolicyTests extends TestCase {
     private static final long TIMEOUT = 5000;
 
     private ExpirationPolicy expirationPolicy;
-    
+
     private Ticket ticket;
 
     protected void setUp() throws Exception {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
-        
+
         this.ticket = new TicketGrantingTicketImpl("test",
-            new MockAuthentication(),
-            this.expirationPolicy);
+            new MockAuthentication(), this.expirationPolicy);
 
         super.setUp();
     }
@@ -48,8 +47,7 @@ public class TimeoutExpirationPolicyTests extends TestCase {
             Thread.sleep(TIMEOUT + 10); // this failed when it was only +1...not
             // accurate??
             assertTrue(this.ticket.isExpired());
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             fail(e.getMessage());
         }
     }

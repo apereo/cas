@@ -34,11 +34,10 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends
             PROTOCOL_HTTPS)) {
             return false;
         }
-        getLog()
-            .debug("Attempting to resolve credentials for "
-                + serviceCredentials);
-            response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
-                .getCallbackUrl());
+        getLog().debug(
+            "Attempting to resolve credentials for " + serviceCredentials);
+        response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
+            .getCallbackUrl());
 
         return this.allowNullResponses ? true : response != null;
     }

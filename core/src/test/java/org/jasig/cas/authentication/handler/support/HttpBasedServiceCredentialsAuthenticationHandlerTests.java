@@ -44,8 +44,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
                 this.httpsInproperCertificateUrl);
             this.authenticationHandler.authenticate(c);
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -54,8 +53,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
         try {
             this.authenticationHandler
                 .authenticate(new UsernamePasswordCredentials());
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             return;
         }
         fail("AuthenticationException expected.");
@@ -66,8 +64,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
             assertTrue(this.authenticationHandler
                 .authenticate(new HttpBasedServiceCredentials(
                     this.httpsProperCertificateUrl)));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("We should not have gotten an error.");
         }
     }
@@ -77,8 +74,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
             assertFalse(this.authenticationHandler
                 .authenticate(new HttpBasedServiceCredentials(
                     this.httpsInproperCertificateUrl)));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay;
         }
     }
@@ -88,20 +84,19 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
             assertFalse(this.authenticationHandler
                 .authenticate(new HttpBasedServiceCredentials(
                     this.httpBackedUrl)));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay.
         }
     }
-    
+
     public void testAllowNullResponse() {
         try {
-            ((HttpBasedServiceCredentialsAuthenticationHandler) this.authenticationHandler).setAllowNullResponses(true);
+            ((HttpBasedServiceCredentialsAuthenticationHandler) this.authenticationHandler)
+                .setAllowNullResponses(true);
             assertTrue(this.authenticationHandler
                 .authenticate(new HttpBasedServiceCredentials(
                     this.httpsProperCertificateUrl)));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("We should not have gotten an error.");
         }
     }

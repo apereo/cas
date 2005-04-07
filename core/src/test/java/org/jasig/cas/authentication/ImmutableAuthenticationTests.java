@@ -39,20 +39,23 @@ public class ImmutableAuthenticationTests extends TestCase {
         assertEquals(this.authentication.getPrincipal(), this.principal);
         assertEquals(this.authentication.getAttributes(), this.obj);
     }
-    
+
     public void testAuthenticatedDate() {
         assertEquals(new Date(), this.authentication.getAuthenticatedDate());
     }
-    
+
     public void testNullHashMap() {
-        assertNotNull(new ImmutableAuthentication(new SimplePrincipal("test"), null).getAttributes());
+        assertNotNull(new ImmutableAuthentication(new SimplePrincipal("test"),
+            null).getAttributes());
     }
-    
+
     public void testHashCode() {
-        assertEquals(HashCodeBuilder.reflectionHashCode(this.authentication), this.authentication.hashCode());
+        assertEquals(HashCodeBuilder.reflectionHashCode(this.authentication),
+            this.authentication.hashCode());
     }
-    
+
     public void testToString() {
-        assertEquals(ToStringBuilder.reflectionToString(this.authentication), this.authentication.toString());
+        assertEquals(ToStringBuilder.reflectionToString(this.authentication),
+            this.authentication.toString());
     }
 }

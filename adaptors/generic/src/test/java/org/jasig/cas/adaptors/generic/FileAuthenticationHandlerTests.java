@@ -41,11 +41,9 @@ public class FileAuthenticationHandlerTests extends TestCase {
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
-        }
-        catch (UnsupportedCredentialsException e) {
+        } catch (UnsupportedCredentialsException e) {
             fail("UnsupportedCredentialsException caught");
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -55,14 +53,11 @@ public class FileAuthenticationHandlerTests extends TestCase {
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
                 new URL("http://www.rutgers.edu"));
             this.authenticationHandler.authenticate(c);
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             fail("MalformedURLException caught.");
-        }
-        catch (UnsupportedCredentialsException e) {
+        } catch (UnsupportedCredentialsException e) {
             // this is okay
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -75,8 +70,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught but it should not have been thrown.");
         }
     }
@@ -89,8 +83,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -103,8 +96,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -117,8 +109,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -131,8 +122,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -148,8 +138,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught but it should not have been thrown.");
         }
     }
@@ -165,8 +154,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -182,8 +170,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -194,8 +181,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         try {
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is good
         }
     }
@@ -205,8 +191,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         try {
             this.authenticationHandler.afterPropertiesSet();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("No Exception expected.");
         }
     }
@@ -217,8 +202,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         try {
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is good
         }
     }
@@ -229,8 +213,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         try {
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is good
         }
     }
@@ -244,8 +227,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is good
         }
     }

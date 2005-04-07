@@ -19,11 +19,11 @@ public class TicketCreationException extends TicketException {
 
     /** Code description. */
     private static final String CODE = "CREATION_ERROR";
-    
+
     public TicketCreationException() {
         super(CODE);
     }
-    
+
     public TicketCreationException(final Throwable throwable) {
         super(CODE, throwable);
     }

@@ -35,8 +35,7 @@ public class LdapUtils {
         if (context != null) {
             try {
                 context.close();
-            }
-            catch (NamingException ex) {
+            } catch (NamingException ex) {
                 logger.warn("Could not close context", ex);
             }
         }

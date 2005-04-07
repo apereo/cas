@@ -6,8 +6,8 @@
 package org.jasig.cas.validation;
 
 /**
- * A mapping of the CAS 2.0 protocol for authentication
- * without the ability to proxy.
+ * A mapping of the CAS 2.0 protocol for authentication without the ability to
+ * proxy.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -20,11 +20,12 @@ public class Cas20WithoutProxyingValidationSpecification extends
         super();
     }
 
-    public Cas20WithoutProxyingValidationSpecification(boolean renew) {
+    public Cas20WithoutProxyingValidationSpecification(final boolean renew) {
         super(renew);
     }
-    
+
     public boolean isSatisfiedBy(final Assertion assertion) {
-        return super.isSatisfiedBy(assertion) && (assertion.getChainedPrincipals().size() == 1);
+        return super.isSatisfiedBy(assertion)
+            && (assertion.getChainedPrincipals().size() == 1);
     }
 }

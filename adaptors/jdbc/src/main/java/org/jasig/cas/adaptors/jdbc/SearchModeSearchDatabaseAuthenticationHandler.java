@@ -43,9 +43,9 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
     private String sql;
 
     protected boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
-        final String encyptedPassword = this.passwordTranslator
-            .encode(uRequest.getPassword());
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
+        final String encyptedPassword = this.passwordTranslator.encode(uRequest
+            .getPassword());
 
         final int count = getJdbcTemplate().queryForInt(this.sql,
             new Object[] {uRequest.getUserName(), encyptedPassword});
@@ -95,8 +95,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(
-        final PasswordEncoder passwordTranslator) {
+    public void setPasswordTranslator(final PasswordEncoder passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 

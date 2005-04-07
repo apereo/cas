@@ -45,7 +45,8 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     public void testCleanRegistryOfExpiredTicketsAllExpired() {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, new MockAuthentication(), new NeverExpiresExpirationPolicy());
+                + i, new MockAuthentication(),
+                new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
         }
@@ -58,13 +59,15 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     public void testCleanRegistryOneNonExpired() {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, new MockAuthentication(), new NeverExpiresExpirationPolicy());
+                + i, new MockAuthentication(),
+                new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
         }
 
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
-            "testNoExpire", new MockAuthentication(), new NeverExpiresExpirationPolicy());
+            "testNoExpire", new MockAuthentication(),
+            new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
 
         this.registryCleaner.clean();

@@ -64,15 +64,15 @@ public final class CentralAuthenticationServiceImpl implements
 
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         if (ticketGrantingTicketId == null) {
-            throw new IllegalArgumentException("ticketGrantingTicketId cannot be null");
+            throw new IllegalArgumentException(
+                "ticketGrantingTicketId cannot be null");
         }
 
         synchronized (this.ticketRegistry) {
             log.debug("Removing ticket [" + ticketGrantingTicketId
                 + "] from registry.");
             final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
-                .getTicket(ticketGrantingTicketId,
-                    TicketGrantingTicket.class);
+                .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
             if (ticket != null) {
                 log.debug("Ticket found.  Expiring and then deleting.");
@@ -145,15 +145,15 @@ public final class CentralAuthenticationServiceImpl implements
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
-            return this.grantServiceTicket(ticketGrantingTicketId, service,
-                null);
+        return this.grantServiceTicket(ticketGrantingTicketId, service, null);
     }
 
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
-        
+
         if (serviceTicketId == null || credentials == null) {
-            throw new IllegalArgumentException("serviceTicketId and credentials are required fields.");
+            throw new IllegalArgumentException(
+                "serviceTicketId and credentials are required fields.");
         }
 
         try {
@@ -223,23 +223,25 @@ public final class CentralAuthenticationServiceImpl implements
 
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
-        log.debug("Attempting to create TicketGrantingTicket for " + credentials);
+        log.debug("Attempting to create TicketGrantingTicket for "
+            + credentials);
         if (credentials == null) {
-            throw new IllegalArgumentException("credentials is a required field.");
+            throw new IllegalArgumentException(
+                "credentials is a required field.");
         }
-        
+
         try {
             final Authentication authentication = this.authenticationManager
                 .authenticate(credentials);
-    
+
             synchronized (this.ticketRegistry) {
                 final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                     this.uniqueTicketIdGenerator
                         .getNewTicketId(TicketGrantingTicket.PREFIX),
                     authentication, this.ticketGrantingTicketExpirationPolicy);
-    
+
                 this.ticketRegistry.addTicket(ticketGrantingTicket);
-    
+
                 return ticketGrantingTicket.getId();
             }
         } catch (AuthenticationException e) {

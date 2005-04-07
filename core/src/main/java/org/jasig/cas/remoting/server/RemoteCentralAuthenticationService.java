@@ -17,64 +17,73 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 /**
- * Wrapper implementation around a CentralAuthenticationService that does 
- * web-service specific "stuff" before delegating to the CentralAuthenticationService.
+ * Wrapper implementation around a CentralAuthenticationService that does
+ * web-service specific "stuff" before delegating to the
+ * CentralAuthenticationService.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
-public final class RemoteCentralAuthenticationService implements CentralAuthenticationService, InitializingBean {
+public final class RemoteCentralAuthenticationService implements
+    CentralAuthenticationService, InitializingBean {
 
     /** The CORE to delegate to. */
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     /** The validators to check the Credentials. */
     private Validator[] validators;
 
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketException {
-        
+
         if (credentials == null) {
-            throw new IllegalArgumentException("credentials is a required field.");
+            throw new IllegalArgumentException(
+                "credentials is a required field.");
         }
-        
+
         final Errors errors = validateCredentials(credentials);
         if (errors.hasErrors()) {
-            throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
+            throw new IllegalArgumentException("Error validating credentials: "
+                + errors.toString());
         }
-        
-        return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
-    } 
+
+        return this.centralAuthenticationService
+            .createTicketGrantingTicket(credentials);
+    }
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
-        
-        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
+
+        return this.centralAuthenticationService.grantServiceTicket(
+            ticketGrantingTicketId, service);
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketException {
-        
+
         if (credentials != null) {
             final Errors errors = validateCredentials(credentials);
             if (errors.hasErrors()) {
-                throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
+                throw new IllegalArgumentException(
+                    "Error validating credentials: " + errors.toString());
             }
         }
-        
-        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
+
+        return this.centralAuthenticationService.grantServiceTicket(
+            ticketGrantingTicketId, service, credentials);
     }
 
     public Assertion validateServiceTicket(final String serviceTicketId,
         final Service service) throws TicketException {
-        return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
+        return this.centralAuthenticationService.validateServiceTicket(
+            serviceTicketId, service);
     }
 
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
-        this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
+        this.centralAuthenticationService
+            .destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 
     public String delegateTicketGrantingTicket(final String serviceTicketId,
@@ -82,26 +91,31 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
 
         final Errors errors = validateCredentials(credentials);
         if (errors.hasErrors()) {
-            throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
+            throw new IllegalArgumentException("Error validating credentials: "
+                + errors.toString());
         }
-        
-        return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
+
+        return this.centralAuthenticationService.delegateTicketGrantingTicket(
+            serviceTicketId, credentials);
     }
-    
+
     private Errors validateCredentials(final Credentials credentials) {
         final Errors errors = new BindException(credentials, "credentials");
         for (int i = 0; i < this.validators.length; i++) {
             if (this.validators[i].supports(credentials.getClass())) {
-                ValidationUtils.invokeValidator(this.validators[i], credentials, errors);
+                ValidationUtils.invokeValidator(this.validators[i],
+                    credentials, errors);
             }
         }
-        
+
         return errors;
     }
 
     /**
      * Set the CentralAuthenticationService.
-     * @param centralAuthenticationService The CentralAuthenticationService to set.
+     * 
+     * @param centralAuthenticationService The CentralAuthenticationService to
+     * set.
      */
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
@@ -110,15 +124,18 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
 
     /**
      * Set the list of validators.
-     * @param validators  The array of validators to use.
+     * 
+     * @param validators The array of validators to use.
      */
     public void setValidators(final Validator[] validators) {
         this.validators = validators;
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.validators == null || this.validators.length == 0 || this.centralAuthenticationService == null) {
-            throw new IllegalStateException("validators and centralAuthenticationService are required fields.");
+        if (this.validators == null || this.validators.length == 0
+            || this.centralAuthenticationService == null) {
+            throw new IllegalStateException(
+                "validators and centralAuthenticationService are required fields.");
         }
     }
 }

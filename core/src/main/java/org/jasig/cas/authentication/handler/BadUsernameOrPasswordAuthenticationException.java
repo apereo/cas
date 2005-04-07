@@ -28,16 +28,18 @@ public class BadUsernameOrPasswordAuthenticationException extends
     public BadUsernameOrPasswordAuthenticationException() {
         super(CODE);
     }
-    
-    public BadUsernameOrPasswordAuthenticationException(final Throwable throwable) {
+
+    public BadUsernameOrPasswordAuthenticationException(
+        final Throwable throwable) {
         super(CODE, throwable);
     }
-    
+
     public BadUsernameOrPasswordAuthenticationException(final String code) {
         super(code);
     }
-    
-    public BadUsernameOrPasswordAuthenticationException(final String code, final Throwable throwable) {
+
+    public BadUsernameOrPasswordAuthenticationException(final String code,
+        final Throwable throwable) {
         super(code, throwable);
     }
 }

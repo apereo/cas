@@ -12,22 +12,23 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class TicketExceptionHandlerExceptionResolverTests extends TestCase {
+
     private TicketExceptionHandlerExceptionResolver resolver = new TicketExceptionHandlerExceptionResolver();
-    
+
     public void testResolverException() {
-        assertNull(this.resolver.resolveException(new MockHttpServletRequest(), new MockHttpServletResponse(), null, new Exception()));
+        assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
+            new MockHttpServletResponse(), null, new Exception()));
     }
 
     public void testResolverTicketException() {
-        assertNotNull(this.resolver.resolveException(new MockHttpServletRequest(), new MockHttpServletResponse(), null, new TicketNotFoundException()));
+        assertNotNull(this.resolver.resolveException(
+            new MockHttpServletRequest(), new MockHttpServletResponse(), null,
+            new TicketNotFoundException()));
     }
 
-    
 }

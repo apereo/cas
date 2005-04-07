@@ -26,9 +26,8 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(password)) {
-            getLog()
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
+            getLog().debug(
+                "User [" + username + "] was successfully authenticated.");
             return true;
         }
 
@@ -39,7 +38,8 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
     public void afterPropertiesSet() throws Exception {
         getLog()
-            .warn(this.getClass().getName()
-                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+            .warn(
+                this.getClass().getName()
+                    + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }
 }

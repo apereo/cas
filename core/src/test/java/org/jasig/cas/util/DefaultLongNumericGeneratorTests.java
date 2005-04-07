@@ -23,8 +23,7 @@ public class DefaultLongNumericGeneratorTests extends TestCase {
 
         try {
             generator.getNextLong();
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             return;
         }
 
@@ -38,8 +37,7 @@ public class DefaultLongNumericGeneratorTests extends TestCase {
         try {
             long response = generator.getNextLong();
             assertEquals(response, 1);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             fail("Unexpected IllegalStateException");
         }
     }

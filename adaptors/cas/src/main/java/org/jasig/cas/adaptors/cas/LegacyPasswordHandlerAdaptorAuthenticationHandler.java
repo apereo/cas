@@ -25,7 +25,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
     private PasswordHandler passwordHandler;
 
     protected boolean authenticateInternal(final Credentials credentials) {
-        final LegacyCasCredentials casCredentials = (LegacyCasCredentials)credentials;
+        final LegacyCasCredentials casCredentials = (LegacyCasCredentials) credentials;
 
         return this.passwordHandler.authenticate(casCredentials
             .getServletRequest(), casCredentials.getUserName(), casCredentials

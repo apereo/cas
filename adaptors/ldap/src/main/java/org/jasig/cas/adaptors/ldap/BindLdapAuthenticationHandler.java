@@ -55,9 +55,9 @@ public class BindLdapAuthenticationHandler extends
     private boolean allowMultipleAccounts;
 
     public boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
 
-        List values = (List)this.getLdapTemplate().search(this.searchBase,
+        List values = (List) this.getLdapTemplate().search(this.searchBase,
             LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
             this.getSearchControls(), new SearchResultCallbackHandler(){
 
@@ -81,7 +81,7 @@ public class BindLdapAuthenticationHandler extends
             return false;
 
         for (Iterator iter = values.iterator(); iter.hasNext();) {
-            String dn = (String)iter.next();
+            String dn = (String) iter.next();
 
             DirContext test = this.getContextSource().getDirContext(
                 dn + "," + this.searchBase, uRequest.getPassword());

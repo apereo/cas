@@ -47,11 +47,9 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
-        }
-        catch (UnsupportedCredentialsException e) {
+        } catch (UnsupportedCredentialsException e) {
             fail("UnsupportedCredentialsException caught");
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -61,14 +59,11 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
             this.authenticationHandler
                 .authenticate(new HttpBasedServiceCredentials(new URL(
                     "http://www.rutgers.edu")));
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
-        }
-        catch (UnsupportedCredentialsException e) {
+        } catch (UnsupportedCredentialsException e) {
             // this is okay
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -81,8 +76,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // fail("AuthenticationException caught but it should not have been
             // thrown.");
         }
@@ -96,8 +90,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("Exception thrown but not expected.");
         }
     }
@@ -110,8 +103,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -124,8 +116,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(c));
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
         }
     }
@@ -135,8 +126,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
             this.authenticationHandler.setUsers(null);
             this.authenticationHandler.afterPropertiesSet();
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return;
         }
     }
@@ -145,8 +135,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         try {
             this.authenticationHandler.afterPropertiesSet();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Exception not expected.");
         }
     }

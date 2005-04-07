@@ -20,14 +20,12 @@ import org.jasig.cas.web.bind.CredentialsBinder;
  */
 public class LegacyCasCredentialsBinder implements CredentialsBinder {
 
-
     public void bind(final HttpServletRequest request,
         final Credentials credentials) {
         if (credentials.getClass().equals(LegacyCasCredentials.class)) {
-            ((LegacyCasCredentials)credentials).setServletRequest(request);
-        }
-        else {
-            ((LegacyCasTrustedCredentials)credentials)
+            ((LegacyCasCredentials) credentials).setServletRequest(request);
+        } else {
+            ((LegacyCasTrustedCredentials) credentials)
                 .setServletRequest(request);
         }
     }

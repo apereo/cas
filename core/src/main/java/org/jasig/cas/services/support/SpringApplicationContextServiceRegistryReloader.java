@@ -20,8 +20,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * ServiceRegistryReloader that reloads the ServiceRegistry from an XML file based on the Spring Bean
- * Factory.
+ * ServiceRegistryReloader that reloads the ServiceRegistry from an XML file
+ * based on the Spring Bean Factory.
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
