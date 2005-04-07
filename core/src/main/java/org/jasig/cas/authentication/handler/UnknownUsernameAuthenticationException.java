@@ -6,8 +6,8 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * The exception to know when we explicitly don't know anything
- * about the username.
+ * The exception to know when we explicitly don't know anything about the
+ * username.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,16 +25,17 @@ public class UnknownUsernameAuthenticationException extends
     public UnknownUsernameAuthenticationException() {
         super(CODE);
     }
-    
+
     public UnknownUsernameAuthenticationException(final Throwable throwable) {
         super(CODE, throwable);
     }
-    
+
     public UnknownUsernameAuthenticationException(final String code) {
         super(code);
     }
-    
-    public UnknownUsernameAuthenticationException(final String code, final Throwable throwable) {
+
+    public UnknownUsernameAuthenticationException(final String code,
+        final Throwable throwable) {
         super(code, throwable);
     }
 }

@@ -6,13 +6,12 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * Generic abstract exception to extend when you don't know what
- * the heck is going on.
+ * Generic abstract exception to extend when you don't know what the heck is
+ * going on.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public abstract class UncategorizedAuthenticationException extends
     AuthenticationException {
@@ -20,8 +19,9 @@ public abstract class UncategorizedAuthenticationException extends
     public UncategorizedAuthenticationException(final String code) {
         super(code);
     }
-    
-    public UncategorizedAuthenticationException(final String code, final Throwable throwable) {
+
+    public UncategorizedAuthenticationException(final String code,
+        final Throwable throwable) {
         super(code, throwable);
     }
 }

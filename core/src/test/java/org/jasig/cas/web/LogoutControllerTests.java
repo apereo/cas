@@ -17,11 +17,9 @@ import org.springframework.web.servlet.view.RedirectView;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class LogoutControllerTests extends TestCase {
 
@@ -30,7 +28,7 @@ public class LogoutControllerTests extends TestCase {
     protected void setUp() throws Exception {
         CentralAuthenticationServiceImpl c = new CentralAuthenticationServiceImpl();
         c.setTicketRegistry(new DefaultTicketRegistry());
-        
+
         this.logoutController = new LogoutController();
         this.logoutController.setCentralAuthenticationService(c);
         this.logoutController.afterPropertiesSet();
@@ -38,7 +36,7 @@ public class LogoutControllerTests extends TestCase {
 
     public void testAfterPropertiesSet() {
         LogoutController controller = new LogoutController();
-        
+
         try {
             controller.afterPropertiesSet();
             fail("IllegalArgumentException expected.");
@@ -46,22 +44,25 @@ public class LogoutControllerTests extends TestCase {
             return;
         }
     }
-    
+
     public void testLogoutNoCookie() throws Exception {
-        assertNotNull(this.logoutController.handleRequestInternal(new MockHttpServletRequest(), new MockHttpServletResponse()));
+        assertNotNull(this.logoutController.handleRequestInternal(
+            new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
-    
+
     public void testLogoutForService() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "TestService");
-        assertTrue(this.logoutController.handleRequestInternal(request, new MockHttpServletResponse()).getView() instanceof RedirectView);
+        assertTrue(this.logoutController.handleRequestInternal(request,
+            new MockHttpServletResponse()).getView() instanceof RedirectView);
     }
-    
+
     public void testLogoutCookie() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "test");
         request.setCookies(new Cookie[] {cookie});
-        assertNotNull(this.logoutController.handleRequestInternal(request, new MockHttpServletResponse()));
+        assertNotNull(this.logoutController.handleRequestInternal(request,
+            new MockHttpServletResponse()));
     }
-    
+
 }

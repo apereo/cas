@@ -145,12 +145,10 @@ public class LdapTemplate {
         try {
             Object result = action.doInAction(context);
             return result;
-        }
-        catch (NamingException ex) {
+        } catch (NamingException ex) {
             throw getExceptionTranslator().translate(
                 "executing OperationCallback", ex);
-        }
-        finally {
+        } finally {
             LdapUtils.closeContext(context);
         }
     }
@@ -220,12 +218,11 @@ public class LdapTemplate {
         SearchResultCallbackHandler callback) throws NamingException {
         try {
             while (namingEnumeration.hasMore()) {
-                callback.processSearchResult((SearchResult)namingEnumeration
+                callback.processSearchResult((SearchResult) namingEnumeration
                     .next());
             }
             return callback.getResult();
-        }
-        finally {
+        } finally {
             namingEnumeration.close();
         }
     }

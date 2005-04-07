@@ -18,23 +18,23 @@ public abstract class AuthenticationException extends Exception {
 
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
-    
+
     /** The code to return for resolving to a message description. */
     private String code;
 
     public AuthenticationException(final String code) {
         this.code = code;
     }
-    
+
     public AuthenticationException(final String code, final Throwable throwable) {
         super(throwable);
         this.code = code;
     }
-    
+
     public final String getCode() {
         return this.code;
     }
-    
+
     public final String toString() {
         return this.code;
     }

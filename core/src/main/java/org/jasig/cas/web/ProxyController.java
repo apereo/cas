@@ -60,11 +60,13 @@ public final class ProxyController extends AbstractController implements
 
         try {
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS,
-                WebConstants.TICKET, this.centralAuthenticationService.grantServiceTicket(ticket, service));
+                WebConstants.TICKET, this.centralAuthenticationService
+                    .grantServiceTicket(ticket, service));
         } catch (TicketException e) {
             final Map model = new HashMap();
             model.put(WebConstants.CODE, e.getCode());
-            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(e.getCode(), e.getCode()));
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
+                e.getCode(), e.getCode()));
             return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
         }
     }

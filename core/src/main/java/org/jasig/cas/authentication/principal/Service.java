@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-
 /**
  * A Service providing service to an authenticated principal. Typically a web
  * application or web service.

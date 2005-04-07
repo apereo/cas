@@ -49,7 +49,7 @@ public class UrlContextSource implements ContextSource {
      * @return Returns the securityAuthentication.
      */
     public String getSecurityAuthentication() {
-        return (String)this.environment.get(Context.SECURITY_AUTHENTICATION);
+        return (String) this.environment.get(Context.SECURITY_AUTHENTICATION);
     }
 
     /**
@@ -64,7 +64,7 @@ public class UrlContextSource implements ContextSource {
      * @return Returns the securityCredentials.
      */
     public String getSecurityCredentials() {
-        return (String)this.environment.get(Context.SECURITY_CREDENTIALS);
+        return (String) this.environment.get(Context.SECURITY_CREDENTIALS);
     }
 
     /**
@@ -78,7 +78,7 @@ public class UrlContextSource implements ContextSource {
      * @return Returns the securityPrincipal.
      */
     public String getSecurityPrincipal() {
-        return (String)this.environment.get(Context.SECURITY_PRINCIPAL);
+        return (String) this.environment.get(Context.SECURITY_PRINCIPAL);
     }
 
     /**
@@ -92,7 +92,7 @@ public class UrlContextSource implements ContextSource {
      * @return Returns the securityProtocol.
      */
     public String getSecurityProtocol() {
-        return (String)this.environment.get(Context.SECURITY_PROTOCOL);
+        return (String) this.environment.get(Context.SECURITY_PROTOCOL);
     }
 
     /**
@@ -106,10 +106,9 @@ public class UrlContextSource implements ContextSource {
         try {
             // TODO check whether there is a faster way to retrieve context,
             // like lookup("") on a lazy initiated initial context
-            return (DirContext)new InitialDirContext(this.environment)
+            return (DirContext) new InitialDirContext(this.environment)
                 .lookup(this.ldapUrl);
-        }
-        catch (NamingException ex) {
+        } catch (NamingException ex) {
             throw new DataAccessResourceFailureException(
                 "Cannot retrieve context", ex);
         }
@@ -117,7 +116,7 @@ public class UrlContextSource implements ContextSource {
 
     public DirContext getDirContext(final String principal,
         final String password) {
-        Hashtable environment = (Hashtable)this.environment.clone();
+        Hashtable environment = (Hashtable) this.environment.clone();
 
         environment.put(Context.SECURITY_PRINCIPAL, principal);
         environment.put(Context.SECURITY_CREDENTIALS, password);
@@ -125,10 +124,9 @@ public class UrlContextSource implements ContextSource {
         try {
             // TODO check whether there is a faster way to retrieve context,
             // like lookup("") on a lazy initiated initial context
-            return (DirContext)new InitialDirContext(environment)
+            return (DirContext) new InitialDirContext(environment)
                 .lookup(this.ldapUrl);
-        }
-        catch (NamingException ex) {
+        } catch (NamingException ex) {
             throw new DataAccessResourceFailureException(
                 "Cannot retrieve context", ex);
         }

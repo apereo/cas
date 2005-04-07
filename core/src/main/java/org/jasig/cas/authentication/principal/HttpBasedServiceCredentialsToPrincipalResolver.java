@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-
 /**
  * Resolver to resolve the credentials presented for an HTTP-based service to a
  * principal.

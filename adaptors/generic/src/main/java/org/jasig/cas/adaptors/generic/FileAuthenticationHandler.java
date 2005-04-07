@@ -106,8 +106,7 @@ public final class FileAuthenticationHandler extends
     /**
      * @param passwordTranslator The passwordTranslator to set.
      */
-    public void setPasswordTranslator(
-        final PasswordEncoder passwordTranslator) {
+    public void setPasswordTranslator(final PasswordEncoder passwordTranslator) {
         this.passwordTranslator = passwordTranslator;
     }
 

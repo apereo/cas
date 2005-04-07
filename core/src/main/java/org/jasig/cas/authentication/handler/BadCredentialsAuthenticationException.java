@@ -6,8 +6,8 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * Generic exception when we can't determine the authenticity
- * of the credentials.
+ * Generic exception when we can't determine the authenticity of the
+ * credentials.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,16 +25,17 @@ public class BadCredentialsAuthenticationException extends
     public BadCredentialsAuthenticationException() {
         super(CODE);
     }
-    
+
     public BadCredentialsAuthenticationException(final Throwable throwable) {
         super(CODE, throwable);
     }
-    
+
     public BadCredentialsAuthenticationException(final String code) {
         super(code);
     }
-    
-    public BadCredentialsAuthenticationException(final String code, final Throwable throwable) {
+
+    public BadCredentialsAuthenticationException(final String code,
+        final Throwable throwable) {
         super(code, throwable);
     }
 }

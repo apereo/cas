@@ -21,8 +21,7 @@ public class SimpleServiceTests extends TestCase {
     public void testNullId() {
         try {
             new SimpleService(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return;
         }
 
@@ -43,7 +42,7 @@ public class SimpleServiceTests extends TestCase {
         assertEquals(HashCodeBuilder.reflectionHashCode(service), service
             .hashCode());
     }
-    
+
     public void testToString() {
         final String id = "test";
         SimpleService service = new SimpleService(id);

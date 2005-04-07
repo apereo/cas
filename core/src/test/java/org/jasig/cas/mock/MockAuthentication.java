@@ -8,15 +8,14 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
-
 public final class MockAuthentication implements Authentication {
 
     private static final long serialVersionUID = 3689065132152010039L;
 
     private Principal principal = new SimplePrincipal("test");
-    
+
     private Map attributes = new HashMap();
-    
+
     private Date authenticatedDate = new Date();
 
     public MockAuthentication(Principal p) {
@@ -26,7 +25,7 @@ public final class MockAuthentication implements Authentication {
     public MockAuthentication() {
         // nothing to do;
     }
-    
+
     public Principal getPrincipal() {
         return this.principal;
     }

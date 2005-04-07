@@ -6,8 +6,8 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * The exception to throw when we know the username is correct
- * but the password is not.
+ * The exception to throw when we know the username is correct but the password
+ * is not.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,16 +25,17 @@ public class BadPasswordAuthenticationException extends
     public BadPasswordAuthenticationException() {
         super(CODE);
     }
-    
+
     public BadPasswordAuthenticationException(final Throwable throwable) {
         super(CODE, throwable);
     }
-    
+
     public BadPasswordAuthenticationException(final String code) {
         super(code);
     }
-    
-    public BadPasswordAuthenticationException(final String code, final Throwable throwable) {
+
+    public BadPasswordAuthenticationException(final String code,
+        final Throwable throwable) {
         super(code, throwable);
     }
 }

@@ -64,16 +64,14 @@ public class RelativeContextSource implements ContextSource, InitializingBean {
 
     public DirContext getDirContext() {
         try {
-            return (DirContext)getBaseContextSource().getDirContext().lookup(
+            return (DirContext) getBaseContextSource().getDirContext().lookup(
                 getRelativeName());
-        }
-        catch (NamingException e) {
+        } catch (NamingException e) {
             String baseName = "Can not get basename";
             try {
                 baseName = getBaseContextSource().getDirContext()
                     .getNameInNamespace();
-            }
-            catch (NamingException ex) {
+            } catch (NamingException ex) {
                 logger.warn("Can not get basename", ex);
             }
             throw new DataAccessResourceFailureException(
@@ -84,16 +82,14 @@ public class RelativeContextSource implements ContextSource, InitializingBean {
 
     public DirContext getDirContext(String principal, String password) {
         try {
-            return (DirContext)getBaseContextSource().getDirContext(principal,
+            return (DirContext) getBaseContextSource().getDirContext(principal,
                 password).lookup(getRelativeName());
-        }
-        catch (NamingException e) {
+        } catch (NamingException e) {
             String baseName = "Can not get basename";
             try {
                 baseName = getBaseContextSource().getDirContext(principal,
                     password).getNameInNamespace();
-            }
-            catch (NamingException ex) {
+            } catch (NamingException ex) {
                 logger.warn("Can not get basename", ex);
             }
             throw new DataAccessResourceFailureException(

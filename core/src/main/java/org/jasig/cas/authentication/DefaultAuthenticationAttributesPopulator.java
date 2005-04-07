@@ -14,12 +14,12 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public final class DefaultAuthenticationAttributesPopulator implements
     AuthenticationAttributesPopulator {
 
-    public Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
+    public Authentication populateAttributes(
+        final Authentication authentication, final Credentials credentials) {
         return authentication;
     }
 

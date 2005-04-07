@@ -24,14 +24,14 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public abstract class AbstractAuthenticationHandler implements
     AuthenticationHandler {
-    
+
     /** Log instance. */
     private final Log log = LogFactory.getLog(getClass());
 
     public final Log getLog() {
         return this.log;
     }
-    
+
     public final boolean authenticate(final Credentials credentials)
         throws AuthenticationException {
         if (!this.supports(credentials)) {

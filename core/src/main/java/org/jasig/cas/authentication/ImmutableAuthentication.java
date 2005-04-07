@@ -29,7 +29,9 @@ public final class ImmutableAuthentication implements Authentication {
     private static final long serialVersionUID = 3906647483978365235L;
 
     /** The principal this authentication object is valid for. */
-    private final Principal principal; // TODO refactor to be an immutable proxy?
+    private final Principal principal; // TODO refactor to be an immutable
+
+    // proxy?
 
     /** The date/time this authentication object became valid. */
     private final Date authenticatedDate;
@@ -40,7 +42,8 @@ public final class ImmutableAuthentication implements Authentication {
     protected ImmutableAuthentication(final Principal principal,
         final Map attributes) {
         this.principal = principal;
-        this.attributes = Collections.unmodifiableMap(attributes == null ? new HashMap() : attributes);
+        this.attributes = Collections
+            .unmodifiableMap(attributes == null ? new HashMap() : attributes);
         this.authenticatedDate = new Date();
     }
 

@@ -48,8 +48,7 @@ public class DesPasswordTranslatorTests extends TestCase {
         try {
             this.passwordTranslator.afterPropertiesSet();
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // ok
         }
     }
@@ -59,8 +58,7 @@ public class DesPasswordTranslatorTests extends TestCase {
 
         try {
             this.passwordTranslator.afterPropertiesSet();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Unexpected expected.");
         }
     }

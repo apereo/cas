@@ -6,8 +6,8 @@
 package org.jasig.cas.services;
 
 /**
- * Strategy to implement a callback to a service for the purposes
- * of logging out.
+ * Strategy to implement a callback to a service for the purposes of logging
+ * out.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

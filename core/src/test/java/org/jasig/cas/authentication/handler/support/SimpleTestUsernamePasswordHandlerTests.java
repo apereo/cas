@@ -34,11 +34,9 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
         c.setPassword("test");
         try {
             this.authenticationHandler.authenticate(c);
-        }
-        catch (UnsupportedCredentialsException e) {
+        } catch (UnsupportedCredentialsException e) {
             fail("UnsupportedCredentialsException caught");
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -48,14 +46,11 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
             this.authenticationHandler
                 .authenticate(new HttpBasedServiceCredentials(new URL(
                     "http://www.rutgers.edu")));
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
-        }
-        catch (UnsupportedCredentialsException e) {
+        } catch (UnsupportedCredentialsException e) {
             // this is okay
-        }
-        catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
     }
@@ -67,8 +62,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
         try {
             assertTrue(this.authenticationHandler.authenticate(authRequest));
-        }
-        catch (AuthenticationException ae) {
+        } catch (AuthenticationException ae) {
             fail();
         }
     }
@@ -80,8 +74,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(authRequest));
-        }
-        catch (AuthenticationException ae) {
+        } catch (AuthenticationException ae) {
             // this is okay
         }
     }
@@ -93,8 +86,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
         try {
             assertFalse(this.authenticationHandler.authenticate(authRequest));
-        }
-        catch (AuthenticationException ae) {
+        } catch (AuthenticationException ae) {
             // this is okay
         }
     }
@@ -102,8 +94,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
     public void testAfterPropertiesSet() {
         try {
             this.authenticationHandler.afterPropertiesSet();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail("Exception caught but none should have been thrown.");
         }
     }

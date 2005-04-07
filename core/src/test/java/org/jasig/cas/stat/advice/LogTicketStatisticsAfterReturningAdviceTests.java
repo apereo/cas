@@ -22,8 +22,7 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
         try {
             advice.afterPropertiesSet();
             fail("IllegalStateException expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is okay
         }
     }
@@ -34,8 +33,7 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
             advice.setStatsStateMutators(new Properties());
             advice.afterPropertiesSet();
             fail("IllegalStateException expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is okay
         }
     }
@@ -48,81 +46,83 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
             advice.setStatsStateMutators(properties);
             advice.afterPropertiesSet();
             fail("IllegalStateException expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is okay
         }
     }
-	
+
     public void testAfterPropertiesSetNoTicketRegistry() {
         LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
         Properties properties = new Properties();
         properties.put("test", "test");
         try {
             advice.setStatsStateMutators(properties);
-			advice.setTicketStatsManager(new TicketStatisticsImpl());
+            advice.setTicketStatsManager(new TicketStatisticsImpl());
             advice.afterPropertiesSet();
             fail("IllegalStateException expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is okay
         }
     }
-	
+
     public void testAfterPropertiesWorksOkay() {
         LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
         Properties properties = new Properties();
         properties.put("test", "test");
         try {
             advice.setStatsStateMutators(properties);
-			advice.setTicketStatsManager(new TicketStatisticsImpl());
-			advice.setTicketRegistry(new DefaultTicketRegistry());
+            advice.setTicketStatsManager(new TicketStatisticsImpl());
+            advice.setTicketRegistry(new DefaultTicketRegistry());
             advice.afterPropertiesSet();
-        }
-        catch (Exception e) {
-			fail("Exception unexpected.");
+        } catch (Exception e) {
+            fail("Exception unexpected.");
         }
     }
-	
-	public void testNullReturnsOkay() {
-		LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
-		try {
-			advice.afterReturning(null, null, null, null);
-		} catch (Throwable e) {
-			fail("Throwable not expected.");
-		}
-	}
-	
-	public void testMethodNotFound() {
-		LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
+
+    public void testNullReturnsOkay() {
+        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
+        try {
+            advice.afterReturning(null, null, null, null);
+        } catch (Throwable e) {
+            fail("Throwable not expected.");
+        }
+    }
+
+    public void testMethodNotFound() {
+        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
         Properties properties = new Properties();
         properties.put("test", "test");
-		
-		advice.setStatsStateMutators(properties);
-		try {
-			
-			advice.afterReturning("test", advice.getClass().getDeclaredMethods()[0], null, null);
-		} catch (Throwable e) {
-			fail("Throwable not expected.");
-		}
-	}
-	
-	public void testMethodFound() {
-		TicketStatisticsImpl t = new TicketStatisticsImpl();
-		LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
-		advice.setTicketRegistry(new DefaultTicketRegistry());
-		advice.setTicketStatsManager(t);
-		Properties p = new Properties();
-		p.put("createTicketGrantingTicket", "incrementNumberOfTicketGrantingTicketsVended");
-		advice.setStatsStateMutators(p);
-		
-		try {
-			
-			advice.afterReturning("tgt", CentralAuthenticationService.class.getMethod("createTicketGrantingTicket", new Class[] {Credentials.class}), null, new CentralAuthenticationServiceImpl());
-			assertEquals(1, t.getNumberOfTicketGrantingTicketsVended());
-		} catch (Throwable e) {
-			e.printStackTrace();
-			fail("Throwable not expected.");
-		}
-	}
+
+        advice.setStatsStateMutators(properties);
+        try {
+
+            advice.afterReturning("test", advice.getClass()
+                .getDeclaredMethods()[0], null, null);
+        } catch (Throwable e) {
+            fail("Throwable not expected.");
+        }
+    }
+
+    public void testMethodFound() {
+        TicketStatisticsImpl t = new TicketStatisticsImpl();
+        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
+        advice.setTicketRegistry(new DefaultTicketRegistry());
+        advice.setTicketStatsManager(t);
+        Properties p = new Properties();
+        p.put("createTicketGrantingTicket",
+            "incrementNumberOfTicketGrantingTicketsVended");
+        advice.setStatsStateMutators(p);
+
+        try {
+
+            advice.afterReturning("tgt", CentralAuthenticationService.class
+                .getMethod("createTicketGrantingTicket",
+                    new Class[] {Credentials.class}), null,
+                new CentralAuthenticationServiceImpl());
+            assertEquals(1, t.getNumberOfTicketGrantingTicketsVended());
+        } catch (Throwable e) {
+            e.printStackTrace();
+            fail("Throwable not expected.");
+        }
+    }
 }

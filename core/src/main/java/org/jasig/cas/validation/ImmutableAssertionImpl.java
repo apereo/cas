@@ -28,7 +28,8 @@ public final class ImmutableAssertionImpl implements Assertion {
     /** Was this the result of a new login. */
     private final boolean fromNewLogin;
 
-    public ImmutableAssertionImpl(final List principals, final boolean fromNewLogin) {
+    public ImmutableAssertionImpl(final List principals,
+        final boolean fromNewLogin) {
         if (principals == null || principals.isEmpty()) {
             throw new IllegalArgumentException(
                 "principals cannot be null or empty.");

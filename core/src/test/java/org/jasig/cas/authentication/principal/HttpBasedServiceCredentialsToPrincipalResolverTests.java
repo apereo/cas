@@ -35,8 +35,7 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends
         try {
             assertTrue(this.resolver.supports(new HttpBasedServiceCredentials(
                 new URL("http://www.rutgers.edu"))));
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             fail("Invalid URL supplied.");
         }
     }
@@ -49,8 +48,7 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends
             Principal p = this.resolver.resolvePrincipal(request);
 
             assertEquals(p.getId(), request.getCallbackUrl().toExternalForm());
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             fail("Invalid URL supplied.");
         }
     }
@@ -58,8 +56,7 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends
     public void testNullCredentials() {
         try {
             this.resolver.resolvePrincipal(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return;
         }
 

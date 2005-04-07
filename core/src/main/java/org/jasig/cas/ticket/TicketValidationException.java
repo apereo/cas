@@ -7,10 +7,10 @@ package org.jasig.cas.ticket;
 
 /**
  * Exception to alert that there was an error validating the ticket.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class TicketValidationException extends TicketException {
 
@@ -19,13 +19,13 @@ public class TicketValidationException extends TicketException {
 
     /** The code description. */
     private static final String CODE = "VALIDATION_ERROR";
-    
+
     public TicketValidationException() {
         super(CODE);
     }
-    
+
     public TicketValidationException(final Throwable throwable) {
         super(CODE, throwable);
     }
-    
+
 }

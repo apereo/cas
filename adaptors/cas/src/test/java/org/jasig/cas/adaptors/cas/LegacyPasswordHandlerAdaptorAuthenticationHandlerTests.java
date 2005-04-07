@@ -17,19 +17,18 @@ import junit.framework.TestCase;
 
 /**
  * Testcase for LegacyPasswordHandlerAdaptorAuthenticationHandler.
+ * 
  * @version $Revision$ $Date$
  */
 public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
-        TestCase {
+    TestCase {
 
     private LegacyPasswordHandlerAdaptorAuthenticationHandler lphaah;
 
     protected void setUp() throws Exception {
         super.setUp();
-        this.lphaah = 
-            new LegacyPasswordHandlerAdaptorAuthenticationHandler();
+        this.lphaah = new LegacyPasswordHandlerAdaptorAuthenticationHandler();
     }
-
 
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -41,12 +40,12 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         assertFalse(this.lphaah.supports(new LegacyCasTrustedCredentials()));
     }
 
-
     /**
      * Document LPHAAH's NPE behavior where its dependency has not been set.
-     * Mitigated by use of afterPropertiesSet() to sanity check.  
-     * Consider using constructor dependency injection to guarantee that
-     * dependecy has been set to non-null value.
+     * Mitigated by use of afterPropertiesSet() to sanity check. Consider using
+     * constructor dependency injection to guarantee that dependecy has been set
+     * to non-null value.
+     * 
      * @throws AuthenticationException as a failure modality
      */
     public void testAuthenticateMissingHandler() throws AuthenticationException {
@@ -59,10 +58,11 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         }
         fail("Behavior we were trying to document was an NPE that wasn't thrown?");
     }
-    
+
     /**
      * Test that throws UnsupportedCredentialsException for a known unsupported
      * credential.
+     * 
      * @throws AuthenticationException as a failure modality
      */
     public void testAuthenticateUnsupported() throws AuthenticationException {
@@ -80,42 +80,41 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         MockPasswordHandler mockHandler = new MockPasswordHandler();
         mockHandler.setSucceed(true);
         this.lphaah.setPasswordHandler(mockHandler);
-        
+
         // configure the LegacyCasCredentials
         LegacyCasCredentials credentials = new LegacyCasCredentials();
         credentials.setUserName("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();
         credentials.setServletRequest(servletRequest);
-        
+
         assertTrue(this.lphaah.authenticate(credentials));
-        
+
         assertEquals("testUser", mockHandler.getUsername());
         assertEquals("testPassword", mockHandler.getPassword());
         assertSame(servletRequest, mockHandler.getRequest());
-        
+
     }
-    
+
     public void testAuthenticateFailure() throws AuthenticationException {
         // configure the PasswordHandler.
         MockPasswordHandler mockHandler = new MockPasswordHandler();
         mockHandler.setSucceed(false);
         this.lphaah.setPasswordHandler(mockHandler);
-        
+
         // configure the LegacyCasCredentials
         LegacyCasCredentials credentials = new LegacyCasCredentials();
         credentials.setUserName("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();
         credentials.setServletRequest(servletRequest);
-        
+
         assertFalse(this.lphaah.authenticate(credentials));
-        
+
         assertEquals("testUser", mockHandler.getUsername());
         assertEquals("testPassword", mockHandler.getPassword());
         assertSame(servletRequest, mockHandler.getRequest());
-        
-    }
-    
-}
 
+    }
+
+}

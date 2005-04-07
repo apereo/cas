@@ -9,7 +9,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-
 /**
  * Implementation of the password handler that returns the MD5 hash of any
  * plaintext password passed into the translator. Returns the equivalent Md5

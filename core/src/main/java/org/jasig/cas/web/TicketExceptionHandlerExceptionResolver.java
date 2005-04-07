@@ -21,40 +21,43 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * ExceptionResolver to map TicketExceptions to a view with
- * the proper error model.
+ * ExceptionResolver to map TicketExceptions to a view with the proper error
+ * model.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public final class TicketExceptionHandlerExceptionResolver implements
     HandlerExceptionResolver {
-    
+
     /** Logger instance. */
-    private final Log log = LogFactory.getLog(TicketExceptionHandlerExceptionResolver.class);
+    private final Log log = LogFactory
+        .getLog(TicketExceptionHandlerExceptionResolver.class);
 
     public TicketExceptionHandlerExceptionResolver() {
         super();
     }
 
     public ModelAndView resolveException(final HttpServletRequest request,
-        final HttpServletResponse response, final Object handler, final Exception exception) {
-        
+        final HttpServletResponse response, final Object handler,
+        final Exception exception) {
+
         if (!(exception instanceof TicketException)) {
-            log.debug("Exception detected was: " + exception.getClass().getName());
+            log.debug("Exception detected was: "
+                + exception.getClass().getName());
             return null;
         }
-        
+
         log.debug("Detected TicketException. Showing error page.");
         final TicketException t = (TicketException) exception;
-        BindException errors = new BindException(new UsernamePasswordCredentials(), "credentials");
+        BindException errors = new BindException(
+            new UsernamePasswordCredentials(), "credentials");
         errors.reject(t.getCode());
-        
+
         final Map model = new HashMap();
         model.putAll(errors.getModel());
-        
+
         return new ModelAndView(ViewNames.CONST_LOGON, model);
     }
 }

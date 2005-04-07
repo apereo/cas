@@ -14,7 +14,7 @@ package org.jasig.cas.ticket;
  */
 public abstract class TicketException extends Exception {
 
-    /** Serializable Unique ID */
+    /** Serializable Unique ID. */
     private static final long serialVersionUID = -6000583436059919480L;
 
     /** The code description of the TicketException. */
@@ -23,16 +23,17 @@ public abstract class TicketException extends Exception {
     public TicketException(final String code) {
         this.code = code;
     }
-    
+
     public TicketException(final String code, final Throwable throwable) {
         super(throwable);
         this.code = code;
     }
-    
-     /**
+
+    /**
      * @return Returns the code.
      */
     public final String getCode() {
-        return (this.getCause() != null) ? this.getCause().toString() : this.code;
+        return (this.getCause() != null) ? this.getCause().toString()
+            : this.code;
     }
 }

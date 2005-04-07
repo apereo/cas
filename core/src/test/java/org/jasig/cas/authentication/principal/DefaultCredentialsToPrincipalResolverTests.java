@@ -35,8 +35,7 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
         try {
             assertFalse(this.resolver.supports(new HttpBasedServiceCredentials(
                 new URL("http://www.rutgers.edu"))));
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             fail("Invalid URL supplied.");
         }
     }
@@ -54,8 +53,7 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
         request.setUserName(null);
         try {
             this.resolver.resolvePrincipal(request);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return;
         }
 
@@ -65,8 +63,7 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
     public void testNullCredentials() {
         try {
             this.resolver.resolvePrincipal(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return;
         }
 

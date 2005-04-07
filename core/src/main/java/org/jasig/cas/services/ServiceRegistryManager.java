@@ -6,8 +6,7 @@
 package org.jasig.cas.services;
 
 /**
- * Interface to a class that can manage the registry for 
- * services.
+ * Interface to a class that can manage the registry for services.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

@@ -26,7 +26,7 @@ public class FastBindLdapAuthenticationHandler extends
     private String filter;
 
     public boolean authenticateInternal(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials)request;
+        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
 
         DirContext dirContext = this.getContextSource().getDirContext(
             LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),

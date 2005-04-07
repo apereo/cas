@@ -33,7 +33,7 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
     public EhCacheTicketRegistryTests() {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
             APPLICATION_CONTEXT_FILE_NAME);
-        this.cache = (Cache)context
+        this.cache = (Cache) context
             .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
         this.ticketRegistry = new EhCacheTicketRegistry();
         this.ticketRegistry.setCache(this.cache);
@@ -47,8 +47,7 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket("testTicket");
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is okay
         }
     }
@@ -61,8 +60,7 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTickets();
             fail("Exception expected.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // this is okay
         }
     }

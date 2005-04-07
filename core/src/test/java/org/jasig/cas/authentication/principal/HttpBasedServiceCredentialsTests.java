@@ -20,8 +20,7 @@ public class HttpBasedServiceCredentialsTests extends TestCase {
     public void testNullURL() {
         try {
             new HttpBasedServiceCredentials(null);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return;
         }
 
@@ -36,8 +35,7 @@ public class HttpBasedServiceCredentialsTests extends TestCase {
                 url);
 
             assertEquals(url, c.getCallbackUrl());
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             fail("MalformedUrlException caught.");
         }
     }

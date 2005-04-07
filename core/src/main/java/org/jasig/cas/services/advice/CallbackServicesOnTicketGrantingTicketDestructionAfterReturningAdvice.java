@@ -64,8 +64,7 @@ public final class CallbackServicesOnTicketGrantingTicketDestructionAfterReturni
                 .getSingleSignoutCallback();
 
             if (callback != null) {
-                callback.signOut(service, serviceTicket
-                    .getId());
+                callback.signOut(service, serviceTicket.getId());
             }
         }
     }
