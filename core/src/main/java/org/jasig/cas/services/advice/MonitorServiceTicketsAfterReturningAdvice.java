@@ -52,7 +52,7 @@ public final class MonitorServiceTicketsAfterReturningAdvice implements
             if (this.singleSignoutMapping.containsKey(ticketGrantingTicket
                 .getId())) {
                 Set serviceTickets = (Set) this.singleSignoutMapping
-                    .get(ticketGrantingTicket);
+                    .get(ticketGrantingTicket.getId());
                 serviceTickets.add(serviceTicket);
             } else {
                 Set serviceTickets = new HashSet();

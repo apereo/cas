@@ -60,8 +60,8 @@ public final class CallbackServicesOnTicketGrantingTicketDestructionAfterReturni
             final ServiceTicket serviceTicket = (ServiceTicket) iter.next();
             final RegisteredService service = this.serviceRegistry
                 .getService(serviceTicket.getService().getId());
-            final SingleSignoutCallback callback = service
-                .getSingleSignoutCallback();
+            final SingleSignoutCallback callback = service != null ? service
+                .getSingleSignoutCallback() : null;
 
             if (callback != null) {
                 callback.signOut(service, serviceTicket.getId());
