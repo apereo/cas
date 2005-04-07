@@ -385,6 +385,16 @@
 		</dependency>
 		<dependency>
 			<groupId>springframework</groupId>
+			<artifactId>spring-dao</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>1.2-rc1</version>
 			<type>jar</type>
@@ -436,15 +446,6 @@
 			<version>1.1.2</version>
 			<type>jar</type>
 			<url>http://jakarta.apache.org/taglibs/</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		
-		<dependency>
-			<groupId>aopalliance</groupId>
-			<artifactId>aopalliance</artifactId>
-			<version>1.0</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
