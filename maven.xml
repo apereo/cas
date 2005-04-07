@@ -25,7 +25,7 @@
 	</preGoal>
 
     <postGoal name="site">
-        <attainGoal name="dashboard:report-single"/>
+        <attainGoal nameex="dashboard:report-single"/>
     </postGoal>
 
 	<preGoal name="war:init">
@@ -40,4 +40,48 @@
 	<goal name="maven-multichanges-report:register">
 		<attainGoal name="multichanges:report" />
 	</goal>
+	
+	<goal name="cas:release">
+<!--		<attainGoal name="war" />-->
+<!--		<attainGoal name="javadoc" />-->
+
+		<ant:delete dir="${dist.dir}" />		
+		<ant:mkdir dir="${dist.dir}" />
+		<ant:fileset id="release" dir=".">
+			<ant:include name="target/cas.war" />
+			<ant:include name="docs/**" />
+			<ant:include name="core/src/main/java/**" />
+			<ant:include name="core/src/test/java/**" />
+			<ant:include name="*.txt" />
+			<ant:include name="*.properties" />
+			<ant:include name="*.xml" />
+			<ant:include name="*.bat" />
+			<ant:include name="webapp/**" />
+		</ant:fileset>
+		
+		<ant:zip zipfile="${dist.dir}/${release.zip}">
+			<ant:zipfileset refid="release" prefix="${release.path}" />
+		</ant:zip>
+		
+		<ant:tar destfile="${dist.dir}/${release.tar}">
+			<ant:tarfileset dir=".">
+				<ant:include name="target/cas.war" />
+				<ant:include name="docs/**" />
+				<ant:include name="core/src/main/java/**" />
+				<ant:include name="core/src/test/java/**" />
+				<ant:include name="*.txt" />
+				<ant:include name="*.properties" />
+				<ant:include name="*.xml" />
+				<ant:include name="*.bat" />
+				<ant:include name="webapp/**" />
+			</ant:tarfileset>
+		</ant:tar>
+		
+		<ant:gzip src="${dist.dir}/${release.tar}" zipfile="${dist.dir}/${release.gzip}">
+		</ant:gzip>
+		
+		<ant:delete file="${dist.dir}/${release.tar}" />
+		<ant:delete file="target/cas.war" />
+	</goal>
+		
 </project>
