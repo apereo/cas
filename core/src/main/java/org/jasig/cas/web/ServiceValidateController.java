@@ -173,7 +173,7 @@ public final class ServiceValidateController extends AbstractController
      * @param authenticationSpecificationClass The
      * authenticationSpecificationClass to set.
      */
-    public void setAuthenticationSpecificationClass(
+    public void setValidationSpecificationClass(
         final Class authenticationSpecificationClass) {
         this.authenticationSpecificationClass = authenticationSpecificationClass;
     }

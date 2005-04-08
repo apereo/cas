@@ -65,8 +65,7 @@
 							<p><input style="width:1.5em;border:0;padding:0;margin:0;" type="checkbox" id="warn" name="warn" value="true" tabindex="3" /> 
 							   <label for="warn"  accesskey="w"><span class="accesskey">W</span>arn me before logging me into other sites.</label></p>
 
-							<input type="hidden" name="ticket" value="${loginTicket}" />
-							<input type="hidden" name="service" value="${casAttributes.service}" />
+							<input type="hidden" name="loginToken" value="${loginToken}" />
 
 
 							<p><input type="submit" class="button" accesskey="l" value="LOGIN" tabindex="4" /></p>
