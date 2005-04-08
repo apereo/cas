@@ -405,6 +405,16 @@
 		</dependency>
 		<dependency>
 			<groupId>springframework</groupId>
+			<artifactId>spring-remoting</artifactId>
+			<version>1.2-rc1</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>1.2-rc1</version>
 			<type>jar</type>
