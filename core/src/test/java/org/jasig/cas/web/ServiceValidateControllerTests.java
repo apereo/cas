@@ -100,7 +100,7 @@ public class ServiceValidateControllerTests extends TestCase {
 
     public void testAfterPropertesSetTestEverything() throws Exception {
         this.serviceValidateController
-            .setAuthenticationSpecificationClass(Cas20ProtocolValidationSpecification.class);
+            .setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
         this.serviceValidateController.setFailureView("test");
         this.serviceValidateController.setSuccessView("test");
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());

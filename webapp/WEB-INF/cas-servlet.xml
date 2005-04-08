@@ -33,7 +33,7 @@
 	
 	<bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
 		<property name="proxyHandler"><ref bean="proxy20Handler" /></property>
-		<property name="authenticationSpecification"><value>org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification</value></property>
+		<property name="validationSpecificationClass"><value>org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification</value></property>
 		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
 	</bean>
 	
@@ -41,7 +41,7 @@
 		<property name="proxyHandler"><ref bean="proxy10Handler" /></property>
 		<property name="successView"><value>cas1ServiceSuccessView</value></property>
 		<property name="failureView"><value>cas1ServiceFailureView</value></property>
-		<property name="authenticationSpecification"><value>org.jasig.cas.validation.Cas10ProtocolValidationSpecification</value></property>
+		<property name="validationSpecificationClass"><value>org.jasig.cas.validation.Cas10ProtocolValidationSpecification</value></property>
 		<property name="centralAuthenticationService"><ref bean="centralAuthenticationService" /></property>
 	</bean>	
 	
