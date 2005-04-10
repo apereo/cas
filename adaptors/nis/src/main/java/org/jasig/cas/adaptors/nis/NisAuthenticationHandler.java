@@ -17,6 +17,7 @@ import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class to authenticate users by connecting to an NIS server. Defaults are: map =
@@ -30,7 +31,7 @@ import org.springframework.beans.factory.DisposableBean;
  */
 // TODO: can we keep the context open?
 public class NisAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
+    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean, DisposableBean {
 
     private static final String DEFAULT_MAP = "passwd.byname";
 

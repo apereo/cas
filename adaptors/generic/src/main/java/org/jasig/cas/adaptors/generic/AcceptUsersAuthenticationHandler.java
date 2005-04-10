@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -25,7 +26,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @since 3.0
  */
 public final class AcceptUsersAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     /** The list of users we will accept. */
     private Map users;
