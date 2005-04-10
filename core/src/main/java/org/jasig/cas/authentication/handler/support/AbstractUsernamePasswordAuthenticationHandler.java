@@ -8,7 +8,6 @@ package org.jasig.cas.authentication.handler.support;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -19,7 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends
-    AbstractAuthenticationHandler implements InitializingBean {
+    AbstractAuthenticationHandler {
 
     protected final boolean authenticateInternal(final Credentials credentials)
         throws AuthenticationException {

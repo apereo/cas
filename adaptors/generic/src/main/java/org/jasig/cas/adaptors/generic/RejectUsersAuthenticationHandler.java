@@ -9,6 +9,7 @@ import java.util.Collection;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class to provide a list of users to automatically reject.
@@ -18,7 +19,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @since 3.0
  */
 public final class RejectUsersAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     /** The collection of users to reject. */
     private Collection users;

@@ -6,6 +6,7 @@
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 /**
@@ -17,7 +18,7 @@ import org.springframework.util.StringUtils;
  * @since 3.0
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {

@@ -13,6 +13,7 @@ import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -28,7 +29,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @since 3.0
  */
 public final class FileAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     /** The default separator in the file. */
     private static final String DEFAULT_SEPARATOR = "::";
