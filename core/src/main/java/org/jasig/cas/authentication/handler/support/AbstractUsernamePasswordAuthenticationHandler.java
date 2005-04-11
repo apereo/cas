@@ -6,8 +6,10 @@
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -17,11 +19,9 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public abstract class AbstractUsernamePasswordAuthenticationHandler extends
-    AbstractAuthenticationHandler {
+public abstract class AbstractUsernamePasswordAuthenticationHandler implements AuthenticationHandler, InitializingBean {
 
-    protected final boolean authenticateInternal(final Credentials credentials)
-        throws AuthenticationException {
+    public final boolean authenticate(final Credentials credentials) throws AuthenticationException {
         return authenticateUsernamePasswordInternal((UsernamePasswordCredentials) credentials);
     }
 
@@ -29,7 +29,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException;
 
-    protected final boolean supports(final Credentials credentials) {
+    public final boolean supports(final Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials
                 .getClass());

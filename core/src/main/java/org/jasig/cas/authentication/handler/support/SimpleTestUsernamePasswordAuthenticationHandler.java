@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
@@ -20,6 +22,9 @@ import org.springframework.util.StringUtils;
 public final class SimpleTestUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
+    /** Log instance. */
+    private final Log log = LogFactory.getLog(getClass());
+    
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
         final String username = credentials.getUserName();
@@ -27,18 +32,18 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(password)) {
-            getLog().debug(
+            log.debug(
                 "User [" + username + "] was successfully authenticated.");
             return true;
         }
 
-        getLog().debug("User [" + username + "] failed authentication");
+        log.debug("User [" + username + "] failed authentication");
 
         return false;
     }
 
     public void afterPropertiesSet() throws Exception {
-        getLog()
+        log
             .warn(
                 this.getClass().getName()
                     + " is only to be used in a testing environment.  NEVER enable this in a production environment.");

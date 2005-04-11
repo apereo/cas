@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.UrlUtils;
@@ -18,8 +21,8 @@ import org.jasig.cas.util.UrlUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class HttpBasedServiceCredentialsAuthenticationHandler extends
-    AbstractAuthenticationHandler {
+public final class HttpBasedServiceCredentialsAuthenticationHandler implements AuthenticationHandler
+     {
 
     /** The string represetning the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
@@ -27,14 +30,17 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends
     /** Do we allow null responses. Usually indicates a redirect or not */
     private boolean allowNullResponses = false;
 
-    public boolean authenticateInternal(final Credentials credentials) {
+    /** Log instance. */
+    private final Log log = LogFactory.getLog(getClass());
+
+    public boolean authenticate(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         String response = null;
         if (!serviceCredentials.getCallbackUrl().getProtocol().equals(
             PROTOCOL_HTTPS)) {
             return false;
         }
-        getLog().debug(
+        log.debug(
             "Attempting to resolve credentials for " + serviceCredentials);
         response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
             .getCallbackUrl());
@@ -42,7 +48,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends
         return this.allowNullResponses ? true : response != null;
     }
 
-    protected boolean supports(final Credentials credentials) {
+    public boolean supports(final Credentials credentials) {
         return HttpBasedServiceCredentials.class.isAssignableFrom(credentials
             .getClass());
     }
