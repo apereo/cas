@@ -25,14 +25,14 @@ public class EventListener implements ApplicationListener, InitializingBean {
     private EventHandler[] eventHandlers;
     
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        if (!(applicationEvent instanceof Event)) {
+        if (!Event.class.isAssignableFrom(applicationEvent.getClass())) {
             return;
         }
         
         final Event event = (Event) applicationEvent;
         
         for (int i = 0; i < this.eventHandlers.length; i++) {
-            EventHandler eventHandler = this.eventHandlers[i];
+            final EventHandler eventHandler = this.eventHandlers[i];
             
             if (eventHandler.supports(event)) {
                 eventHandler.handleEvent(event);

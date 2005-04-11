@@ -110,7 +110,6 @@ public final class CentralAuthenticationServiceImpl implements
                         .getAuthentication().getPrincipal();
                     Principal newPrincipal = authentication.getPrincipal();
 
-                    // XXX change from null to TicketException
                     if (!newPrincipal.equals(originalPrincipal)) {
                         throw new TicketCreationException();
                     }

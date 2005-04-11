@@ -8,6 +8,8 @@ package org.jasig.cas.event;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Abstract implementation of HttpRequestEvent that defines the
+ * getRequest method so that implementing classes do not need to.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -19,7 +21,7 @@ public class AbstractHttpRequestEvent extends AbstractEvent implements
     
     private final HttpServletRequest request;
     
-    public AbstractHttpRequestEvent(HttpServletRequest request) {
+    public AbstractHttpRequestEvent(final HttpServletRequest request) {
         this.request = request;
     }
 

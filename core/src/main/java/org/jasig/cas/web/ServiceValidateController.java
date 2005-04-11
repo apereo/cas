@@ -113,10 +113,8 @@ public final class ServiceValidateController extends AbstractController
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] does not satisfy authentication specification.");
 
-                // TODO internationalize this.
                 model.put(WebConstants.CODE, "INVALID_TICKET");
-                model.put(WebConstants.DESC,
-                    "ticket not backed by initial CAS login, as requested");
+                model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage("INVALID_TICKET", "INVALID_TICKET"));
                 return new ModelAndView(this.failureView, model);
             }
 
