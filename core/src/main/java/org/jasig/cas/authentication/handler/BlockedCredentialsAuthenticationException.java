@@ -37,7 +37,6 @@ public class BlockedCredentialsAuthenticationException extends
     public BlockedCredentialsAuthenticationException(final String code,
         final Throwable throwable) {
         super(code, throwable);
-        // TODO Auto-generated constructor stub
     }
 
 }

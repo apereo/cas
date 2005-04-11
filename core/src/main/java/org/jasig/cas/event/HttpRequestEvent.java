@@ -8,7 +8,8 @@ package org.jasig.cas.event;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 
+ * Event representing an HttpServletRequest.  This event can be
+ * used to represent any event from a web request.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
