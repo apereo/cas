@@ -7,6 +7,8 @@ package org.jasig.cas.event;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Implementation of an HttpRequestEvent that adds convenience methods
+ * to log page accesses.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -15,6 +17,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
 
+    private static final long serialVersionUID = 3257290244557910064L;
+
+    private static final String HEADER_USER_AGENT = "User-Agent";
+    
+    private static final String HEADER_REFERRER = "Referer";
+    
     public PageRequestHttpRequestEvent(HttpServletRequest request) {
         super(request);
     }
@@ -28,5 +36,37 @@ public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
         final String requestContext = getRequest().getContextPath();
         return requestUri.substring(requestUri.indexOf(requestContext)+requestContext.length()+1);
     }
-
+    
+    /** Convenience method to return the IPAddress.
+     * 
+     * @return the IP Address of the remote user.
+     */ 
+    public String getIpAddress() {
+        return getRequest().getRemoteAddr();
+    }
+    
+    /**
+     * Convenience method to return the type of request.
+     * @return GET or POST in most cases.
+     */
+    public String getMethod() {
+        return getRequest().getMethod();
+    }
+    
+    /**
+     * Convenience method to return the user agent.
+     * 
+     * @return the string from the User Agent header.
+     */
+    public String getUserAgent() {
+        return getRequest().getHeader(HEADER_USER_AGENT);
+    }
+    
+    /** Convenience method to return the referrer. Note, that this method name uses the proper header.
+     * 
+     * @return the referrer if there is one, null otherwise.
+     */
+    public String getReferrer() {
+        return getRequest().getHeader(HEADER_REFERRER);
+    }
 }

@@ -12,7 +12,7 @@
 	</bean>
 
 	<!-- Handler Mapping -->
-    <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
+    <bean id="handlerMapping" class="org.jasig.cas.web.support.AutowireHandlerInterceptorsSimpleUrlHandlerMapping">            
         <property name="mappings">
             <props>
                 <prop key="/login">loginController</prop>

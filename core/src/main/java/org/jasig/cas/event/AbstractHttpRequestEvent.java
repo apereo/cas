@@ -16,16 +16,15 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.0
  *
  */
-public class AbstractHttpRequestEvent extends AbstractEvent implements
-    HttpRequestEvent {
+public class AbstractHttpRequestEvent extends AbstractEvent {
     
-    private final HttpServletRequest request;
-    
-    public AbstractHttpRequestEvent(final HttpServletRequest request) {
-        this.request = request;
+    private static final long serialVersionUID = 4120848858890123065L;
+
+   public AbstractHttpRequestEvent(final HttpServletRequest request) {
+        super(request);
     }
 
     public final HttpServletRequest getRequest() {
-        return this.request;
+        return (HttpServletRequest) getSource();
     }
 }

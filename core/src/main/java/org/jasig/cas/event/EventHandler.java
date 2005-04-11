@@ -1,5 +1,7 @@
 package org.jasig.cas.event;
 
+import org.springframework.context.ApplicationEvent;
+
 /**
  * Interface of classes that know how to handle a specific event.
  * 
@@ -16,7 +18,7 @@ public interface EventHandler {
      * 
      * @param event the event to handle.
      */
-    void handleEvent(Event event);
+    void handleEvent(ApplicationEvent event);
     
     /**
      * Method to check if this handler will be able to process
@@ -25,5 +27,5 @@ public interface EventHandler {
      * @param event the event we want to check if we support.
      * @return true if the event is supported, false otherwise.
      */
-    boolean supports(Event event);
+    boolean supports(ApplicationEvent event);
 }
