@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.adaptors.cas;
 
-import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
@@ -20,19 +20,18 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LegacyTrustHandlerAdaptorAuthenticationHandler extends
-    AbstractAuthenticationHandler implements InitializingBean {
+public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements AuthenticationHandler, InitializingBean {
 
     private TrustHandler trustHandler;
 
-    protected boolean authenticateInternal(final Credentials credentials) {
+    public boolean authenticate(final Credentials credentials) {
         final LegacyCasTrustedCredentials casCredentials = (LegacyCasTrustedCredentials) credentials;
 
         return StringUtils.hasText(this.trustHandler.getUsername(casCredentials
             .getServletRequest()));
     }
 
-    protected boolean supports(final Credentials credentials) {
+    public boolean supports(final Credentials credentials) {
         return credentials != null
             && LegacyCasTrustedCredentials.class.equals(credentials.getClass());
     }

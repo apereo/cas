@@ -54,7 +54,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
             final AuthenticationHandler handler = (AuthenticationHandler) iter
                 .next();
 
-            try {
+            if (handler.supports(credentials)) {
                 if (!handler.authenticate(credentials)) {
                     log.info("AuthenticationHandler: "
                         + handler.getClass().getName()
@@ -66,8 +66,6 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                     + " successfully authenticated the user.");
                 authenticated = true;
                 break;
-            } catch (UnsupportedCredentialsException e) {
-                continue;
             }
         }
 

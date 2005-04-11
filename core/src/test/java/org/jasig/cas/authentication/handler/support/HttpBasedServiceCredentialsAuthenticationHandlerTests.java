@@ -50,13 +50,8 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
     }
 
     public void testDoesntSupportBadUserCredentials() {
-        try {
-            this.authenticationHandler
-                .authenticate(new UsernamePasswordCredentials());
-        } catch (AuthenticationException e) {
-            return;
-        }
-        fail("AuthenticationException expected.");
+            assertFalse(this.authenticationHandler
+                .supports(new UsernamePasswordCredentials()));
     }
 
     public void testAcceptsProperCertificateCredentials() {

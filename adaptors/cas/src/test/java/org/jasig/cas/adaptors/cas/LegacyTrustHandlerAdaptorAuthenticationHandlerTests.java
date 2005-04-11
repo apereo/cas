@@ -130,15 +130,8 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      * 
      * @throws AuthenticationException
      */
-    public void testAuthenticateUnsupported() throws AuthenticationException {
+    public void testAuthenticateUnsupported() {
         LegacyCasCredentials badCredentials = new LegacyCasCredentials();
-        try {
-            this.legacyTrustAdaptor.authenticate(badCredentials);
-        } catch (UnsupportedCredentialsException uce) {
-            // good
-            return;
-        }
-        fail("Should have thrown UnuspportedCredentialsException.");
-
+        assertFalse(this.legacyTrustAdaptor.supports(badCredentials));
     }
 }

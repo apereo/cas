@@ -8,10 +8,12 @@ package org.jasig.cas.adaptors.jdbc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -26,7 +28,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  */
 
 public class SearchModeSearchDatabaseAuthenticationHandler extends
-    AbstractJdbcAuthenticationHandler {
+    JdbcDaoSupport implements AuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -42,7 +44,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected boolean authenticateInternal(final Credentials request) {
+    public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
         final String encyptedPassword = this.passwordTranslator.encode(uRequest
             .getPassword());
@@ -53,13 +55,13 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
         return count > 0;
     }
 
-    protected boolean supports(Credentials credentials) {
+    public boolean supports(Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials
                 .getClass());
     }
 
-    public void init() throws Exception {
+    protected void initDao() throws Exception {
         if (this.fieldPassword == null || this.fieldUser == null
             || this.tableUsers == null) {
             throw new IllegalStateException(

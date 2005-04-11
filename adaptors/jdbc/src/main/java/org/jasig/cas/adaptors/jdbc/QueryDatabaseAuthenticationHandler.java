@@ -7,10 +7,13 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -24,7 +27,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @since 3.0
  */
 public class QueryDatabaseAuthenticationHandler extends
-    AbstractJdbcAuthenticationHandler {
+    JdbcDaoSupport implements AuthenticationHandler {
 
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -32,7 +35,7 @@ public class QueryDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected boolean authenticateInternal(final Credentials request) {
+    public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
@@ -43,13 +46,13 @@ public class QueryDatabaseAuthenticationHandler extends
         return dbPassword.equals(encryptedPassword);
     }
 
-    protected boolean supports(Credentials credentials) {
+    public boolean supports(Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials
                 .getClass());
     }
 
-    protected void initHandler() throws Exception {
+    protected void initDao() throws Exception {
         if (this.sql == null) {
             throw new IllegalStateException("sql must be set on "
                 + this.getClass().getName());

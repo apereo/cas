@@ -43,15 +43,11 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            this.authenticationHandler
-                .authenticate(new HttpBasedServiceCredentials(new URL(
-                    "http://www.rutgers.edu")));
+            assertFalse(this.authenticationHandler
+                .supports(new HttpBasedServiceCredentials(new URL(
+                    "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
-        } catch (UnsupportedCredentialsException e) {
-            // this is okay
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught.");
         }
     }
 

@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -45,6 +47,9 @@ public final class FileAuthenticationHandler extends
 
     /** The filename to read the list of usernames from. */
     private String fileName;
+    
+    /** Log instance. */
+    private final Log log = LogFactory.getLog(getClass());
 
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
@@ -75,14 +80,14 @@ public final class FileAuthenticationHandler extends
                 line = bufferedReader.readLine();
             }
         } catch (Exception e) {
-            getLog().error(e);
+            log.error(e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                getLog().error(e);
+                log.error(e);
             }
         }
         return false;

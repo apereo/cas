@@ -8,8 +8,10 @@ package org.jasig.cas.adaptors.ldap;
 import javax.naming.directory.DirContext;
 
 import org.jasig.cas.adaptors.ldap.util.LdapUtils;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
@@ -21,11 +23,11 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @since 3.0
  */
 public class FastBindLdapAuthenticationHandler extends
-    AbstractLdapAuthenticationHandler {
+    LdapDaoSupport implements AuthenticationHandler {
 
     private String filter;
 
-    public boolean authenticateInternal(final Credentials request) {
+    public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
 
         DirContext dirContext = this.getContextSource().getDirContext(
@@ -47,7 +49,7 @@ public class FastBindLdapAuthenticationHandler extends
         this.filter = filter;
     }
 
-    protected boolean supports(Credentials credentials) {
+    public boolean supports(Credentials credentials) {
         return credentials != null
             && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }

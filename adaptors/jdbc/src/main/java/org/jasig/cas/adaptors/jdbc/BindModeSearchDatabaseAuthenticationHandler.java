@@ -8,8 +8,10 @@ package org.jasig.cas.adaptors.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
@@ -23,10 +25,10 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends
-    AbstractJdbcAuthenticationHandler {
+public final class BindModeSearchDatabaseAuthenticationHandler extends
+    JdbcDaoSupport implements AuthenticationHandler {
 
-    protected boolean authenticateInternal(final Credentials request) {
+    public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
         final String username = uRequest.getUserName();
         final String password = uRequest.getPassword();
@@ -42,7 +44,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends
         }
     }
 
-    protected boolean supports(Credentials credentials) {
+    public boolean supports(Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials
                 .getClass());

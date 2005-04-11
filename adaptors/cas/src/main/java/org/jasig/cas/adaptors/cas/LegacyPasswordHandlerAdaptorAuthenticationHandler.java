@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.adaptors.cas;
 
-import org.jasig.cas.authentication.handler.support.AbstractAuthenticationHandler;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -19,12 +19,12 @@ import edu.yale.its.tp.cas.auth.PasswordHandler;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
-    AbstractAuthenticationHandler implements InitializingBean {
+public class LegacyPasswordHandlerAdaptorAuthenticationHandler
+    implements AuthenticationHandler, InitializingBean {
 
     private PasswordHandler passwordHandler;
 
-    protected boolean authenticateInternal(final Credentials credentials) {
+    public boolean authenticate(final Credentials credentials) {
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials) credentials;
 
         return this.passwordHandler.authenticate(casCredentials
@@ -32,7 +32,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler extends
             .getPassword());
     }
 
-    protected boolean supports(final Credentials credentials) {
+    public boolean supports(final Credentials credentials) {
         if (credentials == null)
             return false;
 

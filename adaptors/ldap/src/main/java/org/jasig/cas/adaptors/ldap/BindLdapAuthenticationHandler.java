@@ -15,10 +15,12 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.jasig.cas.adaptors.ldap.util.LdapUtils;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.ldap.core.AttributeHelper;
 import org.springframework.ldap.core.SearchResultCallbackHandler;
+import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
  * Handler to do LDAP bind.
@@ -28,7 +30,7 @@ import org.springframework.ldap.core.SearchResultCallbackHandler;
  * @since 3.0
  */
 public class BindLdapAuthenticationHandler extends
-    AbstractLdapAuthenticationHandler {
+    LdapDaoSupport implements AuthenticationHandler {
 
     private static final String[] RETURN_VALUES = new String[] {"cn"};
 
@@ -54,7 +56,7 @@ public class BindLdapAuthenticationHandler extends
 
     private boolean allowMultipleAccounts;
 
-    public boolean authenticateInternal(final Credentials request) {
+    public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
 
         List values = (List) this.getLdapTemplate().search(this.searchBase,
@@ -103,7 +105,7 @@ public class BindLdapAuthenticationHandler extends
         return constraints;
     }
 
-    public void initDao() throws Exception {
+    protected void initDao() throws Exception {
         if (!this.scopeOneLevel && !this.scopeObject && !this.scopeSubtree)
             throw new IllegalStateException(
                 "Either scopeOneLevel, scopeObject or scopeSubtree must be set to true on "
@@ -124,7 +126,7 @@ public class BindLdapAuthenticationHandler extends
             this.scopeValue = SearchControls.SUBTREE_SCOPE;
     }
 
-    protected boolean supports(Credentials credentials) {
+    public boolean supports(Credentials credentials) {
         return credentials != null
             && credentials.getClass().equals(UsernamePasswordCredentials.class);
     }
