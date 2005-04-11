@@ -7,6 +7,8 @@ package org.jasig.cas.event;
 
 import java.util.Date;
 
+import org.springframework.context.ApplicationEvent;
+
 /**
  * Abstract implementation of the Event interface that defines
  * the method getPublishedDate so that implementing classes
@@ -17,11 +19,12 @@ import java.util.Date;
  * @since 3.0
  *
  */
-public abstract class AbstractEvent implements Event {
+public abstract class AbstractEvent extends ApplicationEvent {
     
     private final Date publishedDate;
     
-    public AbstractEvent() {
+    public AbstractEvent(Object o) {
+        super(o);
         this.publishedDate = new Date();
     }
 
