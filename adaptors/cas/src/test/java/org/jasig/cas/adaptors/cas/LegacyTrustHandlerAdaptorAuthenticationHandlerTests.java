@@ -10,7 +10,6 @@ import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockTrustHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;
@@ -62,7 +61,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      * 
      * @throws AuthenticationException
      */
-    public void testNoTrustHandler() throws AuthenticationException {
+    public void testNoTrustHandler() {
         LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
 
         try {
@@ -81,7 +80,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      * 
      * @throws AuthenticationException as one failure modality
      */
-    public void testAuthenticate() throws AuthenticationException {
+    public void testAuthenticate() {
         LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
 
         ServletRequest request = new MockHttpServletRequest();
@@ -105,7 +104,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      * 
      * @throws AuthenticationException - as one failure modality
      */
-    public void testAuthenticateFails() throws AuthenticationException {
+    public void testAuthenticateFails() {
         LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
 
         ServletRequest request = new MockHttpServletRequest();
