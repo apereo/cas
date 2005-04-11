@@ -65,14 +65,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
      * 
      * @throws AuthenticationException as a failure modality
      */
-    public void testAuthenticateUnsupported() throws AuthenticationException {
-        try {
-            this.lphaah.authenticate(new LegacyCasTrustedCredentials());
-        } catch (UnsupportedCredentialsException uce) {
-            // good
-            return;
-        }
-        fail("Expected UnssupportedCredentialsException.");
+    public void testAuthenticateUnsupported() {
+            this.lphaah.supports(new LegacyCasTrustedCredentials());
     }
 
     public void testAuthenticateSuccess() throws AuthenticationException {

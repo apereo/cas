@@ -12,6 +12,8 @@ import org.jasig.cas.authentication.principal.Credentials;
  * Developers deploying CAS supply an AuthenticationHandler and plug it into the
  * AuthenticationManager. Implementations of this interface might be backed by
  * such things as LDAP servers, Kerberos realms, RDBMS tables, etc.
+ * <p>A call to the authenticate method can assume that the corresponding supports
+ * method was called and check first.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -30,4 +32,14 @@ public interface AuthenticationHandler {
      */
     boolean authenticate(Credentials credentials)
         throws AuthenticationException;
+    
+    /**
+     * Method to check if the handler knows how to handle these credentials.  It may
+     * be a simple check of the Credentials class or something more complicated such as
+     * scanning the information contained in the Credentials object.
+     * 
+     * @param credentials The credentials to check.
+     * @return true if the handler supports the Credentials, false othewrise.
+     */
+    boolean supports(Credentials credentials);
 }
