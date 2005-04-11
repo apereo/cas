@@ -10,7 +10,6 @@ import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockPasswordHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;
@@ -48,7 +47,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
      * 
      * @throws AuthenticationException as a failure modality
      */
-    public void testAuthenticateMissingHandler() throws AuthenticationException {
+    public void testAuthenticateMissingHandler() {
         try {
             this.lphaah.authenticate(new LegacyCasCredentials());
         } catch (NullPointerException npe) {
@@ -69,7 +68,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
             this.lphaah.supports(new LegacyCasTrustedCredentials());
     }
 
-    public void testAuthenticateSuccess() throws AuthenticationException {
+    public void testAuthenticateSuccess() {
         // configure the PasswordHandler.
         MockPasswordHandler mockHandler = new MockPasswordHandler();
         mockHandler.setSucceed(true);
@@ -90,7 +89,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
 
     }
 
-    public void testAuthenticateFailure() throws AuthenticationException {
+    public void testAuthenticateFailure() {
         // configure the PasswordHandler.
         MockPasswordHandler mockHandler = new MockPasswordHandler();
         mockHandler.setSucceed(false);
