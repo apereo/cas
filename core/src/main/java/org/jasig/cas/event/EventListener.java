@@ -43,4 +43,12 @@ public class EventListener implements ApplicationListener, InitializingBean {
             throw new IllegalStateException("eventHandlers cannot be null or empty on " + this.getClass().getName());
         }
     }
+
+    /**
+     * Method to set the Event Handlers to process events.
+     * @param eventHandlers the handlers.
+     */
+    public void setEventHandlers(EventHandler[] eventHandlers) {
+        this.eventHandlers = eventHandlers;
+    }
 }
