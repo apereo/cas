@@ -21,7 +21,7 @@ public class TicketEvent extends AbstractEvent {
     
     public static final TicketEventType CREATE_SERVCE_TICKET = new TicketEventType("CREATE_SERVICE_TICKET");
     
-    public static final TicketEventType DESTROY_TICKET_GRANTING_TICKET = new TicketEventType("DESTORY_TICKET_GRANTING_TICKET");
+    public static final TicketEventType DESTROY_TICKET_GRANTING_TICKET = new TicketEventType("DESTROY_TICKET_GRANTING_TICKET");
     
     public static final TicketEventType VALIDATE_SERVICE_TICKET = new TicketEventType("VALIDATE_SERVICE_TICKET");
 
@@ -39,8 +39,8 @@ public class TicketEvent extends AbstractEvent {
         this(null, ticketEventType, ticketId);
     }
     
-    public TicketEvent(final Ticket ticket, final TicketEventType ticketEventType, final String ticketId) {
-        super(ticket);
+    private TicketEvent(final Ticket ticket, final TicketEventType ticketEventType, final String ticketId) {
+        super((ticket == null) ? (Object) ticketId : ticket);
         
         if (ticketEventType == null) {
             throw new IllegalStateException("ticketEventType cannot be null on " + this.getClass().getName());
@@ -59,7 +59,7 @@ public class TicketEvent extends AbstractEvent {
     }
     
     public Ticket getTicket() {
-        return (Ticket) getSource();
+        return (getSource() instanceof Ticket) ? (Ticket) getSource() : null;
     }
     
     public TicketEventType getTicketEventType() {

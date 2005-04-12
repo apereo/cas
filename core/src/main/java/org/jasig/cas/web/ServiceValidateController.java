@@ -48,7 +48,7 @@ public final class ServiceValidateController extends AbstractController
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The validation protocol we want to use. */
-    private Class authenticationSpecificationClass;
+    private Class validationSpecificationClass;
 
     /** The proxy handler we want to use with the controller. */
     private ProxyHandler proxyHandler;
@@ -66,11 +66,11 @@ public final class ServiceValidateController extends AbstractController
                     + this.getClass().getName());
         }
 
-        if (this.authenticationSpecificationClass == null) {
-            this.authenticationSpecificationClass = Cas20ProtocolValidationSpecification.class;
+        if (this.validationSpecificationClass == null) {
+            this.validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
             log
                 .info("No authentication specification class set.  Defaulting to "
-                    + this.authenticationSpecificationClass.getName());
+                    + this.validationSpecificationClass.getName());
         }
 
         if (this.successView == null) {
@@ -151,7 +151,7 @@ public final class ServiceValidateController extends AbstractController
 
     private ValidationSpecification getCommandClass() {
         try {
-            return (ValidationSpecification) this.authenticationSpecificationClass
+            return (ValidationSpecification) this.validationSpecificationClass
                 .newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -168,12 +168,12 @@ public final class ServiceValidateController extends AbstractController
     }
 
     /**
-     * @param authenticationSpecificationClass The
+     * @param validationSpecificationClass The
      * authenticationSpecificationClass to set.
      */
     public void setValidationSpecificationClass(
-        final Class authenticationSpecificationClass) {
-        this.authenticationSpecificationClass = authenticationSpecificationClass;
+        final Class validationSpecificationClass) {
+        this.validationSpecificationClass = validationSpecificationClass;
     }
 
     /**
