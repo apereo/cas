@@ -24,7 +24,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @see org.jasig.cas.event.PageRequestHttpRequestEvent
  *
  */
-class PageRequestHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ApplicationEventPublisherAware {
+public class PageRequestHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ApplicationEventPublisherAware {
     
     private ApplicationEventPublisher applicationEventPublisher;
 
