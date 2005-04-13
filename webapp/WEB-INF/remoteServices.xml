@@ -10,23 +10,18 @@
 	</bean>
 
 	<bean id="mbeanserver" class="org.springframework.jmx.support.MBeanServerFactoryBean">
-		<property name="defaultDomain"><value>cas</value></property>
+		<property name="defaultDomain" value="cas" />
 	</bean>
 
 	<bean id="attributeSource" class="org.springframework.jmx.export.metadata.AttributesJmxAttributeSource">
 		<property name="attributes"><bean class="org.springframework.metadata.commons.CommonsAttributes" /></property>
 	</bean>
 
-	<bean id="assembler" class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
-		<property name="attributeSource"><ref local="attributeSource" /></property>
-	</bean>
+	<bean id="assembler" class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler" autowire="byType" />
 
-	<bean id="mbeanadapter" class="org.springframework.jmx.export.MBeanExporter">
-		<property name="server"><ref local="mbeanserver"/></property>
+	<bean id="mbeanadapter" class="org.springframework.jmx.export.MBeanExporter" autowire="byType">
 		<property name="namingStrategy">
-			<bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
-				<property name="attributeSource"><ref local="attributeSource" /></property>
-			</bean>
+			<bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy" autowire="byType" />
 		</property>
     	<property name="beans">
 	      	<map>
@@ -35,31 +30,17 @@
         		</entry>
 			</map>
     	</property>
-		<property name="assembler">
-			<ref local="assembler" />
-		</property>
 	</bean>
 
-	<bean id="jmxconnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean">
-		<property name="server">
-			<ref local="mbeanserver" />
-		</property>
-		<property name="serviceUrl">
-			<value>service:jmx:jmxmp://localhost:9876</value>
-		</property>
-		<property name="threaded">
-			<value>true</value>
-		</property>
-		<property name="daemon">
-			<value>true</value>
-		</property>
+	<bean id="jmxconnector" class="org.springframework.jmx.support.ConnectorServerFactoryBean" autowire="byType">
+		<property name="serviceUrl" value="service:jmx:jmxmp://localhost:9876" />
+		<property name="threaded" value="true" />
+		<property name="daemon" value="true" />
 	</bean>
 
 	<bean id="statsBean" class="org.jasig.cas.stat.support.TicketStatisticsImpl" />
 	
-	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice">
-		<property name="ticketStatsManager"><ref local="statsBean" /></property>
-		<property name="ticketRegistry"><ref bean="ticketRegistry" /></property>
+	<bean id="logTicketStatisticsAfterReturningAdvice" class="org.jasig.cas.stat.advice.LogTicketStatisticsAfterReturningAdvice" autowire="byType">
         <property name="statsStateMutators">
             <props>
                 <prop key="delegateTicketGrantingTicket">incrementNumberOfProxyGrantingTicketsVended</prop>
@@ -73,7 +54,7 @@
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 	
 	<bean id="logStatsAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
-		<constructor-arg><ref local="logTicketStatisticsAfterReturningAdvice" /></constructor-arg>
+		<constructor-arg ref="logTicketStatisticsAfterReturningAdvice" />
 		<property name="patterns">
 			<list>
 				<value>.*CentralAuthenticationService.*delegateTicketGrantingTicket.*</value>
@@ -81,9 +62,6 @@
 				<value>.*CentralAuthenticationService.*createTicketGrantingTicket.*</value>
 			</list>
 		</property>
-        <property name="perl5">
-            <value>false</value>
-        </property>
+        <property name="perl5" value="false" />
 	</bean>
-
 </beans>

@@ -3,35 +3,32 @@
 <beans>
 	<!-- Message source for this context, loaded from localized "messages_xx" files -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename"><value>messages</value></property>										
+		<property name="basename" value="messages" />
 	</bean>
 	
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location"><value>WEB-INF/cas.properties</value></property>
+		<property name="location" value="WEB-INF/cas.properties" />
 	</bean>
 	
 	<!-- ID Generators -->
 	<bean id="uniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
-		<constructor-arg index="0"><value>31</value></constructor-arg>
+		<constructor-arg index="0" value="31" />
 	</bean>
 	
 	<!-- Expiration policies -->
 	<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy">
-		<constructor-arg index="0"><value>${policy.expiration.service.numberOfUses}</value></constructor-arg>
-		<constructor-arg index="1"><value>${policy.expiration.service.timeOut}</value></constructor-arg>
+		<constructor-arg index="0" value="${policy.expiration.service.numberOfUses}" />
+		<constructor-arg index="1" value="${policy.expiration.service.timeOut}" />
 	</bean>
 	
 	<bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy">
-		<constructor-arg index="0"><value>${policy.expiration.granting.timeOut}</value></constructor-arg>
+		<constructor-arg index="0" value="${policy.expiration.granting.timeOut}" />
 	</bean>
 
 	<!-- CentralAuthenticationService -->
-	<bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
-		<property name="ticketRegistry"><ref local="ticketRegistry" /></property>
-		<property name="authenticationManager"><ref bean="authenticationManager" /></property>
-		<property name="uniqueTicketIdGenerator"><ref local="uniqueIdGenerator" /></property>
-		<property name="ticketGrantingTicketExpirationPolicy"><ref local="grantingTicketExpirationPolicy" /></property>
-		<property name="serviceTicketExpirationPolicy"><ref local="serviceTicketExpirationPolicy" /></property>
+	<bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl" autowire="byType">
+		<property name="ticketGrantingTicketExpirationPolicy" ref="grantingTicketExpirationPolicy" />
+		<property name="serviceTicketExpirationPolicy" ref="serviceTicketExpirationPolicy" />
 	</bean>
 	
 	<!-- ProxyHandlers -->
@@ -48,15 +45,13 @@
 	<!--Quartz -->
 	<!--  LOGIN TOKEN REGISTRY CLEANER -->
 	<bean id="loginTokenRegistryCleaner" class="org.jasig.cas.ticket.registry.support.LoginTokenRegistryCleaner">
-		<property name="loginTokens"><ref local="loginTokens" /></property>
-		<property name="timeOut"><value>${web.token.login.timeout}</value></property>
+		<property name="loginTokens" ref="loginTokens" />
+		<property name="timeOut" value="${web.token.login.timeout}" />
 	</bean>
 	
 	<bean id="jobDetailLoginTokenRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref local="loginTokenRegistryCleaner" />
-		</property>
-		<property name="targetMethod"><value>clean</value></property>
+		<property name="targetObject" ref="loginTokenRegistryCleaner" />
+		<property name="targetMethod" value="clean" />
 	</bean>
 	
 	<bean id="triggerJobDetailLoginTokenRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
@@ -73,18 +68,14 @@
 	</bean>
 	
 	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject">
-			<ref local="ticketRegistryCleaner" />
-		</property>
+		<property name="targetObject" ref="ticketRegistryCleaner" />
 		<property name="targetMethod"><value>clean</value></property>
 	</bean>
 	
 	<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail">
-			<ref local="jobDetailTicketRegistryCleaner" />
-		</property>
-		<property name="startDelay"><value>${web.token.ticket.cleanup.start}</value></property>
-		<property name="repeatInterval"><value>${web.token.ticket.cleanup.repeat}</value></property>
+		<property name="jobDetail" ref="jobDetailTicketRegistryCleaner" />
+		<property name="startDelay" value="${web.token.ticket.cleanup.start}" />
+		<property name="repeatInterval" value="${web.token.ticket.cleanup.repeat}" />
 	</bean>
 
 	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
@@ -98,5 +89,4 @@
 	
 	<!-- ADVISORS -->	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
-
 </beans>

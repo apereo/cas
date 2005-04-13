@@ -7,7 +7,7 @@
 
 	<bean
 		id="pageRequestHandlerInterceptorAdapter"
-		class="org.jasig.cas.event.advice.PageRequestHandlerIntercepterAdapter" />
+		class="org.jasig.cas.event.advice.PageRequestHandlerInterceptorAdapter" />
 		
 	<bean
 		id="centralAuthenticationServiceAfterReturningAdvice"
