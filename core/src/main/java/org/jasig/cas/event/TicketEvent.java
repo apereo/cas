@@ -4,6 +4,8 @@
  */
 package org.jasig.cas.event;
 
+import java.io.Serializable;
+
 import org.jasig.cas.ticket.Ticket;
 
 /**
@@ -89,7 +91,10 @@ public class TicketEvent extends AbstractEvent {
         return this.ticketEventType;
     }
     
-    protected final static class TicketEventType {
+    protected final static class TicketEventType implements Serializable {
+
+        private static final long serialVersionUID = 3258689897039671865L;
+
         private final String name;
 
         protected TicketEventType(String name) {
