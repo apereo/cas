@@ -26,6 +26,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  */
 public class PageRequestHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ApplicationEventPublisherAware {
     
+    /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
 
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {

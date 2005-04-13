@@ -19,6 +19,8 @@ import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
+ * Advice to check if a Service is allowed to proxy.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0 //TODO this should be using proxyUrl???

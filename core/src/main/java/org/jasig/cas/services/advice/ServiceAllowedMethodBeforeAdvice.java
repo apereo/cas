@@ -15,6 +15,8 @@ import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
+ * Advice to check if a service is allowed to use CAS.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0

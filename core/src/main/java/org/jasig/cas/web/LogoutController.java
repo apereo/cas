@@ -65,6 +65,11 @@ public final class LogoutController extends AbstractController implements
         return new ModelAndView(ViewNames.CONST_LOGOUT);
     }
 
+    /**
+     * Method to destroy the cookie for the TicketGrantingTicket
+     * @param request The HttpServletRequest
+     * @param response The HttpServletResponse
+     */
     private void destroyTicketGrantingTicketCookie(
         final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Destroying TicketGrantingTicket cookie.");

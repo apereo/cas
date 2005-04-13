@@ -69,10 +69,18 @@ public final class CallbackServicesOnTicketGrantingTicketDestructionAfterReturni
         }
     }
 
+    /**
+     *  Set the service registry.
+     * @param serviceRegistry the service registry to use.
+     */
     public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
+    /**
+     * Set the single signout map.
+     * @param singleSignoutMapping the map of single sign outs to use.
+     */
     public void setSingleSignoutMapping(final Map singleSignoutMapping) {
         this.singleSignoutMapping = singleSignoutMapping;
     }

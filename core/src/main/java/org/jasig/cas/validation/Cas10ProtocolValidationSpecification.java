@@ -29,10 +29,18 @@ public class Cas10ProtocolValidationSpecification implements
         this.renew = renew;
     }
 
+    /**
+     * Method to set the renew requirement.
+     * @param renew The renew value we want.
+     */
     public final void setRenew(final boolean renew) {
         this.renew = renew;
     }
 
+    /**
+     * Method to determine if we require renew to be true.
+     * @return true if renew is required, false otherwise.
+     */
     public final boolean isRenew() {
         return this.renew;
     }

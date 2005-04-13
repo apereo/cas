@@ -17,13 +17,18 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public class AbstractHttpRequestEvent extends AbstractEvent {
-    
+
+    /** Unique Serializable Id. */
     private static final long serialVersionUID = 4120848858890123065L;
 
    public AbstractHttpRequestEvent(final HttpServletRequest request) {
         super(request);
     }
 
+   /**
+    * Method to retrieve HttpServletRequest
+    * @return the HttpServletRequest for this event.
+    */
     public final HttpServletRequest getRequest() {
         return (HttpServletRequest) getSource();
     }

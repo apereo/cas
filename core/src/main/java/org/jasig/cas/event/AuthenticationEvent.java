@@ -18,8 +18,10 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public class AuthenticationEvent extends AbstractEvent {
 
+    /** Unique Serializable Id. */
     private static final long serialVersionUID = 3257844398434889778L;
     
+    /** Boolean of whether this event represents a successful authentication or not. */
     private boolean successfulAuthentication;
 
     public AuthenticationEvent(final Credentials credentials, final boolean successfulAuthentication) {
@@ -36,6 +38,10 @@ public class AuthenticationEvent extends AbstractEvent {
         return (Credentials) getSource();
     }
     
+    /**
+     * Method to determine if the authentication this event represents was successful or not.
+     * @return true if successful, false otherwise.
+     */
     public final boolean isSuccessfulAuthentication() {
         return this.successfulAuthentication;
     }

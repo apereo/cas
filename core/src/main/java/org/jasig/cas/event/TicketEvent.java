@@ -17,18 +17,25 @@ import org.jasig.cas.ticket.Ticket;
  */
 public class TicketEvent extends AbstractEvent {
     
+    /** TicketEvent of type Create Ticket Granting Ticket. */
     public static final TicketEventType CREATE_TICKET_GRANTING_TICKET = new TicketEventType("CREATE_TICKET_GRANTING_TICKET");
-    
+
+    /** TicketEvent of type Create Service Ticket. */
     public static final TicketEventType CREATE_SERVCE_TICKET = new TicketEventType("CREATE_SERVICE_TICKET");
     
+    /** TicketEvent of type Destroy Ticket Granting Ticket. */
     public static final TicketEventType DESTROY_TICKET_GRANTING_TICKET = new TicketEventType("DESTROY_TICKET_GRANTING_TICKET");
     
+    /** TicketEvent of type Validate Service Ticket. */
     public static final TicketEventType VALIDATE_SERVICE_TICKET = new TicketEventType("VALIDATE_SERVICE_TICKET");
 
+    /** Unique Serializable Id. */
     private static final long serialVersionUID = 3904682686680347187L;
 
+    /** The TicketEventType for this event. */
     private final TicketEventType ticketEventType;
     
+    /** The String id of the Ticket for this event. */
     private final String ticketId;
     
     public TicketEvent(final Ticket ticket, final TicketEventType ticketEventType) {
@@ -50,18 +57,34 @@ public class TicketEvent extends AbstractEvent {
             throw new IllegalStateException("Either ticketId or Ticket need to be provided.");
         }
         
+        if (ticket != null) {
+            this.ticketId = ticket.getId();
+        } else {
+            this.ticketId = ticketId;    
+        }
+        
         this.ticketEventType = ticketEventType;
-        this.ticketId = ticketId;
     }
-    
+    /**
+     * Method to retrieve the Id of the Ticket.
+     * @return the id of the ticket.
+     */
     public String getTicketId() {
-        return getTicket() == null ? this.ticketId : getTicket().getId(); 
+        return this.ticketId; 
     }
     
+    /**
+     * Method to retrieve the Ticket.
+     * @return the ticket, or null if we have no ticket.
+     */
     public Ticket getTicket() {
         return (getSource() instanceof Ticket) ? (Ticket) getSource() : null;
     }
     
+    /** Method to retrieve the TicketEventType
+     * 
+     * @return the event type.
+     */
     public TicketEventType getTicketEventType() {
         return this.ticketEventType;
     }

@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationListener;
  */
 public class EventListener implements ApplicationListener, InitializingBean {
 
+    /** The array of event handlers. */
     private EventHandler[] eventHandlers;
     
     public void onApplicationEvent(final ApplicationEvent applicationEvent) {

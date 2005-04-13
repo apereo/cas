@@ -17,6 +17,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 /**
+ * BeanPostProcessor to detect UrlHandlerMappings and register the
+ * HandlerInterceptors with them.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -29,19 +31,17 @@ public class AutowireHandlerInterceptorsBeanPostProcessor implements
     /** Logger to log events and errors. */
     private final Log log = LogFactory.getLog(getClass());
 
+    /** The applicationContext. */
     private ApplicationContext applicationContext;
 
     public Object postProcessBeforeInitialization(final Object bean, final String name)
         throws BeansException {
-        return bean;
-    }
-
-    public Object postProcessAfterInitialization(final Object bean, final String name)
-        throws BeansException {
         if (!(bean instanceof SimpleUrlHandlerMapping)) {
+            log.debug("Bean [" + name + "] does not match SimpleUrlHandlerMapping.");
             return bean;
         }
-        
+
+        log.debug("Bean [" + name + "] matches SimpleUrlHandlerMapping.");
         final SimpleUrlHandlerMapping mapping = (SimpleUrlHandlerMapping) bean;
         final Collection handlers = this.applicationContext.getBeansOfType(HandlerInterceptorAdapter.class).values();
         log.debug("Found " + handlers.size() + " HandlerInterceptors.  Attempting to register.");
@@ -53,6 +53,11 @@ public class AutowireHandlerInterceptorsBeanPostProcessor implements
         log.debug("Successfully registered " + handlerInterceptors.length + " HandlerInterceptors.");
 
         return mapping;
+    }
+
+    public Object postProcessAfterInitialization(final Object bean, final String name)
+        throws BeansException {
+        return bean;
     }
 
     

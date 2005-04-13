@@ -15,11 +15,23 @@ package org.jasig.cas.stat;
  */
 public interface TicketStatisticsManager {
 
+    /**
+     * Method to increment the number of proxy granting tickets vended.
+     */
     void incrementNumberOfProxyGrantingTicketsVended();
 
+    /**
+     * Method to increment the number of proxy tickets vended.
+     */
     void incrementNumberOfProxyTicketsVended();
 
+    /**
+     * Method to increment the number of service tickets vended.
+     */
     void incrementNumberOfServiceTicketsVended();
 
+    /**
+     * Method to increment the number of ticket granting tickets vended.
+     */
     void incrementNumberOfTicketGrantingTicketsVended();
 }
