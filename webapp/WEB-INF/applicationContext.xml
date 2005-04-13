@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
+	<!-- Bean Post Processors -->
+	<bean
+		id="autowireHandlerInterceptorsBeanPostProcessor"
+		class="org.jasig.cas.web.support.AutowireHandlerInterceptorsBeanPostProcessor" />
+
 	<!-- Message source for this context, loaded from localized "messages_xx" files -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages" />
@@ -11,7 +16,7 @@
 	</bean>
 	
 	<!-- ID Generators -->
-	<bean id="uniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+	<bean id="uniqueIdGcopyenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg index="0" value="31" />
 	</bean>
 	

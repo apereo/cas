@@ -111,10 +111,18 @@ public final class SpringApplicationContextServiceRegistryReloader implements
         }
     }
 
+    /**
+     * Method to set the file name
+     * @param fileName the File name to set.
+     */
     public void setFileName(final String fileName) {
         this.fileName = fileName;
     }
 
+    /**
+     * Method to set the Service Registry Manager.
+     * @param serviceRegistryManager the serviceRegistryManager to set.
+     */
     public void setServiceRegistryManager(
         final ServiceRegistryManager serviceRegistryManager) {
         this.serviceRegistryManager = serviceRegistryManager;

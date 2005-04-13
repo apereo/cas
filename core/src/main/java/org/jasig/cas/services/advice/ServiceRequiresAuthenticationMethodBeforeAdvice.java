@@ -12,6 +12,9 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.UnauthorizedServiceException;
 
 /**
+ * Method to check that if a service requires authentication,
+ * Credentials are always passed in.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
@@ -36,5 +39,4 @@ public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
                 "Service always requires authentication.");
         }
     }
-
 }

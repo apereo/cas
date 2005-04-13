@@ -29,6 +29,10 @@ public abstract class AbstractEvent extends ApplicationEvent {
         this.publishedDate = new Date();
     }
 
+    /**
+     * Method to retrieve the date this event was published.
+     * @return the Date this event was published.
+     */
     public final Date getPublishedDate() {
         return this.publishedDate;
     }

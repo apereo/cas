@@ -75,10 +75,18 @@ public final class RegisteredService {
         return this.theme;
     }
 
+    /**
+     * Method to retrieve the Callback for Single singout.
+     * @return the Single Signout Callback or null.
+     */
     public SingleSignoutCallback getSingleSignoutCallback() {
         return this.singleSignoutCallback;
     }
 
+    /**
+     * Method to retrieve the Proxy URL
+     * @return the Proxy URL or null if there is none.
+     */
     public URL getProxyUrl() {
         return this.proxyUrl;
     }

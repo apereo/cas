@@ -245,6 +245,12 @@ public final class LoginController extends SimpleFormController implements
         return loginToken;
     }
 
+    /**
+     * Helper method to retrieve the value of a cookie.
+     * @param request The HttpServletRequest containing the cookie.
+     * @param cookieId the name of the cookie.
+     * @return The value of the cookie or null if it does not exist.
+     */
     private String getCookieValue(final HttpServletRequest request,
         final String cookieId) {
         Cookie cookie = WebUtils.getCookie(request, cookieId);
@@ -252,6 +258,13 @@ public final class LoginController extends SimpleFormController implements
         return (cookie == null) ? null : cookie.getValue();
     }
 
+    /**
+     * Method to create a cookie and put it in the response.
+     * @param id The id to name the cookie.
+     * @param value The value to give the cookie.
+     * @param request The HttpServletRequest
+     * @param response TheHttpServletResponse to store the cookie.
+     */
     private void createCookie(final String id, final String value,
         final HttpServletRequest request, final HttpServletResponse response) {
         final Cookie cookie = new Cookie(id, value);
@@ -261,6 +274,11 @@ public final class LoginController extends SimpleFormController implements
         response.addCookie(cookie);
     }
 
+    /**
+     * Private method to convert a value to a boolean.
+     * @param value the value to convert.
+     * @return either true or false.
+     */
     private boolean convertValueToBoolean(final String value) {
         return Boolean.valueOf(value).booleanValue();
     }

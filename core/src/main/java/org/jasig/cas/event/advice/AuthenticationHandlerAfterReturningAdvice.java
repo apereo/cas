@@ -26,7 +26,8 @@ import org.springframework.context.ApplicationEventPublisherAware;
  */
 public class AuthenticationHandlerAfterReturningAdvice implements
     AfterReturningAdvice, ApplicationEventPublisherAware {
-    
+
+    /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
 
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {

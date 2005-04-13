@@ -25,8 +25,10 @@ import org.springframework.context.ApplicationEventPublisherAware;
 public class CentralAuthenticationServiceAfterReturningAdvice implements
     AfterReturningAdvice, ApplicationEventPublisherAware, InitializingBean {
     
+    /** The TicketRegistry which holds ticket information. */
     private TicketRegistry ticketRegistry;
     
+    /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
 
     public void afterReturning(Object returnValue, Method method, Object[] args,

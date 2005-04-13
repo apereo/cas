@@ -17,10 +17,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
 
+    /** The Unique Serializable Id. */
     private static final long serialVersionUID = 3257290244557910064L;
 
+    /** The constant representing the user agent header. */
     private static final String HEADER_USER_AGENT = "User-Agent";
     
+    /** the constant representing the referer header. */
     private static final String HEADER_REFERRER = "Referer";
     
     public PageRequestHttpRequestEvent(HttpServletRequest request) {

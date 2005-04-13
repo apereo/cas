@@ -16,5 +16,8 @@ package org.jasig.cas.services;
  */
 public interface ServiceRegistryReloader {
 
+    /**
+     * Method to call to reload the service registry.
+     */
     void reloadServiceRegistry();
 }
