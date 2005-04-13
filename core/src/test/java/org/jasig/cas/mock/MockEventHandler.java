@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationEvent;
 public class MockEventHandler implements EventHandler {
 
     public void handleEvent(ApplicationEvent event) {
+        // this does not have to do anything
     }
 
     public boolean supports(ApplicationEvent event) {
