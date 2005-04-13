@@ -11,6 +11,7 @@
 			/WEB-INF/userConfigContext.xml,
 			/WEB-INF/remoteServices.xml,
 			/WEB-INF/approvedServices.xml,
+			/WEB-INF/auditTrailContext.xml,
 			classpath:org/codehaus/xfire/spring/xfire.xml
 		</param-value>
 	</context-param>
