@@ -28,12 +28,12 @@ public class AutowireHandlerInterceptorsSimpleUrlHandlerMappingTests extends
         this.mapping.setApplicationContext(this.context);
     }
     
-    public void testAfterPropertiesSetNoInterceptors() throws Exception {
-        this.mapping.afterPropertiesSet();
+    public void testInitApplicationContextNoInterceptors() throws Exception {
+        this.mapping.initApplicationContext();
     }
     
-    public void testAfterPropertiesSetWithInterceptors() throws Exception {
+    public void testInitApplicationContextWithInterceptors() throws Exception {
         this.context.registerPrototype("test", PageRequestHandlerInterceptorAdapter.class);
-        this.mapping.afterPropertiesSet();
+        this.mapping.initApplicationContext();
     }
 }

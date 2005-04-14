@@ -1,6 +1,7 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.event;
 
@@ -71,7 +72,7 @@ public class TicketEvent extends AbstractEvent {
      * Method to retrieve the Id of the Ticket.
      * @return the id of the ticket.
      */
-    public String getTicketId() {
+    public final String getTicketId() {
         return this.ticketId; 
     }
     
@@ -79,25 +80,27 @@ public class TicketEvent extends AbstractEvent {
      * Method to retrieve the Ticket.
      * @return the ticket, or null if we have no ticket.
      */
-    public Ticket getTicket() {
+    public final Ticket getTicket() {
         return (getSource() instanceof Ticket) ? (Ticket) getSource() : null;
     }
     
-    /** Method to retrieve the TicketEventType
+    /** Method to retrieve the TicketEventType.
      * 
      * @return the event type.
      */
-    public TicketEventType getTicketEventType() {
+    public final TicketEventType getTicketEventType() {
         return this.ticketEventType;
     }
     
-    protected final static class TicketEventType implements Serializable {
+    protected static final class TicketEventType implements Serializable {
 
+        /** Serializable Unique Id. */
         private static final long serialVersionUID = 3258689897039671865L;
 
+        /** The name of the event. */
         private final String name;
 
-        protected TicketEventType(String name) {
+        protected TicketEventType(final String name) {
             this.name = name; 
         }
         

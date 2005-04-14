@@ -12,7 +12,7 @@
 	</bean>
 
 	<!-- Handler Mapping -->
-    <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">            
+    <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
                 <prop key="/login">loginController</prop>
@@ -23,6 +23,11 @@
 				<prop key="/proxyValidate">proxyValidateController</prop>
 				<prop key="/CentralAuthenticationService">xFireCentralAuthenticationService</prop>
             </props>
+        </property>
+        <property name="interceptors">
+        	<list>
+        		<ref bean="pageRequestHandlerInterceptorAdapter" />
+        	</list>
         </property>
     </bean>
 	

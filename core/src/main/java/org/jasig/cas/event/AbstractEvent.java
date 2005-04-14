@@ -22,9 +22,10 @@ import org.springframework.context.ApplicationEvent;
  */
 public abstract class AbstractEvent extends ApplicationEvent {
     
+    /** The date the event was published. */
     private final Date publishedDate;
     
-    public AbstractEvent(Object o) {
+    public AbstractEvent(final Object o) {
         super(o);
         this.publishedDate = new Date();
     }
