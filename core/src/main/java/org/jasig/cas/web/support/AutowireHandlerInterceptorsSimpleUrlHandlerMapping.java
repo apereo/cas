@@ -9,9 +9,8 @@ import java.util.Collection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.BeansException;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 /**
@@ -24,14 +23,14 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
  * @since 3.0
  */
 public class AutowireHandlerInterceptorsSimpleUrlHandlerMapping extends
-    SimpleUrlHandlerMapping implements InitializingBean {
+    SimpleUrlHandlerMapping {
 
     /** Logger to log events and errors. */
     private final Log log = LogFactory.getLog(getClass());
     
-    public void afterPropertiesSet() throws Exception {
+    public final void initApplicationContext() throws BeansException {
         
-        Collection handlers = getApplicationContext().getBeansOfType(HandlerInterceptorAdapter.class).values();
+        Collection handlers = getApplicationContext().getBeansOfType(HandlerInterceptor.class).values();
         log.debug("Found " + handlers.size() + " HandlerInterceptors.  Attempting to register.");
         HandlerInterceptor[] handlerInterceptors = new HandlerInterceptor[handlers.size()];
         

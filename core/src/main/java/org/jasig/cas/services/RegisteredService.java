@@ -84,7 +84,7 @@ public final class RegisteredService {
     }
 
     /**
-     * Method to retrieve the Proxy URL
+     * Method to retrieve the Proxy URL.
      * @return the Proxy URL or null if there is none.
      */
     public URL getProxyUrl() {

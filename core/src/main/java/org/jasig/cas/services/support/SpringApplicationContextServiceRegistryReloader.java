@@ -112,7 +112,7 @@ public final class SpringApplicationContextServiceRegistryReloader implements
     }
 
     /**
-     * Method to set the file name
+     * Method to set the file name.
      * @param fileName the File name to set.
      */
     public void setFileName(final String fileName) {

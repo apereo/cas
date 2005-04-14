@@ -1,6 +1,7 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.event.advice;
 
@@ -15,14 +16,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
 /**
- * AfterReturningAdvice to advice the creation, validation, etc. of tickets.
+ * Advice to advise the creation, validation, etc. of tickets.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  *
  */
-public class CentralAuthenticationServiceAfterReturningAdvice implements
+public final class CentralAuthenticationServiceAfterReturningAdvice implements
     AfterReturningAdvice, ApplicationEventPublisherAware, InitializingBean {
     
     /** The TicketRegistry which holds ticket information. */
@@ -31,8 +32,8 @@ public class CentralAuthenticationServiceAfterReturningAdvice implements
     /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void afterReturning(Object returnValue, Method method, Object[] args,
-        Object target) throws Throwable {
+    public void afterReturning(final Object returnValue, final Method method, final Object[] args,
+        final Object target) throws Throwable {
         
         if (method.getName().equals("createTicketGrantingTicket")) {
             Ticket ticket = this.ticketRegistry.getTicket((String) returnValue);

@@ -31,7 +31,7 @@ public class AuthenticationEvent extends AbstractEvent {
     }
 
     /**
-     * Method to return the Credentials for the Authentication
+     * Method to return the Credentials for the Authentication.
      * @return the Credentials.
      */
     public final Credentials getCredentials() {

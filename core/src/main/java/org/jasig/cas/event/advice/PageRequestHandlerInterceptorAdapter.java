@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.event.PageRequestHttpRequestEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
@@ -24,7 +25,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @see org.jasig.cas.event.PageRequestHttpRequestEvent
  *
  */
-public class PageRequestHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ApplicationEventPublisherAware {
+public final class PageRequestHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements HandlerInterceptor, ApplicationEventPublisherAware {
     
     /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
@@ -33,8 +34,8 @@ public class PageRequestHandlerInterceptorAdapter extends HandlerInterceptorAdap
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        PageRequestHttpRequestEvent event = new PageRequestHttpRequestEvent(request);
+    public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) throws Exception {
+        final PageRequestHttpRequestEvent event = new PageRequestHttpRequestEvent(request);
         this.applicationEventPublisher.publishEvent(event);
     }
 }

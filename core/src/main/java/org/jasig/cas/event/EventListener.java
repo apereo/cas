@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationListener;
  * @since 3.0
  *
  */
-public class EventListener implements ApplicationListener, InitializingBean {
+public final class EventListener implements ApplicationListener, InitializingBean {
 
     /** The array of event handlers. */
     private EventHandler[] eventHandlers;
@@ -49,7 +49,7 @@ public class EventListener implements ApplicationListener, InitializingBean {
      * Method to set the Event Handlers to process events.
      * @param eventHandlers the handlers.
      */
-    public void setEventHandlers(EventHandler[] eventHandlers) {
+    public void setEventHandlers(final EventHandler[] eventHandlers) {
         this.eventHandlers = eventHandlers;
     }
 }
