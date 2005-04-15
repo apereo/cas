@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<document>
+	<properties>
+		<author email="scott_battaglia@rutgers.edu">Scott Battaglia</author>
+		<title>Audit Trail Use Case</title>
+	</properties>
+	<body>
+		<section name="Overview">
+			<p>Based on the initial use case provided by Ryan Matteson at CalPoly, Central Authentication Service 3.0 supports the notion of publishing and logging events.</p>
+			<p>Within the CAS 3.0 world, there lives three types of events: TicketEvents, AuthenticationEvents, and PageRequestHttpRequestEvents.</p>
+			<dl>
+				<dt>TicketEvent</dt>
+				<dd>A TicketEvent denotes an event related to a Ticket, such as TicketGrantingTicket creation, ServiceTicket creation, ServiceTicket validation and the destruction of a TicketGrantingTicket.</dd>
+	
+				<dt>AuthenticationEvent</dt>
+				<dd>An AuthenticationEvent denotes when an AuthenticationHandler returned true or false.  The AuthenticationEvent contains both the outcome of the Authentication and the Credentials provided to the handler.</dd>
+	
+				<dt>PageRequestHttpRequestEvent</dt>
+				<dd>A PageRequestHttpRequestEvent is sent whenever there is a successful page rendering (web-tier concern).  This event encapsulates the HttpServletRequest giving the EventHandler access to anything in the ServletRequest. It also includes convenience methods to access the specific page, the IP Address, the User Agent and the Referer.</dd>
+			</dl>
+			<p>There is also an EventListener that is configured to listen for AbstractEvents (all CAS events extend AbstractEvents). The EventListener is configured with a set of EventHandlers that can process certain events.  The EventListener cycles through the EventHandlers and hands off the Event to any EventHandler that can handle the event.</p>
+			<p>The publishing of events is handled by three Aspects.  Once Advice advises the AuthenticationHandlers, one the CentralAuthenticationService, and one is a special HandlerInterceptor that is registered with the UrlMapping.</p>
+		</section>
+		<section name="Configuring">
+			<p>To enable the publishing/listening of events, all one needs to do is edit the web.xml file and under the &quot;contextConfigLocation&quot; param, add WEB-INF/auditTrailContext.xml to the list.  This will enable the Aspects and the Listener.  You will need to implement your own EventHandlers and register them with the EventListener.</p>
+			<p>Finally, at the moment, the following property needs to be added to the SimpleUrlHandlerMapping under cas-servlet.xml</p>
+			<source>
+	        &lt;property name="interceptors"&gt;
+	        	&lt;list&gt;
+	        		&lt;ref bean="pageRequestHandlerInterceptorAdapter" /&gt;
+	        	&lt;/list&gt;
+	        &lt;/property&gt;
+	        </source>
+			<p>For testing purposes, a TestEventHandler that writes to System.out is enabled by default.</p>
+		</section>
+	</body>
+</document>

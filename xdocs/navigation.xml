@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<project name="JA-SIG Central Authentication Service 3.0">
+	<title>JA-SIG Central Authentication Service 3.0</title>
+	
+	<body>
+		<links>
+			<item name="JA-SIG" href="http://www.ja-sig.org" />
+			<item name="Yale" href="http://www.yale.edu" />
+			<item name="Rutgers" href="http://www.rutgers.edu" />
+		</links>
+		
+		<menu name="Use Cases">
+			<item name="Audit Trail" href="/use_cases/auditTrail.html" />
+			<item name="Service Authentication" href="/use_cases/serviceAuthentication.html" />
+		</menu>
+		
+	</body>
+</project>
