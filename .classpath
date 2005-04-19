@@ -25,5 +25,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/commons-collections/jars/commons-collections-3.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2-rc1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2-rc1.jar"/>
+	<classpathentry kind="lib" path="lib/opensaml-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
