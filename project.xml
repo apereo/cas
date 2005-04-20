@@ -332,6 +332,17 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>nekohtml</groupId>
+			<artifactId>nekohtml</artifactId>
+			<version>0.9.4</version>
+			<type>jar</type>
+			<url>http://httpunit.sourceforge.net/</url>
+			<properties>
+				<war.bundle>false</war.bundle>
+			</properties>
+		</dependency>
+		
+		<dependency>
 			<groupId>jwebunit</groupId>
 			<artifactId>jwebunit</artifactId>
 			<version>1.2</version>

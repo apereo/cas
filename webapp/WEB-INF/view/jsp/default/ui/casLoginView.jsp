@@ -53,7 +53,7 @@
 
 							<p>
 								<label for="username"><span class="accesskey">N</span>etID:</label><br />
-								<input class="required" id="userName" name="userName" size="32" tabindex="1" accesskey="n" />
+								<input class="required" id="username" name="username" size="32" tabindex="1" accesskey="n" />
 							</p>
 
 							<p>

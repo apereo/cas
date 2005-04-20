@@ -14,7 +14,7 @@ public class TicketNotFoundExceptionTests extends TestCase {
 
     public void testCodeNoThrowable() {
         TicketException t = new TicketNotFoundException();
-        assertEquals("NOT_FOUND", t.getCode());
+        assertEquals("INVALID_TICKET", t.getCode());
     }
 
     public void testCodeWithThrowable() {
