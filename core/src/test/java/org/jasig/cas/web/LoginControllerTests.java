@@ -249,7 +249,7 @@ public class LoginControllerTests extends TestCase {
 
     public void testNoCredentials() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("loginToken", (String) this.loginController
+        request.addParameter("lt", (String) this.loginController
             .showForm(
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
@@ -268,9 +268,9 @@ public class LoginControllerTests extends TestCase {
 
     public void testValidCredentialsNoOtherParams() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("userName", "test");
+        request.addParameter("username", "test");
         request.addParameter("password", "test");
-        request.addParameter("loginToken", (String) this.loginController
+        request.addParameter("lt", (String) this.loginController
             .showForm(
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
@@ -289,10 +289,10 @@ public class LoginControllerTests extends TestCase {
 
     public void testValidCredentialsWithService() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("userName", "test");
+        request.addParameter("username", "test");
         request.addParameter("password", "test");
         request.addParameter("service", "test");
-        request.addParameter("loginToken", (String) this.loginController
+        request.addParameter("lt", (String) this.loginController
             .showForm(
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
@@ -311,11 +311,11 @@ public class LoginControllerTests extends TestCase {
 
     public void testValidCredentialsWithServiceAndWarn() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("userName", "test");
+        request.addParameter("username", "test");
         request.addParameter("password", "test");
         request.addParameter("service", "test");
         request.addParameter("warn", "test");
-        request.addParameter("loginToken", (String) this.loginController
+        request.addParameter("lt", (String) this.loginController
             .showForm(
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
@@ -335,11 +335,11 @@ public class LoginControllerTests extends TestCase {
     public void testValidCredentialsWithServiceAndRenew() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        request.addParameter("userName", "test");
+        request.addParameter("username", "test");
         request.addParameter("password", "test");
         request.addParameter("service", "test");
         request.addParameter("renew", "true");
-        request.addParameter("loginToken", (String) this.loginController
+        request.addParameter("lt", (String) this.loginController
             .showForm(
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),

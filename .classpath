@@ -116,5 +116,17 @@
 		<attributes>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="var" path="MAVEN_REPO/nekohtml/jars/nekohtml-0.9.4.jar">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="MAVEN_REPO/xerces/jars/xerces-2.4.0.jar">
+		<attributes>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="MAVEN_REPO/xml-apis/jars/xml-apis-1.0.b2.jar">
+		<attributes>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
