@@ -30,7 +30,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
     public void testSupportsProperUserCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         try {
             this.authenticationHandler.authenticate(c);
@@ -53,7 +53,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testValidUsernamePassword() {
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
-        authRequest.setUserName("test");
+        authRequest.setUsername("test");
         authRequest.setPassword("test");
 
         try {
@@ -65,7 +65,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testInvalidUsernamePassword() {
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
-        authRequest.setUserName("test");
+        authRequest.setUsername("test");
         authRequest.setPassword("test2");
 
         try {
@@ -77,7 +77,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testNullUsernamePassword() {
         UsernamePasswordCredentials authRequest = new UsernamePasswordCredentials();
-        authRequest.setUserName(null);
+        authRequest.setUsername(null);
         authRequest.setPassword(null);
 
         try {

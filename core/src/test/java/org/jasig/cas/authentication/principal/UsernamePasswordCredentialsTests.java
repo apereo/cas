@@ -18,9 +18,9 @@ public class UsernamePasswordCredentialsTests extends TestCase {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final String userName = "test";
 
-        c.setUserName(userName);
+        c.setUsername(userName);
 
-        assertEquals(userName, c.getUserName());
+        assertEquals(userName, c.getUsername());
     }
 
     public void testSetGetPassword() {
@@ -36,7 +36,7 @@ public class UsernamePasswordCredentialsTests extends TestCase {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final String userName = "test";
 
-        c.setUserName(userName);
+        c.setUsername(userName);
 
         assertEquals(
             c.getClass().getName() + "@" + Integer.toHexString(c.hashCode())

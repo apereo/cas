@@ -28,7 +28,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials) credentials;
 
         return this.passwordHandler.authenticate(casCredentials
-            .getServletRequest(), casCredentials.getUserName(), casCredentials
+            .getServletRequest(), casCredentials.getUsername(), casCredentials
             .getPassword());
     }
 

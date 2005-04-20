@@ -21,7 +21,7 @@ public class UsernamePasswordCredentials implements Credentials {
     private static final long serialVersionUID = -8343864967200862794L;
 
     /** The username. */
-    private String userName;
+    private String username;
 
     /** The password. */
     private String password;
@@ -43,19 +43,19 @@ public class UsernamePasswordCredentials implements Credentials {
     /**
      * @return Returns the userName.
      */
-    public final String getUserName() {
-        return this.userName;
+    public final String getUsername() {
+        return this.username;
     }
 
     /**
      * @param userName The userName to set.
      */
-    public final void setUserName(final String userName) {
-        this.userName = userName;
+    public final void setUsername(final String userName) {
+        this.username = userName;
     }
 
     public final String toString() {
         ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-        return toStringBuilder.append("userName", this.userName).toString();
+        return toStringBuilder.append("userName", this.username).toString();
     }
 }

@@ -37,7 +37,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testSupportsProperUserCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("scott");
+        c.setUsername("scott");
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
@@ -65,7 +65,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testAuthenticatesUserInFileWithDefaultSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("scott");
+        c.setUsername("scott");
         c.setPassword("rutgers");
 
         try {
@@ -78,7 +78,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testFailsUserNotInFileWithDefaultSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("fds");
+        c.setUsername("fds");
         c.setPassword("rutgers");
 
         try {
@@ -91,7 +91,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testFailsNullUserName() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName(null);
+        c.setUsername(null);
         c.setPassword("user");
 
         try {
@@ -104,7 +104,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testFailsNullUserNameAndPassword() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName(null);
+        c.setUsername(null);
         c.setPassword(null);
 
         try {
@@ -117,7 +117,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testFailsNullPassword() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("scott");
+        c.setUsername("scott");
         c.setPassword(null);
 
         try {
@@ -133,7 +133,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler.setFileName("authentication2.txt");
         this.authenticationHandler.setSeparator(",");
 
-        c.setUserName("scott");
+        c.setUsername("scott");
         c.setPassword("rutgers");
 
         try {
@@ -149,7 +149,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler.setFileName("authentication2.txt");
         this.authenticationHandler.setSeparator(",");
 
-        c.setUserName("fds");
+        c.setUsername("fds");
         c.setPassword("rutgers");
 
         try {
@@ -165,7 +165,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler.setFileName("authentication2.txt");
         this.authenticationHandler.setSeparator(",");
 
-        c.setUserName("scott");
+        c.setUsername("scott");
         c.setPassword("rutgers1");
 
         try {
@@ -222,7 +222,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         this.authenticationHandler.setFileName("fff");
 
-        c.setUserName("scott");
+        c.setUsername("scott");
         c.setPassword("rutgers");
 
         try {

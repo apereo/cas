@@ -55,7 +55,7 @@ public final class FileAuthenticationHandler extends
         final UsernamePasswordCredentials credentials) {
         BufferedReader bufferedReader = null;
 
-        if (credentials.getUserName() == null
+        if (credentials.getUsername() == null
             || credentials.getPassword() == null) {
             return false;
         }
@@ -69,7 +69,7 @@ public final class FileAuthenticationHandler extends
                 final String userName = lineFields[0];
                 final String password = lineFields[1];
 
-                if (credentials.getUserName().equals(userName)) {
+                if (credentials.getUsername().equals(userName)) {
                     if (this.passwordTranslator.encode(
                         credentials.getPassword()).equals(password)) {
                         bufferedReader.close();

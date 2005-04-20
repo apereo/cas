@@ -103,6 +103,13 @@ public final class ServiceValidateController extends AbstractController
             .getCommandClass();
         final Assertion assertion;
         final String pgtUrl = request.getParameter(WebConstants.PGTURL);
+ 
+        // TODO this needs to be customized for any validation
+        if (!StringUtils.hasText(service) || !StringUtils.hasText(serviceTicketId)) {
+            model.put(WebConstants.CODE, "INVALID_REQUEST");
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage("INVALID_REQUEST", "INVALID_REQUEST"));
+        }
+        
         BindUtils.bind(request, authenticationSpecification,
             "authenticationSpecification");
         try {
@@ -114,7 +121,7 @@ public final class ServiceValidateController extends AbstractController
                     + "] does not satisfy authentication specification.");
 
                 model.put(WebConstants.CODE, "INVALID_TICKET");
-                model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage("INVALID_TICKET", "INVALID_TICKET"));
+                model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage("INVALID_TICKET_SPEC", "INVALID_TICKET_SPEC"));
                 return new ModelAndView(this.failureView, model);
             }
 
@@ -144,7 +151,7 @@ public final class ServiceValidateController extends AbstractController
         } catch (TicketException te) {
             model.put(WebConstants.CODE, te.getCode());
             model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
-                te.getCode(), te.getCode()));
+                te.getCode(), new Object[] {serviceTicketId}, te.getCode()));
             return new ModelAndView(this.failureView, model);
         }
     }

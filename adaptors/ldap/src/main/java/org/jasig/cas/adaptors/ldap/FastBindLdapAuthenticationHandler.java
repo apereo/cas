@@ -31,7 +31,7 @@ public class FastBindLdapAuthenticationHandler extends
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
 
         DirContext dirContext = this.getContextSource().getDirContext(
-            LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
+            LdapUtils.getFilterWithValues(this.filter, uRequest.getUsername()),
             uRequest.getPassword());
 
         if (dirContext == null) {

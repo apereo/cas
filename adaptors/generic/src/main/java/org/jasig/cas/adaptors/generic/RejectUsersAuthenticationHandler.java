@@ -27,10 +27,10 @@ public final class RejectUsersAuthenticationHandler extends
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
 
-        if (credentials.getUserName() == null) {
+        if (credentials.getUsername() == null) {
             return false;
         }
-        return !this.users.contains(credentials.getUserName());
+        return !this.users.contains(credentials.getUsername());
     }
 
     public void afterPropertiesSet() throws Exception {

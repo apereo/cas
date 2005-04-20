@@ -187,7 +187,7 @@ public final class CentralAuthenticationServiceImpl implements
         final Service service) throws TicketException {
         if (serviceTicketId == null || service == null) {
             throw new IllegalArgumentException(
-                "serviceTicketId, service and authenticationSpecification cannot be null.");
+                "serviceTicketId, and service cannot be null.");
         }
 
         synchronized (this.ticketRegistry) {

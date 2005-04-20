@@ -52,7 +52,7 @@
 						<div>
 
 							<p>
-								<label for="userName"><span class="accesskey">N</span>etID:</label><br />
+								<label for="username"><span class="accesskey">N</span>etID:</label><br />
 								<input class="required" id="userName" name="userName" size="32" tabindex="1" accesskey="n" />
 							</p>
 
@@ -65,7 +65,7 @@
 							<p><input style="width:1.5em;border:0;padding:0;margin:0;" type="checkbox" id="warn" name="warn" value="true" tabindex="3" /> 
 							   <label for="warn"  accesskey="w"><span class="accesskey">W</span>arn me before logging me into other sites.</label></p>
 
-							<input type="hidden" name="loginToken" value="${loginToken}" />
+							<input type="hidden" name="lt" value="${loginToken}" />
 
 
 							<p><input type="submit" class="button" accesskey="l" value="LOGIN" tabindex="4" /></p>

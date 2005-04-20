@@ -30,7 +30,7 @@ public final class BindModeSearchDatabaseAuthenticationHandler extends
 
     public boolean authenticate(final Credentials request) {
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
-        final String username = uRequest.getUserName();
+        final String username = uRequest.getUsername();
         final String password = uRequest.getPassword();
 
         try {

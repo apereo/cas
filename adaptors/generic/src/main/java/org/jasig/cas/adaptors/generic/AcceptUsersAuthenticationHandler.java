@@ -35,11 +35,11 @@ public final class AcceptUsersAuthenticationHandler extends
         final UsernamePasswordCredentials credentials) {
         final String cachedPassword;
 
-        if (!this.users.containsKey(credentials.getUserName())) {
+        if (!this.users.containsKey(credentials.getUsername())) {
             return false;
         }
 
-        cachedPassword = (String) this.users.get(credentials.getUserName());
+        cachedPassword = (String) this.users.get(credentials.getUsername());
 
         return (cachedPassword.equals(credentials.getPassword()));
     }

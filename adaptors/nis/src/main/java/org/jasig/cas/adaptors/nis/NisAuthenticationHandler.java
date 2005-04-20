@@ -65,7 +65,7 @@ public class NisAuthenticationHandler extends
         final UsernamePasswordCredentials credentials) {
         try {
             final String nisEntry = this.initialContext.lookup(
-                "system/" + this.map + "/" + credentials.getUserName())
+                "system/" + this.map + "/" + credentials.getUsername())
                 .toString();
             final String nisFields[] = nisEntry.split(":");
             String nisEncryptedPassword = nisFields[1];

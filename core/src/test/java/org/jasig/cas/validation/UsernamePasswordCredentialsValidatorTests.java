@@ -33,7 +33,7 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     public void testValidationPasses() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final BindException b = new BindException(c, "credentials");
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         this.validator.validate(c, b);
@@ -44,7 +44,7 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     public void testValidationFailsPasswordNull() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final BindException b = new BindException(c, "credentials");
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword(null);
 
         this.validator.validate(c, b);
@@ -56,7 +56,7 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     public void testValidationFailsPasswordBlank() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final BindException b = new BindException(c, "credentials");
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("");
 
         this.validator.validate(c, b);
@@ -68,7 +68,7 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     public void testValidationFailsUsernameNull() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final BindException b = new BindException(c, "credentials");
-        c.setUserName(null);
+        c.setUsername(null);
         c.setPassword("hello");
 
         this.validator.validate(c, b);
@@ -80,7 +80,7 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     public void testValidationFailsUsernameBlank() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final BindException b = new BindException(c, "credentials");
-        c.setUserName("");
+        c.setUsername("");
         c.setPassword("hello");
 
         this.validator.validate(c, b);
@@ -92,7 +92,7 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     public void testValidationFailsUsernameAndPasswordBlank() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final BindException b = new BindException(c, "credentials");
-        c.setUserName("");
+        c.setUsername("");
         c.setPassword("");
 
         this.validator.validate(c, b);
@@ -104,7 +104,7 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     public void testValidationFailsUsernameAndPasswordNull() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final BindException b = new BindException(c, "credentials");
-        c.setUserName(null);
+        c.setUsername(null);
         c.setPassword(null);
 
         this.validator.validate(c, b);

@@ -319,6 +319,28 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+		
+		<dependency>
+			<groupId>httpunit</groupId>
+			<artifactId>httpunit</artifactId>
+			<version>1.6</version>
+			<type>jar</type>
+			<url>http://httpunit.sourceforge.net/</url>
+			<properties>
+				<war.bundle>false</war.bundle>
+			</properties>
+		</dependency>
+		
+		<dependency>
+			<groupId>jwebunit</groupId>
+			<artifactId>jwebunit</artifactId>
+			<version>1.2</version>
+			<type>jar</type>
+			<url>http://jwebunit.sourceforge.net/</url>
+			<properties>
+				<war.bundle>false</war.bundle>
+			</properties>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -335,6 +357,16 @@
 			<version>1.2.8</version>
 			<type>jar</type>
 			<url>http://logging.apache.org/log4j/docs/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
+			<groupId>opensaml</groupId>
+			<artifactId>opensaml</artifactId>
+			<version>1.1</version>
+			<type>jar</type>
+			<url>http://www.opensaml.org</url>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>

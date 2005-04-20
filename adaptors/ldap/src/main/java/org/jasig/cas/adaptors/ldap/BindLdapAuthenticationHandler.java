@@ -60,7 +60,7 @@ public class BindLdapAuthenticationHandler extends
         final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
 
         List values = (List) this.getLdapTemplate().search(this.searchBase,
-            LdapUtils.getFilterWithValues(this.filter, uRequest.getUserName()),
+            LdapUtils.getFilterWithValues(this.filter, uRequest.getUsername()),
             this.getSearchControls(), new SearchResultCallbackHandler(){
 
                 private List cns = new ArrayList();
