@@ -64,7 +64,7 @@
 		</ant:zip>
 		
 		<ant:tar destfile="${dist.dir}/${release.tar}">
-			<ant:tarfileset dir=".">
+			<ant:tarfileset dir="." prefix="${release.path}">
 				<ant:include name="target/cas.war" />
 				<ant:include name="docs/**" />
 				<ant:include name="core/src/main/java/**" />
