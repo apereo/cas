@@ -110,7 +110,7 @@ public class ServiceValidateControllerTests extends TestCase {
     public void testValidServiceTicket() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
-        c.setUserName("test");
+        c.setUsername("test");
         final String tId = this.centralAuthenticationService
             .createTicketGrantingTicket(c);
         final String sId = this.centralAuthenticationService
@@ -128,7 +128,7 @@ public class ServiceValidateControllerTests extends TestCase {
     public void testValidServiceTicketInvalidSpec() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
-        c.setUserName("test");
+        c.setUsername("test");
         final String tId = this.centralAuthenticationService
             .createTicketGrantingTicket(c);
         this.centralAuthenticationService.grantServiceTicket(tId,
@@ -149,7 +149,7 @@ public class ServiceValidateControllerTests extends TestCase {
     public void testInvalidServiceTicket() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
-        c.setUserName("test");
+        c.setUsername("test");
         final String tId = this.centralAuthenticationService
             .createTicketGrantingTicket(c);
         final String sId = this.centralAuthenticationService
@@ -170,7 +170,7 @@ public class ServiceValidateControllerTests extends TestCase {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
-        c.setUserName("test");
+        c.setUsername("test");
         final String tId = this.centralAuthenticationService
             .createTicketGrantingTicket(c);
         final String sId = this.centralAuthenticationService
@@ -191,7 +191,7 @@ public class ServiceValidateControllerTests extends TestCase {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
-        c.setUserName("test");
+        c.setUsername("test");
         final String tId = this.centralAuthenticationService
             .createTicketGrantingTicket(c);
         final String sId = this.centralAuthenticationService

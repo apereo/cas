@@ -116,7 +116,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
 
     public void testValidCredentials() throws TicketException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         this.remoteCentralAuthenticationService.createTicketGrantingTicket(c);
     }
@@ -129,7 +129,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
     public void testGrantServiceTicketWithValidTicketGrantingTicket()
         throws TicketException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         final String ticketId = this.remoteCentralAuthenticationService
@@ -141,7 +141,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
     public void testGrantServiceTicketWithValidCredentials()
         throws TicketException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(c);
@@ -152,7 +152,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
     public void testGrantServiceTicketWithNullCredentials()
         throws TicketException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(c);
@@ -163,7 +163,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
     public void testGrantServiceTicketWithEmptyCredentials()
         throws TicketException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(c);
@@ -180,7 +180,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
     public void testValidateServiceTicketWithValidService()
         throws TicketException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         final String ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(c);
@@ -194,7 +194,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
     public void testDelegateTicketGrantingTicketWithValidCredentials()
         throws TicketException, MalformedURLException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         final String ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(c);
@@ -208,7 +208,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
     public void testDelegateTicketGrantingTicketWithInvalidCredentials()
         throws TicketException {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         final String ticketGrantingTicket = this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(c);

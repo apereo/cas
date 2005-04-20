@@ -20,12 +20,12 @@ public class DefaultSpringBindCredentialsBinderTests extends TestCase {
 
     public void testBindUsernamePasswordCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("scott");
+        c.setUsername("scott");
         c.setPassword("scott");
 
         this.credentialsBinder.bind(null, c);
 
-        assertEquals("scott", c.getUserName());
+        assertEquals("scott", c.getUsername());
         assertEquals("scott", c.getPassword());
     }
 

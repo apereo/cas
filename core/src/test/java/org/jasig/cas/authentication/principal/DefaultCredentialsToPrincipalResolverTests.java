@@ -42,15 +42,15 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
 
     public void testValidCredentials() {
         UsernamePasswordCredentials request = new UsernamePasswordCredentials();
-        request.setUserName("test");
+        request.setUsername("test");
         Principal p = this.resolver.resolvePrincipal(request);
 
-        assertEquals(p.getId(), request.getUserName());
+        assertEquals(p.getId(), request.getUsername());
     }
 
     public void testInvalidCredentials() {
         UsernamePasswordCredentials request = new UsernamePasswordCredentials();
-        request.setUserName(null);
+        request.setUsername(null);
         try {
             this.resolver.resolvePrincipal(request);
         } catch (IllegalArgumentException e) {

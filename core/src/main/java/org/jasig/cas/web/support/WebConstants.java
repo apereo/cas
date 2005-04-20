@@ -45,7 +45,7 @@ public abstract class WebConstants {
     public static final String TARGET_SERVICE = "targetService";
 
     /** Identifier for a login token in the request params. */
-    public static final String LOGIN_TOKEN = "loginToken";
+    public static final String LOGIN_TOKEN = "lt";
 
     /** Identifier for a service in the request params. */
     public static final String SERVICE = "service";

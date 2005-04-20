@@ -27,7 +27,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
     
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
-        final String username = credentials.getUserName();
+        final String username = credentials.getUsername();
         final String password = credentials.getPassword();
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)

@@ -18,7 +18,7 @@ public class TicketValidationException extends TicketException {
     private static final long serialVersionUID = 3257004341537093175L;
 
     /** The code description. */
-    private static final String CODE = "VALIDATION_ERROR";
+    private static final String CODE = "INVALID_SERVICE";
 
     public TicketValidationException() {
         super(CODE);

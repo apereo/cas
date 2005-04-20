@@ -93,7 +93,7 @@ public class AuthenticationManagerImplTests extends TestCase {
     public void testSuccessfulAuthentication() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         Principal p = new SimplePrincipal("test");
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         setUpManager(this.manager);
@@ -107,7 +107,7 @@ public class AuthenticationManagerImplTests extends TestCase {
 
     public void testFailedAuthentication() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("tt");
 
         setUpManager(this.manager);
@@ -134,7 +134,7 @@ public class AuthenticationManagerImplTests extends TestCase {
     public void testNoResolverFound() {
         setUpManager2(this.manager);
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
         try {
             this.manager.authenticate(c);

@@ -76,7 +76,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
 
         // configure the LegacyCasCredentials
         LegacyCasCredentials credentials = new LegacyCasCredentials();
-        credentials.setUserName("testUser");
+        credentials.setUsername("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();
         credentials.setServletRequest(servletRequest);
@@ -97,7 +97,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
 
         // configure the LegacyCasCredentials
         LegacyCasCredentials credentials = new LegacyCasCredentials();
-        credentials.setUserName("testUser");
+        credentials.setUsername("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();
         credentials.setServletRequest(servletRequest);

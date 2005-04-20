@@ -18,7 +18,7 @@ public class TicketNotFoundException extends TicketException {
     private static final long serialVersionUID = 3256723974594508849L;
 
     /** The code description. */
-    private static final String CODE = "NOT_FOUND";
+    private static final String CODE = "INVALID_TICKET";
 
     public TicketNotFoundException() {
         super(CODE);

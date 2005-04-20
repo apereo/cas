@@ -175,7 +175,7 @@ public class LoginControllerTests extends TestCase {
     public void testTicketGrantingTicketAndService() throws Exception {
         String ticketGrantingTicketId;
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         ticketGrantingTicketId = this.centralAuthenticationService
@@ -199,7 +199,7 @@ public class LoginControllerTests extends TestCase {
     public void testTicketGrantingTicketAndServiceWarn() throws Exception {
         String ticketGrantingTicketId;
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         ticketGrantingTicketId = this.centralAuthenticationService
@@ -225,7 +225,7 @@ public class LoginControllerTests extends TestCase {
     public void testTicketGrantingTicketAndServiceWithRenew() throws Exception {
         String ticketGrantingTicketId;
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         ticketGrantingTicketId = this.centralAuthenticationService
@@ -279,7 +279,7 @@ public class LoginControllerTests extends TestCase {
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         assertEquals(ViewNames.CONST_LOGON_SUCCESS, this.loginController
@@ -301,7 +301,7 @@ public class LoginControllerTests extends TestCase {
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         assertTrue(this.loginController.processFormSubmission(request,
@@ -324,7 +324,7 @@ public class LoginControllerTests extends TestCase {
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         assertEquals(ViewNames.CONST_LOGON_CONFIRM, this.loginController
@@ -348,7 +348,7 @@ public class LoginControllerTests extends TestCase {
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID,

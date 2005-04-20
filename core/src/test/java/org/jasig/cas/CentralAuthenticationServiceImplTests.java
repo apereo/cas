@@ -80,7 +80,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testBadCredentialsOnTicketGrantingTicketCreation() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test1");
 
         try {
@@ -324,7 +324,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     private UsernamePasswordCredentials getUsernamePasswordCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test");
+        c.setUsername("test");
         c.setPassword("test");
 
         return c;
@@ -332,7 +332,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     private UsernamePasswordCredentials getUsernamePasswordCredentials2() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUserName("test1");
+        c.setUsername("test1");
         c.setPassword("test1");
 
         return c;

@@ -32,9 +32,9 @@ public final class DefaultCredentialsToPrincipalResolver implements
         }
 
         log.debug("Creating SimplePrincipal for ["
-            + usernamePasswordCredentials.getUserName() + "]");
+            + usernamePasswordCredentials.getUsername() + "]");
 
-        return new SimplePrincipal(usernamePasswordCredentials.getUserName());
+        return new SimplePrincipal(usernamePasswordCredentials.getUsername());
     }
 
     public boolean supports(final Credentials credentials) {
