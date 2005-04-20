@@ -8,9 +8,6 @@ package org.jasig.cas.login;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Properties;
-
-import net.sourceforge.jwebunit.WebTestCase;
 
 /**
  * 
@@ -19,27 +16,15 @@ import net.sourceforge.jwebunit.WebTestCase;
  * @since 3.0
  *
  */
-public class LoginAsCredentialsRequestorCompatibilityTests extends WebTestCase {
-    final Properties properties = new Properties();
+public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLoginCompatibilityTests {
+    
     
     public LoginAsCredentialsRequestorCompatibilityTests() throws IOException {
         super();
-        setUpTest();
     }
     
     public LoginAsCredentialsRequestorCompatibilityTests(final String name) throws IOException {
         super(name);
-        setUpTest();
-    }
-    
-    private final void setUpTest() throws IOException {
-        this.properties.load(ClassLoader.getSystemResourceAsStream("urls.properties"));
-        getTestContext().setBaseUrl(this.properties.getProperty("server.url"));
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        beginAt("/login");
     }
 
     public void testGatewayWithServiceWithNoTgt() throws UnsupportedEncodingException {
@@ -51,4 +36,25 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends WebTestCase {
         assertTextPresent("cnn.com");
     }
     
+    public void testGatewayWithNoService() {
+        final String GATEWAY = "yes";
+        final String URL = "/login?gateway=" + GATEWAY;
+        
+        beginAt(URL);
+        assertFormElementPresent("lt");
+    }
+    
+    public void testGatewayWithServiceWithTgt() {
+        //TODO: complete the test for a Gateway request with a Service
+    }
+    
+    public void testExistingTgtRenewEqualsTrue() {
+        //TODO: complete the test for a renew=true and existing TGT
+    }
+    
+    public void testInitialFormParameters() {
+        assertFormElementPresent("username");
+        assertFormElementPresent("password");
+        assertFormElementPresent("lt");
+    }
 }
