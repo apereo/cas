@@ -108,6 +108,7 @@ public final class ServiceValidateController extends AbstractController
         if (!StringUtils.hasText(service) || !StringUtils.hasText(serviceTicketId)) {
             model.put(WebConstants.CODE, "INVALID_REQUEST");
             model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage("INVALID_REQUEST", "INVALID_REQUEST"));
+            return new ModelAndView(this.failureView, model);
         }
         
         BindUtils.bind(request, authenticationSpecification,

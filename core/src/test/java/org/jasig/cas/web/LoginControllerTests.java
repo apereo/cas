@@ -138,13 +138,13 @@ public class LoginControllerTests extends TestCase {
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
                 new BindException(new UsernamePasswordCredentials(),
-                    "credentials")).getModel().get(WebConstants.LOGIN_TOKEN);
+                    "credentials")).getModel().get("loginToken");
         loginToken2 = (String) this.loginController
             .showForm(
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
                 new BindException(new UsernamePasswordCredentials(),
-                    "credentials")).getModel().get(WebConstants.LOGIN_TOKEN);
+                    "credentials")).getModel().get("loginToken");
         assertNotNull(loginToken1);
         assertNotNull(loginToken2);
         assertNotSame(loginToken1, loginToken2);
@@ -254,7 +254,7 @@ public class LoginControllerTests extends TestCase {
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
                 new BindException(new UsernamePasswordCredentials(),
-                    "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
+                    "credentials")).getModel().get("loginToken"));
         try {
             Credentials c = new UsernamePasswordCredentials();
             this.loginController.processFormSubmission(request,
@@ -275,7 +275,7 @@ public class LoginControllerTests extends TestCase {
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
                 new BindException(new UsernamePasswordCredentials(),
-                    "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
+                    "credentials")).getModel().get("loginToken"));
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -297,7 +297,7 @@ public class LoginControllerTests extends TestCase {
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
                 new BindException(new UsernamePasswordCredentials(),
-                    "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
+                    "credentials")).getModel().get("loginToken"));
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -320,7 +320,7 @@ public class LoginControllerTests extends TestCase {
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
                 new BindException(new UsernamePasswordCredentials(),
-                    "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
+                    "credentials")).getModel().get("loginToken"));
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -344,7 +344,7 @@ public class LoginControllerTests extends TestCase {
                 new MockHttpServletRequest(),
                 new MockHttpServletResponse(),
                 new BindException(new UsernamePasswordCredentials(),
-                    "credentials")).getModel().get(WebConstants.LOGIN_TOKEN));
+                    "credentials")).getModel().get("loginToken"));
 
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -366,6 +366,6 @@ public class LoginControllerTests extends TestCase {
         assertNotNull(this.loginController.processFormSubmission(
             new MockHttpServletRequest(), new MockHttpServletResponse(), c,
             new BindException(c, "credentials")).getModel().get(
-            WebConstants.LOGIN_TOKEN));
+            "loginToken"));
     }
 }

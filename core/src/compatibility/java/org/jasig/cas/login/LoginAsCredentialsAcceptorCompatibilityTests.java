@@ -28,54 +28,66 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         super(name);
     }
     
+    public void testSingleSignOn() {
+        setFormElement(FORM_USERNAME, "test");
+        setFormElement(FORM_PASSWORD, "test");
+        submit();
+        assertFormNotPresent();
+    }
+    
     public void testValidCredentialsAuthenticationWithWarn() throws UnsupportedEncodingException {
-        final String service = "http://www.cnn.com";
+        final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
         beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
-        setFormElement("username", "test");
-        setFormElement("password", "test");
-        checkCheckbox("warn");
+        setFormElement(FORM_USERNAME, "test");
+        setFormElement(FORM_PASSWORD, "test");
+        getDialog().getForm().setCheckbox("warn", true);
+        submit();
+//        checkCheckbox("warn");
         assertTextPresent(service);
         assertCookiePresent(WebConstants.COOKIE_PRIVACY);
         assertCookiePresent(WebConstants.COOKIE_TGC_ID);
     }
 
     public void testValidCredentialsAuthenticationWithoutWarn() {
-        setFormElement("username", "test");
-        setFormElement("password", "test");
+        setFormElement(FORM_USERNAME, "test");
+        setFormElement(FORM_PASSWORD, "test");
         submit();
         // TODO testValidCredentialsAuthenticationWithoutWarn
     }
     
-    public void testNoLoginTicket() {
-        setFormElement("username", "test");
-        setFormElement("password", "test");
-        setFormElement("lt", "");
+    public void testBadLoginTicket() {
+        setFormElement(FORM_USERNAME, "test");
+        setFormElement(FORM_PASSWORD, "test");
+        setFormElement(WebConstants.LOGIN_TOKEN, "test");
+
         submit();
-        assertFormElementPresent("username");
+        assertFormElementPresent(FORM_USERNAME);
     }
     
-    public void testBadLoginTicket() {
-        setFormElement("username", "test");
-        setFormElement("password", "test");
-        setFormElement("lt", "test");
+    public void testNoLoginTicket() {
+        setFormElement(FORM_USERNAME, "test");
+        setFormElement(FORM_PASSWORD, "test");
+        setFormElement(WebConstants.LOGIN_TOKEN, "");
         submit();
-        assertFormElementPresent("username");
+        assertFormElementPresent(FORM_USERNAME);
     }
+    
+
     
     public void testDoubleLoginTicket() {
         //TODO: covered by badLoginTicket?
     }
     
     public void testPassBadCredentials() {
-        setFormElement("username", "test");
-        setFormElement("password", "duh");
+        setFormElement(FORM_USERNAME, "test");
+        setFormElement(FORM_PASSWORD, "duh");
         submit();
-        assertFormElementPresent("username");
+        assertFormElementPresent(FORM_USERNAME);
     }
     
     public void testPassEmptyCredentials() {
         submit();
-        assertFormElementPresent("username");
+        assertFormElementPresent(FORM_USERNAME);
     }
 
 }
