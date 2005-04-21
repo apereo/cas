@@ -9,6 +9,8 @@ import java.io.IOException;
 
 
 public abstract class AbstractLoginCompatibilityTests extends AbstractCompatibilityTests {
+    public static final String FORM_USERNAME = "username";
+    public static final String FORM_PASSWORD = "password";
 
     public AbstractLoginCompatibilityTests() throws IOException {
         super();

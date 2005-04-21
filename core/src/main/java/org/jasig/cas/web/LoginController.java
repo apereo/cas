@@ -112,7 +112,7 @@ public final class LoginController extends SimpleFormController implements
         throws Exception {
         final Map referenceData = new HashMap();
 
-        referenceData.put(WebConstants.LOGIN_TOKEN, this.getLoginToken());
+        referenceData.put("loginToken", this.getLoginToken());
 
         return referenceData;
     }

@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.jasig.cas.web.support.WebConstants;
+
 /**
  * 
  * @author Scott Battaglia
@@ -36,15 +38,23 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertTextPresent("cnn.com");
     }
     
+    public void testServiceWithSingleSignOn() {
+        setFormElement(FORM_USERNAME, "test");
+        setFormElement(FORM_PASSWORD, "test");
+        submit();
+        // TODO test single sign on
+    }
+    
     public void testGatewayWithNoService() {
         final String GATEWAY = "yes";
         final String URL = "/login?gateway=" + GATEWAY;
         
         beginAt(URL);
-        assertFormElementPresent("lt");
+        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
     }
     
     public void testGatewayWithServiceWithTgt() {
+        
         //TODO: complete the test for a Gateway request with a Service
     }
     
@@ -52,9 +62,13 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         //TODO: complete the test for a renew=true and existing TGT
     }
     
+    public void testTrustHandling() {
+        // TODO test trust handling
+    }
+    
     public void testInitialFormParameters() {
-        assertFormElementPresent("username");
-        assertFormElementPresent("password");
-        assertFormElementPresent("lt");
+        assertFormElementPresent(FORM_USERNAME);
+        assertFormElementPresent(FORM_PASSWORD);
+        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
     }
 }
