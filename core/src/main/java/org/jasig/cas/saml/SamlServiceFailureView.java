@@ -26,6 +26,8 @@ import org.springframework.web.servlet.View;
  * This is an extension to the CAS 2.0 protocol standard.
  * 
  * @author Howard Gilbert
+ * @version $Revision$ $Date$
+ * @since 3.0
  *
  */
 public class SamlServiceFailureView implements View {
@@ -53,10 +55,8 @@ public class SamlServiceFailureView implements View {
 		try {
 			response.getWriter().print(samlResponse.toString());
 		} catch (IOException e1) {
-			;// The Service probably went away before getting its
+			// The Service probably went away before getting its
 			// response. Not much can be done.
 		}
-
 	}
-
 }
