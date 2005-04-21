@@ -6,6 +6,10 @@
 package org.jasig.cas.login;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import org.jasig.cas.web.support.WebConstants;
 
 /**
  * 
@@ -24,12 +28,22 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         super(name);
     }
     
-    public void testValidCredentialsAuthenticationWithWarn() {
-        
+    public void testValidCredentialsAuthenticationWithWarn() throws UnsupportedEncodingException {
+        final String service = "http://www.cnn.com";
+        beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
+        setFormElement("username", "test");
+        setFormElement("password", "test");
+        checkCheckbox("warn");
+        assertTextPresent(service);
+        assertCookiePresent(WebConstants.COOKIE_PRIVACY);
+        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
     }
 
     public void testValidCredentialsAuthenticationWithoutWarn() {
-        
+        setFormElement("username", "test");
+        setFormElement("password", "test");
+        submit();
+        // TODO testValidCredentialsAuthenticationWithoutWarn
     }
     
     public void testNoLoginTicket() {
