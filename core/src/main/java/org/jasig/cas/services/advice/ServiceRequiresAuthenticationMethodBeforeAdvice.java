@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.UnauthorizedServiceException;
 
 /**
  * Method to check that if a service requires authentication,
@@ -26,8 +25,7 @@ public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
     private static final int NUMBER_OF_ARGS = 3;
 
     protected void beforeInternal(final Method method, final Object[] args,
-        final Object target, final RegisteredService service)
-        throws UnauthorizedServiceException {
+        final Object target, final RegisteredService service) {
         if (args.length != NUMBER_OF_ARGS) {
             return;
         }

@@ -37,7 +37,7 @@ public class ServiceAllowedMethodBeforeAdviceTests extends TestCase {
         this.advice.setServiceRegistry(this.serviceRegistry);
 
         RegisteredService service = new RegisteredService("Test", false, false,
-            null, null, null);
+            null, null);
         this.serviceRegistryManager.addService(service);
         this.advice.afterPropertiesSet();
     }

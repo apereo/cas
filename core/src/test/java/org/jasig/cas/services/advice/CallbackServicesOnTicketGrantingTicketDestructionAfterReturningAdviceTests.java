@@ -9,7 +9,6 @@ import org.jasig.cas.services.DefaultServiceRegistry;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.ServiceRegistryManager;
-import org.jasig.cas.services.SingleSignoutCallback;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -91,7 +90,7 @@ public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvi
     public void testTicketGrantingTicketAndServiceExist() throws Throwable {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", new MockAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket("test2", new SimpleService("test"), new NeverExpiresExpirationPolicy());
-        final RegisteredService service = new RegisteredService("test", true, true, "test", new SingleSignoutCallback() {public boolean signOut(RegisteredService r, String serviceTicketId) {return true;}}, null);
+        final RegisteredService service = new RegisteredService("test", true, true, "test", null);
         this.serviceRegistryManager.addService(service);
         
         this.monitor.afterReturning(null, null, new Object[] {s}, null);

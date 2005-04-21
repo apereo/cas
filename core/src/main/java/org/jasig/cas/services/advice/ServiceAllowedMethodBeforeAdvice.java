@@ -46,8 +46,7 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
     }
 
     protected void beforeInternal(final Method method, final Object[] args,
-        final Object target, final RegisteredService service)
-        throws UnauthorizedServiceException {
+        final Object target, final RegisteredService service) {
         // this will be overwritten by extending classes
     }
 
