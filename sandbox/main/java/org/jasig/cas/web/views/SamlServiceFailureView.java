@@ -3,7 +3,7 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.saml;
+package org.jasig.cas.web.views;
 
 import java.io.IOException;
 import java.util.Map;
@@ -40,12 +40,13 @@ public class SamlServiceFailureView implements View {
 		
 		// In OpenSAML, the way to get a bad status response is to
 		// create a SAMLException object with the status info.
-		SAMLException samlException = new SAMLException("Invalid Ticket");
+//		SAMLException samlException = new SAMLException("Invalid Ticket");
 		
 		// Then pass it to the Response constructor
 		SAMLResponse samlResponse;
 		try {
-			samlResponse = new SAMLResponse(null,null,null,samlException);
+			// samlResponse = new SAMLResponse(null,null,null,samlException);
+            samlResponse = new SAMLResponse(null,null,null,null);
 		} catch (SAMLException e) {
 			// Should not occur. Something serious wrong in OpenSAML
 			response.setStatus(500);

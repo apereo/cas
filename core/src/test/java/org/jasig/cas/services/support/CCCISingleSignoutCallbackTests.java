@@ -7,14 +7,14 @@ package org.jasig.cas.services.support;
 
 import java.net.URL;
 
-import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.CallbackRegisteredService;
 
 import junit.framework.TestCase;
 
 public class CCCISingleSignoutCallbackTests extends TestCase {
 
     public void testValidUrl() throws Exception {
-        RegisteredService service = new RegisteredService(
+        CallbackRegisteredService service = new CallbackRegisteredService(
             "http://www.rutgers.edu", true, true, "test",
             new CCCISingleSignoutCallback(), new URL("http://www.rutgers.edu"));
         assertTrue(service.getSingleSignoutCallback()
@@ -22,7 +22,7 @@ public class CCCISingleSignoutCallbackTests extends TestCase {
     }
 
     public void testValidUrlWithQueryString() throws Exception {
-        RegisteredService service = new RegisteredService(
+        CallbackRegisteredService service = new CallbackRegisteredService(
             "http://www.rutgers.edu?test=test", true, true, "test",
             new CCCISingleSignoutCallback(), new URL("http://www.rutgers.edu"));
         assertTrue(service.getSingleSignoutCallback()
@@ -30,7 +30,7 @@ public class CCCISingleSignoutCallbackTests extends TestCase {
     }
 
     public void testInValidUrl() throws Exception {
-        RegisteredService service = new RegisteredService("test", true, true,
+        CallbackRegisteredService service = new CallbackRegisteredService("test", true, true,
             "test", new CCCISingleSignoutCallback(), new URL(
                 "http://www.rutgers.edu"));
         assertFalse(service.getSingleSignoutCallback().signOut(service,

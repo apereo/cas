@@ -36,7 +36,7 @@ public class ServiceThemeResolverTests extends TestCase {
         this.resolver.setServiceRegistry(this.registry);
 
         this.service = new RegisteredService("test", false, false, "test",
-            null, null);
+            null);
         ((ServiceRegistryManager) this.registry).addService(this.service);
     }
 

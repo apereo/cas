@@ -19,7 +19,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class to watch for ServiceTickets being entered into the registry and adding
- * them to the list of ticktets to watch for Single Signout capabilities.
+ * them to the list of tickets to watch for Single Signout capabilities.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

@@ -23,13 +23,13 @@ public class AuthenticatedServiceTests extends TestCase {
         final String THEME = "theme";
         final SingleSignoutCallback callback = new SingleSignoutCallback(){
 
-            public boolean signOut(RegisteredService service, String test) {
+            public boolean signOut(CallbackRegisteredService service, String test) {
                 return false;
             }
         };
         final URL url = null;
 
-        RegisteredService authenticatedService = new RegisteredService(ID,
+        CallbackRegisteredService authenticatedService = new CallbackRegisteredService(ID,
             ALLOWTOPROXY, FORCEAUTHENTICATION, THEME, callback, url);
 
         assertEquals(ID, authenticatedService.getId());
@@ -43,7 +43,7 @@ public class AuthenticatedServiceTests extends TestCase {
 
     public void testNoId() {
         try {
-            new RegisteredService(null, false, false, null, null, null);
+            new CallbackRegisteredService(null, false, false, null, null, null);
             fail("IllegalArgumentsException expected.");
         } catch (Exception e) {
             return;

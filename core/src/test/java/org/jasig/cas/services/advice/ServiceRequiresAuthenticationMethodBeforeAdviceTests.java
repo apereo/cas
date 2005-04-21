@@ -37,11 +37,10 @@ public class ServiceRequiresAuthenticationMethodBeforeAdviceTests extends
         this.advice.setServiceRegistry(this.serviceRegistry);
 
         RegisteredService service = new RegisteredService("Test", false, false,
-            null, null, null);
+            null, null);
         this.serviceRegistryManager.addService(service);
 
-        service = new RegisteredService("TestAuth", false, true, null, null,
-            null);
+        service = new RegisteredService("TestAuth", false, true, null, null);
         this.serviceRegistryManager.addService(service);
         this.advice.afterPropertiesSet();
     }

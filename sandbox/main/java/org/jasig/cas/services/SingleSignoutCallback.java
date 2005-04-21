@@ -22,6 +22,6 @@ public interface SingleSignoutCallback {
      * @param serviceTicketId The service ticket.
      * @return true if we signed out, false otherwise.
      */
-    boolean signOut(RegisteredService authenticatedService,
+    boolean signOut(CallbackRegisteredService authenticatedService,
         String serviceTicketId);
 }

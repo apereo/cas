@@ -12,7 +12,7 @@ import java.net.URL;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class RegisteredService {
+public final class CallbackRegisteredService {
 
     /** The unique String to identify this service. */
     private final String id;
@@ -26,12 +26,15 @@ public final class RegisteredService {
     /** The theme name for this service. */
     private final String theme;
 
+    /** The callback for single sign out. */
+    private final SingleSignoutCallback singleSignoutCallback;
+
     /** The proxyUrl of the service if it needs one. */
     private final URL proxyUrl;
 
-    public RegisteredService(final String id, final boolean allowedToProxy,
+    public CallbackRegisteredService(final String id, final boolean allowedToProxy,
         final boolean forceAuthentication, final String theme,
-        final URL proxyUrl) {
+        final SingleSignoutCallback singleSignoutCallback, final URL proxyUrl) {
         if (id == null) {
             throw new IllegalArgumentException("id is a required parameter.");
         }
@@ -40,6 +43,7 @@ public final class RegisteredService {
         this.allowedToProxy = allowedToProxy;
         this.forceAuthentication = forceAuthentication;
         this.theme = theme;
+        this.singleSignoutCallback = singleSignoutCallback;
         this.proxyUrl = proxyUrl;
     }
 
@@ -69,6 +73,14 @@ public final class RegisteredService {
      */
     public String getTheme() {
         return this.theme;
+    }
+
+    /**
+     * Method to retrieve the Callback for Single singout.
+     * @return the Single Signout Callback or null.
+     */
+    public SingleSignoutCallback getSingleSignoutCallback() {
+        return this.singleSignoutCallback;
     }
 
     /**

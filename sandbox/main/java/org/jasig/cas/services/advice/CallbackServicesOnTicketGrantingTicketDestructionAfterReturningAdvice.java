@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.jasig.cas.services.CallbackRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.SingleSignoutCallback;
@@ -28,7 +29,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.0
  * @see org.jasig.cas.services.SingleSignoutCallback
  * @see org.jasig.cas.services.ServiceRegistry
- * @see org.jasig.cas.services.RegisteredService
+ * @see org.jasig.cas.services.CallbackRegisteredService
  * @see org.jasig.cas.ticket.registry.TicketRegistry
  */
 public final class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvice
@@ -60,12 +61,13 @@ public final class CallbackServicesOnTicketGrantingTicketDestructionAfterReturni
             final ServiceTicket serviceTicket = (ServiceTicket) iter.next();
             final RegisteredService service = this.serviceRegistry
                 .getService(serviceTicket.getService().getId());
-            final SingleSignoutCallback callback = service != null ? service
+            // TODO: renable later
+       /*     final SingleSignoutCallback callback = service != null ? service
                 .getSingleSignoutCallback() : null;
 
             if (callback != null) {
                 callback.signOut(service, serviceTicket.getId());
-            }
+            }*/
         }
     }
 

@@ -47,8 +47,6 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // TODO testProperCredentialsAndServiceTicket
         
         assertTextPresent("test");
-        
-        
+
     }
-    
 }
