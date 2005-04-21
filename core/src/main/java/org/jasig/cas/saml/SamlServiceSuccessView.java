@@ -37,6 +37,8 @@ import org.springframework.web.servlet.View;
  * This is an extension to the CAS 2.0 protocol standard.
  * 
  * @author Howard Gilbert
+ * @version $Revision$ $Date$
+ * @since 3.0
  *
  */
 public class SamlServiceSuccessView implements View {
@@ -80,7 +82,7 @@ public class SamlServiceSuccessView implements View {
 					new SAMLAuthenticationStatement(authNSubject, authenticationMethod, authTime, request
 					.getRemoteAddr(), null, null)};
 
-			SAMLAssertion samlAssertion = new SAMLAssertion(issuer, 
+			SAMLAssertion samlAssertion = new SAMLAssertion(this.issuer, 
 					new Date(System.currentTimeMillis()), 
 					new Date(System.currentTimeMillis() + 300000), 
 					null, null, Arrays.asList(statements));
@@ -112,7 +114,7 @@ public class SamlServiceSuccessView implements View {
 	 * @return Returns the issuer.
 	 */
 	public String getIssuer() {
-		return issuer;
+		return this.issuer;
 	}
 	/**
 	 * @param issuer The issuer to set.
