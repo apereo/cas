@@ -4,6 +4,24 @@
     <author email="scott_battaglia@rutgers.edu">Scott Battaglia</author>
   </properties>
   <body>
+	<release version="3.0-m3" date="2005-04-22">
+		<action dev="hgilbert" type="add">
+			SAML View Response
+		</action>
+		<action dev="sbattaglia" type="add">
+			Well-defined Ticket Exception Heirarchy
+		</action>
+		<action dev="sbattaglia" type="add">
+			AttributesPopulator now checks Credentials
+		</action>
+		<action dev="sbattaglia" type="add">
+			Test Coverage at 89%
+		</action>
+		<action dev="sbattaglia" type="add">
+			Web Services front end via XFire
+		</action>
+	</release>
+
 
     <release version="3.0-m2" date="2005-03-28">
 
