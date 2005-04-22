@@ -32,7 +32,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * Controller to validate ServiceTickets and ProxyTickets.
+ * Process the /validate and /serviceValidate URL requests.
+ * 
+ * <p>Obtain the Service Ticket and Service information and 
+ * present them to the CAS validation services. Receive back an
+ * Assertion containing the user Principal and (possibly) a 
+ * chain of Proxy Principals. Store the Assertion in the Model 
+ * and chain to a View to generate the appropriate response 
+ * (CAS 1, CAS 2 XML, SAML, ...).  
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
