@@ -6,7 +6,18 @@
 package org.jasig.cas.authentication.principal;
 
 /**
- * Strategy interface to resolve <code>Principal</code> s.
+ * After Credentials have been validated, routines implementing this
+ * interface are called to extract the ID information and create a 
+ * Principal object.
+ * 
+ * <p>If the Credentials are a userid and password, then this
+ * interface just gets the userid. Things are more complicated
+ * after Certificate validation because there are many different 
+ * ways that the meaningful ID value may be stored in a valid 
+ * certificate.<p>
+ * 
+ * <p>A minimal Principal object just has one ID value. This can
+ * be extended with richer objects containing more properties.</p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -17,7 +28,9 @@ package org.jasig.cas.authentication.principal;
 public interface CredentialsToPrincipalResolver {
 
     /**
-     * Resolve Principal for a given Credentials.
+     * Turn Credentials into a Principal object by extracting a
+     * primary ID value and, optionally, getting other extended
+     * information.
      * 
      * @param credentials from which to resolve Principal
      * @return resolved Principal

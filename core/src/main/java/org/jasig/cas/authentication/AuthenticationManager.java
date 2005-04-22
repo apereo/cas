@@ -12,6 +12,12 @@ import org.jasig.cas.authentication.principal.Credentials;
  * Authenticate logon presenting a single Credential.
  * Typically an AuthenticationManagerImpl class.
  * 
+ * <p>An AuthenticationManager must be attached to the same named
+ * property in the CentralAuthenticationServiceImpl. Typically it is
+ * defined in the userConfigContext.xml file and is then autowired by
+ * type to the centralAuthenticationService bean defined in 
+ * applicationContext.xml</p>
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0

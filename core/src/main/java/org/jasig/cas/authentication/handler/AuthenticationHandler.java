@@ -8,12 +8,13 @@ package org.jasig.cas.authentication.handler;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Interface for the handlers that validate credentials for authentication.
- * Developers deploying CAS supply an AuthenticationHandler and plug it into the
- * AuthenticationManager. Implementations of this interface might be backed by
- * such things as LDAP servers, Kerberos realms, RDBMS tables, etc.
- * <p>A call to the authenticate method can assume that the corresponding supports
- * method was called and check first.
+ * Validate Credentials support for AuthenticationManagerImpl.
+ * 
+ * <p>Determines that Credentials are valid. Password-based credentials
+ * may be tested against an external LDAP, Kerberos, JDBC source. 
+ * Certificates may be checked against a list of CA's and do the
+ * usual chain validation. Implementations must be parameterized with
+ * their sources of information.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -22,10 +23,10 @@ import org.jasig.cas.authentication.principal.Credentials;
 public interface AuthenticationHandler {
 
     /**
-     * Method to determine if the credentials supplied can be authenticated.
+     * Method to determine if the credentials supplied are valid.
      * 
-     * @param credentials The credentials to authenticate
-     * @return true if authenticated and false they are not
+     * @param credentials The credentials to validate.
+     * @return true if valid. Do not return false, throw the exception.
      * @throws AuthenticationException An AuthenticationException can contain
      * details about why a particular authentication request failed.
      * AuthenticationExceptions contain code/desc.
@@ -37,6 +38,12 @@ public interface AuthenticationHandler {
      * Method to check if the handler knows how to handle these credentials.  It may
      * be a simple check of the Credentials class or something more complicated such as
      * scanning the information contained in the Credentials object.
+     * 
+     * <p>In AuthenticationManagerImpl, the first handler to claim that it
+     * supports a particular Credentials object is the only Handler that 
+     * gets to validate them. So if you want to allow subsequent handlers
+     * to get a chance to look at these credentials and cannot validate them
+     * yourself, return false from this method.
      * 
      * @param credentials The credentials to check.
      * @return true if the handler supports the Credentials, false othewrise.
