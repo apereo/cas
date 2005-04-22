@@ -14,7 +14,6 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistryReloader;
 import org.jasig.cas.services.ServiceRegistryManager;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ResourceLoader;
@@ -52,6 +51,9 @@ public final class SpringApplicationContextServiceRegistryReloader implements
 
     /** The resourceloader to find the file. */
     private ResourceLoader resourceLoader;
+    
+    /** The application context which stores the services. */
+    private ClassPathXmlApplicationContext applicationContext;
 
     public void reloadServiceRegistry() {
         log.info("Checking if service list changed since last reload.");
@@ -67,13 +69,13 @@ public final class SpringApplicationContextServiceRegistryReloader implements
                     + ".  File most likely modified.  Regenerating ServiceRegistry.");
 
             synchronized (this.serviceRegistryManager) {
-                final ListableBeanFactory beanFactory = new ClassPathXmlApplicationContext(
-                    this.fileName);
 
+                applicationContext.refresh();
+                
                 log.debug("Clearing out previous ServiceRegistry entries.");
                 this.serviceRegistryManager.clear();
 
-                for (final Iterator iter = beanFactory.getBeansOfType(
+                for (final Iterator iter = applicationContext.getBeansOfType(
                     RegisteredService.class).values().iterator(); iter
                     .hasNext();) {
                     final RegisteredService authenticatedService = (RegisteredService) iter
@@ -109,6 +111,9 @@ public final class SpringApplicationContextServiceRegistryReloader implements
             throw new IllegalStateException("File: " + this.serviceRegistryFile
                 + " does not exist.");
         }
+        
+        this.applicationContext = new ClassPathXmlApplicationContext(this.fileName);
+
     }
 
     /**
