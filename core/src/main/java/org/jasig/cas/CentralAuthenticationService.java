@@ -11,11 +11,16 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 
 /**
- * The main runtime interface between a Java application and CAS. This is the
- * central public API class abstracting the notion of an authentication service.
- * <p>
- * The main function of the CentralAuthenticationService is to offer create,
- * grant, find and validate operations for instances CAS tickets.
+ * CAS viewed as a set of services to generate and validate Tickets.
+ * 
+ * <p>This is the interface between a Web HTML, Web Services, RMI, 
+ * or any other request processing layer and the CAS Service viewed 
+ * as a mechanism to generate, store, validate, and retrieve Tickets
+ * containing Authentication information. The features of the request
+ * processing layer (the HttpXXX Servlet objects) are not visible 
+ * here or in any modules behind this layer. In theory, a standalone
+ * application could call these methods directly as a private
+ * authentication service.</p>
  * 
  * @author William G. Thompson, Jr.
  * @author Dmitry Kopylenko
@@ -26,10 +31,23 @@ import org.jasig.cas.validation.Assertion;
 public interface CentralAuthenticationService {
 
     /**
-     * Create a TicketGrantingTicket for a principal given the credentials.
+     * Create a TicketGrantingTicket based on opaque credentials
+     * supplied by the caller.
+     * 
+     * <p>The caller may supply any object implimenting the
+     * Credentials marker. CAS doesn't know about the form of 
+     * the Credentials object, but it must be recognized and 
+     * processed by one of the helper routines plugged into the
+     * AuthenticationManager layer.</p>
+     * 
+     * <p>This is the Single Credential version of this method.
+     * One Credential object is presented and it must either 
+     * succeed or else generate an Exception. A more complex 
+     * method will be used when multiple Credentials can be 
+     * presented and some may succeed while others fail.</p>
      * 
      * @param credentials The credentials to create the ticket for
-     * @return The String identifier of the ticket.
+     * @return The String identifier of the ticket (may not be null).
      * @throws TicketCreationException if ticket cannot be created
      */
     String createTicketGrantingTicket(Credentials credentials)
