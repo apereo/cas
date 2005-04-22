@@ -16,7 +16,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
- * Default immutable implementation of Authentication.
+ * Default implementation of Authentication.
+ * 
+ * <p> Immutable (no setters, all contents must be specified at construction)</p>
  * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
