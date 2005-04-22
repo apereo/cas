@@ -10,7 +10,6 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.services.CallbackRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistryReloader;
 import org.jasig.cas.services.ServiceRegistryManager;
@@ -75,7 +74,7 @@ public final class SpringApplicationContextServiceRegistryReloader implements
                 this.serviceRegistryManager.clear();
 
                 for (final Iterator iter = beanFactory.getBeansOfType(
-                    CallbackRegisteredService.class).values().iterator(); iter
+                    RegisteredService.class).values().iterator(); iter
                     .hasNext();) {
                     final RegisteredService authenticatedService = (RegisteredService) iter
                         .next();
