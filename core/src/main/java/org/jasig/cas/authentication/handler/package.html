@@ -1,7 +1,22 @@
 <html>
 <body>
 
-Classes to actually handle the authentication piece.
+The AuthenticationHandler validates Credentials.
+
+<p>If the credentials are a Userid and Password, then it submits them to an 
+external Kerberos, LDAP, or JDBC authority for validation.</p>
+<p>If the credentials are a Certificate, then it verifies the Issuer chain 
+against some list of reliable CAs, checks the date to make sure it hasn't 
+expired, and checks the CRL to make sure it wasn't revoked. </p>
+<p>If authentication has been done by the Servlet Container or by a Filter, then 
+the Credentials have been extracted from the HttpRequest object. Notably, this 
+will include the REMOTE_USER. Such Credentials are implicitly trusted and self 
+validating, so an AuthenticationHandler recognizing such an object will indicate 
+that it is valid without inspecting its contents.</p>
+<p>An AuthenticationHandler.authentication(Credentials) returns <i>true</i> if 
+the credentials are valid or else it throws some subclass of 
+AuthenticationException. It should not return <i>false</i>, although if it does 
+the normal behavior is to turn this into a less informative exception.</p>
 
 </body>
 </html>
