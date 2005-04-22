@@ -9,7 +9,8 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Interface for processing a request for authentication.
+ * Authenticate logon presenting a single Credential.
+ * Typically an AuthenticationManagerImpl class.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -18,12 +19,13 @@ import org.jasig.cas.authentication.principal.Credentials;
 public interface AuthenticationManager {
 
     /**
-     * Method to confirm credentials from an authentication request and map
-     * those credentials to a principal.
+     * Verify Credentials, create a Principal, and return it wrapped by
+     * an Authentication object that can be used to construct a TGT.
+     * Any falure must throw AuthenticationException 
      * 
-     * @param credentials the authentication credentials
-     * @return the Principal the credentials authenticate or it throws an
-     * exception otherwise
+     * @param Opaque Credentials known to the manager or one of its plugins
+     * @return Authentication object containing a Principal (may not be null)
+     * @throws AuthenticationException on any failure
      */
     Authentication authenticate(final Credentials credentials)
         throws AuthenticationException;
