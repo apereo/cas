@@ -11,20 +11,18 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * Abstract implementation of the Event interface that defines
- * the method getPublishedDate so that implementing classes
- * do not need to.
+ * Abstract implementation of the Event interface that defines the method
+ * getPublishedDate so that implementing classes do not need to.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public abstract class AbstractEvent extends ApplicationEvent {
-    
+
     /** The date the event was published. */
     private final Date publishedDate;
-    
+
     public AbstractEvent(final Object o) {
         super(o);
         this.publishedDate = new Date();
@@ -32,12 +30,13 @@ public abstract class AbstractEvent extends ApplicationEvent {
 
     /**
      * Method to retrieve the date this event was published.
+     * 
      * @return the Date this event was published.
      */
     public final Date getPublishedDate() {
         return this.publishedDate;
     }
-    
+
     public final String toString() {
         return ToStringBuilder.reflectionToString(this);
     }

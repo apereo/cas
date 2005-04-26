@@ -8,15 +8,15 @@ package org.jasig.cas.validation;
 import java.util.List;
 
 /**
- * Return from CentralAuthenticationService.validateServiceTicket(String, Service),
- * the Assertion contains a chain of Principal objects. The first is the User's
- * logon Principal, while any others are Proxy Principals.
- * 
- * <p>In normal use, the Assertion is passed to the Web layer where a
- * reference to it is stored in a Map that Spring calls the Model. This
- * is passed to the View layer where a Servlet or JSP formats it into
- * the response to the /validate or /serviceValidate</p>
- * 
+ * Return from CentralAuthenticationService.validateServiceTicket(String,
+ * Service), the Assertion contains a chain of Principal objects. The first is
+ * the User's logon Principal, while any others are Proxy Principals.
+ * <p>
+ * In normal use, the Assertion is passed to the Web layer where a reference to
+ * it is stored in a Map that Spring calls the Model. This is passed to the View
+ * layer where a Servlet or JSP formats it into the response to the /validate or
+ * /serviceValidate
+ * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

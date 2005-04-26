@@ -31,6 +31,7 @@ public class Cas10ProtocolValidationSpecification implements
 
     /**
      * Method to set the renew requirement.
+     * 
      * @param renew The renew value we want.
      */
     public final void setRenew(final boolean renew) {
@@ -39,6 +40,7 @@ public class Cas10ProtocolValidationSpecification implements
 
     /**
      * Method to determine if we require renew to be true.
+     * 
      * @return true if renew is required, false otherwise.
      */
     public final boolean isRenew() {

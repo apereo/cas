@@ -19,9 +19,11 @@ import org.springframework.beans.factory.InitializingBean;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public abstract class AbstractUsernamePasswordAuthenticationHandler implements AuthenticationHandler, InitializingBean {
+public abstract class AbstractUsernamePasswordAuthenticationHandler implements
+    AuthenticationHandler, InitializingBean {
 
-    public final boolean authenticate(final Credentials credentials) throws AuthenticationException {
+    public final boolean authenticate(final Credentials credentials)
+        throws AuthenticationException {
         return authenticateUsernamePasswordInternal((UsernamePasswordCredentials) credentials);
     }
 

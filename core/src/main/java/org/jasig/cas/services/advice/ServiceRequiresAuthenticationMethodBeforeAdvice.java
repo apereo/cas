@@ -11,8 +11,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.services.RegisteredService;
 
 /**
- * Method to check that if a service requires authentication,
- * Credentials are always passed in.
+ * Method to check that if a service requires authentication, Credentials are
+ * always passed in.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

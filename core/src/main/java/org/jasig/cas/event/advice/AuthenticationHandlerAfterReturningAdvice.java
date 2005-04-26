@@ -20,9 +20,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  * @see org.jasig.cas.event.AuthenticationAvent
- *
  */
 public final class AuthenticationHandlerAfterReturningAdvice implements
     AfterReturningAdvice, ApplicationEventPublisherAware {
@@ -30,14 +28,16 @@ public final class AuthenticationHandlerAfterReturningAdvice implements
     /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+    public void setApplicationEventPublisher(
+        final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void afterReturning(final Object returnValue, final Method method, final Object[] args,
-        final Object arg3) throws Throwable {
-        
+    public void afterReturning(final Object returnValue, final Method method,
+        final Object[] args, final Object arg3) throws Throwable {
+
         final Boolean value = (Boolean) returnValue;
-        this.applicationEventPublisher.publishEvent(new AuthenticationEvent((Credentials) args[0], value.booleanValue()));
+        this.applicationEventPublisher.publishEvent(new AuthenticationEvent(
+            (Credentials) args[0], value.booleanValue()));
     }
 }

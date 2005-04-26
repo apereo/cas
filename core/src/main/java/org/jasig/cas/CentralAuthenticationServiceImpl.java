@@ -250,6 +250,7 @@ public final class CentralAuthenticationServiceImpl implements
 
     /**
      * Method to set the TicketRegistry.
+     * 
      * @param ticketRegistry the TicketRegistry to set.
      */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
