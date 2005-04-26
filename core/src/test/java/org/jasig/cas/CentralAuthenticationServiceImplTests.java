@@ -7,13 +7,14 @@ package org.jasig.cas;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
 import org.jasig.cas.authentication.DefaultAuthenticationAttributesPopulator;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
@@ -49,16 +50,10 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
 
-        List populators = new ArrayList();
-        populators.add(new DefaultAuthenticationAttributesPopulator());
-
-        List resolvers = new ArrayList();
-        resolvers.add(new DefaultCredentialsToPrincipalResolver());
-        resolvers.add(new HttpBasedServiceCredentialsToPrincipalResolver());
-
-        List handlers = new ArrayList();
-        handlers.add(new SimpleTestUsernamePasswordAuthenticationHandler());
-        handlers.add(new HttpBasedServiceCredentialsAuthenticationHandler());
+        
+        AuthenticationAttributesPopulator[] populators = new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()};
+        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
+        AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
 
         manager.setAuthenticationAttributesPopulators(populators);
         manager.setAuthenticationHandlers(handlers);

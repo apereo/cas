@@ -70,12 +70,12 @@ public final class SpringApplicationContextServiceRegistryReloader implements
 
             synchronized (this.serviceRegistryManager) {
 
-                applicationContext.refresh();
+                this.applicationContext.refresh();
                 
                 log.debug("Clearing out previous ServiceRegistry entries.");
                 this.serviceRegistryManager.clear();
 
-                for (final Iterator iter = applicationContext.getBeansOfType(
+                for (final Iterator iter = this.applicationContext.getBeansOfType(
                     RegisteredService.class).values().iterator(); iter
                     .hasNext();) {
                     final RegisteredService authenticatedService = (RegisteredService) iter
