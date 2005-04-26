@@ -50,8 +50,10 @@
 		<ant:fileset id="release" dir=".">
 			<ant:include name="target/cas.war" />
 			<ant:include name="docs/**" />
+			<ant:include name="core/*.xml" />
 			<ant:include name="core/src/main/java/**" />
 			<ant:include name="core/src/test/java/**" />
+			<ant:include name="core/src/test/resources/**" />
 			<ant:include name="*.txt" />
 			<ant:include name="*.properties" />
 			<ant:include name="*.xml" />
