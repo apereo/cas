@@ -9,7 +9,6 @@ package org.jasig.cas.adaptors.cas;
 import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockTrustHandler;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;
