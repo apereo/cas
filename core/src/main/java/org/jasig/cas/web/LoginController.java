@@ -38,13 +38,15 @@ import org.springframework.web.util.WebUtils;
 
 /**
  * Handle the /login HTTP request.
- * 
- * <p>If this URL is presented without Form data, then the showForm method
- * is called. It checks for a Cookie and a prexisting TGT. If none is 
- * found then the Form is displayed.</p>
- * 
- * <p>The Form is submitted to the processFormSubmission method. It 
- * generates a Credentials object and passes it to CAS to generate a TGT.</p>
+ * <p>
+ * If this URL is presented without Form data, then the showForm method is
+ * called. It checks for a Cookie and a prexisting TGT. If none is found then
+ * the Form is displayed.
+ * </p>
+ * <p>
+ * The Form is submitted to the processFormSubmission method. It generates a
+ * Credentials object and passes it to CAS to generate a TGT.
+ * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -124,9 +126,9 @@ public final class LoginController extends SimpleFormController implements
         return referenceData;
     }
 
-	/**
-	 * With no Form data, check for an existing TGT or else display Form.
-	 */
+    /**
+     * With no Form data, check for an existing TGT or else display Form.
+     */
     protected ModelAndView showForm(final HttpServletRequest request,
         final HttpServletResponse response, final BindException errors)
         throws Exception {
@@ -175,9 +177,9 @@ public final class LoginController extends SimpleFormController implements
         return super.showForm(request, response, errors);
     }
 
-	/**
-	 * Process data (userid/password) submitted from the Login Form.
-	 */
+    /**
+     * Process data (userid/password) submitted from the Login Form.
+     */
     protected ModelAndView processFormSubmission(
         final HttpServletRequest request, final HttpServletResponse response,
         final Object command, final BindException errors) throws Exception {
@@ -260,6 +262,7 @@ public final class LoginController extends SimpleFormController implements
 
     /**
      * Helper method to retrieve the value of a cookie.
+     * 
      * @param request The HttpServletRequest containing the cookie.
      * @param cookieId the name of the cookie.
      * @return The value of the cookie or null if it does not exist.
@@ -273,6 +276,7 @@ public final class LoginController extends SimpleFormController implements
 
     /**
      * Method to create a cookie and put it in the response.
+     * 
      * @param id The id to name the cookie.
      * @param value The value to give the cookie.
      * @param request The HttpServletRequest
@@ -289,6 +293,7 @@ public final class LoginController extends SimpleFormController implements
 
     /**
      * Private method to convert a value to a boolean.
+     * 
      * @param value the value to convert.
      * @return either true or false.
      */
