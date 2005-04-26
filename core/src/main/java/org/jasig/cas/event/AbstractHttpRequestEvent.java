@@ -25,7 +25,7 @@ public class AbstractHttpRequestEvent extends AbstractEvent {
     }
 
     /**
-     * Method to retrieve HttpServletRequest
+     * Method to retrieve HttpServletRequest.
      * 
      * @return the HttpServletRequest for this event.
      */

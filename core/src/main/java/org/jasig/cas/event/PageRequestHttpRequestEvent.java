@@ -26,7 +26,7 @@ public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
     /** the constant representing the referer header. */
     private static final String HEADER_REFERRER = "Referer";
 
-    public PageRequestHttpRequestEvent(HttpServletRequest request) {
+    public PageRequestHttpRequestEvent(final HttpServletRequest request) {
         super(request);
     }
 
