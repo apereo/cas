@@ -24,7 +24,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
     /** Log instance. */
     private final Log log = LogFactory.getLog(getClass());
-    
+
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
         final String username = credentials.getUsername();
@@ -32,8 +32,9 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(password)) {
-            log.debug(
-                "User [" + username + "] was successfully authenticated.");
+            log
+                .debug("User [" + username
+                    + "] was successfully authenticated.");
             return true;
         }
 
@@ -44,8 +45,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
     public void afterPropertiesSet() throws Exception {
         log
-            .warn(
-                this.getClass().getName()
-                    + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+            .warn(this.getClass().getName()
+                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }
 }

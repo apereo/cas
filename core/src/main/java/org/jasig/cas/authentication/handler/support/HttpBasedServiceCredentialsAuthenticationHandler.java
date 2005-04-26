@@ -21,8 +21,8 @@ import org.jasig.cas.util.UrlUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class HttpBasedServiceCredentialsAuthenticationHandler implements AuthenticationHandler
-     {
+public final class HttpBasedServiceCredentialsAuthenticationHandler implements
+    AuthenticationHandler {
 
     /** The string represetning the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
@@ -40,8 +40,9 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
             PROTOCOL_HTTPS)) {
             return false;
         }
-        log.debug(
-            "Attempting to resolve credentials for " + serviceCredentials);
+        log
+            .debug("Attempting to resolve credentials for "
+                + serviceCredentials);
         response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
             .getCallbackUrl());
 

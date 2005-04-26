@@ -15,27 +15,31 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
- * HandlerInterceptor that will on a successful completion of a page rendering, publish a 
- * PageRequestHttpRequestEvent.
+ * HandlerInterceptor that will on a successful completion of a page rendering,
+ * publish a PageRequestHttpRequestEvent.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  * @see org.jasig.cas.event.PageRequestHttpRequestEvent
- *
  */
-public final class PageRequestHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements HandlerInterceptor, ApplicationEventPublisherAware {
-    
+public final class PageRequestHandlerInterceptorAdapter extends
+    HandlerInterceptorAdapter implements HandlerInterceptor,
+    ApplicationEventPublisherAware {
+
     /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+    public void setApplicationEventPublisher(
+        final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) throws Exception {
-        final PageRequestHttpRequestEvent event = new PageRequestHttpRequestEvent(request);
+    public void afterCompletion(final HttpServletRequest request,
+        final HttpServletResponse response, final Object handler,
+        final Exception ex) throws Exception {
+        final PageRequestHttpRequestEvent event = new PageRequestHttpRequestEvent(
+            request);
         this.applicationEventPublisher.publishEvent(event);
     }
 }

@@ -8,9 +8,9 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * An extension point that allows the installation to add attributes
- * to the Authentication object. It has no defined function in the 
- * basic CAS implmentation and it typically represented by a 
+ * An extension point that allows the installation to add attributes to the
+ * Authentication object. It has no defined function in the basic CAS
+ * implmentation and it typically represented by a
  * DefaultAuthenticationAttributesPopulator that does nothing.
  * 
  * @author Scott Battaglia

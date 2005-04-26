@@ -21,54 +21,61 @@ import org.springframework.context.ApplicationEventPublisherAware;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public final class CentralAuthenticationServiceAfterReturningAdvice implements
     AfterReturningAdvice, ApplicationEventPublisherAware, InitializingBean {
-    
+
     /** The TicketRegistry which holds ticket information. */
     private TicketRegistry ticketRegistry;
-    
+
     /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void afterReturning(final Object returnValue, final Method method, final Object[] args,
-        final Object target) throws Throwable {
-        
+    public void afterReturning(final Object returnValue, final Method method,
+        final Object[] args, final Object target) throws Throwable {
+
         if (method.getName().equals("createTicketGrantingTicket")) {
             Ticket ticket = this.ticketRegistry.getTicket((String) returnValue);
-            TicketEvent ticketEvent = new TicketEvent(ticket, TicketEvent.CREATE_TICKET_GRANTING_TICKET);
+            TicketEvent ticketEvent = new TicketEvent(ticket,
+                TicketEvent.CREATE_TICKET_GRANTING_TICKET);
             this.applicationEventPublisher.publishEvent(ticketEvent);
         } else if (method.getName().equals("delegateTicketGrantingTicket")) {
             Ticket ticket = this.ticketRegistry.getTicket((String) returnValue);
-            TicketEvent ticketEvent = new TicketEvent(ticket, TicketEvent.CREATE_TICKET_GRANTING_TICKET);
+            TicketEvent ticketEvent = new TicketEvent(ticket,
+                TicketEvent.CREATE_TICKET_GRANTING_TICKET);
             this.applicationEventPublisher.publishEvent(ticketEvent);
         } else if (method.getName().equals("grantServiceTicket")) {
             Ticket ticket = this.ticketRegistry.getTicket((String) returnValue);
-            TicketEvent ticketEvent = new TicketEvent(ticket, TicketEvent.CREATE_SERVCE_TICKET);
+            TicketEvent ticketEvent = new TicketEvent(ticket,
+                TicketEvent.CREATE_SERVCE_TICKET);
             this.applicationEventPublisher.publishEvent(ticketEvent);
         } else if (method.getName().equals("destroyTicketGrantingTicket")) {
-            TicketEvent ticketEvent = new TicketEvent(TicketEvent.DESTROY_TICKET_GRANTING_TICKET, (String) args[0]);
+            TicketEvent ticketEvent = new TicketEvent(
+                TicketEvent.DESTROY_TICKET_GRANTING_TICKET, (String) args[0]);
             this.applicationEventPublisher.publishEvent(ticketEvent);
         } else if (method.getName().equals("validateServiceTicket")) {
             Ticket ticket = this.ticketRegistry.getTicket((String) args[0]);
-            TicketEvent ticketEvent = new TicketEvent(ticket, TicketEvent.VALIDATE_SERVICE_TICKET);
+            TicketEvent ticketEvent = new TicketEvent(ticket,
+                TicketEvent.VALIDATE_SERVICE_TICKET);
             this.applicationEventPublisher.publishEvent(ticketEvent);
         }
     }
 
-    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+    public void setApplicationEventPublisher(
+        final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public void afterPropertiesSet() throws Exception {
-       if (this.ticketRegistry == null) {
-           throw new IllegalStateException("ticketRegistry cannot be null on " + this.getClass().getName());
-       }
+        if (this.ticketRegistry == null) {
+            throw new IllegalStateException("ticketRegistry cannot be null on "
+                + this.getClass().getName());
+        }
     }
 
     /**
      * The TicketRegistry to use to look up tickets.
+     * 
      * @param ticketRegistry the TicketRegistry
      */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {

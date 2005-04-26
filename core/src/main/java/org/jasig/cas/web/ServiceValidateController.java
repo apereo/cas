@@ -33,13 +33,12 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * Process the /validate and /serviceValidate URL requests.
- * 
- * <p>Obtain the Service Ticket and Service information and 
- * present them to the CAS validation services. Receive back an
- * Assertion containing the user Principal and (possibly) a 
- * chain of Proxy Principals. Store the Assertion in the Model 
- * and chain to a View to generate the appropriate response 
- * (CAS 1, CAS 2 XML, SAML, ...).  
+ * <p>
+ * Obtain the Service Ticket and Service information and present them to the CAS
+ * validation services. Receive back an Assertion containing the user Principal
+ * and (possibly) a chain of Proxy Principals. Store the Assertion in the Model
+ * and chain to a View to generate the appropriate response (CAS 1, CAS 2 XML,
+ * SAML, ...).
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -110,14 +109,16 @@ public final class ServiceValidateController extends AbstractController
             .getCommandClass();
         final Assertion assertion;
         final String pgtUrl = request.getParameter(WebConstants.PGTURL);
- 
+
         // TODO this needs to be customized for any validation
-        if (!StringUtils.hasText(service) || !StringUtils.hasText(serviceTicketId)) {
+        if (!StringUtils.hasText(service)
+            || !StringUtils.hasText(serviceTicketId)) {
             model.put(WebConstants.CODE, "INVALID_REQUEST");
-            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage("INVALID_REQUEST", "INVALID_REQUEST"));
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
+                "INVALID_REQUEST", "INVALID_REQUEST"));
             return new ModelAndView(this.failureView, model);
         }
-        
+
         BindUtils.bind(request, authenticationSpecification,
             "authenticationSpecification");
         try {
@@ -129,7 +130,8 @@ public final class ServiceValidateController extends AbstractController
                     + "] does not satisfy authentication specification.");
 
                 model.put(WebConstants.CODE, "INVALID_TICKET");
-                model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage("INVALID_TICKET_SPEC", "INVALID_TICKET_SPEC"));
+                model.put(WebConstants.DESC, getMessageSourceAccessor()
+                    .getMessage("INVALID_TICKET_SPEC", "INVALID_TICKET_SPEC"));
                 return new ModelAndView(this.failureView, model);
             }
 
@@ -183,8 +185,8 @@ public final class ServiceValidateController extends AbstractController
     }
 
     /**
-     * @param validationSpecificationClass The
-     * authenticationSpecificationClass to set.
+     * @param validationSpecificationClass The authenticationSpecificationClass
+     * to set.
      */
     public void setValidationSpecificationClass(
         final Class validationSpecificationClass) {

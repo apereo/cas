@@ -9,15 +9,13 @@ import org.jasig.cas.event.EventHandler;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * Test EventHandler to demonstrate that event publishing and
- * handling are working. This should not be used in a production 
- * environment.
+ * Test EventHandler to demonstrate that event publishing and handling are
+ * working. This should not be used in a production environment.
  * <p>
  * Handler simply System.out's the event as a String.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- *
  */
 public final class TestEventHandler implements EventHandler {
 

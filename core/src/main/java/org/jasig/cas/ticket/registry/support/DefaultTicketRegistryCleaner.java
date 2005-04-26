@@ -45,8 +45,9 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                     ticketsToRemove.add(ticket);
                 }
             }
-            
-            log.info(ticketsToRemove.size() + " found to be removed.  Removing now.");
+
+            log.info(ticketsToRemove.size()
+                + " found to be removed.  Removing now.");
 
             for (final Iterator iter = ticketsToRemove.iterator(); iter
                 .hasNext();) {

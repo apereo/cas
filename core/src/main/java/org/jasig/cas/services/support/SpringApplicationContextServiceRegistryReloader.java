@@ -51,7 +51,7 @@ public final class SpringApplicationContextServiceRegistryReloader implements
 
     /** The resourceloader to find the file. */
     private ResourceLoader resourceLoader;
-    
+
     /** The application context which stores the services. */
     private ClassPathXmlApplicationContext applicationContext;
 
@@ -71,13 +71,13 @@ public final class SpringApplicationContextServiceRegistryReloader implements
             synchronized (this.serviceRegistryManager) {
 
                 this.applicationContext.refresh();
-                
+
                 log.debug("Clearing out previous ServiceRegistry entries.");
                 this.serviceRegistryManager.clear();
 
-                for (final Iterator iter = this.applicationContext.getBeansOfType(
-                    RegisteredService.class).values().iterator(); iter
-                    .hasNext();) {
+                for (final Iterator iter = this.applicationContext
+                    .getBeansOfType(RegisteredService.class).values()
+                    .iterator(); iter.hasNext();) {
                     final RegisteredService authenticatedService = (RegisteredService) iter
                         .next();
                     log.debug("Adding [" + authenticatedService.getId()
@@ -111,13 +111,15 @@ public final class SpringApplicationContextServiceRegistryReloader implements
             throw new IllegalStateException("File: " + this.serviceRegistryFile
                 + " does not exist.");
         }
-        
-        this.applicationContext = new ClassPathXmlApplicationContext(this.fileName);
+
+        this.applicationContext = new ClassPathXmlApplicationContext(
+            this.fileName);
 
     }
 
     /**
      * Method to set the file name.
+     * 
      * @param fileName the File name to set.
      */
     public void setFileName(final String fileName) {
@@ -126,6 +128,7 @@ public final class SpringApplicationContextServiceRegistryReloader implements
 
     /**
      * Method to set the Service Registry Manager.
+     * 
      * @param serviceRegistryManager the serviceRegistryManager to set.
      */
     public void setServiceRegistryManager(

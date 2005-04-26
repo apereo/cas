@@ -9,16 +9,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Implementation of CredentialsToPrincipalResolver for Credentials based
- * on UsernamePasswordCredentials when a SimplePrincipal (username only) 
- * is sufficient.
- * 
- * <p>The userid and password were already validated by the Handler. 
- * Extract the userid and make it the ID of a SimplePrincipal object.</p>
+ * Implementation of CredentialsToPrincipalResolver for Credentials based on
+ * UsernamePasswordCredentials when a SimplePrincipal (username only) is
+ * sufficient.
+ * <p>
+ * The userid and password were already validated by the Handler. Extract the
+ * userid and make it the ID of a SimplePrincipal object.
+ * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
+ * 
  * @see org.jasig.cas.authentication.principal.SimplePrincipal
  */
 public final class DefaultCredentialsToPrincipalResolver implements
@@ -27,12 +29,12 @@ public final class DefaultCredentialsToPrincipalResolver implements
     /** Logging instance. */
     private final Log log = LogFactory.getLog(getClass());
 
-	/**
-	 * Create a SimplePrincipal containing the Userid.
-	 * 
-	 * @param credentials UsernamePasswordCredentials
-	 * @return SimplePrincipal
-	 */
+    /**
+     * Create a SimplePrincipal containing the Userid.
+     * 
+     * @param credentials the Username and Password provided as credentials.
+     * @return an instance of the principal where the id is the username.
+     */
     public Principal resolvePrincipal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
 
@@ -46,9 +48,9 @@ public final class DefaultCredentialsToPrincipalResolver implements
         return new SimplePrincipal(usernamePasswordCredentials.getUsername());
     }
 
-	/**
-	 * Return true if Credentials are UsernamePasswordCredentials
-	 */
+    /**
+     * Return true if Credentials are UsernamePasswordCredentials.
+     */
     public boolean supports(final Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials
