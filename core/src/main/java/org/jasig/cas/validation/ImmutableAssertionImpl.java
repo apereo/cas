@@ -28,6 +28,12 @@ public final class ImmutableAssertionImpl implements Assertion {
     /** Was this the result of a new login. */
     private final boolean fromNewLogin;
 
+    /**
+     * 
+     * @param principals the chain of principals
+     * @param fromNewLogin was the service ticket from a new login.
+     * @throws IllegalArgumentException if there are no principals.
+     */
     public ImmutableAssertionImpl(final List principals,
         final boolean fromNewLogin) {
         if (principals == null || principals.isEmpty()) {

@@ -54,18 +54,26 @@ public class TicketEvent extends AbstractEvent {
         this(null, ticketEventType, ticketId);
     }
 
+    /**
+     * 
+     * @param ticket The ticket the event is for. 
+     * @param ticketEventType the event type.
+     * @param ticketId the id of the ticket.
+     * @throws IllegalArgumentException if the EventType is null.
+     * @throws IllegalArgumentException if the ticketId and the ticket are null.
+     */
     private TicketEvent(final Ticket ticket,
         final TicketEventType ticketEventType, final String ticketId) {
         super((ticket == null) ? (Object) ticketId : ticket);
 
         if (ticketEventType == null) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                 "ticketEventType cannot be null on "
                     + this.getClass().getName());
         }
 
         if (ticketId == null && ticket == null) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                 "Either ticketId or Ticket need to be provided.");
         }
 

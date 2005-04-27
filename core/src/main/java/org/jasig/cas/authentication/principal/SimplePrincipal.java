@@ -24,6 +24,13 @@ public class SimplePrincipal implements Principal {
     /** The unique identifier for the principal. */
     private final String id;
 
+    /**
+     * 
+     * The constructor to set the ID.
+     * 
+     * @param id the identifier for the Principal
+     * @throws IllegalArgumentException if the id is null
+     */
     public SimplePrincipal(final String id) {
         if (id == null) {
             throw new IllegalArgumentException("id is a required parameter.");

@@ -29,6 +29,15 @@ public final class RegisteredService {
     /** The proxyUrl of the service if it needs one. */
     private final URL proxyUrl;
 
+    /**
+     * 
+     * @param id The identifier for the service.
+     * @param allowedToProxy Is this service allowed to proxy
+     * @param forceAuthentication does it opt out of single sign on
+     * @param theme the theme associated with the service
+     * @param proxyUrl the proxyUrl of the service if applicable.
+     * @throws IllegalArgumentException if the ID is null.
+     */
     public RegisteredService(final String id, final boolean allowedToProxy,
         final boolean forceAuthentication, final String theme,
         final URL proxyUrl) {
