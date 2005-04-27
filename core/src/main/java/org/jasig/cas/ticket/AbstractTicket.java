@@ -34,6 +34,13 @@ public abstract class AbstractTicket implements Ticket {
     /** The number of times this was used. */
     private int countOfUses;
 
+    /**
+     * 
+     * @param id the unique identifier for the ticket
+     * @param ticket the parent TicketGrantingTicket
+     * @param expirationPolicy the expirartion policy for the ticket.
+     * @throws IllegalArgumentException if the id or expiration policy is null.
+     */
     public AbstractTicket(final String id, final TicketGrantingTicket ticket,
         final ExpirationPolicy expirationPolicy) {
         if (expirationPolicy == null || id == null) {

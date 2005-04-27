@@ -67,6 +67,9 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
         return DefaultLongNumericGenerator.MIN_STRING_LENGTH;
     }
 
+    /**
+     * @throws IllegalStateException if the maximum value is reached and wrapping is not allowed.
+     */
     protected synchronized long getNextValue() {
         if (!this.wrap && this.count == Long.MAX_VALUE) {
             throw new IllegalStateException(

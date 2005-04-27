@@ -28,6 +28,15 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     /** Is this service ticket the result of a new login. */
     private boolean fromNewLogin;
 
+    /**
+     * 
+     * @param id the unique identifier for the ticket.
+     * @param ticket the TicketGrantingTicket parent.
+     * @param service the service this ticket is for.
+     * @param fromNewLogin is it from a new login.
+     * @param policy the expiration policy for the Ticket.
+     * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
+     */
     protected ServiceTicketImpl(final String id,
         final TicketGrantingTicket ticket, final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {

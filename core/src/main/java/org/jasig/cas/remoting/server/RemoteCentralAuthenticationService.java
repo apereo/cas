@@ -34,6 +34,10 @@ public final class RemoteCentralAuthenticationService implements
     /** The validators to check the Credentials. */
     private Validator[] validators;
 
+    /**
+     * @see org.jasig.cas.CentralAuthenticationService#createTicketGrantingTicket(org.jasig.cas.authentication.principal.Credentials)
+     * @throws IllegalArgumentException if the Credentials are nullor if given invalid credentials.
+     */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketException {
 
@@ -59,6 +63,10 @@ public final class RemoteCentralAuthenticationService implements
             ticketGrantingTicketId, service);
     }
 
+    /**
+     * @see org.jasig.cas.CentralAuthenticationService#grantServiceTicket(java.lang.String, org.jasig.cas.authentication.principal.Service, org.jasig.cas.authentication.principal.Credentials)
+     * @throws IllegalArgumentException if given invalid credentials
+     */
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketException {
@@ -86,6 +94,10 @@ public final class RemoteCentralAuthenticationService implements
             .destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 
+    /**
+     * @see org.jasig.cas.CentralAuthenticationService#delegateTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
+     * @throws IllegalArgumentException if the credentials are invalid.
+     */
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
 

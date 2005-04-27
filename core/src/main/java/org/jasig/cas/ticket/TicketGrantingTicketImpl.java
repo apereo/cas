@@ -31,6 +31,14 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     /** Flag to enforce manual expiration. */
     private boolean expired = false;
 
+    /**
+     * 
+     * @param id the id of the Ticket
+     * @param ticketGrantingTicket the parent ticket
+     * @param authentication the Authentication request for this ticket
+     * @param policy the expiration policy for this ticket.
+     * @throws IllegalArgumentException if the Authentication object is null
+     */
     public TicketGrantingTicketImpl(final String id,
         final TicketGrantingTicket ticketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {

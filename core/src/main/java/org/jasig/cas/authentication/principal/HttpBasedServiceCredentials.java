@@ -24,6 +24,7 @@ public class HttpBasedServiceCredentials implements Credentials {
 
     /**
      * @param callbackUrl the URL representing the service
+     * @throws IllegalArgumentException if the callbackUrl is null.
      */
     public HttpBasedServiceCredentials(final URL callbackUrl) {
         if (callbackUrl == null) {

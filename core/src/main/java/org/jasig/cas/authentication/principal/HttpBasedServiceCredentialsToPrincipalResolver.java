@@ -16,6 +16,10 @@ package org.jasig.cas.authentication.principal;
 public final class HttpBasedServiceCredentialsToPrincipalResolver implements
     CredentialsToPrincipalResolver {
 
+    /**
+     * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver#resolvePrincipal(org.jasig.cas.authentication.principal.Credentials)
+     * @throws IllegalArgumentException if the Credentials passed in are null.
+     */
     public Principal resolvePrincipal(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
 

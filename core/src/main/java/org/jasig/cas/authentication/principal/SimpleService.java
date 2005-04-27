@@ -24,6 +24,13 @@ public class SimpleService implements Service {
     /** Unique identifier for this service. */
     private String id;
 
+    /**
+     * 
+     * Constructor to set the ID for the service.
+     * 
+     * @param id the identifier for the service.
+     * @throws IllegalArgumentException if the ID is null
+     */
     public SimpleService(final String id) {
 
         if (id == null) {

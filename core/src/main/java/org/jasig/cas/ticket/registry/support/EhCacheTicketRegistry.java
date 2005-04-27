@@ -44,6 +44,10 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
         this.cache = cache;
     }
 
+    /**
+     * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
+     * @throws IllegalArgumentException if the ticket is null.
+     */
     public void addTicket(final Ticket ticket) {
         if (ticket == null) {
             throw new IllegalArgumentException(
@@ -54,6 +58,11 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
         this.cache.put(new Element(ticket.getId(), ticket));
     }
 
+    /**
+     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
+     * @throws IllegalArgumentException if the class is null.
+     * @throws ClassCastException if the Ticket Class does not match the requested class.
+     */
     public Ticket getTicket(final String ticketId, final Class clazz) {
         if (clazz == null) {
             throw new IllegalArgumentException(
@@ -75,6 +84,10 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
         return ticket;
     }
 
+    /**
+     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
+     * @throws  IllegalStateException if the cache throws an exception.
+     */
     public Ticket getTicket(final String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         if (ticketId == null) {
@@ -101,6 +114,10 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
         return this.cache.remove(ticketId);
     }
 
+    /**
+     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTickets()
+     * @throws IllegalStateException if the backing cache is not ready.
+     */
     public Collection getTickets() {
         try {
             List keys = this.cache.getKeys();
@@ -113,7 +130,7 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
             }
             return Collections.unmodifiableCollection(items);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e.getMessage());
         }
     }
 }

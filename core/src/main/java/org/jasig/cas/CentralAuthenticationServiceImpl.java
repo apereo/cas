@@ -62,6 +62,11 @@ public final class CentralAuthenticationServiceImpl implements
     /** ExpirationPolicy for Service Tickets. */
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
+    /**
+     * 
+     * @see org.jasig.cas.CentralAuthenticationService#destroyTicketGrantingTicket(java.lang.String)
+     * @throws IllegalArgumentException if the TicketGrantingTicket ID is null. 
+     */
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         if (ticketGrantingTicketId == null) {
             throw new IllegalArgumentException(
@@ -82,6 +87,11 @@ public final class CentralAuthenticationServiceImpl implements
         }
     }
 
+    /**
+     * 
+     * @see org.jasig.cas.CentralAuthenticationService#grantServiceTicket(java.lang.String, org.jasig.cas.authentication.principal.Service, org.jasig.cas.authentication.principal.Credentials)
+     * @throws IllegalArgumentException if TicketGrantingTicket ID, Credentials or Service are null.
+     */
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketException {
@@ -147,6 +157,11 @@ public final class CentralAuthenticationServiceImpl implements
         return this.grantServiceTicket(ticketGrantingTicketId, service, null);
     }
 
+    /**
+     * 
+     * @see org.jasig.cas.CentralAuthenticationService#delegateTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
+     * @throws  IllegalArgumentException if the ServiceTicketId or the Credentials are null.
+     */
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
 
@@ -183,6 +198,11 @@ public final class CentralAuthenticationServiceImpl implements
         }
     }
 
+    /**
+     * 
+     * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(java.lang.String, org.jasig.cas.authentication.principal.Service)
+     * @throws IllegalArgumentException if the ServiceTicketId or the Service are null.
+     */
     public Assertion validateServiceTicket(final String serviceTicketId,
         final Service service) throws TicketException {
         if (serviceTicketId == null || service == null) {
@@ -220,6 +240,11 @@ public final class CentralAuthenticationServiceImpl implements
         }
     }
 
+    /**
+     * 
+     * @see org.jasig.cas.CentralAuthenticationService#createTicketGrantingTicket(org.jasig.cas.authentication.principal.Credentials)
+     * @throws IllegalArgumentException if the credentials are null.
+     */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
         log.debug("Attempting to create TicketGrantingTicket for "
