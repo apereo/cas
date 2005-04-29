@@ -99,6 +99,10 @@ public class ServiceValidateControllerTests extends TestCase {
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
         this.serviceValidateController.afterPropertiesSet();
     }
+    
+    public void testEmptyParams() throws Exception {
+        assertNotNull(this.serviceValidateController.handleRequestInternal(new MockHttpServletRequest(), new MockHttpServletResponse()).getModel().get(WebConstants.CODE));
+    }
 
     public void testValidServiceTicket() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();

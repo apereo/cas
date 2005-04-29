@@ -53,28 +53,21 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     public void before(final Method method, final Object[] args,
         final Object target) throws UnauthorizedServiceException {
         String serviceTicketId = (String) args[0];
-        boolean foundIt = false;
         ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
             .getTicket(serviceTicketId);
         RegisteredService authenticatedService = null;
 
         for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter
             .hasNext();) {
-            authenticatedService = (RegisteredService) iter.next();
+            final RegisteredService service = (RegisteredService) iter.next();
             if ((authenticatedService.getProxyUrl().toExternalForm()
                 .equals(serviceTicket.getService().getId()))
                 || (authenticatedService.getId().equals(serviceTicket
                     .getService().getId()))) {
-                foundIt = true;
+                authenticatedService = service;
                 break;
             }
 
-        }
-
-        if (!foundIt) {
-            log.debug("Service [" + serviceTicket.getId()
-                + "] not found in registry");
-            authenticatedService = null;
         }
 
         if ((authenticatedService == null)
@@ -97,5 +90,4 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
-
 }
