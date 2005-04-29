@@ -10,10 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.jasig.cas.services.CallbackRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
-import org.jasig.cas.services.SingleSignoutCallback;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;

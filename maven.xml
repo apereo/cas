@@ -4,21 +4,6 @@
    xmlns:util="jelly:util"
    xmlns:maven="jelly:maven">
 
-    <!-- =========== Set root dir =========== -->
-
-    <j:set var="rootdir">${basedir}</j:set>
-
-    <j:while test="${true}">
-        <util:available file="${rootdir}/core/project.xml">
-            <j:break/>
-        </util:available>
-        <j:set var="rootdir">${rootdir}/..</j:set>
-    </j:while>
-
-    <ant:dirname property="rootdirname" file="${rootdir}/project.xml"/>
-    <j:set var="rootdir">${rootdirname}</j:set>
-    <echo>Using root dir: ${rootdir}</echo>
-
 	<preGoal name="site">
 		<attainGoal name="statcvs" />
 		<attainGoal name="xdoc" />
@@ -42,8 +27,8 @@
 	</goal>
 	
 	<goal name="cas:release">
-<!--		<attainGoal name="war" />-->
-<!--		<attainGoal name="javadoc" />-->
+		<attainGoal name="war" />
+		<attainGoal name="javadoc" />
 
 		<ant:delete dir="${dist.dir}" />		
 		<ant:mkdir dir="${dist.dir}" />
@@ -51,13 +36,14 @@
 			<ant:include name="target/cas.war" />
 			<ant:include name="docs/**" />
 			<ant:include name="core/*.xml" />
+			<ant:include name="core/*.txt" />
+			<ant:include name="core/src/compatibility/java/**" />
 			<ant:include name="core/src/main/java/**" />
 			<ant:include name="core/src/test/java/**" />
 			<ant:include name="core/src/test/resources/**" />
 			<ant:include name="*.txt" />
-			<ant:include name="*.properties" />
+			<ant:include name="project.properties" />
 			<ant:include name="*.xml" />
-			<ant:include name="*.bat" />
 			<ant:include name="webapp/**" />
 		</ant:fileset>
 		
@@ -69,12 +55,15 @@
 			<ant:tarfileset dir="." prefix="${release.path}">
 				<ant:include name="target/cas.war" />
 				<ant:include name="docs/**" />
+				<ant:include name="core/*.xml" />
+				<ant:include name="core/*.txt" />
+				<ant:include name="core/src/compatibility/java/**" />
 				<ant:include name="core/src/main/java/**" />
 				<ant:include name="core/src/test/java/**" />
+				<ant:include name="core/src/test/resources/**" />
 				<ant:include name="*.txt" />
-				<ant:include name="*.properties" />
+				<ant:include name="project.properties" />
 				<ant:include name="*.xml" />
-				<ant:include name="*.bat" />
 				<ant:include name="webapp/**" />
 			</ant:tarfileset>
 		</ant:tar>
