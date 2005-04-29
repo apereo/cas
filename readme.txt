@@ -40,6 +40,10 @@ The "dist" directory contains the following distinct jar files and wars:
 * EhCache 1.1
 * J2EE Servlet 2.3+
 * Spring 1.1.4+
+* JavaMail (and activation.jar).
+JavaMail cannot be included in our Maven Repository for legal reasons.  Therefore it must be manually downloaded at:
+http://java.sun.com/products/javamail/
+http://java.sun.com/products/javabeans/glasgow/jaf.html
 
 5. DEPLOYMENT
 
