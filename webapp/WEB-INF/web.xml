@@ -10,11 +10,16 @@
 			/WEB-INF/applicationContext.xml,
 			/WEB-INF/userConfigContext.xml,
 			/WEB-INF/remoteServices.xml,
-			/WEB-INF/approvedServices.xml,
 			/WEB-INF/auditTrailContext.xml,
 			classpath:org/codehaus/xfire/spring/xfire.xml
 		</param-value>
 	</context-param>
+
+	<!-- 
+			place this into the contextConfigLocation to enable
+			service restrictions.
+			/WEB-INF/approvedServices.xml,
+	-->
 	
 	<!--
 	  - Key of the system property that should specify the root directory of this
