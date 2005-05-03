@@ -46,14 +46,14 @@ public class Cas20ProxyHandlerTests extends TestCase {
         Cas20ProxyHandler handler = new Cas20ProxyHandler();
         handler.afterPropertiesSet();
         assertNotNull(handler.handle(new HttpBasedServiceCredentials(new URL(
-            "http://www.rutgers.edu")), "proxyGrantingTicketId"));
+            "http://www.rutgers.edu/")), "proxyGrantingTicketId"));
     }
 
     public void testValidProxyTicketWithQueryString() throws Exception {
         Cas20ProxyHandler handler = new Cas20ProxyHandler();
         handler.afterPropertiesSet();
         assertNotNull(handler.handle(new HttpBasedServiceCredentials(new URL(
-            "http://www.rutgers.edu?test=test")), "proxyGrantingTicketId"));
+            "http://www.rutgers.edu/?test=test")), "proxyGrantingTicketId"));
     }
 
     public void testNonValidProxyTicket() throws Exception {
