@@ -8,7 +8,7 @@
 		name="cas3"
 		buildafterfailed="true">
 		<listeners>
-			<currentbuildstatuslistener file="status.html" />
+			<currentbuildstatuslistener file="status.txt" />
 		</listeners>
 		<bootstrappers>
 			<cvsbootstrapper
@@ -16,20 +16,41 @@
 				cvsroot=":pserver:anonymous@uportal.org:/home/cvs/jasig" />
 		</bootstrappers>
 		<modificationset
-			requiresmodification="false"
+			requiremodification="false"
 			quietperiod="60">
 			<alwaysbuild
 				username="cruisecontrol" />
 		</modificationset>
 		<schedule>
 			<maven
-				mavenscript=""
+				mavenscript="/jasigdev/maven-1.0.2/bin/maven"
 				projectfile="/jasigdev/cruisecontrol/workspace/cas3/project.xml"
 				goal="cas:release"
-				time="1400" />
+				time="0920" />
 		</schedule>
 		<log
 			dir="/jasigdev/cruisecontrol/workspace/logs/cas3">
+			<merge
+				dir="/jasigdev/cruisecontrol/workspace/cas3/target/test-reports"
+				removeproperties="true"
+				pattern="*.xml" />
 		</log>
+		<publishers>
+			<artifactspublisher
+				dir="/jasigdev/cruisecontrol/workspace/cas3/dist"
+				dest="/jasigdev/cruisecontrol/workspace/logs/cas3" />
+			<email
+				buildresultsurl="http://jasigch.princeton.edu:9080/cruisecontrol/"
+				failasimportant="true"
+				mailhost="email.rci.rutgers.edu"
+				reportsuccess="true"
+				returnaddress="cruisecontrol@jasig.org"
+				returnname="CruiseControl (JA-SIG)"
+				skipusers="true"
+				spamwhilebroken="true"
+				subjectprefix="[jasig-cas-build]">
+				<always address="scott_battaglia@rutgers.edu" />	
+			</email>
+		</publishers>
 	</project>
 </cruisecontrol>
