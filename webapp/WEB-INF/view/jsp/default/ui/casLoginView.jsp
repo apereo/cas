@@ -3,7 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 	<head>
 		<!-- $Id$ -->
 	
@@ -14,6 +14,9 @@
 		<!-- KEYWORDS AND DESCRIPTIONS GO INTO THIS SECTION -->
 	
 		<meta name="keywords" content="Central Authentication Service,JA-SIG,CAS" />
+		<meta name="description" content="The login page for the JA-SIG Central Authentication Service" />
+		<meta name="author" content="Bart Grebowiec, Scott Battaglia" />
+		
 	
 		<!-- THIS CODE PROVIDES THE FORMATTING FOR THE TEXT - PLEASE LEAVE INTACT -->
 		<link rel="stylesheet" href="<spring:theme code="css" />" type="text/css" media="all" />
@@ -40,10 +43,10 @@
 			  For security reasons, please Log Out and Exit your web browser when you are done accessing services that require authentication!
 			</p>
 
-			<form method="post">
+			<form method="post" action="">
 			<spring:bind path="credentials.*">
 			  <c:forEach var="error" items="${status.errorMessages}">
-			      <br /><c:out value="${error}"/>
+			      <br />${error}
 			  </c:forEach>
 			</spring:bind>
 				<fieldset>
