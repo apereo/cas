@@ -15,7 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.util.UniqueTokenIdGenerator;
 import org.jasig.cas.web.support.ViewNames;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -35,7 +34,8 @@ public final class TicketExceptionHandlerExceptionResolver implements
     /** Logger instance. */
     private final Log log = LogFactory
         .getLog(TicketExceptionHandlerExceptionResolver.class);
-    
+
+    /** The login controller which contains the login token generator. */
     private LoginController loginController;
 
     public TicketExceptionHandlerExceptionResolver() {
@@ -70,7 +70,7 @@ public final class TicketExceptionHandlerExceptionResolver implements
         return new ModelAndView(ViewNames.CONST_LOGON, model);
     }
 
-    public void setLoginController(LoginController loginController) {
+    public void setLoginController(final LoginController loginController) {
         this.loginController = loginController;
     }
     
