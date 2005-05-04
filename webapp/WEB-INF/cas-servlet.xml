@@ -80,7 +80,9 @@
   	</property>
   </bean>
   
-  <bean id="ticketExceptionHandlerExceptionResolver" class="org.jasig.cas.web.TicketExceptionHandlerExceptionResolver" />
+  <bean id="ticketExceptionHandlerExceptionResolver" class="org.jasig.cas.web.TicketExceptionHandlerExceptionResolver">
+  	<property name="loginController" ref="loginController" />
+  </bean>
   
   <bean id="simpleMappingHandlerExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
   	<property name="exceptionMappings">
