@@ -25,7 +25,7 @@
 			<maven
 				mavenscript="/jasigdev/maven-1.0.2/bin/maven"
 				projectfile="/jasigdev/cruisecontrol/workspace/cas3/project.xml"
-				goal="cas:release"
+				goal="cas:release|site"
 				time="0920" />
 		</schedule>
 		<log
@@ -39,6 +39,11 @@
 			<artifactspublisher
 				dir="/jasigdev/cruisecontrol/workspace/cas3/dist"
 				dest="/jasigdev/cruisecontrol/workspace/logs/cas3" />
+				
+			<artifactspublisher
+				dir="/jasigdev/cruisecontrol/workspace/cas3/target/docs"
+				dest="/jasigdev/jakarta-tomcat-5.0.18/webapps/cruisecontrol/cas" />
+
 			<email
 				buildresultsurl="http://jasigch.princeton.edu:9080/cruisecontrol/"
 				failasimportant="true"
