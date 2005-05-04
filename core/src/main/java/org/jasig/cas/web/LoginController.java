@@ -21,6 +21,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.registry.support.LoginTokenRegistryCleaner;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
@@ -47,6 +48,15 @@ import org.springframework.web.util.WebUtils;
  * The Form is submitted to the processFormSubmission method. It generates a
  * Credentials object and passes it to CAS to generate a TGT.
  * </p>
+ * <p>
+ * This class requires that the environment inject two properties:
+ * </p>
+ * <ul>
+ * <li>CentralAuthenticationService - a bean that provides the CAS services.</li>
+ * <li>LoginTokens - a Map keyed by random strings generated to prevent form
+ * resubmission</li>
+ * </ul>
+ * 
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -64,7 +74,22 @@ public final class LoginController extends SimpleFormController implements
     /** Token Generator for generating login tokens. */
     private UniqueTokenIdGenerator uniqueTokenIdGenerator = null;
 
-    /** Map to hold the login tokens. */
+    /**
+     * Property LoginTokens is initially an empty Map
+     * 
+     * <p>It will be filled with entries keyed by a randomly generated 
+     * string. The string is written to the Form. For a Form submission
+     * to be valid, the submitted string must be in the Map. The string
+     * is removed from the Map by Form processing, so the Form cannot be
+     * resubmmited with the same contents.</p>
+     * 
+     * <p>It is recommended, but not required, that the Map be periodically
+     * cleaned out by expiring old entries. This can be done by an instance
+     * of org.jasig.cas.ticket.registry.support.LoginTokenRegistryCleaner.</p>
+     * 
+     * <p>Access to this Map must be explicitly syncronized.
+     * 
+     */
     private Map loginTokens;
 
     /**
@@ -79,12 +104,24 @@ public final class LoginController extends SimpleFormController implements
         this.setFormView(ViewNames.CONST_LOGON);
         this.setSuccessView(ViewNames.CONST_LOGON_SUCCESS);
     }
-
+	
+	private static final boolean createDefaultWiring = false;
     public void afterPropertiesSet() throws Exception {
-        if (this.loginTokens == null
-            || this.centralAuthenticationService == null) {
+        if (this.loginTokens == null) {
+			if (!createDefaultWiring) {
+				throw new IllegalStateException(
+	                "You must set loginTokens on "
+	                    + this.getClass());
+			} else {
+				this.loginTokens= new HashMap();
+				LoginTokenRegistryCleaner cleaner = new LoginTokenRegistryCleaner();
+				cleaner.setLoginTokens(this.loginTokens);
+				cleaner.setTimeOut(43200000);
+			}
+        }
+        if (this.centralAuthenticationService == null) {
             throw new IllegalStateException(
-                "You must set loginTokens and centralAuthenticationService on "
+                "You must set centralAuthenticationService on "
                     + this.getClass());
         }
 
@@ -196,12 +233,19 @@ public final class LoginController extends SimpleFormController implements
             WebConstants.COOKIE_TGC_ID);
 
         // check for a login ticket
-        if (loginToken == null || !this.loginTokens.containsKey(loginToken)) {
+        if (loginToken == null) {
             return super.showForm(request, response, errors);
         }
-
-        this.loginTokens.remove(loginToken);
-
+		
+		boolean formReusedOrTimedOut;
+		synchronized(this.loginTokens) {
+			formReusedOrTimedOut = 
+				(null == this.loginTokens.remove(loginToken));
+		}
+		if (formReusedOrTimedOut) {
+			return super.showForm(request, response, errors);
+		}
+			
         this.credentialsBinder.bind(request, credentials);
 
         if (renew && StringUtils.hasText(ticketGrantingTicketId)
@@ -255,7 +299,9 @@ public final class LoginController extends SimpleFormController implements
 
     private String getLoginToken() {
         final String loginToken = this.uniqueTokenIdGenerator.getNewTokenId();
-        this.loginTokens.put(loginToken, new Date());
+		synchronized (this.loginTokens) {
+			this.loginTokens.put(loginToken, new Date());
+		}
 
         return loginToken;
     }
@@ -311,7 +357,7 @@ public final class LoginController extends SimpleFormController implements
     }
 
     /**
-     * @param loginTokens The loginTokens to set.
+     * @param loginTokens an empty Map associated with a RegistryCleaner.
      */
     public void setLoginTokens(final Map loginTokens) {
         this.loginTokens = loginTokens;
