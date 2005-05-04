@@ -18,6 +18,15 @@ import org.jasig.cas.ticket.registry.RegistryCleaner;
 /**
  * Class to determine if a loginToken is ready to be removed.
  * 
+ * <p>The loginToken is a random string written to a Hidden field
+ * on the login Form. The loginToken string and a related timestamp
+ * are cached in the loginTokens Map while valid. The token is used 
+ * once and then removed from the Map. This prevents the same Form
+ * from being resubmitted by pressing BACK enough times on the 
+ * Web Browser.</p>
+ * 
+ * <p>This routine removes stale loginTokens from the Map.</p>
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
