@@ -21,7 +21,6 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.ticket.registry.support.LoginTokenRegistryCleaner;
 import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.util.UniqueTokenIdGenerator;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
@@ -48,18 +47,6 @@ import org.springframework.web.util.WebUtils;
  * The Form is submitted to the processFormSubmission method. It generates a
  * Credentials object and passes it to CAS to generate a TGT.
  * </p>
- * <p>
- * This class requires that the environment inject two properties:
- * </p>
- * <ul>
- * <li>CentralAuthenticationService - a bean that provides the CAS services.</li>
- * <li>LoginTokens - a Map keyed by random strings generated to prevent form
- * resubmission</li>
- * </ul>
- * <p>If legacy CAS 2 PasswordHandler classes are to be supported then
- * a LegacyCasCredentialsBinder object must be presented as the 
- * CredentialsBinder property. The LegacyPasswordHandlerAdaptorAuthenticationHandler
- * cannot sucessfully adapt an old PasswordHandler unless this property is set.</p> 
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -96,9 +83,8 @@ public final class LoginController extends SimpleFormController implements
     private Map loginTokens;
 
     /**
-     * The CredentialsBinder will opaquely wrap the HttpServletRequest 
-     * inside a Credentials object so it can be presented as required by
-     * the deprecated CAS 2 PasswordHandler.
+     * CredentialsBinder to provide additional bindings besides normal Spring
+     * Binding.
      */
     private CredentialsBinder credentialsBinder;
 
@@ -108,24 +94,12 @@ public final class LoginController extends SimpleFormController implements
         this.setFormView(ViewNames.CONST_LOGON);
         this.setSuccessView(ViewNames.CONST_LOGON_SUCCESS);
     }
-	
-	private static final boolean createDefaultWiring = false;
+
     public void afterPropertiesSet() throws Exception {
-        if (this.loginTokens == null) {
-			if (!createDefaultWiring) {
-				throw new IllegalStateException(
-	                "You must set loginTokens on "
-	                    + this.getClass());
-			} else {
-				this.loginTokens= new HashMap();
-				LoginTokenRegistryCleaner cleaner = new LoginTokenRegistryCleaner();
-				cleaner.setLoginTokens(this.loginTokens);
-				cleaner.setTimeOut(43200000);
-			}
-        }
-        if (this.centralAuthenticationService == null) {
+        if (this.loginTokens == null
+            || this.centralAuthenticationService == null) {
             throw new IllegalStateException(
-                "You must set centralAuthenticationService on "
+                "You must set loginTokens and centralAuthenticationService on "
                     + this.getClass());
         }
 
@@ -145,13 +119,7 @@ public final class LoginController extends SimpleFormController implements
         }
 
         if (this.credentialsBinder == null) {
-        	// attach the CredentialsBinder that does nothing
-        	// Question: since this is running after all the wiring has
-        	// been done from the XML files, shouldn't it be possible to
-        	// test a flag to see if any LegacyPasswordHandlerAdaptorAuthenticationHandler
-        	// objects have been wired, and if so to set this to the
-        	// LegacyCasCredentialsBinder we really need
-             this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
+            this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
             log
                 .info("CredentialsBinder not set.  Using default CredentialsBinder of "
                     + this.credentialsBinder.getClass().getName());
@@ -242,20 +210,15 @@ public final class LoginController extends SimpleFormController implements
         String ticketGrantingTicketId = getCookieValue(request,
             WebConstants.COOKIE_TGC_ID);
 
-        // check for a login ticket
-        if (loginToken == null) {
-            return super.showForm(request, response, errors);
+        synchronized (this.loginTokens) {
+            // check for a login ticket
+            if (loginToken == null || !this.loginTokens.containsKey(loginToken)) {
+                return super.showForm(request, response, errors);
+            }
+
+            this.loginTokens.remove(loginToken);
         }
-		
-		boolean formReusedOrTimedOut;
-		synchronized(this.loginTokens) {
-			formReusedOrTimedOut = 
-				(null == this.loginTokens.remove(loginToken));
-		}
-		if (formReusedOrTimedOut) {
-			return super.showForm(request, response, errors);
-		}
-			
+
         this.credentialsBinder.bind(request, credentials);
 
         if (renew && StringUtils.hasText(ticketGrantingTicketId)
@@ -369,7 +332,7 @@ public final class LoginController extends SimpleFormController implements
     }
 
     /**
-     * @param loginTokens an empty Map associated with a RegistryCleaner.
+     * @param loginTokens The loginTokens to set.
      */
     public void setLoginTokens(final Map loginTokens) {
         this.loginTokens = loginTokens;
