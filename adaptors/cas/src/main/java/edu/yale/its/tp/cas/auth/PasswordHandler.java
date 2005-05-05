@@ -2,7 +2,10 @@ package edu.yale.its.tp.cas.auth;
 
 import javax.servlet.ServletRequest;
 
-/** Interface for password-based authentication handlers. */
+/**
+ * CAS 2 interface supported in CAS 3 through the LegacyPasswordHandlerAdapter
+ * technology. 
+ */ 
 public interface PasswordHandler extends AuthHandler {
 
     /**

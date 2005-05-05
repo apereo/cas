@@ -12,8 +12,14 @@ import org.springframework.beans.factory.InitializingBean;
 import edu.yale.its.tp.cas.auth.PasswordHandler;
 
 /**
- * Adaptor class to adapt the legacy CAS PasswordHandler to the new
- * AuthenticationHandler
+ * An AuthenticationHandler that obtains the hidden HttpServletRequest 
+ * bound to the Credentials to present to a Legacy CAS 2 Password Handler.
+ * Then map the response back to the new interface.
+ * 
+ * <p>Requires a CAS 2 PasswordHandler object wired to the PasswordHandler
+ * property</p>
+ * 
+ * <p>Only responds to LegacyCasCredentials</p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -24,7 +30,11 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler
 
     private PasswordHandler passwordHandler;
 
+    /**
+     * AuthenticationHandler method
+     */
     public boolean authenticate(final Credentials credentials) {
+    	
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials) credentials;
 
         return this.passwordHandler.authenticate(casCredentials
@@ -40,7 +50,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandler
     }
 
     /**
-     * @param passwordHandler The passwordHandler to set.
+     * @param passwordHandler CAS 2 PasswordHandler object to be adapted
+     * to the new AuthenticationHandler interface.
      */
     public void setPasswordHandler(final PasswordHandler passwordHandler) {
         this.passwordHandler = passwordHandler;

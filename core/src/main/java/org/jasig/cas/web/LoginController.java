@@ -56,7 +56,10 @@ import org.springframework.web.util.WebUtils;
  * <li>LoginTokens - a Map keyed by random strings generated to prevent form
  * resubmission</li>
  * </ul>
- * 
+ * <p>If legacy CAS 2 PasswordHandler classes are to be supported then
+ * a LegacyCasCredentialsBinder object must be presented as the 
+ * CredentialsBinder property. The LegacyPasswordHandlerAdaptorAuthenticationHandler
+ * cannot sucessfully adapt an old PasswordHandler unless this property is set.</p> 
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -93,8 +96,9 @@ public final class LoginController extends SimpleFormController implements
     private Map loginTokens;
 
     /**
-     * CredentialsBinder to provide additional bindings besides normal Spring
-     * Binding.
+     * The CredentialsBinder will opaquely wrap the HttpServletRequest 
+     * inside a Credentials object so it can be presented as required by
+     * the deprecated CAS 2 PasswordHandler.
      */
     private CredentialsBinder credentialsBinder;
 
@@ -141,7 +145,13 @@ public final class LoginController extends SimpleFormController implements
         }
 
         if (this.credentialsBinder == null) {
-            this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
+        	// attach the CredentialsBinder that does nothing
+        	// Question: since this is running after all the wiring has
+        	// been done from the XML files, shouldn't it be possible to
+        	// test a flag to see if any LegacyPasswordHandlerAdaptorAuthenticationHandler
+        	// objects have been wired, and if so to set this to the
+        	// LegacyCasCredentialsBinder we really need
+             this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
             log
                 .info("CredentialsBinder not set.  Using default CredentialsBinder of "
                     + this.credentialsBinder.getClass().getName());
@@ -297,12 +307,14 @@ public final class LoginController extends SimpleFormController implements
         return super.processFormSubmission(request, response, command, errors);
     }
 
+    /**
+     * Generate a unique LoginToken string and save it in the Map.
+     */
     private String getLoginToken() {
         final String loginToken = this.uniqueTokenIdGenerator.getNewTokenId();
 		synchronized (this.loginTokens) {
 			this.loginTokens.put(loginToken, new Date());
 		}
-
         return loginToken;
     }
 
