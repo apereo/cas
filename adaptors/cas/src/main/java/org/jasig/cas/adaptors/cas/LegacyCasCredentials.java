@@ -10,8 +10,9 @@ import javax.servlet.ServletRequest;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
- * Credentials class that maps to the parameters required by the Legacy CAS
- * password handler.
+ * Class to wrap the HttpServletRequest object opaquely in the
+ * Credentials. The LegacyPasswordHandlerAdapter extracts this object
+ * so it can be presented to a CAS 2 PasswordHandler.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

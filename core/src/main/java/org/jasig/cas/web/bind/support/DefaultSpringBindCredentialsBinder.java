@@ -10,8 +10,10 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
 
 /**
- * The default custom binder for credentials. It doesn't do anything as it
- * assumes you're using the Spring bind capabilties.
+ * When no CAS 2 PasswordHandler classes need to be adapted to the new
+ * interface, there is no need to bind an HttpServletRequest to the
+ * Credentials object. So this class fulfils the interface but does 
+ * nothing. It is replaced by a real CredentialsBinder if one is needed.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
