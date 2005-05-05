@@ -9,12 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Bind Web layer HttpServletRequest object to a Credentials object.
+ * Interface for a class that can bind items stored in the request to a
+ * particular credentials implementation. This allows for binding beyond the
+ * basic JavaBean/Request parameter binding that is handled by Spring
+ * automatically.
  * 
- * <p>The javax.servlet classes should be limited to the Web layer. The 
- * CAS layer is not permitted to have Servlet API references. However,
- * to support Legacy PasswordHandlers (from CAS 2) we need 
- * to be able to present the HttpServletRequest as part of the call.</p>
+ * Implementations are free to pass part or all of the HttpServletRequest
+ * to the Credentials.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -23,7 +24,9 @@ import org.jasig.cas.authentication.principal.Credentials;
 public interface CredentialsBinder {
 
     /**
-     * Attach HttpServletRequest to Credentials object.
+     * Method to allow manually binding attributes from the request object to
+     * properties of the credentials. Useful when there is no mapping of
+     * attribute to property for the usual Spring binding to handle.
      * 
      * @param request The HttpServletRequest from which we wish to bind
      * credentials to
