@@ -34,7 +34,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     public void clean() {
         final List ticketsToRemove = new ArrayList();
         log
-            .debug("Starting cleaning of expired tickets from ticket registry at ["
+            .info("Starting cleaning of expired tickets from ticket registry at ["
                 + new Date() + "]");
         synchronized (this.ticketRegistry) {
             for (final Iterator iter = this.ticketRegistry.getTickets()
@@ -46,10 +46,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            if (ticketsToRemove.size()>0) {
-	            log.info(ticketsToRemove.size()
-	                + " Tickets have expired and are being removed from the registry.");
-	            }
+            log.info(ticketsToRemove.size()
+                + " found to be removed.  Removing now.");
 
             for (final Iterator iter = ticketsToRemove.iterator(); iter
                 .hasNext();) {
@@ -58,7 +56,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
             }
         }
         log
-            .debug("Finished cleaning of expired tickets from ticket registry at ["
+            .info("Finished cleaning of expired tickets from ticket registry at ["
                 + new Date() + "]");
     }
 
