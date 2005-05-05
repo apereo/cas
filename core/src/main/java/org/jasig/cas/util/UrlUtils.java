@@ -31,7 +31,12 @@ public final class UrlUtils {
     }
 
     /**
-     * Method to retrieve the response from a HTTP request for a specific URL.
+     * Method to retrieve the text response from a HTTP request for a specific URL.
+     * 
+     * <p>Warning, because we are constrained to support Java 1.4, 
+     * this routine can hang for an indefinite period of time. Until
+     * J2SE 5, there is no way to make a read from a URL connection 
+     * timeout.</p>
      * 
      * @param url The URL to contact.
      * @return the body of the response.
@@ -40,9 +45,12 @@ public final class UrlUtils {
         BufferedReader bufferedReader = null;
         final StringBuffer buf = new StringBuffer();
 
+        URLConnection connection = null;
         try {
-            final URLConnection connection = url.openConnection();
-
+            connection = url.openConnection();
+            
+            /* connection.setReadTimeout(60000);    [J2SE 5.0] */
+            /* connection.setConnectTimeout(60000); [J2SE 5.0] */
             connection.setRequestProperty("Connection", "close");
             bufferedReader = new BufferedReader(new InputStreamReader(
                 connection.getInputStream()));
