@@ -13,6 +13,7 @@ import java.net.URLConnection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.util.http.HttpTimeoutHandler;
 
 /**
  * Utilities class for generic functions related to URLs.
@@ -25,18 +26,16 @@ public final class UrlUtils {
 
     /** The instance of the logger. */
     private static final Log LOG = LogFactory.getLog(UrlUtils.class);
-
+    
+    /** The amount of time to wait for a connection. */
+    private static final int TIMEOUT = 10000;
+    
     private UrlUtils() {
         // we do not want this able to be extended.
     }
 
     /**
-     * Method to retrieve the text response from a HTTP request for a specific URL.
-     * 
-     * <p>Warning, because we are constrained to support Java 1.4, 
-     * this routine can hang for an indefinite period of time. Until
-     * J2SE 5, there is no way to make a read from a URL connection 
-     * timeout.</p>
+     * Method to retrieve the response from a HTTP request for a specific URL.
      * 
      * @param url The URL to contact.
      * @return the body of the response.
@@ -45,12 +44,10 @@ public final class UrlUtils {
         BufferedReader bufferedReader = null;
         final StringBuffer buf = new StringBuffer();
 
-        URLConnection connection = null;
         try {
-            connection = url.openConnection();
-            
-            /* connection.setReadTimeout(60000);    [J2SE 5.0] */
-            /* connection.setConnectTimeout(60000); [J2SE 5.0] */
+            final URL timeoutUrl = new URL((URL) null, url.toExternalForm(), new HttpTimeoutHandler(TIMEOUT));
+            final URLConnection connection = timeoutUrl.openConnection();
+
             connection.setRequestProperty("Connection", "close");
             bufferedReader = new BufferedReader(new InputStreamReader(
                 connection.getInputStream()));
