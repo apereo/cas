@@ -1,2 +1,0 @@
-<%@ page session="false" %>no
-
