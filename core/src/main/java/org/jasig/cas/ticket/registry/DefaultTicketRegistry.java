@@ -25,7 +25,14 @@ public final class DefaultTicketRegistry implements TicketRegistry {
     /** The Commons Logging instance. */
     private final Log log = LogFactory.getLog(getClass());
 
-    /** The map to use as the cache. */
+    /**
+     * A HashMap to contain the tickets. 
+     * 
+     * <p>Because the HashMap is not itself thread-safe, it can only
+     * be access from methods of this class that are declared to be
+     * synchronized. We could synchronize only the actually Map accesses,
+     * but there is not much more to this code.</p>
+     */
     private final Map cache = new HashMap();
 
     /**
@@ -33,7 +40,7 @@ public final class DefaultTicketRegistry implements TicketRegistry {
      * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
      * @throws IllegalArgumentException if the Ticket is null.
      */
-    public void addTicket(final Ticket ticket) {
+    public synchronized void addTicket(final Ticket ticket) {
         if (ticket == null) {
             throw new IllegalArgumentException("ticket cannot be null");
         }
@@ -68,7 +75,7 @@ public final class DefaultTicketRegistry implements TicketRegistry {
         return ticket;
     }
 
-    public Ticket getTicket(final String ticketId) {
+    public synchronized Ticket getTicket(final String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         final Ticket ticket = (Ticket) this.cache.get(ticketId);
 
@@ -79,12 +86,12 @@ public final class DefaultTicketRegistry implements TicketRegistry {
         return ticket;
     }
 
-    public boolean deleteTicket(final String ticketId) {
+    public synchronized boolean deleteTicket(final String ticketId) {
         log.debug("Removing ticket [" + ticketId + "] from registry");
-        return this.cache.remove(ticketId) == null ? false : true;
+        return (this.cache.remove(ticketId) != null);
     }
 
-    public Collection getTickets() {
+    public synchronized Collection getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
     }
 }
