@@ -48,6 +48,14 @@ import org.springframework.web.util.WebUtils;
  * Credentials object and passes it to CAS to generate a TGT.
  * </p>
  * 
+ * This class requires that the environment inject two properties:
+ * </p>
+ * <ul>
+ * <li>CentralAuthenticationService - a bean that provides the CAS services.</li>
+ * <li>LoginTokens - a Map keyed by random strings generated to prevent form
+ * resubmission</li>
+ * </ul>
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
