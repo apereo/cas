@@ -2,93 +2,162 @@
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 	<!-- Theme Resolver -->
-	<bean id="themeResolver" class="org.jasig.cas.web.ServiceThemeResolver">
+	<bean id="themeResolver"
+		class="org.jasig.cas.web.ServiceThemeResolver">
 		<property name="defaultThemeName" value="default" />
 	</bean>
 
 	<!-- View Resolver -->
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
 		<property name="basename" value="default_views" />
 	</bean>
 
+	<bean id="loginFlow"
+		class="org.springframework.web.flow.config.FlowFactoryBean">
+		<property name="flowBuilder">
+			<bean
+				class="org.springframework.web.flow.config.XmlFlowBuilder">
+				<property name="resource"
+					value="classpath:logon-webflow.xml" />
+			</bean>
+		</property>
+	</bean>
+
 	<!-- Handler Mapping -->
-    <bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="mappings">
-            <props>
-                <prop key="/login">loginController</prop>
+	<bean id="handlerMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/login">loginController</prop>
 				<prop key="/logout">logoutController</prop>
-				<prop key="/serviceValidate">serviceValidateController</prop>
+				<prop key="/serviceValidate">
+					serviceValidateController
+				</prop>
 				<prop key="/validate">legacyValidateController</prop>
 				<prop key="/proxy">proxyController</prop>
-				<prop key="/proxyValidate">proxyValidateController</prop>
-				<prop key="/CentralAuthenticationService">xFireCentralAuthenticationService</prop>
-            </props>
-        </property>
-        <property name="interceptors">
-        	<list>
-        		<ref bean="pageRequestHandlerInterceptorAdapter" />
-        	</list>
-        </property>
-    </bean>
-	
-	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
-		<property name="proxyHandler" ref="proxy20Handler" />
-		<property name="centralAuthenticationService" ref="centralAuthenticationService" />
+				<prop key="/proxyValidate">
+					proxyValidateController
+				</prop>
+				<prop key="/CentralAuthenticationService">
+					xFireCentralAuthenticationService
+				</prop>
+			</props>
+		</property>
+		<property name="interceptors">
+			<list>
+				<ref bean="pageRequestHandlerInterceptorAdapter" />
+			</list>
+		</property>
 	</bean>
-	
-	<bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
-		<property name="proxyHandler" ref="proxy20Handler" />
-		<property name="validationSpecificationClass" value="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification" />
-		<property name="centralAuthenticationService" ref="centralAuthenticationService" />
+
+	<bean id="loginController"
+		class="org.springframework.web.flow.mvc.FlowController">
+		<property name="flowExecutionManager">
+			<bean
+				class="org.springframework.web.flow.execution.servlet.HttpServletFlowExecutionManager">
+				<property name="flow" ref="loginFlow" />
+			</bean>
+		</property>
 	</bean>
-	
-	<bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController" autowire="byType">
+
+	<bean id="serviceValidateController"
+		class="org.jasig.cas.web.ServiceValidateController"
+		autowire="byType">
+		<property name="proxyHandler" ref="proxy20Handler" />
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
+	</bean>
+
+	<bean id="proxyValidateController"
+		class="org.jasig.cas.web.ServiceValidateController"
+		autowire="byType">
+		<property name="proxyHandler" ref="proxy20Handler" />
+		<property name="validationSpecificationClass"
+			value="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification" />
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
+	</bean>
+
+	<bean id="legacyValidateController"
+		class="org.jasig.cas.web.ServiceValidateController"
+		autowire="byType">
 		<property name="proxyHandler" ref="proxy10Handler" />
 		<property name="successView" value="cas1ServiceSuccessView" />
 		<property name="failureView" value="cas1ServiceFailureView" />
-		<property name="validationSpecificationClass" value="org.jasig.cas.validation.Cas10ProtocolValidationSpecification" />
-		<property name="centralAuthenticationService" ref="centralAuthenticationService" />
-	</bean>	
-	
-	<bean id="proxyController" class="org.jasig.cas.web.ProxyController" autowire="byType">
-		<property name="centralAuthenticationService" ref="centralAuthenticationService" />
+		<property name="validationSpecificationClass"
+			value="org.jasig.cas.validation.Cas10ProtocolValidationSpecification" />
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
 	</bean>
-	
-	<bean id="logoutController" class="org.jasig.cas.web.LogoutController" autowire="byType">
-		<property name="centralAuthenticationService" ref="centralAuthenticationService" />
+
+	<bean id="proxyController" class="org.jasig.cas.web.ProxyController"
+		autowire="byType">
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
 	</bean>
-	
-	<bean id="loginController" class="org.jasig.cas.web.LoginController" autowire="byType">
+
+	<bean id="logoutController"
+		class="org.jasig.cas.web.LogoutController" autowire="byType">
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
+	</bean>
+
+	<!-- 
+		<bean id="loginController" class="org.jasig.cas.web.LoginController" autowire="byType">
 		<property name="loginTokens" ref="loginTokens" />
 		<property name="centralAuthenticationService" ref="centralAuthenticationService" />
+		</bean>
+	-->
+
+	<bean id="xFireCentralAuthenticationService"
+		class="org.codehaus.xfire.spring.XFireExporter">
+		<property name="service"
+			ref="remoteCentralAuthenticationService" />
+		<property name="serviceInterface"
+			value="org.jasig.cas.CentralAuthenticationService" />
+		<property name="serviceFactory" ref="xfire.serviceFactory" />
+		<property name="xfire" ref="xfire" />
 	</bean>
 
+	<bean id="remoteCentralAuthenticationService"
+		class="org.jasig.cas.remoting.server.RemoteCentralAuthenticationService">
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
+		<property name="validators">
+			<list>
+				<bean
+					class="org.jasig.cas.validation.UsernamePasswordCredentialsValidator" />
+			</list>
+		</property>
+	</bean>
 
-  <bean id="xFireCentralAuthenticationService" class="org.codehaus.xfire.spring.XFireExporter">
-    <property name="service" ref="remoteCentralAuthenticationService" />
-    <property name="serviceInterface" value="org.jasig.cas.CentralAuthenticationService" />
-    <property name="serviceFactory" ref="xfire.serviceFactory"/>
-    <property name="xfire" ref="xfire" />
-  </bean>
+	<bean id="ticketExceptionHandlerExceptionResolver"
+		class="org.jasig.cas.web.TicketExceptionHandlerExceptionResolver" />
 
-  <bean id="remoteCentralAuthenticationService" class="org.jasig.cas.remoting.server.RemoteCentralAuthenticationService">
-  	<property name="centralAuthenticationService" ref="centralAuthenticationService" />
-  	<property name="validators">
-  		<list>
-  			<bean class="org.jasig.cas.validation.UsernamePasswordCredentialsValidator" />
-  		</list>
-  	</property>
-  </bean>
-  
-  <bean id="ticketExceptionHandlerExceptionResolver" class="org.jasig.cas.web.TicketExceptionHandlerExceptionResolver">
-  	<property name="loginController" ref="loginController" />
-  </bean>
-  
-  <bean id="simpleMappingHandlerExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-  	<property name="exceptionMappings">
-  		<props>
-			<prop key="UndeclaredThrowableException">serviceErrorView</prop>
-  		</props>
-  	</property>
-  </bean>
+	<bean id="simpleMappingHandlerExceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="UndeclaredThrowableException">
+					serviceErrorView
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="logonFormAction"
+		class="org.jasig.cas.web.flow.LogonFormAction">
+		<property name="loginTokens" ref="loginTokens" />
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
+	</bean>
+
+	<bean id="warnAction" class="org.jasig.cas.web.flow.WarnAction" />
+
+	<bean id="ticketGrantingTicketCheckAction"
+		class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction">
+		<property name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
+	</bean>
 </beans>

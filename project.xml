@@ -514,6 +514,29 @@
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 		</dependency>
+		
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-webflow</artifactId>
+			<version>preview2</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>	
+		
+		<dependency>
+			<groupId>springframework</groupId>
+			<artifactId>spring-webflow-support</artifactId>
+			<version>preview2</version>
+			<type>jar</type>
+			<url>http://www.springframework.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+
 		<dependency>
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>

@@ -15,10 +15,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.web.support.ViewNames;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * ExceptionResolver to map TicketExceptions to a view with the proper error
@@ -35,8 +35,8 @@ public final class TicketExceptionHandlerExceptionResolver implements
     private final Log log = LogFactory
         .getLog(TicketExceptionHandlerExceptionResolver.class);
 
-    /** The login controller which contains the login token generator. */
-    private LoginController loginController;
+    /** The url to redirect to. */
+    private String url = "/logon";
 
     public TicketExceptionHandlerExceptionResolver() {
         super();
@@ -61,17 +61,13 @@ public final class TicketExceptionHandlerExceptionResolver implements
         final Map model = new HashMap();
         model.putAll(errors.getModel());
         
-        try {
-            model.putAll(this.loginController.referenceData(request));
-        } catch (Exception e) {
-            // nothing to do
-        }
+ 
 
-        return new ModelAndView(ViewNames.CONST_LOGON, model);
+        return new ModelAndView(new RedirectView(this.url, true));
     }
 
-    public void setLoginController(final LoginController loginController) {
-        this.loginController = loginController;
+    public void setUrl(String url) {
+        this.url = url;
     }
     
 
