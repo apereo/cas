@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
+	"http://www.springframework.org/dtd/spring-webflow.dtd">
+
+<webflow id="logonFlow" start-state="ticketGrantingTicketCheck">
+	<action-state id="ticketGrantingTicketCheck">
+		<action bean="ticketGrantingTicketCheckAction" />
+		<transition on="success" to="warn" />
+		<transition on="error" to="setupReferenceData" />
+	</action-state>
+	
+	<action-state id="setupReferenceData">
+		<action bean="logonFormAction" method="setupReferenceData" />
+		<transition on="success" to="viewLogonForm" />
+	</action-state>
+
+	<view-state id="viewLogonForm" view="casLogonView">
+		<transition on="submit" to="bindAndValidate" />
+	</view-state>
+	
+	<action-state id="bindAndValidate">
+		<action bean="logonFormAction" />
+		<transition on="success" to="submit" />
+		<transition on="error" to="setupReferenceData" />
+	</action-state>
+	
+	<action-state id="submit">
+		<action bean="logonFormAction" method="submit" />
+		<transition on="noService" to="viewGenericLogon" />
+		<transition on="success" to="warn" />
+		<transition on="error" to="setupReferenceData" />
+	</action-state>
+	
+	<action-state id="warn">
+		<action bean="warnAction" />
+		<transition on="success" to="showWarningView" />
+		<transition on="error" to="showWarningView" />
+	</action-state>
+	
+	<end-state id="viewGenericLogon" view="casLogonGenericSuccessView" />
+	
+	<end-state id="showWarningView" view="casLogonConfirmView" />
+</webflow>
