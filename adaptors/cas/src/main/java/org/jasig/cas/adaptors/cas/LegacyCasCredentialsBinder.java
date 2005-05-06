@@ -22,7 +22,8 @@ public class LegacyCasCredentialsBinder implements CredentialsBinder {
 
     public void bind(final HttpServletRequest request,
         final Credentials credentials) {
-        if (credentials.getClass().equals(LegacyCasCredentials.class)) {
+
+        if (credentials instanceof LegacyCasCredentials) {
             ((LegacyCasCredentials) credentials).setServletRequest(request);
         } else {
             ((LegacyCasTrustedCredentials) credentials)
@@ -31,9 +32,23 @@ public class LegacyCasCredentialsBinder implements CredentialsBinder {
     }
 
     public boolean supports(Class clazz) {
-        return !(clazz == null)
-            && (clazz.equals(LegacyCasCredentials.class) || clazz
-                .equals(LegacyCasTrustedCredentials.class));
+        
+        if (clazz == null) {
+            throw new IllegalArgumentException("Cannot support a null class.");
+        }
+        
+        if (LegacyCasCredentials.class.isAssignableFrom(clazz)) {
+            return true;
+            // we support LegacyCasCredentials and its subclasses.
+        }
+        
+        if (LegacyCasTrustedCredentials.class.isAssignableFrom(clazz)) {
+            return true;
+            // we support LegacyCasTrustedCredentials and its subclasses.
+        }
+        
+        // must be some other class that we don't support
+        return false;
     }
 
 }
