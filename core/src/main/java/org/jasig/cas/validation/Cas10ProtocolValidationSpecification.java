@@ -6,7 +6,9 @@
 package org.jasig.cas.validation;
 
 /**
- * A mapping of the Cas 1.0 protocol for authentication.
+ * Validation specification for the CAS 1.0 protocol.  This specification
+ * checks for the presence of renew=true and if requested, succeeds only if 
+ * ticket validation is occurring from a new login.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
