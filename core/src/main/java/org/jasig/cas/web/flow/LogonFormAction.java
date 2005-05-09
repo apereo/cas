@@ -28,10 +28,11 @@ import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
 import org.springframework.web.flow.Event;
 import org.springframework.web.flow.RequestContext;
-import org.springframework.web.flow.SimpleEvent;
 import org.springframework.web.flow.action.FormAction;
+import org.springframework.web.flow.action.FormObjectAccessor;
 import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
 
 /**
@@ -52,7 +53,6 @@ public class LogonFormAction extends FormAction {
     private CentralAuthenticationService centralAuthenticationService;
 
     public Event setupReferenceData(RequestContext context) throws Exception {
-//        bindAndValidate(context);
         context.getRequestScope().setAttribute("loginToken",
             getLoginToken());
         return success();
@@ -79,8 +79,7 @@ public class LogonFormAction extends FormAction {
             .getParameter(WebConstants.WARN));
 
         final String service = request.getParameter(WebConstants.SERVICE);
-        final Credentials credentials = (Credentials) context.getFlowScope()
-            .getRequiredAttribute("credentials", Credentials.class);
+        final Credentials credentials = (Credentials) context.getRequestScope().get(getFormObjectName());
         String ticketGrantingTicketId = WebUtils.getCookieValue(request,
             WebConstants.COOKIE_TGC_ID);
         String serviceTicketId = null;
@@ -106,36 +105,42 @@ public class LogonFormAction extends FormAction {
             }
         }
 
-        if (serviceTicketId == null) {
-            ticketGrantingTicketId = this.centralAuthenticationService
-                .createTicketGrantingTicket(credentials);
+        try {
+            if (serviceTicketId == null) {
+                ticketGrantingTicketId = this.centralAuthenticationService
+                    .createTicketGrantingTicket(credentials);
+            }
+    
+            this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId,
+                request, response);
+    
+            if (warn) {
+                this.createCookie(WebConstants.COOKIE_PRIVACY,
+                    WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
+            } else {
+                this.createCookie(WebConstants.COOKIE_PRIVACY,
+                    WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
+            }
+    
+            if (StringUtils.hasText(service)) {
+                serviceTicketId = this.centralAuthenticationService
+                    .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
+                        service));
+    
+                context.getFlowScope().setAttribute(WebConstants.TICKET,
+                    serviceTicketId);
+                context.getFlowScope().setAttribute(WebConstants.SERVICE, service);
+    
+                return success();
+            }
+        } catch (TicketException e) {
+            FormObjectAccessor accessor = new FormObjectAccessor(context);
+            Errors errors = accessor.getFormErrors(this.getFormObjectName(), this.getErrorsScope());
+            errors.reject(e.getCode(), e.getCode());
+            return error();
         }
 
-        this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId,
-            request, response);
-
-        if (warn) {
-            this.createCookie(WebConstants.COOKIE_PRIVACY,
-                WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
-        } else {
-            this.createCookie(WebConstants.COOKIE_PRIVACY,
-                WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
-        }
-
-        if (StringUtils.hasText(service)) {
-            // the exception thrown here is handled externally
-            serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
-                    service));
-
-            context.getFlowScope().setAttribute(WebConstants.TICKET,
-                serviceTicketId);
-            context.getFlowScope().setAttribute(WebConstants.SERVICE, service);
-
-            return success();
-        }
-
-        return new SimpleEvent("noService");
+        return result("noService");
     }
 
     /**

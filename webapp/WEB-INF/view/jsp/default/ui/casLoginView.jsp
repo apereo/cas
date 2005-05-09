@@ -44,13 +44,11 @@
 			</p>
 
 			<form method="post" action="">
-			<c:if test="${credentials != null}">
-				<spring:bind path="credentials.*">
-				  <c:forEach var="error" items="${status.errorMessages}">
-				      <br />${error}
+				<spring:hasBindErrors name="credentials">
+				  <c:forEach var="error" items="${errors.allErrors}">
+				      <br /><spring:message code="${error.code}" />
 				  </c:forEach>
-				</spring:bind>
-			</c:if>
+				</spring:hasBindErrors>
 				<fieldset>
 					<legend><strong>Enter your JA-SIG NetID and Password</strong></legend>
 					<div style="margin-left:25%;">
@@ -71,7 +69,9 @@
 							   <label for="warn"  accesskey="w"><span class="accesskey">W</span>arn me before logging me into other sites.</label></p>
 
 							<input type="hidden" name="lt" value="${loginToken}" />
-					       <input type="hidden" name="_eventId" value="submit" />
+							<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}" />
+							<input type="hidden" name="_currentStateId" value="${flowExecution.currentStateId}" />
+							<input type="hidden" name="_eventId" value="submit" />
 
 
 							<p><input type="submit" class="button" accesskey="l" value="LOGIN" tabindex="4" /></p>
