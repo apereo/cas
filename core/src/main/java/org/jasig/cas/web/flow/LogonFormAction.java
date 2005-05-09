@@ -24,6 +24,7 @@ import org.jasig.cas.util.UniqueTokenIdGenerator;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
+import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -33,44 +34,51 @@ import org.springframework.web.flow.Event;
 import org.springframework.web.flow.RequestContext;
 import org.springframework.web.flow.action.FormAction;
 import org.springframework.web.flow.action.FormObjectAccessor;
-import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
 
 /**
+ * Action in flow of Login that attempts to collect and process credentials
+ * related to any type of information that can be collected via form.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
 public class LogonFormAction extends FormAction {
 
+    /** Log instance. */
     private Log log = LogFactory.getLog(this.getClass());
 
+    /** Map of tokens used to prevent resubmission of a form. */
     private Map loginTokens;
 
+    /** Id generator of tokens used to prevent resubmission of a form. */
     private UniqueTokenIdGenerator uniqueTokenIdGenerator;
 
+    /** Binder that allows additional binding of form object beyond Spring defaults. */
     private CredentialsBinder credentialsBinder;
 
+    /** Core we delegate to for handling all ticket related tasks. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    public Event setupReferenceData(RequestContext context) throws Exception {
-        context.getRequestScope().setAttribute("loginToken",
-            getLoginToken());
+    public Event setupReferenceData(final RequestContext context)
+        throws Exception {
+        ContextUtils.addAttribute(context, "loginToken", getLoginToken());
         return success();
     }
 
-    protected void onBind(RequestContext context, Object formObject,
-        BindException errors) {
-        final HttpServletRequest request = ((HttpServletRequestEvent) context
-            .getOriginatingEvent()).getRequest();
+    protected void onBind(final RequestContext context,
+        final Object formObject, final BindException errors) {
+        final HttpServletRequest request = ContextUtils
+            .getHttpServletRequest(context);
         final Credentials credentials = (Credentials) formObject;
         this.credentialsBinder.bind(request, credentials);
     }
 
-    public Event submit(RequestContext context) throws Exception {
-        final HttpServletRequest request = ((HttpServletRequestEvent) context
-            .getOriginatingEvent()).getRequest();
-        final HttpServletResponse response = ((HttpServletRequestEvent) context
-            .getOriginatingEvent()).getResponse();
+    public Event submit(final RequestContext context) throws Exception {
+        final HttpServletRequest request = ContextUtils
+            .getHttpServletRequest(context);
+        final HttpServletResponse response = ContextUtils
+            .getHttpServletResponseFromContext(context);
         final String loginToken = request
             .getParameter(WebConstants.LOGIN_TOKEN);
         final boolean renew = Boolean.valueOf(
@@ -79,7 +87,8 @@ public class LogonFormAction extends FormAction {
             .getParameter(WebConstants.WARN));
 
         final String service = request.getParameter(WebConstants.SERVICE);
-        final Credentials credentials = (Credentials) context.getRequestScope().get(getFormObjectName());
+        final Credentials credentials = (Credentials) context.getRequestScope()
+            .get(getFormObjectName());
         String ticketGrantingTicketId = WebUtils.getCookieValue(request,
             WebConstants.COOKIE_TGC_ID);
         String serviceTicketId = null;
@@ -110,32 +119,36 @@ public class LogonFormAction extends FormAction {
                 ticketGrantingTicketId = this.centralAuthenticationService
                     .createTicketGrantingTicket(credentials);
             }
-    
-            this.createCookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicketId,
-                request, response);
-    
+
+            this.createCookie(WebConstants.COOKIE_TGC_ID,
+                ticketGrantingTicketId, request, response);
+
             if (warn) {
-                this.createCookie(WebConstants.COOKIE_PRIVACY,
-                    WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request, response);
+                this
+                    .createCookie(WebConstants.COOKIE_PRIVACY,
+                        WebConstants.COOKIE_DEFAULT_FILLED_VALUE, request,
+                        response);
             } else {
                 this.createCookie(WebConstants.COOKIE_PRIVACY,
                     WebConstants.COOKIE_DEFAULT_EMPTY_VALUE, request, response);
             }
-    
+
             if (StringUtils.hasText(service)) {
                 serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
-                        service));
-    
+                    .grantServiceTicket(ticketGrantingTicketId,
+                        new SimpleService(service));
+
                 context.getFlowScope().setAttribute(WebConstants.TICKET,
                     serviceTicketId);
-                context.getFlowScope().setAttribute(WebConstants.SERVICE, service);
-    
+                context.getFlowScope().setAttribute(WebConstants.SERVICE,
+                    service);
+
                 return success();
             }
-        } catch (TicketException e) {
-            FormObjectAccessor accessor = new FormObjectAccessor(context);
-            Errors errors = accessor.getFormErrors(this.getFormObjectName(), this.getErrorsScope());
+        } catch (final TicketException e) {
+            final FormObjectAccessor accessor = new FormObjectAccessor(context);
+            final Errors errors = accessor.getFormErrors(this
+                .getFormObjectName(), this.getErrorsScope());
             errors.reject(e.getCode(), e.getCode());
             return error();
         }
