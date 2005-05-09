@@ -36,7 +36,7 @@ public final class TicketExceptionHandlerExceptionResolver implements
         .getLog(TicketExceptionHandlerExceptionResolver.class);
 
     /** The url to redirect to. */
-    private String url = "/logon";
+    private String url = "/login";
 
     public TicketExceptionHandlerExceptionResolver() {
         super();
