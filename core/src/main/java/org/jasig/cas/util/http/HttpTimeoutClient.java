@@ -22,7 +22,7 @@ public class HttpTimeoutClient extends HttpClient {
     }
 
     public HttpTimeoutClient(URL url) throws IOException {
-        super(url, null, -1);
+        this(url, null, -1);
     }
 
     public static HttpTimeoutClient getNew(URL url) throws IOException {
