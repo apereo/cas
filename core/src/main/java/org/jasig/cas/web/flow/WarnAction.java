@@ -7,13 +7,13 @@ package org.jasig.cas.web.flow;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.flow.Event;
 import org.springframework.web.flow.RequestContext;
 import org.springframework.web.flow.action.AbstractAction;
-import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
 
 /**
  * Action for determining whether the warning page needs to be displayed or not.
@@ -26,8 +26,7 @@ import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
 public class WarnAction extends AbstractAction {
 
     protected Event doExecuteAction(RequestContext context) throws Exception {
-        final HttpServletRequest request = ((HttpServletRequestEvent) context
-            .getOriginatingEvent()).getRequest();
+        final HttpServletRequest request = ContextUtils.getHttpServletRequest(context);
         final boolean warn = Boolean.valueOf(
             WebUtils.getCookieValue(request, WebConstants.COOKIE_PRIVACY))
             .booleanValue();
