@@ -52,7 +52,8 @@ public class LogonFormAction extends FormAction {
     private CentralAuthenticationService centralAuthenticationService;
 
     public Event setupReferenceData(RequestContext context) throws Exception {
-        context.getRequestScope().setAttribute(WebConstants.LOGIN_TOKEN,
+//        bindAndValidate(context);
+        context.getRequestScope().setAttribute("loginToken",
             getLoginToken());
         return success();
     }
