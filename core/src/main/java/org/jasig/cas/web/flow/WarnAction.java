@@ -41,7 +41,7 @@ public class WarnAction extends AbstractAction {
         }
         // TODO: handle redirect automatically
         Map model = new HashMap();
-        model.put("ticket", request.getAttribute(WebConstants.TICKET));
+        model.put(WebConstants.TICKET, ContextUtils.getAttribute(context, WebConstants.TICKET));
         ContextUtils.addAttribute(context, "model", model);
         return success();
     }
