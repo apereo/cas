@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.web.flow.util.ContextUtils;
@@ -37,6 +40,9 @@ public class WarnAction extends AbstractAction {
             return error();
         }
         // TODO: handle redirect automatically
+        Map model = new HashMap();
+        model.put("ticket", request.getAttribute(WebConstants.TICKET));
+        ContextUtils.addAttribute(context, "model", model);
         return success();
     }
 }
