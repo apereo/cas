@@ -40,4 +40,8 @@ public class ContextUtils {
     public static void addAttribute(final RequestContext context, final String attributeName, final Object attribute) {
         context.getRequestScope().setAttribute(attributeName, attribute);
     }
+    
+    public static Object getAttribute(final RequestContext context, final String attributeName) {
+        return context.getRequestScope().getAttribute(attributeName);
+    }
 }
