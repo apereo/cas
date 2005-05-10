@@ -42,6 +42,7 @@
 				<prop key="/CentralAuthenticationService">
 					xFireCentralAuthenticationService
 				</prop>
+				<prop key="/redirect">redirectController</prop>
 			</props>
 		</property>
 		<property name="interceptors">
@@ -50,6 +51,8 @@
 			</list>
 		</property>
 	</bean>
+
+	<bean id="redirectController" class="org.jasig.cas.web.RedirectController" />
 
 	<bean id="loginController"
 		class="org.springframework.web.flow.mvc.FlowController">

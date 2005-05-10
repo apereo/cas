@@ -7,6 +7,7 @@
 		<action bean="ticketGrantingTicketCheckAction" />
 		<transition on="success" to="warn" />
 		<transition on="error" to="setupReferenceData" />
+		<transition on="gateway" to="redirect" />
 	</action-state>
 	
 	<action-state id="setupReferenceData">
@@ -33,11 +34,13 @@
 	
 	<action-state id="warn">
 		<action bean="warnAction" />
-		<transition on="success" to="showWarningView" />
+		<transition on="success" to="redirect" />
 		<transition on="error" to="showWarningView" />
 	</action-state>
 	
 	<end-state id="viewGenericLogon" view="casLogonGenericSuccessView" />
 	
 	<end-state id="showWarningView" view="casLogonConfirmView" />
+	
+	<end-state id="redirect" view="redirectView" />
 </webflow>

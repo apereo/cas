@@ -44,7 +44,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
             .getParameter(WebConstants.RENEW))
             && !"false".equals(request.getParameter(WebConstants.RENEW));
 
-        if (!StringUtils.hasText(service) || renew) {
+        if (!StringUtils.hasText(service) || renew || ticketGrantingTicketId == null) {
             return error();
         }
 
@@ -59,7 +59,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
         } catch (TicketException e) {
             // if we are being used as a gateway just bounce!
             if (gateway) {
-                // TODO how to do redirect.
+                ContextUtils.addAttribute(context, WebConstants.SERVICE, service);
+                return result("gateway");
             }
             return error();
         }
