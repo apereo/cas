@@ -18,6 +18,7 @@ import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResol
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.mock.MockValidationSpecification;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -141,6 +142,33 @@ public class ServiceValidateControllerTests extends TestCase {
         assertEquals(ViewNames.CONST_SERVICE_FAILURE,
             this.serviceValidateController.handleRequestInternal(request,
                 new MockHttpServletResponse()).getViewName());
+    }
+    
+    public void testValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        c.setPassword("test");
+        c.setUsername("test");
+        this.serviceValidateController.setValidationSpecificationClass(MockValidationSpecification.class);
+        final String tId = this.centralAuthenticationService
+            .createTicketGrantingTicket(c);
+        this.centralAuthenticationService.grantServiceTicket(tId,
+            new SimpleService("test"));
+        final String sId2 = this.centralAuthenticationService
+            .grantServiceTicket(tId, new SimpleService("test"));
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter(WebConstants.SERVICE, "test");
+        request.addParameter(WebConstants.TICKET, sId2);
+        request.addParameter(WebConstants.RENEW, "true");
+
+        try {
+        assertEquals(ViewNames.CONST_SERVICE_FAILURE,
+            this.serviceValidateController.handleRequestInternal(request,
+                new MockHttpServletResponse()).getViewName());
+            fail("RuntimeException expected.");
+        } catch (RuntimeException e) {
+            return;
+        }
     }
 
     public void testInvalidServiceTicket() throws Exception {
