@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,11 +40,14 @@ public class ImmutableAuthenticationTests extends TestCase {
         assertEquals(this.authentication.getAttributes(), this.obj);
     }
 
-    /*
+
     public void testAuthenticatedDate() {
-        assertEquals(new Date(), this.authentication.getAuthenticatedDate());
+        Date date1 = this.authentication.getAuthenticatedDate();
+        Date date2 = this.authentication.getAuthenticatedDate();
+        
+        assertNotSame(date1, date2);
+        assertEquals(date1, date2);
     }
-*/
     
     public void testNullHashMap() {
         assertNotNull(new ImmutableAuthentication(new SimplePrincipal("test"),
@@ -54,7 +58,7 @@ public class ImmutableAuthenticationTests extends TestCase {
         assertEquals(HashCodeBuilder.reflectionHashCode(this.authentication),
             this.authentication.hashCode());
     }
-
+    
     public void testToString() {
         assertEquals(ToStringBuilder.reflectionToString(this.authentication),
             this.authentication.toString());
