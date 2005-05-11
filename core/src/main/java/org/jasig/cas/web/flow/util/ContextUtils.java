@@ -29,7 +29,7 @@ public class ContextUtils {
         throw new IllegalStateException("Cannot obtain HttpServletRequest from event of type: " + context.getOriginatingEvent().getClass().getName());
     }
     
-    public static HttpServletResponse getHttpServletResponseFromContext(final RequestContext context) {
+    public static HttpServletResponse getHttpServletResponse(final RequestContext context) {
         if (context.getOriginatingEvent() instanceof HttpServletRequestEvent) {
            return ((HttpServletRequestEvent) context.getOriginatingEvent()).getResponse(); 
         }

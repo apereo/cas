@@ -78,7 +78,7 @@ public class LogonFormAction extends FormAction {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
         final HttpServletResponse response = ContextUtils
-            .getHttpServletResponseFromContext(context);
+            .getHttpServletResponse(context);
         final String loginToken = request
             .getParameter(WebConstants.LOGIN_TOKEN);
         final boolean renew = Boolean.valueOf(
