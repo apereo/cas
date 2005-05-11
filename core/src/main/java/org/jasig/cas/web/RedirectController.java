@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.cas.web.support.WebConstants;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.view.RedirectView;
@@ -19,7 +20,7 @@ public class RedirectController implements Controller {
     public ModelAndView handleRequest(HttpServletRequest request,
         HttpServletResponse response) throws Exception {
         Map model = (Map) request.getAttribute("model");
-        String redirectUrl = (String) request.getAttribute("service");
+        String redirectUrl = (String) request.getAttribute(WebConstants.SERVICE);
         
         return new ModelAndView(new RedirectView(redirectUrl), model);
     }
