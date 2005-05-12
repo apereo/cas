@@ -14,16 +14,15 @@ import org.jasig.cas.web.bind.CredentialsBinder;
  * Custom Binder to populate the Legacy CAS Credentials with the required
  * ServletRequest.
  * 
- * @author Scott
+ * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LegacyCasCredentialsBinder implements CredentialsBinder {
+public final class LegacyCasCredentialsBinder implements CredentialsBinder {
 
     public void bind(final HttpServletRequest request,
         final Credentials credentials) {
-
-        if (credentials instanceof LegacyCasCredentials) {
+        if (credentials.getClass().equals(LegacyCasCredentials.class)) {
             ((LegacyCasCredentials) credentials).setServletRequest(request);
         } else {
             ((LegacyCasTrustedCredentials) credentials)
@@ -32,23 +31,9 @@ public class LegacyCasCredentialsBinder implements CredentialsBinder {
     }
 
     public boolean supports(Class clazz) {
-        
-        if (clazz == null) {
-            throw new IllegalArgumentException("Cannot support a null class.");
-        }
-        
-        if (LegacyCasCredentials.class.isAssignableFrom(clazz)) {
-            return true;
-            // we support LegacyCasCredentials and its subclasses.
-        }
-        
-        if (LegacyCasTrustedCredentials.class.isAssignableFrom(clazz)) {
-            return true;
-            // we support LegacyCasTrustedCredentials and its subclasses.
-        }
-        
-        // must be some other class that we don't support
-        return false;
+        return !(clazz == null)
+            && (clazz.equals(LegacyCasCredentials.class) || clazz
+                .equals(LegacyCasTrustedCredentials.class));
     }
 
 }
