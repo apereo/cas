@@ -20,7 +20,8 @@ import org.springframework.context.ApplicationEventPublisherAware;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * @see org.jasig.cas.event.AuthenticationAvent
+ * 
+ * @see org.jasig.cas.event.AuthenticationEvent
  */
 public final class AuthenticationHandlerAfterReturningAdvice implements
     AfterReturningAdvice, ApplicationEventPublisherAware {

@@ -8,23 +8,32 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * An extension point that allows the installation to add attributes to the
- * Authentication object. It has no defined function in the basic CAS
- * implmentation and it typically represented by a
- * DefaultAuthenticationAttributesPopulator that does nothing.
+ * An extension point to the Authentication process that allows CAS to provide
+ * additional attributes related to the overall Authentication (such as
+ * authentication type) that are specific to the Authentication request versus
+ * the Principal itself. AuthenticationAttributePopulators are a new feature in
+ * CAS3. In order for an installation to be CAS2 compliant, they do not need a
+ * AuthenticationAttributesPopulator or they may use a dummy
+ * AuthenticationAttributesPopulator.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
+ * @see DefaultAuthenticationAttriubutesPopulator
+ * @see AuthenticationManagerImpl
  */
 public interface AuthenticationAttributesPopulator {
 
     /**
-     * Given an existing Authentication object, either return it unmodified,
-     * replace it, or if it is mutable, change it.
+     * Provided with an Authentication object and the original credentials
+     * presented, provide any additional attributes to the Authentication
+     * object. Implementations have the option of returning the same
+     * Authentication object, or a new one.
      * 
-     * @param Authentication object so far
-     * @return the argument or a new Authentication object.
+     * @param authentication The Authentication to potentially augment with
+     * additional attributes.
+     * @return the original Authentication object or a new Authentication
+     * object.
      */
     Authentication populateAttributes(Authentication authentication,
         Credentials credentials);

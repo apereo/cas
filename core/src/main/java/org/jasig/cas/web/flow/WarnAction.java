@@ -20,16 +20,18 @@ import org.springframework.web.flow.action.AbstractAction;
 
 /**
  * Action for determining whether the warning page needs to be displayed or not.
- * If it does not need to be displayed we want to forward to the proper servce.
+ * If it does not need to be displayed we want to forward to the proper service.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class WarnAction extends AbstractAction {
+public final class WarnAction extends AbstractAction {
 
-    protected Event doExecuteAction(RequestContext context) throws Exception {
-        final HttpServletRequest request = ContextUtils.getHttpServletRequest(context);
+    protected Event doExecuteAction(final RequestContext context)
+        throws Exception {
+        final HttpServletRequest request = ContextUtils
+            .getHttpServletRequest(context);
         final boolean warn = Boolean.valueOf(
             WebUtils.getCookieValue(request, WebConstants.COOKIE_PRIVACY))
             .booleanValue();
@@ -39,9 +41,9 @@ public class WarnAction extends AbstractAction {
         if (warn || requestWarn) {
             return error();
         }
-        // TODO: handle redirect automatically
         Map model = new HashMap();
-        model.put(WebConstants.TICKET, ContextUtils.getAttribute(context, WebConstants.TICKET));
+        model.put(WebConstants.TICKET, ContextUtils.getAttribute(context,
+            WebConstants.TICKET));
         ContextUtils.addAttribute(context, "model", model);
         return success();
     }
