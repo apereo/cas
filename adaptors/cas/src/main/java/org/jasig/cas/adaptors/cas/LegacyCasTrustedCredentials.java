@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LegacyCasTrustedCredentials implements Credentials {
+public final class LegacyCasTrustedCredentials implements Credentials {
 
     private static final long serialVersionUID = 3618701894071892024L;
 
