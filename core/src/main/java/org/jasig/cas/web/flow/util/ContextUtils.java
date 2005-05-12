@@ -17,31 +17,76 @@ import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class ContextUtils {
 
-    public static HttpServletRequest getHttpServletRequest(final RequestContext context) {
-        if (context.getOriginatingEvent() instanceof HttpServletRequestEvent) {
-           return ((HttpServletRequestEvent) context.getOriginatingEvent()).getRequest(); 
-        }
-        
-        throw new IllegalStateException("Cannot obtain HttpServletRequest from event of type: " + context.getOriginatingEvent().getClass().getName());
+    private ContextUtils() {
+        // private constructor so that we can't instanciate new instances.
     }
-    
-    public static HttpServletResponse getHttpServletResponse(final RequestContext context) {
+
+    /**
+     * Method to retrieve the HttpServletRequest from a RequestContext that
+     * originated from a HttpServletRequestEvent.
+     * 
+     * @param context the RequestContext to grab the HttpServletRequest from.
+     * @return the HttpServletRequest for this context.
+     * @throws IllegalStateException if the originating event was not a
+     * HttpServletRequestEvent
+     */
+    public final static HttpServletRequest getHttpServletRequest(
+        final RequestContext context) {
         if (context.getOriginatingEvent() instanceof HttpServletRequestEvent) {
-           return ((HttpServletRequestEvent) context.getOriginatingEvent()).getResponse(); 
+            return ((HttpServletRequestEvent) context.getOriginatingEvent())
+                .getRequest();
         }
-        
-        throw new IllegalStateException("Cannot obtain HttpServletResponse from event of type: " + context.getOriginatingEvent().getClass().getName());
+
+        throw new IllegalStateException(
+            "Cannot obtain HttpServletRequest from event of type: "
+                + context.getOriginatingEvent().getClass().getName());
     }
-    
-    public static void addAttribute(final RequestContext context, final String attributeName, final Object attribute) {
+
+    /**
+     * Method to retrieve the HttpServletResponse from a RequestContext that
+     * originated from a HttpServletRequestEvent.
+     * 
+     * @param context the RequestContext to grab the HttpServletResponse from.
+     * @return the HttpServletResponse for this context.
+     * @throws IllegalStateException if the originating event was not a
+     * HttpServletRequestEvent
+     */
+    public final static HttpServletResponse getHttpServletResponse(
+        final RequestContext context) {
+        if (context.getOriginatingEvent() instanceof HttpServletRequestEvent) {
+            return ((HttpServletRequestEvent) context.getOriginatingEvent())
+                .getResponse();
+        }
+
+        throw new IllegalStateException(
+            "Cannot obtain HttpServletResponse from event of type: "
+                + context.getOriginatingEvent().getClass().getName());
+    }
+
+    /**
+     * Convenience method to add an attribute to the Request scope.
+     * 
+     * @param context the RequestContext to add the attribute to.
+     * @param attributeName The name of the attribute.
+     * @param attribute the value of the attribute.
+     */
+    public final static void addAttribute(final RequestContext context,
+        final String attributeName, final Object attribute) {
         context.getRequestScope().setAttribute(attributeName, attribute);
     }
-    
-    public static Object getAttribute(final RequestContext context, final String attributeName) {
+
+    /**
+     * Convenience method to retrieve an attribute from the Request scope.
+     * 
+     * @param context the RequestContext to retrieve the attribute from.
+     * @param attributeName The name of the attribute.
+     * @return the value of the attribute.
+     */
+    public final static Object getAttribute(final RequestContext context,
+        final String attributeName) {
         return context.getRequestScope().getAttribute(attributeName);
     }
 }

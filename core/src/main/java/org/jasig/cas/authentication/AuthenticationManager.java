@@ -9,14 +9,9 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Authenticate logon presenting a single Credential. Typically an
- * AuthenticationManagerImpl class.
- * <p>
- * An AuthenticationManager must be attached to the same named property in the
- * CentralAuthenticationServiceImpl. Typically it is defined in the
- * userConfigContext.xml file and is then autowired by type to the
- * centralAuthenticationService bean defined in applicationContext.xml
- * </p>
+ * The AuthenticationManager class is the entity that determines the
+ * authenticity of the credentials provided. It (or a class it delegates to) is
+ * the sole authority on whether credentials are valid or not.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,13 +20,18 @@ import org.jasig.cas.authentication.principal.Credentials;
 public interface AuthenticationManager {
 
     /**
-     * Verify Credentials, create a Principal, and return it wrapped by an
-     * Authentication object that can be used to construct a TGT. Any falure
-     * must throw AuthenticationException
+     * Method to validate the credentials provided. On successful validation, a
+     * fully populated Authentication object will be returned. Typically this
+     * will involve resolving a principal and providing any additional
+     * attributes, but specifics are left to the individual implementations to
+     * determine. Failure to authenticate is considered an exceptional case, and
+     * an AuthenticationException is thrown.
      * 
-     * @param Opaque Credentials known to the manager or one of its plugins
-     * @return Authentication object containing a Principal (may not be null)
-     * @throws AuthenticationException on any failure
+     * @param credentials The credentials provided for authentication.
+     * @return fully populated Authentication object.
+     * @throws AuthenticationException if unable to determine validity of
+     * credentials or there is an extenuating circumstance related to
+     * credentials (i.e. Account locked).
      */
     Authentication authenticate(final Credentials credentials)
         throws AuthenticationException;
