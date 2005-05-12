@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
