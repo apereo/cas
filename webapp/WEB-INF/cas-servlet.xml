@@ -12,6 +12,9 @@
 		class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
 		<property name="basename" value="default_views" />
 	</bean>
+	
+	<bean id="errorHandlerResolver" 
+		class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
 	<bean id="loginFlow"
 		class="org.springframework.web.flow.config.FlowFactoryBean">
