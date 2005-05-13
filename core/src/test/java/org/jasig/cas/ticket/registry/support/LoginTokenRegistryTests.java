@@ -85,6 +85,6 @@ public class LoginTokenRegistryTests extends TestCase {
 
         this.loginTokenRegistryCleaner.clean();
 
-        assertEquals(this.loginTokens.size(), 10);
+        assertTrue(this.loginTokens.size() <= 10);
     }
 }
