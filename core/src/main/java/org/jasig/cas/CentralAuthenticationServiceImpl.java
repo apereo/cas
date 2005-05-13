@@ -25,12 +25,27 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
  * central, organizing component of CAS's internal implementation.
  * <p>
  * This class is threadsafe.
+ * <p>
+ * This class has the following properties that must be set:
+ * <ul>
+ * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
+ * of available tickets.
+ * <li> <code>authenticationManager</code> - The service that will handle
+ * authentication.
+ * <li> <code>uniqueTicketIdGenerator</code> - Plug in to generate unique
+ * secure ids for tickets.
+ * <li> <code>ticketGrantingTicketExpirationPolicy</code> - The expiration
+ * policy for TicketGrantingTickets.
+ * <li> <code>serviceTicketExpirationPolicy</code> - The expiration policy for
+ * ServiceTicktes.
+ * </ul>
  * 
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
@@ -39,7 +54,7 @@ import org.jasig.cas.validation.ImmutableAssertionImpl;
  * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl implements
-    CentralAuthenticationService {
+    CentralAuthenticationService, InitializingBean {
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Log log = LogFactory.getLog(this.getClass());
@@ -63,9 +78,7 @@ public final class CentralAuthenticationServiceImpl implements
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
-     * 
-     * @see org.jasig.cas.CentralAuthenticationService#destroyTicketGrantingTicket(java.lang.String)
-     * @throws IllegalArgumentException if the TicketGrantingTicket ID is null. 
+     * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         if (ticketGrantingTicketId == null) {
@@ -88,9 +101,8 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
-     * 
-     * @see org.jasig.cas.CentralAuthenticationService#grantServiceTicket(java.lang.String, org.jasig.cas.authentication.principal.Service, org.jasig.cas.authentication.principal.Credentials)
-     * @throws IllegalArgumentException if TicketGrantingTicket ID, Credentials or Service are null.
+     * @throws IllegalArgumentException if TicketGrantingTicket ID, Credentials
+     * or Service are null.
      */
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
@@ -158,9 +170,8 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
-     * 
-     * @see org.jasig.cas.CentralAuthenticationService#delegateTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
-     * @throws  IllegalArgumentException if the ServiceTicketId or the Credentials are null.
+     * @throws IllegalArgumentException if the ServiceTicketId or the
+     * Credentials are null.
      */
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
@@ -199,9 +210,8 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
-     * 
-     * @see org.jasig.cas.CentralAuthenticationService#validateServiceTicket(java.lang.String, org.jasig.cas.authentication.principal.Service)
-     * @throws IllegalArgumentException if the ServiceTicketId or the Service are null.
+     * @throws IllegalArgumentException if the ServiceTicketId or the Service
+     * are null.
      */
     public Assertion validateServiceTicket(final String serviceTicketId,
         final Service service) throws TicketException {
@@ -241,8 +251,6 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
-     * 
-     * @see org.jasig.cas.CentralAuthenticationService#createTicketGrantingTicket(org.jasig.cas.authentication.principal.Credentials)
      * @throws IllegalArgumentException if the credentials are null.
      */
     public String createTicketGrantingTicket(final Credentials credentials)
@@ -283,6 +291,8 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
+     * Method to inject the AuthenticationManager into the class.
+     * 
      * @param authenticationManager The authenticationManager to set.
      */
     public void setAuthenticationManager(
@@ -291,6 +301,8 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
+     * Method to inject the TicketGrantingTicket Expiration Policy.
+     * 
      * @param ticketGrantingTicketExpirationPolicy The
      * ticketGrantingTicketExpirationPolicy to set.
      */
@@ -300,6 +312,8 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
+     * Method to inject the Unique Ticket Id Generator into the class.
+     * 
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to use
      */
     public void setUniqueTicketIdGenerator(
@@ -308,6 +322,8 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     /**
+     * Method to inject the TicketGrantingTicket Expiration Policy.
+     * 
      * @param serviceTicketExpirationPolicy The serviceTicketExpirationPolicy to
      * set.
      */
@@ -315,4 +331,36 @@ public final class CentralAuthenticationServiceImpl implements
         final ExpirationPolicy serviceTicketExpirationPolicy) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
     }
+
+    public void afterPropertiesSet() throws Exception {
+        final String name = this.getClass().getName();
+
+        if (this.ticketRegistry == null) {
+            throw new IllegalStateException("ticketRegistry cannot be null on "
+                + name);
+        }
+
+        if (this.authenticationManager == null) {
+            throw new IllegalStateException(
+                "authenticationManager cannot be null on " + name);
+        }
+
+        if (this.uniqueTicketIdGenerator == null) {
+            throw new IllegalStateException(
+                "uniqueTicketIdGenerator cannot be null on " + name);
+        }
+
+        if (this.ticketGrantingTicketExpirationPolicy == null) {
+            throw new IllegalStateException(
+                "ticketGrantingTicketExpirationPolicy cannot be null on "
+                    + name);
+        }
+
+        if (this.serviceTicketExpirationPolicy == null) {
+            throw new IllegalStateException(
+                "serviceTicketExpirationPolicy cannot be null on " + name);
+        }
+
+    }
+
 }
