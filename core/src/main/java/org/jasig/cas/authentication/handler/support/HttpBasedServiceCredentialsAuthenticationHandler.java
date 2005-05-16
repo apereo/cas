@@ -46,7 +46,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
         response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
             .getCallbackUrl());
 
-        return this.allowNullResponses ? true : response != null;
+        return this.allowNullResponses || response != null;
     }
 
     public boolean supports(final Credentials credentials) {
@@ -54,6 +54,12 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
             .getClass());
     }
 
+    /**
+     * Method to programmatically set whether this AuthenticationHandler will follow
+     * redirects.
+     * 
+     * @param allowNullResponses
+     */
     public void setAllowNullResponses(final boolean allowNullResponses) {
         this.allowNullResponses = allowNullResponses;
     }

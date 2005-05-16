@@ -22,11 +22,25 @@ import org.springframework.beans.factory.InitializingBean;
 public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     AuthenticationHandler, InitializingBean {
 
+    /**
+     * Method automatically handles conversion to UsernamePasswordCredentials
+     * and delegates to abstract authenticateUsernamePasswordInternal so
+     * subclasses do not need to cast.
+     */
     public final boolean authenticate(final Credentials credentials)
         throws AuthenticationException {
         return authenticateUsernamePasswordInternal((UsernamePasswordCredentials) credentials);
     }
 
+    /**
+     * Abstract convenience method that assumes the credentials passed in are a
+     * subclass of UsernamePasswordCredentials.
+     * 
+     * @param credentials the credentials representing the Username and Password
+     * presented to CAS
+     * @return true if the credentials are authentic, false otherwise.
+     * @throws AuthenticationException if authenticity cannot be determined.
+     */
     protected abstract boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException;
