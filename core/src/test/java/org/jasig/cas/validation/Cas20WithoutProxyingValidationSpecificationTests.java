@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 
@@ -30,7 +31,8 @@ public class Cas20WithoutProxyingValidationSpecificationTests extends TestCase {
     public void testSatisfiesSpecOfTrue() {
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new ImmutableAssertionImpl(list, true);
+        final Assertion assertion = new ImmutableAssertionImpl(list,
+            new SimpleService("test"), true);
         assertTrue(this.validationSpecification.isSatisfiedBy(assertion));
     }
 
@@ -38,14 +40,16 @@ public class Cas20WithoutProxyingValidationSpecificationTests extends TestCase {
         final List list = new ArrayList();
         this.validationSpecification.setRenew(true);
         list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new ImmutableAssertionImpl(list, false);
+        final Assertion assertion = new ImmutableAssertionImpl(list,
+            new SimpleService("test"), false);
         assertFalse(this.validationSpecification.isSatisfiedBy(assertion));
     }
 
     public void testSatisfiesSpecOfFalse() {
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new ImmutableAssertionImpl(list, true);
+        final Assertion assertion = new ImmutableAssertionImpl(list,
+            new SimpleService("test"), true);
         assertTrue(this.validationSpecification.isSatisfiedBy(assertion));
     }
 
@@ -53,7 +57,8 @@ public class Cas20WithoutProxyingValidationSpecificationTests extends TestCase {
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
         list.add(new SimplePrincipal("test2"));
-        final Assertion assertion = new ImmutableAssertionImpl(list, false);
+        final Assertion assertion = new ImmutableAssertionImpl(list,
+            new SimpleService("test"), false);
         assertFalse(this.validationSpecification.isSatisfiedBy(assertion));
     }
 

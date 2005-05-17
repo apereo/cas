@@ -30,13 +30,14 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
 
     private EhCacheTicketRegistry ticketRegistry;
 
-    public EhCacheTicketRegistryTests() {
+    public EhCacheTicketRegistryTests() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
             APPLICATION_CONTEXT_FILE_NAME);
         this.cache = (Cache) context
             .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
         this.ticketRegistry = new EhCacheTicketRegistry();
         this.ticketRegistry.setCache(this.cache);
+        this.ticketRegistry.afterPropertiesSet();
     }
 
     public void testBadCacheGetTicket() {

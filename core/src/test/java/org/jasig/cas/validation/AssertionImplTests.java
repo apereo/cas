@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 
 import junit.framework.TestCase;
@@ -23,7 +25,7 @@ public class AssertionImplTests extends TestCase {
 
     public void testNullParameters() {
         try {
-            new ImmutableAssertionImpl(null, false);
+            new ImmutableAssertionImpl(null, null, false);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -33,7 +35,7 @@ public class AssertionImplTests extends TestCase {
 
     public void testEmptyParameters() {
         try {
-            new ImmutableAssertionImpl(new ArrayList(), false);
+            new ImmutableAssertionImpl(new ArrayList(), null, false);
         } catch (IllegalArgumentException e) {
             return;
         }
@@ -49,7 +51,7 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test2"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, true);
+            list, new SimpleService("test"), true);
 
         assertEquals(list, assertion.getChainedPrincipals());
     }
@@ -60,7 +62,7 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, false);
+            list, new SimpleService("test"), false);
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -71,7 +73,7 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, true);
+            list, new SimpleService("test"), true);
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -81,7 +83,7 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, true);
+            list, new SimpleService("test"), true);
 
         assertFalse(assertion.equals(null));
     }
@@ -91,7 +93,7 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, true);
+            list, new SimpleService("test"), true);
 
         assertFalse(assertion.equals("test"));
     }
@@ -103,11 +105,22 @@ public class AssertionImplTests extends TestCase {
         list1.add(new SimplePrincipal("test"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, true);
+            list, new SimpleService("test"), true);
         final ImmutableAssertionImpl assertion1 = new ImmutableAssertionImpl(
-            list1, true);
+            list1, new SimpleService("test"), true);
 
         assertTrue(assertion.equals(assertion1));
+    }
+    
+    public void testGetService() {
+        final Service service = new SimpleService("test");
+        
+        final List list = new ArrayList();
+        list.add(new SimplePrincipal("test"));
+
+        final Assertion assertion = new ImmutableAssertionImpl(list, service, false);
+        
+        assertEquals(service, assertion.getService());
     }
 
     public void testToString() {
@@ -116,8 +129,10 @@ public class AssertionImplTests extends TestCase {
         list.add(new SimplePrincipal("test"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, true);
+            list, new SimpleService("test"), true);
         assertEquals(ToStringBuilder.reflectionToString(assertion), assertion
             .toString());
     }
+    
+    
 }

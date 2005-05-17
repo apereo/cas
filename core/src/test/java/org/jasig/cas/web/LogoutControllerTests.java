@@ -7,42 +7,25 @@ package org.jasig.cas.web;
 
 import javax.servlet.http.Cookie;
 
-import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
-
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LogoutControllerTests extends TestCase {
+public class LogoutControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private LogoutController logoutController;
 
     protected void setUp() throws Exception {
-        CentralAuthenticationServiceImpl c = new CentralAuthenticationServiceImpl();
-        c.setTicketRegistry(new DefaultTicketRegistry());
-
         this.logoutController = new LogoutController();
-        this.logoutController.setCentralAuthenticationService(c);
+        this.logoutController.setCentralAuthenticationService(getCentralAuthenticationService());
         this.logoutController.afterPropertiesSet();
-    }
-
-    public void testAfterPropertiesSet() {
-        LogoutController controller = new LogoutController();
-
-        try {
-            controller.afterPropertiesSet();
-            fail("IllegalArgumentException expected.");
-        } catch (Exception e) {
-            return;
-        }
     }
 
     public void testLogoutNoCookie() throws Exception {

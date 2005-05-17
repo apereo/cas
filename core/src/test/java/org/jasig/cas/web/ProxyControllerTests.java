@@ -5,28 +5,25 @@
  */
 package org.jasig.cas.web;
 
-import org.jasig.cas.CentralAuthenticationServiceImpl;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import junit.framework.TestCase;
-
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ProxyControllerTests extends TestCase {
+public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private ProxyController proxyController;
 
@@ -34,30 +31,16 @@ public class ProxyControllerTests extends TestCase {
 
     protected void setUp() throws Exception {
         this.t = new DefaultTicketRegistry();
-        CentralAuthenticationServiceImpl c = new CentralAuthenticationServiceImpl();
-        c.setTicketRegistry(this.t);
-        c.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        c.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
 
         this.proxyController = new ProxyController();
-        this.proxyController.setCentralAuthenticationService(c);
+        this.proxyController.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.centralAuthenticationService.setTicketRegistry(this.t);
         this.proxyController.afterPropertiesSet();
 
         StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         ((ApplicationContextAware) this.proxyController)
             .setApplicationContext(context);
-    }
-
-    public void testAfterPropertiesSet() {
-        ProxyController controller = new ProxyController();
-
-        try {
-            controller.afterPropertiesSet();
-            fail("IllegalArgumentException expected.");
-        } catch (Exception e) {
-            return;
-        }
     }
 
     public void testNonExistantPGT() throws Exception {
