@@ -5,25 +5,12 @@
  */
 package org.jasig.cas.web;
 
-import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.DefaultAuthenticationAttributesPopulator;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.mock.MockValidationSpecification;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
@@ -32,44 +19,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-import junit.framework.TestCase;
-
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ServiceValidateControllerTests extends TestCase {
+public class ServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private ServiceValidateController serviceValidateController;
-
-    private CentralAuthenticationServiceImpl centralAuthenticationService;
-
-    private CentralAuthenticationService getCentralAuthenticationService() {
-        this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
-        this.centralAuthenticationService
-            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketRegistry(new DefaultTicketRegistry());
-        this.centralAuthenticationService
-            .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-
-        AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-
-        AuthenticationAttributesPopulator[] populators = new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()};
-        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
-        AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
-
-        manager.setAuthenticationAttributesPopulators(populators);
-        manager.setAuthenticationHandlers(handlers);
-        manager.setCredentialsToPrincipalResolvers(resolvers);
-
-        this.centralAuthenticationService.setAuthenticationManager(manager);
-
-        return this.centralAuthenticationService;
-    }
 
     protected void setUp() throws Exception {
         StaticApplicationContext context = new StaticApplicationContext();
@@ -80,16 +37,6 @@ public class ServiceValidateControllerTests extends TestCase {
         this.serviceValidateController.setApplicationContext(context);
 
         this.serviceValidateController.afterPropertiesSet();
-    }
-
-    public void testAfterPropertiesSetNoAuthenticationService() {
-        this.serviceValidateController.setCentralAuthenticationService(null);
-        try {
-            this.serviceValidateController.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            return;
-        }
     }
 
     public void testAfterPropertesSetTestEverything() throws Exception {

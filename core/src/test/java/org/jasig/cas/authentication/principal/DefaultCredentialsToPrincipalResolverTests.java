@@ -7,10 +7,6 @@ package org.jasig.cas.authentication.principal;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
 
@@ -53,16 +49,6 @@ public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
         request.setUsername(null);
         try {
             this.resolver.resolvePrincipal(request);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-
-        fail("IllegalArgumentException expected.");
-    }
-
-    public void testNullCredentials() {
-        try {
-            this.resolver.resolvePrincipal(null);
         } catch (IllegalArgumentException e) {
             return;
         }

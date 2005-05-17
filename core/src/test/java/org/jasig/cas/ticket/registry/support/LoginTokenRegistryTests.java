@@ -28,6 +28,8 @@ public class LoginTokenRegistryTests extends TestCase {
         super.setUp();
         this.loginTokens = new HashMap();
         this.loginTokenRegistryCleaner.setLoginTokens(this.loginTokens);
+        this.loginTokenRegistryCleaner.setTimeOut(10);
+        this.loginTokenRegistryCleaner.afterPropertiesSet();
     }
 
     public void testCleanEmptyLoginTokens() {

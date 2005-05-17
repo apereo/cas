@@ -52,14 +52,4 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends
             fail("Invalid URL supplied.");
         }
     }
-
-    public void testNullCredentials() {
-        try {
-            this.resolver.resolvePrincipal(null);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-
-        fail("IllegalArgumentException expected.");
-    }
 }
