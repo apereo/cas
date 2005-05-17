@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Marker interface for credentials required to authenticate a principal.
  * <p>
- * The Credentials is an opaque object passed from the Web layer through the CAS
+ * The Credentials is an opaque object passed into the CAS
  * and AuthenticationManager layer to the various Handler and Resolver objects.
  * You add this marker to any object you want to pass along this way.
  * Credentials can contain a userid and password, or a Certificate, or an IP

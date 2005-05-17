@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  * @see org.jasig.cas.authentication.principal.SimplePrincipal
  */
 public final class DefaultCredentialsToPrincipalResolver implements
@@ -38,10 +37,6 @@ public final class DefaultCredentialsToPrincipalResolver implements
      */
     public Principal resolvePrincipal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
-
-        if (credentials == null) {
-            throw new IllegalArgumentException("credentials cannot be null");
-        }
 
         log.debug("Creating SimplePrincipal for ["
             + usernamePasswordCredentials.getUsername() + "]");

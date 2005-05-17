@@ -27,7 +27,6 @@ public final class Md5PasswordEncoder implements PasswordEncoder {
     private static final String ALGORITHM_NAME = "MD5";
 
     /**
-     * @see org.jasig.cas.authentication.handler.PasswordEncoder#encode(java.lang.String)
      * @throws SecurityException if the Algorithm can't be found. 
      */
     public String encode(final String password) {

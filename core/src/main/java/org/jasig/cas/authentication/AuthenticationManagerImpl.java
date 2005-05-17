@@ -18,14 +18,21 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * AuthenticationManager for a single Credential.
+ * <p>
+ * Default implementation of the AuthenticationManager. Follows a simple
+ * algorithm that searches AuthenticationHandlers for the first one that can
+ * validate the credentials. If none are found, it throws an
+ * UnsupportedCredentials Exception. Next, it looks for a
+ * CredentialsToPrincipalResolver that can handle the credentials in order to
+ * create a Principal. Finally, it attempts to populate the Authentication
+ * object's attributes map using AuthenticationAttributesPopulators
  * <p>
  * Behavior is determined by external beans attached through three configuration
  * properties. The Credentials are opaque to the manager. They are passed to the
  * external beans to see if any can process the actual type represented by the
  * Credentials marker.
  * <p>
- * The properties are lists of support beans implementing an interface. For
+ * The properties are arrays of support beans implementing an interface. For
  * details on their operation, see the interfaces:<br>
  * AuthenticationHandlers<br>
  * CredentialsToPrincipalResolvers<br>
@@ -55,17 +62,6 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     /** An array of AuthenticationAttributesPopulators. */
     private AuthenticationAttributesPopulator[] authenticationAttributesPopulators;
 
-    /**
-     * Turn Credentials into an Authentication containing a Principal.
-     * <p>
-     * This routine searches the AuthenticationHandlers until one validates the
-     * credentials or throws a serious AuthenticationException. It the runs the
-     * CredentialsToPrincipalResolver until one returns a Principal, or throws a
-     * serious exception. The Principal is wrapped in an Authentication object.
-     * It then runs the AuthenticationAttributesPopulators, if any, to allow the
-     * Authentication to be augmented.
-     * <p>
-     */
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
         boolean authenticated = false;
@@ -76,7 +72,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                     log.info("AuthenticationHandler: "
                         + this.authenticationHandlers[i].getClass().getName()
                         + " failed to authenticate the user.");
-                    throw new BadCredentialsAuthenticationException();
+                    throw BadCredentialsAuthenticationException.ERROR;
                 }
                 log.info("AuthenticationHandler: "
                     + this.authenticationHandlers[i].getClass().getName()

@@ -25,25 +25,18 @@ public interface AuthenticationHandler {
      * Method to determine if the credentials supplied are valid.
      * 
      * @param credentials The credentials to validate.
-     * @return true if valid. Do not return false, throw the exception.
+     * @return true if valid, return false otherwise.
      * @throws AuthenticationException An AuthenticationException can contain
      * details about why a particular authentication request failed.
-     * AuthenticationExceptions contain code/desc.
      */
     boolean authenticate(Credentials credentials)
         throws AuthenticationException;
 
     /**
-     * Method to check if the handler knows how to handle these credentials. It
-     * may be a simple check of the Credentials class or something more
-     * complicated such as scanning the information contained in the Credentials
-     * object.
-     * <p>
-     * In AuthenticationManagerImpl, the first handler to claim that it supports
-     * a particular Credentials object is the only Handler that gets to validate
-     * them. So if you want to allow subsequent handlers to get a chance to look
-     * at these credentials and cannot validate them yourself, return false from
-     * this method.
+     * Method to check if the handler knows how to handle the credentials
+     * provided. It may be a simple check of the Credentials class or something
+     * more complicated such as scanning the information contained in the
+     * Credentials object.
      * 
      * @param credentials The credentials to check.
      * @return true if the handler supports the Credentials, false othewrise.
