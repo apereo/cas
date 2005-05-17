@@ -14,6 +14,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * After returning AOP advice which updates <code>TicketStatistics</code>
@@ -77,24 +78,14 @@ public final class LogTicketStatisticsAfterReturningAdvice implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.statsStateMutators == null
-            || this.statsStateMutators.isEmpty()) {
-            throw new IllegalStateException(
-                "You must set the statsStateMutators on "
-                    + this.getClass().getName());
-        }
-
-        if (this.ticketStatsManager == null) {
-            throw new IllegalStateException(
-                "You must set the ticketStatsManager bean on "
-                    + this.getClass().getName());
-        }
-
-        if (this.ticketRegistry == null) {
-            throw new IllegalStateException(
-                "You must set the ticketRegistry bean on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.statsStateMutators,
+            "statsStateMutators is a required property.");
+        Assert.notEmpty(this.statsStateMutators,
+            "statsStateMutators is a required property.");
+        Assert.notNull(this.ticketStatsManager,
+            "ticketStatsManager is a required property.");
+        Assert.notNull(this.ticketRegistry,
+            "ticketRegistry is a required property.");
     }
 
     /**

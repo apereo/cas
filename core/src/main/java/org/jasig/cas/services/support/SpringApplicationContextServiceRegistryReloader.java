@@ -17,6 +17,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 
 /**
  * ServiceRegistryReloader that reloads the ServiceRegistry from an XML file
@@ -90,11 +91,8 @@ public final class SpringApplicationContextServiceRegistryReloader implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.serviceRegistryManager == null) {
-            throw new IllegalStateException(
-                "ServiceRegistryManager cannot be null on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.serviceRegistryManager,
+            "serviceRegistryManager is a required property.");
 
         if (this.fileName == null) {
             log.info("No fileName provided for " + this.getClass().getName()
@@ -104,8 +102,6 @@ public final class SpringApplicationContextServiceRegistryReloader implements
 
         this.serviceRegistryFile = this.resourceLoader.getResource(
             ResourceLoader.CLASSPATH_URL_PREFIX + this.fileName).getFile();
-
-        log.info("LOCATION: " + this.serviceRegistryFile);
 
         if (!this.serviceRegistryFile.exists()) {
             throw new IllegalStateException("File: " + this.serviceRegistryFile

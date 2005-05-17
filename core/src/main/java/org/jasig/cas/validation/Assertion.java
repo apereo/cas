@@ -7,6 +7,8 @@ package org.jasig.cas.validation;
 
 import java.util.List;
 
+import org.jasig.cas.authentication.principal.Service;
+
 /**
  * Return from CentralAuthenticationService.validateServiceTicket(String,
  * Service), the Assertion contains a chain of Principal objects. The first is
@@ -47,5 +49,13 @@ public interface Assertion {
      * grantor's issuance
      */
     boolean isFromNewLogin();
+
+    /**
+     * Method to obtain the service for which we are asserting this ticket is
+     * valid for.
+     * 
+     * @return the service for which we are asserting this ticket is valid for.
+     */
+    Service getService();
 
 }

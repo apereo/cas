@@ -15,6 +15,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -39,11 +40,9 @@ public final class LogoutController extends AbstractController implements
     private CentralAuthenticationService centralAuthenticationService;
 
     public void afterPropertiesSet() throws Exception {
-        if (this.centralAuthenticationService == null) {
-            throw new IllegalStateException(
-                "centralAuthenticationService must be set on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService must be set on "
+                + this.getClass().getName());
     }
 
     protected ModelAndView handleRequestInternal(

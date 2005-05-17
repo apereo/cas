@@ -13,6 +13,7 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.flow.Event;
 import org.springframework.web.flow.RequestContext;
@@ -26,7 +27,7 @@ import org.springframework.web.flow.action.AbstractAction;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class TicketGrantingTicketCheckAction extends AbstractAction {
+public final class TicketGrantingTicketCheckAction extends AbstractAction {
 
     /** The CORE of CAS which we will use to obtain tickets. */
     private CentralAuthenticationService centralAuthenticationService;
@@ -44,7 +45,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
             .getParameter(WebConstants.RENEW))
             && !"false".equals(request.getParameter(WebConstants.RENEW));
 
-        if (!StringUtils.hasText(service) || renew || ticketGrantingTicketId == null) {
+        if (!StringUtils.hasText(service) || renew
+            || ticketGrantingTicketId == null) {
             return error();
         }
 
@@ -59,7 +61,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
         } catch (TicketException e) {
             // if we are being used as a gateway just bounce!
             if (gateway) {
-                ContextUtils.addAttribute(context, WebConstants.SERVICE, service);
+                ContextUtils.addAttribute(context, WebConstants.SERVICE,
+                    service);
                 return result("gateway");
             }
             return error();
@@ -74,11 +77,8 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        if (this.centralAuthenticationService == null) {
-            throw new IllegalStateException(
-                "centralAuthenticationService cannot be null on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null on "
+                + this.getClass().getName());
     }
-
 }

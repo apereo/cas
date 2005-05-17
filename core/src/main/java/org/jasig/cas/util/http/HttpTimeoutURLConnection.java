@@ -1,3 +1,8 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.util.http;
 
 import java.io.IOException;
@@ -6,19 +11,26 @@ import java.net.URL;
 
 import sun.net.www.http.HttpClient;
 
-// Need to override any function in HttpURLConnection that create a new HttpClient
+// Need to override any function in HttpURLConnection that create a new
+// HttpClient
 // and create a HttpTimeoutClient instead. Those functions are
 // connect(), getNewClient(), getProxiedClient()
 
 /**
- * Based on code from:
- * http://coding.derkeiler.com/Archive/Java/comp.lang.java.programmer/2004-01/3271.html
+ * Based on code by Niels Campbell.
+ * http://tinyurl.com/dccnc
+ * 
+ * @author Niels Campbell (niels_campbell_at_lycos.co.uk)
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
-public class HttpTimeoutURLConnection extends
+public final class HttpTimeoutURLConnection extends
     sun.net.www.protocol.http.HttpURLConnection {
 
-    public HttpTimeoutURLConnection(URL u, HttpTimeoutHandler handler,
-        int iSoTimeout) throws IOException {
+    public HttpTimeoutURLConnection(final URL u,
+        final HttpTimeoutHandler handler, final int iSoTimeout)
+        throws IOException {
         super(u, handler);
         HttpTimeoutClient.setSoTimeout(iSoTimeout);
     }
@@ -29,8 +41,8 @@ public class HttpTimeoutURLConnection extends
         }
 
         try {
-            if ("http".equals(this.url.getProtocol())) // && !failedOnce <-PRIVATE
-            {
+            // && !failedOnce <-PRIVATE
+            if ("http".equals(this.url.getProtocol())) {
                 // for safety's sake, as reported by KLGroup
                 synchronized (this.url) {
                     this.http = HttpTimeoutClient.getNew(this.url);
@@ -53,14 +65,14 @@ public class HttpTimeoutURLConnection extends
         this.connected = true;
     }
 
-    protected HttpClient getNewClient(URL url) throws IOException {
+    protected HttpClient getNewClient(final URL url) throws IOException {
         HttpTimeoutClient httpTimeoutClient = new HttpTimeoutClient(url,
             (String) null, -1);
         return httpTimeoutClient;
     }
 
-    protected HttpClient getProxiedClient(URL url, String s, int i)
-        throws IOException {
+    protected HttpClient getProxiedClient(final URL url, final String s,
+        final int i) throws IOException {
         HttpTimeoutClient httpTimeoutClient = new HttpTimeoutClient(url, s, i);
         return httpTimeoutClient;
     }

@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.authentication.principal.Service;
 
 /**
  * Default implementation of the Assertion interface which returns the minimum
@@ -27,21 +28,26 @@ public final class ImmutableAssertionImpl implements Assertion {
 
     /** Was this the result of a new login. */
     private final boolean fromNewLogin;
+    
+    /** The service we are asserting this ticket for. */
+    private final Service service;
 
     /**
      * 
      * @param principals the chain of principals
+     * @param service The service we are asserting this ticket for.
      * @param fromNewLogin was the service ticket from a new login.
      * @throws IllegalArgumentException if there are no principals.
      */
-    public ImmutableAssertionImpl(final List principals,
+    public ImmutableAssertionImpl(final List principals, final Service service,
         final boolean fromNewLogin) {
-        if (principals == null || principals.isEmpty()) {
+        if (principals == null || service == null || principals.isEmpty()) {
             throw new IllegalArgumentException(
                 "principals cannot be null or empty.");
         }
 
         this.principals = Collections.unmodifiableList(principals);
+        this.service = service;
         this.fromNewLogin = fromNewLogin;
     }
 
@@ -52,6 +58,11 @@ public final class ImmutableAssertionImpl implements Assertion {
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
+    
+    public Service getService() {
+        return this.service;
+    }
+
 
     public boolean equals(final Object o) {
         if (o == null || !this.getClass().equals(o.getClass())) {
@@ -67,5 +78,5 @@ public final class ImmutableAssertionImpl implements Assertion {
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
+    }    
 }

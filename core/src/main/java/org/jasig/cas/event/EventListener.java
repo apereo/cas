@@ -8,6 +8,7 @@ package org.jasig.cas.event;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.util.Assert;
 
 /**
  * Implementation of an ApplicationListener that listens specifically for events
@@ -41,11 +42,7 @@ public final class EventListener implements ApplicationListener,
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.eventHandlers == null || this.eventHandlers.length == 0) {
-            throw new IllegalStateException(
-                "eventHandlers cannot be null or empty on "
-                    + this.getClass().getName());
-        }
+        Assert.notEmpty(this.eventHandlers, "eventHandlers is a required property.");
     }
 
     /**

@@ -19,6 +19,7 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -43,11 +44,9 @@ public final class ProxyController extends AbstractController implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.centralAuthenticationService == null) {
-            throw new IllegalStateException(
-                "centralAuthenticationService cannot be null on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null on "
+                + this.getClass().getName());
     }
 
     protected ModelAndView handleRequestInternal(

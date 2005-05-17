@@ -15,6 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Class to look for expired tickets and remove them from the registry.
@@ -23,7 +25,7 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
+public final class DefaultTicketRegistryCleaner implements RegistryCleaner, InitializingBean {
 
     /** The Commons Logging instance. */
     private final Log log = LogFactory.getLog(getClass());
@@ -65,5 +67,9 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(this.ticketRegistry, "ticketRegistry cannot be null.");
     }
 }

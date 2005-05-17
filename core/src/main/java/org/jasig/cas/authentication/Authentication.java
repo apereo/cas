@@ -33,7 +33,7 @@ import org.jasig.cas.authentication.principal.Principal;
 public interface Authentication extends Serializable {
 
     /**
-     * Method to obtain the Principal
+     * Method to obtain the Principal.
      * 
      * @return a Principal implementation
      */
