@@ -33,9 +33,7 @@ public final class ImmutableAuthentication implements Authentication {
     private static final long serialVersionUID = 3906647483978365235L;
 
     /** A Principal object returned by the CredentialsToPrincipalResolver. */
-    private final Principal principal; // TODO refactor to be an immutable
-
-    // proxy?
+    private final Principal principal; // TODO refactor to be immutable
 
     /** The date/time this authentication object became valid. */
     private final Date authenticatedDate;
@@ -47,17 +45,26 @@ public final class ImmutableAuthentication implements Authentication {
     private final Map attributes;
 
     /**
-     * Only constructor, must provide values for properties.
+     * Constructor that accepts both a principal and a map.
      * 
      * @param principal Principal representing user
      * @param attributes Authentication attributes map.
+     * @throws IllegalArgumentException if the principal is null.
      */
     public ImmutableAuthentication(final Principal principal,
         final Map attributes) {
+        
+        if (principal == null) {
+            throw new IllegalArgumentException("principal cannot be null on " + this.getClass().getName());
+        }
         this.principal = principal;
         this.attributes = Collections
             .unmodifiableMap(attributes == null ? new HashMap() : attributes);
         this.authenticatedDate = new Date();
+    }
+    
+    public ImmutableAuthentication(final Principal principal) {
+        this(principal, null);
     }
 
     public Principal getPrincipal() {

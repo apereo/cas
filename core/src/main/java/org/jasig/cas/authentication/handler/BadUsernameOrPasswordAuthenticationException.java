@@ -22,9 +22,6 @@ public class BadUsernameOrPasswordAuthenticationException extends
     /** The code description of this exception. */
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword";
 
-    /**
-     * 
-     */
     public BadUsernameOrPasswordAuthenticationException() {
         super(CODE);
     }

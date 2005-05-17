@@ -23,9 +23,6 @@ public final class UnsupportedCredentialsException extends
     /** The code description of this exception. */
     private static final String CODE = "error.authentication.credentials.unsupported";
 
-    /**
-     * 
-     */
     public UnsupportedCredentialsException() {
         super(CODE);
     }

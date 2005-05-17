@@ -56,7 +56,7 @@ public interface CredentialsToPrincipalResolver {
      * Determine if a credentials type is supported by this resolver. This is
      * checked before calling resolve principal.
      * 
-     * @param credentials
+     * @param credentials The credentials to check if we support.
      * @return true if we support these credentials, false otherwise.
      */
     boolean supports(Credentials credentials);

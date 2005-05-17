@@ -15,6 +15,8 @@ package org.jasig.cas.authentication.handler;
  */
 public class BadCredentialsAuthenticationException extends
     AuthenticationException {
+    
+    public static final BadCredentialsAuthenticationException ERROR = new BadCredentialsAuthenticationException();
 
     /** UID for serializable objects. */
     private static final long serialVersionUID = 3256719585087797044L;
