@@ -55,8 +55,7 @@ public class TicketEvent extends AbstractEvent {
     }
 
     /**
-     * 
-     * @param ticket The ticket the event is for. 
+     * @param ticket The ticket the event is for.
      * @param ticketEventType the event type.
      * @param ticketId the id of the ticket.
      * @throws IllegalArgumentException if the EventType is null.
@@ -113,6 +112,13 @@ public class TicketEvent extends AbstractEvent {
         return this.ticketEventType;
     }
 
+    /**
+     * Enumeration class to denote what ticket event occurred.
+     * 
+     * @author Scott Battaglia
+     * @version $Revision$ $Date$
+     * @since 3.0
+     */
     protected static final class TicketEventType implements Serializable {
 
         /** Serializable Unique Id. */

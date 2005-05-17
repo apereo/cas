@@ -18,6 +18,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Ticket registry backed by EHCache caching subsystem.
@@ -29,7 +31,8 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class EhCacheTicketRegistry implements TicketRegistry {
+public final class EhCacheTicketRegistry implements TicketRegistry,
+    InitializingBean {
 
     /** The Commons Logging log instance. */
     private final Log log = LogFactory.getLog(getClass());
@@ -45,7 +48,6 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
      * @throws IllegalArgumentException if the ticket is null.
      */
     public void addTicket(final Ticket ticket) {
@@ -59,9 +61,9 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      * @throws IllegalArgumentException if the class is null.
-     * @throws ClassCastException if the Ticket Class does not match the requested class.
+     * @throws ClassCastException if the Ticket Class does not match the
+     * requested class.
      */
     public Ticket getTicket(final String ticketId, final Class clazz) {
         if (clazz == null) {
@@ -85,8 +87,7 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
-     * @throws  IllegalStateException if the cache throws an exception.
+     * @throws IllegalStateException if the cache throws an exception.
      */
     public Ticket getTicket(final String ticketId) {
         log.debug("Attempting to retrieve ticket [" + ticketId + "]");
@@ -115,7 +116,6 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTickets()
      * @throws IllegalStateException if the backing cache is not ready.
      */
     public Collection getTickets() {
@@ -132,5 +132,9 @@ public final class EhCacheTicketRegistry implements TicketRegistry {
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage());
         }
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(this.cache, "cache cannot be null.");
     }
 }

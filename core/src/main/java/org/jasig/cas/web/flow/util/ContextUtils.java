@@ -18,7 +18,7 @@ import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ContextUtils {
+public final class ContextUtils {
 
     private ContextUtils() {
         // private constructor so that we can't instanciate new instances.
@@ -33,7 +33,7 @@ public class ContextUtils {
      * @throws IllegalStateException if the originating event was not a
      * HttpServletRequestEvent
      */
-    public final static HttpServletRequest getHttpServletRequest(
+    public static HttpServletRequest getHttpServletRequest(
         final RequestContext context) {
         if (context.getOriginatingEvent() instanceof HttpServletRequestEvent) {
             return ((HttpServletRequestEvent) context.getOriginatingEvent())
@@ -54,7 +54,7 @@ public class ContextUtils {
      * @throws IllegalStateException if the originating event was not a
      * HttpServletRequestEvent
      */
-    public final static HttpServletResponse getHttpServletResponse(
+    public static HttpServletResponse getHttpServletResponse(
         final RequestContext context) {
         if (context.getOriginatingEvent() instanceof HttpServletRequestEvent) {
             return ((HttpServletRequestEvent) context.getOriginatingEvent())
@@ -73,7 +73,7 @@ public class ContextUtils {
      * @param attributeName The name of the attribute.
      * @param attribute the value of the attribute.
      */
-    public final static void addAttribute(final RequestContext context,
+    public static void addAttribute(final RequestContext context,
         final String attributeName, final Object attribute) {
         context.getRequestScope().setAttribute(attributeName, attribute);
     }
@@ -85,7 +85,7 @@ public class ContextUtils {
      * @param attributeName The name of the attribute.
      * @return the value of the attribute.
      */
-    public final static Object getAttribute(final RequestContext context,
+    public static Object getAttribute(final RequestContext context,
         final String attributeName) {
         return context.getRequestScope().getAttribute(attributeName);
     }

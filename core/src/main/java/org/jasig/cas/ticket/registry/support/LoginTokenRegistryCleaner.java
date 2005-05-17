@@ -14,24 +14,28 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Class to determine if a loginToken is ready to be removed.
- * 
- * <p>The loginToken is a random string written to a Hidden field
- * on the login Form. The loginToken string and a related timestamp
- * are cached in the loginTokens Map while valid. The token is used 
- * once and then removed from the Map. This prevents the same Form
- * from being resubmitted by pressing BACK enough times on the 
- * Web Browser.</p>
- * 
- * <p>This routine removes stale loginTokens from the Map.</p>
+ * <p>
+ * The loginToken is a random string written to a Hidden field on the login
+ * Form. The loginToken string and a related timestamp are cached in the
+ * loginTokens Map while valid. The token is used once and then removed from the
+ * Map. This prevents the same Form from being resubmitted by pressing BACK
+ * enough times on the Web Browser.
+ * </p>
+ * <p>
+ * This routine removes stale loginTokens from the Map.
+ * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class LoginTokenRegistryCleaner implements RegistryCleaner {
+public final class LoginTokenRegistryCleaner implements RegistryCleaner,
+    InitializingBean {
 
     /** Instance of Commons logging. */
     private final Log log = LogFactory.getLog(getClass());
@@ -80,5 +84,11 @@ public final class LoginTokenRegistryCleaner implements RegistryCleaner {
      */
     public void setTimeOut(final long timeOut) {
         this.timeOut = timeOut;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(this.loginTokens, "loginTokens cannot be empty.");
+        Assert.isTrue(this.timeOut > 0,
+            "timeOut must be a positive, greater than 0 value.");
     }
 }

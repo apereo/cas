@@ -26,6 +26,7 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -44,7 +45,7 @@ import org.springframework.beans.factory.InitializingBean;
  * <li> <code>ticketGrantingTicketExpirationPolicy</code> - The expiration
  * policy for TicketGrantingTickets.
  * <li> <code>serviceTicketExpirationPolicy</code> - The expiration policy for
- * ServiceTicktes.
+ * ServiceTickets.
  * </ul>
  * 
  * @author William G. Thompson, Jr.
@@ -246,7 +247,8 @@ public final class CentralAuthenticationServiceImpl implements
             }
 
             return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
-                .getChainedPrincipals(), serviceTicket.isFromNewLogin());
+                .getChainedPrincipals(), serviceTicket.getService(),
+                serviceTicket.isFromNewLogin());
         }
     }
 
@@ -334,33 +336,16 @@ public final class CentralAuthenticationServiceImpl implements
 
     public void afterPropertiesSet() throws Exception {
         final String name = this.getClass().getName();
-
-        if (this.ticketRegistry == null) {
-            throw new IllegalStateException("ticketRegistry cannot be null on "
-                + name);
-        }
-
-        if (this.authenticationManager == null) {
-            throw new IllegalStateException(
-                "authenticationManager cannot be null on " + name);
-        }
-
-        if (this.uniqueTicketIdGenerator == null) {
-            throw new IllegalStateException(
-                "uniqueTicketIdGenerator cannot be null on " + name);
-        }
-
-        if (this.ticketGrantingTicketExpirationPolicy == null) {
-            throw new IllegalStateException(
-                "ticketGrantingTicketExpirationPolicy cannot be null on "
-                    + name);
-        }
-
-        if (this.serviceTicketExpirationPolicy == null) {
-            throw new IllegalStateException(
-                "serviceTicketExpirationPolicy cannot be null on " + name);
-        }
-
+        Assert.notNull(this.ticketRegistry, "ticketRegistry cannot be null on "
+            + name);
+        Assert.notNull(this.authenticationManager,
+            "authenticationManager cannot be null on " + name);
+        Assert.notNull(this.uniqueTicketIdGenerator,
+            "uniqueTicketIdGenerator cannot be null on " + name);
+        Assert.notNull(this.ticketGrantingTicketExpirationPolicy,
+            "ticketGrantingTicketExpirationPolicy cannot be null on " + name);
+        Assert.notNull(this.serviceTicketExpirationPolicy,
+            "serviceTicketExpirationPolicy cannot be null on " + name);
     }
 
 }

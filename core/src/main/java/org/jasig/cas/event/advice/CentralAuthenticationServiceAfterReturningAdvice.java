@@ -14,6 +14,7 @@ import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.util.Assert;
 
 /**
  * Advice to advise the creation, validation, etc. of tickets.
@@ -67,10 +68,8 @@ public final class CentralAuthenticationServiceAfterReturningAdvice implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.ticketRegistry == null) {
-            throw new IllegalStateException("ticketRegistry cannot be null on "
-                + this.getClass().getName());
-        }
+        Assert.notNull(this.ticketRegistry,
+            "ticketRegistry is a required property.");
     }
 
     /**

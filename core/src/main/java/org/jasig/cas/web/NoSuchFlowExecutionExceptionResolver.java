@@ -19,43 +19,46 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
+ * Resolver to catch and restart the workflow.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
-public class NoSuchFlowExecutionExceptionResolver implements
+public final class NoSuchFlowExecutionExceptionResolver implements
     HandlerExceptionResolver, InitializingBean {
-    
+
+    /** Default Login Url to use. */
     private static final String DEFAULT_LOGIN_URL = "login";
-    
+
+    /** The login url to redirect to. */
     private String loginUrl;
 
     public ModelAndView resolveException(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
         final Exception exception) {
-        
+
         if (!exception.getClass().equals(NoSuchFlowExecutionException.class)) {
             return null;
         }
-        
-        Map model = new HashMap();
-        model.put(WebConstants.SERVICE, request.getParameter(WebConstants.SERVICE));
-        model.put(WebConstants.GATEWAY, request.getParameter(WebConstants.GATEWAY));
+
+        final Map model = new HashMap();
+        model.put(WebConstants.SERVICE, request
+            .getParameter(WebConstants.SERVICE));
+        model.put(WebConstants.GATEWAY, request
+            .getParameter(WebConstants.GATEWAY));
         model.put(WebConstants.RENEW, request.getParameter(WebConstants.RENEW));
 
         return new ModelAndView(new RedirectView(this.loginUrl), model);
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (this.loginUrl == null) {
             this.loginUrl = DEFAULT_LOGIN_URL;
         }
     }
 
-    public void setLoginUrl(String loginUrl) {
+    public void setLoginUrl(final String loginUrl) {
         this.loginUrl = loginUrl;
     }
-
 }

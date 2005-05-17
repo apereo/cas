@@ -16,6 +16,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * <p>
@@ -114,14 +115,10 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.authenticationHandlers == null
-            || this.authenticationHandlers.length == 0
-            || this.credentialsToPrincipalResolvers == null
-            || this.credentialsToPrincipalResolvers.length == 0) {
-            throw new IllegalStateException(
-                "You must provide authenticationHandlers and credentialsToPrincipalResolvers for "
-                    + this.getClass().getName());
-        }
+        Assert.notEmpty(this.authenticationHandlers,
+            "authenticationHandlers is a required property.");
+        Assert.notEmpty(this.credentialsToPrincipalResolvers,
+            "credentialsToPrincipalResolvers is a required property.");
 
         if (this.authenticationAttributesPopulators == null
             || this.authenticationAttributesPopulators.length == 0) {

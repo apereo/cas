@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class WebUtils {
+public final class WebUtils {
 
     private WebUtils() {
         // private constructor so we can't instanciate the class.
@@ -29,7 +29,7 @@ public class WebUtils {
      * @param id the id of the cookie.
      * @return the cookie value or null if the cookie does not exist.
      */
-    public final static String getCookieValue(final HttpServletRequest request,
+    public static String getCookieValue(final HttpServletRequest request,
         final String id) {
         final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
             request, id);

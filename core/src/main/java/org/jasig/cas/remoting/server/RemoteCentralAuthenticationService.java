@@ -11,6 +11,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -35,8 +36,8 @@ public final class RemoteCentralAuthenticationService implements
     private Validator[] validators;
 
     /**
-     * @see org.jasig.cas.CentralAuthenticationService#createTicketGrantingTicket(org.jasig.cas.authentication.principal.Credentials)
-     * @throws IllegalArgumentException if the Credentials are nullor if given invalid credentials.
+     * @throws IllegalArgumentException if the Credentials are nullor if given
+     * invalid credentials.
      */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketException {
@@ -64,7 +65,6 @@ public final class RemoteCentralAuthenticationService implements
     }
 
     /**
-     * @see org.jasig.cas.CentralAuthenticationService#grantServiceTicket(java.lang.String, org.jasig.cas.authentication.principal.Service, org.jasig.cas.authentication.principal.Credentials)
      * @throws IllegalArgumentException if given invalid credentials
      */
     public String grantServiceTicket(final String ticketGrantingTicketId,
@@ -95,7 +95,6 @@ public final class RemoteCentralAuthenticationService implements
     }
 
     /**
-     * @see org.jasig.cas.CentralAuthenticationService#delegateTicketGrantingTicket(java.lang.String, org.jasig.cas.authentication.principal.Credentials)
      * @throws IllegalArgumentException if the credentials are invalid.
      */
     public String delegateTicketGrantingTicket(final String serviceTicketId,
@@ -144,10 +143,8 @@ public final class RemoteCentralAuthenticationService implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (this.validators == null || this.validators.length == 0
-            || this.centralAuthenticationService == null) {
-            throw new IllegalStateException(
-                "validators and centralAuthenticationService are required fields.");
-        }
+        Assert.notEmpty(this.validators, "validators is a required property.");
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService is a required property.");
     }
 }

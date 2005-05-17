@@ -17,6 +17,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Advice to check if a Service is allowed to proxy.
@@ -38,16 +39,11 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     private ServiceRegistry serviceRegistry;
 
     public void afterPropertiesSet() throws Exception {
-        if (this.ticketRegistry == null) {
-            throw new IllegalStateException("ticketRegistry cannot be null on "
-                + this.getClass().getName());
-        }
+        Assert.notNull(this.ticketRegistry,
+            "ticketRegistry is a required property.");
+        Assert.notNull(this.serviceRegistry,
+            "serviceRegistry is a required property.");
 
-        if (this.serviceRegistry == null) {
-            throw new IllegalStateException(
-                "serviceRegistry cannot be null on "
-                    + this.getClass().getName());
-        }
     }
 
     public void before(final Method method, final Object[] args,

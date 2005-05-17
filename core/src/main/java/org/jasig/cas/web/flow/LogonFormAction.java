@@ -27,6 +27,7 @@ import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -43,7 +44,7 @@ import org.springframework.web.flow.action.FormObjectAccessor;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LogonFormAction extends FormAction {
+public final class LogonFormAction extends FormAction {
 
     /** Log instance. */
     private Log log = LogFactory.getLog(this.getClass());
@@ -54,7 +55,10 @@ public class LogonFormAction extends FormAction {
     /** Id generator of tokens used to prevent resubmission of a form. */
     private UniqueTokenIdGenerator uniqueTokenIdGenerator;
 
-    /** Binder that allows additional binding of form object beyond Spring defaults. */
+    /**
+     * Binder that allows additional binding of form object beyond Spring
+     * defaults.
+     */
     private CredentialsBinder credentialsBinder;
 
     /** Core we delegate to for handling all ticket related tasks. */
@@ -138,8 +142,10 @@ public class LogonFormAction extends FormAction {
                     .grantServiceTicket(ticketGrantingTicketId,
                         new SimpleService(service));
 
-                ContextUtils.addAttribute(context, WebConstants.TICKET, serviceTicketId);
-                ContextUtils.addAttribute(context, WebConstants.SERVICE, service);
+                ContextUtils.addAttribute(context, WebConstants.TICKET,
+                    serviceTicketId);
+                ContextUtils.addAttribute(context, WebConstants.SERVICE,
+                    service);
 
                 return success();
             }
@@ -183,32 +189,30 @@ public class LogonFormAction extends FormAction {
     }
 
     public void setCentralAuthenticationService(
-        CentralAuthenticationService centralAuthenticationService) {
+        final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    public void setCredentialsBinder(CredentialsBinder credentialsBinder) {
+    public void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
 
-    public void setLoginTokens(Map loginTokens) {
+    public void setLoginTokens(final Map loginTokens) {
         this.loginTokens = loginTokens;
     }
 
     public void setUniqueTokenIdGenerator(
-        UniqueTokenIdGenerator uniqueTokenIdGenerator) {
+        final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
         this.uniqueTokenIdGenerator = uniqueTokenIdGenerator;
     }
 
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
+        final String name = this.getClass().getName();
 
-        if (this.loginTokens == null
-            || this.centralAuthenticationService == null) {
-            throw new IllegalStateException(
-                "You must set loginTokens and centralAuthenticationService on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.loginTokens,
+            "You must set loginTokens and centralAuthenticationService on "
+                + name);
 
         if (this.uniqueTokenIdGenerator == null) {
             this.uniqueTokenIdGenerator = new DefaultUniqueTokenIdGenerator();
@@ -240,5 +244,4 @@ public class LogonFormAction extends FormAction {
                     + this.getClass().getName());
         }
     }
-
 }

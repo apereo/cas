@@ -26,6 +26,7 @@ import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.BindUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -66,11 +67,10 @@ public final class ServiceValidateController extends AbstractController
     private String failureView;
 
     public void afterPropertiesSet() throws Exception {
-        if (this.centralAuthenticationService == null) {
-            throw new IllegalStateException(
-                "centralAuthenticationService cannot be null on "
-                    + this.getClass().getName());
-        }
+        final String name = this.getClass().getName();
+
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null on " + name);
 
         if (this.validationSpecificationClass == null) {
             this.validationSpecificationClass = Cas20ProtocolValidationSpecification.class;

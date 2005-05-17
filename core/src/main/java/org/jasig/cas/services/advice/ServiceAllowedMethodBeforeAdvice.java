@@ -13,6 +13,7 @@ import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Advice to check if a service is allowed to use CAS.
@@ -27,10 +28,6 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
     /** The registry containing the list of services. */
     private ServiceRegistry serviceRegistry;
 
-    /**
-     * @see org.springframework.aop.MethodBeforeAdvice#before(java.lang.reflect.Method,
-     * java.lang.Object[], java.lang.Object)
-     */
     public final void before(final Method method, final Object[] args,
         final Object target) throws UnauthorizedServiceException {
         final Service service = (Service) args[1];
@@ -64,15 +61,8 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
         this.serviceRegistry = serviceRegistry;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public final void afterPropertiesSet() throws Exception {
-        if (this.serviceRegistry == null) {
-            throw new IllegalStateException(
-                "ServiceRegistry cannot be null on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.serviceRegistry, "serviceRegistry is a required property.");
 
         afterPropertiesSetInternal();
     }

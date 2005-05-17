@@ -15,7 +15,11 @@ package org.jasig.cas.authentication.handler;
  */
 public class BadCredentialsAuthenticationException extends
     AuthenticationException {
-    
+
+    /**
+     * static instance of class to prevent cost incurred by creating new
+     * instance.
+     */
     public static final BadCredentialsAuthenticationException ERROR = new BadCredentialsAuthenticationException();
 
     /** UID for serializable objects. */

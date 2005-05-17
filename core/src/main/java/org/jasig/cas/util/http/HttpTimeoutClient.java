@@ -1,35 +1,45 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.util.http;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.URL;
-import java.net.UnknownHostException;
 
 import sun.net.www.http.HttpClient;
 
 /**
- * Based on code from:
- * http://coding.derkeiler.com/Archive/Java/comp.lang.java.programmer/2004-01/3271.html
+ * Based on code by Niels Campbell.
+ * http://tinyurl.com/dccnc
+ * 
+ * @author Niels Campbell (niels_campbell_at_lycos.co.uk)
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
-public class HttpTimeoutClient extends HttpClient {
+public final class HttpTimeoutClient extends HttpClient {
 
+    /** Timeout value. */
     private static int iSoTimeout = 0;
 
-    public HttpTimeoutClient(URL url, String proxy, int proxyPort)
-        throws IOException {
+    public HttpTimeoutClient(final URL url, final String proxy,
+        final int proxyPort) throws IOException {
         super(url, proxy, proxyPort);
     }
 
-    public HttpTimeoutClient(URL url) throws IOException {
+    public HttpTimeoutClient(final URL url) throws IOException {
         this(url, null, -1);
     }
 
-    public static HttpTimeoutClient getNew(URL url) throws IOException {
+    public static HttpTimeoutClient getNew(final URL url) throws IOException {
         HttpTimeoutClient httpTimeoutClient = (HttpTimeoutClient) kac.get(url);
 
         if (httpTimeoutClient == null) {
-            httpTimeoutClient = new HttpTimeoutClient(url); // CTOR called openServer()
+            httpTimeoutClient = new HttpTimeoutClient(url); // CTOR called
+            // openServer()
         } else {
             httpTimeoutClient.url = url;
         }
@@ -37,7 +47,7 @@ public class HttpTimeoutClient extends HttpClient {
         return httpTimeoutClient;
     }
 
-    public static void setSoTimeout(int iNewSoTimeout) {
+    public static void setSoTimeout(final int iNewSoTimeout) {
         iSoTimeout = iNewSoTimeout;
     }
 
@@ -45,10 +55,7 @@ public class HttpTimeoutClient extends HttpClient {
         return iSoTimeout;
     }
 
-    // Override doConnect in NetworkClient
-
-    protected Socket doConnect(String s, int i) throws IOException,
-        UnknownHostException, SocketException {
+    protected Socket doConnect(final String s, final int i) throws IOException {
         Socket socket = super.doConnect(s, i);
 
         // This is the important bit
