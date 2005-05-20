@@ -25,7 +25,6 @@ public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
     private static final int NUMBER_OF_ARGS = 3;
 
     /**
-     * @see org.jasig.cas.services.advice.ServiceAllowedMethodBeforeAdvice#beforeInternal(java.lang.reflect.Method, java.lang.Object[], java.lang.Object, org.jasig.cas.services.RegisteredService)
      * @throws IllegalStateException if the service requires authentication and Credentials are not provided.
      */
     protected void beforeInternal(final Method method, final Object[] args,

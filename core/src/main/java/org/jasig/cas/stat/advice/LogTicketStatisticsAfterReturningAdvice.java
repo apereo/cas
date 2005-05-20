@@ -25,11 +25,21 @@ import org.springframework.util.Assert;
  * names) should be properly configured as keys in the <b>statsStateMutators
  * </b> property and must be mapped to the appropriate ticket statistics mutator
  * method names of the <code>TicketStatisticsManager</code>
+ * <p>
+ * The following properties are required to be set:
+ * <ul>
+ *  <li> <code>statsStateMutators</code> - The property set mapping the CAS methods to the methods in the TicketStatistics Manager.
+ *  <li> <code>ticketRegistry</code> - The registry that holds the ticket information.
+ *  <li> <code>ticketStatsManager</code> - The manager of the Ticket Stats, charged with maintaining the count.
+ * </ul>
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
  * @version $Revision$ $Date$
  * @since 3.0
+ * 
+ * @see org.jasig.cas.stat.TicketStatisticsManager
+ * @see org.jasig.cas.ticket.registry.TicketRegistry
  */
 public final class LogTicketStatisticsAfterReturningAdvice implements
     AfterReturningAdvice, InitializingBean {
