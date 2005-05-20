@@ -1,132 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="core/src/test/resources">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="core/src/compatibility/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="sandbox/test/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/generic/src/test/resources">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/generic/src/main/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/generic/src/test/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="sandbox/main/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/nis/src/test/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/nis/src/main/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/ldap/src/main/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/ldap/src/test/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/jdbc/src/main/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/jdbc/src/test/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/cas/src/main/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="adaptors/cas/src/test/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="core/src/main/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="core/src/test/java">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.0.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-collections/jars/commons-collections-3.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2-rc1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2-rc1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/opensaml/jars/opensaml-1.1.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/jwebunit/jars/jwebunit-1.2.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.6.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/nekohtml/jars/nekohtml-0.9.4.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-preview2.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-support-preview2.jar">
-		<attributes>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="src" path="adaptors/generic/src/test/resources"/>
+	<classpathentry kind="src" path="adaptors/generic/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/generic/src/test/java"/>
+	<classpathentry kind="src" path="sandbox/main/java"/>
+	<classpathentry kind="src" path="sandbox/test/java"/>
+	<classpathentry kind="src" path="sandbox/resources"/>
+	<classpathentry kind="src" path="adaptors/nis/src/test/java"/>
+	<classpathentry kind="src" path="adaptors/nis/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/ldap/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/ldap/src/test/java"/>
+	<classpathentry kind="src" path="adaptors/jdbc/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/jdbc/src/test/java"/>
+	<classpathentry kind="src" path="adaptors/cas/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/cas/src/test/java"/>
+	<classpathentry kind="src" path="core/src/main/java"/>
+	<classpathentry kind="src" path="core/src/test/java"/>
+	<classpathentry kind="src" path="core/src/test/resources"/>
+	<classpathentry kind="src" path="core/src/compatibility/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-collections/jars/commons-collections-3.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2-rc1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2-rc1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/opensaml/jars/opensaml-1.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jwebunit/jars/jwebunit-1.2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.6.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/nekohtml/jars/nekohtml-0.9.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-preview2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-support-preview2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
