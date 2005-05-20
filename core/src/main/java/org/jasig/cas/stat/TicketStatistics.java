@@ -7,7 +7,8 @@ package org.jasig.cas.stat;
 
 /**
  * TicketStatistics is the API to obtain various stats about <i>Tickets</i> in
- * the CAS server.
+ * the CAS server. It exposes the number of tickets vended by type and the
+ * number of tickets vended per second by type.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

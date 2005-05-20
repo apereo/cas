@@ -9,6 +9,12 @@ import org.jasig.cas.stat.TicketStatistics;
 import org.jasig.cas.stat.TicketStatisticsManager;
 
 /**
+ * Combined implementation of both the TicketStatistics interface and the Ticket
+ * StatisticsManager as a convenience to allow for both retrieval and updating
+ * of stats from the same implementation.
+ * <p>
+ * Statistics are exposed via JMX using Common Attributes.
+ * 
  * @@org.springframework.jmx.export.metadata.ManagedResource(description="CAS Ticket
  * Statistics",persistPeriod=1,objectName="cas:id=stats")
  * @author Scott Battaglia

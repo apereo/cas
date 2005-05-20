@@ -33,12 +33,15 @@ import org.springframework.util.Assert;
  * external beans to see if any can process the actual type represented by the
  * Credentials marker.
  * <p>
- * The properties are arrays of support beans implementing an interface. For
- * details on their operation, see the interfaces:<br>
- * AuthenticationHandlers<br>
- * CredentialsToPrincipalResolvers<br>
- * AuthenticationAttributesPopulators
+ * AuthenticationManagerImpl requires the following properties to be set:
  * </p>
+ * <ul>
+ * <li> <code>authenticationHandlers</code> - The array of
+ * AuthenticationHandlers that know how to process the credentials provided.
+ * <li> <code>credentialsToPrincipalResolvers</code> - The array of
+ * CredentialsToPrincipal resolvers that know how to process the credentials
+ * provided.
+ * </ul>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -123,6 +126,9 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         if (this.authenticationAttributesPopulators == null
             || this.authenticationAttributesPopulators.length == 0) {
             this.authenticationAttributesPopulators = new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()};
+            log.info("No AuthenticationAttributesPopulator set.  Defaulting to"
+                + this.authenticationAttributesPopulators[0].getClass()
+                    .getName());
         }
     }
 

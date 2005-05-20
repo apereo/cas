@@ -6,7 +6,8 @@
 package org.jasig.cas.stat;
 
 /**
- * TicketStatistics SPI for CAS core.
+ * TicketStatistics SPI for CAS core. Interface to allow a manager to update the
+ * store maintaining the count of tickets vended.
  * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
