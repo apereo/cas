@@ -62,7 +62,7 @@
 			ref="authenticationManager" />
 		<property
 			name="uniqueTicketIdGenerator"
-			ref=uniqueIdGenerator"" />
+			ref="uniqueIdGenerator" />
 	</bean>
 	
 	<bean
