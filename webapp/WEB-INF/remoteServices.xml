@@ -37,8 +37,9 @@
     		name="beans">
 	      	<map>
     	    	<entry
-    	    		key="cas:id=stats"
-    	    		value-ref="statsBean" />
+    	    		key="cas:id=stats">
+    	    		<ref bean="statsBean" />
+    	    	</entry>
 			</map>
     	</property>
 		<property
