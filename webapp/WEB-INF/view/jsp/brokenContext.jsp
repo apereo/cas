@@ -45,41 +45,46 @@
 			
 			<!-- Render a message about who logged what where -->
 			
-			<c:if test="${not empty throwable_from_servlet and not empty throwable_from_listener}">
+			<c:if test="${not empty applicationScope.exceptionCaughtByServlet and not empty applicationScope.exceptionCaughtByListener}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 			  The Throwables representing these fatal errors have been logged by the <em>SafeContextLoaderListener</em>
 			  and by the <em>SafeDispatcherServlet</em> via Commons Logging, via ServletContext logging, and to System.err.
 			</p>
 			</c:if>
 			
-			<c:if test="${not empty throwable_from_servlet and empty throwable_from_listener}">
+			<c:if test="${not empty applicationScope.exceptionCaughtByServlet and empty applicationScope.exceptionCaughtByListener}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 			  The Throwable representing the fatal error has been logged by the <em>SafeDispatcherServlet</em>
 			  via Commons Logging, via ServletContext logging, and to System.err.
 			</p>
 			</c:if>
 			
-			<c:if test="${empty throwable_from_servlet and not empty throwable_from_listener}">
+			<c:if test="${empty applicationScope.exceptionCaughtByServlet and not empty applicationScope.exceptionCaughtByListener}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 			  The Throwable representing the fatal error has been logged by the SafeContextLoaderListener
 			  via Commons Logging, via ServletContext logging, and to System.err.
 			</p>
 			</c:if>
 			
+			<c:if test="${empty applicationScope.exceptionCaughtByServlet and empty applicationScope.exceptionCaughtByListener}">
+			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
+			   A general exception occurred while trying to access CAS.  Please notify your system administrator.
+			</p>
+			</c:if>	
 			
 			<!-- Render information about the throwables themselves -->
 			
-			<c:if test="${not empty throwable_from_listener}">
+			<c:if test="${not empty applicationScope.exceptionCaughtByListener}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#FF99FF;color:#000;padding:5px;">
 			  The Throwable encountered at context listener initialization was: <br/> <br/>
-			  <c:out value="${throwable_from_listener}"/>
+			  <c:out value="${applicationScope.exceptionCaughtByListener}"/>
 			</p>
 			</c:if>
 			
-			<c:if test="${not empty throwable_from_servlet}">
+			<c:if test="${not empty applicationScope.exceptionCaughtByServlet}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#FF99FF;color:#000;padding:5px;">
 			  The Throwable encountered at dispatcher servlet initialization was: <br/> <br/>
-			  <c:out value="${throwable_from_servlet}"/>
+			  <c:out value="${applicationScope.exceptionCaughtByServlet}"/>
 			</p>
 			</c:if>
 			
