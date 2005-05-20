@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-	<!-- The Authentication Manager
-		 Extension points for the Authentication Manager include:
-		 1.  credentialsToPrincipalResolver - this allows you to return a principal with any properties you want (i.e. a Person with a NetId, Person Type, Age, etc.)
-		     The default implementation uses SimplePrincipal which just includes an Id.
-		
-		 2. authenticationHandlers - provide a list of handlers that will attempt to process an authentication request.  Handlers are tried in order so if you want
-            one to execute before another, it must be placed higher on the list.
-	-->
-	<bean id="authenticationManager" class="org.jasig.cas.authentication.AuthenticationManagerImpl">
-		<property name="credentialsToPrincipalResolvers">
+	<bean
+		id="authenticationManager"
+		class="org.jasig.cas.authentication.AuthenticationManagerImpl">
+		<property
+			name="credentialsToPrincipalResolvers">
 			<list>
-				<bean class="org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver" />
-				<bean class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+				<bean
+					class="org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver" />
+				<bean
+					class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
 			</list>
 		</property>
-		<property name="authenticationHandlers">
+		<property
+			name="authenticationHandlers">
 			<list>
-				<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
-				<bean class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+				<bean
+					class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+				<bean
+					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
 			</list>
 		</property>
 	</bean>
