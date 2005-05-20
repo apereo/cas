@@ -51,7 +51,7 @@ public final class SafeContextLoaderListener
      * The name of the ServletContext attribute whereat we will place a List of
      * Throwables that we caught from our delegate context listeners.
      */
-    public static final String CAUGHT_THROWABLE_KEY = "org.jasig.cas.web.init.SafeDelegatingContextListener.CAUGHT";
+    public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByListener";
 
     private final ContextLoaderListener delegate = new ContextLoaderListener();
     

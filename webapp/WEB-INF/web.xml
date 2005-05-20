@@ -75,26 +75,6 @@
 		<listener-class>org.jasig.cas.web.init.SafeContextLoaderListener</listener-class>
 	</listener>
 	
-	
-	<!--
-	 - Detects the Throwables stored from the initialization of SafeContextLoaderListener and/or 
-	 - SafeDispatchServlet and forwards to /WEB-INF/view/jsp/brokenContext.jsp (path can be overridden by
-	 - setting the "errorTarget" filter init param).
-	 -
-	 - This Filter MUST be mapped for /* if SafeContextLoaderListener is used and for all paths
-	 - serviced by SafeDispatchServlet when it is used.  This Filter will have no effect if that listener and servlet are
-	 - both not mapped.
-	 -->
-	<filter>
-		<filter-name>ContextInitFailureFilter</filter-name>
-		<filter-class>org.jasig.cas.web.init.ContextInitFailureFilter</filter-class>
-    </filter>
-	
-	<filter-mapping>
-		<filter-name>ContextInitFailureFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
 	<!--
 	 - This is the Spring dispatcher servlet which delegates all requests to the 
 	 - Spring WebMVC controllers as configured in cas-servlet.xml.
@@ -148,6 +128,11 @@
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/proxyValidate</url-pattern>
 	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
+		<url-pattern>/redirect</url-pattern>
+	</servlet-mapping>
 		
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>
@@ -162,5 +147,10 @@
 	<error-page>
 		<exception-type>java.lang.IllegalStateException</exception-type>
 		<location>/index.jsp</location>
+	</error-page>
+
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/WEB-INF/view/jsp/brokenContext.jsp</location>
 	</error-page>
 </web-app>

@@ -1,4 +1,3 @@
-
 package org.jasig.cas.web.init;
 
 import java.io.IOException;
@@ -30,15 +29,19 @@ import org.springframework.web.servlet.DispatcherServlet;
  * @see DispatcherServlet
  * @see ContextInitFailureFilter
  */
-public final class SafeDispatcherServlet 
-    extends HttpServlet {
+public final class SafeDispatcherServlet extends HttpServlet {
 
-    public static final String CAUGHT_THROWABLE_KEY = "org.jasig.cas.web.init.SafeDispatcherServlet.CAUGHT";
-    
+    /**
+     * Comment for <code>serialVersionUID</code>
+     */
+    private static final long serialVersionUID = 1L;
+
+    public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
+
     private Log log = LogFactory.getLog(getClass());
-    
+
     private DispatcherServlet delegate = new DispatcherServlet();
-    
+
     public void init(ServletConfig config) {
         try {
             this.delegate.init(config);
@@ -46,42 +49,41 @@ public final class SafeDispatcherServlet
         } catch (Throwable t) {
             // no matter what went wrong, our role is to capture this error and prevent
             // it from blocking initialization of the servlet.
-            
+
             // logging overkill so that our deployer will find a record of this problem
             // even if unfamiliar with Commons Logging and properly configuring it.
-            
-            final String message = "SafeDispatcherServlet: \n" +
-                    "The Spring DispatcherServlet we wrap threw on init.\n" +
-            "But for our having caught this error, the servlet would not have initialized.";
-            
+
+            final String message = "SafeDispatcherServlet: \n"
+                + "The Spring DispatcherServlet we wrap threw on init.\n"
+                + "But for our having caught this error, the servlet would not have initialized.";
+
             // log it via Commons Logging
             log.fatal(message, t);
-            
+
             // log it to System.err
             System.err.println(message);
             t.printStackTrace();
-            
+
             // log it to the ServletContext
             ServletContext context = config.getServletContext();
             context.log(message, t);
-            
-            
+
             // record the error so that the ContextListenerFailureFilter can detect the error condition
             // make the throwable available to the eventual error UI
-            
+
             context.setAttribute(CAUGHT_THROWABLE_KEY, t);
+
         }
     }
-    
-    public void service(ServletRequest req, ServletResponse resp) 
+
+    public void service(ServletRequest req, ServletResponse resp)
         throws ServletException, IOException {
         /*
          * Since our container calls only this method and not any of the other HttpServlet
          * runtime methods, such as doDelete(), etc., delegating this method is sufficient
          * to delegate all of the methods in the HttpServlet API.
          */
-        
+
         this.delegate.service(req, resp);
     }
-    
 }
