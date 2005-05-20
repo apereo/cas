@@ -63,15 +63,14 @@
 		<property
 			name="uniqueTicketIdGenerator"
 			ref="uniqueIdGenerator" />
+		<property
+			name="ticketRegistry"
+			ref="ticketRegistry" />
 	</bean>
 	
 	<bean
 		id="proxy10Handler"
-		class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler">
-		<property
-			name="uniqueIdTicketGenerator"
-			ref="uniqueIdGenerator" />
-	</bean>
+		class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler" />
 	
 	<!-- Ticket Registry -->
 	<bean
