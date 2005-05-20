@@ -21,7 +21,7 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import junit.framework.TestCase;
 
 
-public class AbstractCentralAuthenticationServiceTest extends TestCase {
+public abstract class AbstractCentralAuthenticationServiceTest extends TestCase {
     protected CentralAuthenticationServiceImpl centralAuthenticationService;
     
     protected AuthenticationManagerImpl authenticationManager;
