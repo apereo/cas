@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.flow.NoSuchFlowExecutionException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.flow.execution.NoSuchFlowExecutionException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 

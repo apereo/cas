@@ -388,6 +388,16 @@
 			</properties>
 		</dependency>
 		<dependency>
+			<groupId>ognl</groupId>
+			<artifactId>ognl</artifactId>
+			<version>2.6.7</version>
+			<type>jar</type>
+			<url>http://www.ognl.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		<dependency>
 			<groupId>quartz</groupId>
 			<artifactId>quartz</artifactId>
 			<version>1.4.0</version>
@@ -518,7 +528,7 @@
 		<dependency>
 			<groupId>springframework</groupId>
 			<artifactId>spring-webflow</artifactId>
-			<version>preview2</version>
+			<version>preview3</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -529,7 +539,7 @@
 		<dependency>
 			<groupId>springframework</groupId>
 			<artifactId>spring-webflow-support</artifactId>
-			<version>preview2</version>
+			<version>preview3</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>

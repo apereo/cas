@@ -42,5 +42,5 @@
 	
 	<end-state id="showWarningView" view="casLogonConfirmView" />
 	
-	<end-state id="redirect" view="redirectView" />
+	<end-state id="redirect" view="class:org.jasig.cas.web.flow.RedirectViewDescriptorCreator"/>
 </webflow>

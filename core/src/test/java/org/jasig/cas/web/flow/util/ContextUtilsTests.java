@@ -8,8 +8,8 @@ package org.jasig.cas.web.flow.util;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.flow.MockRequestContext;
-import org.springframework.web.flow.SimpleEvent;
-import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
+import org.springframework.web.flow.Event;
+import org.springframework.web.flow.execution.servlet.ServletEvent;
 
 import junit.framework.TestCase;
 
@@ -28,8 +28,8 @@ public class ContextUtilsTests extends TestCase {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
         this.requestContext = new MockRequestContext();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(this.request, this.response);
-        this.requestContext.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(this.request, this.response);
+        this.requestContext.setSourceEvent(event);
     }
 
     public void testAddGetAttribute() {
@@ -46,7 +46,7 @@ public class ContextUtilsTests extends TestCase {
     }
     
     public void testGetHttpServletRequestThrowsException() {
-        this.requestContext.setOriginatingEvent(new SimpleEvent("test"));
+        this.requestContext.setSourceEvent(new Event("test"));
         try {
             ContextUtils.getHttpServletRequest(this.requestContext);
             fail("Exception expected.");
@@ -56,7 +56,7 @@ public class ContextUtilsTests extends TestCase {
     }
     
     public void testGetHttpServletResponseThrowsException() {
-        this.requestContext.setOriginatingEvent(new SimpleEvent("test"));
+        this.requestContext.setSourceEvent(new Event("test"));
         try {
             ContextUtils.getHttpServletResponse(this.requestContext);
             fail("Exception expected.");
