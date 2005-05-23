@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
@@ -22,6 +23,9 @@ import org.springframework.web.servlet.DispatcherServlet;
  * appropriate use of the page in production). The error page associated with
  * this deployment failure is configured in the web.xml via the standard error
  * handling mechanism.
+ * <p>
+ * The exception thrown is exposed in the Servlet Context under the key
+ * "exceptionCaughtByServlet".
  * 
  * @author Andrew Petro
  * @version $Revision$ $Date$
@@ -37,12 +41,17 @@ public final class SafeDispatcherServlet extends HttpServlet {
     private Log log = LogFactory.getLog(getClass());
 
     private DispatcherServlet delegate = new DispatcherServlet();
+    
+    private boolean successfulInitialization = true;
 
     public void init(ServletConfig config) {
         try {
             this.delegate.init(config);
 
         } catch (Throwable t) {
+            // let the service method know initialization failed.
+            this.successfulInitialization = false;
+            
             // no matter what went wrong, our role is to capture this error and
             // prevent it from blocking initialization of the servlet.
 
@@ -83,7 +92,10 @@ public final class SafeDispatcherServlet extends HttpServlet {
          * this method is sufficient to delegate all of the methods in the
          * HttpServlet API.
          */
-
-        this.delegate.service(req, resp);
+        if (this.successfulInitialization) {
+            this.delegate.service(req, resp);
+        } else {
+            throw new ApplicationContextException("Unable to initialize application context.");
+        }
     }
 }
