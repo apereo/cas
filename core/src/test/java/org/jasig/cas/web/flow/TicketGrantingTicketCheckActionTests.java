@@ -23,7 +23,7 @@ import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.flow.MockRequestContext;
-import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
+import org.springframework.web.flow.execution.servlet.ServletEvent;
 
 import junit.framework.TestCase;
 
@@ -61,58 +61,58 @@ public class TicketGrantingTicketCheckActionTests extends TestCase {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         request.addParameter(WebConstants.SERVICE, "test");
         
-        assertEquals("error", this.checkAction.doExecuteAction(context).getId());
+        assertEquals("error", this.checkAction.doExecute(context).getId());
     }
     
     public void testCheckInvalidTicketGrantingTicketCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         request.addParameter(WebConstants.SERVICE, "test");
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "test");
         request.setCookies(new Cookie[] {cookie});
         
-        assertEquals("error", this.checkAction.doExecuteAction(context).getId());
+        assertEquals("error", this.checkAction.doExecute(context).getId());
     }
     
     public void testCheckInvalidTicketGrantingTicketCookieWithGateway() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         request.addParameter(WebConstants.SERVICE, "test");
         request.addParameter(WebConstants.GATEWAY, "true");
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "test");
         request.setCookies(new Cookie[] {cookie});
         
-        assertEquals("gateway", this.checkAction.doExecuteAction(context).getId());
+        assertEquals("gateway", this.checkAction.doExecute(context).getId());
     }
     
     public void testCheckRenewTrue() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         request.addParameter(WebConstants.RENEW, "true");
         request.addParameter(WebConstants.SERVICE, "test");        
         
-        assertEquals("error", this.checkAction.doExecuteAction(context).getId());
+        assertEquals("error", this.checkAction.doExecute(context).getId());
     }
     
     public void testCheckValidTicketGrantingTicketCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         request.addParameter(WebConstants.SERVICE, "test");
         UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername("test");
@@ -120,7 +120,7 @@ public class TicketGrantingTicketCheckActionTests extends TestCase {
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
         request.setCookies(new Cookie[] {cookie});
         
-        assertEquals("success", this.checkAction.doExecuteAction(context).getId());
+        assertEquals("success", this.checkAction.doExecute(context).getId());
     }
     
     public void testAfterPropertiesSet() {

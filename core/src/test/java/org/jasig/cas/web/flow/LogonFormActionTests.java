@@ -34,7 +34,7 @@ import org.springframework.mock.web.flow.MockRequestContext;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
+import org.springframework.web.flow.execution.servlet.ServletEvent;
 
 import junit.framework.TestCase;
 
@@ -67,7 +67,7 @@ public class LogonFormActionTests extends TestCase {
 
     public void testGetLoginToken() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.setOriginatingEvent(new HttpServletRequestEvent(new MockHttpServletRequest(), new MockHttpServletResponse()));
+        context.setSourceEvent(new ServletEvent(new MockHttpServletRequest(), new MockHttpServletResponse()));
         
         assertEquals("success", this.logonFormAction.setupReferenceData(context).getId());
         assertNotNull(ContextUtils.getAttribute(context, "loginToken"));
@@ -75,7 +75,7 @@ public class LogonFormActionTests extends TestCase {
     
     public void testSubmitNoLoginToken() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.setOriginatingEvent(new HttpServletRequestEvent(new MockHttpServletRequest(), new MockHttpServletResponse()));
+        context.setSourceEvent(new ServletEvent(new MockHttpServletRequest(), new MockHttpServletResponse()));
         
         assertEquals("error", this.logonFormAction.submit(context).getId());
     }
@@ -83,7 +83,7 @@ public class LogonFormActionTests extends TestCase {
     public void testSubmitBadCredentials() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setOriginatingEvent(new HttpServletRequestEvent(request, new MockHttpServletResponse()));
+        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
         
         this.logonFormAction.setupReferenceData(context);
         final String loginToken = (String) ContextUtils.getAttribute(context, "loginToken");
@@ -102,7 +102,7 @@ public class LogonFormActionTests extends TestCase {
     public void testSubmitProperCredentialsWithService() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setOriginatingEvent(new HttpServletRequestEvent(request, new MockHttpServletResponse()));
+        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
         
         this.logonFormAction.setupReferenceData(context);
         final String loginToken = (String) ContextUtils.getAttribute(context, "loginToken");
@@ -122,7 +122,7 @@ public class LogonFormActionTests extends TestCase {
     public void testSubmitProperCredentialsWithNoService() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setOriginatingEvent(new HttpServletRequestEvent(request, new MockHttpServletResponse()));
+        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
         
         this.logonFormAction.setupReferenceData(context);
         final String loginToken = (String) ContextUtils.getAttribute(context, "loginToken");
@@ -141,7 +141,7 @@ public class LogonFormActionTests extends TestCase {
     public void testWarn() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setOriginatingEvent(new HttpServletRequestEvent(request, new MockHttpServletResponse()));
+        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
         
         this.logonFormAction.setupReferenceData(context);
         final String loginToken = (String) ContextUtils.getAttribute(context, "loginToken");
@@ -164,7 +164,7 @@ public class LogonFormActionTests extends TestCase {
     public void testRenewIsTrue() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setOriginatingEvent(new HttpServletRequestEvent(request, new MockHttpServletResponse()));
+        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
         
         this.logonFormAction.setupReferenceData(context);
         final String loginToken = (String) ContextUtils.getAttribute(context, "loginToken");
@@ -210,10 +210,12 @@ public class LogonFormActionTests extends TestCase {
                 }
 
                 public void validate(Object arg0, Errors arg1) {
+                    // do nothing
                 }});
             this.logonFormAction.setCredentialsBinder(new CredentialsBinder() {
 
                 public void bind(HttpServletRequest request, Credentials credentials) {
+                    // do nothing
                 }
 
                 public boolean supports(Class clazz) {

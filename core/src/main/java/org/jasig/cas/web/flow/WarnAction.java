@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.web.flow.util.ContextUtils;
@@ -28,7 +25,7 @@ import org.springframework.web.flow.action.AbstractAction;
  */
 public final class WarnAction extends AbstractAction {
 
-    protected Event doExecuteAction(final RequestContext context)
+    protected Event doExecute(final RequestContext context)
         throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
@@ -41,10 +38,7 @@ public final class WarnAction extends AbstractAction {
         if (warn || requestWarn) {
             return error();
         }
-        Map model = new HashMap();
-        model.put(WebConstants.TICKET, ContextUtils.getAttribute(context,
-            WebConstants.TICKET));
-        ContextUtils.addAttribute(context, "model", model);
+        
         return success();
     }
 }

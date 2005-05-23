@@ -142,9 +142,9 @@ public final class LogonFormAction extends FormAction {
                     .grantServiceTicket(ticketGrantingTicketId,
                         new SimpleService(service));
 
-                ContextUtils.addAttribute(context, WebConstants.TICKET,
+                ContextUtils.addAttributeToFlowScope(context, WebConstants.TICKET,
                     serviceTicketId);
-                ContextUtils.addAttribute(context, WebConstants.SERVICE,
+                ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE,
                     service);
 
                 return success();

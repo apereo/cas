@@ -12,7 +12,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.flow.MockRequestContext;
 import org.springframework.web.flow.Event;
-import org.springframework.web.flow.execution.servlet.HttpServletRequestEvent;
+import org.springframework.web.flow.execution.servlet.ServletEvent;
 
 import junit.framework.TestCase;
 
@@ -25,19 +25,17 @@ import junit.framework.TestCase;
  */
 public class WarnActionTests extends TestCase {
     private WarnAction warnAction = new WarnAction();
-    
-    
-    
+
     public void testWarnFromCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         Cookie cookie = new Cookie(WebConstants.COOKIE_PRIVACY, WebConstants.COOKIE_DEFAULT_FILLED_VALUE);
         request.setCookies(new Cookie[] {cookie});
         
-        Event finalEvent = this.warnAction.doExecuteAction(context);
+        Event finalEvent = this.warnAction.doExecute(context);
         
         assertEquals("error", finalEvent.getId());
     }
@@ -46,11 +44,11 @@ public class WarnActionTests extends TestCase {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         request.addParameter(WebConstants.WARN, "true");
         
-        Event finalEvent = this.warnAction.doExecuteAction(context);
+        Event finalEvent = this.warnAction.doExecute(context);
         
         assertEquals("error", finalEvent.getId()); 
     }
@@ -59,10 +57,10 @@ public class WarnActionTests extends TestCase {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        HttpServletRequestEvent event = new HttpServletRequestEvent(request, response);
-        context.setOriginatingEvent(event);
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
         
-        Event finalEvent = this.warnAction.doExecuteAction(context);
+        Event finalEvent = this.warnAction.doExecute(context);
         
         assertEquals("success", finalEvent.getId()); 
     }

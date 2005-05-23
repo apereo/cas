@@ -32,7 +32,7 @@ public final class TicketGrantingTicketCheckAction extends AbstractAction {
     /** The CORE of CAS which we will use to obtain tickets. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    protected Event doExecuteAction(final RequestContext context)
+    protected Event doExecute(final RequestContext context)
         throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
@@ -54,14 +54,14 @@ public final class TicketGrantingTicketCheckAction extends AbstractAction {
             final String serviceTicketId = this.centralAuthenticationService
                 .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
                     service));
-            ContextUtils.addAttribute(context, WebConstants.SERVICE, service);
-            ContextUtils.addAttribute(context, WebConstants.TICKET,
+            ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE, service);
+            ContextUtils.addAttributeToFlowScope(context, WebConstants.TICKET,
                 serviceTicketId);
             return success();
         } catch (TicketException e) {
             // if we are being used as a gateway just bounce!
             if (gateway) {
-                ContextUtils.addAttribute(context, WebConstants.SERVICE,
+                ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE,
                     service);
                 return result("gateway");
             }

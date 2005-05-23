@@ -70,7 +70,7 @@
 
 							<input type="hidden" name="lt" value="${loginToken}" />
 							<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}" />
-							<input type="hidden" name="_currentStateId" value="${flowExecution.currentStateId}" />
+  							<input type="hidden" name="_currentStateId" value="${currentStateId}" />
 							<input type="hidden" name="_eventId" value="submit" />
 
 

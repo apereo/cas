@@ -17,6 +17,17 @@
 		<property
 			name="basename"
 			value="default_views" />
+		<property
+			name="order"
+			value="0" />
+	</bean>
+	
+	<bean
+		id="urlBasedViewResolver"
+		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property
+			name="viewClass"
+			value="org.springframework.web.servlet.view.AbstractUrlBasedView" />
 	</bean>
 	
 	<bean
@@ -25,16 +36,10 @@
 
 	<bean
 		id="loginFlow"
-		class="org.springframework.web.flow.config.FlowFactoryBean">
-		<property
-			name="flowBuilder">
-			<bean
-				class="org.springframework.web.flow.config.XmlFlowBuilder">
-				<property
-					name="resource"
-					value="classpath:logon-webflow.xml" />
-			</bean>
-		</property>
+		class="org.springframework.web.flow.config.XmlFlowFactoryBean">
+	   <property
+			name="location"
+	   		value="/WEB-INF/logon-webflow.xml" />
 	</bean>
 
 	<!-- Handler Mapping -->
@@ -94,14 +99,8 @@
 		id="loginController"
 		class="org.springframework.web.flow.mvc.FlowController">
 		<property
-			name="flowExecutionManager">
-			<bean
-				class="org.springframework.web.flow.execution.servlet.HttpServletFlowExecutionManager">
-				<property
-					name="flow"
-					ref="loginFlow" />
-			</bean>
-		</property>
+			name="flow"
+			ref="loginFlow"/>
 	</bean>
 
 	<bean id="proxyValidateController"
