@@ -30,6 +30,9 @@ import org.springframework.web.context.ContextLoaderListener;
  * ContextListener, instead this implementation specifically wraps and delegates
  * to a Spring {@link ContextLoaderListener}. As such, mapping this listener in
  * web.xml is a one for one replacement for {@link ContextLoaderListener}.
+ * <p>
+ * The exception thrown is exposed in the Servlet Context under the key
+ * "exceptionCaughtByListener".
  * 
  * @author Andrew Petro
  * @version $Revision$ $Date$
