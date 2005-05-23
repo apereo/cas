@@ -26,27 +26,22 @@ import org.springframework.web.context.ContextLoaderListener;
  * if your desired behavior is that a failure at context initialization results in a dummy
  * CAS context that presents a user-friendly "CAS is unavailable at this time" message,
  * using this ContextListener in place of Spring's {@link ContextLoaderListener} 
- * should do the trick.
- * 
- * Using this context listener only makes sense when you also map the
- * {@link ContextInitFailureFilter} to provide a reasonable user experience for the
- * (broken) web application that this ContextListener allows to initialize.  You must also
- * provide an appropriate JSP to which {@link ContextInitFailureFilter} can forward.
+ * should do the trick.  The error page associated with this deployment failure is configured
+ * in the web.xml via the standard error handling mechanism.
  * 
  * Rather than being a generic ContextListener wrapper that will make safe any
  * ContextListener, instead this implementation specifically wraps and delegates to
  * a Spring {@link ContextLoaderListener}.  As such, mapping this listener in web.xml is
  * a one for one replacement for {@link ContextLoaderListener}.
  * 
+ * @author Andrew Petro
  * @version $Revision$ $Date$
  * @see ContextLoaderListener
- * @see ContextInitFailureFilter
  */
-public final class SafeContextLoaderListener 
-    implements ServletContextListener {
-    
+public final class SafeContextLoaderListener implements ServletContextListener {
+
     protected final Log log = LogFactory.getLog(getClass());
-    
+
     /**
      * The name of the ServletContext attribute whereat we will place a List of
      * Throwables that we caught from our delegate context listeners.
@@ -54,44 +49,41 @@ public final class SafeContextLoaderListener
     public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByListener";
 
     private final ContextLoaderListener delegate = new ContextLoaderListener();
-    
+
     public void contextInitialized(ServletContextEvent sce) {
         try {
             this.delegate.contextInitialized(sce);
         } catch (Throwable t) {
             // no matter what went wrong, our role is to capture this error and prevent
             // it from blocking initialization of the context.
-            
+
             // logging overkill so that our deployer will find a record of this problem
             // even if unfamiliar with Commons Logging and properly configuring it.
-            
-            final String message = "SafeContextLoaderListener: \n" +
-                    "The Spring ContextLoaderListener we wrap threw on contextInitialized.\n" +
-            "But for our having caught this error, the web application context would not have initialized.";
-            
+
+            final String message = "SafeContextLoaderListener: \n"
+                + "The Spring ContextLoaderListener we wrap threw on contextInitialized.\n"
+                + "But for our having caught this error, the web application context would not have initialized.";
+
             // log it via Commons Logging
             log.fatal(message, t);
-            
+
             // log it to System.err
             System.err.println(message);
             t.printStackTrace();
-            
+
             // log it to the ServletContext
             ServletContext context = sce.getServletContext();
             context.log(message, t);
-            
-            
+
             // record the error so that the ContextListenerFailureFilter can detect the error condition
             // make the throwable available to the eventual error UI
-            
+
             context.setAttribute(CAUGHT_THROWABLE_KEY, t);
-            
         }
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
         this.delegate.contextDestroyed(sce);
     }
-    
-}
 
+}

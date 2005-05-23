@@ -14,26 +14,22 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
- * This servlet wraps the Spring DispatchServlet, catching any exceptions it throws
- * on init() to guarantee that servlet initialization succeeds.  This allows our
- * application context to succeed in initializing so that we can display a friendly
- * "CAS is not available" page to the deployer (an appropriate use of the page in
- * development) or to the end user (an appropriate use of the page in production).
+ * This servlet wraps the Spring DispatchServlet, catching any exceptions it
+ * throws on init() to guarantee that servlet initialization succeeds. This
+ * allows our application context to succeed in initializing so that we can
+ * display a friendly "CAS is not available" page to the deployer (an
+ * appropriate use of the page in development) or to the end user (an
+ * appropriate use of the page in production). The error page associated with
+ * this deployment failure is configured in the web.xml via the standard error
+ * handling mechanism.
  * 
- * Use of this Servlet only makes sense when you've also mapped the
- * {@link ContextInitFailureFilter} to all paths serviced by this Servlet so that the filter
- * will intercept requests for this servlet when initialization fails and render the 
- * context initialization failed UI.
- * 
+ * @author Andrew Petro
  * @version $Revision$ $Date$
  * @see DispatcherServlet
- * @see ContextInitFailureFilter
  */
 public final class SafeDispatcherServlet extends HttpServlet {
 
-    /**
-     * Comment for <code>serialVersionUID</code>
-     */
+    /** Unique Id for serialization. */
     private static final long serialVersionUID = 1L;
 
     public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
@@ -47,11 +43,14 @@ public final class SafeDispatcherServlet extends HttpServlet {
             this.delegate.init(config);
 
         } catch (Throwable t) {
-            // no matter what went wrong, our role is to capture this error and prevent
+            // no matter what went wrong, our role is to capture this error and
+            // prevent
             // it from blocking initialization of the servlet.
 
-            // logging overkill so that our deployer will find a record of this problem
-            // even if unfamiliar with Commons Logging and properly configuring it.
+            // logging overkill so that our deployer will find a record of this
+            // problem
+            // even if unfamiliar with Commons Logging and properly configuring
+            // it.
 
             final String message = "SafeDispatcherServlet: \n"
                 + "The Spring DispatcherServlet we wrap threw on init.\n"
@@ -68,7 +67,8 @@ public final class SafeDispatcherServlet extends HttpServlet {
             ServletContext context = config.getServletContext();
             context.log(message, t);
 
-            // record the error so that the ContextListenerFailureFilter can detect the error condition
+            // record the error so that the ContextListenerFailureFilter can
+            // detect the error condition
             // make the throwable available to the eventual error UI
 
             context.setAttribute(CAUGHT_THROWABLE_KEY, t);
@@ -79,9 +79,10 @@ public final class SafeDispatcherServlet extends HttpServlet {
     public void service(ServletRequest req, ServletResponse resp)
         throws ServletException, IOException {
         /*
-         * Since our container calls only this method and not any of the other HttpServlet
-         * runtime methods, such as doDelete(), etc., delegating this method is sufficient
-         * to delegate all of the methods in the HttpServlet API.
+         * Since our container calls only this method and not any of the other
+         * HttpServlet runtime methods, such as doDelete(), etc., delegating
+         * this method is sufficient to delegate all of the methods in the
+         * HttpServlet API.
          */
 
         this.delegate.service(req, resp);
