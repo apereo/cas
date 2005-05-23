@@ -6,9 +6,9 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * The most generic type of authentication exception when one cannot determine
- * why the authentication actually failed. Top of the tree of all other
- * AuthenticationExceptions
+ * The most generic type of authentication exception that one can catch if
+ * not sure what specific implementation will be thrown. Top of the tree of all other
+ * AuthenticationExceptions.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -54,7 +54,7 @@ public abstract class AuthenticationException extends Exception {
     public final String getCode() {
         return this.code;
     }
-    
+
     public final String toString() {
         return getCode();
     }

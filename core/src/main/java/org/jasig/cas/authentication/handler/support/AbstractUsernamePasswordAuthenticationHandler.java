@@ -45,6 +45,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException;
 
+    /**
+     * @return true if the credentials are not null and the credentials class is
+     * assignable from UsernamePasswordCredentials.
+     */
     public final boolean supports(final Credentials credentials) {
         return credentials != null
             && UsernamePasswordCredentials.class.isAssignableFrom(credentials

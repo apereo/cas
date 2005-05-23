@@ -24,7 +24,7 @@ import org.jasig.cas.util.UrlUtils;
 public final class HttpBasedServiceCredentialsAuthenticationHandler implements
     AuthenticationHandler {
 
-    /** The string represetning the HTTPS protocol. */
+    /** The string representing the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
 
     /** Do we allow null responses. Usually indicates a redirect or not */
@@ -49,14 +49,19 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
         return this.allowNullResponses || response != null;
     }
 
+    /**
+     * @return true if the credentials provided are not null and the credentials
+     * are a subclass of (or equal to) HttpBasedServiceCredentials.
+     */
     public boolean supports(final Credentials credentials) {
-        return HttpBasedServiceCredentials.class.isAssignableFrom(credentials
-            .getClass());
+        return credentials != null
+            && HttpBasedServiceCredentials.class.isAssignableFrom(credentials
+                .getClass());
     }
 
     /**
-     * Method to programmatically set whether this AuthenticationHandler will follow
-     * redirects.
+     * Method to programmatically set whether this AuthenticationHandler will
+     * follow redirects.
      * 
      * @param allowNullResponses
      */
