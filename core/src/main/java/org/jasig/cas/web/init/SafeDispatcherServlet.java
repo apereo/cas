@@ -44,8 +44,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
 
         } catch (Throwable t) {
             // no matter what went wrong, our role is to capture this error and
-            // prevent
-            // it from blocking initialization of the servlet.
+            // prevent it from blocking initialization of the servlet.
 
             // logging overkill so that our deployer will find a record of this
             // problem
@@ -67,10 +66,10 @@ public final class SafeDispatcherServlet extends HttpServlet {
             ServletContext context = config.getServletContext();
             context.log(message, t);
 
-            // record the error so that the ContextListenerFailureFilter can
-            // detect the error condition
-            // make the throwable available to the eventual error UI
-
+            /*
+             * record the error so that the application has access to later
+             * display a proper error message based on the exception.
+             */
             context.setAttribute(CAUGHT_THROWABLE_KEY, t);
 
         }
