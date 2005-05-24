@@ -77,10 +77,6 @@
 					key="/CentralAuthenticationService">
 					xFireCentralAuthenticationService
 				</prop>
-				<prop
-					key="/redirect">
-					redirectController
-				</prop>
 			</props>
 		</property>
 		<property
@@ -92,15 +88,20 @@
 	</bean>
 
 	<bean
-		id="redirectController"
-		class="org.jasig.cas.web.RedirectController" />
-
-	<bean
 		id="loginController"
 		class="org.springframework.web.flow.mvc.FlowController">
 		<property
 			name="flow"
-			ref="loginFlow"/>
+			ref="loginFlow" />
+		<property
+			name="flowExecutionManager">
+			<bean
+				class="org.jasig.cas.web.flow.CasServletFlowExecutionManager">
+				<property
+					name="flow"
+					ref="loginFlow" />
+			</bean>
+		</property>
 	</bean>
 
 	<bean id="proxyValidateController"
@@ -206,9 +207,6 @@
 	<bean
 		id="logonFormAction"
 		class="org.jasig.cas.web.flow.LogonFormAction">
-		<property
-			name="loginTokens"
-			ref="loginTokens" />
 		<property
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />

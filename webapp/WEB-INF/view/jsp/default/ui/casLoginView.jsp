@@ -68,11 +68,9 @@
 							<p><input style="width:1.5em;border:0;padding:0;margin:0;" type="checkbox" id="warn" name="warn" value="true" tabindex="3" /> 
 							   <label for="warn"  accesskey="w"><span class="accesskey">W</span>arn me before logging me into other sites.</label></p>
 
-							<input type="hidden" name="lt" value="${loginToken}" />
-							<input type="hidden" name="_flowExecutionId" value="${flowExecutionId}" />
+							<input type="hidden" name="lt" value="${flowExecutionId}" />
   							<input type="hidden" name="_currentStateId" value="${currentStateId}" />
 							<input type="hidden" name="_eventId" value="submit" />
-
 
 							<p><input type="submit" class="button" accesskey="l" value="LOGIN" tabindex="4" /></p>
 						</div>

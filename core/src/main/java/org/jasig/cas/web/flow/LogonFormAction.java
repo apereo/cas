@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.Date;
-import java.util.Map;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,9 +46,6 @@ public final class LogonFormAction extends FormAction {
     /** Log instance. */
     private Log log = LogFactory.getLog(this.getClass());
 
-    /** Map of tokens used to prevent resubmission of a form. */
-    private Map loginTokens;
-
     /** Id generator of tokens used to prevent resubmission of a form. */
     private UniqueTokenIdGenerator uniqueTokenIdGenerator;
 
@@ -63,12 +57,6 @@ public final class LogonFormAction extends FormAction {
 
     /** Core we delegate to for handling all ticket related tasks. */
     private CentralAuthenticationService centralAuthenticationService;
-
-    public Event setupReferenceData(final RequestContext context)
-        throws Exception {
-        ContextUtils.addAttribute(context, "loginToken", getLoginToken());
-        return success();
-    }
 
     protected void onBind(final RequestContext context,
         final Object formObject, final BindException errors) {
@@ -83,8 +71,6 @@ public final class LogonFormAction extends FormAction {
             .getHttpServletRequest(context);
         final HttpServletResponse response = ContextUtils
             .getHttpServletResponse(context);
-        final String loginToken = request
-            .getParameter(WebConstants.LOGIN_TOKEN);
         final boolean renew = Boolean.valueOf(
             request.getParameter(WebConstants.RENEW)).booleanValue();
         final boolean warn = StringUtils.hasText(request
@@ -96,15 +82,6 @@ public final class LogonFormAction extends FormAction {
         String ticketGrantingTicketId = WebUtils.getCookieValue(request,
             WebConstants.COOKIE_TGC_ID);
         String serviceTicketId = null;
-
-        synchronized (this.loginTokens) {
-            // check for a login ticket
-            if (loginToken == null || !this.loginTokens.containsKey(loginToken)) {
-                return error();
-            }
-
-            this.loginTokens.remove(loginToken);
-        }
 
         if (renew && StringUtils.hasText(ticketGrantingTicketId)
             && StringUtils.hasText(service)) {
@@ -142,10 +119,10 @@ public final class LogonFormAction extends FormAction {
                     .grantServiceTicket(ticketGrantingTicketId,
                         new SimpleService(service));
 
-                ContextUtils.addAttributeToFlowScope(context, WebConstants.TICKET,
-                    serviceTicketId);
-                ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE,
-                    service);
+                ContextUtils.addAttributeToFlowScope(context,
+                    WebConstants.TICKET, serviceTicketId);
+                ContextUtils.addAttributeToFlowScope(context,
+                    WebConstants.SERVICE, service);
 
                 return success();
             }
@@ -158,17 +135,6 @@ public final class LogonFormAction extends FormAction {
         }
 
         return result("noService");
-    }
-
-    /**
-     * Generate a unique LoginToken string and save it in the Map.
-     */
-    private String getLoginToken() {
-        final String loginToken = this.uniqueTokenIdGenerator.getNewTokenId();
-        synchronized (this.loginTokens) {
-            this.loginTokens.put(loginToken, new Date());
-        }
-        return loginToken;
     }
 
     /**
@@ -197,10 +163,6 @@ public final class LogonFormAction extends FormAction {
         this.credentialsBinder = credentialsBinder;
     }
 
-    public void setLoginTokens(final Map loginTokens) {
-        this.loginTokens = loginTokens;
-    }
-
     public void setUniqueTokenIdGenerator(
         final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
         this.uniqueTokenIdGenerator = uniqueTokenIdGenerator;
@@ -210,9 +172,8 @@ public final class LogonFormAction extends FormAction {
         super.afterPropertiesSet();
         final String name = this.getClass().getName();
 
-        Assert.notNull(this.loginTokens,
-            "You must set loginTokens and centralAuthenticationService on "
-                + name);
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null on " + name);
 
         if (this.uniqueTokenIdGenerator == null) {
             this.uniqueTokenIdGenerator = new DefaultUniqueTokenIdGenerator();

@@ -131,11 +131,6 @@
 
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>
-		<url-pattern>/redirect</url-pattern>
-	</servlet-mapping>
-		
-	<servlet-mapping>
-		<servlet-name>cas</servlet-name>
 		<url-pattern>/CentralAuthenticationService</url-pattern>
 	</servlet-mapping>
 
@@ -145,12 +140,12 @@
 	</session-config>
 
 	<error-page>
-		<exception-type>java.lang.IllegalStateException</exception-type>
-		<location>/index.jsp</location>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/WEB-INF/view/jsp/brokenContext.jsp</location>
 	</error-page>
 
 	<error-page>
-		<exception-type>java.lang.Exception</exception-type>
-		<location>/WEB-INF/view/jsp/brokenContext.jsp</location>
+		<error-code>404</error-code>
+		<location>/index.jsp</location>
 	</error-page>
 </web-app>
