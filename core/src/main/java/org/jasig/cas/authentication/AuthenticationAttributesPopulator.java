@@ -19,8 +19,7 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * @see DefaultAuthenticationAttriubutesPopulator
- * @see AuthenticationManagerImpl
+ *
  */
 public interface AuthenticationAttributesPopulator {
 
