@@ -77,49 +77,7 @@
 		id="ticketRegistry"
 		class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 	
-	<!-- Tokens -->
-	<bean
-		id="loginTokens"
-		class="java.util.HashMap" />
-	
 	<!--Quartz -->
-	<!--  LOGIN TOKEN REGISTRY CLEANER -->
-	<bean
-		id="loginTokenRegistryCleaner"
-		class="org.jasig.cas.ticket.registry.support.LoginTokenRegistryCleaner">
-		<property
-			name="loginTokens"
-			ref="loginTokens" />
-		<property
-			name="timeOut"
-			value="${web.token.login.timeout}" />
-	</bean>
-	
-	<bean
-		id="jobDetailLoginTokenRegistryCleaner"
-		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property
-			name="targetObject"
-			ref="loginTokenRegistryCleaner" />	
-		<property
-			name="targetMethod"
-			value="clean" />
-	</bean>
-	
-	<bean
-		id="triggerJobDetailLoginTokenRegistryCleaner"
-		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property
-			name="jobDetail"
-			ref="jobDetailLoginTokenRegistryCleaner" />
-		<property
-			name="startDelay"
-			value="${web.token.login.cleanup.start}" />
-		<property
-			name="repeatInterval"
-			value="${web.token.login.cleanup.repeat}" />
-	</bean>
-	
 	<!-- TICKET REGISTRY CLEANER -->
 	<bean
 		id="ticketRegistryCleaner"
@@ -155,8 +113,6 @@
 	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref
-					local="triggerJobDetailLoginTokenRegistryCleaner" />
 				<ref
 					local="triggerJobDetailTicketRegistryCleaner" />
 			</list>

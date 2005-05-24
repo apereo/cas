@@ -6,13 +6,8 @@
 	<action-state id="ticketGrantingTicketCheck">
 		<action bean="ticketGrantingTicketCheckAction" />
 		<transition on="success" to="warn" />
-		<transition on="error" to="setupReferenceData" />
+		<transition on="error" to="viewLogonForm" />
 		<transition on="gateway" to="redirect" />
-	</action-state>
-	
-	<action-state id="setupReferenceData">
-		<action bean="logonFormAction" method="setupReferenceData" />
-		<transition on="success" to="viewLogonForm" />
 	</action-state>
 
 	<view-state id="viewLogonForm" view="casLogonView">
@@ -22,14 +17,14 @@
 	<action-state id="bindAndValidate">
 		<action bean="logonFormAction" />
 		<transition on="success" to="submit" />
-		<transition on="error" to="setupReferenceData" />
+		<transition on="error" to="viewLogonForm" />
 	</action-state>
 	
 	<action-state id="submit">
 		<action bean="logonFormAction" method="submit" />
 		<transition on="noService" to="viewGenericLogon" />
 		<transition on="success" to="warn" />
-		<transition on="error" to="setupReferenceData" />
+		<transition on="error" to="viewLogonForm" />
 	</action-state>
 	
 	<action-state id="warn">
