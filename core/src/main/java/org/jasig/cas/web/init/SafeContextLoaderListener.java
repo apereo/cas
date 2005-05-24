@@ -1,3 +1,8 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.web.init;
 
 import javax.servlet.ServletContext;
@@ -40,7 +45,8 @@ import org.springframework.web.context.ContextLoaderListener;
  */
 public final class SafeContextLoaderListener implements ServletContextListener {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    /** Instance of Commons Logging. */
+    private final Log log = LogFactory.getLog(getClass());
 
     /**
      * The name of the ServletContext attribute whereat we will place a List of
@@ -48,9 +54,10 @@ public final class SafeContextLoaderListener implements ServletContextListener {
      */
     public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByListener";
 
+    /** The actual ContextLoaderListener to which we will delegate to. */
     private final ContextLoaderListener delegate = new ContextLoaderListener();
 
-    public void contextInitialized(ServletContextEvent sce) {
+    public void contextInitialized(final ServletContextEvent sce) {
         try {
             this.delegate.contextInitialized(sce);
         } catch (Throwable t) {
@@ -86,7 +93,7 @@ public final class SafeContextLoaderListener implements ServletContextListener {
         }
     }
 
-    public void contextDestroyed(ServletContextEvent sce) {
+    public void contextDestroyed(final ServletContextEvent sce) {
         this.delegate.contextDestroyed(sce);
     }
 

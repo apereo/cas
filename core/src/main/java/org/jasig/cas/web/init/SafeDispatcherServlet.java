@@ -1,3 +1,8 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
+ */
 package org.jasig.cas.web.init;
 
 import java.io.IOException;
@@ -36,22 +41,26 @@ public final class SafeDispatcherServlet extends HttpServlet {
     /** Unique Id for serialization. */
     private static final long serialVersionUID = 1L;
 
+    /** Key under which we will store the exception in the ServletContext. */
     public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
 
+    /** Instance of Commons Logging. */
     private Log log = LogFactory.getLog(getClass());
 
+    /** The actual DispatcherServlet to which we will delegate to. */
     private DispatcherServlet delegate = new DispatcherServlet();
-    
-    private boolean successfulInitialization = true;
 
-    public void init(ServletConfig config) {
+    /** Boolean to determine if the application deployed successfully. */
+    private boolean initSuccess = true;
+
+    public void init(final ServletConfig config) {
         try {
             this.delegate.init(config);
 
-        } catch (Throwable t) {
+        } catch (final Throwable t) {
             // let the service method know initialization failed.
-            this.successfulInitialization = false;
-            
+            this.initSuccess = false;
+
             // no matter what went wrong, our role is to capture this error and
             // prevent it from blocking initialization of the servlet.
 
@@ -84,7 +93,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
         }
     }
 
-    public void service(ServletRequest req, ServletResponse resp)
+    public void service(final ServletRequest req, final ServletResponse resp)
         throws ServletException, IOException {
         /*
          * Since our container calls only this method and not any of the other
@@ -92,10 +101,11 @@ public final class SafeDispatcherServlet extends HttpServlet {
          * this method is sufficient to delegate all of the methods in the
          * HttpServlet API.
          */
-        if (this.successfulInitialization) {
+        if (this.initSuccess) {
             this.delegate.service(req, resp);
         } else {
-            throw new ApplicationContextException("Unable to initialize application context.");
+            throw new ApplicationContextException(
+                "Unable to initialize application context.");
         }
     }
 }
