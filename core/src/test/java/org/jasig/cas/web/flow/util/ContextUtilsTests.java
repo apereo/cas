@@ -13,7 +13,13 @@ import org.springframework.web.flow.execution.servlet.ServletEvent;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ *
+ */
 public class ContextUtilsTests extends TestCase {
 
     private MockRequestContext requestContext;
@@ -21,9 +27,7 @@ public class ContextUtilsTests extends TestCase {
     private MockHttpServletRequest request;
     
     private MockHttpServletResponse response;
-    
-    
-    
+
     protected void setUp() throws Exception {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
@@ -63,5 +67,10 @@ public class ContextUtilsTests extends TestCase {
         } catch (Exception e) {
             return;
         }
+    }
+    
+    public void testAddGetAttributeFromFlowScope() {
+        ContextUtils.addAttributeToFlowScope(this.requestContext, "test", "test");
+        assertEquals("test", ContextUtils.getAttributeFromFlowScope(this.requestContext, "test"));
     }
 }
