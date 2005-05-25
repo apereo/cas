@@ -26,9 +26,6 @@ public final class UrlUtils {
     /** The instance of the logger. */
     private static final Log LOG = LogFactory.getLog(UrlUtils.class);
     
-    /** The amount of time to wait for a connection. */
-    private static final int TIMEOUT = 10000;
-    
     private UrlUtils() {
         // we do not want this able to be extended.
     }
