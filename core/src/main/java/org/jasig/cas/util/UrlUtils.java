@@ -13,7 +13,6 @@ import java.net.URLConnection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.util.http.HttpTimeoutHandler;
 
 /**
  * Utilities class for generic functions related to URLs.
@@ -45,8 +44,7 @@ public final class UrlUtils {
         final StringBuffer buf = new StringBuffer();
 
         try {
-            final URL timeoutUrl = new URL((URL) null, url.toExternalForm(), new HttpTimeoutHandler(TIMEOUT));
-            final URLConnection connection = timeoutUrl.openConnection();
+            final URLConnection connection = url.openConnection();
 
             connection.setRequestProperty("Connection", "close");
             bufferedReader = new BufferedReader(new InputStreamReader(
@@ -58,14 +56,14 @@ public final class UrlUtils {
                 line = bufferedReader.readLine();
             }
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e,e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                LOG.error(e);
+                LOG.error(e,e);
             }
         }
         return buf.toString().length() > 0 ? buf.toString() : null;
