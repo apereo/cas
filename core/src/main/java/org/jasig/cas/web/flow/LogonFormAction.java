@@ -16,8 +16,6 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
-import org.jasig.cas.util.UniqueTokenIdGenerator;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
@@ -45,9 +43,6 @@ public final class LogonFormAction extends FormAction {
 
     /** Log instance. */
     private Log log = LogFactory.getLog(this.getClass());
-
-    /** Id generator of tokens used to prevent resubmission of a form. */
-    private UniqueTokenIdGenerator uniqueTokenIdGenerator;
 
     /**
      * Binder that allows additional binding of form object beyond Spring
@@ -163,24 +158,12 @@ public final class LogonFormAction extends FormAction {
         this.credentialsBinder = credentialsBinder;
     }
 
-    public void setUniqueTokenIdGenerator(
-        final UniqueTokenIdGenerator uniqueTokenIdGenerator) {
-        this.uniqueTokenIdGenerator = uniqueTokenIdGenerator;
-    }
-
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
         final String name = this.getClass().getName();
 
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService cannot be null on " + name);
-
-        if (this.uniqueTokenIdGenerator == null) {
-            this.uniqueTokenIdGenerator = new DefaultUniqueTokenIdGenerator();
-            log
-                .info("UniqueTokenIdGenerator not set, using default UniqueIdGenerator of "
-                    + this.uniqueTokenIdGenerator.getClass().getName());
-        }
 
         if (this.getFormObjectClass() == null) {
             this.setFormObjectClass(UsernamePasswordCredentials.class);
@@ -192,6 +175,11 @@ public final class LogonFormAction extends FormAction {
                 + this.getFormObjectName() + " and validator "
                 + this.getValidator().getClass().getName() + ".");
         }
+
+        Assert
+            .isTrue(Credentials.class.isAssignableFrom(this
+                .getFormObjectClass()),
+                "CommandClass must be of type Credentials.");
 
         if (this.credentialsBinder == null) {
             this.credentialsBinder = new DefaultSpringBindCredentialsBinder();

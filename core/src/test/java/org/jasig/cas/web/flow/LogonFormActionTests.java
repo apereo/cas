@@ -22,7 +22,6 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.DefaultUniqueTokenIdGenerator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
@@ -36,117 +35,149 @@ import org.springframework.web.flow.execution.servlet.ServletEvent;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ *
+ */
 public class LogonFormActionTests extends TestCase {
 
     private LogonFormAction logonFormAction;
-    
+
     private CentralAuthenticationServiceImpl centralAuthenticationService;
 
     protected void setUp() throws Exception {
         this.logonFormAction = new LogonFormAction();
-        
+
         this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
-        this.centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
-                
+        this.centralAuthenticationService
+            .setTicketRegistry(new DefaultTicketRegistry());
+
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-        manager.setAuthenticationAttributesPopulators(new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()});
-        manager.setAuthenticationHandlers(new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler()});
-        manager.setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver()});
-        
+        manager
+            .setAuthenticationAttributesPopulators(new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()});
+        manager
+            .setAuthenticationHandlers(new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler()});
+        manager
+            .setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver()});
+
         this.centralAuthenticationService.setAuthenticationManager(manager);
-        this.centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        this.logonFormAction.setCentralAuthenticationService(this.centralAuthenticationService);
+        this.centralAuthenticationService
+            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
+        this.centralAuthenticationService
+            .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
+        this.centralAuthenticationService
+            .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        this.logonFormAction
+            .setCentralAuthenticationService(this.centralAuthenticationService);
         this.logonFormAction.afterPropertiesSet();
     }
- 
+
     public void testSubmitBadCredentials() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
-        
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername("test");
         credentials.setPassword("test2");
-        
+
         ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context, "org.springframework.validation.BindException.credentials", new BindException(credentials, "credentials"));
+        ContextUtils.addAttribute(context,
+            "org.springframework.validation.BindException.credentials",
+            new BindException(credentials, "credentials"));
 
         assertEquals("error", this.logonFormAction.submit(context).getId());
     }
-    
+
     public void testSubmitProperCredentialsWithService() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
-        
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+
         request.addParameter("service", "test");
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername("test");
         credentials.setPassword("test");
-        
+
         ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context, "org.springframework.validation.BindException.credentials", new BindException(credentials, "credentials"));
+        ContextUtils.addAttribute(context,
+            "org.springframework.validation.BindException.credentials",
+            new BindException(credentials, "credentials"));
 
         assertEquals("success", this.logonFormAction.submit(context).getId());
     }
-    
+
     public void testSubmitProperCredentialsWithNoService() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
-        
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername("test");
         credentials.setPassword("test");
-        
+
         ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context, "org.springframework.validation.BindException.credentials", new BindException(credentials, "credentials"));
+        ContextUtils.addAttribute(context,
+            "org.springframework.validation.BindException.credentials",
+            new BindException(credentials, "credentials"));
 
         assertEquals("noService", this.logonFormAction.submit(context).getId());
     }
-    
+
     public void testWarn() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
-        
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+
         request.addParameter("warn", "on");
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername("test");
         credentials.setPassword("test");
-        
+
         ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context, "org.springframework.validation.BindException.credentials", new BindException(credentials, "credentials"));
+        ContextUtils.addAttribute(context,
+            "org.springframework.validation.BindException.credentials",
+            new BindException(credentials, "credentials"));
 
         assertEquals("noService", this.logonFormAction.submit(context).getId());
-        MockHttpServletResponse response = (MockHttpServletResponse) ContextUtils.getHttpServletResponse(context);
+        MockHttpServletResponse response = (MockHttpServletResponse) ContextUtils
+            .getHttpServletResponse(context);
         assertNotNull(response.getCookie(WebConstants.COOKIE_PRIVACY));
-        assertEquals(WebConstants.COOKIE_DEFAULT_FILLED_VALUE, response.getCookie(WebConstants.COOKIE_PRIVACY).getValue());
+        assertEquals(WebConstants.COOKIE_DEFAULT_FILLED_VALUE, response
+            .getCookie(WebConstants.COOKIE_PRIVACY).getValue());
     }
-    
+
     public void testRenewIsTrue() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
-        
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+
         request.addParameter("service", "true");
         request.addParameter("renew", "true");
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername("test");
         credentials.setPassword("test");
 
-        final String ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(credentials);
-        request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID, ticketGrantingTicket)});
-        
+        final String ticketGrantingTicket = this.centralAuthenticationService
+            .createTicketGrantingTicket(credentials);
+        request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
+            ticketGrantingTicket)});
+
         ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context, "org.springframework.validation.BindException.credentials", new BindException(credentials, "credentials"));
+        ContextUtils.addAttribute(context,
+            "org.springframework.validation.BindException.credentials",
+            new BindException(credentials, "credentials"));
 
         assertEquals("success", this.logonFormAction.submit(context).getId());
     }
-    
+
     public void testAfterPropertiesSetCas() {
         try {
             this.logonFormAction.setCentralAuthenticationService(null);
@@ -156,16 +187,22 @@ public class LogonFormActionTests extends TestCase {
             return;
         }
     }
-    
-    public void testAfterPropertiesSetNonDefaultTokenGenerator() throws Exception {
-        this.logonFormAction.setUniqueTokenIdGenerator(new DefaultUniqueTokenIdGenerator());
-        this.logonFormAction.afterPropertiesSet();
+
+    public void testAfterPropertiesSetBadCredentials() {
+        try {
+            this.logonFormAction.setFormObjectClass(Object.class);
+            this.logonFormAction.afterPropertiesSet();
+            fail("Exception expected.");
+        } catch (Exception e) {
+            return;
+        }
     }
-    
+
     public void testAfterPropertiesSetDifferentCredentials() {
         try {
-            this.logonFormAction.setFormObjectClass(HttpBasedServiceCredentials.class);
-            this.logonFormAction.setValidator(new Validator() {
+            this.logonFormAction
+                .setFormObjectClass(HttpBasedServiceCredentials.class);
+            this.logonFormAction.setValidator(new Validator(){
 
                 public boolean supports(Class arg0) {
                     return true;
@@ -173,16 +210,19 @@ public class LogonFormActionTests extends TestCase {
 
                 public void validate(Object arg0, Errors arg1) {
                     // do nothing
-                }});
-            this.logonFormAction.setCredentialsBinder(new CredentialsBinder() {
+                }
+            });
+            this.logonFormAction.setCredentialsBinder(new CredentialsBinder(){
 
-                public void bind(HttpServletRequest request, Credentials credentials) {
+                public void bind(HttpServletRequest request,
+                    Credentials credentials) {
                     // do nothing
                 }
 
                 public boolean supports(Class clazz) {
                     return false;
-                }});
+                }
+            });
             this.logonFormAction.afterPropertiesSet();
             fail("Exception expected.");
         } catch (Exception e) {
