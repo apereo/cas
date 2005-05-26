@@ -37,6 +37,7 @@
 			<ant:include name="docs/**" />
 			<ant:include name="core/*.xml" />
 			<ant:include name="core/*.txt" />
+			<ant:include name="lib/**" />
 			<ant:include name="core/src/compatibility/java/**" />
 			<ant:include name="core/src/main/java/**" />
 			<ant:include name="core/src/test/java/**" />
