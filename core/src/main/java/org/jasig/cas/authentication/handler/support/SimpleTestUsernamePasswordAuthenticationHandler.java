@@ -12,7 +12,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 /**
- * Simple test implementation of a AuthenticationHandler that returns a true if
+ * Simple test implementation of a AuthenticationHandler that returns true if
  * the username and password match. This class should never be enabled in a
  * production environment and is only designed to facilitate unit testing and
  * load testing.

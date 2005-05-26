@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Implementation of the password handler that returns the MD5 hash of any
- * plaintext password passed into the translator. Returns the equivalent Md5
+ * plaintext password passed into the encoder. Returns the equivalent Md5
  * Hash you would get from a PHP hash.
  * 
  * @author Scott Battaglia

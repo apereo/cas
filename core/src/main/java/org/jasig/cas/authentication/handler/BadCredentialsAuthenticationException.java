@@ -27,10 +27,16 @@ public class BadCredentialsAuthenticationException extends
     /** UID for serializable objects. */
     private static final long serialVersionUID = 3256719585087797044L;
 
-    /** String code to map to error message. */
+    /**
+     * Default constructor that does not allow the chaining of exceptions and
+     * uses the default code as the error code for this exception.
+     */
     private static final String CODE = "error.authentication.credentials.bad";
 
-    /** Default constructor that uses the default error code. */
+    /**
+     * Default constructor that does not allow the chaining of exceptions and
+     * uses the default code as the error code for this exception.
+     */
     public BadCredentialsAuthenticationException() {
         super(CODE);
     }

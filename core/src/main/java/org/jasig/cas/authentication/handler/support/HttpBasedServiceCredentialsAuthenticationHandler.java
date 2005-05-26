@@ -16,6 +16,10 @@ import org.jasig.cas.util.UrlUtils;
  * Class to validate the credentials presented by communicating with the web
  * server and checking the certificate that is returned against the hostname,
  * etc.
+ * <p>
+ * This class is concerned with ensuring that the protocol is HTTPS and that a
+ * response is returned. The SSL handshake that occurs automatically by opening
+ * a connection does the heavy process of authenticating.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

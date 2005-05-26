@@ -10,6 +10,9 @@ package org.jasig.cas.authentication.handler;
  * different representation of that password so that the password may be
  * compared with the stored encrypted password without having to decode the
  * encrypted password.
+ * <p>
+ * PasswordEncoders are useful because often the stored passwords are encoded
+ * with a one way hash function which makes them almost impossible to decode.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
