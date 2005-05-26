@@ -5,15 +5,15 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.flow.Event;
 import org.springframework.web.flow.RequestContext;
-import org.springframework.web.flow.action.AbstractAction;
 
 /**
  * Action for determining whether the warning page needs to be displayed or not.
@@ -23,9 +23,9 @@ import org.springframework.web.flow.action.AbstractAction;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class WarnAction extends AbstractAction {
+public final class WarnAction extends AbstractCasAction {
 
-    protected Event doExecute(final RequestContext context)
+    protected ModelAndEvent doExecuteInternal(final RequestContext context, final Map attributes)
         throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
@@ -36,9 +36,9 @@ public final class WarnAction extends AbstractAction {
             .getParameter(WebConstants.WARN));
 
         if (warn || requestWarn) {
-            return error();
+            return new ModelAndEvent(error());
         }
-        
-        return success();
+
+        return new ModelAndEvent(success());
     }
 }

@@ -11,6 +11,10 @@ import java.util.Map;
 import org.springframework.web.flow.Event;
 
 /**
+ * Holder for both Model and Event in the CAS work flow.
+ * Note that these are entirely distinct. This class merely holds
+ * both to make it possible for a action to return both model
+ * and event in a single return value.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

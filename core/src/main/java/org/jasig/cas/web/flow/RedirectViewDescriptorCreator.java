@@ -12,6 +12,10 @@ import org.springframework.web.flow.ViewDescriptor;
 import org.springframework.web.flow.ViewDescriptorCreator;
 
 /**
+ * Custom View Descriptor that allows the Web Flow to have an end state that
+ * allows for redirects based on a URL provided rather than just configured
+ * views.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0

@@ -80,7 +80,7 @@ public final class NonInteractiveLoginAction extends AbstractCasAction
             return new ModelAndEvent(error());
         }
     }
-
+    
     protected Object createFormObject(RequestContext context)
         throws InstantiationException, IllegalAccessException {
         return this.domainObjectClass.newInstance();
