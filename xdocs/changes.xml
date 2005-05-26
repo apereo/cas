@@ -4,6 +4,19 @@
     <author email="scott_battaglia@rutgers.edu">Scott Battaglia</author>
   </properties>
   <body>
+
+  	<release version="3.0-rc1" date="2005-05-26">
+  		<action dev="sbattaglia" type="add">
+  			Test Coverage increased to 90+%
+  		</action>
+  		<action dev="apetro" type="add">
+  			Failed Deployment treated as normal error to allow for standard error handling.
+  		</action>
+  		<action dev="sbattaglia" type="add">
+  			Login Use Case defined by Web Flow to allow for more flexible configuration than previously allowed by LoginController.
+  		</action>
+  	</release>
+  
 	<release version="3.0-m3" date="2005-04-22">
 		<action dev="hgilbert" type="add">
 			SAML View Response
