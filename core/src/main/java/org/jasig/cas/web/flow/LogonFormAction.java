@@ -18,7 +18,6 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.jasig.cas.web.bind.CredentialsBinder;
-import org.jasig.cas.web.bind.support.DefaultSpringBindCredentialsBinder;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
@@ -58,7 +57,9 @@ public final class LogonFormAction extends FormAction {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
         final Credentials credentials = (Credentials) formObject;
-        this.credentialsBinder.bind(request, credentials);
+        if (this.credentialsBinder != null) {
+            this.credentialsBinder.bind(request, credentials);
+        }
     }
 
     public Event submit(final RequestContext context) throws Exception {
@@ -181,13 +182,8 @@ public final class LogonFormAction extends FormAction {
                 .getFormObjectClass()),
                 "CommandClass must be of type Credentials.");
 
-        if (this.credentialsBinder == null) {
-            this.credentialsBinder = new DefaultSpringBindCredentialsBinder();
-            log.info("CredentialsBinder not set.  Using default of "
-                + this.credentialsBinder.getClass().getName());
-        }
-
-        if (!this.credentialsBinder.supports(this.getFormObjectClass())) {
+        if (this.credentialsBinder != null
+            && !this.credentialsBinder.supports(this.getFormObjectClass())) {
             throw new IllegalStateException(
                 "CredentialsBinder does not support supplied FormObjectClass: "
                     + this.getClass().getName());
