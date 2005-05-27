@@ -5,9 +5,7 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.DefaultAuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -38,11 +36,9 @@ public abstract class AbstractCentralAuthenticationServiceTest extends TestCase 
         this.centralAuthenticationService
             .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
 
-        AuthenticationAttributesPopulator[] populators = new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()};
         CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
         AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
 
-        this.authenticationManager.setAuthenticationAttributesPopulators(populators);
         this.authenticationManager.setAuthenticationHandlers(handlers);
         this.authenticationManager.setCredentialsToPrincipalResolvers(resolvers);
         this.authenticationManager.afterPropertiesSet();

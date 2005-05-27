@@ -39,9 +39,6 @@ public class AuthenticationManagerImplTests extends TestCase {
 
         AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
         a.setAuthenticationHandlers(handlers);
-
-        AuthenticationAttributesPopulator[] populators = new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()};
-        a.setAuthenticationAttributesPopulators(populators);
     }
 
     private void setUpManager2(AuthenticationManagerImpl a) {
@@ -79,13 +76,14 @@ public class AuthenticationManagerImplTests extends TestCase {
         }
     }
 
-    public void testSuccessfulAuthentication() {
+    public void testSuccessfulAuthentication() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         Principal p = new SimplePrincipal("test");
         c.setUsername("test");
         c.setPassword("test");
 
         setUpManager(this.manager);
+        this.manager.afterPropertiesSet();
         try {
             Authentication authentication = this.manager.authenticate(c);
             assertEquals(p, authentication.getPrincipal());

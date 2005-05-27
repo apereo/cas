@@ -8,9 +8,7 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.DefaultAuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
@@ -45,9 +43,9 @@ public class TicketGrantingTicketCheckActionTests extends TestCase {
         this.centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
                 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-        manager.setAuthenticationAttributesPopulators(new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()});
         manager.setAuthenticationHandlers(new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler()});
         manager.setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver()});
+        manager.afterPropertiesSet();
         
         this.centralAuthenticationService.setAuthenticationManager(manager);
         this.centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
