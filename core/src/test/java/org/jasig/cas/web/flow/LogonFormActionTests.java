@@ -9,9 +9,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.DefaultAuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -36,10 +36,8 @@ import org.springframework.web.flow.execution.servlet.ServletEvent;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- *
  */
 public class LogonFormActionTests extends TestCase {
 
@@ -56,13 +54,20 @@ public class LogonFormActionTests extends TestCase {
 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         manager
-            .setAuthenticationAttributesPopulators(new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()});
+            .setAuthenticationAttributesPopulators(new AuthenticationAttributesPopulator[] {new AuthenticationAttributesPopulator(){
+
+                public Authentication populateAttributes(
+                    Authentication authentication, Credentials credentials) {
+                    return authentication;
+                }
+            }});
         manager
             .setAuthenticationHandlers(new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler()});
         manager
             .setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver()});
 
         this.centralAuthenticationService.setAuthenticationManager(manager);
+        manager.afterPropertiesSet();
         this.centralAuthenticationService
             .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         this.centralAuthenticationService

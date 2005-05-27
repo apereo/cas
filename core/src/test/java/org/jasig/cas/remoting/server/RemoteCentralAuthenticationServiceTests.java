@@ -9,9 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.DefaultAuthenticationAttributesPopulator;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -55,13 +53,12 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
 
-        AuthenticationAttributesPopulator[] populators = new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()};
         CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
         AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
 
-        manager.setAuthenticationAttributesPopulators(populators);
         manager.setAuthenticationHandlers(handlers);
         manager.setCredentialsToPrincipalResolvers(resolvers);
+        manager.afterPropertiesSet();
 
         this.centralAuthenticationService.setAuthenticationManager(manager);
 
@@ -73,6 +70,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
         Validator[] validators = new Validator[1];
         validators[0] = new UsernamePasswordCredentialsValidator();
 
+        this.centralAuthenticationService.afterPropertiesSet();
         this.remoteCentralAuthenticationService.setValidators(validators);
         this.remoteCentralAuthenticationService.afterPropertiesSet();
     }

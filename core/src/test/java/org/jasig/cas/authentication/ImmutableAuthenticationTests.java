@@ -63,4 +63,8 @@ public class ImmutableAuthenticationTests extends TestCase {
         assertEquals(ToStringBuilder.reflectionToString(this.authentication),
             this.authentication.toString());
     }
+    
+    public void testEquals() {
+        assertTrue(this.authentication.equals(this.authentication));
+    }
 }

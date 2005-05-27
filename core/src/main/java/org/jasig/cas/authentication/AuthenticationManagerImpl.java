@@ -128,12 +128,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         Assert.notEmpty(this.credentialsToPrincipalResolvers,
             "credentialsToPrincipalResolvers is a required property.");
 
-        if (this.authenticationAttributesPopulators == null
-            || this.authenticationAttributesPopulators.length == 0) {
-            this.authenticationAttributesPopulators = new AuthenticationAttributesPopulator[] {new DefaultAuthenticationAttributesPopulator()};
-            log.info("No AuthenticationAttributesPopulator set.  Defaulting to"
-                + this.authenticationAttributesPopulators[0].getClass()
-                    .getName());
+        if (this.authenticationAttributesPopulators == null) {
+            this.authenticationAttributesPopulators = new AuthenticationAttributesPopulator[0];
         }
     }
 

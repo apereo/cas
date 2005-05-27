@@ -180,4 +180,26 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             .getViewName());
         assertNull(modelAndView.getModel().get(WebConstants.PGTIOU));
     }
+    
+    public void testValidServiceTicketWithInvalidPgt() throws Exception {
+        this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        c.setPassword("test");
+        c.setUsername("test");
+        final String tId = this.centralAuthenticationService
+            .createTicketGrantingTicket(c);
+        final String sId = this.centralAuthenticationService
+            .grantServiceTicket(tId, new SimpleService("test"));
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter(WebConstants.SERVICE, "test");
+        request.addParameter(WebConstants.TICKET, sId);
+        request.addParameter(WebConstants.PGTURL, "duh");
+
+        final ModelAndView modelAndView = this.serviceValidateController
+            .handleRequestInternal(request, new MockHttpServletResponse());
+        assertEquals(ViewNames.CONST_SERVICE_SUCCESS, modelAndView
+            .getViewName());
+        assertNull(modelAndView.getModel().get(WebConstants.PGTIOU));
+    }
 }
