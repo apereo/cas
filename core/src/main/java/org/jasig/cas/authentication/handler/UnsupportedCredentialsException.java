@@ -17,6 +17,9 @@ package org.jasig.cas.authentication.handler;
 public final class UnsupportedCredentialsException extends
     AuthenticationException {
 
+    /** Static instance of UnsupportedCredentialsException. */
+    public static final UnsupportedCredentialsException ERROR = new UnsupportedCredentialsException();
+
     /** Unique ID for serializing. */
     private static final long serialVersionUID = 3977861752513837361L;
 

@@ -27,8 +27,6 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
- * @see org.jasig.cas.authentication.ImmutableAuthentication
  */
 public interface Authentication extends Serializable {
 

@@ -16,11 +16,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
- * The implementation of Authentation returned by AuthenticationManagerImpl.
+ * Default implementation of Authentication interface. ImmutableAuthentication
+ * is an immutable object and thus its attributes cannot be changed.
  * <p>
- * All property values must be set in the constructor and then may not be
- * changed. Serializable since it is tied to the TGT and may be persisted.
- * </p>
+ * Instanciators of the ImmutableAuthentication class must take care that the
+ * map they provide is serializable (i.e. HashMap).
  * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
@@ -32,16 +32,13 @@ public final class ImmutableAuthentication implements Authentication {
     /** UID for serializing. */
     private static final long serialVersionUID = 3906647483978365235L;
 
-    /** A Principal object returned by the CredentialsToPrincipalResolver. */
+    /** A Principal object representing the authenticated entity. */
     private final Principal principal; // TODO refactor to be immutable
 
     /** The date/time this authentication object became valid. */
     private final Date authenticatedDate;
 
-    /**
-     * Associated authentication attributes. Initially empty but may be filled
-     * in by an AuthenticationAttributesPopulator.
-     */
+    /** Associated authentication attributes. */
     private final Map attributes;
 
     /**
@@ -53,16 +50,23 @@ public final class ImmutableAuthentication implements Authentication {
      */
     public ImmutableAuthentication(final Principal principal,
         final Map attributes) {
-        
+
         if (principal == null) {
-            throw new IllegalArgumentException("principal cannot be null on " + this.getClass().getName());
+            throw new IllegalArgumentException("principal cannot be null on "
+                + this.getClass().getName());
         }
         this.principal = principal;
-        this.attributes = Collections
-            .unmodifiableMap(attributes == null ? new HashMap() : attributes);
+        this.attributes = Collections.unmodifiableMap(attributes == null
+            ? new HashMap() : attributes);
         this.authenticatedDate = new Date();
     }
-    
+
+    /**
+     * Constructor that assumes there are no additional authentication
+     * attributes.
+     * 
+     * @param principal the Principal representing the authenticated entity.
+     */
     public ImmutableAuthentication(final Principal principal) {
         this(principal, null);
     }

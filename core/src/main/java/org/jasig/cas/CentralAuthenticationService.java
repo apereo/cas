@@ -33,18 +33,6 @@ public interface CentralAuthenticationService {
     /**
      * Create a TicketGrantingTicket based on opaque credentials supplied by the
      * caller.
-     * <p>
-     * The caller may supply any object implimenting the Credentials marker. CAS
-     * doesn't know about the form of the Credentials object, but it must be
-     * recognized and processed by one of the helper routines plugged into the
-     * AuthenticationManager layer.
-     * </p>
-     * <p>
-     * This is the Single Credential version of this method. One Credential
-     * object is presented and it must either succeed or else generate an
-     * Exception. A more complex method will be used when multiple Credentials
-     * can be presented and some may succeed while others fail.
-     * </p>
      * 
      * @param credentials The credentials to create the ticket for
      * @return The String identifier of the ticket (may not be null).

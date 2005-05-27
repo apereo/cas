@@ -79,6 +79,9 @@ public final class CentralAuthenticationServiceImpl implements
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
+     * Implementation of destoryTicketGrantingTicket expires the ticket provided and removes
+     * it from the TicketRegistry.
+     * 
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {

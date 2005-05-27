@@ -16,6 +16,9 @@ package org.jasig.cas.authentication.handler;
 public class BlockedCredentialsAuthenticationException extends
     AuthenticationException {
 
+    /** Static instance of BlockedCredentialsAuthenticationException. */
+    public static final BlockedCredentialsAuthenticationException ERROR = new BlockedCredentialsAuthenticationException();
+    
     /** Unique ID for serialization. */
     private static final long serialVersionUID = 3544669598642420017L;
 
