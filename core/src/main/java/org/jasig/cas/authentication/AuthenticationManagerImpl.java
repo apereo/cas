@@ -89,10 +89,11 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         }
 
         if (!authenticated) {
-        	if(foundSupported)
+        	if(foundSupported) {
         		throw BadCredentialsAuthenticationException.ERROR;
-        	else
-        		throw new UnsupportedCredentialsException();
+            }
+
+       		throw UnsupportedCredentialsException.ERROR;
         }
 
         Authentication authentication = null;
@@ -111,7 +112,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         if (authentication == null) {
             log.error("CredentialsToPrincipalResolver not found for "
                 + credentials.getClass().getName());
-            throw new UnsupportedCredentialsException();
+            throw UnsupportedCredentialsException.ERROR;
         }
 
         for (int i = 0; i < this.authenticationAttributesPopulators.length; i++) {

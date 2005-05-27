@@ -16,6 +16,9 @@ package org.jasig.cas.authentication.handler;
 public class BadUsernameOrPasswordAuthenticationException extends
     BadCredentialsAuthenticationException {
 
+    /** Static instance of BadUsernameOrPasswordAuthenticationException. */
+    public static final BadUsernameOrPasswordAuthenticationException ERROR = new BadUsernameOrPasswordAuthenticationException();
+
     /** Unique ID for serializing. */
     private static final long serialVersionUID = 3977861752513837361L;
 

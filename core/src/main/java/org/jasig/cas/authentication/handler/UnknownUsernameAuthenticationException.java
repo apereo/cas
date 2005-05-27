@@ -16,6 +16,9 @@ package org.jasig.cas.authentication.handler;
 public class UnknownUsernameAuthenticationException extends
     BadUsernameOrPasswordAuthenticationException {
 
+    /** Static instance of UnknownUsernameAuthenticationException. */
+    public static final UnknownUsernameAuthenticationException ERROR = new UnknownUsernameAuthenticationException();
+
     /** Unique ID for serializing. */
     private static final long serialVersionUID = 3977861752513837361L;
 
