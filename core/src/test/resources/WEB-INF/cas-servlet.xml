@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/>
+        
+    <bean id="cache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager"><ref local="cacheManager"/></property>
+        <property name="maxElementsInMemory"><value>5000</value></property>
+        <property name="overflowToDisk"><value>false</value></property>
+        <property name="timeToLive"><value>300</value></property>
+        <property name="timeToIdle"><value>300</value></property>
+    </bean>
+</beans>
