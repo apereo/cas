@@ -36,7 +36,7 @@ public final class BindModeSearchDatabaseAuthenticationHandler extends
         try {
             Connection c = this.getJdbcTemplate().getDataSource()
                 .getConnection(username, password);
-            DataSourceUtils.closeConnectionIfNecessary(c, this
+            DataSourceUtils.releaseConnection(c, this
                 .getJdbcTemplate().getDataSource());
             return true;
         } catch (SQLException e) {
