@@ -13,6 +13,13 @@ import org.springframework.web.flow.Event;
 import org.springframework.web.flow.RequestContext;
 import org.springframework.web.flow.action.AbstractAction;
 
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ *
+ */
 public abstract class AbstractCasAction extends AbstractAction {
 
     protected final Event doExecute(final RequestContext requestContext)
@@ -20,10 +27,6 @@ public abstract class AbstractCasAction extends AbstractAction {
         final Map attributes = requestContext.getFlowScope().getAttributeMap();
     
         final ModelAndEvent modelAndEvent = doExecuteInternal(requestContext, attributes);
-        
-        if (modelAndEvent == null) {
-            throw new IllegalStateException("modelAndEvent not found.");
-        }
         
         final Map model = modelAndEvent.getModel();
         
