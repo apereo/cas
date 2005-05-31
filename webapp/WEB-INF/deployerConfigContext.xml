@@ -8,7 +8,7 @@
 			name="credentialsToPrincipalResolvers">
 			<list>
 				<bean
-					class="org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver" />
+					class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
 				<bean
 					class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
 			</list>
