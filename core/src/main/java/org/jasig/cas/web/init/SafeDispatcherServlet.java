@@ -29,8 +29,14 @@ import org.springframework.web.servlet.DispatcherServlet;
  * this deployment failure is configured in the web.xml via the standard error
  * handling mechanism.
  * <p>
- * The exception thrown is exposed in the Servlet Context under the key
- * "exceptionCaughtByServlet".
+ * If the underlying Spring DispatcherServlet failed to init(), this
+ * SafeDispatcherServlet will throw an
+ * <code>org.springframework.context.ApplicationContextException</code> on
+ * <code>service()</code>.
+ * <p>
+ * The exception thrown by the underlying Spring DispatcherServlet init() and
+ * caught in the SafeDispatcherServlet init() is exposed as a Servlet Context
+ * attribute under the key "exceptionCaughtByServlet".
  * 
  * @author Andrew Petro
  * @version $Revision$ $Date$
@@ -61,13 +67,13 @@ public final class SafeDispatcherServlet extends HttpServlet {
             // let the service method know initialization failed.
             this.initSuccess = false;
 
-            // no matter what went wrong, our role is to capture this error and
-            // prevent it from blocking initialization of the servlet.
-
-            // logging overkill so that our deployer will find a record of this
-            // problem
-            // even if unfamiliar with Commons Logging and properly configuring
-            // it.
+            /*
+             * no matter what went wrong, our role is to capture this error and
+             * prevent it from blocking initialization of the servlet. logging
+             * overkill so that our deployer will find a record of this problem
+             * even if unfamiliar with Commons Logging and properly configuring
+             * it.
+             */
 
             final String message = "SafeDispatcherServlet: \n"
                 + "The Spring DispatcherServlet we wrap threw on init.\n"
@@ -93,6 +99,10 @@ public final class SafeDispatcherServlet extends HttpServlet {
         }
     }
 
+    /**
+     * @throws ApplicationContextException if the DispatcherServlet does not
+     * initialize properly, but the servlet attempts to process a request.
+     */
     public void service(final ServletRequest req, final ServletResponse resp)
         throws ServletException, IOException {
         /*
