@@ -34,7 +34,7 @@
 	<div id="content">
 
 		<div class="dataset clear" style="position: relative;">
-			<h2 style="margin-bottom:0;">Please Log In</h2>
+			<h2 style="margin-bottom:0;">Log In Successful</h2>
 
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 				You have successfully logged into the Central Authentication Service.<br /><br />
