@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
  * @since 3.0
  * @see org.jasig.cas.authentication.principal.SimplePrincipal
  */
-public final class DefaultCredentialsToPrincipalResolver implements
+public final class UsernamePasswordCredentialsToPrincipalResolver implements
     CredentialsToPrincipalResolver {
 
     /** Logging instance. */

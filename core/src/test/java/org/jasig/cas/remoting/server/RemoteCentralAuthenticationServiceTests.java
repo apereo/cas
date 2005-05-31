@@ -14,7 +14,7 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleService;
@@ -53,7 +53,7 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
 
-        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
+        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
         AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
 
         manager.setAuthenticationHandlers(handlers);

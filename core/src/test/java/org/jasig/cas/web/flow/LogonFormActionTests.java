@@ -16,7 +16,7 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -64,7 +64,7 @@ public class LogonFormActionTests extends TestCase {
         manager
             .setAuthenticationHandlers(new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler()});
         manager
-            .setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new DefaultCredentialsToPrincipalResolver()});
+            .setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()});
 
         this.centralAuthenticationService.setAuthenticationManager(manager);
         manager.afterPropertiesSet();

@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  */
 public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
 
-    private CredentialsToPrincipalResolver resolver = new DefaultCredentialsToPrincipalResolver();
+    private CredentialsToPrincipalResolver resolver = new UsernamePasswordCredentialsToPrincipalResolver();
 
     public void testValidSupportsCredentials() {
         assertTrue(this.resolver.supports(new UsernamePasswordCredentials()));
