@@ -15,13 +15,13 @@
 	</view-state>
 	
 	<action-state id="bindAndValidate">
-		<action bean="logonFormAction" />
+		<action bean="loginFormAction" />
 		<transition on="success" to="submit" />
 		<transition on="error" to="viewLogonForm" />
 	</action-state>
 	
 	<action-state id="submit">
-		<action bean="logonFormAction" method="submit" />
+		<action bean="loginFormAction" method="submit" />
 		<transition on="noService" to="viewGenericLogon" />
 		<transition on="success" to="warn" />
 		<transition on="error" to="viewLogonForm" />
