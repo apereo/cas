@@ -33,25 +33,23 @@
 	<!-- CONTENT -->
 	<div style="border-top:1px solid #fff; margin:0 5%; padding:0; width:auto !important; width /**/:100%; clear:both;">
 
-		<div style="	margin:30px 0 0 0; padding:10px; border:1px solid #eee; clear:both; width:auto !important;width /**/:100%; position: relative;">
+		<div style="margin:30px 0 0 0; padding:10px; border:1px solid #eee; clear:both; width:auto !important;width /**/:100%; position: relative;">
 			<h2 style="margin-bottom:0; position:relative; top:-20px; left:-20px; width:350px; margin:0; padding:0 0 1px 5px; border:1px solid #ccc; background-color:#eee; color:#066; font-weight:bold; font-size:1em; line-height:1.3em;">CAS is Unavailable</h2>
 
+			<c:if test="${not empty applicationScope.exceptionCaughtByServlet and not empty applicationScope.exceptionCaughtByListener}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 			  There was a fatal error initializing the CAS application context.  This is almost always because of an error in the Spring bean configuration files.
 			  Are the files valid XML?  Do the beans they refer to all exist?<br /><br />
 			  Before placing CAS in production, you should change this page to present a UI appropriate for the case where the CAS
 			  web application is fundamentally broken.  Perhaps "Sorry, CAS is currently unavailable." with some links to your user support information.
 			</p>
-			
-			<!-- Render a message about who logged what where -->
-			
-			<c:if test="${not empty applicationScope.exceptionCaughtByServlet and not empty applicationScope.exceptionCaughtByListener}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 			  The Throwables representing these fatal errors have been logged by the <em>SafeContextLoaderListener</em>
 			  and by the <em>SafeDispatcherServlet</em> via Commons Logging, via ServletContext logging, and to System.err.
 			</p>
-			</c:if>
-			
+
+			</c:if>			
+		
 			<c:if test="${not empty applicationScope.exceptionCaughtByServlet and empty applicationScope.exceptionCaughtByListener}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 			  The Throwable representing the fatal error has been logged by the <em>SafeDispatcherServlet</em>
