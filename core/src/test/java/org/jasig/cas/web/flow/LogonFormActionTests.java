@@ -41,12 +41,12 @@ import junit.framework.TestCase;
  */
 public class LogonFormActionTests extends TestCase {
 
-    private LogonFormAction logonFormAction;
+    private LoginFormAction logonFormAction;
 
     private CentralAuthenticationServiceImpl centralAuthenticationService;
 
     protected void setUp() throws Exception {
-        this.logonFormAction = new LogonFormAction();
+        this.logonFormAction = new LoginFormAction();
 
         this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
         this.centralAuthenticationService

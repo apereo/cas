@@ -38,7 +38,7 @@ import org.springframework.web.flow.action.FormObjectAccessor;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class LogonFormAction extends FormAction {
+public final class LoginFormAction extends FormAction {
 
     /** Log instance. */
     private Log log = LogFactory.getLog(this.getClass());

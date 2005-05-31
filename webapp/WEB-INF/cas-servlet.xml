@@ -205,8 +205,8 @@
 	</bean>
 
 	<bean
-		id="logonFormAction"
-		class="org.jasig.cas.web.flow.LogonFormAction">
+		id="loginFormAction"
+		class="org.jasig.cas.web.flow.LoginFormAction">
 		<property
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
