@@ -8,7 +8,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/applicationContext.xml,
-			/WEB-INF/userConfigContext.xml,
+			/WEB-INF/deployerConfigContext.xml,
 			/WEB-INF/remoteServices.xml,
 			/WEB-INF/auditTrailContext.xml,
 			classpath:org/codehaus/xfire/spring/xfire.xml
