@@ -28,6 +28,7 @@
 	
 	<goal name="cas:release">
 		<attainGoal name="war" />
+		<j:set var="maven.javadoc.destdir">${basedir}/docs</j:set>
 		<attainGoal name="javadoc" />
 
 		<ant:delete dir="${dist.dir}" />		
