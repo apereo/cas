@@ -87,7 +87,7 @@
 		class="org.jasig.cas.services.support.SpringApplicationContextServiceRegistryReloader">
 		<property
 			name="serviceRegistryManager"
-			ref=serviceRegistry"" />
+			ref="serviceRegistry" />
 	</bean>
 	
 	<bean
