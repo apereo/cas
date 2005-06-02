@@ -19,8 +19,16 @@ import org.springframework.validation.Validator;
 
 /**
  * Wrapper implementation around a CentralAuthenticationService that does
- * web-service specific "stuff" before delegating to the
- * CentralAuthenticationService.
+ * completes the marshalling of parameters from the web-service layer to the
+ * service layer. Typically the only thing that is done is to validate the
+ * parameters (as you would in the web tier) and then delegate to the service
+ * layer.
+ * <p>
+ * The following properties are required:
+ * </p>
+ * <ul>
+ * <li>centralAuthenticationService - the service layer we are delegating to.</li>
+ * </ul>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -36,7 +44,7 @@ public final class RemoteCentralAuthenticationService implements
     private Validator[] validators;
 
     /**
-     * @throws IllegalArgumentException if the Credentials are nullor if given
+     * @throws IllegalArgumentException if the Credentials are null or if given
      * invalid credentials.
      */
     public String createTicketGrantingTicket(final Credentials credentials)
@@ -112,6 +120,11 @@ public final class RemoteCentralAuthenticationService implements
 
     private Errors validateCredentials(final Credentials credentials) {
         final Errors errors = new BindException(credentials, "credentials");
+
+        if (this.validators == null) {
+            return errors;
+        }
+
         for (int i = 0; i < this.validators.length; i++) {
             if (this.validators[i].supports(credentials.getClass())) {
                 ValidationUtils.invokeValidator(this.validators[i],
@@ -143,7 +156,6 @@ public final class RemoteCentralAuthenticationService implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notEmpty(this.validators, "validators is a required property.");
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService is a required property.");
     }
