@@ -3,7 +3,6 @@
 	<name>cas3</name>
 	<comment></comment>
 	<projects>
-		<project>spring</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
