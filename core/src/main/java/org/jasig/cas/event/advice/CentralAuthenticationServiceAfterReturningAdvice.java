@@ -17,7 +17,16 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.util.Assert;
 
 /**
- * Advice to advise the creation, validation, etc. of tickets.
+ * Advice to advise the CentralAuthenticationService to publish TicketEvents
+ * whenever any of the methods get called and successfully return a result.
+ * <p>
+ * CentralAuthenticationServiceAfterReturningAdvice requires the following
+ * properties to be set:
+ * </p>
+ * <ul>
+ * <li> ticketRegistry - the TicketRegistry which stores the tickets that will
+ * need to be retrieved to provide specific information to the TicketEvents.</li>
+ * </ul>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

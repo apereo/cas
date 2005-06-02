@@ -8,28 +8,6 @@ typically passes the Credentials to a sequence of plug-in elements
 to see if any of them can recognize and process the concrete implementing
 type.</p>
 
-<p>The simplest implementation of AuthenticationManager is 
-AuthenticationManagerImpl. It is configured in userConfigContext.xml</p>
-<p>&lt;bean id=&quot;authenticationManager&quot; class=&quot;org.jasig.cas.authentication.AuthenticationManagerImpl&quot;&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;property name=&quot;credentialsToPrincipalResolvers&quot;&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;list&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bean class=&quot;org.jasig.cas.authentication.principal.DefaultCredentialsToPrincipalResolver&quot; 
-/&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bean class=&quot;org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver&quot; 
-/&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/list&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/property&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;property name=&quot;authenticationHandlers&quot;&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;list&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bean 
-class=&quot;...HttpBasedServiceCredentialsAuthenticationHandler&quot; /&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;bean 
-class=&quot;...SimpleTestUsernamePasswordAuthenticationHandler&quot; /&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/list&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/property&gt;<br>
-&lt;/bean&gt;</p>
-<p>This bean then is autowired by type into the default 
-centralAuthenticationService in the appliationContext.xml file.</p>
 <p>Successful authentication generates a Principal object wrapped in an
 Authentication object. All these objects must be serializable, and the 
 Authentication becomes part of the TGT in the ticket cache.</p>

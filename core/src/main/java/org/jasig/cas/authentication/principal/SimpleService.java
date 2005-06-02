@@ -10,7 +10,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * The simplest implementation of a representation of a service.
+ * The simplest implementation of a representation of a service. Provides no
+ * additional attributes beyond those in the Service interface.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,8 +26,8 @@ public class SimpleService implements Service {
     private String id;
 
     /**
-     * 
-     * Constructor to set the ID for the service.
+     * Constructs a new SimpleService using the provided unique id for the
+     * service.
      * 
      * @param id the identifier for the service.
      * @throws IllegalArgumentException if the ID is null

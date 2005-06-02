@@ -8,7 +8,9 @@ package org.jasig.cas.event;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * Interface of classes that know how to handle a specific event.
+ * Interface of classes that know how to handle a specific event. The concept of
+ * handling an event usually implies that the handler will perform some form of
+ * logging such as using Log4j or writing the information to a database.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

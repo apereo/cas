@@ -6,8 +6,9 @@
 package org.jasig.cas.authentication.principal;
 
 /**
- * Resolver to resolve the credentials presented for an HTTP-based service to a
- * principal.
+ * HttpBasedServiceCredentialsToPrincipalResolver extracts the callbackUrl from
+ * the HttpBasedServiceCredentials and constructs a SimpleService with the
+ * callbackUrl as the unique Id
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -27,6 +28,10 @@ public final class HttpBasedServiceCredentialsToPrincipalResolver implements
             .toExternalForm());
     }
 
+    /**
+     * @return true if the credentials provided are not null and are assignable
+     * from HttpBasedServiceCredentials, otherwise returns false.
+     */
     public boolean supports(final Credentials credentials) {
         return credentials != null
             && HttpBasedServiceCredentials.class.isAssignableFrom(credentials

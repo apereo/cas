@@ -14,13 +14,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
 /**
- * AfterReturningAdvice to publish events about any AuthenticationHandler
- * authenticating a request.
+ * Advice to advise an AuthenticationHandler such that it checks the return
+ * value returned by the authenticate method and constructs an
+ * AuthenticationEvent that captures the result and publishes it for an
+ * EventHandler to process.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  * @see org.jasig.cas.event.AuthenticationEvent
  */
 public final class AuthenticationHandlerAfterReturningAdvice implements

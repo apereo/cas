@@ -19,10 +19,14 @@ import org.springframework.context.ApplicationEvent;
  */
 public final class TestEventHandler implements EventHandler {
 
+    /** This method calls the toString on an event and writes it to standard out. */
     public void handleEvent(final ApplicationEvent event) {
         System.out.println(event.toString());
     }
 
+    /** 
+     * @return always returns true.
+     */
     public boolean supports(final ApplicationEvent event) {
         return true;
     }

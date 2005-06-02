@@ -22,6 +22,10 @@ import org.jasig.cas.authentication.principal.Principal;
  * An Authentication object must be serializable to permit persistance and
  * clustering.
  * </p>
+ * <p>
+ * Implementing classes must take care to ensure that the Map returned by
+ * getAttributes is serializable by using a Serializable map such as HashMap.
+ * </p>
  * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia

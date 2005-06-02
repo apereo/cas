@@ -20,6 +20,12 @@ public class AbstractHttpRequestEvent extends AbstractEvent {
     /** Unique Serializable Id. */
     private static final long serialVersionUID = 4120848858890123065L;
 
+    /**
+     * Constructs an AbstractHttpRequestEvent using the HttpServletRequest
+     * object as the source.
+     * 
+     * @param request the HttpServletRequest object that is the source.
+     */
     public AbstractHttpRequestEvent(final HttpServletRequest request) {
         super(request);
     }
