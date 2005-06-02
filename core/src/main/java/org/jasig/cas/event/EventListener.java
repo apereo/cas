@@ -16,6 +16,12 @@ import org.springframework.util.Assert;
  * listener attempts to delegate the event to one or more event handlers to
  * process the event (i.e. a Log4JLoggedInEventHandler and a
  * DbLoggedInEventHandler).
+ * <p>
+ * The following properties are required to be set:
+ * </p>
+ * <ul>
+ * <li>eventHandlers - the list of event handlers that can process events.</li>
+ * </ul>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -42,7 +48,8 @@ public final class EventListener implements ApplicationListener,
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notEmpty(this.eventHandlers, "eventHandlers is a required property.");
+        Assert.notEmpty(this.eventHandlers,
+            "eventHandlers is a required property.");
     }
 
     /**
