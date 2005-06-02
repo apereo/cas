@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of an HttpRequestEvent that adds convenience methods to log
- * page accesses.
+ * page accesses. PageRequestHttpRequestEvents provide access to the page,
+ * IpAddress, User Agent, Http Method type, and the referrer.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -26,6 +27,12 @@ public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
     /** the constant representing the referer header. */
     private static final String HEADER_REFERRER = "Referer";
 
+    /**
+     * Constructs a PageRequestHttpRequestEvent with the HttpServletRequest as
+     * the source.
+     * 
+     * @param request the HttpServletRequest to use as the source.
+     */
     public PageRequestHttpRequestEvent(final HttpServletRequest request) {
         super(request);
     }

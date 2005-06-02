@@ -13,8 +13,8 @@ import org.apache.commons.logging.LogFactory;
  * UsernamePasswordCredentials when a SimplePrincipal (username only) is
  * sufficient.
  * <p>
- * The userid and password were already validated by the Handler. Extract the
- * userid and make it the ID of a SimplePrincipal object.
+ * Implementation extracts the username from the Credentials provided and
+ * constructs a new SimplePrincipal with the unique id set to the username.
  * </p>
  * 
  * @author Scott Battaglia
@@ -29,7 +29,8 @@ public final class UsernamePasswordCredentialsToPrincipalResolver implements
     private final Log log = LogFactory.getLog(getClass());
 
     /**
-     * Create a SimplePrincipal containing the Userid.
+     * Constructs a SimplePrincipal from the username provided in the
+     * credentials.
      * 
      * @param credentials the Username and Password provided as credentials.
      * @return an instance of the principal where the id is the username.
@@ -45,7 +46,8 @@ public final class UsernamePasswordCredentialsToPrincipalResolver implements
     }
 
     /**
-     * Return true if Credentials are UsernamePasswordCredentials.
+     * Return true if Credentials are UsernamePasswordCredentials, false
+     * otherwise.
      */
     public boolean supports(final Credentials credentials) {
         return credentials != null

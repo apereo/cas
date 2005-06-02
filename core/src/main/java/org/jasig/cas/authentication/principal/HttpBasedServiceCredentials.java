@@ -8,7 +8,9 @@ package org.jasig.cas.authentication.principal;
 import java.net.URL;
 
 /**
- * The Credentials representing an HTTP-based service.
+ * The Credentials representing an HTTP-based service. HTTP-based services (such
+ * as web applications) are often represented by the URL entry point of the
+ * application.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -19,10 +21,13 @@ public class HttpBasedServiceCredentials implements Credentials {
     /** Unique Serializable ID. */
     private static final long serialVersionUID = 3904681574350991665L;
 
-    /** The callbackURL to check. */
+    /** The callbackURL to check that identifies the application. */
     private final URL callbackUrl;
 
     /**
+     * Constructor that takes the URL of the HTTP-based service and creates the
+     * Credentials object.
+     * 
      * @param callbackUrl the URL representing the service
      * @throws IllegalArgumentException if the callbackUrl is null.
      */

@@ -44,17 +44,32 @@ public class TicketEvent extends AbstractEvent {
     /** The String id of the Ticket for this event. */
     private final String ticketId;
 
+    /**
+     * Constructs a TicketEvent with the Ticket as the source.
+     * @param ticket the source Ticket
+     * @param ticketEventType the event type.
+     */
     public TicketEvent(final Ticket ticket,
         final TicketEventType ticketEventType) {
         this(ticket, ticketEventType, null);
     }
 
+    /**
+     * Constructs a TicketEvent without a Ticket using the TicketId as the
+     * source object.
+     * 
+     * @param ticketEventType the type of TicketEvent
+     * @param ticketId the identifier for the ticket.
+     */
     public TicketEvent(final TicketEventType ticketEventType,
         final String ticketId) {
         this(null, ticketEventType, ticketId);
     }
 
     /**
+     * Constructs a TicketEvent with either the ticketId or the ticket as the
+     * source object (depending on whether a Ticket is provided).
+     * 
      * @param ticket The ticket the event is for.
      * @param ticketEventType the event type.
      * @param ticketId the id of the ticket.

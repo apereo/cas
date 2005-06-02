@@ -23,6 +23,11 @@ public abstract class AbstractEvent extends ApplicationEvent {
     /** The date the event was published. */
     private final Date publishedDate;
 
+    /**
+     * Constructor that passes the source object to the super class.
+     * 
+     * @param o the source object.
+     */
     public AbstractEvent(final Object o) {
         super(o);
         this.publishedDate = new Date();

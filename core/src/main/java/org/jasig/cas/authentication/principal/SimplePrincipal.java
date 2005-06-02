@@ -10,7 +10,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Simplest implementation of a Principal.
+ * Simplest implementation of a Principal. Provides no additional attributes
+ * beyond those in the Principal interface. This is the closest representation
+ * of a principal in the CAS 2 world.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,8 +27,7 @@ public class SimplePrincipal implements Principal {
     private final String id;
 
     /**
-     * 
-     * The constructor to set the ID.
+     * Constructs the SimplePrincipal using the provided unique id.
      * 
      * @param id the identifier for the Principal
      * @throws IllegalArgumentException if the id is null

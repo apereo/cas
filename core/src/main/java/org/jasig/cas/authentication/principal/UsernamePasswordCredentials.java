@@ -8,8 +8,8 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Domain object to bind the request for an authentication to a command object.
- * This will bind all of the CAS 2.0 parameters.
+ * UsernamePasswordCredentials respresents the username and password that a user
+ * may provide in order to prove the authenticity of who they say they are.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

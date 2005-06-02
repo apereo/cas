@@ -9,7 +9,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 
 /**
  * Event for letting listeners know about authentication requests and whether
- * they were successful or not.
+ * they were successful or not. Provides handlers with access to the original
+ * Credentials object as well as the return value from the handler.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -26,6 +27,14 @@ public class AuthenticationEvent extends AbstractEvent {
      */
     private boolean successfulAuthentication;
 
+    /**
+     * Constructs the AuthenticationEvent using the credentials as the source
+     * object.
+     * 
+     * @param credentials the Credentials from the AuthenticationRequest.
+     * @param successfulAuthentication boolean of whether the authentication was
+     * successful or not.
+     */
     public AuthenticationEvent(final Credentials credentials,
         final boolean successfulAuthentication) {
         super(credentials);
