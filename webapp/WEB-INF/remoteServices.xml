@@ -104,10 +104,6 @@
 	</bean>
 	
 	<bean
-		id="advisorAutoProxyCreator"
-		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
-	
-	<bean
 		id="logStatsAdvisor"
 		class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
 		<constructor-arg
