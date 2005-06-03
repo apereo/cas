@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.event;
 
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.event.handlers.TestEventHandler;
 import org.jasig.cas.mock.MockApplicationEvent;
@@ -32,7 +33,7 @@ public class EventListenerTests extends TestCase {
     }
     
     public void testHandlEvent() {
-        AuthenticationEvent e = new AuthenticationEvent(new UsernamePasswordCredentials(), true);
+        AuthenticationEvent e = new AuthenticationEvent(new UsernamePasswordCredentials(), true, AuthenticationHandler.class);
         
         this.eventListener.onApplicationEvent(e);
     }
@@ -44,7 +45,7 @@ public class EventListenerTests extends TestCase {
     }
     
     public void testNotHandlEvent() {
-        AuthenticationEvent e = new AuthenticationEvent(new UsernamePasswordCredentials(), true);
+        AuthenticationEvent e = new AuthenticationEvent(new UsernamePasswordCredentials(), true, AuthenticationHandler.class);
         
         
         this.eventListener.setEventHandlers(new EventHandler[] {new MockEventHandler()});

@@ -33,11 +33,21 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
             new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
 
-    public void testLogoutForService() throws Exception {
+    public void testLogoutForServiceWithFollowRedirects() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "TestService");
+        this.logoutController.setFollowServiceRedirects(true);
         assertTrue(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView);
+    }
+    
+
+    public void testLogoutForServiceWithNoFollowRedirects() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", "TestService");
+        this.logoutController.setFollowServiceRedirects(false);
+        assertTrue(!(this.logoutController.handleRequestInternal(request,
+            new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
     public void testLogoutCookie() throws Exception {
