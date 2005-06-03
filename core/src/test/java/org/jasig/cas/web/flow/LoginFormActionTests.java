@@ -5,12 +5,15 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationAttributesPopulator;
+import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -39,7 +42,7 @@ import junit.framework.TestCase;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  */
-public class LogonFormActionTests extends TestCase {
+public class LoginFormActionTests extends TestCase {
 
     private LoginFormAction logonFormAction;
 
@@ -54,7 +57,7 @@ public class LogonFormActionTests extends TestCase {
 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         manager
-            .setAuthenticationAttributesPopulators(new AuthenticationAttributesPopulator[] {new AuthenticationAttributesPopulator(){
+            .setAuthenticationMetaDataPopulators(new AuthenticationMetaDataPopulator[] {new AuthenticationMetaDataPopulator(){
 
                 public Authentication populateAttributes(
                     Authentication authentication, Credentials credentials) {
@@ -233,5 +236,59 @@ public class LogonFormActionTests extends TestCase {
         } catch (Exception e) {
             return;
         }
+    }
+    
+    public void testOnBindNoBinding() throws IllegalAccessException, InvocationTargetException {
+        this.logonFormAction.setFormObjectClass(UsernamePasswordCredentials.class);
+        this.logonFormAction.setCredentialsBinder(null);
+        MockRequestContext context = new MockRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+        Method[] methods = this.logonFormAction.getClass().getDeclaredMethods();
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        
+        Method method = null;
+        
+        for (int i =0; i < methods.length; i++) {
+            if (methods[i].getName().equals("onBind") && methods[i].getParameterTypes().length == 3) {
+                method = methods[i];
+                break;
+            }
+        }
+
+        method.invoke(this.logonFormAction, new Object[] {context, c, new BindException(c, "credentials")});
+    }
+    
+    public void testBinding() throws IllegalAccessException, InvocationTargetException {
+        this.logonFormAction.setFormObjectClass(UsernamePasswordCredentials.class);
+        this.logonFormAction.setCredentialsBinder(new CredentialsBinder() {
+
+            public void bind(HttpServletRequest request, Credentials credentials) {
+                UsernamePasswordCredentials c = (UsernamePasswordCredentials) credentials;
+                c.setUsername("test");
+            }
+
+            public boolean supports(Class clazz) {
+                return true;
+            }});
+        MockRequestContext context = new MockRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+        Method[] methods = this.logonFormAction.getClass().getDeclaredMethods();
+        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        
+        Method method = null;
+        
+        for (int i =0; i < methods.length; i++) {
+            if (methods[i].getName().equals("onBind") && methods[i].getParameterTypes().length == 3) {
+                method = methods[i];
+                break;
+            }
+        }
+
+        method.invoke(this.logonFormAction, new Object[] {context, c, new BindException(c, "credentials")});
+        assertEquals("test", c.getUsername());
     }
 }
