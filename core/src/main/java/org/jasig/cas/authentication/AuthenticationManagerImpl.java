@@ -48,7 +48,7 @@ import org.springframework.util.Assert;
  * @since 3.0
  * @see org.jasig.cas.authentication.handler.AuthenticationHandler
  * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver
- * @see org.jasig.cas.authentication.AuthenticationAttributesPopulator
+ * @see org.jasig.cas.authentication.AuthenticationMetaDataPopulator
  */
 
 public final class AuthenticationManagerImpl implements AuthenticationManager,
@@ -64,7 +64,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     private CredentialsToPrincipalResolver[] credentialsToPrincipalResolvers;
 
     /** An array of AuthenticationAttributesPopulators. */
-    private AuthenticationAttributesPopulator[] authenticationAttributesPopulators;
+    private AuthenticationMetaDataPopulator[] authenticationMetaDataPopulators;
 
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
@@ -115,8 +115,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
             throw UnsupportedCredentialsException.ERROR;
         }
 
-        for (int i = 0; i < this.authenticationAttributesPopulators.length; i++) {
-            authentication = this.authenticationAttributesPopulators[i]
+        for (int i = 0; i < this.authenticationMetaDataPopulators.length; i++) {
+            authentication = this.authenticationMetaDataPopulators[i]
                 .populateAttributes(authentication, credentials);
         }
 
@@ -129,8 +129,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         Assert.notEmpty(this.credentialsToPrincipalResolvers,
             "credentialsToPrincipalResolvers is a required property.");
 
-        if (this.authenticationAttributesPopulators == null) {
-            this.authenticationAttributesPopulators = new AuthenticationAttributesPopulator[0];
+        if (this.authenticationMetaDataPopulators == null) {
+            this.authenticationMetaDataPopulators = new AuthenticationMetaDataPopulator[0];
         }
     }
 
@@ -152,11 +152,11 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     }
 
     /**
-     * @param authenticationAttributesPopulators the
-     * authenticationAttributesPopulators to set.
+     * @param authenticationMetaDataPopulators the
+     * authenticationMetaDataPopulators to set.
      */
-    public void setAuthenticationAttributesPopulators(
-        final AuthenticationAttributesPopulator[] authenticationAttributesPopulators) {
-        this.authenticationAttributesPopulators = authenticationAttributesPopulators;
+    public void setAuthenticationMetaDataPopulators(
+        final AuthenticationMetaDataPopulator[] authenticationAttributesPopulators) {
+        this.authenticationMetaDataPopulators = authenticationAttributesPopulators;
     }
 }
