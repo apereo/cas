@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
+public class HttpRequestEvent extends AbstractEvent {
 
     /** The Unique Serializable Id. */
     private static final long serialVersionUID = 3257290244557910064L;
@@ -33,7 +33,7 @@ public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
      * 
      * @param request the HttpServletRequest to use as the source.
      */
-    public PageRequestHttpRequestEvent(final HttpServletRequest request) {
+    public HttpRequestEvent(final HttpServletRequest request) {
         super(request);
     }
 
@@ -85,5 +85,14 @@ public class PageRequestHttpRequestEvent extends AbstractHttpRequestEvent {
      */
     public final String getReferrer() {
         return getRequest().getHeader(HEADER_REFERRER);
+    }
+    
+    /**
+     * Method to retrieve HttpServletRequest.
+     * 
+     * @return the HttpServletRequest for this event.
+     */
+    public final HttpServletRequest getRequest() {
+        return (HttpServletRequest) getSource();
     }
 }

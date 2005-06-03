@@ -40,6 +40,7 @@ public final class AuthenticationHandlerAfterReturningAdvice implements
 
         final Boolean value = (Boolean) returnValue;
         this.applicationEventPublisher.publishEvent(new AuthenticationEvent(
-            (Credentials) args[0], value.booleanValue()));
+            (Credentials) args[0], value.booleanValue(), method
+                .getDeclaringClass()));
     }
 }
