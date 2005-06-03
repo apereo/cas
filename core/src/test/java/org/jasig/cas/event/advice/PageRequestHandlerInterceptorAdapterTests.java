@@ -19,7 +19,7 @@ import junit.framework.TestCase;
  *
  */
 public class PageRequestHandlerInterceptorAdapterTests extends TestCase {
-    private PageRequestHandlerInterceptorAdapter adapter = new PageRequestHandlerInterceptorAdapter();
+    private HttpRequestHandlerInterceptorAdapter adapter = new HttpRequestHandlerInterceptorAdapter();
     private StaticWebApplicationContext context = new StaticWebApplicationContext();
     
     public PageRequestHandlerInterceptorAdapterTests() {

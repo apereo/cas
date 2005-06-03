@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class PageRequestHttpRequestEventTests extends TestCase {
     private MockHttpServletRequest request = new MockHttpServletRequest();
-    private PageRequestHttpRequestEvent event = new PageRequestHttpRequestEvent(this.request);
+    private HttpRequestEvent event = new HttpRequestEvent(this.request);
     
     public void testGetRequest() {
         assertEquals(this.request, this.event.getRequest());
