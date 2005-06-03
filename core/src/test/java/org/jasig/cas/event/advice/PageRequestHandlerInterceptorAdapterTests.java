@@ -5,9 +5,11 @@
  */
 package org.jasig.cas.event.advice;
 
+import org.jasig.cas.event.HttpRequestEvent;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.context.support.StaticWebApplicationContext;
 
 import junit.framework.TestCase;
 
@@ -20,14 +22,22 @@ import junit.framework.TestCase;
  */
 public class PageRequestHandlerInterceptorAdapterTests extends TestCase {
     private HttpRequestHandlerInterceptorAdapter adapter = new HttpRequestHandlerInterceptorAdapter();
-    private StaticWebApplicationContext context = new StaticWebApplicationContext();
+    private ApplicationEventPublisher eventPublisher = new MockApplicationEventPublisher();
+    HttpRequestEvent event = null;
     
     public PageRequestHandlerInterceptorAdapterTests() {
-        this.adapter.setApplicationEventPublisher(this.context);
-        this.context.refresh();
+        this.adapter.setApplicationEventPublisher(this.eventPublisher);
     }
     
     public void testPublishEvent() throws Exception {
         this.adapter.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), null, null);
+        assertNotNull(this.event);
+    }
+    
+    protected class MockApplicationEventPublisher implements ApplicationEventPublisher {
+
+        public void publishEvent(ApplicationEvent arg0) {
+            PageRequestHandlerInterceptorAdapterTests.this.event = (HttpRequestEvent) arg0;
+        }
     }
 }

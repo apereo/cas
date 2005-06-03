@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="contactsCas" class="org.jasig.cas.services.RegisteredService">
+		<constructor-arg index="0"><value>https://localhost:8443/contacts-cas/j_acegi_cas_security_check</value></constructor-arg>
+		<constructor-arg index="1"><value>true</value></constructor-arg>
+		<constructor-arg index="2"><value>true</value></constructor-arg>
+		<constructor-arg index="3"><null /></constructor-arg>
+		<constructor-arg index="4"><value>https://localhost:8443/contacts-cas/casProxy/receptor</value></constructor-arg>
+	</bean>
+</beans>

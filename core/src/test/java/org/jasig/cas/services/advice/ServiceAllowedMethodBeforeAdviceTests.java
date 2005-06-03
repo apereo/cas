@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.services.advice;
 
+import java.net.URL;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.services.DefaultServiceRegistry;
@@ -21,7 +23,6 @@ import junit.framework.TestCase;
  * @since 3.0
  */
 public class ServiceAllowedMethodBeforeAdviceTests extends TestCase {
-
     private ServiceAllowedMethodBeforeAdvice advice;
 
     private ServiceRegistry serviceRegistry;
@@ -37,7 +38,7 @@ public class ServiceAllowedMethodBeforeAdviceTests extends TestCase {
         this.advice.setServiceRegistry(this.serviceRegistry);
 
         RegisteredService service = new RegisteredService("Test", false, false,
-            null, null);
+            null, new URL("http://www.rutgers.edu"));
         this.serviceRegistryManager.addService(service);
         this.advice.afterPropertiesSet();
     }
