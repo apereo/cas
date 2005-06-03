@@ -112,6 +112,17 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
         c.setPassword("test");
         this.remoteCentralAuthenticationService.createTicketGrantingTicket(c);
     }
+    
+    public void testDontUseValidatorsToCheckValidCredentials() {
+        try {
+            UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+            this.remoteCentralAuthenticationService.setValidators(null);
+            this.remoteCentralAuthenticationService.createTicketGrantingTicket(c);
+            fail("TicketException expected.");
+        } catch (TicketException e) {
+            return;
+        }
+    }
 
     public void testDestroyTicketGrantingTicket() {
         this.remoteCentralAuthenticationService
