@@ -103,11 +103,6 @@ public final class SpringApplicationContextServiceRegistryReloader implements
         this.serviceRegistryFile = this.resourceLoader.getResource(
             ResourceLoader.CLASSPATH_URL_PREFIX + this.fileName).getFile();
 
-        if (!this.serviceRegistryFile.exists()) {
-            throw new IllegalStateException("File: " + this.serviceRegistryFile
-                + " does not exist.");
-        }
-
         this.applicationContext = new ClassPathXmlApplicationContext(
             this.fileName);
 
