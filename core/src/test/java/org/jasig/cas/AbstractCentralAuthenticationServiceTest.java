@@ -13,6 +13,7 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
+import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
@@ -23,16 +24,19 @@ public abstract class AbstractCentralAuthenticationServiceTest extends TestCase 
     protected CentralAuthenticationServiceImpl centralAuthenticationService;
     
     protected AuthenticationManagerImpl authenticationManager;
+    
+    protected TicketRegistry ticketRegistry;
 
     public final CentralAuthenticationService getCentralAuthenticationService() throws Exception {
         this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
         this.authenticationManager = new AuthenticationManagerImpl();
+        this.ticketRegistry = new DefaultTicketRegistry();
         this.centralAuthenticationService
             .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         this.centralAuthenticationService
             .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         this.centralAuthenticationService
-            .setTicketRegistry(new DefaultTicketRegistry());
+            .setTicketRegistry(this.ticketRegistry);
         this.centralAuthenticationService
             .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
 
