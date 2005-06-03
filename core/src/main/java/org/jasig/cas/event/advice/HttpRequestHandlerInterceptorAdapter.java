@@ -8,7 +8,7 @@ package org.jasig.cas.event.advice;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.event.PageRequestHttpRequestEvent;
+import org.jasig.cas.event.HttpRequestEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -22,9 +22,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * @see org.jasig.cas.event.PageRequestHttpRequestEvent
+ * @see org.jasig.cas.event.HttpRequestEvent
  */
-public final class PageRequestHandlerInterceptorAdapter extends
+public final class HttpRequestHandlerInterceptorAdapter extends
     HandlerInterceptorAdapter implements HandlerInterceptor,
     ApplicationEventPublisherAware {
 
@@ -39,7 +39,7 @@ public final class PageRequestHandlerInterceptorAdapter extends
     public void afterCompletion(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
         final Exception ex) throws Exception {
-        final PageRequestHttpRequestEvent event = new PageRequestHttpRequestEvent(
+        final HttpRequestEvent event = new HttpRequestEvent(
             request);
         this.applicationEventPublisher.publishEvent(event);
     }
