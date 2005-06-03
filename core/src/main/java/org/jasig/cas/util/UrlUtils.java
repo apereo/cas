@@ -25,7 +25,7 @@ public final class UrlUtils {
 
     /** The instance of the logger. */
     private static final Log LOG = LogFactory.getLog(UrlUtils.class);
-    
+
     private UrlUtils() {
         // we do not want this able to be extended.
     }
@@ -53,14 +53,14 @@ public final class UrlUtils {
                 line = bufferedReader.readLine();
             }
         } catch (Exception e) {
-            LOG.error(e,e);
+            LOG.error(e, e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                LOG.error(e,e);
+                LOG.error(e, e);
             }
         }
         return buf.toString().length() > 0 ? buf.toString() : null;

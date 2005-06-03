@@ -56,9 +56,9 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
         for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter
             .hasNext();) {
             final RegisteredService service = (RegisteredService) iter.next();
-            if ((authenticatedService.getProxyUrl().toExternalForm()
+            if (service.getProxyUrl() != null && (service.getProxyUrl().toExternalForm()
                 .equals(serviceTicket.getService().getId()))
-                || (authenticatedService.getId().equals(serviceTicket
+                || (service.getId().equals(serviceTicket
                     .getService().getId()))) {
                 authenticatedService = service;
                 break;
