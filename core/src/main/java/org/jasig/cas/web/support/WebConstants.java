@@ -67,4 +67,7 @@ public abstract class WebConstants {
 
     /** Identifier for a assertion in the model. */
     public static final String ASSERTION = "assertion";
+
+    /** Identifier for the logout url to display on the logout page. */
+    public static final String LOGOUT = "url";
 }

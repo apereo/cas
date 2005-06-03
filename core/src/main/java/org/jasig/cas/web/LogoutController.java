@@ -39,6 +39,12 @@ public final class LogoutController extends AbstractController implements
     /** The CORE to which we delegate for all CAS functionality. */
     private CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * Boolean to determine if we will redirect to any url provided in the
+     * service request parameter.
+     */
+    private boolean followServiceRedirects = false;
+
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService must be set on "
@@ -57,11 +63,12 @@ public final class LogoutController extends AbstractController implements
             destroyTicketGrantingTicketCookie(request, response);
         }
 
-        if (service != null) {
+        if (this.followServiceRedirects && service != null) {
             return new ModelAndView(new RedirectView(service));
         }
 
-        return new ModelAndView(ViewNames.CONST_LOGOUT);
+        return new ModelAndView(ViewNames.CONST_LOGOUT, WebConstants.LOGOUT,
+            request.getParameter(WebConstants.LOGOUT));
     }
 
     /**
@@ -87,5 +94,10 @@ public final class LogoutController extends AbstractController implements
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    
+    public void setFollowServiceRedirects(boolean followServiceRedirects) {
+        this.followServiceRedirects = followServiceRedirects;
     }
 }
