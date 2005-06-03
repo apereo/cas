@@ -4,7 +4,7 @@
 	<!-- Theme Resolver -->
 	<bean
 		id="themeResolver"
-		class="org.jasig.cas.web.ServiceThemeResolver">
+		class="org.jasig.cas.services.web.ServiceThemeResolver">
 		<property
 			name="defaultThemeName"
 			value="default" />
@@ -73,18 +73,24 @@
 					key="/proxyValidate">
 					proxyValidateController
 				</prop>
+				<!--
+				uncomment this to enable remote access to web service 
 				<prop
 					key="/CentralAuthenticationService">
 					xFireCentralAuthenticationService
 				</prop>
+				 -->
 			</props>
 		</property>
+		<!--
+		uncomment this to enable sending PageRequest events. 
 		<property
 			name="interceptors">
 			<list>
 				<ref bean="pageRequestHandlerInterceptorAdapter" />
 			</list>
 		</property>
+		 -->
 	</bean>
 
 	<bean
@@ -157,7 +163,8 @@
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
 	</bean>
-
+<!--
+uncomment this to allow access to web service
 	<bean
 		id="xFireCentralAuthenticationService"
 		class="org.codehaus.xfire.spring.XFireExporter">
@@ -189,7 +196,7 @@
 			</list>
 		</property>
 	</bean>
-
+-->
 	<bean
 		id="simpleMappingHandlerExceptionResolver"
 		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
