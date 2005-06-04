@@ -6,7 +6,9 @@
 package org.jasig.cas.services;
 
 /**
- * Interface to a class that can manage the registry for services.
+ * Interface to a class that can manage the registry for services. The Registry
+ * manager has the ability to add or delete a service as well as clear out the
+ * whole registry.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -27,8 +29,8 @@ public interface ServiceRegistryManager {
      * result of this method invocation unregistered (true) or the serviceId did
      * not map to a registered service (false).
      * 
-     * @param serviceId The service to delete
-     * @return true if method invocation resulted in a change, false otherwise
+     * @param serviceId The service to delete.
+     * @return true if method invocation resulted in a change, false otherwise.
      */
     boolean deleteService(String serviceId);
 

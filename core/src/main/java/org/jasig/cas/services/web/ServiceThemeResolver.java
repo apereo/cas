@@ -14,7 +14,10 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
 
 /**
  * ThemeResolver to determine the theme for CAS based on the service provided.
- * If the Service is not found, the ThemeResolver will return the default theme.
+ * The theme resolver will extract the service parameter from the Request object
+ * and attempt to match the URL provided to a Service Id. If the service is
+ * found, the theme associated with it will be used. If no these is associated
+ * with the service or the service was not found, a default theme will be used.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

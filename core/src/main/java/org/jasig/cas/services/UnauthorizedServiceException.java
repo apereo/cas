@@ -17,19 +17,40 @@ public class UnauthorizedServiceException extends Exception {
     /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
 
+    /**
+     * Default constructor to use without providing a message or exception
+     * chaining.
+     */
     public UnauthorizedServiceException() {
         super();
     }
 
+    /**
+     * Constructs an UnauthorizedServiceException with a custom message and the
+     * root cause of this exception.
+     * 
+     * @param message an explanatory message.
+     * @param cause the root cause of the exception.
+     */
     public UnauthorizedServiceException(final String message,
         final Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Constructs an exception with a custom message.
+     * 
+     * @param message an explanatory message.
+     */
     public UnauthorizedServiceException(final String message) {
         super(message);
     }
 
+    /**
+     * Constructs an exception with no custom message and a chained exception.
+     * 
+     * @param cause the root cause of the exception.
+     */
     public UnauthorizedServiceException(final Throwable cause) {
         super(cause);
     }

@@ -68,7 +68,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
 
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
-    	boolean foundSupported = false;
+        boolean foundSupported = false;
         boolean authenticated = false;
 
         for (int i = 0; i < this.authenticationHandlers.length; i++) {
@@ -79,21 +79,21 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                         + this.authenticationHandlers[i].getClass().getName()
                         + " failed to authenticate the user.");
                 } else {
-                	log.info("AuthenticationHandler: "
-                			+ this.authenticationHandlers[i].getClass().getName()
-							+ " successfully authenticated the user.");
-                	authenticated = true;
-                	break;
+                    log.info("AuthenticationHandler: "
+                        + this.authenticationHandlers[i].getClass().getName()
+                        + " successfully authenticated the user.");
+                    authenticated = true;
+                    break;
                 }
             }
         }
 
         if (!authenticated) {
-        	if(foundSupported) {
-        		throw BadCredentialsAuthenticationException.ERROR;
+            if (foundSupported) {
+                throw BadCredentialsAuthenticationException.ERROR;
             }
 
-       		throw UnsupportedCredentialsException.ERROR;
+            throw UnsupportedCredentialsException.ERROR;
         }
 
         Authentication authentication = null;

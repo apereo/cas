@@ -8,7 +8,7 @@ package org.jasig.cas.authentication.principal;
 /**
  * HttpBasedServiceCredentialsToPrincipalResolver extracts the callbackUrl from
  * the HttpBasedServiceCredentials and constructs a SimpleService with the
- * callbackUrl as the unique Id
+ * callbackUrl as the unique Id.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

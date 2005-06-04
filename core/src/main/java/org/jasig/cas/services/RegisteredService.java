@@ -8,6 +8,11 @@ package org.jasig.cas.services;
 import java.net.URL;
 
 /**
+ * Class representing a service we have registered with the system.
+ * RegisteredServices are assumed to be "approved" services and thus have
+ * special options, such as allowing proxying, forcing renew=true, and the
+ * ability to skin the login.
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
@@ -30,6 +35,8 @@ public final class RegisteredService {
     private final URL proxyUrl;
 
     /**
+     * Constructs a new RegisteredService with the required property of id and
+     * the optional theme and proxyUrl.
      * 
      * @param id The identifier for the service.
      * @param allowedToProxy Is this service allowed to proxy

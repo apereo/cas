@@ -20,8 +20,15 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 
 /**
- * ServiceRegistryReloader that reloads the ServiceRegistry from an XML file
- * based on the Spring Bean Factory.
+ * Implementation of the ServiceRegistryReloader that will refresh a Spring
+ * context if the underlying file changes.
+ * <p>
+ * The algorithm is as follows. Check the last recorded lastModified time
+ * against the current lastModified time. If they differ, reload the registry by
+ * re-reading the context, deleting all of the current services and replacing
+ * them with fresh copies from the file. This class locks on the
+ * ServiceRegistry.
+ * </p>
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko

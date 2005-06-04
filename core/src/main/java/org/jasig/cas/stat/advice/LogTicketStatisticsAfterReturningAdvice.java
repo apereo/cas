@@ -28,16 +28,18 @@ import org.springframework.util.Assert;
  * <p>
  * The following properties are required to be set:
  * <ul>
- *  <li> <code>statsStateMutators</code> - The property set mapping the CAS methods to the methods in the TicketStatistics Manager.
- *  <li> <code>ticketRegistry</code> - The registry that holds the ticket information.
- *  <li> <code>ticketStatsManager</code> - The manager of the Ticket Stats, charged with maintaining the count.
+ * <li> <code>statsStateMutators</code> - The property set mapping the CAS
+ * methods to the methods in the TicketStatistics Manager.</li>
+ * <li> <code>ticketRegistry</code> - The registry that holds the ticket
+ * information.</li>
+ * <li> <code>ticketStatsManager</code> - The manager of the Ticket Stats,
+ * charged with maintaining the count.</li>
  * </ul>
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
  * @version $Revision$ $Date$
  * @since 3.0
- * 
  * @see org.jasig.cas.stat.TicketStatisticsManager
  * @see org.jasig.cas.ticket.registry.TicketRegistry
  */
