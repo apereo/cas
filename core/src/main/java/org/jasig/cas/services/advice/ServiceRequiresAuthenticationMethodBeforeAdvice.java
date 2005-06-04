@@ -11,8 +11,17 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.services.RegisteredService;
 
 /**
- * Method to check that if a service requires authentication, Credentials are
- * always passed in.
+ * Advice to confirm that if a service forces the concept of a renew = true
+ * (i.e. opting out of Single-sign on) then they need to have passed in a set of
+ * Credentials which means they called the grantServiceTicket with the third
+ * parameter set to a form of Credentials.
+ * <p>
+ * The behavior for this advice is only defined for the grantedServiceTicket
+ * methods.
+ * </p>
+ * <p>
+ * Please check the super class for any required properties.
+ * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,7 +34,8 @@ public final class ServiceRequiresAuthenticationMethodBeforeAdvice extends
     private static final int NUMBER_OF_ARGS = 3;
 
     /**
-     * @throws IllegalStateException if the service requires authentication and Credentials are not provided.
+     * @throws IllegalStateException if the service requires authentication and
+     * Credentials are not provided.
      */
     protected void beforeInternal(final Method method, final Object[] args,
         final Object target, final RegisteredService service) {

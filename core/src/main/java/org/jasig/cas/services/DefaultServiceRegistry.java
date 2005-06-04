@@ -13,6 +13,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Default implementation of the Service Registry. It stores all services in a
+ * HashMap. Implementation is basically a type-safe wrapper around the HashMap.
+ * <p>
+ * The Service Registry is not thread-safe so any class using the
+ * ServiceRegistry needs to ensure they synchronize on the registry.
+ * </p>
+ * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0

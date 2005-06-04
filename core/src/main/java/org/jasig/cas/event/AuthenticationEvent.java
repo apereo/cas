@@ -71,7 +71,7 @@ public class AuthenticationEvent extends AbstractEvent {
      * 
      * @return the Class of the AuthenticationHandler.
      */
-    public Class getAuthenticationHandlerClass() {
+    public final Class getAuthenticationHandlerClass() {
         return this.authenticationHandlerClass;
     }
 }

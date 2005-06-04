@@ -96,8 +96,7 @@ public final class LogoutController extends AbstractController implements
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    
-    public void setFollowServiceRedirects(boolean followServiceRedirects) {
+    public void setFollowServiceRedirects(final boolean followServiceRedirects) {
         this.followServiceRedirects = followServiceRedirects;
     }
 }

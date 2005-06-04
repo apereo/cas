@@ -8,9 +8,10 @@ package org.jasig.cas.services;
 import java.util.Collection;
 
 /**
- * Registry that contains a list of valid services that service tickets must use
- * for validation. If a service ticket does not exist in the registry (other
- * than the registry being empty), a service ticket should not be granted.
+ * Interface for a registry that holds services. ServiceRegistry is only
+ * concerned with the retrieval of a service and the determination of if the
+ * service exists. The ServiceRegistryManager is concerned with the maintanance
+ * of the list of services.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -19,9 +20,7 @@ import java.util.Collection;
 public interface ServiceRegistry {
 
     /**
-     * Method to determine if the service exists in the registry. Default
-     * behavior of returning true if there are no services registered in the
-     * system.
+     * Method to determine if the service exists in the registry.
      * 
      * @param serviceId the service to check
      * @return true if the service exists. False otherwise.
@@ -29,7 +28,7 @@ public interface ServiceRegistry {
     boolean serviceExists(String serviceId);
 
     /**
-     * Retrieve a service from the registry.
+     * Retrieve a service from the registry matched to the provided serviceId.
      * 
      * @param serviceId the id of the service to retrieve.
      * @return the service if found, null otherwise.

@@ -20,11 +20,25 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
- * Advice to check if a Service is allowed to proxy.
+ * Advice that first checks if a service is authorized to use CAS and then
+ * furthermore checks if it is allowed to proxy. To perform the check, it
+ * attempts to match a service in the registry either by its Id or its ProxyUrl.
+ * <p>
+ * Behavior of this advice is only defined where the joinpoint is
+ * CentralAuthenticationService.delegateTicketGrantingTicket.
+ * </p>
+ * <p>
+ * This class requires the following properties to be set:
+ * </p>
+ * <ul>
+ * <li>ticketRegistry - The registry containing the tickets.</li>
+ * <li>sericeRegistry - The registry containing the services.</li>
+ * </ul>
+ * TODO this should be using proxyUrl???
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0 //TODO this should be using proxyUrl???
+ * @since 3.0
  */
 public final class ServiceAllowedToProxyMethodBeforeAdvice implements
     MethodBeforeAdvice, InitializingBean {
@@ -56,10 +70,10 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
         for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter
             .hasNext();) {
             final RegisteredService service = (RegisteredService) iter.next();
-            if (service.getProxyUrl() != null && (service.getProxyUrl().toExternalForm()
-                .equals(serviceTicket.getService().getId()))
-                || (service.getId().equals(serviceTicket
-                    .getService().getId()))) {
+            if (service.getProxyUrl() != null
+                && (service.getProxyUrl().toExternalForm().equals(serviceTicket
+                    .getService().getId()))
+                || (service.getId().equals(serviceTicket.getService().getId()))) {
                 authenticatedService = service;
                 break;
             }
