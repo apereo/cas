@@ -14,7 +14,12 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
 
 /**
- * Generic registry that holds all tickets of any kind in a hash map.
+ * Implementation of the TicketRegistry that is backed by a HashMap.
+ * <p>
+ * The underlying HashMap is not threadsafe. Each method is synchronized but
+ * care should be taken that if multiple methods will be called, the code should
+ * be placed in a synchronize block.
+ * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,19 +30,10 @@ public final class DefaultTicketRegistry implements TicketRegistry {
     /** The Commons Logging instance. */
     private final Log log = LogFactory.getLog(getClass());
 
-    /**
-     * A HashMap to contain the tickets. 
-     * 
-     * <p>Because the HashMap is not itself thread-safe, it can only
-     * be access from methods of this class that are declared to be
-     * synchronized. We could synchronize only the actually Map accesses,
-     * but there is not much more to this code.</p>
-     */
+    /** A HashMap to contain the tickets. */
     private final Map cache = new HashMap();
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#addTicket(org.jasig.cas.ticket.Ticket)
      * @throws IllegalArgumentException if the Ticket is null.
      */
     public synchronized void addTicket(final Ticket ticket) {
@@ -50,12 +46,12 @@ public final class DefaultTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * 
-     * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String, java.lang.Class)
      * @throws IllegalArgumentException if class is null.
-     * @throws ClassCastException if class does not match requested ticket class.
+     * @throws ClassCastException if class does not match requested ticket
+     * class.
      */
-    public Ticket getTicket(final String ticketId, final Class clazz) {
+    public synchronized Ticket getTicket(final String ticketId,
+        final Class clazz) {
         if (clazz == null) {
             throw new IllegalArgumentException("clazz cannot be null");
         }

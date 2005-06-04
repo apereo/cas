@@ -20,6 +20,10 @@ import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
+ * <p>
+ * The default behavior as defined in the CAS 2 Specification is to callback the
+ * URL provided and give it a pgtIou and a pgtId.
+ * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

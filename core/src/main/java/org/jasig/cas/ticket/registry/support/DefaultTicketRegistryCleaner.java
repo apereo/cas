@@ -19,13 +19,24 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
- * Class to look for expired tickets and remove them from the registry.
+ * Class that will iterate through the registry and check for tickets that are
+ * expired. If a ticket is expired it is removed from the registry. This process
+ * is only required so that the size of the TicketRegistry will not grow
+ * significantly large. The functionality of CAS is not dependent on a Ticket
+ * being removed as soon as it is expired.
+ * <p>
+ * The following property is required.
+ * </p>
+ * <ul>
+ * <li>ticketRegistry - the Registry to clean.</li>
+ * </ul>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultTicketRegistryCleaner implements RegistryCleaner, InitializingBean {
+public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
+    InitializingBean {
 
     /** The Commons Logging instance. */
     private final Log log = LogFactory.getLog(getClass());
