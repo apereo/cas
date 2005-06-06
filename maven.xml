@@ -46,6 +46,7 @@
 			<ant:include name="*.txt" />
 			<ant:include name="project.properties" />
 			<ant:include name="*.xml" />
+			<ant:include name="localPlugins/**" />
 			<ant:include name="webapp/**" />
 		</ant:fileset>
 		
@@ -66,6 +67,7 @@
 				<ant:include name="*.txt" />
 				<ant:include name="project.properties" />
 				<ant:include name="*.xml" />
+				<ant:include name="localPlugins/**" />
 				<ant:include name="webapp/**" />
 			</ant:tarfileset>
 		</ant:tar>
