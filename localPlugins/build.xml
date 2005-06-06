@@ -1,0 +1,42 @@
+<project name="casLocalPlugins" default="main" basedir=".">
+	<path id="buildLibs">
+		<fileset dir="lib"/>
+		<fileset dir="../webapp/WEB-INF/lib"/>
+	</path>
+	<target name="main">
+		<mkdir dir="build"/>
+		<mkdir dir="build/META-INF"/>
+		<javac srcdir="src" destdir="build" debug="on">
+			<classpath refid="buildLibs"/>
+		</javac>
+	</target>
+	<target name="jar" depends="main">
+		<mkdir dir="target"/>
+		<jar jarfile="target/localPlugins.jar" basedir="build"/>
+		<echo>
+**********************************************************
+* Make sure you edit                                     *
+* ../webapp/WEB-INF/deployerConfigContext.xml to include *
+* your plugins before you build the "war" target!        *
+**********************************************************</echo>
+	</target>
+	<target name="war" depends="jar">
+		<copy file="target/localPlugins.jar" tofile="../webapp/WEB-INF/lib/localPlugins.jar"/>
+		<copy todir="../webapp/WEB-INF/lib">
+			<fileset dir="lib" includes="**/*.jar"/>
+		</copy>
+		<jar jarfile="target/cas.war" basedir="../webapp"/>
+	</target>
+	<target name="doc">
+		<javadoc sourcepath="src" destdir="docs">
+			<classpath refid="buildLibs"/>
+			<package name="*"/>
+		</javadoc>
+	</target>
+	<target name="clean">
+		<delete dir="build"/>
+		<delete dir="docs"/>
+		<delete dir="target"/>
+		<delete file="../webapp/WEB-INF/lib/localPlugins.jar"/>
+	</target>
+</project>
