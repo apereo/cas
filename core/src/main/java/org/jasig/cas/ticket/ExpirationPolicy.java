@@ -8,7 +8,9 @@ package org.jasig.cas.ticket;
 import java.io.Serializable;
 
 /**
- * Strategy that determines if the ticket is expired.
+ * Strategy that determines if the ticket is expired. Implementations of the
+ * Expiration Policy define their own rules on what they consider an expired
+ * Ticket to be.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

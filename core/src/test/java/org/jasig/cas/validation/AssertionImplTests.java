@@ -53,7 +53,7 @@ public class AssertionImplTests extends TestCase {
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);
 
-        assertEquals(list, assertion.getChainedPrincipals());
+        assertEquals(list, assertion.getChainedAuthentications());
     }
 
     public void testGetterFalseForNewLogin() {

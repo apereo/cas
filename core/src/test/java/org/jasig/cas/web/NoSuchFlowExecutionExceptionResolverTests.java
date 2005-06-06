@@ -24,7 +24,6 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
 
     protected void setUp() throws Exception {
         this.resolver = new NoSuchFlowExecutionExceptionResolver();
-        this.resolver.afterPropertiesSet();
     }
 
     public void testNullPointerException() {
@@ -33,13 +32,13 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
     }
 
     public void testNoSuchFlowExecutionException() {
-        this.resolver.setLoginUrl("test");
-        this.resolver.afterPropertiesSet();
-        ModelAndView model = (this.resolver.resolveException(new MockHttpServletRequest(),
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("test");
+        ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
             new NoSuchFlowExecutionException("test")));
         
-        assertEquals("test", ((RedirectView) model.getView()).getUrl());
+        assertEquals(request.getRequestURI(), ((RedirectView) model.getView()).getUrl());
     }
 
 }

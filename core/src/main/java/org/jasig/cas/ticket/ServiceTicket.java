@@ -10,7 +10,8 @@ import org.jasig.cas.authentication.principal.Service;
 
 /**
  * Interface for a Service Ticket. A service ticket is used to grant access to a
- * specific service.
+ * specific service for a principal. A Service Ticket is generally a one-time
+ * use ticket.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

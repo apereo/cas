@@ -1,14 +1,14 @@
 <%@ page session="false" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %><?xml version="1.0" encoding="UTF-8"?>
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
 <cas:authenticationSuccess>
-<cas:user>${assertion.chainedPrincipals[0].id}</cas:user>
+<cas:user>${assertion.chainedAuthentications[0].principal.id}</cas:user>
 <c:if test="${not empty pgtIou}">
 	<cas:proxyGrantingTicket>${pgtIou}</cas:proxyGrantingTicket>
 </c:if>
-<c:if test="${fn:length(assertion.chainedPrincipals) > 1}">
+<c:if test="${fn:length(assertion.chainedAuthentications) > 1}">
 <cas:proxies>
-<c:forEach var="proxy" items="${assertion.chainedPrincipals}" varStatus="loopStatus" begin="1">
-	<cas:proxy>${proxy.id}</cas:proxy>
+<c:forEach var="proxy" items="${assertion.chainedAuthentications}" varStatus="loopStatus" begin="1">
+	<cas:proxy>${proxy.principal.id}</cas:proxy>
 </c:forEach>
 </cas:proxies>
 </c:if>

@@ -72,12 +72,12 @@ public class TicketGrantingTicketImplTests extends TestCase {
         Principal principal = new SimplePrincipal("Test");
         Authentication authentication = new MockAuthentication(principal);
         List principals = new ArrayList();
-        principals.add(principal);
+        principals.add(authentication);
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
 
-        assertEquals(principals, t.getChainedPrincipals());
+        assertEquals(principals, t.getChainedAuthentications());
     }
 
     public void testGetChainedPrincipalsWithTwo() {
@@ -86,15 +86,15 @@ public class TicketGrantingTicketImplTests extends TestCase {
         Authentication authentication = new MockAuthentication(principal);
         Authentication authentication1 = new MockAuthentication(principal1);
         List principals = new ArrayList();
-        principals.add(principal1);
-        principals.add(principal);
+        principals.add(authentication1);
+        principals.add(authentication);
 
         TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
             authentication1, new NeverExpiresExpirationPolicy());
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
             authentication, new NeverExpiresExpirationPolicy());
 
-        assertEquals(principals, t.getChainedPrincipals());
+        assertEquals(principals, t.getChainedAuthentications());
     }
 
     public void testServiceTicketAsFromInitialCredentials() {

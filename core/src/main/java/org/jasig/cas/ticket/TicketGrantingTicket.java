@@ -11,7 +11,9 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 
 /**
- * Interface for a ticket granting ticket.
+ * Interface for a ticket granting ticket. A TicketGrantingTicket is the main
+ * access into the CAS service layer. Without a TicketGrantingTicket, a user of
+ * CAS cannot do anything.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -54,10 +56,10 @@ public interface TicketGrantingTicket extends Ticket {
     boolean isRoot();
 
     /**
-     * Method to retrieve the chained list of principals for this
+     * Method to retrieve the chained list of Authentications for this
      * TicketGrantingTicket.
      * 
      * @return the list of principals
      */
-    List getChainedPrincipals();
+    List getChainedAuthentications();
 }

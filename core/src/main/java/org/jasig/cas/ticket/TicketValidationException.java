@@ -20,10 +20,19 @@ public class TicketValidationException extends TicketException {
     /** The code description. */
     private static final String CODE = "INVALID_SERVICE";
 
+    /**
+     * Constructs a TicketValidationException with the default exception code.
+     */
     public TicketValidationException() {
         super(CODE);
     }
 
+    /**
+     * Constructs a TicketValidationException with the default exception code
+     * and the original exception that was thrown.
+     * 
+     * @param throwable the chained exception
+     */
     public TicketValidationException(final Throwable throwable) {
         super(CODE, throwable);
     }

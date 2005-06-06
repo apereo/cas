@@ -62,7 +62,7 @@ public class SamlServiceSuccessView implements View {
 				throw internalError;
 			
 			List/*<Principal>*/ chainedPrincipals = 
-				assertion.getChainedPrincipals();
+				assertion.getChainedAuthentications();
 			if (chainedPrincipals==null || chainedPrincipals.size()==0)
 				throw internalError;
 			

@@ -20,10 +20,19 @@ public class TicketCreationException extends TicketException {
     /** Code description. */
     private static final String CODE = "CREATION_ERROR";
 
+    /**
+     * Constructs a TicketCreationException with the default exception code.
+     */
     public TicketCreationException() {
         super(CODE);
     }
 
+    /**
+     * Constructs a TicketCreationException with the default exception code and
+     * the original exception that was thrown.
+     * 
+     * @param throwable the chained exception
+     */
     public TicketCreationException(final Throwable throwable) {
         super(CODE, throwable);
     }

@@ -11,7 +11,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
- * policies. Also incorporates properties common among all tickets.
+ * policies. Also incorporates properties common among all tickets. As this is
+ * an abstract class, it cannnot be instanciated. It is recommended that
+ * implementations of the Ticket interface extend the AbstractTicket as it
+ * handles common functionality amongst different ticket types (such as state
+ * updating).
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -35,6 +39,8 @@ public abstract class AbstractTicket implements Ticket {
     private int countOfUses;
 
     /**
+     * Constructs a new Ticket with a unqiue id, a possible parent Ticket (can
+     * be null) and a specified Expiration Policy.
      * 
      * @param id the unique identifier for the ticket
      * @param ticket the parent TicketGrantingTicket
@@ -74,9 +80,6 @@ public abstract class AbstractTicket implements Ticket {
         this.lastTimeUsed = System.currentTimeMillis();
     }
 
-    /**
-     * @return Returns the ticketGrantingTicket.
-     */
     public final TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
