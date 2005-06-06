@@ -24,7 +24,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * Controller to return a valid proxy ticket upon request.
+ * The ProxyController is involved with returning a Proxy Ticket (in CAS 2
+ * terms) to the calling application. In CAS 3, a Proxy Ticket is just a Service
+ * Ticket granted to a service.
+ * <p>
+ * The ProxyController requires the following property to be set:
+ * </p>
+ * <ul>
+ * <li> centralAuthenticationService - the service layer</li>
+ * </ul>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

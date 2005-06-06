@@ -28,12 +28,12 @@ public final class ImmutableAssertionImpl implements Assertion {
 
     /** Was this the result of a new login. */
     private final boolean fromNewLogin;
-    
+
     /** The service we are asserting this ticket for. */
     private final Service service;
 
     /**
-     * 
+     * Constructs a new ImmutableAssertion out of the given parameters.
      * @param principals the chain of principals
      * @param service The service we are asserting this ticket for.
      * @param fromNewLogin was the service ticket from a new login.
@@ -51,18 +51,17 @@ public final class ImmutableAssertionImpl implements Assertion {
         this.fromNewLogin = fromNewLogin;
     }
 
-    public List getChainedPrincipals() {
+    public List getChainedAuthentications() {
         return this.principals;
     }
 
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
-    
+
     public Service getService() {
         return this.service;
     }
-
 
     public boolean equals(final Object o) {
         if (o == null || !this.getClass().equals(o.getClass())) {
@@ -78,5 +77,5 @@ public final class ImmutableAssertionImpl implements Assertion {
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }    
+    }
 }

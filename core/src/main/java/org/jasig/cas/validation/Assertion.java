@@ -13,12 +13,6 @@ import org.jasig.cas.authentication.principal.Service;
  * Return from CentralAuthenticationService.validateServiceTicket(String,
  * Service), the Assertion contains a chain of Principal objects. The first is
  * the User's logon Principal, while any others are Proxy Principals.
- * <p>
- * In normal use, the Assertion is passed to the Web layer where a reference to
- * it is stored in a Map that Spring calls the Model. This is passed to the View
- * layer where a Servlet or JSP formats it into the response to the /validate or
- * /serviceValidate
- * </p>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -27,19 +21,19 @@ import org.jasig.cas.authentication.principal.Service;
 public interface Assertion {
 
     /**
-     * Get a List of Principals which represent the owners of the
+     * Get a List of Authentications which represent the owners of the
      * GrantingTickets which granted the ticket that was validated. The first
-     * Principal of this list is the Principal which originally authenticated to
-     * CAS to obtain the first Granting Ticket. Subsequent Principals are those
-     * associated with GrantingTickets that were granted from that original
-     * granting ticket. The last Principal in this List is that associated with
-     * the GrantingTicket that was the immediate grantor of the ticket that was
-     * validated. The List returned by this method will contain at least one
-     * Principal.
+     * Authentication of this list is the Authentication which originally
+     * authenticated to CAS to obtain the first Granting Ticket. Subsequent
+     * Authentication are those associated with GrantingTickets that were
+     * granted from that original granting ticket. The last Authentication in
+     * this List is that associated with the GrantingTicket that was the
+     * immediate grantor of the ticket that was validated. The List returned by
+     * this method will contain at least one Authentication.
      * 
-     * @return a List of Principals
+     * @return a List of Authentication
      */
-    List getChainedPrincipals();
+    List getChainedAuthentications();
 
     /**
      * True if the validated ticket was granted in the same transaction as that

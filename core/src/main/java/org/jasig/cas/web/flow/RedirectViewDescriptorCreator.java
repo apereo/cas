@@ -23,6 +23,11 @@ import org.springframework.web.flow.ViewDescriptorCreator;
 public final class RedirectViewDescriptorCreator implements
     ViewDescriptorCreator {
 
+    /**
+     * @return ViewDescriptor constructed from a ServiceUrl stored in the
+     * FlowScope as WebConstants.SERVICE and the model consisting of the ticket
+     * id stored in the flowscope.
+     */
     public ViewDescriptor createViewDescriptor(
         final RequestContext requestContext) {
         final String service = (String) ContextUtils.getAttributeFromFlowScope(

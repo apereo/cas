@@ -21,8 +21,25 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.flow.RequestContext;
 
 /**
+ * <p>
  * Action to check to see if a TicketGrantingTicket exists and if we can grant a
  * ServiceTicket using that TicketGrantingTicket.
+ * </p>
+ * <p>
+ * TicketGrantingTicketCheckAction attempts to load the TicketGrantingTicket
+ * from the Cookie and retrieve a service ticket for it from the service layer.
+ * If we have renew=true, no service specified or no TicketGrantingTicket, we
+ * return an event of "error." If we are unable to obtain a service ticket, one
+ * of two events are returned: "gateway" if the gateway parameter is set, or
+ * "error" otherwise. A "success" event is sent if we are able to retrieve a
+ * service ticket.
+ * </p>
+ * <p>
+ * This class requires the following properties to be set:
+ * </p>
+ * <ul>
+ * <li>centralAuthenticationService - the service layer</li>
+ * </ul>
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -30,11 +47,13 @@ import org.springframework.web.flow.RequestContext;
  */
 public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
 
+    private static final String EVENT_GATEWAY = "gateway";
+    
     /** The CORE of CAS which we will use to obtain tickets. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    protected ModelAndEvent doExecuteInternal(final RequestContext context, final Map attributes)
-        throws Exception {
+    protected ModelAndEvent doExecuteInternal(final RequestContext context,
+        final Map attributes) throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
         final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
@@ -62,7 +81,8 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         } catch (TicketException e) {
             // if we are being used as a gateway just bounce!
             if (gateway) {
-                return new ModelAndEvent(result("gateway"), WebConstants.SERVICE, service);
+                return new ModelAndEvent(result(EVENT_GATEWAY),
+                    WebConstants.SERVICE, service);
             }
             return new ModelAndEvent(error());
         }

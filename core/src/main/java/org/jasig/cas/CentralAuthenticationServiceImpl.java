@@ -250,7 +250,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
 
             return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
-                .getChainedPrincipals(), serviceTicket.getService(),
+                .getChainedAuthentications(), serviceTicket.getService(),
                 serviceTicket.isFromNewLogin());
         }
     }

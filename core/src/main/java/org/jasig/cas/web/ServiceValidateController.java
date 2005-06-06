@@ -110,7 +110,6 @@ public final class ServiceValidateController extends AbstractController
         final Assertion assertion;
         final String pgtUrl = request.getParameter(WebConstants.PGTURL);
 
-        // TODO this needs to be customized for any validation
         if (!StringUtils.hasText(service)
             || !StringUtils.hasText(serviceTicketId)) {
             model.put(WebConstants.CODE, "INVALID_REQUEST");
