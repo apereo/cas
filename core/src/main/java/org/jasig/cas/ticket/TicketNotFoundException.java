@@ -20,10 +20,19 @@ public class TicketNotFoundException extends TicketException {
     /** The code description. */
     private static final String CODE = "INVALID_TICKET";
 
+    /**
+     * Constructs a TicketNotFoundException with the default exception code.
+     */
     public TicketNotFoundException() {
         super(CODE);
     }
 
+    /**
+     * Constructs a TicketNotFoundException with the default exception code and
+     * the original exception that was thrown.
+     * 
+     * @param throwable the chained exception
+     */
     public TicketNotFoundException(final Throwable throwable) {
         super(CODE, throwable);
     }

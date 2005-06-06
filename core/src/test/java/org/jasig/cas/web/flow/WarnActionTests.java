@@ -37,7 +37,7 @@ public class WarnActionTests extends TestCase {
         
         Event finalEvent = this.warnAction.doExecute(context);
         
-        assertEquals("error", finalEvent.getId());
+        assertEquals("warn", finalEvent.getId());
     }
     
     public void testWarnFromRequestParameter() throws Exception {
@@ -50,7 +50,7 @@ public class WarnActionTests extends TestCase {
         
         Event finalEvent = this.warnAction.doExecute(context);
         
-        assertEquals("error", finalEvent.getId()); 
+        assertEquals("warn", finalEvent.getId()); 
     }
     
     public void testNoWarn() throws Exception {
@@ -62,6 +62,6 @@ public class WarnActionTests extends TestCase {
         
         Event finalEvent = this.warnAction.doExecute(context);
         
-        assertEquals("success", finalEvent.getId()); 
+        assertEquals("redirect", finalEvent.getId()); 
     }
 }

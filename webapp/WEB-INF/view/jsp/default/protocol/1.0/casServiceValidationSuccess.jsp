@@ -1,2 +1,2 @@
 <%@ page session="false" %>yes
-${assertion.chainedPrincipals[0].id}
+${assertion.chainedAuthentications[0].principal.id}

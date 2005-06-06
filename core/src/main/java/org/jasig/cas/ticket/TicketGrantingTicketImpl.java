@@ -13,7 +13,11 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 
 /**
- * Domain object to model a ticket granting ticket.
+ * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
+ * the global identifier of a principal into the system. It grants the Principal
+ * single-sign on access to any service that opts into single-sign on.
+ * Expiration of a TicketGrantingTicket is controlled by the ExpirationPolicy
+ * specified as object creation.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -32,6 +36,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     private boolean expired = false;
 
     /**
+     * Constructs a new TicketGrantingTicket.
      * 
      * @param id the id of the Ticket
      * @param ticketGrantingTicket the parent ticket
@@ -52,6 +57,14 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         this.authentication = authentication;
     }
 
+    /**
+     * Constructs a new TicketGrantingTicket without a parent
+     * TicketGrantingTicket.
+     * 
+     * @param id the id of the Ticket
+     * @param authentication the Authentication request for this ticket
+     * @param policy the expiration policy for this ticket.
+     */
     public TicketGrantingTicketImpl(final String id,
         final Authentication authentication, final ExpirationPolicy policy) {
         this(id, null, authentication, policy);
@@ -85,16 +98,16 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
                 .isExpired());
     }
 
-    public List getChainedPrincipals() {
+    public List getChainedAuthentications() {
         final List list = new ArrayList();
 
         if (this.getGrantingTicket() == null) {
-            list.add(this.getAuthentication().getPrincipal());
+            list.add(this.getAuthentication());
             return Collections.unmodifiableList(list);
         }
 
-        list.addAll(this.getGrantingTicket().getChainedPrincipals());
-        list.add(this.getAuthentication().getPrincipal());
+        list.addAll(this.getGrantingTicket().getChainedAuthentications());
+        list.add(this.getAuthentication());
 
         return Collections.unmodifiableList(list);
     }
