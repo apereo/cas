@@ -8,7 +8,7 @@
 		<!-- $Id$ -->
 	
 		<!-- DOCUMENT TITLE: CHANGE TO NEW TITLE -->
-		<title>Rutgers  Central  Authentication  Service (CAS)</title>
+		<title>JA-SIG  Central  Authentication  Service (CAS)</title>
 		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
 	
 		<!-- KEYWORDS AND DESCRIPTIONS GO INTO THIS SECTION -->
