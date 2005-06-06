@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.services.DefaultServiceRegistry;
@@ -115,6 +114,7 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
 
         RegisteredService r = new RegisteredService("test2", false, false,
             null, new URL("http://www.rutgers.com"));
+        ((ServiceRegistryManager) this.serviceRegistry).addService(r);
 
         String ticketGrantingTicketId = this.centralAuthenticationService
             .createTicketGrantingTicket(cred);

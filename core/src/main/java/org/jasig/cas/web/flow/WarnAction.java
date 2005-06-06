@@ -18,6 +18,8 @@ import org.springframework.web.flow.RequestContext;
 /**
  * Action for determining whether the warning page needs to be displayed or not.
  * If it does not need to be displayed we want to forward to the proper service.
+ * If there is a privacy request for a warning, the "warn" event is returned,
+ * otherwise the "redirect" event is returned.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -25,8 +27,20 @@ import org.springframework.web.flow.RequestContext;
  */
 public final class WarnAction extends AbstractCasAction {
 
-    protected ModelAndEvent doExecuteInternal(final RequestContext context, final Map attributes)
-        throws Exception {
+    /**
+     * Event label for the event that will trigger the view state for warning
+     * before going back to the service.
+     */
+    private static final String EVENT_WARN = "warn";
+
+    /**
+     * Event label for the event that will trigger the end state of being
+     * redirected back to the service.
+     */
+    private static final String EVENT_REDIRECT = "redirect";
+
+    protected ModelAndEvent doExecuteInternal(final RequestContext context,
+        final Map attributes) throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
         final boolean warn = Boolean.valueOf(
@@ -36,9 +50,9 @@ public final class WarnAction extends AbstractCasAction {
             .getParameter(WebConstants.WARN));
 
         if (warn || requestWarn) {
-            return new ModelAndEvent(error());
+            return new ModelAndEvent(result(EVENT_WARN));
         }
 
-        return new ModelAndEvent(success());
+        return new ModelAndEvent(result(EVENT_REDIRECT));
     }
 }

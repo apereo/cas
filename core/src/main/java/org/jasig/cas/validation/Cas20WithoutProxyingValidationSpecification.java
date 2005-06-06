@@ -29,6 +29,6 @@ public class Cas20WithoutProxyingValidationSpecification extends
 
     public boolean isSatisfiedBy(final Assertion assertion) {
         return super.isSatisfiedBy(assertion)
-            && (assertion.getChainedPrincipals().size() == 1);
+            && (assertion.getChainedAuthentications().size() == 1);
     }
 }

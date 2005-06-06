@@ -24,7 +24,8 @@ import org.springframework.web.util.WebUtils;
 /**
  * Controller to delete ticket granting ticket cookie in order to log out of
  * single sign on. This controller implements the idea of the ESUP Portail's
- * Logout patch to allow for redirecting to a url on logout.
+ * Logout patch to allow for redirecting to a url on logout. It also exposes a
+ * log out link to the view via the WebConstants.LOGOUT constant.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

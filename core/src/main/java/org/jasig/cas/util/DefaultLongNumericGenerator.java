@@ -6,7 +6,8 @@
 package org.jasig.cas.util;
 
 /**
- * The default numeric generator for generating long values.
+ * The default numeric generator for generating long values. Implementation
+ * allows for wrapping (to restart count) if the maximum is reached.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -68,7 +69,8 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
     }
 
     /**
-     * @throws IllegalStateException if the maximum value is reached and wrapping is not allowed.
+     * @throws IllegalStateException if the maximum value is reached and
+     * wrapping is not allowed.
      */
     protected synchronized long getNextValue() {
         if (!this.wrap && this.count == Long.MAX_VALUE) {
