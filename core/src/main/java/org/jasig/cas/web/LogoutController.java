@@ -14,12 +14,12 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.util.WebUtils;
 
 /**
  * Controller to delete ticket granting ticket cookie in order to log out of
@@ -55,14 +55,15 @@ public final class LogoutController extends AbstractController implements
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        Cookie tgcCookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
+        String ticketGrantingTicketId = WebUtils.getCookieValue(request,
+            WebConstants.COOKIE_TGC_ID);
         String service = request.getParameter(WebConstants.SERVICE);
 
-        if (tgcCookie != null) {
+        if (ticketGrantingTicketId != null) {
             this.centralAuthenticationService
-                .destroyTicketGrantingTicket(tgcCookie.getValue());
-            destroyTicketGrantingTicketCookie(request, response);
-            destroyPrivacyCookie(request, response);
+                .destroyTicketGrantingTicket(ticketGrantingTicketId);
+            destroyCookie(request, response, WebConstants.COOKIE_TGC_ID);
+            destroyCookie(request, response, WebConstants.COOKIE_PRIVACY);
         }
 
         if (this.followServiceRedirects && service != null) {
@@ -73,32 +74,10 @@ public final class LogoutController extends AbstractController implements
             request.getParameter(WebConstants.LOGOUT));
     }
 
-    /**
-     * Method to destroy the cookie for the TicketGrantingTicket.
-     * 
-     * @param request The HttpServletRequest
-     * @param response The HttpServletResponse
-     */
-    private void destroyTicketGrantingTicketCookie(
-        final HttpServletRequest request, final HttpServletResponse response) {
-        log.debug("Destroying TicketGrantingTicket cookie.");
-        Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "");
-        cookie.setMaxAge(0);
-        cookie.setPath(request.getContextPath());
-        cookie.setSecure(true);
-        response.addCookie(cookie);
-    }
-    
-    /**
-     * Method to destroy the privacy (warn) cookie.
-     * 
-     * @param request The HttpServletRequest
-     * @param response The HttpServletResponse
-     */
-    private void destroyPrivacyCookie(
-        final HttpServletRequest request, final HttpServletResponse response) {
-        log.debug("Destroying privacy cookie.");
-        Cookie cookie = new Cookie(WebConstants.COOKIE_PRIVACY, "");
+    private void destroyCookie(final HttpServletRequest request,
+        final HttpServletResponse response, final String id) {
+        log.debug("Destroying cookie with id: " + id);
+        Cookie cookie = new Cookie(id, "");
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());
         cookie.setSecure(true);
