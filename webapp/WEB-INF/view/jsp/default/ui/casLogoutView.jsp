@@ -33,12 +33,25 @@
 	<div id="content">
 
 		<div class="dataset clear" style="position: relative;">
-			<h2 style="margin-bottom:0;">Please Log In</h2>
+			<h2 style="margin-bottom:0;">Logout successful</h2>
 
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 				You have successfully logged out of the Central Authentication Service.<br /><br />
 			  For security reasons, exit your web browser.
 			</p>
+			
+			<%--
+			 Implementation of support for the "url" parameter to logout as recommended in CAS spec section 2.3.1.
+			 A service sending a user to CAS for logout can specify this parameter to suggest that we offer
+			 the user a particular link out from the logout UI once logout is completed.  We do that here.
+			--%>
+			<c:if test="${not empty param.url}">
+			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
+				The service from which you arrived has supplied a 
+				<a href="${param.url}">link you may follow by clicking here</a>.<br /><br />
+			  ({$param.url})
+			</p>
+			</c:if>
 		</div>
 	</div><!-- END CONTENT -->
 
