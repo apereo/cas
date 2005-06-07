@@ -109,6 +109,8 @@ public final class ServiceValidateController extends AbstractController
             .getCommandClass();
         final Assertion assertion;
         final String pgtUrl = request.getParameter(WebConstants.PGTURL);
+        String proxyGrantingTicketId = null;
+        Credentials serviceCredentials = null;
 
         if (!StringUtils.hasText(service)
             || !StringUtils.hasText(serviceTicketId)) {
@@ -121,6 +123,21 @@ public final class ServiceValidateController extends AbstractController
         BindUtils.bind(request, authenticationSpecification,
             "authenticationSpecification");
         try {
+            if (StringUtils.hasText(pgtUrl)) {
+                try {
+                    serviceCredentials = new HttpBasedServiceCredentials(
+                        new URL(pgtUrl));
+                    proxyGrantingTicketId = this.centralAuthenticationService
+                        .delegateTicketGrantingTicket(serviceTicketId,
+                            serviceCredentials);
+                } catch (TicketException e) {
+                    log.error("TicketException generating ticket for: "
+                        + pgtUrl, e);
+                } catch (MalformedURLException e) {
+                    log.error("Exception converting pgtUrl to class URL", e);
+                }
+            }
+
             assertion = this.centralAuthenticationService
                 .validateServiceTicket(serviceTicketId, new SimpleService(
                     service));
@@ -134,25 +151,10 @@ public final class ServiceValidateController extends AbstractController
                 return new ModelAndView(this.failureView, model);
             }
 
-            if (StringUtils.hasText(pgtUrl)) {
-                try {
-                    final Credentials serviceCredentials = new HttpBasedServiceCredentials(
-                        new URL(pgtUrl));
-                    final String proxyGrantingTicketId = this.centralAuthenticationService
-                        .delegateTicketGrantingTicket(serviceTicketId,
-                            serviceCredentials);
-
-                    final String proxyIou = this.proxyHandler.handle(
-                        serviceCredentials, proxyGrantingTicketId);
-                    model.put(WebConstants.PGTIOU, proxyIou);
-                } catch (MalformedURLException e) {
-                    log
-                        .debug("Error attempting to convert pgtUrl from String to URL.  pgtUrl was: "
-                            + pgtUrl);
-                } catch (TicketException e) {
-                    log.error("TicketException generating ticket for: "
-                        + pgtUrl, e);
-                }
+            if (StringUtils.hasText(pgtUrl) && proxyGrantingTicketId != null) {
+                final String proxyIou = this.proxyHandler.handle(
+                    serviceCredentials, proxyGrantingTicketId);
+                model.put(WebConstants.PGTIOU, proxyIou);
             }
             model.put(WebConstants.ASSERTION, assertion);
 
