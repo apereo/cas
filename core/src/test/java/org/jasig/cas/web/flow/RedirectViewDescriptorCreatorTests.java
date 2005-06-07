@@ -41,4 +41,14 @@ public class RedirectViewDescriptorCreatorTests extends TestCase {
         assertEquals(SERVICE, viewDescriptor.getViewName());
         assertTrue(viewDescriptor.getModel().containsValue(TICKET));
     } 
+    
+    public void testGetViewDescriptorNoTicket() {
+        final MockRequestContext context = new MockRequestContext();
+        ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE, SERVICE);
+        
+        final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator.createViewDescriptor(context);
+        
+        assertEquals(SERVICE, viewDescriptor.getViewName());
+        assertFalse(viewDescriptor.getModel().containsValue(TICKET));
+    } 
 }
