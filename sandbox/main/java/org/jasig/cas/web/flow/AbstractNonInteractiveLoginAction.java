@@ -26,32 +26,67 @@ import org.springframework.web.bind.BindUtils;
 import org.springframework.web.flow.RequestContext;
 
 /**
- * Webflow Action that allows for the non-interactive check for a credential.  
- * Specific uses may include the checking for Client Certificates.  Developers
- * need only supply a Credentials class and a custom CredentialsBinder.  The class
- * will them bind the Credentials using both Spring binding and the custom CredentialsBinder.
- * It will attempt to obtain a TicketGrantingTicket and a ServiceTicket.
+ * Webflow Action that allows for the non-interactive check for a credential.
+ * Specific uses may include the checking for Client Certificates. Developers
+ * need only supply a Credentials class and a custom CredentialsBinder. The
+ * class will them bind the Credentials using both Spring binding and the custom
+ * CredentialsBinder. It will attempt to obtain a TicketGrantingTicket and a
+ * ServiceTicket.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class NonInteractiveLoginAction extends AbstractCasAction
+public abstract class AbstractNonInteractiveLoginAction extends AbstractCasAction
     implements InitializingBean {
 
+    /** If no domainObjectName is provided, use the defaul. */
     private static final String DEFAULT_DOMAIN_OBJECT_NAME = "credentials";
 
+    /** The class of the domain object. */
     private Class domainObjectClass;
 
+    /** The name given to the domain object. */
     private String domainObjectName;
 
+    /**
+     * Binder that allows additional binding of form object beyond Spring
+     * defaults.
+     */
     private CredentialsBinder credentialsBinder;
 
+    /** Core we delegate to for handling all ticket related tasks. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    protected ModelAndEvent doExecuteInternal(
+    /**
+     * Method to determine if the credentials we are expecting were provided via
+     * the Request Context. This makes no statement about the validity of the
+     * credentials just their existance.
+     * 
+     * @param requestContext the request context for this flow
+     * @return true if the credentials were found in the request, false
+     * otherwise.
+     */
+    protected abstract boolean credentialsExist(
+        final RequestContext requestContext);
+
+    /**
+     * Method follows the following workflow:
+     * <ul>
+     * <li> call <code>credentailsExist(requestContext)</li>
+     * <li> if false, return error event, otherwise...</li>
+     * <li> check to see that we have a service. </li>
+     * <li> Attempt to obtain the TicketGrantingTicket</li>
+     * <li> Attempt to obtain the Service Ticket.</li>
+     * </ul>
+     */
+    protected final ModelAndEvent doExecuteInternal(
         final RequestContext requestContext, final Map attributes)
         throws Exception {
+
+        if (!credentialsExist(requestContext)) {
+            return new ModelAndEvent(error());
+        }
 
         if (ContextUtils.getHttpServletRequest(requestContext).getParameter(
             WebConstants.SERVICE) == null) {
@@ -80,13 +115,29 @@ public final class NonInteractiveLoginAction extends AbstractCasAction
             return new ModelAndEvent(error());
         }
     }
-    
-    protected Object createFormObject(RequestContext context)
+
+    /**
+     * Method to instanciate a new instance of the domain object.
+     * 
+     * @param context the Request Context.
+     * @return the new Credentials object.
+     * @throws InstantiationException if there was an error instanciating.
+     * @throws IllegalAccessException if there was a security issue accessing
+     * the class.
+     */
+    protected final Object createFormObject(RequestContext context)
         throws InstantiationException, IllegalAccessException {
         return this.domainObjectClass.newInstance();
     }
 
-    protected void bind(final RequestContext requestContext,
+    /**
+     * Method that calls the CredentialsBinder in order to populate the
+     * Credentials object.
+     * 
+     * @param requestContext the RequestContext for this flow request..
+     * @param credentials the Credentials to bind to.
+     */
+    protected final void bind(final RequestContext requestContext,
         Credentials credentials) {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(requestContext);
@@ -97,7 +148,18 @@ public final class NonInteractiveLoginAction extends AbstractCasAction
         }
     }
 
-    protected String obtainTicketGrantingTicket(
+    /**
+     * Method to obtain a TicketGrantingTicket either from a cookie or from the
+     * CentralAuthenticationService.
+     * 
+     * @param requestContext the Request Context for this flow.
+     * @param credentials the Credentials to use to create a new
+     * TicketGrantingTicket
+     * @return the String identifier for the TicketGrantingTicket.
+     * @throws TicketException if there is a problem creating the new
+     * TicketGrantingTicket.
+     */
+    protected final String obtainTicketGrantingTicket(
         final RequestContext requestContext, final Credentials credentials)
         throws TicketException {
         final HttpServletRequest request = ContextUtils
@@ -113,9 +175,22 @@ public final class NonInteractiveLoginAction extends AbstractCasAction
             .createTicketGrantingTicket(credentials);
     }
 
-    protected String obtainServiceTicket(final RequestContext requestContext,
-        final Credentials credentials, final String ticketGrantingTicketId)
-        throws TicketException {
+    /**
+     * Method attempts to obtain a service ticket first by checking if the renew
+     * flag is set and then trying to use the existing TicketGrantingTicket.
+     * Failing that, it atempts to create a new TicketGrantingTicket and use
+     * that.
+     * 
+     * @param requestContext the request context for this scope
+     * @param credentials the Credentials representing a future Principal.
+     * @param ticketGrantingTicketId the TicketGrantingTicket id to use for
+     * single-sign on.
+     * @return the String identifier for a unique ServiceTicket
+     * @throws TicketException if there was a problem creating a cookie.
+     */
+    protected final String obtainServiceTicket(
+        final RequestContext requestContext, final Credentials credentials,
+        final String ticketGrantingTicketId) throws TicketException {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(requestContext);
         final HttpServletResponse response = ContextUtils
@@ -158,7 +233,7 @@ public final class NonInteractiveLoginAction extends AbstractCasAction
      * @param request The HttpServletRequest
      * @param response TheHttpServletResponse to store the cookie.
      */
-    private void createCookie(final String id, final String value,
+    private final void createCookie(final String id, final String value,
         final HttpServletRequest request, final HttpServletResponse response) {
         final Cookie cookie = new Cookie(id, value);
         cookie.setSecure(true);
@@ -167,7 +242,7 @@ public final class NonInteractiveLoginAction extends AbstractCasAction
         response.addCookie(cookie);
     }
 
-    public void afterPropertiesSet() {
+    public final void afterPropertiesSet() {
         super.afterPropertiesSet();
 
         final String name = this.getClass().getName();
@@ -180,5 +255,16 @@ public final class NonInteractiveLoginAction extends AbstractCasAction
         if (this.domainObjectName == null) {
             this.domainObjectName = DEFAULT_DOMAIN_OBJECT_NAME;
         }
+
+        afterPropertiesSetInternal();
+    }
+
+    /**
+     * Template method to provide afterPropertiesSet capabilities to subclassing
+     * implementations without having to rely on them calling
+     * super.afterPropertiesSet();
+     */
+    protected void afterPropertiesSetInternal() {
+        // override in subclasses
     }
 }
