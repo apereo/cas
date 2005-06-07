@@ -62,8 +62,7 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         final boolean gateway = StringUtils.hasText(request
             .getParameter(WebConstants.GATEWAY));
         final boolean renew = StringUtils.hasText(request
-            .getParameter(WebConstants.RENEW))
-            && !"false".equals(request.getParameter(WebConstants.RENEW));
+            .getParameter(WebConstants.RENEW));
 
         if (!StringUtils.hasText(service) || renew
             || ticketGrantingTicketId == null) {
