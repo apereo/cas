@@ -8,6 +8,8 @@ package org.jasig.cas.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.flow.execution.NoSuchFlowExecutionException;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,6 +30,9 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public final class NoSuchFlowExecutionExceptionResolver implements
     HandlerExceptionResolver {
+    
+    /** Instance of a log. */
+    private final Log log = LogFactory.getLog(this.getClass());
 
     public ModelAndView resolveException(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
@@ -37,6 +42,8 @@ public final class NoSuchFlowExecutionExceptionResolver implements
             return null;
         }
 
+        log.debug("Error getting flow information for URL:" + request.getRequestURI(), exception);
+        
         return new ModelAndView(new RedirectView(request.getRequestURI()));
     }
 }
