@@ -3,7 +3,7 @@
 <beans>
 	<bean
 		id="authenticationHandlerAfterReturningAdvice"
-		class="org.jasig.cas.event.advice.AuthenticationHandlerAfterReturningAdvice" />
+		class="org.jasig.cas.event.advice.AuthenticationHandlerMethodInterceptor" />
 
 	<bean
 		id="pageRequestHandlerInterceptorAdapter"
