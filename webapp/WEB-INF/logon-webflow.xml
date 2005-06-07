@@ -8,6 +8,7 @@
 		<transition on="success" to="warn" />
 		<transition on="error" to="viewLogonForm" />
 		<transition on="gateway" to="redirect" />
+		<transition on="noService" to="viewGenericLogon" />
 	</action-state>
 
 	<view-state id="viewLogonForm" view="casLogonView">
