@@ -35,10 +35,14 @@ public final class RedirectViewDescriptorCreator implements
         final String ticket = (String) ContextUtils.getAttributeFromFlowScope(
             requestContext, WebConstants.TICKET);
 
-        ViewDescriptor descriptor = new ViewDescriptor(service,
-            WebConstants.TICKET, ticket);
-        descriptor.setRedirect(true);
-
-        return descriptor;
+        if (ticket != null) {
+            final ViewDescriptor descriptor = new ViewDescriptor(service,
+                WebConstants.TICKET, ticket);
+            descriptor.setRedirect(true);
+            return descriptor;
+        } 
+        final ViewDescriptor viewDescriptor = new ViewDescriptor(service);
+        viewDescriptor.setRedirect(true);
+        return viewDescriptor;
     }
 }

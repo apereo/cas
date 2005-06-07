@@ -71,7 +71,8 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         }
         
         if (ticketGrantingTicketId == null && gateway) {
-            return new ModelAndEvent(result(EVENT_GATEWAY));
+            return new ModelAndEvent(result(EVENT_GATEWAY),
+                WebConstants.SERVICE, service);
         }
         
         if (!StringUtils.hasText(service) || renew
