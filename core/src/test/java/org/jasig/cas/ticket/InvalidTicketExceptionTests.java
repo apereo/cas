@@ -10,16 +10,16 @@ import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationExceptio
 
 import junit.framework.TestCase;
 
-public class TicketNotFoundExceptionTests extends TestCase {
+public class InvalidTicketExceptionTests extends TestCase {
 
     public void testCodeNoThrowable() {
-        TicketException t = new TicketNotFoundException();
+        TicketException t = new InvalidTicketException();
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
     public void testCodeWithThrowable() {
         AuthenticationException a = new BadCredentialsAuthenticationException();
-        TicketException t = new TicketNotFoundException(a);
+        TicketException t = new InvalidTicketException(a);
 
         assertEquals(a.toString(), t.getCode());
     }

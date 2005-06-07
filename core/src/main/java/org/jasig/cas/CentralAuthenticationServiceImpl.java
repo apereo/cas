@@ -19,7 +19,7 @@ import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.TicketNotFoundException;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -124,7 +124,7 @@ public final class CentralAuthenticationServiceImpl implements
 
             if (ticketGrantingTicket == null
                 || ticketGrantingTicket.isExpired()) {
-                throw new TicketNotFoundException();
+                throw new InvalidTicketException();
             }
 
             if (credentials != null) {
@@ -195,7 +195,7 @@ public final class CentralAuthenticationServiceImpl implements
                     serviceTicketId, ServiceTicket.class);
 
                 if (serviceTicket == null || serviceTicket.isExpired()) {
-                    throw new TicketNotFoundException();
+                    throw new InvalidTicketException();
                 }
 
                 TicketGrantingTicket ticketGrantingTicket = serviceTicket
@@ -231,13 +231,13 @@ public final class CentralAuthenticationServiceImpl implements
             if (serviceTicket == null) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] does not exist.");
-                throw new TicketNotFoundException();
+                throw new InvalidTicketException();
             }
 
             if (serviceTicket.isExpired()) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] has expired.");
-                throw new TicketValidationException();
+                throw new InvalidTicketException();
             }
 
             serviceTicket.incrementCountOfUses();
