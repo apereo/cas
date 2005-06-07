@@ -55,13 +55,14 @@ public final class LogoutController extends AbstractController implements
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        Cookie cookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
+        Cookie tgcCookie = WebUtils.getCookie(request, WebConstants.COOKIE_TGC_ID);
         String service = request.getParameter(WebConstants.SERVICE);
 
-        if (cookie != null) {
+        if (tgcCookie != null) {
             this.centralAuthenticationService
-                .destroyTicketGrantingTicket(cookie.getValue());
+                .destroyTicketGrantingTicket(tgcCookie.getValue());
             destroyTicketGrantingTicketCookie(request, response);
+            destroyPrivacyCookie(request, response);
         }
 
         if (this.followServiceRedirects && service != null) {
@@ -82,6 +83,22 @@ public final class LogoutController extends AbstractController implements
         final HttpServletRequest request, final HttpServletResponse response) {
         log.debug("Destroying TicketGrantingTicket cookie.");
         Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "");
+        cookie.setMaxAge(0);
+        cookie.setPath(request.getContextPath());
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+    }
+    
+    /**
+     * Method to destroy the privacy (warn) cookie.
+     * 
+     * @param request The HttpServletRequest
+     * @param response The HttpServletResponse
+     */
+    private void destroyPrivacyCookie(
+        final HttpServletRequest request, final HttpServletResponse response) {
+        log.debug("Destroying privacy cookie.");
+        Cookie cookie = new Cookie(WebConstants.COOKIE_PRIVACY, "");
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());
         cookie.setSecure(true);
