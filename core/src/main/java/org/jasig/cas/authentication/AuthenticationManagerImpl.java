@@ -20,10 +20,13 @@ import org.springframework.util.Assert;
 
 /**
  * <p>
- * Default implementation of the AuthenticationManager. Follows a simple
- * algorithm that searches AuthenticationHandlers for the first one that can
- * validate the credentials. If none are found, it throws an
- * UnsupportedCredentials Exception. Next, it looks for a
+ * Default implementation of the AuthenticationManager. The
+ * AuthenticationManager follows the following algorithm. The manager loops
+ * through the array of AuthenticationHandlers searching for one that can
+ * attempt to determine the validity of the credentials. If it finds one, it
+ * tries that one. If that handler returns true, it continues on. If it returns
+ * false, it looks for another handler. If it throws an exception, it aborts the
+ * whole process and rethrows the exception. Next, it looks for a
  * CredentialsToPrincipalResolver that can handle the credentials in order to
  * create a Principal. Finally, it attempts to populate the Authentication
  * object's attributes map using AuthenticationAttributesPopulators
