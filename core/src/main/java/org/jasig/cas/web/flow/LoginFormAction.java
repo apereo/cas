@@ -62,6 +62,26 @@ public final class LoginFormAction extends FormAction {
         }
     }
 
+    /**
+     * Method follows the following flow of events:
+     * <ul>
+     * <li> If renew is true and there is a TicketGrantingTicket, attempt to
+     * generate a service ticket with the supplied credentials.</li>
+     * <li> If we cannot create a ServiceTicket attempt to generate a new
+     * TicketGrantingTicket.</li>
+     * <li> If that is successful, store the value in a cookie.</li>
+     * <li> Create a privacy cookie if needed.</li>
+     * <li> Attempt to get a service ticket.</li>
+     * </ul>
+     * 
+     * @return
+     * <ul>
+     * <li>"noService" event if there is successful authentication but no
+     * service;</li>
+     * <li>"warn" if there is successful authentication and a service provided.</li>
+     * <li>"error" if authentication was unsuccessful.</li>
+     * </ul>
+     */
     public Event submit(final RequestContext context) throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
@@ -120,7 +140,7 @@ public final class LoginFormAction extends FormAction {
                 ContextUtils.addAttributeToFlowScope(context,
                     WebConstants.SERVICE, service);
 
-                return success();
+                return result("warn");
             }
         } catch (final TicketException e) {
             final FormObjectAccessor accessor = new FormObjectAccessor(context);
