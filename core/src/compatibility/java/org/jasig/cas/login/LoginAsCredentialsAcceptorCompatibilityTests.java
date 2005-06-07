@@ -14,6 +14,7 @@ import org.jasig.cas.web.support.WebConstants;
 /**
  * 
  * @author Scott Battaglia
+ * @author Drew Mazurek
  * @version $Revision$ $Date$
  * @since 3.0
  *
@@ -32,6 +33,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         setFormElement(FORM_USERNAME, "test");
         setFormElement(FORM_PASSWORD, "test");
         submit();
+        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
         assertFormNotPresent();
     }
     
@@ -48,13 +50,18 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         assertCookiePresent(WebConstants.COOKIE_TGC_ID);
     }
 
-    public void testValidCredentialsAuthenticationWithoutWarn() {
+    public void testValidCredentialsAuthenticationWithoutWarn() throws UnsupportedEncodingException {
+    	final String service = "http://www.cnn.com";
+        beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
         setFormElement(FORM_USERNAME, "test");
         setFormElement(FORM_PASSWORD, "test");
         submit();
         // TODO testValidCredentialsAuthenticationWithoutWarn
     }
     
+    /*
+     * jWebUnit doesn't allow you to change pre-populated hidden form values.
+     * 
     public void testBadLoginTicket() {
         setFormElement(FORM_USERNAME, "test");
         setFormElement(FORM_PASSWORD, "test");
@@ -71,12 +78,12 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         submit();
         assertFormElementPresent(FORM_USERNAME);
     }
-    
-
-    
+        
     public void testDoubleLoginTicket() {
         //TODO: covered by badLoginTicket?
     }
+     *
+     */
     
     public void testPassBadCredentials() {
         setFormElement(FORM_USERNAME, "test");
