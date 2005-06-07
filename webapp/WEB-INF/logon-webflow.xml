@@ -24,7 +24,7 @@
 	<action-state id="submit">
 		<action bean="loginFormAction" method="submit" />
 		<transition on="noService" to="viewGenericLogon" />
-		<transition on="success" to="warn" />
+		<transition on="warn" to="warn" />
 		<transition on="error" to="viewLogonForm" />
 	</action-state>
 	
