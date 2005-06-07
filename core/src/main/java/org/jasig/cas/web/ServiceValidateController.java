@@ -151,7 +151,7 @@ public final class ServiceValidateController extends AbstractController
                             + pgtUrl);
                 } catch (TicketException e) {
                     log.error("TicketException generating ticket for: "
-                        + pgtUrl);
+                        + pgtUrl, e);
                 }
             }
             model.put(WebConstants.ASSERTION, assertion);
