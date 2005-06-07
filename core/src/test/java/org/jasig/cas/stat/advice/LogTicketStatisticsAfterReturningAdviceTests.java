@@ -16,7 +16,6 @@ import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.stat.support.TicketStatisticsImpl;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
