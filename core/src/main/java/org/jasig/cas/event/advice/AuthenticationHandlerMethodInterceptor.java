@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.event.advice;
 
-import java.lang.reflect.Method;
-
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.event.AuthenticationEvent;
-import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
@@ -24,8 +24,8 @@ import org.springframework.context.ApplicationEventPublisherAware;
  * @since 3.0
  * @see org.jasig.cas.event.AuthenticationEvent
  */
-public final class AuthenticationHandlerAfterReturningAdvice implements
-    AfterReturningAdvice, ApplicationEventPublisherAware {
+public final class AuthenticationHandlerMethodInterceptor implements
+    MethodInterceptor, ApplicationEventPublisherAware {
 
     /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
@@ -35,12 +35,22 @@ public final class AuthenticationHandlerAfterReturningAdvice implements
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void afterReturning(final Object returnValue, final Method method,
-        final Object[] args, final Object arg3) throws Throwable {
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 
-        final Boolean value = (Boolean) returnValue;
-        this.applicationEventPublisher.publishEvent(new AuthenticationEvent(
-            (Credentials) args[0], value.booleanValue(), method
-                .getDeclaringClass()));
+        try {
+            final Boolean returnValue = (Boolean) methodInvocation.proceed();
+            this.applicationEventPublisher
+                .publishEvent(new AuthenticationEvent(
+                    (Credentials) methodInvocation.getArguments()[0],
+                    returnValue.booleanValue(), methodInvocation.getMethod()
+                        .getDeclaringClass()));
+            return returnValue;
+        } catch (AuthenticationException e) {
+            this.applicationEventPublisher
+                .publishEvent(new AuthenticationEvent(
+                    (Credentials) methodInvocation.getArguments()[0], false,
+                    methodInvocation.getMethod().getDeclaringClass()));
+            throw e;
+        }
     }
 }
