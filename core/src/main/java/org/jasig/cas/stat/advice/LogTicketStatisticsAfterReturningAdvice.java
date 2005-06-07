@@ -71,11 +71,14 @@ public final class LogTicketStatisticsAfterReturningAdvice implements
             return;
         }
 
-        if (statsStateMutatorMethodName.equals(PROXY_TICKET_METHOD)) {
+        if (method.getName().equals(PROXY_TICKET_METHOD)) {
             ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
                 .getTicket((String) returnValue);
 
-            // we have a proxy ticket!!
+            /*
+             * TODO: this needs to be more sophisticated, as web service become
+             * more popular this check may not be true. we have a proxy ticket!!
+             */
             if ((serviceTicket.getGrantingTicket().getAuthentication()
                 .getPrincipal() instanceof Service)
                 && (serviceTicket.getGrantingTicket().getGrantingTicket() != null)) {

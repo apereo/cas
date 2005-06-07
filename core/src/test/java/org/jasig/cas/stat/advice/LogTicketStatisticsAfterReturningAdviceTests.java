@@ -10,8 +10,18 @@ import java.util.Properties;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.stat.support.TicketStatisticsImpl;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.ServiceTicketImpl;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
+import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import junit.framework.TestCase;
 
@@ -120,6 +130,49 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
                     new Class[] {Credentials.class}), null,
                 new CentralAuthenticationServiceImpl());
             assertEquals(1, t.getNumberOfTicketGrantingTicketsVended());
+        } catch (Throwable e) {
+            e.printStackTrace();
+            fail("Throwable not expected.");
+        }
+    }
+    
+    public void testProxyTicket() {
+        TicketStatisticsImpl ts = new TicketStatisticsImpl();
+        TicketGrantingTicketImpl tgtParent = new TicketGrantingTicketImpl("parentTicket", new MockAuthentication(new SimplePrincipal("test")), new NeverExpiresExpirationPolicy());
+        ServiceTicket stChild = tgtParent.grantServiceTicket("childTicket", new SimpleService("test"), new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket tgtPgt = stChild.grantTicketGrantingTicket("pgtId", new MockAuthentication(new SimpleService("test")), new NeverExpiresExpirationPolicy());
+        ServiceTicket stProxy = tgtPgt.grantServiceTicket("proxyId", new SimpleService("test"), new NeverExpiresExpirationPolicy());
+        
+        TicketRegistry t = new DefaultTicketRegistry();
+        t.addTicket(tgtParent);
+        t.addTicket(stChild);
+        t.addTicket(tgtPgt);
+        t.addTicket(stProxy);
+        
+        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
+        advice.setTicketRegistry(t);
+        advice.setTicketStatsManager(ts);
+        Properties p = new Properties();
+        p.put("grantServiceTicket",
+            "incrementNumberOfServiceTicketsVended");
+        advice.setStatsStateMutators(p);
+        
+        try {
+            advice.afterReturning(stProxy.getId(), CentralAuthenticationService.class
+                .getMethod("grantServiceTicket",
+                    new Class[] {String.class, Service.class}), null,
+                new CentralAuthenticationServiceImpl());
+            assertEquals(1, ts.getNumberOfProxyTicketsVended());
+        } catch (Throwable e) {
+            fail("Throwable not expected.");
+        }
+        
+       try {
+            advice.afterReturning(stChild.getId(), CentralAuthenticationService.class
+                .getMethod("grantServiceTicket",
+                    new Class[] {String.class, Service.class}), null,
+                new CentralAuthenticationServiceImpl());
+            assertEquals(1, ts.getNumberOfProxyTicketsVended());
         } catch (Throwable e) {
             e.printStackTrace();
             fail("Throwable not expected.");
