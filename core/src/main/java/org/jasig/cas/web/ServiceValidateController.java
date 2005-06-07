@@ -93,6 +93,7 @@ public final class ServiceValidateController extends AbstractController
 
         if (this.proxyHandler == null) {
             this.proxyHandler = new Cas20ProxyHandler();
+            ((Cas20ProxyHandler) this.proxyHandler).afterPropertiesSet();
             log.info("No proxyHandler specified.  Defaulting to "
                 + this.proxyHandler.getClass().getName());
         }
