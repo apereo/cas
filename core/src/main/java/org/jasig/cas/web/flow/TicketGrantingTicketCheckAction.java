@@ -47,10 +47,18 @@ import org.springframework.web.flow.RequestContext;
  */
 public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
 
+    /**
+     * Identifier for the event that gets triggered when we want to initiate a
+     * redirect to a gateway.
+     */
     private static final String EVENT_GATEWAY = "gateway";
-    
+
+    /**
+     * Identifier for the event that gets triggered when we want to initiate a
+     * call to the view to be displayed when there is no service to redirect to.
+     */
     private static final String EVENT_NO_SERVICE = "noService";
-    
+
     /** The CORE of CAS which we will use to obtain tickets. */
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -66,15 +74,24 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         final boolean renew = StringUtils.hasText(request
             .getParameter(WebConstants.RENEW));
 
+        // if we have a TGT and no service, its a redirect to noService.
         if (ticketGrantingTicketId != null && !StringUtils.hasText(service)) {
             return new ModelAndEvent(result(EVENT_NO_SERVICE));
         }
-        
+
+        /*
+         * if there is no service ticket and a gateway, redirect back to the
+         * service.
+         */
         if (ticketGrantingTicketId == null && gateway) {
             return new ModelAndEvent(result(EVENT_GATEWAY),
                 WebConstants.SERVICE, service);
         }
-        
+
+        /*
+         * if there is no service, renew is true and no TGT, move to the next
+         * action.
+         */
         if (!StringUtils.hasText(service) || renew
             || ticketGrantingTicketId == null) {
             return new ModelAndEvent(error());

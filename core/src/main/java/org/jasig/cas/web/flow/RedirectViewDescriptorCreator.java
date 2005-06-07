@@ -40,7 +40,7 @@ public final class RedirectViewDescriptorCreator implements
                 WebConstants.TICKET, ticket);
             descriptor.setRedirect(true);
             return descriptor;
-        } 
+        }
         final ViewDescriptor viewDescriptor = new ViewDescriptor(service);
         viewDescriptor.setRedirect(true);
         return viewDescriptor;
