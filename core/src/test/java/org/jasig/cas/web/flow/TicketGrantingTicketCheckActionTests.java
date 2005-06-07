@@ -136,6 +136,21 @@ public class TicketGrantingTicketCheckActionTests extends TestCase {
         assertEquals("noService", this.checkAction.doExecute(context).getId());
     }
     
+    public void testNoTgtAndGateway() throws Exception {
+        MockRequestContext context = new MockRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        request.addParameter(WebConstants.GATEWAY, "true");
+        request.addParameter(WebConstants.SERVICE, "test");
+        credentials.setUsername("test");
+        credentials.setPassword("test");
+        
+        assertEquals("gateway", this.checkAction.doExecute(context).getId());
+    }
+    
     public void testAfterPropertiesSet() {
         this.checkAction.setCentralAuthenticationService(null);
         try {
