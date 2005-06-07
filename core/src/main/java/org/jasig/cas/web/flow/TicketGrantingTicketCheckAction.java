@@ -49,6 +49,8 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
 
     private static final String EVENT_GATEWAY = "gateway";
     
+    private static final String EVENT_NO_SERVICE = "noService";
+    
     /** The CORE of CAS which we will use to obtain tickets. */
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -64,6 +66,14 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         final boolean renew = StringUtils.hasText(request
             .getParameter(WebConstants.RENEW));
 
+        if (ticketGrantingTicketId != null && !StringUtils.hasText(service)) {
+            return new ModelAndEvent(result(EVENT_NO_SERVICE));
+        }
+        
+        if (ticketGrantingTicketId == null && gateway) {
+            return new ModelAndEvent(result(EVENT_GATEWAY));
+        }
+        
         if (!StringUtils.hasText(service) || renew
             || ticketGrantingTicketId == null) {
             return new ModelAndEvent(error());

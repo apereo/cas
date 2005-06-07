@@ -121,6 +121,21 @@ public class TicketGrantingTicketCheckActionTests extends TestCase {
         assertEquals("success", this.checkAction.doExecute(context).getId());
     }
     
+    public void testValidTgtNoService() throws Exception {
+        MockRequestContext context = new MockRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        credentials.setUsername("test");
+        credentials.setPassword("test");
+        Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
+        request.setCookies(new Cookie[] {cookie});
+        
+        assertEquals("noService", this.checkAction.doExecute(context).getId());
+    }
+    
     public void testAfterPropertiesSet() {
         this.checkAction.setCentralAuthenticationService(null);
         try {
