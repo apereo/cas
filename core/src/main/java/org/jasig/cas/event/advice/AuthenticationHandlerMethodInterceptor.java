@@ -35,7 +35,8 @@ public final class AuthenticationHandlerMethodInterceptor implements
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    public Object invoke(final MethodInvocation methodInvocation)
+        throws Throwable {
 
         try {
             final Boolean returnValue = (Boolean) methodInvocation.proceed();
