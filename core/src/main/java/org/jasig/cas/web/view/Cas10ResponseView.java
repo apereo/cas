@@ -36,9 +36,9 @@ public class Cas10ResponseView implements View {
             response.getWriter().print(
                 "yes\n"
                     + ((Authentication) assertion.getChainedAuthentications()
-                        .get(0)).getPrincipal().getId());
+                        .get(0)).getPrincipal().getId()+"\n");
         } else {
-            response.getWriter().print("no\n");
+            response.getWriter().print("no\n\n");
         }
     }
 

@@ -31,7 +31,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import junit.framework.TestCase;
 
 /**
- * NOTE: This file checks for one less \n than needed as the server tends to add the extra one itself.
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  *
@@ -55,7 +54,7 @@ public class Cas10ResponseViewTests extends TestCase {
 
         this.view.render(model, new MockHttpServletRequest(),
             new MockWriterHttpMockHttpServletResponse());
-        assertEquals("yes\ntest", this.response);
+        assertEquals("yes\ntest\n", this.response);
 
     }
 
@@ -72,7 +71,7 @@ public class Cas10ResponseViewTests extends TestCase {
 
         this.view.render(model, new MockHttpServletRequest(),
             new MockWriterHttpMockHttpServletResponse());
-        assertEquals("no\n", this.response);
+        assertEquals("no\n\n", this.response);
     }
 
     protected class MockWriterHttpMockHttpServletResponse implements
