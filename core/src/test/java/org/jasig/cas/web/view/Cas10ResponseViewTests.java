@@ -223,7 +223,7 @@ public class Cas10ResponseViewTests extends TestCase {
             super(out);
         }
 
-        public void write(String s) {
+        public void print(String s) {
             Cas10ResponseViewTests.this.response = s;
         }
 
