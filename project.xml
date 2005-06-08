@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0-rc1</currentVersion>
+	<currentVersion>3.0-rc2</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -22,6 +22,11 @@
 		<url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/</url>
 	</repository>
 	<versions>
+		<version>
+			<id>3.0-rc2</id>
+			<name>3.0-rc2</name>
+			<tag>cas-3-0-rc2</tag>
+		</version>
 		<version>
 			<id>3.0-rc1</id>
 			<name>3.0-rc1</name>
@@ -682,12 +687,12 @@
 	</build>
 	<reports>
 		<report>maven-changes-plugin</report>
-		<report>maven-changelog-plugin</report>
+<!--		<report>maven-changelog-plugin</report> -->
 		<report>maven-checkstyle-plugin</report>
 		<report>maven-clover-plugin</report>
 		<report>maven-javadoc-plugin</report>
 		<report>maven-jdepend-plugin</report>
-		<report>maven-junit-report-plugin</report>
+<!--		<report>maven-junit-report-plugin</report>-->
 		<report>maven-jxr-plugin</report>
 		<report>maven-pmd-plugin</report>
 		<report>maven-simian-plugin</report>
@@ -698,7 +703,7 @@
 		<report>maven-multichanges-report</report>
 <!--	    <report>maven-statcvs-plugin</report>-->
 <!--	    <report>maven-dashboard-plugin</report>-->
-	    <report>maven-developer-activity-plugin</report>
-	    <report>maven-file-activity-plugin</report>
-	</reports>
+<!--	    <report>maven-developer-activity-plugin</report>-->
+<!--	    <report>maven-file-activity-plugin</report>-->
+</reports>
 </project>
