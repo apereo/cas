@@ -40,8 +40,6 @@ public class Cas10ResponseView implements View {
         } else {
             response.getWriter().print("no\n\n");
         }
-        
-        response.getWriter().flush();
     }
 
     public void setSuccessResponse(boolean successResponse) {
