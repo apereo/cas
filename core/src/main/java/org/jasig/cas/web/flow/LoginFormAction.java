@@ -107,6 +107,10 @@ public final class LoginFormAction extends FormAction {
                     .grantServiceTicket(ticketGrantingTicketId,
                         new SimpleService(service), credentials);
             } catch (TicketException e) {
+                log
+                    .debug(
+                        "Attempted to generate a ServiceTicket using renew=true with different credentials",
+                        e);
                 // nothing to do here....move on.
             }
         }
@@ -175,6 +179,19 @@ public final class LoginFormAction extends FormAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    /**
+     * Set a CredentialsBinder for additional binding of the HttpServletRequest
+     * to the Credentials instance, beyond our default binding of the
+     * Credentials as a Form Object in Spring WebMVC parlance. By the time we
+     * invoke this CredentialsBinder, we have already engaged in default binding
+     * such that for each HttpServletRequest parameter, if there was a JavaBean
+     * property of the Credentials implementation of the same name, we have set
+     * that property to be the value of the corresponding request parameter.
+     * This CredentialsBinder plugin point exists to allow consideration of
+     * things other than HttpServletRequest parameters in populating the
+     * Credentials (or more sophisticated consideration of the
+     * HttpServletRequest parameters).
+     */
     public void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }

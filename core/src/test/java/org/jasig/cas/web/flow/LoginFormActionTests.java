@@ -116,7 +116,7 @@ public class LoginFormActionTests extends TestCase {
             "org.springframework.validation.BindException.credentials",
             new BindException(credentials, "credentials"));
 
-        assertEquals("success", this.logonFormAction.submit(context).getId());
+        assertEquals("warn", this.logonFormAction.submit(context).getId());
     }
 
     public void testSubmitProperCredentialsWithNoService() throws Exception {
@@ -183,7 +183,7 @@ public class LoginFormActionTests extends TestCase {
             "org.springframework.validation.BindException.credentials",
             new BindException(credentials, "credentials"));
 
-        assertEquals("success", this.logonFormAction.submit(context).getId());
+        assertEquals("warn", this.logonFormAction.submit(context).getId());
     }
 
     public void testAfterPropertiesSetCas() {
