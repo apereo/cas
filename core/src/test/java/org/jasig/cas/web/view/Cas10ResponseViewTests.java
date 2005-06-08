@@ -226,11 +226,5 @@ public class Cas10ResponseViewTests extends TestCase {
         public void print(String s) {
             Cas10ResponseViewTests.this.response = s;
         }
-
-        public void flush() {
-            // do nothing
-        }
-        
-        
     }
 }
