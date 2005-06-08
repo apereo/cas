@@ -33,12 +33,12 @@ public class Cas10ResponseView implements View {
         Assertion assertion = (Assertion) model.get(WebConstants.ASSERTION);
 
         if (this.successResponse) {
-            response.getWriter().write(
+            response.getWriter().print(
                 "yes\n"
                     + ((Authentication) assertion.getChainedAuthentications()
                         .get(0)).getPrincipal().getId() + "\n");
         } else {
-            response.getWriter().write("no\n\n");
+            response.getWriter().print("no\n\n");
         }
         
         response.getWriter().flush();
