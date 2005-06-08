@@ -31,7 +31,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import junit.framework.TestCase;
 
 /**
- * 
+ * NOTE: This file checks for one less \n than needed as the server tends to add the extra one itself.
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  *
@@ -39,37 +39,44 @@ import junit.framework.TestCase;
 public class Cas10ResponseViewTests extends TestCase {
 
     private final Cas10ResponseView view = new Cas10ResponseView();
-    
+
     String response;
-    
+
     public void testSuccessView() throws Exception {
         this.view.setSuccessResponse(true);
         Map model = new HashMap();
-        Authentication authentication = new MockAuthentication(new SimplePrincipal("test"));
+        Authentication authentication = new MockAuthentication(
+            new SimplePrincipal("test"));
         List list = new ArrayList();
         list.add(authentication);
-        Assertion assertion = new ImmutableAssertionImpl(list, new SimpleService("TestService"), true);
+        Assertion assertion = new ImmutableAssertionImpl(list,
+            new SimpleService("TestService"), true);
         model.put(WebConstants.ASSERTION, assertion);
-        
-        this.view.render(model, new MockHttpServletRequest(), new MockWriterHttpMockHttpServletResponse());
-        assertEquals("yes\ntest\n", this.response);
-        
+
+        this.view.render(model, new MockHttpServletRequest(),
+            new MockWriterHttpMockHttpServletResponse());
+        assertEquals("yes\ntest", this.response);
+
     }
-    
+
     public void testFailureView() throws Exception {
         this.view.setSuccessResponse(false);
         Map model = new HashMap();
-        Authentication authentication = new MockAuthentication(new SimplePrincipal("test"));
+        Authentication authentication = new MockAuthentication(
+            new SimplePrincipal("test"));
         List list = new ArrayList();
         list.add(authentication);
-        Assertion assertion = new ImmutableAssertionImpl(list, new SimpleService("TestService"), true);
+        Assertion assertion = new ImmutableAssertionImpl(list,
+            new SimpleService("TestService"), true);
         model.put(WebConstants.ASSERTION, assertion);
-        
-        this.view.render(model, new MockHttpServletRequest(), new MockWriterHttpMockHttpServletResponse());
-        assertEquals("no\n\n", this.response);
+
+        this.view.render(model, new MockHttpServletRequest(),
+            new MockWriterHttpMockHttpServletResponse());
+        assertEquals("no\n", this.response);
     }
-    
-    protected class MockWriterHttpMockHttpServletResponse implements HttpServletResponse {
+
+    protected class MockWriterHttpMockHttpServletResponse implements
+        HttpServletResponse {
 
         public void addCookie(Cookie arg0) {
             // nothing to do
@@ -125,27 +132,27 @@ public class Cas10ResponseViewTests extends TestCase {
 
         public void setHeader(String arg0, String arg1) {
             // nothing to do
-            
+
         }
 
         public void setIntHeader(String arg0, int arg1) {
             // nothing to do
-            
+
         }
 
         public void setStatus(int arg0, String arg1) {
             // nothing to do
-            
+
         }
 
         public void setStatus(int arg0) {
             // nothing to do
-            
+
         }
 
         public void flushBuffer() throws IOException {
             // nothing to do
-            
+
         }
 
         public int getBufferSize() {
@@ -176,33 +183,33 @@ public class Cas10ResponseViewTests extends TestCase {
 
         public void reset() {
             // nothing to do
-            
+
         }
 
         public void resetBuffer() {
             // nothing to do
-            
+
         }
 
         public void setBufferSize(int arg0) {
             // nothing to do
-            
+
         }
 
         public void setContentLength(int arg0) {
             // nothing to do
-            
+
         }
 
         public void setContentType(String arg0) {
             // nothing to do
-            
+
         }
 
         public void setLocale(Locale arg0) {
             // nothing to do
         }
-        
+
     }
 
     protected class MockPrintWriter extends PrintWriter {
