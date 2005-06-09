@@ -8,48 +8,27 @@ package org.jasig.cas.validation;
 /**
  * Validation specification for the CAS 1.0 protocol.  This specification
  * checks for the presence of renew=true and if requested, succeeds only if 
- * ticket validation is occurring from a new login.
+ * ticket validation is occurring from a new login.  Additionally,
+ * validation will fail if passed a proxy ticket.
  * 
  * @author Scott Battaglia
+ * @author Drew Mazurek
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Cas10ProtocolValidationSpecification implements
-    ValidationSpecification {
-
-    /** The default value for the renew attribute is false. */
-    private static final boolean DEFAULT_RENEW = false;
-
-    /** Denotes whether we should always authenticate or not. */
-    private boolean renew;
+public class Cas10ProtocolValidationSpecification extends 
+	CasProtocolValidationSpecification implements ValidationSpecification {
 
     public Cas10ProtocolValidationSpecification() {
-        this.renew = DEFAULT_RENEW;
+        super();
     }
 
     public Cas10ProtocolValidationSpecification(final boolean renew) {
-        this.renew = renew;
-    }
-
-    /**
-     * Method to set the renew requirement.
-     * 
-     * @param renew The renew value we want.
-     */
-    public final void setRenew(final boolean renew) {
-        this.renew = renew;
-    }
-
-    /**
-     * Method to determine if we require renew to be true.
-     * 
-     * @return true if renew is required, false otherwise.
-     */
-    public final boolean isRenew() {
-        return this.renew;
+        super(renew);
     }
 
     public boolean isSatisfiedBy(final Assertion assertion) {
-        return (!this.renew) || (assertion.isFromNewLogin() && this.renew);
+        return super.isSatisfiedBy(assertion)
+        	&& (assertion.getChainedAuthentications().size() == 1);
     }
 }

@@ -17,7 +17,7 @@ package org.jasig.cas.validation;
  * @since 3.0
  */
 public class Cas20WithoutProxyingValidationSpecification extends
-    Cas20ProtocolValidationSpecification {
+    CasProtocolValidationSpecification {
 
     public Cas20WithoutProxyingValidationSpecification() {
         super();
