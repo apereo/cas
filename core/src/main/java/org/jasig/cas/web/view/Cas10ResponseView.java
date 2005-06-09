@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -24,25 +24,30 @@ import org.springframework.web.servlet.View;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Cas10ResponseView implements View {
+public final class Cas10ResponseView implements View {
 
+    /**
+     * Indicate whether this view will be generating the success response or
+     * not.
+     */
     private boolean successResponse;
 
-    public void render(Map model, HttpServletRequest request,
-        HttpServletResponse response) throws Exception {
-        Assertion assertion = (Assertion) model.get(WebConstants.ASSERTION);
+    public void render(final Map model, final HttpServletRequest request,
+        final HttpServletResponse response) throws Exception {
+        final Assertion assertion = (Assertion) model
+            .get(WebConstants.ASSERTION);
 
         if (this.successResponse) {
             response.getWriter().print(
                 "yes\n"
                     + ((Authentication) assertion.getChainedAuthentications()
-                        .get(0)).getPrincipal().getId()+"\n");
+                        .get(0)).getPrincipal().getId() + "\n");
         } else {
             response.getWriter().print("no\n\n");
         }
     }
 
-    public void setSuccessResponse(boolean successResponse) {
+    public void setSuccessResponse(final boolean successResponse) {
         this.successResponse = successResponse;
     }
 }
