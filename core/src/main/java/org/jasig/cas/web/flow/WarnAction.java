@@ -49,7 +49,7 @@ public final class WarnAction extends AbstractCasAction {
         final boolean requestWarn = StringUtils.hasText(request
             .getParameter(WebConstants.WARN));
 
-        if (warn || requestWarn) {
+        if (warn && !requestWarn) {
             return new ModelAndEvent(result(EVENT_WARN));
         }
 
