@@ -46,11 +46,11 @@
 			 A service sending a user to CAS for logout can specify this parameter to suggest that we offer
 			 the user a particular link out from the logout UI once logout is completed.  We do that here.
 			--%>
-			<c:if test="${not empty param.url}">
+			<c:if test="${not empty url}">
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 				The service from which you arrived has supplied a 
-				<a href="${param.url}">link you may follow by clicking here</a>.<br /><br />
-			  ({$param.url})
+				<a href="${url}">link you may follow by clicking here</a>.<br /><br />
+			  ({$url})
 			</p>
 			</c:if>
 		</div>
