@@ -185,6 +185,35 @@ public class LoginFormActionTests extends TestCase {
 
         assertEquals("warn", this.logonFormAction.submit(context).getId());
     }
+    
+    public void testRenewIsTrueWithDifferentCredentials() throws Exception {
+        MockRequestContext context = new MockRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        context.setSourceEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
+
+        request.addParameter("service", "true");
+        request.addParameter("renew", "true");
+        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        credentials.setUsername("test");
+        credentials.setPassword("test");
+        
+        final UsernamePasswordCredentials credentials2 = new UsernamePasswordCredentials();
+        credentials2.setUsername("test2");
+        credentials2.setPassword("test2");
+
+        final String ticketGrantingTicket = this.centralAuthenticationService
+            .createTicketGrantingTicket(credentials);
+        request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
+            ticketGrantingTicket)});
+
+        ContextUtils.addAttribute(context, "credentials", credentials2);
+        ContextUtils.addAttribute(context,
+            "org.springframework.validation.BindException.credentials",
+            new BindException(credentials, "credentials"));
+
+        assertEquals("warn", this.logonFormAction.submit(context).getId());
+    }
 
     public void testAfterPropertiesSetCas() {
         try {
