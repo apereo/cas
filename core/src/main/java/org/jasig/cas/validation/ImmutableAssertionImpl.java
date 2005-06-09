@@ -34,6 +34,7 @@ public final class ImmutableAssertionImpl implements Assertion {
 
     /**
      * Constructs a new ImmutableAssertion out of the given parameters.
+     * 
      * @param principals the chain of principals
      * @param service The service we are asserting this ticket for.
      * @param fromNewLogin was the service ticket from a new login.

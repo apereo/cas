@@ -6,15 +6,15 @@
 package org.jasig.cas.validation;
 
 /**
- * Base validation specification for the CAS protocol.  This specification
- * checks for the presence of renew=true and if requested, succeeds only if 
- * ticket validation is occurring from a new login.
+ * Base validation specification for the CAS protocol. This specification checks
+ * for the presence of renew=true and if requested, succeeds only if ticket
+ * validation is occurring from a new login.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class CasProtocolValidationSpecification implements
+public abstract class AbstractCasProtocolValidationSpecification implements
     ValidationSpecification {
 
     /** The default value for the renew attribute is false. */
@@ -23,11 +23,11 @@ public class CasProtocolValidationSpecification implements
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
 
-    public CasProtocolValidationSpecification() {
+    public AbstractCasProtocolValidationSpecification() {
         this.renew = DEFAULT_RENEW;
     }
 
-    public CasProtocolValidationSpecification(final boolean renew) {
+    public AbstractCasProtocolValidationSpecification(final boolean renew) {
         this.renew = renew;
     }
 
@@ -49,7 +49,14 @@ public class CasProtocolValidationSpecification implements
         return this.renew;
     }
 
-    public boolean isSatisfiedBy(final Assertion assertion) {
-        return (!this.renew) || (assertion.isFromNewLogin() && this.renew);
+    public final boolean isSatisfiedBy(final Assertion assertion) {
+        return isSatisfiedByInternal(assertion)
+            && ((!this.renew) || (assertion.isFromNewLogin() && this.renew));
     }
+
+    /**
+     * Template method to allow for additional checks by subclassed methods
+     * without needing to call super.isSatisfiedBy(...).
+     */
+    protected abstract boolean isSatisfiedByInternal(final Assertion assertion);
 }
