@@ -114,15 +114,15 @@ public class Cas10ResponseViewTests extends TestCase {
         }
 
         public void sendError(int arg0, String arg1) throws IOException {
-            // nothing to do            
+            throw new IOException();          
         }
 
         public void sendError(int arg0) throws IOException {
-            // nothing to do
+            throw new IOException();
         }
 
         public void sendRedirect(String arg0) throws IOException {
-            // nothing to do
+            throw new IOException();
         }
 
         public void setDateHeader(String arg0, long arg1) {
@@ -150,8 +150,7 @@ public class Cas10ResponseViewTests extends TestCase {
         }
 
         public void flushBuffer() throws IOException {
-            // nothing to do
-
+            throw new IOException();
         }
 
         public int getBufferSize() {
@@ -167,12 +166,15 @@ public class Cas10ResponseViewTests extends TestCase {
         }
 
         public ServletOutputStream getOutputStream() throws IOException {
-            // nothing to do
-            return null;
+            throw new IOException();
         }
 
         public PrintWriter getWriter() throws IOException {
-            return new MockPrintWriter(new ByteArrayOutputStream());
+            try {
+                return new MockPrintWriter(new ByteArrayOutputStream());
+            } catch (Exception e) {
+                throw new IOException();
+            }
         }
 
         public boolean isCommitted() {
