@@ -50,7 +50,7 @@ public class WarnActionTests extends TestCase {
         
         Event finalEvent = this.warnAction.doExecute(context);
         
-        assertEquals("warn", finalEvent.getId()); 
+        assertEquals("redirect", finalEvent.getId()); 
     }
     
     public void testNoWarn() throws Exception {
