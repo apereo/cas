@@ -31,7 +31,7 @@
 		<j:set var="maven.javadoc.destdir">${basedir}/docs</j:set>
 		<attainGoal name="javadoc" />
 
-
+		<ant:mkdir dir="${basedir}/lib/war" />
 		<ant:copy todir="${basedir}/lib/war">
 			<ant:fileset dir="target/${pom.artifactId}/WEB-INF/lib/">
 				<ant:include name="**" />
@@ -85,5 +85,7 @@
 		
 		<ant:delete file="${dist.dir}/${release.tar}" />
 		<ant:delete file="target/cas.war" />
+
+		<ant:delete dir="${basedir}/lib/war" />
 	</goal>
 </project>
