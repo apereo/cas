@@ -5,15 +5,16 @@
  */
 package org.jasig.cas.login;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import net.sourceforge.jwebunit.HttpUnitDialog;
 
 /**
  * 
  * @author Scott Battaglia
+ * @author Andrew Petro
+ * @author Drew Mazurek
  * @version $Revision$ $Date$
  * @since 3.0
  *
@@ -34,17 +35,11 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         
         // here we test that the response was exactly that specified 
         // in section 2.4.2 of the CAS spec
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        
-        dumpResponse(printStream);
-        
-        String validateOutput = byteArrayOutputStream.toString();
-        
+        HttpUnitDialog htDialog = getDialog();
+        String validateOutput = htDialog.getResponseText();
         String exactExpectedResponse = "no\n\n";
         
         assertEquals(exactExpectedResponse, validateOutput);
-
     }
     
     public void testBadServiceTicket() throws UnsupportedEncodingException {
@@ -54,17 +49,11 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         
         // here we test that the response was exactly that specified 
         // in section 2.4.2 of the CAS spec
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        
-        dumpResponse(printStream);
-        
-        String validateOutput = byteArrayOutputStream.toString();
-        
+        HttpUnitDialog htDialog = getDialog();
+        String validateOutput = htDialog.getResponseText();
         String exactExpectedResponse = "no\n\n";
         
         assertEquals(exactExpectedResponse, validateOutput);
-
     }
     
     public void testProperCredentialsAndServiceTicket() throws UnsupportedEncodingException {
