@@ -2,8 +2,8 @@ Central Authentication Service 3.0
 Quick Installation Guide
 ----------------------------------
 
-This guide is meant to be a quickstart for you to get CAS configured and 
-installed as quickly and easily as possible.  If you need more information, 
+This guide is meant to be a quickstart for you configure and install CAS 
+as quickly and easily as possible.  If you need more information, 
 you can check the CAS website at 
 
 http://jasigch.princeton.edu:9000/display/CAS/Home
