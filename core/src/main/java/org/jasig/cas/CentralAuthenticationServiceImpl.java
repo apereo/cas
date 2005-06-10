@@ -246,6 +246,7 @@ public final class CentralAuthenticationServiceImpl implements
             if (serviceTicket.isExpired()) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] has expired.");
+				this.ticketRegistry.deleteTicket(serviceTicketId);
                 throw new InvalidTicketException();
             }
 
