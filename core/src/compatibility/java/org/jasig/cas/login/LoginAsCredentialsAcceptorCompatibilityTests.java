@@ -37,17 +37,25 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         assertFormNotPresent();
     }
     
-    public void testValidCredentialsAuthenticationWithWarn() throws UnsupportedEncodingException {
-        final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
+    public void testValidCredentialsAuthenticationWithWarn() throws IOException {
+        final String service = "http://www.yale.edu";
         beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         getDialog().getForm().setCheckbox("warn", true);
         submit();
-//        checkCheckbox("warn");
-        assertTextPresent(service);
-        assertCookiePresent(WebConstants.COOKIE_PRIVACY);
-        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        
+        final String anotherService = "https://secure.its.yale.edu/cas";
+        final String anotherServiceEncoded = URLEncoder.encode(anotherService, "UTF-8");
+        
+        beginAt("/login?service=" + anotherServiceEncoded);
+        
+        // since warn was set, CAS should not redirect us immediately to the service,
+        // but should rather interpose a warning screen.
+        
+        assertTextPresent(anotherService);
+        
+        
     }
 
     public void testValidCredentialsAuthenticationWithoutWarn() throws UnsupportedEncodingException {
