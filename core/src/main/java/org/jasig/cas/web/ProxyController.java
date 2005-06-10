@@ -20,6 +20,7 @@ import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -62,15 +63,23 @@ public final class ProxyController extends AbstractController implements
         throws Exception {
         final String ticket = request
             .getParameter(WebConstants.PROXY_GRANTING_TICKET);
-        final Service service = new SimpleService(request
-            .getParameter(WebConstants.TARGET_SERVICE));
+        final String targetService = request
+            .getParameter(WebConstants.TARGET_SERVICE);
+        final Map model = new HashMap();
+
+        if (!StringUtils.hasText(ticket) || !StringUtils.hasText(targetService)) {
+            model.put(WebConstants.CODE, "INVALID_REQUEST");
+            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
+                "INVALID_REQUEST_PROXY", "INVALID_REQUEST_PROXY"));
+            return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
+        }
 
         try {
+            final Service service = new SimpleService(targetService);
             return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS,
                 WebConstants.TICKET, this.centralAuthenticationService
                     .grantServiceTicket(ticket, service));
         } catch (TicketException e) {
-            final Map model = new HashMap();
             model.put(WebConstants.CODE, e.getCode());
             model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
                 e.getCode(), new Object[] {ticket}, e.getCode()));
