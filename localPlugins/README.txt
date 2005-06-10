@@ -24,8 +24,9 @@ Follow the steps below to compile and install these plugins.
 
    % ant war
 
-   This copies your plugin to ../webapp/WEB-INF/lib, and packages up 
-   everything under CAS 3.0's webapp/ directory into target/cas.war.
+   This target copies all the necessary files into target/webapp and
+   then packages them into target/cas.war.  This war is configured
+   with your new plugins and is ready to deploy.
 
 Additional Ant build targets:
 
