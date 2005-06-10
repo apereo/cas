@@ -1,7 +1,7 @@
 <project name="casLocalPlugins" default="build" basedir=".">
 	<path id="buildLibs">
 		<fileset dir="lib"/>
-		<fileset dir="../webapp/WEB-INF/lib"/>
+		<fileset dir="../lib/war"/>
 	</path>
 	<target name="build">
 		<mkdir dir="build"/>
