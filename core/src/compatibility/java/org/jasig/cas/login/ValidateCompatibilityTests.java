@@ -99,6 +99,17 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         
         assertEquals(expected, validateOutput);
 
+        // test that a second validation of the same ticket fails
+        
+        beginAt("/validate?service=" + URLEncoder.encode(service, "UTF-8") + "&ticket=" + serviceTicket);
+        
+        // here we test that the response was exactly that specified 
+        // in section 2.4.2 of the CAS spec
+        htDialog = getDialog();
+        String secondValidateOutput = htDialog.getResponseText();
+        
+        assertEquals(LEGACY_NO_RESPONSE, secondValidateOutput);
+        
     }
     
     /**
@@ -133,6 +144,58 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         String validateOutput = htDialog.getResponseText();
         
         assertEquals(LEGACY_NO_RESPONSE, validateOutput);
-
+        
+        // test that validation will now fail even if we specify the right service,
+        // that is, that the ticket is now invalid
+        
+        beginAt("/validate?service=" + URLEncoder.encode(loginService, "UTF-8") + "&ticket=" + serviceTicket);
+        // here we test that the response was exactly that specified 
+        // in section 2.4.2 of the CAS spec
+        htDialog = getDialog();
+        String secondValidateOutput = htDialog.getResponseText();
+        
+        assertEquals(LEGACY_NO_RESPONSE, secondValidateOutput);
+        
+    }
+    
+    /**
+     * Test that attempting to validate a ticket without declaring 
+     * a service returns the ticket validation failure response and 
+     * invalidates the ticket causing subsequent attempts to validate the
+     * ticket to fail with the ticket validation failure response.
+     * @throws IOException
+     */
+    public void testNoService() throws IOException {
+    	
+    	// log into CAS and obtain a service ticket
+        final String service = "http://www.ja-sig.org";
+        
+        beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        HttpUnitDialog htDialog = getDialog();
+        String response = htDialog.getResponse().getText();
+        
+        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        
+        beginAt("/validate?ticket=" + serviceTicket);
+        assertTextPresent("no");
+        
+        // here we test that the response was exactly that specified 
+        // in section 2.4.2 of the CAS spec
+        htDialog = getDialog();
+        String validateOutput = htDialog.getResponseText();
+        
+        assertEquals(LEGACY_NO_RESPONSE, validateOutput);
+        
+        // whether ticket validation would now succeed if we were to validate
+        // specifying the correct service is unspecified, so we do not test it.
+        
+    }
+    
+    public void testNoValidateProxyTickets() {
+    	//TODO: test that validation of a proxy ticket fails.
     }
 }
