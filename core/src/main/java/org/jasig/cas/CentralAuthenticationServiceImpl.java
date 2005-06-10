@@ -251,6 +251,13 @@ public final class CentralAuthenticationServiceImpl implements
 
             serviceTicket.incrementCountOfUses();
             serviceTicket.updateLastTimeUsed();
+			
+			/* implemented this manual removal if expired so that registry 
+			 * does not grow too large.
+			 */
+			if (serviceTicket.isExpired()) {
+				this.ticketRegistry.deleteTicket(serviceTicketId);
+			}
 
             if (!service.equals(serviceTicket.getService())) {
                 log.debug("ServiceTicket [" + serviceTicketId
