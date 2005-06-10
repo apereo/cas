@@ -74,6 +74,13 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         final boolean renew = StringUtils.hasText(request
             .getParameter(WebConstants.RENEW));
 
+		/* if we have gateway selected but no service, then just show
+		 * show the logon form.
+		 */
+		if (gateway && !StringUtils.hasText(service)) {
+			return new ModelAndEvent(error());
+		}
+		
         // if we have a TGT and no service, its a redirect to noService.
         if (ticketGrantingTicketId != null && !StringUtils.hasText(service)) {
             return new ModelAndEvent(result(EVENT_NO_SERVICE));
