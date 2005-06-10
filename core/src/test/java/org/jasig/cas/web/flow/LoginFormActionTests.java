@@ -76,9 +76,11 @@ public class LoginFormActionTests extends TestCase {
         this.centralAuthenticationService
             .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         this.centralAuthenticationService
-            .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         this.logonFormAction
             .setCentralAuthenticationService(this.centralAuthenticationService);
+        this.centralAuthenticationService
+            .setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         this.logonFormAction.afterPropertiesSet();
     }
 
@@ -185,7 +187,7 @@ public class LoginFormActionTests extends TestCase {
 
         assertEquals("warn", this.logonFormAction.submit(context).getId());
     }
-    
+
     public void testRenewIsTrueWithDifferentCredentials() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -197,7 +199,7 @@ public class LoginFormActionTests extends TestCase {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername("test");
         credentials.setPassword("test");
-        
+
         final UsernamePasswordCredentials credentials2 = new UsernamePasswordCredentials();
         credentials2.setUsername("test2");
         credentials2.setPassword("test2");
@@ -266,9 +268,11 @@ public class LoginFormActionTests extends TestCase {
             return;
         }
     }
-    
-    public void testOnBindNoBinding() throws IllegalAccessException, InvocationTargetException {
-        this.logonFormAction.setFormObjectClass(UsernamePasswordCredentials.class);
+
+    public void testOnBindNoBinding() throws IllegalAccessException,
+        InvocationTargetException {
+        this.logonFormAction
+            .setFormObjectClass(UsernamePasswordCredentials.class);
         this.logonFormAction.setCredentialsBinder(null);
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -276,22 +280,26 @@ public class LoginFormActionTests extends TestCase {
             new MockHttpServletResponse()));
         Method[] methods = this.logonFormAction.getClass().getDeclaredMethods();
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        
+
         Method method = null;
-        
-        for (int i =0; i < methods.length; i++) {
-            if (methods[i].getName().equals("onBind") && methods[i].getParameterTypes().length == 3) {
+
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].getName().equals("onBind")
+                && methods[i].getParameterTypes().length == 3) {
                 method = methods[i];
                 break;
             }
         }
 
-        method.invoke(this.logonFormAction, new Object[] {context, c, new BindException(c, "credentials")});
+        method.invoke(this.logonFormAction, new Object[] {context, c,
+            new BindException(c, "credentials")});
     }
-    
-    public void testBinding() throws IllegalAccessException, InvocationTargetException {
-        this.logonFormAction.setFormObjectClass(UsernamePasswordCredentials.class);
-        this.logonFormAction.setCredentialsBinder(new CredentialsBinder() {
+
+    public void testBinding() throws IllegalAccessException,
+        InvocationTargetException {
+        this.logonFormAction
+            .setFormObjectClass(UsernamePasswordCredentials.class);
+        this.logonFormAction.setCredentialsBinder(new CredentialsBinder(){
 
             public void bind(HttpServletRequest request, Credentials credentials) {
                 UsernamePasswordCredentials c = (UsernamePasswordCredentials) credentials;
@@ -300,24 +308,27 @@ public class LoginFormActionTests extends TestCase {
 
             public boolean supports(Class clazz) {
                 return true;
-            }});
+            }
+        });
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setSourceEvent(new ServletEvent(request,
             new MockHttpServletResponse()));
         Method[] methods = this.logonFormAction.getClass().getDeclaredMethods();
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        
+
         Method method = null;
-        
-        for (int i =0; i < methods.length; i++) {
-            if (methods[i].getName().equals("onBind") && methods[i].getParameterTypes().length == 3) {
+
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].getName().equals("onBind")
+                && methods[i].getParameterTypes().length == 3) {
                 method = methods[i];
                 break;
             }
         }
 
-        method.invoke(this.logonFormAction, new Object[] {context, c, new BindException(c, "credentials")});
+        method.invoke(this.logonFormAction, new Object[] {context, c,
+            new BindException(c, "credentials")});
         assertEquals("test", c.getUsername());
     }
 }

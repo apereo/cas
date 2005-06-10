@@ -37,15 +37,17 @@ import org.springframework.util.Assert;
  * This class has the following properties that must be set:
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
- * of available tickets.
+ * of available tickets.</li>
  * <li> <code>authenticationManager</code> - The service that will handle
- * authentication.
- * <li> <code>uniqueTicketIdGenerator</code> - Plug in to generate unique
- * secure ids for tickets.
+ * authentication.</li>
+ * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
+ * generate unique secure ids for TicketGrantingTickets.</li>
+ * <li> <code>serviceTicketUniqueTicketIdGenerator</code> - Plug in to
+ * generate unique secure ids for ServiceTickets.</li>
  * <li> <code>ticketGrantingTicketExpirationPolicy</code> - The expiration
- * policy for TicketGrantingTickets.
+ * policy for TicketGrantingTickets.</li>
  * <li> <code>serviceTicketExpirationPolicy</code> - The expiration policy for
- * ServiceTickets.
+ * ServiceTickets.</li>
  * </ul>
  * 
  * @author William G. Thompson, Jr.
@@ -69,8 +71,14 @@ public final class CentralAuthenticationServiceImpl implements
      */
     private AuthenticationManager authenticationManager;
 
-    /** UniqueTicketIdGenerator to generate ids for any tickets created. */
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator;
+    /**
+     * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
+     * created.
+     */
+    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+
+    /** UniqueTicketIdGenerator to generate ids for ServiceTickets created. */
+    private UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator;
 
     /** Expiration policy for ticket granting tickets. */
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
@@ -79,8 +87,8 @@ public final class CentralAuthenticationServiceImpl implements
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
-     * Implementation of destoryTicketGrantingTicket expires the ticket provided and removes
-     * it from the TicketRegistry.
+     * Implementation of destoryTicketGrantingTicket expires the ticket provided
+     * and removes it from the TicketRegistry.
      * 
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
@@ -145,7 +153,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
 
             final ServiceTicket serviceTicket = ticketGrantingTicket
-                .grantServiceTicket(this.uniqueTicketIdGenerator
+                .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
                     .getNewTicketId(ServiceTicket.PREFIX), service,
                     this.serviceTicketExpirationPolicy);
 
@@ -199,8 +207,9 @@ public final class CentralAuthenticationServiceImpl implements
                 }
 
                 TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                    .grantTicketGrantingTicket(this.uniqueTicketIdGenerator
-                        .getNewTicketId(TicketGrantingTicket.PREFIX),
+                    .grantTicketGrantingTicket(
+                        this.ticketGrantingTicketUniqueTicketIdGenerator
+                            .getNewTicketId(TicketGrantingTicket.PREFIX),
                         authentication,
                         this.ticketGrantingTicketExpirationPolicy);
 
@@ -273,7 +282,7 @@ public final class CentralAuthenticationServiceImpl implements
 
             synchronized (this.ticketRegistry) {
                 final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                    this.uniqueTicketIdGenerator
+                    this.ticketGrantingTicketUniqueTicketIdGenerator
                         .getNewTicketId(TicketGrantingTicket.PREFIX),
                     authentication, this.ticketGrantingTicketExpirationPolicy);
 
@@ -321,9 +330,9 @@ public final class CentralAuthenticationServiceImpl implements
      * 
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to use
      */
-    public void setUniqueTicketIdGenerator(
+    public void setTicketGrantingTicketUniqueTicketIdGenerator(
         final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
-        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
+        this.ticketGrantingTicketUniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 
     /**
@@ -343,12 +352,19 @@ public final class CentralAuthenticationServiceImpl implements
             + name);
         Assert.notNull(this.authenticationManager,
             "authenticationManager cannot be null on " + name);
-        Assert.notNull(this.uniqueTicketIdGenerator,
-            "uniqueTicketIdGenerator cannot be null on " + name);
+        Assert.notNull(this.ticketGrantingTicketUniqueTicketIdGenerator,
+            "ticketGrantingTicketUniqueTicketIdGenerator cannot be null on " + name);
+        Assert.notNull(this.serviceTicketUniqueTicketIdGenerator,
+            "serviceTicketUniqueTicketIdGenerator cannot be null on " + name);
         Assert.notNull(this.ticketGrantingTicketExpirationPolicy,
             "ticketGrantingTicketExpirationPolicy cannot be null on " + name);
         Assert.notNull(this.serviceTicketExpirationPolicy,
             "serviceTicketExpirationPolicy cannot be null on " + name);
+    }
+
+    public void setServiceTicketUniqueTicketIdGenerator(
+        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator) {
+        this.serviceTicketUniqueTicketIdGenerator = serviceTicketUniqueTicketIdGenerator;
     }
 
 }
