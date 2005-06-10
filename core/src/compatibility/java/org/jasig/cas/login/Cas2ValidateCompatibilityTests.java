@@ -16,6 +16,8 @@ import java.net.URLEncoder;
  */
 public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
+	public final String PROXY_RECEPTOR_URL_PROPERTY = "pgtreceptor.url";
+	
     public Cas2ValidateCompatibilityTests() throws IOException {
         super();
     }
@@ -32,6 +34,10 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
      * @return
      */
     protected abstract String getValidationPath();
+    
+    protected final String getProxyCallbackUrl() {
+    	return getProperties().getProperty(PROXY_RECEPTOR_URL_PROPERTY);
+    }
     
     public void testNoParameters() {
         beginAt(getValidationPath());
@@ -139,7 +145,8 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
         
         beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket);
         
-        assertTextPresent("cas:authenticationSuccess");
+        assertTextPresent("<cas:authenticationSuccess>");
+        assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");
     }
     
     /**
@@ -188,6 +195,68 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
         assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");
         // TODO: assert more about the response
         
+    }
+    
+    /**
+     * Test best-effort ticket validation when a specified proxy callback handler
+     * doesn't really exist.
+     * @throws IOException
+     */
+    public void testBrokenProxyCallbackUrl() throws IOException {
+    	
+        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        String encodedService = URLEncoder.encode(service, "UTF-8");
+        beginAt("/login?service=" + encodedService);
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        // read the service ticket
+        
+        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // great, now we have a ticket
+        
+        // let's validate it, specifying a bogus pgt callback
+        
+        String encodedProxyCallbackUrl = URLEncoder.encode("https://secure.its.yale.edu/cas/noexist", "UTF-8");
+        
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket + "&pgtUrl=" + encodedProxyCallbackUrl);
+        
+        assertTextPresent("<cas:authenticationSuccess>");
+        assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");
+        
+        // no pgtiou because failure in sending pgt to specified receptor URL.
+        assertTextNotPresent("<cas:pgtiou>");
+    	
+    }
+    
+    public void testPgtAcquisition() throws IOException {
+    	
+        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        String encodedService = URLEncoder.encode(service, "UTF-8");
+        beginAt("/login?service=" + encodedService);
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        // read the service ticket
+        
+        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // great, now we have a ticket
+        
+        // let's validate it, specifying a bogus pgt callback
+        
+        String encodedProxyCallbackUrl = URLEncoder.encode(getProxyCallbackUrl(), "UTF-8");
+        
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket + "&pgtUrl=" + encodedProxyCallbackUrl);
+        
+        assertTextPresent("<cas:authenticationSuccess>");
+        assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");
+        // pgtiou because success in sending pgt
+        assertTextPresent("<cas:proxyGrantingTicket>");
+    	
     }
     
 }
