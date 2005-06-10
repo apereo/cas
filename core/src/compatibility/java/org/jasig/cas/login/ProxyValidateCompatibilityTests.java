@@ -17,7 +17,7 @@ import java.io.IOException;
  * @since 3.0
  */
 public class ProxyValidateCompatibilityTests 
-	extends Cas2ValidateCompatibilityTests {
+	extends AbstractCas2ValidateCompatibilityTests {
 
 	/**
 	 * @throws IOException

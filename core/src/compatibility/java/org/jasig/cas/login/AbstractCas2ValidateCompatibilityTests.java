@@ -14,15 +14,15 @@ import java.net.URLEncoder;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibilityTests {
+public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
 	public final String PROXY_RECEPTOR_URL_PROPERTY = "pgtreceptor.url";
 	
-    public Cas2ValidateCompatibilityTests() throws IOException {
+    public AbstractCas2ValidateCompatibilityTests() throws IOException {
         super();
     }
 
-    public Cas2ValidateCompatibilityTests(String name) throws IOException {
+    public AbstractCas2ValidateCompatibilityTests(String name) throws IOException {
         super(name);
     }
     
