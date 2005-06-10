@@ -42,13 +42,12 @@ Customization
 -------------
 
 After you've gotten CAS working, one of the first things you will want 
-to do is create your own theme.  A theme is a set of pages that make up 
-your public CAS view.
+to do is create your own skin.
 
-There are two themes included with CAS.  One is called "default" and the 
+There are two skins included with CAS.  One is called "default" and the 
 other is called "simple".  "simple" is meant to be used as a template for
-building your own theme.  If you look in webapp/WEB-INF/view/jsp/simple/ui, 
-you will see that a theme is made up of the following files:
+building your own skin.  If you look in webapp/WEB-INF/view/jsp/simple/ui, 
+you will see that a skin is made up of the following files:
 
 casConfirmView.jsp      displayed when the user is warned before being
                         redirected to the service
@@ -62,43 +61,29 @@ serviceErrorView.jsp    used in conjunction with the service registry feature,
                         feature is not enabled by default, in which case
                         all services are able to use CAS.
 
-Steps for creating a custom theme
----------------------------------
+Steps for creating a custom skin
+--------------------------------
 
-1. recursively copy the contents of webapp/WEB-INF/view/jsp/simple into
-   webapp/WEB-INF/view/jsp/myTheme (name this what you want, but I will
-   refer to this directory as "myTheme" for the rest of these instructions).
+1. copy the contents of webapp/WEB-INF/view/jsp/simple/ui into
+   webapp/WEB-INF/view/jsp/default/ui (backup this directory first if
+   you want to save the default pages that come with CAS).
 
-2. edit each of the pages in myTheme to appear as you want them.  Take
-   care when you're editing these pages not to change any of the forms or
-   logic tags unless you're sure you know what you're doing.  If you need
-   to include a css file, put it in webapp/themes/myTheme/cas.css and 
-   reference it with the following link tag:
+2. edit each of the pages to appear as you want them.  Take care when 
+   you're editing these pages not to change any of the forms or logic tags
+   unless you're sure you know what you're doing.  If you need to include 
+   a css file, put it in webapp/themes/default/cas.css and reference it 
+   with the following link tag:
 
    <link rel="stylesheet" href="<spring:theme code="css" />" type="text/css" 
     media="all" />
 
-   The <spring:theme code="css" /> will be replaced with the appropriate URL
-   to that directory.
-
-3. configure CAS to use your new theme by editing 
-   webapp/WEB-INF/cas-servlet.xml.  You will want to change the property 
-   value of "defaultThemeName" to "myTheme" (or whatever you named your 
-   theme):
-
-        <!-- Theme Resolver -->
-        <bean
-                id="themeResolver"
-                class="org.jasig.cas.services.web.ServiceThemeResolver">
-                <property
-                        name="defaultThemeName"
-                        value="default" />  <!-- CHANGE THIS TO "myTheme" -->
-        </bean>
+   The "<spring:theme code="css" />" will be replaced with the appropriate 
+   URL to that directory.
 
 Custom Plugins & Building
 -------------------------
 
-4. The remaining steps for building CAS can be found in 
+3. The remaining steps for building CAS can be found in 
    localPlugins/README.txt.  Please view this file to finish your 
    CAS installation.
 
