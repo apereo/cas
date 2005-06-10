@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import net.sourceforge.jwebunit.HttpUnitDialog;
+
 import org.jasig.cas.web.support.WebConstants;
 
 /**
@@ -45,6 +47,11 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertTextPresent("cnn.com");
     }
     
+    /**
+     * Test that setting gateway explicitly to "false" behaves as if gateway
+     * were set to true, since the spec for gateway is present / not-present.
+     * @throws UnsupportedEncodingException
+     */
     public void testGatewayFalseEqualsGatewayTrueWithServiceWithNoTgt() throws UnsupportedEncodingException {
         final String GATEWAY = "false";
         final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
@@ -64,6 +71,15 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertFormNotPresent(FORM_USERNAME);
     }
     
+    /**
+     * Test for recommended behavior in case where no service is specified and
+     * gateway is set.  Recommended behavior is that CAS behave as if neither
+     * service nor gateway had been set (provide opportunity to establish
+     * SSO session).
+     * 
+     * CAS server instances failing this test may not be non-compliant -
+     * not following the recommended behavior can cause this test case to fail.
+     */
     public void testGatewayWithNoService() {
         final String GATEWAY = "notNull";
         final String URL = "/login?gateway=" + GATEWAY;
@@ -72,19 +88,36 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertFormElementPresent(WebConstants.LOGIN_TOKEN);
     }
     
-    public void testGatewayWithServiceWithTgt() {
+    /**
+     * Test that visiting login with gateway=true yields a valid service ticket
+     * without painting the login screen.
+     * @throws IOException
+     */
+    public void testGatewayWithServiceWithTgt() throws IOException {
     	final String GATEWAY = "notNull";
-    	final String SERVICE = "http://www.yale.edu";
-        final String URLNOGW = "/login?service=" + SERVICE;
-        final String URLGW = "/login?service=" + SERVICE + "&gateway=" + GATEWAY;
+    	final String service = "http://www.yale.edu";
+    	final String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String URLNOGW = "/login?service=" + encodedService;
+        final String URLGW = "/login?service=" + encodedService + "&gateway=" + GATEWAY;
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
         assertCookiePresent(WebConstants.COOKIE_TGC_ID);
         beginAt(URLGW);
-        assertTextPresent(SERVICE);
-        assertTextPresent("ticket=ST-");
-        assertFormNotPresent();
+        
+        // extract the service ticket
+        String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // be sure it's valid
+
+        
+        beginAt("/validate?ticket=" + st + "&service=" + encodedService);
+        HttpUnitDialog htDialog = getDialog();
+        String validateOutput = htDialog.getResponseText();
+        
+        String expected = "yes\n" + getUsername() + "\n";
+        
+        assertEquals(expected, validateOutput);
     }
     
     /**
@@ -117,6 +150,35 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertFormElementPresent(FORM_USERNAME);
         assertFormElementPresent(FORM_PASSWORD);
         assertFormElementPresent(WebConstants.LOGIN_TOKEN);
-        assertTextPresent("LT-");
+    }
+    
+    /**
+     * Test that the renew parameter on /login overrides the gateway parameter,
+     * as recommended in the CAS 2 spec S 2.1.1.
+     * 
+     * A CAS server instance failing this test may not be incompatible, only
+     * failing to follow a recommendation.
+     * @throws UnsupportedEncodingException
+     */
+    public void testRenewOverridesGateway() throws UnsupportedEncodingException {
+    	// first, establish SSO
+    	final String service = "http://www.yale.edu";
+    	final String encodedService = URLEncoder.encode(service, "UTF-8");
+        
+        
+        
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
+        submit();
+        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        
+        // then, hit login with a service, renew, and gateway
+        final String renewAndGatewayUrl = "/login?service=" + encodedService + "&renew=true&gateway=true";
+        beginAt(renewAndGatewayUrl);
+        
+        // test that we're at the login screen (no ST was issued).
+        assertFormPresent();
+        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+    	
     }
 }
