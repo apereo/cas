@@ -26,6 +26,14 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
         super(name);
     }
     
+    /**
+     * Test that the logout UI follows the recommended behavior of painting
+     * a link to the URL specified by an application redirecting for logout.
+     * 
+     * CAS servers failing this test are not necessarily CAS2 non-compliant, as
+     * support for this behavior is recommended but not required.
+     * @throws UnsupportedEncodingException
+     */
     public void testUrlParameter() throws UnsupportedEncodingException {
         final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
         beginAt("/logout?url=" + URLEncoder.encode(service, "UTF-8"));
@@ -38,4 +46,5 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
 
         assertTextPresent("logged out");
     }
+
 }
