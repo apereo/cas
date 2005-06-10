@@ -12,11 +12,38 @@ and you can subscribe to the CAS mailing list by visiting:
 
 http://tp.its.yale.edu/mailman/listinfo/cas
 
+Quick Demo
+----------
+
+The following steps will deploy the included demo of CAS.  Start here if
+you're new to CAS and want to see it in action.  These steps assume
+you will be using Tomcat as your servlet container.
+
+1. copy target/cas.war to Tomcat's webapps/ directory
+
+2. start Tomcat
+
+3. access the CAS login page by opening up a web browser and visiting:
+
+   http://hostname:8080/cas/login (see note below)
+
+   You should see the CAS login page asking you for your username and
+   password.  The default authentication plugin accepts NetID=password.
+   Enter in an identical value for NetID and password and click LOGIN.
+   If everything is set up correctly, you should see a page stating that
+   you've successfully logged into CAS.  Congratulations!
+
+   Note: this URL assumes that port 8080 is not blocked by a firewall,
+   and Tomcat is configured to listen on that port (it is by default).
+   Since we are only testing CAS, this configuration uses http for transport 
+   rather than https -- this is not something you would do in production.
+
 Customization
 -------------
 
-The first thing you will need to do is create your own theme.  A theme is a
-set of pages that make up your public CAS view.
+After you've gotten CAS working, one of the first things you will want 
+to do is create your own theme.  A theme is a set of pages that make up 
+your public CAS view.
 
 There are two themes included with CAS.  One is called "default" and the 
 other is called "simple".  "simple" is meant to be used as a template for
