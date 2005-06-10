@@ -142,6 +142,38 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertFormElementPresent(WebConstants.LOGIN_TOKEN);
     }
     
+    /**
+     * Test that when the request parameter 'renew' is set at all, 
+     * an existing TGT still causes CAS to render the login UI.
+     * @throws UnsupportedEncodingException
+     */
+    public void testExistingTgtRenewEqualsNonNull() throws UnsupportedEncodingException {
+    	final String service = "http://www.yale.edu";
+    	final String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String nonNullRenewUrl = "/login?service=" + encodedService + "&renew=nonnull";
+        
+        
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
+        submit();
+        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        beginAt(nonNullRenewUrl);
+        
+        // test that we're at the login screen (no ST was issued).
+        assertFormPresent();
+        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        
+        // test what when renew "is set" but no particular value is given
+        // CAS server behaves as if renew=true
+        final String renewSetUrl = "/login?service=" + encodedService + "&renew";
+        beginAt(renewSetUrl);
+        // test that we're at the login screen (no ST was issued).
+        assertFormPresent();
+        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        
+        
+    }
+    
     public void testTrustHandling() {
         // TODO test trust handling
     }
