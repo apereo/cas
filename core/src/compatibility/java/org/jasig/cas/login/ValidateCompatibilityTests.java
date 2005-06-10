@@ -100,4 +100,39 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         assertEquals(expected, validateOutput);
 
     }
+    
+    /**
+     * Test that validating a ticket for a service other than that declared at
+     * validation (declaring different services at /login and at /validate) 
+     * causes the ticket validation failure response.
+     * @throws IOException
+     */
+    public void testServiceMismatch() throws IOException {
+    	
+    	// log into CAS and obtain a service ticket
+    	
+        final String loginService = "http://www.rutgers.edu";
+        final String validateService = "http://www.yale.edu";
+        
+        beginAt("/login?service=" + URLEncoder.encode(loginService, "UTF-8"));
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        HttpUnitDialog htDialog = getDialog();
+        String response = htDialog.getResponse().getText();
+        
+        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        
+        beginAt("/validate?service=" + URLEncoder.encode(validateService, "UTF-8") + "&ticket=" + serviceTicket);
+        assertTextPresent("no");
+        
+        // here we test that the response was exactly that specified 
+        // in section 2.4.2 of the CAS spec
+        htDialog = getDialog();
+        String validateOutput = htDialog.getResponseText();
+        
+        assertEquals(LEGACY_NO_RESPONSE, validateOutput);
+
+    }
 }
