@@ -55,8 +55,8 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     }
     
     public void testServiceWithSingleSignOn() {
-        setFormElement(FORM_USERNAME, "test");
-        setFormElement(FORM_PASSWORD, "test");
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
         final String URL = "/login";
         submit();
         assertCookiePresent(WebConstants.COOKIE_TGC_ID);
@@ -77,8 +77,8 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     	final String SERVICE = "http://www.yale.edu";
         final String URLNOGW = "/login?service=" + SERVICE;
         final String URLGW = "/login?service=" + SERVICE + "&gateway=" + GATEWAY;
-        setFormElement(FORM_USERNAME, "test");
-        setFormElement(FORM_PASSWORD, "test");
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
         assertCookiePresent(WebConstants.COOKIE_TGC_ID);
         beginAt(URLGW);
