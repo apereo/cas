@@ -88,4 +88,106 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
         // TODO: do more to test that the response is actually XML, etc. etc.
         
     }
+    
+    /**
+     * Test that renew=true, when specified both at login and ticket validation, 
+     * validation succeeds.
+     * @throws IOException
+     */
+    public void testRenew() throws IOException {
+        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        String encodedService = URLEncoder.encode(service, "UTF-8");
+        beginAt("/login?renew=true&service=" + encodedService);
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        // read the service ticket
+        
+        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // great, now we have a ticket
+        
+        // let's validate it
+        
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket);
+        
+        assertTextPresent("cas:authenticationSuccess");
+    }
+    
+    /**
+     * Test that renew=true, when specified only at ticket validation, 
+     * validation succeeds if username, password were presented at login even
+     * though renew wasn't set then.
+     * @throws IOException
+     */
+    public void testAccidentalRenew() throws IOException {
+        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        String encodedService = URLEncoder.encode(service, "UTF-8");
+        beginAt("/login?service=" + encodedService);
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        // read the service ticket
+        
+        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // great, now we have a ticket
+        
+        // let's validate it
+        
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedService + "&" + "ticket=" + serviceTicket);
+        
+        assertTextPresent("cas:authenticationSuccess");
+    }
+    
+    /**
+     * Test that renew at ticket validation blocks validation of a ticket
+     * vended via SSO.
+     * @throws IOException
+     */
+    public void testRenewBlocksSsoValidation() throws IOException {
+    	
+    	// initial authentication
+        final String firstService = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        final String encodedFirstService = URLEncoder.encode(firstService, "UTF-8");
+        beginAt("/login?service=" + encodedFirstService);
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // that established SSO.  Now let's get another ticket via SSO
+        
+        final String secondService= "http://www.uportal.org/";
+        final String encodedSecondService = URLEncoder.encode(secondService, "UTF-8");
+        
+        beginAt("/login?service=" + encodedSecondService);
+        
+        // read the service ticket
+        
+        String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // let's validate the second (non-renew) ticket.
+        
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedSecondService + "&ticket=" + secondServiceTicket);
+        
+        assertTextPresent("cas:authenticationFailure");
+        
+        // TODO: test the authentication failure response in more detail
+        
+        assertTextNotPresent("<cas:user>");
+        
+        // however, we can validate the first ticket with renew=true.
+        
+        beginAt(getValidationPath() + "?renew=true&service=" + encodedFirstService + "&ticket=" + firstServiceTicket);
+        
+        assertTextPresent("cas:authenticationSuccess");
+        assertTextPresent("<cas:user>" + getUsername() + "</cas:user>");
+        // TODO: assert more about the response
+        
+    }
+    
 }
