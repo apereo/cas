@@ -7,7 +7,7 @@
 </c:if>
 <c:if test="${fn:length(assertion.chainedAuthentications) > 1}">
 <cas:proxies>
-<c:forEach var="proxy" items="${assertion.chainedAuthentications}" varStatus="loopStatus" begin="1">
+<c:forEach var="proxy" items="${assertion.chainedAuthentications}" varStatus="loopStatus" begin="${fn:length(assertion.chainedAuthentications)-1}" end="1" step="-1">
 	<cas:proxy>${proxy.principal.id}</cas:proxy>
 </c:forEach>
 </cas:proxies>
