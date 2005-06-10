@@ -87,8 +87,26 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertFormNotPresent();
     }
     
-    public void testExistingTgtRenewEqualsTrue() {
-        //TODO: complete the test for a renew=true and existing TGT
+    /**
+     * Test that when renew=true, an existing TGT still causes CAS to render
+     * the login UI.
+     * @throws UnsupportedEncodingException
+     */
+    public void testExistingTgtRenewEqualsTrue() throws UnsupportedEncodingException {
+    	final String service = "http://www.yale.edu";
+    	final String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String renewUrl = "/login?service=" + encodedService + "&renew=true";
+        
+        
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
+        submit();
+        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        beginAt(renewUrl);
+        
+        // test that we're at the login screen (no ST was issued).
+        assertFormPresent();
+        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
     }
     
     public void testTrustHandling() {
