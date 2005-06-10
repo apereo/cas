@@ -3,6 +3,10 @@
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
 <webflow id="logonFlow" start-state="ticketGrantingTicketCheck">
+	<!-- 
+		The TicketGrantingTicketCheck reads the TGT cookie and looks for the TicketId and attempts to use it to generate a service ticket.
+		It also handles the gateway functions.
+	-->
 	<action-state id="ticketGrantingTicketCheck">
 		<action bean="ticketGrantingTicketCheckAction" />
 		<transition on="success" to="warn" />
@@ -11,32 +15,62 @@
 		<transition on="noService" to="viewGenericLogon" />
 	</action-state>
 
+
+	<!-- 
+		View of the Logon Form which normally displays username/password fields.
+	-->
 	<view-state id="viewLogonForm" view="casLogonView">
 		<transition on="submit" to="bindAndValidate" />
 	</view-state>
-	
+
+	<!-- 
+		This action does the automatic Spring Binding that matches parameters from the request object to properties on
+		the form object.  On error, it goes back to the viewLogonForm.  Otherwise it continues the submission process.
+	-->
 	<action-state id="bindAndValidate">
 		<action bean="loginFormAction" />
 		<transition on="success" to="submit" />
 		<transition on="error" to="viewLogonForm" />
 	</action-state>
-	
+
+	<!-- 
+		The "submit" action is the action that occurs when a user submits a form.  It marshalls the
+		submitted credentials and attempts to obtain to obtain a TicketGrantingTicket (and optionally a ServiceTicket).
+	-->
 	<action-state id="submit">
 		<action bean="loginFormAction" method="submit" />
 		<transition on="noService" to="viewGenericLogon" />
 		<transition on="warn" to="warn" />
 		<transition on="error" to="viewLogonForm" />
 	</action-state>
-	
+
+	<!-- 
+		The "warn" action makes the determination of whether to redirect directly to the requested
+		service or display the "confirmation" page to go back to the server.
+	-->
 	<action-state id="warn">
 		<action bean="warnAction" />
 		<transition on="redirect" to="redirect" />
 		<transition on="warn" to="showWarningView" />
 	</action-state>
-	
+
+	<!-- 
+		the "viewGenericLogon" is the end state for when a user attempts to logon without coming directly from a service.
+		They have only initialized their single-sign on session.
+	-->
 	<end-state id="viewGenericLogon" view="casLogonGenericSuccessView" />
-	
+
+	<!-- 
+		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a 
+		view defines in default_views.properties that display the "Please click here to go to the servce." message.
+	-->
 	<end-state id="showWarningView" view="casLogonConfirmView" />
-	
-	<end-state id="redirect" view="class:org.jasig.cas.web.flow.RedirectViewDescriptorCreator"/>
+
+
+	<!-- 
+		The "redirect" end state allows CAS to properly end the workflow while still redirecting
+		the user back to the service required.
+	-->
+	<end-state id="redirect"
+		view="class:org.jasig.cas.web.flow.RedirectViewDescriptorCreator" />
 </webflow>
