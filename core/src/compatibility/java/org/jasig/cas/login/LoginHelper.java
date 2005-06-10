@@ -18,6 +18,13 @@ import com.meterware.httpunit.WebResponse;
  */
 public class LoginHelper {
 
+	/**
+	 * Extract a serviceTicket from a CAS 1 ticket validation response.
+	 * @param webResponse
+	 * @return a String representing the ticket
+	 * @throws IOException on IO error reading response
+	 * @throws RuntimeException on some parse failures
+	 */
 	public static String serviceTicketFromResponse(WebResponse webResponse) throws IOException {
 		
 		String serviceTicket;
