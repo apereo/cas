@@ -47,7 +47,7 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
     }
     
     public void testBadServiceTicket() throws UnsupportedEncodingException {
-        final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
+        final String service = getServiceUrl();
         beginAt(getValidationPath() + "?service=" + URLEncoder.encode(service, "UTF-8") + "&ticket=test");
         
         assertTextPresent("cas:authenticationFailure");
@@ -61,7 +61,7 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
      * @throws IOException
      */
     public void testProperCredentialsAndServiceTicket() throws IOException {
-        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        final String service = getServiceUrl();
         String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
@@ -101,7 +101,7 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
      * @throws IOException
      */
     public void testRenew() throws IOException {
-        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        final String service = getServiceUrl();
         String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?renew=true&service=" + encodedService);
         setFormElement("username", getUsername());
@@ -128,7 +128,7 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
      * @throws IOException
      */
     public void testAccidentalRenew() throws IOException {
-        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        final String service = getServiceUrl();
         String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
@@ -157,7 +157,7 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
     public void testRenewBlocksSsoValidation() throws IOException {
     	
     	// initial authentication
-        final String firstService = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        final String firstService = getServiceUrl();
         final String encodedFirstService = URLEncoder.encode(firstService, "UTF-8");
         beginAt("/login?service=" + encodedFirstService);
         setFormElement("username", getUsername());
@@ -204,7 +204,7 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
      */
     public void testBrokenProxyCallbackUrl() throws IOException {
     	
-        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        final String service = getServiceUrl();
         String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
@@ -233,7 +233,7 @@ public abstract class Cas2ValidateCompatibilityTests extends AbstractCompatibili
     
     public void testPgtAcquisition() throws IOException {
     	
-        final String service = "https://localhost:18443/compat-test-support/displayTicket.jsp";
+        final String service = getServiceUrl();
         String encodedService = URLEncoder.encode(service, "UTF-8");
         beginAt("/login?service=" + encodedService);
         setFormElement("username", getUsername());
