@@ -1,16 +1,16 @@
-<project name="casLocalPlugins" default="main" basedir=".">
+<project name="casLocalPlugins" default="build" basedir=".">
 	<path id="buildLibs">
 		<fileset dir="lib"/>
 		<fileset dir="../webapp/WEB-INF/lib"/>
 	</path>
-	<target name="main">
+	<target name="build">
 		<mkdir dir="build"/>
 		<mkdir dir="build/META-INF"/>
 		<javac srcdir="src" destdir="build" debug="on">
 			<classpath refid="buildLibs"/>
 		</javac>
 	</target>
-	<target name="jar" depends="main">
+	<target name="jar" depends="build">
 		<mkdir dir="target"/>
 		<jar jarfile="target/localPlugins.jar" basedir="build"/>
 		<echo>
@@ -21,11 +21,18 @@
 **********************************************************</echo>
 	</target>
 	<target name="war" depends="jar">
-		<copy file="target/localPlugins.jar" tofile="../webapp/WEB-INF/lib/localPlugins.jar"/>
-		<copy todir="../webapp/WEB-INF/lib">
+		<mkdir dir="target/webapp"/>
+		<copy todir="target/webapp">
+			<fileset dir="../webapp"/>
+		</copy>
+		<copy todir="target/webapp/WEB-INF/lib">
+			<fileset dir="../lib/war"/>
+		</copy>
+		<copy todir="target/webapp/WEB-INF/lib">
 			<fileset dir="lib" includes="**/*.jar"/>
 		</copy>
-		<jar jarfile="target/cas.war" basedir="../webapp"/>
+		<copy file="target/localPlugins.jar" tofile="target/webapp/WEB-INF/lib/localPlugins.jar"/>
+		<jar jarfile="target/cas.war" basedir="target/webapp"/>
 	</target>
 	<target name="doc">
 		<javadoc sourcepath="src" destdir="docs">
@@ -37,6 +44,5 @@
 		<delete dir="build"/>
 		<delete dir="docs"/>
 		<delete dir="target"/>
-		<delete file="../webapp/WEB-INF/lib/localPlugins.jar"/>
 	</target>
 </project>
