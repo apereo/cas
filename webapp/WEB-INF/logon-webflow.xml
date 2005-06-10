@@ -15,6 +15,10 @@
 		<transition on="noService" to="viewGenericLogon" />
 	</action-state>
 
+	<!--  
+		Note: If you needed to check for an alternate form of credentials such as a Client Certificate, it
+		would be beneficial to do it in between the TGT check and the action to display the login form.
+	 -->
 
 	<!-- 
 		View of the Logon Form which normally displays username/password fields.
