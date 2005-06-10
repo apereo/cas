@@ -31,7 +31,10 @@
 	   Warn me before logging me into other sites.
 	   
 	<!-- The following hidden field must be part of the submitted Form -->   
-	<input type="hidden" name="lt" value="${loginToken}" />
+	<input type="hidden" name="lt" value="${flowExecutionId}" />
+	<input type="hidden" name="_currentStateId" value="${currentStateId}" />
+	<input type="hidden" name="_eventId" value="submit" />
+
 	</p>
 
 	<p>
