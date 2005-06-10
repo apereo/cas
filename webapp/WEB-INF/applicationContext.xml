@@ -20,11 +20,19 @@
 	
 	<!-- ID Generators -->
 	<bean
-		id="uniqueIdGenerator"
+		id="ticketGrantingTicketUniqueIdGenerator"
 		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg
 			index="0"
-			value="31" />
+			value="50" />
+	</bean>
+	
+	<bean
+		id="serviceTicketUniqueIdGenerator"
+		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+		<constructor-arg
+			index="0"
+			value="20" />
 	</bean>
 	
 	<!-- Expiration policies -->
@@ -61,8 +69,11 @@
 			name="authenticationManager"
 			ref="authenticationManager" />
 		<property
-			name="uniqueTicketIdGenerator"
-			ref="uniqueIdGenerator" />
+			name="ticketGrantingTicketUniqueTicketIdGenerator"
+			ref="ticketGrantingTicketUniqueIdGenerator" />
+		<property
+			name="serviceTicketUniqueTicketIdGenerator"
+			ref="serviceTicketUniqueIdGenerator" />
 		<property
 			name="ticketRegistry"
 			ref="ticketRegistry" />

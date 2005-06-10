@@ -50,7 +50,8 @@ public class TicketGrantingTicketCheckActionTests extends TestCase {
         this.centralAuthenticationService.setAuthenticationManager(manager);
         this.centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         this.centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        this.centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        this.centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         this.checkAction.setCentralAuthenticationService(this.centralAuthenticationService);
         this.checkAction.afterPropertiesSet();
     }

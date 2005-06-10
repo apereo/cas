@@ -44,7 +44,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
         this.centralAuthenticationService
             .setTicketRegistry(new DefaultTicketRegistry());
         this.centralAuthenticationService
-            .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
 
@@ -60,6 +60,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
         manager.afterPropertiesSet();
 
         this.centralAuthenticationService.setAuthenticationManager(manager);
+        this.centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         this.centralAuthenticationService.afterPropertiesSet();
     }
 

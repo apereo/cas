@@ -49,7 +49,8 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
         this.centralAuthenticationService
             .setTicketRegistry(new DefaultTicketRegistry());
         this.centralAuthenticationService
-            .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        this.centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
 
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
 

@@ -38,8 +38,8 @@ public abstract class AbstractCentralAuthenticationServiceTest extends TestCase 
         this.centralAuthenticationService
             .setTicketRegistry(this.ticketRegistry);
         this.centralAuthenticationService
-            .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-
+            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        this.centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
         AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
 
