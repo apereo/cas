@@ -4,6 +4,9 @@ Custom Plugins for CAS 3.0
 This directory is provided for you to create your own CAS plugins.
 Follow the steps below to compile and install these plugins.
 
+0. be sure you have Apache Ant installed (http://ant.apache.org) as well
+   as JDK 1.4.2 or better (http://java.sun.com)
+
 1. write your plugins, placing the source under src/ and any external
    dependencies that aren't already part of CAS 3.0 under lib/
 
