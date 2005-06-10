@@ -28,6 +28,9 @@ Follow the steps below to compile and install these plugins.
    then packages them into target/cas.war.  This war is configured
    with your new plugins and is ready to deploy.
 
+5. deploy this war in your servlet container, following your servlet 
+   container's instructions
+
 Additional Ant build targets:
 
    % ant
