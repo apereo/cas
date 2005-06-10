@@ -86,8 +86,8 @@ public class TicketGrantingTicketImplTests extends TestCase {
         Authentication authentication = new MockAuthentication(principal);
         Authentication authentication1 = new MockAuthentication(principal1);
         List principals = new ArrayList();
-        principals.add(authentication1);
         principals.add(authentication);
+        principals.add(authentication1);
 
         TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
             authentication1, new NeverExpiresExpirationPolicy());
