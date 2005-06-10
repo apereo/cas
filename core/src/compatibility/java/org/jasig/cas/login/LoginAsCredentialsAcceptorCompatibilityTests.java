@@ -30,8 +30,8 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
     }
     
     public void testSingleSignOn() {
-        setFormElement(FORM_USERNAME, "test");
-        setFormElement(FORM_PASSWORD, "test");
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
         assertCookiePresent(WebConstants.COOKIE_TGC_ID);
         assertFormNotPresent();
@@ -40,8 +40,8 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
     public void testValidCredentialsAuthenticationWithWarn() throws UnsupportedEncodingException {
         final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
         beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
-        setFormElement(FORM_USERNAME, "test");
-        setFormElement(FORM_PASSWORD, "test");
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
         getDialog().getForm().setCheckbox("warn", true);
         submit();
 //        checkCheckbox("warn");
@@ -53,8 +53,8 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
     public void testValidCredentialsAuthenticationWithoutWarn() throws UnsupportedEncodingException {
     	final String service = "http://www.cnn.com";
         beginAt("/login?service=" + URLEncoder.encode(service, "UTF-8"));
-        setFormElement(FORM_USERNAME, "test");
-        setFormElement(FORM_PASSWORD, "test");
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
         // TODO testValidCredentialsAuthenticationWithoutWarn
     }
@@ -86,8 +86,8 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
      */
     
     public void testPassBadCredentials() {
-        setFormElement(FORM_USERNAME, "test");
-        setFormElement(FORM_PASSWORD, "duh");
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getBadPassword());
         submit();
         assertFormElementPresent(FORM_USERNAME);
     }

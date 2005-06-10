@@ -13,6 +13,12 @@ import net.sourceforge.jwebunit.WebTestCase;
 
 public abstract class AbstractCompatibilityTests extends WebTestCase {
 
+	/**
+	 * The name of our properties configuration while, which we expect on the
+	 * classpath.
+	 */
+	public static final String PROPERTIES_FILE_NAME = "configuration.properties";
+	
     final private Properties properties = new Properties();
     
     protected AbstractCompatibilityTests() throws IOException {
@@ -26,7 +32,16 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
     }
     
     private final void setUpTest() throws IOException {
-        this.properties.load(ClassLoader.getSystemResourceAsStream("urls.properties"));
+        this.properties.load(ClassLoader.getSystemResourceAsStream(PROPERTIES_FILE_NAME));
         getTestContext().setBaseUrl(this.properties.getProperty("server.url"));
+    }
+    
+    /**
+     * Get the Properties parsed at instantiation from the compatibility
+     * tests configuration file.
+     * @return Properties from our configuration file.
+     */
+    protected final Properties getProperties() {
+    	return this.properties;
     }
 }
