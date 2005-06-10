@@ -46,6 +46,13 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
      */
     public static final String BAD_PASSWORD_PROPERTY = "credentials.badPassword";
     
+    
+    /**
+     * The name of the compatibility test configuration property the value of
+     * which will be a URL to a service we can use for testing.
+     */
+    public static final String SERVICE_URL_PROPERTY = "service.url";
+    
     protected AbstractCompatibilityTests() throws IOException {
         super();
         setUpTest();
@@ -93,5 +100,14 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
      */
     protected final String getBadPassword() {
     	return getProperties().getProperty(BAD_PASSWORD_PROPERTY);
+    }
+    
+    /**
+     * Get the configured URL we are to use as an example service for which
+     * we acquire service tickets.
+     * @return example service URL
+     */
+    protected final String getServiceUrl() {
+    	return getProperties().getProperty(SERVICE_URL_PROPERTY);
     }
 }
