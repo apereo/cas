@@ -322,7 +322,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
     	 final String service = getServiceUrl();
          String encodedService = URLEncoder.encode(service, "UTF-8");
          
-         beginAt("/login?service=" + encodedService + "renew=true");
+         beginAt("/login?service=" + encodedService + "&renew=true");
          setFormElement("username", getUsername());
          setFormElement("password", getGoodPassword());
          submit();
