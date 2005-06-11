@@ -159,6 +159,7 @@ public final class CentralAuthenticationServiceImpl implements
 
             // TODO we need a better way of handling this
             if (credentials != null) {
+                log.debug("We received a renew=true request, so setting fromNewLogin to true");
                 serviceTicket.setFromNewLogin(true);
             }
 
