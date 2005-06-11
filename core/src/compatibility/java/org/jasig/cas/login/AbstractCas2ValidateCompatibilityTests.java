@@ -16,7 +16,15 @@ import java.net.URLEncoder;
  */
 public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
-	public final String PROXY_RECEPTOR_URL_PROPERTY = "pgtreceptor.url";
+	/**
+	 * The name of the compatibility test configuration property the value of which
+	 * will be the URL of a proxy ticket receptor to which the CAS server under test
+	 * can send proxy granting tickets.  E.g., an instance of the Java CAS Client
+	 * ProxyTicketReceptor servlet deployed behind SSL with an SSL cert trusted by the
+	 * CAS server under test.  We use this to test specifying a proxy callback URL
+	 * and thereby obtaining a pgtiou.
+	 */
+	public static final String PROXY_RECEPTOR_URL_PROPERTY = "pgtreceptor.url";
 	
     public AbstractCas2ValidateCompatibilityTests() throws IOException {
         super();
