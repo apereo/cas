@@ -122,6 +122,52 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
     }
     
     /**
+     * Test a couple renew=true logins...
+     * @throws IOException
+     */
+    public void testMultipleRenew() throws IOException {
+        final String service = getServiceUrl();
+        String encodedService = URLEncoder.encode(service, "UTF-8");
+        
+        beginAt("/login?renew=true&service=" + encodedService);
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        // read the service ticket
+        
+        String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // great, now we have a ticket
+        
+        // let's validate it
+        
+        beginAt(getValidationPath() + "?service=" + encodedService + "&" + "ticket=" + serviceTicket + "&renew=true");
+        
+        assertTextPresent("cas:authenticationSuccess");
+        
+        // now let's do it again
+        
+        beginAt("/login?renew=true&service=" + encodedService);
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+        
+        // read the service ticket
+        
+        serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // great, now we have a ticket
+        
+        // let's validate it
+        
+        beginAt(getValidationPath() + "?service=" + encodedService + "&" + "ticket=" + serviceTicket + "&renew=true");
+        
+        assertTextPresent("cas:authenticationSuccess");
+        
+    }
+    
+    /**
      * Test that renew=true, when specified only at ticket validation, 
      * validation succeeds if username, password were presented at login even
      * though renew wasn't set then.
