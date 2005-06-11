@@ -87,7 +87,7 @@ public final class LoginFormAction extends FormAction {
             .getHttpServletRequest(context);
         final HttpServletResponse response = ContextUtils
             .getHttpServletResponse(context);
-		final boolean renew = request.getParameter(WebConstants.RENEW) != null;
+        final boolean renew = request.getParameter(WebConstants.RENEW) != null;
         final boolean warn = StringUtils.hasText(request
             .getParameter(WebConstants.WARN));
 
@@ -134,9 +134,11 @@ public final class LoginFormAction extends FormAction {
             }
 
             if (StringUtils.hasText(service)) {
-                serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId,
-                        new SimpleService(service));
+                if (serviceTicketId == null) {
+                    serviceTicketId = this.centralAuthenticationService
+                        .grantServiceTicket(ticketGrantingTicketId,
+                            new SimpleService(service));
+                }
 
                 ContextUtils.addAttributeToFlowScope(context,
                     WebConstants.TICKET, serviceTicketId);
