@@ -163,7 +163,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
         
         beginAt(getValidationPath() + "?service=" + encodedService + "&" + "ticket=" + serviceTicket + "&renew=true");
         
-        assertTextPresent("cas:authenticationSuccess");
+        assertTextPresent("<cas:authenticationSuccess>");
         
     }
     
