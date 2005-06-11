@@ -106,6 +106,8 @@ public final class LoginFormAction extends FormAction {
                     .grantServiceTicket(ticketGrantingTicketId,
                         new SimpleService(service), credentials);
             } catch (TicketException e) {
+                this.centralAuthenticationService
+                    .destroyTicketGrantingTicket(ticketGrantingTicketId);
                 log
                     .debug(
                         "Attempted to generate a ServiceTicket using renew=true with different credentials",
