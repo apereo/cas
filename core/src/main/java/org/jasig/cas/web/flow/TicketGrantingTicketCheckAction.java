@@ -76,7 +76,7 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
          * if we have gateway selected but no service, then just show show the
          * logon form.
          */
-        if (gateway && !StringUtils.hasText(service)) {
+        if (ticketGrantingTicketId == null && gateway && !StringUtils.hasText(service)) {
             return new ModelAndEvent(error());
         }
 
