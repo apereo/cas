@@ -36,6 +36,8 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         submit();
         assertCookiePresent(WebConstants.COOKIE_TGC_ID);
         assertFormNotPresent();
+        
+        // TODO test logging in to another service
     }
     
     public void testValidCredentialsAuthenticationWithWarn() throws IOException {
@@ -106,6 +108,54 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
     	beginAt("/login");
         submit();
         assertFormElementPresent(FORM_USERNAME);
+    }
+    
+    /**
+     * Test that logging in as someone else destroys the TGT and outstanding 
+     * service tickets for the previously authenticated user.
+     * @throws IOException
+     */
+    public void testLoginAsSomeoneElse() throws IOException {
+    	String encodedService = URLEncoder.encode(getServiceUrl(), "UTF-8");
+    	
+    	// establish SSO session as the first user
+    	
+    	beginAt("/login?service=" + encodedService);
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
+        submit();
+        
+        // get the service ticket
+        
+        String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // now login via renew as someone else
+        
+        
+        beginAt("/login?renew=true&service=" + encodedService);
+        setFormElement(FORM_USERNAME, getAlternateUsername());
+        setFormElement(FORM_PASSWORD, getAlternatePassword());
+        submit();
+        
+        // get the service ticket
+        
+        String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // validate the second service ticket
+        
+        beginAt("/serviceValidate?ticket=" + secondServiceTicket + "&service=" + encodedService);
+        
+        assertTextPresent("<cas:user>" + getAlternateUsername() + "</cas:user>");
+        
+        
+        // okay, now attempt to validate the original service ticket
+        // and see that it has been invalidated
+        
+        beginAt("/serviceValidate?ticket=" + firstServiceTicket + "&service=" + encodedService);
+        
+        System.out.println(getDialog().getResponseText());
+        assertTextPresent("<cas:authenticationFailure");
+        
     }
 
 }
