@@ -30,6 +30,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
     }
     
     public void testSingleSignOn() {
+    	beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
@@ -94,6 +95,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
      */
     
     public void testPassBadCredentials() {
+    	beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getBadPassword());
         submit();
@@ -101,6 +103,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
     }
     
     public void testPassEmptyCredentials() {
+    	beginAt("/login");
         submit();
         assertFormElementPresent(FORM_USERNAME);
     }
