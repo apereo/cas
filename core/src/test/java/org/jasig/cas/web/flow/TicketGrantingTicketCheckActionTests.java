@@ -56,6 +56,17 @@ public class TicketGrantingTicketCheckActionTests extends TestCase {
         this.checkAction.afterPropertiesSet();
     }
     
+    public void testGatewayNoService() throws Exception {
+        MockRequestContext context = new MockRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ServletEvent event = new ServletEvent(request, response);
+        context.setSourceEvent(event);
+        request.addParameter(WebConstants.GATEWAY, "test");
+        
+        assertEquals("error", this.checkAction.doExecute(context).getId());
+    }
+    
     public void testCheckNoTicketGrantingTicketCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
