@@ -1,0 +1,62 @@
+The Safari Redirect Bug
+-----------------------
+
+In December 2003, we noticed that Internet Explorer and Safari were having
+issues with service redirection.  The explanation below is copied from
+the HISTORY file of the Yale CAS 2.0 distribution.
+
+   We've recently noticed several security issues with CAS's interaction 
+   with certain web browsers, specifically Internet Explorer in Windows 
+   and Safari in OS X.  First I'll explain the Internet Explorer behavior.
+
+   After a user logs into CAS, he is redirected to the service.  Once he
+   logs out, if he doesn't close his browser, he is able to click back a 
+   few times until Internet Explorer offers to repost his form data 
+   (i.e. login credentials).  Clicking Refresh will resubmit the credentials 
+   and the user will be logged in again.  This isn't so much an issue on 
+   users' personal machines as it is on public kiosks.  If the user walks
+   away without closing the browser, the next kiosk user can go back 
+   through the browser's history and log in to CAS by reposting that
+   form data.
+
+   Safari exhibits a similar behavior, only a lot more insecurely.  When
+   the user sees the dialog box that offers to repost the credentials, if 
+   he clicks yes, Safari will repost the login credentials to the web
+   application -- not to CAS.
+
+   We have fixed both of these bugs in our CAS distribution which we will
+   officially release in January.  The fixes are as follows:
+
+   * The Javascript redirect page (goService.jsp) was modified to use an 
+     HTTP Refresh instead.  This fixed the Internet Explorer issue.
+   * Upon detecting that the remote browser is Safari, the automatic refresh
+     is disabled on initial login.  Safari users will see a page that states 
+     they have been logged in successfully and they are asked click a link 
+     to access the requested service.  This appears to be the only way to 
+     keep Safari from incorrectly posting the credentials to the web 
+     application.  Even after this fix, though, Safari still exhibited the 
+     same behavior Internet Explorer did from the start -- it still offered
+     to repost the login credentials.
+   * To fix this new Safari bug, a transaction ID was added to each login.
+     The login page now includes a one-time-use transaction ID as one of its
+     post parameters.  If the transaction ID has already been used, it cannot
+     be used for another login.
+
+   - Drew Mazurek
+     ITS Technology & Planning
+
+This bug was fixed by Apple in the Safari 1.2.4 release in November 2004.
+We have decided to remove this fix from the CAS 3.0 distribution at least
+until we can receive more feedback from the CAS community regarding the
+issue.  If you are running a version of Safari older than 1.2.4, or are
+supporting users who run these earlier versions of Safari, please let us
+know by contacting the CAS developers mailing list at
+cas-dev@tp.its.yale.edu.
+
+Thank you, and we apologize if this causes you any inconvenience.
+
+- The JA-SIG CAS Team
+--------------------------
+Author: Drew Mazurek
+Version: $Revision$ $Date$
+Since: 3.0
