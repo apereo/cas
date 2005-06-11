@@ -62,7 +62,8 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     }
     
     public void testServiceWithSingleSignOn() {
-        setFormElement(FORM_USERNAME, getUsername());
+        beginAt("/login");
+    	setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         final String URL = "/login";
         submit();
@@ -99,17 +100,20 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     	final String encodedService = URLEncoder.encode(service, "UTF-8");
         final String URLNOGW = "/login?service=" + encodedService;
         final String URLGW = "/login?service=" + encodedService + "&gateway=" + GATEWAY;
+        
+        beginAt(URLNOGW);
+        
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
-        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        
         beginAt(URLGW);
         
         // extract the service ticket
         String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
         
         // be sure it's valid
-
+        assertNotNull(st);
         
         beginAt("/validate?ticket=" + st + "&service=" + encodedService);
         HttpUnitDialog htDialog = getDialog();
@@ -118,6 +122,42 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         String expected = "yes\n" + getUsername() + "\n";
         
         assertEquals(expected, validateOutput);
+        
+    }
+    
+    /**
+     * Test that /login?gateway=&service=whatever is the same as /login?gateway=true&service=whatever
+     * @throws IOException
+     */
+    public void testGatewayEqualsBlankWithServiceWithTgt() throws IOException {
+    	final String service = "http://www.yale.edu";
+    	final String encodedService = URLEncoder.encode(service, "UTF-8");
+        final String establishSsoUrl = "/login?service=" + encodedService;
+        
+        beginAt(establishSsoUrl);
+        
+        setFormElement(FORM_USERNAME, getUsername());
+        setFormElement(FORM_PASSWORD, getGoodPassword());
+        submit();
+        
+        final String gatewayUrl = "/login?service=" + encodedService + "&gateway=";
+        beginAt(gatewayUrl);
+        
+        // extract the service ticket
+        String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        
+        // be sure it's valid
+        assertNotNull(st);
+        
+        
+        beginAt("/validate?ticket=" + st + "&service=" + encodedService);
+        HttpUnitDialog htDialog = getDialog();
+        String validateOutput = htDialog.getResponseText();
+        
+        String expected = "yes\n" + getUsername() + "\n";
+        
+        assertEquals(expected, validateOutput);
+        
     }
     
     /**
@@ -130,7 +170,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     	final String encodedService = URLEncoder.encode(service, "UTF-8");
         final String renewUrl = "/login?service=" + encodedService + "&renew=true";
         
-        
+        beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
@@ -148,11 +188,11 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * @throws UnsupportedEncodingException
      */
     public void testExistingTgtRenewEqualsNonNull() throws UnsupportedEncodingException {
-    	final String service = "http://www.yale.edu";
+    	final String service = getServiceUrl();
     	final String encodedService = URLEncoder.encode(service, "UTF-8");
         final String nonNullRenewUrl = "/login?service=" + encodedService + "&renew=nonnull";
         
-        
+        beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
@@ -179,6 +219,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     }
     
     public void testInitialFormParameters() {
+    	beginAt("/login");
         assertFormElementPresent(FORM_USERNAME);
         assertFormElementPresent(FORM_PASSWORD);
         assertFormElementPresent(WebConstants.LOGIN_TOKEN);
@@ -197,6 +238,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     	final String service = "http://www.yale.edu";
     	final String encodedService = URLEncoder.encode(service, "UTF-8");
         
+    	beginAt("/login");
         
         
         setFormElement(FORM_USERNAME, getUsername());
