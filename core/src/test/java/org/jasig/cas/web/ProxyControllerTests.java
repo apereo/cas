@@ -23,7 +23,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTest {
+public class ProxyControllerTests extends
+    AbstractCentralAuthenticationServiceTest {
 
     private ProxyController proxyController;
 
@@ -33,7 +34,8 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         this.t = new DefaultTicketRegistry();
 
         this.proxyController = new ProxyController();
-        this.proxyController.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.proxyController
+            .setCentralAuthenticationService(getCentralAuthenticationService());
         this.centralAuthenticationService.setTicketRegistry(this.t);
         this.proxyController.afterPropertiesSet();
 
@@ -41,6 +43,13 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         context.refresh();
         ((ApplicationContextAware) this.proxyController)
             .setApplicationContext(context);
+    }
+
+    public void testNoParams() throws Exception {
+        assertEquals("INVALID_REQUEST", this.proxyController
+            .handleRequestInternal(new MockHttpServletRequest(),
+                new MockHttpServletResponse()).getModel()
+            .get(WebConstants.CODE));
     }
 
     public void testNonExistantPGT() throws Exception {
