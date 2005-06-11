@@ -305,4 +305,41 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
     	
     }
     
+    /**
+     * Test for JIRA issue CAS-224.
+     * 1. /cas/login?service=foo&renew=true
+     * 2. log in
+     * 3. /serviceValidate?ticket=[ticket]&service=foo&renew=true 
+     * 
+     * Issue was that validation fails whereas it should succeed.
+     * 
+     * This testcase is almost certainly redundant, but it's explicitly here
+     * to cover this issue.
+     * @throws IOException
+     */
+    public void test224() throws IOException {
+    	
+    	 final String service = getServiceUrl();
+         String encodedService = URLEncoder.encode(service, "UTF-8");
+         
+         beginAt("/login?service=" + encodedService + "renew=true");
+         setFormElement("username", getUsername());
+         setFormElement("password", getGoodPassword());
+         submit();
+         
+         // read the service ticket
+         
+         String serviceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+         
+         // great, now we have a ticket
+         
+         // let's validate it
+         assertNotNull(serviceTicket);
+         
+         beginAt(getValidationPath() + "?ticket=" + serviceTicket + "&service=" + encodedService + "&renew=true");
+         
+         assertTextPresent("cas:authenticationSuccess");
+         
+    }
+    
 }
