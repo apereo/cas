@@ -87,8 +87,7 @@ public final class LoginFormAction extends FormAction {
             .getHttpServletRequest(context);
         final HttpServletResponse response = ContextUtils
             .getHttpServletResponse(context);
-		final boolean renew = StringUtils.hasText(request
-	            .getParameter(WebConstants.RENEW));
+		final boolean renew = request.getParameter(WebConstants.RENEW) != null;
         final boolean warn = StringUtils.hasText(request
             .getParameter(WebConstants.WARN));
 
