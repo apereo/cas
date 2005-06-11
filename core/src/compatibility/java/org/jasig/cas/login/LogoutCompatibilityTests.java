@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.jasig.cas.web.support.WebConstants;
+
 /**
  * 
  * @author Scott Battaglia
@@ -47,4 +49,58 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
         assertTextPresent("logged out");
     }
 
+    
+    /**
+     * Test that after logout SSO doesn't happen - visiting login
+     * leads to the login screen.  Also test that logout renders a previous
+     * service ticket invalid.
+     * @throws IOException
+     */
+    public void testLogoutEndsSso() throws IOException {
+    	// demonstrate lack of SSO session
+    	String serviceUrl = getServiceUrl();
+    	String encodedService = URLEncoder.encode(serviceUrl, "UTF-8");
+    	beginAt("/login?service=" + encodedService);
+    	
+    	// verify that login screen is painted
+    	assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+    	
+    	// establish SSO session
+    	
+        setFormElement("username", getUsername());
+        setFormElement("password", getGoodPassword());
+        submit();
+    	
+        String firstServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        assertNotNull(firstServiceTicket);
+        
+        // demonstate successful validation of st before logout
+        
+        beginAt("/serviceValidate?service=" + encodedService + "&ticket=" + firstServiceTicket);
+        assertTextPresent("<cas:authenticationSuccess");
+        
+    	// demonstrate SSO session
+    	
+        beginAt("/login?service=" + encodedService);
+        
+        String secondServiceTicket = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        assertNotNull(secondServiceTicket);
+        assertFalse(firstServiceTicket.equals(secondServiceTicket));
+        
+    	// log out
+    	
+        beginAt("/logout");
+        
+    	// demonstrate lack of SSO session
+        
+        beginAt("/login?service=" + encodedService);
+        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        
+        // demonstate that the second service ticket no longer validates
+        
+        beginAt("/serviceValidate?service=" + encodedService + "&ticket=" + secondServiceTicket);
+        assertTextPresent("<cas:authenticationFailure");
+        
+    }
+    
 }
