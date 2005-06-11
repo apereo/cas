@@ -36,7 +36,7 @@ public abstract class AbstractCas2ValidateCompatibilityTests extends AbstractCom
     protected abstract String getValidationPath();
     
     protected final String getProxyCallbackUrl() {
-    	return getProperties().getProperty(PROXY_RECEPTOR_URL_PROPERTY);
+    	return getProperties().getProperty(this.PROXY_RECEPTOR_URL_PROPERTY);
     }
     
     public void testNoParameters() {
