@@ -71,8 +71,7 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         final String service = request.getParameter(WebConstants.SERVICE);
         final boolean gateway = StringUtils.hasText(request
             .getParameter(WebConstants.GATEWAY));
-        final boolean renew = StringUtils.hasText(request
-            .getParameter(WebConstants.RENEW));
+        final boolean renew = request.getParameter(WebConstants.RENEW) != null;
 
 		/* if we have gateway selected but no service, then just show
 		 * show the logon form.
