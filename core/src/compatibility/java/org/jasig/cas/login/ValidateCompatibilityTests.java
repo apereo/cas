@@ -83,7 +83,6 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         submit();
         
         HttpUnitDialog htDialog = getDialog();
-        String response = htDialog.getResponse().getText();
         
         String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
         
@@ -131,7 +130,6 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         submit();
         
         HttpUnitDialog htDialog = getDialog();
-        String response = htDialog.getResponse().getText();
         
         String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
         
@@ -176,7 +174,6 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         submit();
         
         HttpUnitDialog htDialog = getDialog();
-        String response = htDialog.getResponse().getText();
         
         String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
         

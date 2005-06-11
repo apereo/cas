@@ -108,7 +108,12 @@ public class SamlServiceSuccessView implements View {
 
 	}
 	
-	private class InternalError extends Exception {}
+	private class InternalError extends Exception {
+
+        /**
+         * Unique id for serialization
+         */
+        private static final long serialVersionUID = 1L;}
 
 	/**
 	 * @return Returns the issuer.

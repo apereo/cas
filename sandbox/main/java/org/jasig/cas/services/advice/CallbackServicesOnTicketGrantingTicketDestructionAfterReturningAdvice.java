@@ -10,9 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
-import org.jasig.cas.ticket.ServiceTicket;
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -56,9 +54,9 @@ public final class CallbackServicesOnTicketGrantingTicketDestructionAfterReturni
 
         for (final Iterator iter = servicesToCallback.iterator(); iter
             .hasNext();) {
-            final ServiceTicket serviceTicket = (ServiceTicket) iter.next();
-            final RegisteredService service = this.serviceRegistry
-                .getService(serviceTicket.getService().getId());
+//            final ServiceTicket serviceTicket = (ServiceTicket) iter.next();
+//            final RegisteredService service = this.serviceRegistry
+//                .getService(serviceTicket.getService().getId());
             // TODO: renable later
        /*     final SingleSignoutCallback callback = service != null ? service
                 .getSingleSignoutCallback() : null;
