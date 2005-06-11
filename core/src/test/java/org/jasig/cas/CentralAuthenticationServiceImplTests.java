@@ -20,6 +20,8 @@ import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
+import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
@@ -33,6 +35,8 @@ import junit.framework.TestCase;
 public class CentralAuthenticationServiceImplTests extends TestCase {
 
     private CentralAuthenticationServiceImpl centralAuthenticationService;
+    
+    private TicketRegistry ticketRegistry = new DefaultTicketRegistry();
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -42,7 +46,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
         this.centralAuthenticationService
             .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         this.centralAuthenticationService
-            .setTicketRegistry(new DefaultTicketRegistry());
+            .setTicketRegistry(this.ticketRegistry);
         this.centralAuthenticationService
             .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
 
@@ -105,7 +109,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
             return;
         }
     }
-
+    
     public void testDestroyTicketGrantingTicketWithNonExistantTicket() {
         this.centralAuthenticationService.destroyTicketGrantingTicket("test");
     }
@@ -251,6 +255,19 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
             return;
         }
     }
+    
+    public void testValidateServiceTicketWithExpires()     throws TicketException {
+        this.centralAuthenticationService.setServiceTicketExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(1,1100));
+    final String ticketGrantingTicket = this.centralAuthenticationService
+        .createTicketGrantingTicket(getUsernamePasswordCredentials());
+    final String serviceTicket = this.centralAuthenticationService
+        .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
+
+    this.centralAuthenticationService.validateServiceTicket(serviceTicket,
+        new SimpleService("test"));
+    
+    assertFalse(this.ticketRegistry.deleteTicket(serviceTicket));
+}
 
     public void testValidateServiceTicketWithValidService()
         throws TicketException {
