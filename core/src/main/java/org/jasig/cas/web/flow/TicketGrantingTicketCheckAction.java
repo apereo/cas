@@ -69,17 +69,17 @@ public final class TicketGrantingTicketCheckAction extends AbstractCasAction {
         final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
             WebConstants.COOKIE_TGC_ID);
         final String service = request.getParameter(WebConstants.SERVICE);
-        final boolean gateway = StringUtils.hasText(request
-            .getParameter(WebConstants.GATEWAY));
+        final boolean gateway = request.getParameter(WebConstants.GATEWAY) != null;
         final boolean renew = request.getParameter(WebConstants.RENEW) != null;
 
-		/* if we have gateway selected but no service, then just show
-		 * show the logon form.
-		 */
-		if (gateway && !StringUtils.hasText(service)) {
-			return new ModelAndEvent(error());
-		}
-		
+        /*
+         * if we have gateway selected but no service, then just show show the
+         * logon form.
+         */
+        if (gateway && !StringUtils.hasText(service)) {
+            return new ModelAndEvent(error());
+        }
+
         // if we have a TGT and no service, its a redirect to noService.
         if (ticketGrantingTicketId != null && !StringUtils.hasText(service)) {
             return new ModelAndEvent(result(EVENT_NO_SERVICE));
