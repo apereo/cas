@@ -44,7 +44,21 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         final String URL = "/login?service=" + SERVICE + "&gateway=" + GATEWAY;
          
         beginAt(URL);
+        
+        // test that we're now at cnn.com rather than at the login form.
         assertTextPresent("cnn.com");
+        assertFormElementNotPresent("lt");
+    }
+    
+    public void testBlankGateway() throws UnsupportedEncodingException {
+        final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
+        final String URL = "/login?service=" + SERVICE + "&gateway=";
+         
+        beginAt(URL);
+        
+        // test that we're now at cnn.com rather than at the login form.
+        assertTextPresent("cnn.com");
+        assertFormElementNotPresent("lt");
     }
     
     /**
