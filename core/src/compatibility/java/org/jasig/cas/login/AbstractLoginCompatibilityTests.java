@@ -19,10 +19,6 @@ public abstract class AbstractLoginCompatibilityTests extends AbstractCompatibil
     public AbstractLoginCompatibilityTests(String name) throws IOException {
         super(name);
     }
-    
-    protected void setUp() throws Exception {
-        super.setUp();
-        beginAt("/login");
-    }
+
     
 }
