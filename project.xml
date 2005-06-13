@@ -237,6 +237,18 @@
 			</properties>
         </dependency>
 		
+		<!-- to support unit and compatibility tests.  Commented out waiting
+			 for version 2.1.1
+		<dependency>
+			<groupId>cas</groupId>
+			<artifactId>casclient</artifactId>
+			<version>2.1.1</version>
+			<properties>
+				<war.bundle>false</war.bundle>
+			</properties>
+		</dependency>
+		-->
+		
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
@@ -577,6 +589,16 @@
 			<groupId>oro</groupId>
 			<artifactId>oro</artifactId>
 			<version>2.0.8</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+
+		<!-- for CAS 2.0 service response -->
+		<dependency>
+			<groupId>xmlbeans</groupId>
+			<artifactId>xbean</artifactId>
+			<version>1.0.4</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
