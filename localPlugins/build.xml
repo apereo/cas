@@ -1,7 +1,11 @@
 <project name="casLocalPlugins" default="build" basedir=".">
 	<path id="buildLibs">
-		<fileset dir="lib"/>
-		<fileset dir="../lib/war"/>
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="../lib/war">
+			<include name="**/*.jar"/>
+		</fileset>
 	</path>
 	<target name="build">
 		<mkdir dir="build"/>
