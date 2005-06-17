@@ -237,8 +237,7 @@
 			</properties>
         </dependency>
 		
-		<!-- to support unit and compatibility tests.  Commented out waiting
-			 for version 2.1.1
+		<!-- for unit and compatibility tests -->
 		<dependency>
 			<groupId>cas</groupId>
 			<artifactId>casclient</artifactId>
@@ -247,7 +246,6 @@
 				<war.bundle>false</war.bundle>
 			</properties>
 		</dependency>
-		-->
 		
 		<dependency>
 			<groupId>commons-beanutils</groupId>
