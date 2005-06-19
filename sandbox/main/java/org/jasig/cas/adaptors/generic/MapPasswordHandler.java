@@ -5,11 +5,10 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.handler.AbstractPasswordHandler;
+
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -31,7 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
  * This implementation synchronizes on its Map
  * from username to password (provided via the 
  * {@link #setUsernamesToPasswords(Map)} method) in its implementation of 
- * {@link #authenticateUsernamePasswordInternal(UsernamePasswordCredentials)}.  
+ * {@link #authenticateInternal(String, String)}.  
  * Any other code modifying the Map should synchonize on the Map before 
  * modifying it to ensure that this Handler has a consistent view on the Map for 
  * any given authentication attempt and does not run afoul of concurrent 
@@ -50,49 +49,13 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.0.1
  * @see ImmutableMapPasswordHandler
  */
-public final class MapPasswordHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+public final class MapPasswordHandler 
+    extends AbstractPasswordHandler 
+    implements InitializingBean {
 
     /** Map from String username to String password. */
     private Map usernamesToPasswords;
 
-    protected boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials) {
-
-        // use a local reference to the Map so that we will use the same Map,
-        // the Map upon which we synchronize, 
-        // throughout this method call, regardless of a new Map being injected
-        // during this method run
-        Map localUsernamesToPasswords = this.usernamesToPasswords;
-        
-        // synchronize on our Map of usernames to passwords to preclude
-        // concurrent modification by any process that periodically or ongoingly
-        // updates the map (and properly synchronizes before performing those
-        // changes)
-        synchronized (localUsernamesToPasswords) {
-
-			// if we know of no valid password for the username, fail the
-			// authentication.
-			if (! localUsernamesToPasswords.containsKey(credentials.getUsername())) {
-				return false;
-			}
-
-			final String cachedPassword = (String) localUsernamesToPasswords.get(credentials.getUsername());
-            
-            // the password in our credentials store shouldn't be null, but if it is, 
-            // fail to authenticate rather than throwing NullPointerException when we
-            // try to do the String equality comparison.
-            if (cachedPassword == null) {
-                return false;
-            }
-            
-
-			// authentication succeeds if the presented password equals the
-			// password in our Map.
-			return (cachedPassword.equals(credentials.getPassword()));
-
-		}
-    }
 
     public void afterPropertiesSet() throws Exception {
         if (this.usernamesToPasswords == null) {
@@ -120,5 +83,56 @@ public final class MapPasswordHandler extends
     	}
     	
         this.usernamesToPasswords = usernamesToPasswords;
+    }
+
+    protected boolean authenticateInternal(String username, String password) {
+
+        // use a local reference to the Map so that we will use the same Map,
+        // the Map upon which we synchronize, 
+        // throughout this method call, regardless of a new Map being injected
+        // during this method run
+        Map localUsernamesToPasswords = this.usernamesToPasswords;
+        
+        // synchronize on our Map of usernames to passwords to preclude
+        // concurrent modification by any process that periodically or ongoingly
+        // updates the map (and properly synchronizes before performing those
+        // changes)
+        synchronized (localUsernamesToPasswords) {
+
+            // if we know of no valid password for the username, fail the
+            // authentication.
+            if (! localUsernamesToPasswords.containsKey(username)) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Failed to authenticate [" + username + "] because username is not recognized.");
+                }
+                return false;
+            }
+
+            final String cachedPassword = (String) localUsernamesToPasswords.get(username);
+            
+            // the password in our credentials store shouldn't be null, but if it is, 
+            // fail to authenticate rather than throwing NullPointerException when we
+            // try to do the String equality comparison.
+            if (cachedPassword == null) {
+                log.warn("Failed to authenticate [" + username + "] because stored password for this user was null.");
+                return false;
+            }
+            
+
+            // authentication succeeds if the presented password equals the
+            // password in our Map.
+            final boolean passwordMatched =  cachedPassword.equals(password);
+            
+            if (log.isTraceEnabled()) {
+                if (passwordMatched) {
+                    log.trace("Authenticating [" + username + "] because presented password matched stored password.");
+                } else {
+                    log.trace("Failing to authenticate [" + username + "] because presented password did not match stored password");
+                }
+            }
+            
+            return passwordMatched;
+
+        }
     }
 }
