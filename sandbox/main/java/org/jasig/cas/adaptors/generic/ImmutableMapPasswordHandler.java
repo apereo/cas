@@ -9,8 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.handler.AbstractPasswordHandler;
 
 /**
  * AuthenticationHandler implementation that authenticates usernames and 
@@ -30,7 +29,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @see MapPasswordHandler
  */
 public final class ImmutableMapPasswordHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+    AbstractPasswordHandler {
 
     /** 
      * Map from String username to String password. 
@@ -57,38 +56,44 @@ public final class ImmutableMapPasswordHandler extends
     	this.usernamesToPasswords = Collections.unmodifiableMap(tempUsernamesToPasswords);
     }
 
-    protected boolean authenticateUsernamePasswordInternal(
-			final UsernamePasswordCredentials credentials) {
-    	
-    	// we need not synchronize on our Map because no other code can edit the
-    	// Map.
+    protected boolean authenticateInternal(String username, String password) {
+        // we need not synchronize on our Map because no other code can edit the
+        // Map.
 
-		// if we know of no valid password for the username, fail the
-		// authentication.
-		if (!this.usernamesToPasswords.containsKey(credentials.getUsername())) {
-			return false;
-		}
+        // if we know of no valid password for the username, fail the
+        // authentication.
+        if (!this.usernamesToPasswords.containsKey(username)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Failing to authenticate username [" + username + "] because username is not recognized.");
+            }
+            return false;
+        }
 
-		final String cachedPassword = 
-			(String) this.usernamesToPasswords.get(credentials.getUsername());
-		
-		if (cachedPassword == null) {
-			// our internal Map of usernames to passwords shouldn't contain
-			// a null password, but if it did, we fail the authentication in
-			// a controlled way rather than incur a NullPointerException by
-			// trying to ask this null String if it equals the presented password.
-			return false;
-		}
+        final String cachedPassword = 
+            (String) this.usernamesToPasswords.get(password);
+        
+        if (cachedPassword == null) {
+            // our internal Map of usernames to passwords shouldn't contain
+            // a null password, but if it did, we fail the authentication in
+            // a controlled way rather than incur a NullPointerException by
+            // trying to ask this null String if it equals the presented password.
+            log.warn("Failing to authenticate username [" + username + "] because stored password is null.");
+            return false;
+        }
 
-		// authentication succeeds if the presented password equals the
-		// password in our Map.
-		return (cachedPassword.equals(credentials.getPassword()));
-	}
-
-    public void afterPropertiesSet() throws Exception {
-        // we must implement this method because 
-        // AbstractUsernamePasswordAuthenticationHanlder declares the 
-        // InitializingBean interface, but we have nothing to do at afterPropertiesSet()
-        // as all of our state is injected at construction.
+        // authentication succeeds if the presented password equals the
+        // password in our Map.
+        final boolean passwordMatched = (cachedPassword.equals(password));
+        
+        if (log.isTraceEnabled()){
+            if (passwordMatched) {
+                log.trace("Authenticating [" + username + "] because presented password matched stored password.");
+            } else {
+                log.trace("Failing to authenticate [" + username + "] because presented password does not match stored password.");
+            }
+        }
+        
+        return passwordMatched;
     }
+
 }
