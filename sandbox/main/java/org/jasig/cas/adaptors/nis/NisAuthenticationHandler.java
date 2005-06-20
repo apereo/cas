@@ -12,8 +12,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
 
-import org.jasig.cas.authentication.handler.PasswordEncoder;
-import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.DisposableBean;
@@ -31,15 +29,14 @@ import org.springframework.beans.factory.InitializingBean;
  */
 // TODO: can we keep the context open?
 public class NisAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean, DisposableBean {
+    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean,
+    DisposableBean {
 
     private static final String DEFAULT_MAP = "passwd.byname";
 
     private static final String DEFAULT_CONTEXT_FACTORY = "com.sun.jndi.nis.NISCtxFactory";
 
     private static final String DEFAULT_SECURITY_AUTHENTICATION = "simple";
-
-    private static final PasswordEncoder DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordEncoder();
 
     private static final String DEFAULT_PROTOCOL = "nis://";
 
@@ -48,8 +45,6 @@ public class NisAuthenticationHandler extends
     private String host;
 
     private String map = DEFAULT_MAP;
-
-    private PasswordEncoder passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
 
     private String contextFactory = DEFAULT_CONTEXT_FACTORY;
 
@@ -70,7 +65,7 @@ public class NisAuthenticationHandler extends
             final String nisFields[] = nisEntry.split(":");
             String nisEncryptedPassword = nisFields[1];
 
-            return nisEncryptedPassword.matches(this.passwordTranslator
+            return nisEncryptedPassword.matches(this.getPasswordEncoder()
                 .encode(credentials.getPassword()));
         } catch (NamingException e) {
             return false;
@@ -98,19 +93,12 @@ public class NisAuthenticationHandler extends
         this.map = map;
     }
 
-    /**
-     * @param passwordTranslator The passwordTranslator to set.
-     */
-    public void setPasswordTranslator(final PasswordEncoder passwordTranslator) {
-        this.passwordTranslator = passwordTranslator;
-    }
-
-    public void afterPropertiesSet() throws Exception {
+    protected void afterPropertiesSetInternal() throws Exception {
         if (this.domain == null || this.host == null || this.map == null
-            || this.passwordTranslator == null || this.contextFactory == null
+            || this.contextFactory == null
             || this.securityAuthentication == null) {
             throw new IllegalStateException(
-                "domain, host, map, contextFactory, securityAuthentication and passwordTranslator cannot be null on "
+                "domain, host, map, contextFactory, and securityAuthentication cannot be null on "
                     + this.getClass().getName());
         }
 
