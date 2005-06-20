@@ -4,7 +4,7 @@ import javax.servlet.ServletRequest;
 
 /** 
  * CAS 2 interface for  authentication handlers that implement
- * authentication strategies that cannot or should not be accomodated 
+ * authentication strategies that cannot or should not be 
  * implemented using CAS 2 PasswordHandlers.
  * 
  * TrustHandlers can dynamically determine the authenticated username, something
@@ -13,15 +13,13 @@ import javax.servlet.ServletRequest;
  * implementation that doesn't use the password at all would probably be better
  * implemented as a TrustHandler.
  * 
- * Formally deprecated in the context of CAS 3 because CAS 3 provides a new 
- * AuthenticationHandler API in which to implement your specific credential
- * authentication requirements.  However, despite this API being deprecated, 
- * it remains a trivial problem to adapt from this API to the CAS 3 APIs, and so
- * CAS 2 TrustHandlers can continue to be used in CAS 3 via adaption.
+ * When writing authentication plugins for CAS 3 is is preferable to write to the
+ * new CAS 3 AuthenticationHandler API rather than to this legacy 
+ * CAS 2 API.  However, CAS 2 TrustHandlers can continue to be usable in CAS 3 
+ * via adaption.
  * 
  * @version $Revision$ $Date$
  * @since CAS 2.0
- * @deprecated use CAS 3 AuthenticationHandler API directly in CAS 3.
  * @see PasswordHandler
  * @see org.jasig.cas.adaptors.cas.LegacyTrustHandlerAdaptorAuthenticationHandler
  */
