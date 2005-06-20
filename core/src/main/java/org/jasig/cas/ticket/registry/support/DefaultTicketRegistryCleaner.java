@@ -6,6 +6,7 @@
 package org.jasig.cas.ticket.registry.support;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,11 @@ import org.springframework.util.Assert;
  * is only required so that the size of the TicketRegistry will not grow
  * significantly large. The functionality of CAS is not dependent on a Ticket
  * being removed as soon as it is expired.
+ * <p>
+ * Note that this version grabs an Unmodifiable collection and does the
+ * expiration checking outside of the synchronization block, thus allowing
+ * processing to continue.
+ * </p>
  * <p>
  * The following property is required.
  * </p>
@@ -46,19 +52,24 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
 
     public void clean() {
         final List ticketsToRemove = new ArrayList();
+        final Collection ticketsInCache;
         log
             .info("Starting cleaning of expired tickets from ticket registry at ["
                 + new Date() + "]");
+
         synchronized (this.ticketRegistry) {
-            for (final Iterator iter = this.ticketRegistry.getTickets()
-                .iterator(); iter.hasNext();) {
-                final Ticket ticket = (Ticket) iter.next();
+            ticketsInCache = this.ticketRegistry.getTickets();
+        }
 
-                if (ticket.isExpired()) {
-                    ticketsToRemove.add(ticket);
-                }
+        for (final Iterator iter = ticketsInCache.iterator(); iter.hasNext();) {
+            final Ticket ticket = (Ticket) iter.next();
+
+            if (ticket.isExpired()) {
+                ticketsToRemove.add(ticket);
             }
+        }
 
+        synchronized (this.ticketRegistry) {
             log.info(ticketsToRemove.size()
                 + " found to be removed.  Removing now.");
 
