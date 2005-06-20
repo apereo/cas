@@ -175,17 +175,6 @@ public class FileAuthenticationHandlerTests extends TestCase {
         }
     }
 
-    public void testAfterPropertiesSetNoPasswordTranslator() {
-        this.authenticationHandler.setPasswordTranslator(null);
-
-        try {
-            this.authenticationHandler.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            // this is good
-        }
-    }
-
     public void testAfterProperties() {
 
         try {
