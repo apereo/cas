@@ -14,27 +14,30 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class PageRequestHandlerInterceptorAdapterTests extends TestCase {
+
     private HttpRequestHandlerInterceptorAdapter adapter = new HttpRequestHandlerInterceptorAdapter();
+
     private ApplicationEventPublisher eventPublisher = new MockApplicationEventPublisher();
+
     HttpRequestEvent event = null;
-    
+
     public PageRequestHandlerInterceptorAdapterTests() {
         this.adapter.setApplicationEventPublisher(this.eventPublisher);
     }
-    
+
     public void testPublishEvent() throws Exception {
-        this.adapter.afterCompletion(new MockHttpServletRequest(), new MockHttpServletResponse(), null, null);
+        this.adapter.afterCompletion(new MockHttpServletRequest(),
+            new MockHttpServletResponse(), null, null);
         assertNotNull(this.event);
     }
-    
-    protected class MockApplicationEventPublisher implements ApplicationEventPublisher {
+
+    protected class MockApplicationEventPublisher implements
+        ApplicationEventPublisher {
 
         public void publishEvent(ApplicationEvent arg0) {
             PageRequestHandlerInterceptorAdapterTests.this.event = (HttpRequestEvent) arg0;

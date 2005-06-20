@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
@@ -25,7 +26,16 @@ import junit.framework.TestCase;
  */
 public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
-    private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
+    private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
+
+
+    
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        this.authenticationHandler.setPasswordEncoder(new PlainTextPasswordEncoder());
+        this.authenticationHandler.afterPropertiesSet();
+    }
 
     public void testSupportsProperUserCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();

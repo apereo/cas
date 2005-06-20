@@ -17,8 +17,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Ticket Registries.
  * 
  * @author Scott Battaglia
- * @version $Id: EhCacheTicketRegistryTests.java,v 1.4 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
  */
 public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
 
@@ -66,9 +65,6 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
         }
     }
 
-    /**
-     * @see org.jasig.cas.ticket.registry.AbstractTicketRegistryTests#getNewTicketRegistry()
-     */
     public TicketRegistry getNewTicketRegistry() throws Exception {
         this.cache.removeAll();
         return this.ticketRegistry;

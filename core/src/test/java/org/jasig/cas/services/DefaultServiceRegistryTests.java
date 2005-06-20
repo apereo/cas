@@ -28,7 +28,8 @@ public class DefaultServiceRegistryTests extends TestCase {
     private final URL url = null;
 
     private RegisteredService authenticatedService = new RegisteredService(
-        this.ID, this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME, this.url);
+        this.ID, this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME,
+        this.url);
 
     private DefaultServiceRegistry serviceRegistry = new DefaultServiceRegistry();
 
@@ -80,7 +81,8 @@ public class DefaultServiceRegistryTests extends TestCase {
 
     public void testGetCollection() {
         final RegisteredService authenticatedService2 = new RegisteredService(
-            "test2", this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME, this.url);
+            "test2", this.ALLOWTOPROXY, this.FORCEAUTHENTICATION, this.THEME,
+            this.url);
 
         this.serviceRegistry.addService(authenticatedService2);
         this.serviceRegistry.addService(this.authenticatedService);

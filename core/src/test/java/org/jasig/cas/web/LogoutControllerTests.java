@@ -22,8 +22,9 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
 
     private LogoutController logoutController;
 
-    protected void setUp() throws Exception {
-        this.logoutController = new LogoutController();
+    protected void onSetUp() throws Exception {
+        super.onSetUp();
+        this.logoutController = new LogoutController();        
         this.logoutController.setCentralAuthenticationService(getCentralAuthenticationService());
         this.logoutController.afterPropertiesSet();
     }

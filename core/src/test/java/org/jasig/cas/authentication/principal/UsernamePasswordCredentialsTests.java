@@ -9,8 +9,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id: UsernamePasswordCredentialsTests.java,v 1.3 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class UsernamePasswordCredentialsTests extends TestCase {
 

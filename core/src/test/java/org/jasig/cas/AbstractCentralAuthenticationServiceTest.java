@@ -5,51 +5,53 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
-import junit.framework.TestCase;
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ *
+ */
+public abstract class AbstractCentralAuthenticationServiceTest extends
+    AbstractDependencyInjectionSpringContextTests {
 
+    private CentralAuthenticationService centralAuthenticationService;
 
-public abstract class AbstractCentralAuthenticationServiceTest extends TestCase {
-    protected CentralAuthenticationServiceImpl centralAuthenticationService;
+    private TicketRegistry ticketRegistry;
     
-    protected AuthenticationManagerImpl authenticationManager;
+    private AuthenticationManager authenticationManager;
+
     
-    protected TicketRegistry ticketRegistry;
+    public AuthenticationManager getAuthenticationManager() {
+        return this.authenticationManager;
+    }
 
-    public final CentralAuthenticationService getCentralAuthenticationService() throws Exception {
-        this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
-        this.authenticationManager = new AuthenticationManagerImpl();
-        this.ticketRegistry = new DefaultTicketRegistry();
-        this.centralAuthenticationService
-            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketRegistry(this.ticketRegistry);
-        this.centralAuthenticationService
-            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        this.centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
-        AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
-        this.authenticationManager.setAuthenticationHandlers(handlers);
-        this.authenticationManager.setCredentialsToPrincipalResolvers(resolvers);
-        this.authenticationManager.afterPropertiesSet();
-
-        this.centralAuthenticationService.setAuthenticationManager(this.authenticationManager);
-        this.centralAuthenticationService.afterPropertiesSet();
-
+    public CentralAuthenticationService getCentralAuthenticationService() {
         return this.centralAuthenticationService;
+    }
+
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public TicketRegistry getTicketRegistry() {
+        return this.ticketRegistry;
+    }
+
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
+    protected String[] getConfigLocations() {
+        return new String[] {"applicationContext.xml"};
     }
 }

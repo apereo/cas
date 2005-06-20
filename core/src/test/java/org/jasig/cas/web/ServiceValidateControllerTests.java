@@ -24,18 +24,18 @@ import org.springframework.web.servlet.ModelAndView;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
+public class ServiceValidateControllerTests extends
+    AbstractCentralAuthenticationServiceTest {
 
     private ServiceValidateController serviceValidateController;
 
-    protected void setUp() throws Exception {
+    protected void onSetUp() throws Exception {
         StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController
             .setCentralAuthenticationService(getCentralAuthenticationService());
         this.serviceValidateController.setApplicationContext(context);
-
         this.serviceValidateController.afterPropertiesSet();
     }
 
@@ -47,18 +47,20 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
         this.serviceValidateController.afterPropertiesSet();
     }
-    
+
     public void testEmptyParams() throws Exception {
-        assertNotNull(this.serviceValidateController.handleRequestInternal(new MockHttpServletRequest(), new MockHttpServletResponse()).getModel().get(WebConstants.CODE));
+        assertNotNull(this.serviceValidateController.handleRequestInternal(
+            new MockHttpServletRequest(), new MockHttpServletResponse())
+            .getModel().get(WebConstants.CODE));
     }
 
     public void testValidServiceTicket() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
         c.setUsername("test");
-        final String tId = this.centralAuthenticationService
+        final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(c);
-        final String sId = this.centralAuthenticationService
+        final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -74,11 +76,11 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
         c.setUsername("test");
-        final String tId = this.centralAuthenticationService
+        final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(c);
-        this.centralAuthenticationService.grantServiceTicket(tId,
+        getCentralAuthenticationService().grantServiceTicket(tId,
             new SimpleService("test"));
-        final String sId2 = this.centralAuthenticationService
+        final String sId2 = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -90,17 +92,19 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             this.serviceValidateController.handleRequestInternal(request,
                 new MockHttpServletResponse()).getViewName());
     }
-    
-    public void testValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
+
+    public void testValidServiceTicketRuntimeExceptionWithSpec()
+        throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
         c.setUsername("test");
-        this.serviceValidateController.setValidationSpecificationClass(MockValidationSpecification.class);
-        final String tId = this.centralAuthenticationService
+        this.serviceValidateController
+            .setValidationSpecificationClass(MockValidationSpecification.class);
+        final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(c);
-        this.centralAuthenticationService.grantServiceTicket(tId,
+        getCentralAuthenticationService().grantServiceTicket(tId,
             new SimpleService("test"));
-        final String sId2 = this.centralAuthenticationService
+        final String sId2 = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -109,9 +113,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         request.addParameter(WebConstants.RENEW, "true");
 
         try {
-        assertEquals(ViewNames.CONST_SERVICE_FAILURE,
-            this.serviceValidateController.handleRequestInternal(request,
-                new MockHttpServletResponse()).getViewName());
+            assertEquals(ViewNames.CONST_SERVICE_FAILURE,
+                this.serviceValidateController.handleRequestInternal(request,
+                    new MockHttpServletResponse()).getViewName());
             fail("RuntimeException expected.");
         } catch (RuntimeException e) {
             return;
@@ -122,12 +126,12 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
         c.setUsername("test");
-        final String tId = this.centralAuthenticationService
+        final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(c);
-        final String sId = this.centralAuthenticationService
+        final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
-        this.centralAuthenticationService.destroyTicketGrantingTicket(tId);
+        getCentralAuthenticationService().destroyTicketGrantingTicket(tId);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(WebConstants.SERVICE, "test");
@@ -143,9 +147,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
         c.setUsername("test");
-        final String tId = this.centralAuthenticationService
+        final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(c);
-        final String sId = this.centralAuthenticationService
+        final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -164,9 +168,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
         c.setUsername("test");
-        final String tId = this.centralAuthenticationService
+        final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(c);
-        final String sId = this.centralAuthenticationService
+        final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -180,15 +184,15 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             .getViewName());
         assertNull(modelAndView.getModel().get(WebConstants.PGTIOU));
     }
-    
+
     public void testValidServiceTicketWithInvalidPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setPassword("test");
         c.setUsername("test");
-        final String tId = this.centralAuthenticationService
+        final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(c);
-        final String sId = this.centralAuthenticationService
+        final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
         MockHttpServletRequest request = new MockHttpServletRequest();

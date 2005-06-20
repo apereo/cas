@@ -13,8 +13,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id: SimpleServiceTests.java,v 1.4 2005/03/01 05:04:58 sbattaglia
- * Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class SimpleServiceTests extends TestCase {
 

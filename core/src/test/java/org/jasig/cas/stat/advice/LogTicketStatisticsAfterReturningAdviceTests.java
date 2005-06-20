@@ -24,6 +24,13 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import junit.framework.TestCase;
 
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ *
+ */
 public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
 
     public void testAfterPropertiesSetNoMap() {

@@ -15,8 +15,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id: UsernamePasswordCredentialsValidatorTests.java,v 1.1 2005/02/15
- * 05:06:39 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class UsernamePasswordCredentialsValidatorTests extends TestCase {
 

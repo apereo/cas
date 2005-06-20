@@ -12,20 +12,19 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id: PlainTextPasswordTranslatorTests.java,v 1.2 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
-public class PlainTextPasswordTranslatorTests extends TestCase {
+public class PlainTextPasswordEncoderTests extends TestCase {
 
-    private final PasswordEncoder passwordTranslator = new PlainTextPasswordEncoder();
+    private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     public void testNullValueToTranslate() {
-        assertEquals(null, this.passwordTranslator.encode(null));
+        assertEquals(null, this.passwordEncoder.encode(null));
     }
 
     public void testValueToTranslate() {
-        assertEquals("CAS IS COOL", this.passwordTranslator
-            .encode("CAS IS COOL"));
+        assertEquals("CAS IS COOL", this.passwordEncoder.encode("CAS IS COOL"));
     }
 
 }

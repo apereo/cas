@@ -10,14 +10,11 @@ package org.jasig.cas.ticket.registry;
  * Ticket Registries.
  * 
  * @author Scott Battaglia
- * @version $Id: DefaultTicketRegistryTests.java,v 1.1 2005/02/15 05:06:39
- * sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
 
-    /**
-     * @see org.jasig.cas.ticket.registry.AbstractTicketRegistryTests#getNewTicketRegistry()
-     */
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return new DefaultTicketRegistry();
     }
