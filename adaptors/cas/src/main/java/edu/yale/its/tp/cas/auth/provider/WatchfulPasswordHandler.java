@@ -16,11 +16,11 @@ import edu.yale.its.tp.cas.auth.*;
  * that call returns false.  Also, an implementation extending this class must
  * explicitly registerFailure() for every failed authentication attempt.
  * 
- * This class is deprecated because it is part of an API that is deprecated.
+ * In the context of CAS 3, than writing new implementations extending this class,
+ * consider instead writing a CAS 3 AuthenticationHandler.
  * 
  * @since CAS 2.0
  * @version $Revision$ $Date$
- * @deprecated Use the CAS 3 authentication APIs.
  */
 public abstract class WatchfulPasswordHandler implements PasswordHandler {
 
