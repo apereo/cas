@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class to provide a list of users to automatically reject.
@@ -19,7 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.0
  */
 public final class RejectUsersAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+    AbstractUsernamePasswordAuthenticationHandler {
 
     /** The collection of users to reject. */
     private Collection users;
@@ -27,13 +26,10 @@ public final class RejectUsersAuthenticationHandler extends
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
 
-        if (credentials.getUsername() == null) {
-            return false;
-        }
         return !this.users.contains(credentials.getUsername());
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSetInternal() throws Exception {
         if (this.users == null) {
             throw new IllegalStateException(
                 "You must provide a list of users that are not allowed to use the system.");

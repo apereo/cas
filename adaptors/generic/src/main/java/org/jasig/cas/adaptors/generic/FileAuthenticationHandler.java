@@ -9,13 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.authentication.handler.PasswordEncoder;
-import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -31,25 +26,16 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.0
  */
 public final class FileAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+    AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
     private static final String DEFAULT_SEPARATOR = "::";
 
-    /** The default PasswordTranslator (PlainText). */
-    private static final PasswordEncoder DEFAULT_PASSWORD_TRANSLATOR = new PlainTextPasswordEncoder();
-
     /** The separator to use. */
     private String separator = DEFAULT_SEPARATOR;
 
-    /** The PasswordTranslator to use. */
-    private PasswordEncoder passwordTranslator = DEFAULT_PASSWORD_TRANSLATOR;
-
     /** The filename to read the list of usernames from. */
     private String fileName;
-    
-    /** Log instance. */
-    private final Log log = LogFactory.getLog(getClass());
 
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
@@ -70,7 +56,7 @@ public final class FileAuthenticationHandler extends
                 final String password = lineFields[1];
 
                 if (credentials.getUsername().equals(userName)) {
-                    if (this.passwordTranslator.encode(
+                    if (this.getPasswordEncoder().encode(
                         credentials.getPassword()).equals(password)) {
                         bufferedReader.close();
                         return true;
@@ -80,24 +66,23 @@ public final class FileAuthenticationHandler extends
                 line = bufferedReader.readLine();
             }
         } catch (Exception e) {
-            log.error(e);
+            getLog().error(e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                log.error(e);
+                getLog().error(e);
             }
         }
         return false;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        if (this.fileName == null || this.passwordTranslator == null
-            || this.separator == null) {
+    protected void afterPropertiesSetInternal() throws Exception {
+        if (this.fileName == null || this.separator == null) {
             throw new IllegalStateException(
-                "fileName, passwordTranslator and separator must be set on "
+                "fileName, and separator must be set on "
                     + this.getClass().getName());
         }
     }
@@ -107,13 +92,6 @@ public final class FileAuthenticationHandler extends
      */
     public void setFileName(final String fileName) {
         this.fileName = fileName;
-    }
-
-    /**
-     * @param passwordTranslator The passwordTranslator to set.
-     */
-    public void setPasswordTranslator(final PasswordEncoder passwordTranslator) {
-        this.passwordTranslator = passwordTranslator;
     }
 
     /**

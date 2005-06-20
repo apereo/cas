@@ -5,8 +5,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +25,15 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     AuthenticationHandler, InitializingBean {
+
+    /**
+     * PasswordEncoder to be used by subclasses to encode passwords for
+     * comparing against a resource.
+     */
+    private PasswordEncoder passwordEncoder;
+
+    /** Instance of logging for subclasses. */
+    private Log log = LogFactory.getLog(this.getClass());
 
     /**
      * Method automatically handles conversion to UsernamePasswordCredentials
@@ -44,6 +57,55 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     protected abstract boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException;
+
+    public final void afterPropertiesSet() throws Exception {
+        if (this.passwordEncoder == null) {
+            this.passwordEncoder = new PlainTextPasswordEncoder();
+            getLog().info(
+                "No PasswordEncoder set.  Using default: "
+                    + this.passwordEncoder.getClass().getName());
+        }
+        afterPropertiesSetInternal();
+    }
+
+    /**
+     * Method designed to be overwritten subclasses that need to do additional
+     * properties checking.
+     * 
+     * @throws Exception if there is an error checking the properties.
+     */
+    protected void afterPropertiesSetInternal() throws Exception {
+        // this is designed to be overwritten
+    }
+
+    /**
+     * Method to return the PasswordEncoder to be used to encode passwords.
+     * 
+     * @return the PasswordEncoder associated with this class.
+     */
+    public final PasswordEncoder getPasswordEncoder() {
+        return this.passwordEncoder;
+    }
+
+    /**
+     * Method to return the log instance in order for subclasses to have access
+     * to the log object.
+     * 
+     * @return the logging instance for this class.
+     */
+    public final Log getLog() {
+        return this.log;
+    }
+
+    /**
+     * Sets the PasswordEncoder to be used with this class.
+     * 
+     * @param passwordEncoder the PasswordEncoder to use when encoding
+     * passwords.
+     */
+    public final void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * @return true if the credentials are not null and the credentials class is
