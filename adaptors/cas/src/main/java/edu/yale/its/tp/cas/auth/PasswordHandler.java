@@ -9,12 +9,12 @@ import javax.servlet.ServletRequest;
  * This CAS 2 interface supported in CAS 3 through the 
  * LegacyPasswordHandlerAdaptorAuthenticationHandler adaptor. 
  * 
- * This interface is formally deprecated to encourage that new PasswordHandler
- * implementations be written to the new APIs.  However, CAS 2 PasswordHandlers
- * remain quite usable in CAS 3 by means of the referenced adaptor.
+ * Writing to this interface when providing custom authentication plugins for
+ * CAS 3 is discouraged. New PasswordHandler implementations should probably
+ * instead be written to the new CAS 3 APIs (as AuthenticationHandlers).  
+ * However, CAS 2 PasswordHandlers remain quite usable in CAS 3 by means of 
+ * the referenced adaptor.
  * 
- * @deprecated CAS 3 provides authentication APIs as an alternative to adapting
- * legacy PasswordHandlers into CAS 3.
  * @since CAS 2.0
  * @version $Revision$ $Date$
  */ 
