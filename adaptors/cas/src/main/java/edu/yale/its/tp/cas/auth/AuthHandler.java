@@ -3,13 +3,15 @@ package edu.yale.its.tp.cas.auth;
 /** 
  * Marker interface for CAS 2 authentication handlers. 
  * 
- * Deprecated in the context of CAS 3 as CAS 3 provides new authentication APIs.
- * However, CAS 2 AuthHandler implementations continue to work (via adaptor) in
- * CAS 3.
+ * In the context of CAS 3 is is preferable to write your custom authentication logic
+ * as a new CAS 3 AuthenticationHandler implementation rather than as an
+ * implementation of this legacy CAS 2 AuthHandler API.
+ * 
+ * However, CAS 2 AuthHandler implementations (at least, PasswordHandler and
+ * TrustHandler implementations) continue to work in CAS 3 via adaptor.
  *
  * @since CAS 2.0
  * @version $Revision$ $Date$
- * @deprecated Recommendation is to use the CAS 3 APIs.  See type comments. 
  */
 public interface AuthHandler {
     // no methods as this is a marker interface
