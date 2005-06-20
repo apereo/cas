@@ -8,70 +8,33 @@ package org.jasig.cas.remoting.server;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.springframework.validation.Validator;
-
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class RemoteCentralAuthenticationServiceTests extends TestCase {
-
-    private CentralAuthenticationServiceImpl centralAuthenticationService;
+public class RemoteCentralAuthenticationServiceTests extends
+    AbstractCentralAuthenticationServiceTest {
 
     private RemoteCentralAuthenticationService remoteCentralAuthenticationService;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-        this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
-        this.centralAuthenticationService
-            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketRegistry(new DefaultTicketRegistry());
-        this.centralAuthenticationService
-            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        this.centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-
-        AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-
-        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
-        AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
-
-        manager.setAuthenticationHandlers(handlers);
-        manager.setCredentialsToPrincipalResolvers(resolvers);
-        manager.afterPropertiesSet();
-
-        this.centralAuthenticationService.setAuthenticationManager(manager);
-
+    protected void onSetUp() throws Exception {
         this.remoteCentralAuthenticationService = new RemoteCentralAuthenticationService();
 
         this.remoteCentralAuthenticationService
-            .setCentralAuthenticationService(this.centralAuthenticationService);
+            .setCentralAuthenticationService(getCentralAuthenticationService());
 
         Validator[] validators = new Validator[1];
         validators[0] = new UsernamePasswordCredentialsValidator();
 
-        this.centralAuthenticationService.afterPropertiesSet();
         this.remoteCentralAuthenticationService.setValidators(validators);
         this.remoteCentralAuthenticationService.afterPropertiesSet();
     }
@@ -113,12 +76,13 @@ public class RemoteCentralAuthenticationServiceTests extends TestCase {
         c.setPassword("test");
         this.remoteCentralAuthenticationService.createTicketGrantingTicket(c);
     }
-    
+
     public void testDontUseValidatorsToCheckValidCredentials() {
         try {
             UsernamePasswordCredentials c = new UsernamePasswordCredentials();
             this.remoteCentralAuthenticationService.setValidators(null);
-            this.remoteCentralAuthenticationService.createTicketGrantingTicket(c);
+            this.remoteCentralAuthenticationService
+                .createTicketGrantingTicket(c);
             fail("TicketException expected.");
         } catch (TicketException e) {
             return;

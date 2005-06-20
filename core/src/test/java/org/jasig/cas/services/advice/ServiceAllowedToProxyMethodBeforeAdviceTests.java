@@ -25,11 +25,10 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
 
     private ServiceRegistry serviceRegistry;
 
-    protected void setUp() throws Exception {
-        getCentralAuthenticationService();
+    protected void onSetUp() throws Exception {
         this.serviceRegistry = new DefaultServiceRegistry();
         this.advice = new ServiceAllowedToProxyMethodBeforeAdvice();
-        this.advice.setTicketRegistry(this.ticketRegistry);
+        this.advice.setTicketRegistry(getTicketRegistry());
         this.advice.setServiceRegistry(this.serviceRegistry);
         this.advice.afterPropertiesSet();
 
@@ -64,11 +63,11 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
         cred.setPassword("a");
         cred.setUsername("a");
 
-        String ticketGrantingTicketId = this.centralAuthenticationService
+        String ticketGrantingTicketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(cred);
-        String serviceTicketId = this.centralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
-                "test2"));
+        String serviceTicketId = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicketId,
+                new SimpleService("test2"));
         try {
             this.advice
                 .before(null, new Object[] {serviceTicketId, cred}, null);
@@ -84,11 +83,11 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
         cred.setPassword("a");
         cred.setUsername("a");
 
-        String ticketGrantingTicketId = this.centralAuthenticationService
+        String ticketGrantingTicketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(cred);
-        String serviceTicketId = this.centralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
-                "test"));
+        String serviceTicketId = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicketId,
+                new SimpleService("test"));
         this.advice.before(null, new Object[] {serviceTicketId, cred}, null);
     }
 
@@ -98,11 +97,11 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
         cred.setPassword("a");
         cred.setUsername("a");
 
-        String ticketGrantingTicketId = this.centralAuthenticationService
+        String ticketGrantingTicketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(cred);
-        String serviceTicketId = this.centralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
-                "http://www.rutgers.edu"));
+        String serviceTicketId = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicketId,
+                new SimpleService("http://www.rutgers.edu"));
         this.advice.before(null, new Object[] {serviceTicketId, cred}, null);
     }
 
@@ -116,11 +115,11 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
             null, new URL("http://www.rutgers.com"));
         ((ServiceRegistryManager) this.serviceRegistry).addService(r);
 
-        String ticketGrantingTicketId = this.centralAuthenticationService
+        String ticketGrantingTicketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(cred);
-        String serviceTicketId = this.centralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicketId, new SimpleService(
-                "test2"));
+        String serviceTicketId = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicketId,
+                new SimpleService("test2"));
         try {
             this.advice
                 .before(null, new Object[] {serviceTicketId, cred}, null);

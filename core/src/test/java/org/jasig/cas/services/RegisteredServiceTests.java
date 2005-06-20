@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class AuthenticatedServiceTests extends TestCase {
+public class RegisteredServiceTests extends TestCase {
 
     public void testGetters() {
         final String ID = "id";

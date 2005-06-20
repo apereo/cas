@@ -5,76 +5,27 @@
  */
 package org.jasig.cas.authentication;
 
+import java.net.URL;
+
+import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-
-import junit.framework.TestCase;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class AuthenticationManagerImplTests extends TestCase {
-
-    AuthenticationManagerImpl manager;
-
-    public void setUp() throws Exception {
-        this.manager = new AuthenticationManagerImpl();
-    }
-
-    private void setUpManager(AuthenticationManagerImpl a) {
-        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver(), new HttpBasedServiceCredentialsToPrincipalResolver()};
-        a.setCredentialsToPrincipalResolvers(resolvers);
-
-        AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
-        a.setAuthenticationHandlers(handlers);
-    }
-
-    private void setUpManager2(AuthenticationManagerImpl a) {
-        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {new HttpBasedServiceCredentialsToPrincipalResolver()};
-        a.setCredentialsToPrincipalResolvers(resolvers);
-
-        AuthenticationHandler[] handlers = new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler(), new HttpBasedServiceCredentialsAuthenticationHandler()};
-        a.setAuthenticationHandlers(handlers);
-    }
-
-    public void testNoPropertiesSet() {
-        try {
-            this.manager.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            return;
-        }
-    }
-
-    public void testProperties() {
-        setUpManager(this.manager);
-        try {
-            this.manager.afterPropertiesSet();
-        } catch (Exception e) {
-            fail("Exception not expected.");
-        }
-    }
-
-    public void testNoPopulators() {
-        setUpManager2(this.manager);
-        try {
-            this.manager.afterPropertiesSet();
-        } catch (Exception e) {
-            fail("Exception not expected.");
-        }
-    }
+public class AuthenticationManagerImplTests extends AbstractCentralAuthenticationServiceTest {
 
     public void testSuccessfulAuthentication() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
@@ -82,49 +33,37 @@ public class AuthenticationManagerImplTests extends TestCase {
         c.setUsername("test");
         c.setPassword("test");
 
-        setUpManager(this.manager);
-        this.manager.afterPropertiesSet();
         try {
-            Authentication authentication = this.manager.authenticate(c);
+            Authentication authentication = getAuthenticationManager().authenticate(c);
             assertEquals(p, authentication.getPrincipal());
         } catch (AuthenticationException e) {
             fail(e.getMessage());
         }
     }
 
-    public void testFailedAuthentication() {
+    public void testFailedAuthentication() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setUsername("test");
         c.setPassword("tt");
 
-        setUpManager(this.manager);
         try {
-            this.manager.authenticate(c);
+            getAuthenticationManager().authenticate(c);
             fail("Authentication should have failed.");
         } catch (AuthenticationException e) {
             return;
         }
     }
 
-    public void testNoHandlerFound() {
-        setUpManager(this.manager);
+    public void testNoHandlerFound() throws Exception {
         try {
-            this.manager.authenticate(new TestCredentials());
-            fail("Authentication should have failed.");
-        } catch (UnsupportedCredentialsException e) {
-            return;
-        } catch (AuthenticationException e) {
-            fail("UnsupportedCredentialsException expected.");
-        }
-    }
+            getAuthenticationManager().authenticate(new Credentials() {
 
-    public void testNoResolverFound() {
-        setUpManager2(this.manager);
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUsername("test");
-        c.setPassword("test");
-        try {
-            this.manager.authenticate(c);
+                /**
+                 * Comment for <code>serialVersionUID</code>
+                 */
+                private static final long serialVersionUID = -4897240037527663222L;
+                // there is nothing to do here
+            });
             fail("Authentication should have failed.");
         } catch (UnsupportedCredentialsException e) {
             return;
@@ -133,9 +72,18 @@ public class AuthenticationManagerImplTests extends TestCase {
         }
     }
 
-    protected static class TestCredentials implements Credentials {
-
-        private static final long serialVersionUID = 3258413949803246388L;
-
+    public void testNoResolverFound() throws Exception {
+        AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
+        manager.setAuthenticationHandlers(new AuthenticationHandler[] {new HttpBasedServiceCredentialsAuthenticationHandler()});
+        manager.setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()});
+        manager.afterPropertiesSet();
+        try {
+            manager.authenticate(new HttpBasedServiceCredentials(new URL("https://www.yale.edu")));
+            fail("Authentication should have failed.");
+        } catch (UnsupportedCredentialsException e) {
+            return;
+        } catch (AuthenticationException e) {
+            fail("UnsupportedCredentialsException expected.");
+        }
     }
 }

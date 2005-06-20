@@ -11,20 +11,10 @@ import java.lang.reflect.Method;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
@@ -36,51 +26,20 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.flow.execution.servlet.ServletEvent;
 
-import junit.framework.TestCase;
-
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
+ * @since 3.0
  */
-public class LoginFormActionTests extends TestCase {
+public class LoginFormActionTests extends
+    AbstractCentralAuthenticationServiceTest {
 
     private LoginFormAction logonFormAction;
 
-    private CentralAuthenticationServiceImpl centralAuthenticationService;
-
-    protected void setUp() throws Exception {
+    protected void onSetUp() throws Exception {
         this.logonFormAction = new LoginFormAction();
-
-        this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
-        this.centralAuthenticationService
-            .setTicketRegistry(new DefaultTicketRegistry());
-
-        AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-        manager
-            .setAuthenticationMetaDataPopulators(new AuthenticationMetaDataPopulator[] {new AuthenticationMetaDataPopulator(){
-
-                public Authentication populateAttributes(
-                    Authentication authentication, Credentials credentials) {
-                    return authentication;
-                }
-            }});
-        manager
-            .setAuthenticationHandlers(new AuthenticationHandler[] {new SimpleTestUsernamePasswordAuthenticationHandler()});
-        manager
-            .setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()});
-
-        this.centralAuthenticationService.setAuthenticationManager(manager);
-        manager.afterPropertiesSet();
-        this.centralAuthenticationService
-            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         this.logonFormAction
-            .setCentralAuthenticationService(this.centralAuthenticationService);
-        this.centralAuthenticationService
-            .setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+            .setCentralAuthenticationService(getCentralAuthenticationService());
         this.logonFormAction.afterPropertiesSet();
     }
 
@@ -175,7 +134,7 @@ public class LoginFormActionTests extends TestCase {
         credentials.setUsername("test");
         credentials.setPassword("test");
 
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(credentials);
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});
@@ -204,7 +163,7 @@ public class LoginFormActionTests extends TestCase {
         credentials2.setUsername("test2");
         credentials2.setPassword("test2");
 
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(credentials);
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});

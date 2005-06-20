@@ -15,6 +15,7 @@ import junit.framework.TestCase;
  * 
  * @author Andrew Petro
  * @version $Revision$ $Date$
+ * @since 3.0
  */
 public class SafeContextLoaderListenerTests extends TestCase {
 

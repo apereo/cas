@@ -12,10 +12,10 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id: DefaultCredentialsToPrincipalResolverTests.java,v 1.2
- * 2005/02/27 05:49:26 sbattaglia Exp $
+ * @version $Revision$ $Date$
+ * @since 3.0
  */
-public class DefaultCredentialsToPrincipalResolverTests extends TestCase {
+public class UsernamePasswordCredentialsToPrincipalResolverTests extends TestCase {
 
     private CredentialsToPrincipalResolver resolver = new UsernamePasswordCredentialsToPrincipalResolver();
 

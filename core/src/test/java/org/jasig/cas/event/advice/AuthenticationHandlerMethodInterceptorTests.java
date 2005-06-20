@@ -32,14 +32,16 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
 
     protected void setUp() throws Exception {
         this.event = null;
-        this.advice.setApplicationEventPublisher(new MockApplicationEventPublisher());
+        this.advice
+            .setApplicationEventPublisher(new MockApplicationEventPublisher());
     }
-    
+
     public void testAuthenticationEventWithBooleanTrue() throws Throwable {
-        MethodInvocation methodInvocation = new MethodInvocation() {
+        MethodInvocation methodInvocation = new MethodInvocation(){
 
             public Method getMethod() {
-                return SimpleTestUsernamePasswordAuthenticationHandler.class.getDeclaredMethods()[0];
+                return SimpleTestUsernamePasswordAuthenticationHandler.class
+                    .getDeclaredMethods()[0];
             }
 
             public Object[] getArguments() {
@@ -57,18 +59,19 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
             public Object proceed() throws Throwable {
                 return Boolean.TRUE;
             }
-            
+
         };
         this.advice.invoke(methodInvocation);
         assertNotNull(this.event);
         assertTrue(this.event.isSuccessfulAuthentication());
     }
-    
+
     public void testAuthenticationEventWithBooleanFalse() throws Throwable {
-        MethodInvocation methodInvocation = new MethodInvocation() {
+        MethodInvocation methodInvocation = new MethodInvocation(){
 
             public Method getMethod() {
-                return SimpleTestUsernamePasswordAuthenticationHandler.class.getDeclaredMethods()[0];
+                return SimpleTestUsernamePasswordAuthenticationHandler.class
+                    .getDeclaredMethods()[0];
             }
 
             public Object[] getArguments() {
@@ -86,18 +89,19 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
             public Object proceed() throws Throwable {
                 return Boolean.FALSE;
             }
-            
+
         };
         this.advice.invoke(methodInvocation);
         assertNotNull(this.event);
         assertFalse(this.event.isSuccessfulAuthentication());
     }
-    
+
     public void testAuthenticationEventWithException() throws Throwable {
-        MethodInvocation methodInvocation = new MethodInvocation() {
+        MethodInvocation methodInvocation = new MethodInvocation(){
 
             public Method getMethod() {
-                return SimpleTestUsernamePasswordAuthenticationHandler.class.getDeclaredMethods()[0];
+                return SimpleTestUsernamePasswordAuthenticationHandler.class
+                    .getDeclaredMethods()[0];
             }
 
             public Object[] getArguments() {
@@ -115,7 +119,7 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
             public Object proceed() throws Throwable {
                 throw BadUsernameOrPasswordAuthenticationException.ERROR;
             }
-            
+
         };
         try {
             this.advice.invoke(methodInvocation);
@@ -126,7 +130,8 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
         assertFalse(this.event.isSuccessfulAuthentication());
     }
 
-    protected class MockApplicationEventPublisher implements ApplicationEventPublisher {
+    protected class MockApplicationEventPublisher implements
+        ApplicationEventPublisher {
 
         public void publishEvent(ApplicationEvent arg0) {
             AuthenticationHandlerMethodInterceptorTests.this.event = (AuthenticationEvent) arg0;

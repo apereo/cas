@@ -8,69 +8,24 @@ package org.jasig.cas;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class CentralAuthenticationServiceImplTests extends TestCase {
-
-    private CentralAuthenticationServiceImpl centralAuthenticationService;
-    
-    private TicketRegistry ticketRegistry = new DefaultTicketRegistry();
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        this.centralAuthenticationService = new CentralAuthenticationServiceImpl();
-        this.centralAuthenticationService
-            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
-        this.centralAuthenticationService
-            .setTicketRegistry(this.ticketRegistry);
-        this.centralAuthenticationService
-            .setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-
-        AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-
-        CredentialsToPrincipalResolver[] resolvers = new CredentialsToPrincipalResolver[] {
-            new UsernamePasswordCredentialsToPrincipalResolver(),
-            new HttpBasedServiceCredentialsToPrincipalResolver()};
-        AuthenticationHandler[] handlers = new AuthenticationHandler[] {
-            new SimpleTestUsernamePasswordAuthenticationHandler(),
-            new HttpBasedServiceCredentialsAuthenticationHandler()};
-
-        manager.setAuthenticationHandlers(handlers);
-        manager.setCredentialsToPrincipalResolvers(resolvers);
-        manager.afterPropertiesSet();
-
-        this.centralAuthenticationService.setAuthenticationManager(manager);
-        this.centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        this.centralAuthenticationService.afterPropertiesSet();
-    }
+public class CentralAuthenticationServiceImplTests extends
+    AbstractCentralAuthenticationServiceTest {
 
     public void testNullCredentialsOnTicketGrantingTicketCreation() {
         try {
-            this.centralAuthenticationService.createTicketGrantingTicket(null);
+            getCentralAuthenticationService().createTicketGrantingTicket(null);
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
             return;
@@ -85,7 +40,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
         c.setPassword("test1");
 
         try {
-            this.centralAuthenticationService.createTicketGrantingTicket(c);
+            getCentralAuthenticationService().createTicketGrantingTicket(c);
             fail("TicketException expected.");
         } catch (TicketException e) {
             return;
@@ -94,7 +49,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testGoodCredentialsOnTicketGrantingTicketCreation() {
         try {
-            assertNotNull(this.centralAuthenticationService
+            assertNotNull(getCentralAuthenticationService()
                 .createTicketGrantingTicket(getUsernamePasswordCredentials()));
         } catch (TicketException e) {
             fail("TicketException not expected.");
@@ -103,33 +58,33 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testDestroyTicketGrantingTicketWithNull() {
         try {
-            this.centralAuthenticationService.destroyTicketGrantingTicket(null);
+            getCentralAuthenticationService().destroyTicketGrantingTicket(null);
             fail("IllegalArgumentException exepcted.");
         } catch (IllegalArgumentException e) {
             return;
         }
     }
-    
+
     public void testDestroyTicketGrantingTicketWithNonExistantTicket() {
-        this.centralAuthenticationService.destroyTicketGrantingTicket("test");
+        getCentralAuthenticationService().destroyTicketGrantingTicket("test");
     }
 
     public void testDestroyTicketGrantingTicketWithValidTicket()
         throws TicketException {
-        final String ticketId = this.centralAuthenticationService
+        final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        this.centralAuthenticationService.destroyTicketGrantingTicket(ticketId);
+        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
     }
 
     public void testDestroyTicketGrantingTicketWithInvalidTicket()
         throws TicketException {
-        final String ticketId = this.centralAuthenticationService
+        final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        final String serviceTicketId = this.centralAuthenticationService
+        final String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
         try {
-            this.centralAuthenticationService
-                .destroyTicketGrantingTicket(serviceTicketId);
+            getCentralAuthenticationService().destroyTicketGrantingTicket(
+                serviceTicketId);
             fail("ClassCastException expected.");
         } catch (ClassCastException e) {
             return;
@@ -138,19 +93,19 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testGrantServiceTicketWithValidTicketGrantingTicket()
         throws TicketException {
-        final String ticketId = this.centralAuthenticationService
+        final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        this.centralAuthenticationService.grantServiceTicket(ticketId,
+        getCentralAuthenticationService().grantServiceTicket(ticketId,
             new SimpleService("test"));
     }
 
     public void testGrantServiceTicketWithInvalidTicketGrantingTicket()
         throws TicketException {
-        final String ticketId = this.centralAuthenticationService
+        final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        this.centralAuthenticationService.destroyTicketGrantingTicket(ticketId);
+        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
         try {
-            this.centralAuthenticationService.grantServiceTicket(ticketId,
+            getCentralAuthenticationService().grantServiceTicket(ticketId,
                 new SimpleService("test"));
             fail("Expected exception to be thrown.");
         } catch (TicketException e) {
@@ -160,22 +115,22 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testDelegateTicketGrantingTicketWithProperParams()
         throws TicketException {
-        final String ticketId = this.centralAuthenticationService
+        final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        final String serviceTicketId = this.centralAuthenticationService
+        final String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
-        this.centralAuthenticationService.delegateTicketGrantingTicket(
+        getCentralAuthenticationService().delegateTicketGrantingTicket(
             serviceTicketId, getHttpBasedServiceCredentials());
     }
 
     public void testDelegateTicketGrantingTicketWithBadCredentials()
         throws TicketException {
-        final String ticketId = this.centralAuthenticationService
+        final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        final String serviceTicketId = this.centralAuthenticationService
+        final String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
         try {
-            this.centralAuthenticationService.delegateTicketGrantingTicket(
+            getCentralAuthenticationService().delegateTicketGrantingTicket(
                 serviceTicketId, getBadHttpBasedServiceCredentials());
             fail("TicketException expected.");
         } catch (TicketException e) {
@@ -185,13 +140,13 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testDelegateTicketGrantingTicketWithBadServiceTicket()
         throws TicketException {
-        final String ticketId = this.centralAuthenticationService
+        final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        final String serviceTicketId = this.centralAuthenticationService
+        final String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
-        this.centralAuthenticationService.destroyTicketGrantingTicket(ticketId);
+        getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
         try {
-            this.centralAuthenticationService.delegateTicketGrantingTicket(
+            getCentralAuthenticationService().delegateTicketGrantingTicket(
                 serviceTicketId, getHttpBasedServiceCredentials());
             fail("TicketException expected.");
         } catch (TicketException e) {
@@ -202,7 +157,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
     public void testDelegateTicketGrantingTicketWithNullParams()
         throws TicketException {
         try {
-            this.centralAuthenticationService.delegateTicketGrantingTicket(
+            getCentralAuthenticationService().delegateTicketGrantingTicket(
                 null, null);
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
@@ -212,7 +167,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testGrantServiceTicketWithNullParams() throws TicketException {
         try {
-            this.centralAuthenticationService.grantServiceTicket(null, null);
+            getCentralAuthenticationService().grantServiceTicket(null, null);
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
             return;
@@ -221,19 +176,19 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testGrantServiceTicketWithValidCredentials()
         throws TicketException {
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        this.centralAuthenticationService.grantServiceTicket(
+        getCentralAuthenticationService().grantServiceTicket(
             ticketGrantingTicket, new SimpleService("test"),
             getUsernamePasswordCredentials());
     }
 
     public void testGrantServiceTicketWithInvalidCredentials()
         throws TicketException {
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
         try {
-            this.centralAuthenticationService.grantServiceTicket(
+            getCentralAuthenticationService().grantServiceTicket(
                 ticketGrantingTicket, new SimpleService("test"),
                 getBadHttpBasedServiceCredentials());
             fail("Exception expected.");
@@ -244,10 +199,10 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testGrantServiceTicketWithDifferentCredentials()
         throws TicketException {
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
         try {
-            this.centralAuthenticationService.grantServiceTicket(
+            getCentralAuthenticationService().grantServiceTicket(
                 ticketGrantingTicket, new SimpleService("test"),
                 getUsernamePasswordCredentials2());
             fail("Exception expected.");
@@ -255,40 +210,44 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
             return;
         }
     }
-    
-    public void testValidateServiceTicketWithExpires()     throws TicketException {
-        this.centralAuthenticationService.setServiceTicketExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(1,1100));
-    final String ticketGrantingTicket = this.centralAuthenticationService
-        .createTicketGrantingTicket(getUsernamePasswordCredentials());
-    final String serviceTicket = this.centralAuthenticationService
-        .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
 
-    this.centralAuthenticationService.validateServiceTicket(serviceTicket,
-        new SimpleService("test"));
-    
-    assertFalse(this.ticketRegistry.deleteTicket(serviceTicket));
-}
+    public void testValidateServiceTicketWithExpires() throws TicketException {
+        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService())
+            .setServiceTicketExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(
+                1, 1100));
+        final String ticketGrantingTicket = getCentralAuthenticationService()
+            .createTicketGrantingTicket(getUsernamePasswordCredentials());
+        final String serviceTicket = getCentralAuthenticationService()
+            .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
+
+        getCentralAuthenticationService().validateServiceTicket(serviceTicket,
+            new SimpleService("test"));
+
+        assertFalse(getTicketRegistry().deleteTicket(serviceTicket));
+        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService())
+            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
+    }
 
     public void testValidateServiceTicketWithValidService()
         throws TicketException {
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        final String serviceTicket = this.centralAuthenticationService
+        final String serviceTicket = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
 
-        this.centralAuthenticationService.validateServiceTicket(serviceTicket,
+        getCentralAuthenticationService().validateServiceTicket(serviceTicket,
             new SimpleService("test"));
     }
 
     public void testValidateServiceTicketWithInvalidService()
         throws TicketException {
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        final String serviceTicket = this.centralAuthenticationService
+        final String serviceTicket = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
 
         try {
-            this.centralAuthenticationService.validateServiceTicket(
+            getCentralAuthenticationService().validateServiceTicket(
                 serviceTicket, new SimpleService("test2"));
             fail("Exception expected.");
         } catch (TicketException e) {
@@ -298,15 +257,15 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testValidateServiceTicketWithInvalidServiceTicket()
         throws TicketException {
-        final String ticketGrantingTicket = this.centralAuthenticationService
+        final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(getUsernamePasswordCredentials());
-        final String serviceTicket = this.centralAuthenticationService
+        final String serviceTicket = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
-        this.centralAuthenticationService
-            .destroyTicketGrantingTicket(ticketGrantingTicket);
+        getCentralAuthenticationService().destroyTicketGrantingTicket(
+            ticketGrantingTicket);
 
         try {
-            this.centralAuthenticationService.validateServiceTicket(
+            getCentralAuthenticationService().validateServiceTicket(
                 serviceTicket, new SimpleService("test"));
             fail("Exception expected.");
         } catch (TicketException e) {
@@ -316,7 +275,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
 
     public void testValidateServiceTicketNonExistantTicket() {
         try {
-            this.centralAuthenticationService.validateServiceTicket("test",
+            getCentralAuthenticationService().validateServiceTicket("test",
                 new SimpleService("test"));
             fail("Exception expected.");
         } catch (TicketException e) {
@@ -329,7 +288,7 @@ public class CentralAuthenticationServiceImplTests extends TestCase {
         throws TicketException {
 
         try {
-            this.centralAuthenticationService.validateServiceTicket(null, null);
+            getCentralAuthenticationService().validateServiceTicket(null, null);
             fail("Exception expected.");
         } catch (IllegalArgumentException e) {
             return;

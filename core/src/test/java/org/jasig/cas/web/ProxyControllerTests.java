@@ -9,8 +9,6 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.context.ApplicationContextAware;
@@ -28,15 +26,10 @@ public class ProxyControllerTests extends
 
     private ProxyController proxyController;
 
-    private TicketRegistry t;
-
-    protected void setUp() throws Exception {
-        this.t = new DefaultTicketRegistry();
-
+    protected void onSetUp() throws Exception {
         this.proxyController = new ProxyController();
         this.proxyController
             .setCentralAuthenticationService(getCentralAuthenticationService());
-        this.centralAuthenticationService.setTicketRegistry(this.t);
         this.proxyController.afterPropertiesSet();
 
         StaticApplicationContext context = new StaticApplicationContext();
@@ -66,7 +59,7 @@ public class ProxyControllerTests extends
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
             "ticketGrantingTicketId", new MockAuthentication(),
             new NeverExpiresExpirationPolicy());
-        this.t.addTicket(ticket);
+        getTicketRegistry().addTicket(ticket);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request
             .addParameter(WebConstants.PROXY_GRANTING_TICKET, ticket.getId());
