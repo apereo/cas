@@ -159,7 +159,8 @@ public final class CentralAuthenticationServiceImpl implements
 
             // TODO we need a better way of handling this
             if (credentials != null) {
-                log.debug("We received a renew=true request, so setting fromNewLogin to true");
+                log
+                    .debug("We received a renew=true request, so setting fromNewLogin to true");
                 serviceTicket.setFromNewLogin(true);
             }
 
@@ -247,19 +248,20 @@ public final class CentralAuthenticationServiceImpl implements
             if (serviceTicket.isExpired()) {
                 log.debug("ServiceTicket [" + serviceTicketId
                     + "] has expired.");
-				this.ticketRegistry.deleteTicket(serviceTicketId);
+                this.ticketRegistry.deleteTicket(serviceTicketId);
                 throw new InvalidTicketException();
             }
 
             serviceTicket.incrementCountOfUses();
             serviceTicket.updateLastTimeUsed();
-			
-			/* implemented this manual removal if expired so that registry 
-			 * does not grow too large.
-			 */
-			if (serviceTicket.isExpired()) {
-				this.ticketRegistry.deleteTicket(serviceTicketId);
-			}
+
+            /*
+             * implemented this manual removal if expired so that registry does
+             * not grow too large.
+             */
+            if (serviceTicket.isExpired()) {
+                this.ticketRegistry.deleteTicket(serviceTicketId);
+            }
 
             if (!service.equals(serviceTicket.getService())) {
                 log.debug("ServiceTicket [" + serviceTicketId
@@ -362,7 +364,8 @@ public final class CentralAuthenticationServiceImpl implements
         Assert.notNull(this.authenticationManager,
             "authenticationManager cannot be null on " + name);
         Assert.notNull(this.ticketGrantingTicketUniqueTicketIdGenerator,
-            "ticketGrantingTicketUniqueTicketIdGenerator cannot be null on " + name);
+            "ticketGrantingTicketUniqueTicketIdGenerator cannot be null on "
+                + name);
         Assert.notNull(this.serviceTicketUniqueTicketIdGenerator,
             "serviceTicketUniqueTicketIdGenerator cannot be null on " + name);
         Assert.notNull(this.ticketGrantingTicketExpirationPolicy,
@@ -372,7 +375,7 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     public void setServiceTicketUniqueTicketIdGenerator(
-        UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator) {
+        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator) {
         this.serviceTicketUniqueTicketIdGenerator = serviceTicketUniqueTicketIdGenerator;
     }
 
