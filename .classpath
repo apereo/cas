@@ -6,8 +6,6 @@
 	<classpathentry kind="src" path="sandbox/main/java"/>
 	<classpathentry kind="src" path="sandbox/test/java"/>
 	<classpathentry kind="src" path="sandbox/resources"/>
-	<classpathentry kind="src" path="adaptors/nis/src/test/java"/>
-	<classpathentry kind="src" path="adaptors/nis/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/ldap/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/ldap/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/jdbc/src/main/java"/>
