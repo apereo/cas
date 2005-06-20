@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import junit.framework.TestCase;
@@ -40,31 +39,20 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler.setUsers(this.users);
     }
 
-    public void testSupportsProperUserCredentials() {
+    public void testSupportsProperUserCredentials() throws Exception {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
-        try {
-            this.authenticationHandler.authenticate(c);
-        } catch (UnsupportedCredentialsException e) {
-            fail("UnsupportedCredentialsException caught");
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught.");
-        }
+        this.authenticationHandler.authenticate(c);
     }
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            this.authenticationHandler
-                .authenticate(new HttpBasedServiceCredentials(new URL(
-                    "http://www.rutgers.edu")));
+            assertFalse(this.authenticationHandler.supports(new HttpBasedServiceCredentials(new URL(
+                    "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
-        } catch (UnsupportedCredentialsException e) {
-            // this is okay
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught.");
         }
     }
 
