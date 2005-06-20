@@ -5,10 +5,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 /**
@@ -22,10 +19,7 @@ import org.springframework.util.StringUtils;
  * @since 3.0
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
-
-    /** Log instance. */
-    private final Log log = LogFactory.getLog(getClass());
+    AbstractUsernamePasswordAuthenticationHandler {
 
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
@@ -33,21 +27,21 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
         final String password = credentials.getPassword();
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
-            && username.equals(password)) {
-            log
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
+            && username.equals(getPasswordEncoder().encode(password))) {
+            getLog().debug(
+                "User [" + username + "] was successfully authenticated.");
             return true;
         }
 
-        log.debug("User [" + username + "] failed authentication");
+        getLog().debug("User [" + username + "] failed authentication");
 
         return false;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        log
-            .warn(this.getClass().getName()
-                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+    protected void afterPropertiesSetInternal() throws Exception {
+        getLog()
+            .warn(
+                this.getClass().getName()
+                    + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }
 }

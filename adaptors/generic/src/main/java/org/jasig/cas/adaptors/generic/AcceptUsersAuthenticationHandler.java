@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.adaptors.generic;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -26,7 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.0
  */
 public final class AcceptUsersAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+    AbstractUsernamePasswordAuthenticationHandler {
 
     /** The list of users we will accept. */
     private Map users;
@@ -44,10 +44,20 @@ public final class AcceptUsersAuthenticationHandler extends
         return (cachedPassword.equals(credentials.getPassword()));
     }
 
-    public void afterPropertiesSet() throws Exception {
+    protected void afterPropertiesSetInternal() throws Exception {
         if (this.users == null) {
             throw new IllegalStateException("users must be set on "
                 + this.getClass().getName());
+        }
+        
+        for (Iterator iter = this.users.keySet().iterator(); iter.hasNext();) {
+            final Object key = iter.next();
+            final Object value = this.users.get(key);
+            
+            if (value == null) {
+                getLog().error("Cannot have null password for user [" + key + "]");
+                throw new IllegalStateException("Cannot have null password for user [" + key + "]");
+            }
         }
     }
 
