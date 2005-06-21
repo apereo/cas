@@ -83,7 +83,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
      * 
      * @return the PasswordEncoder associated with this class.
      */
-    public final PasswordEncoder getPasswordEncoder() {
+    protected final PasswordEncoder getPasswordEncoder() {
         return this.passwordEncoder;
     }
 
