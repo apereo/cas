@@ -87,5 +87,10 @@
 		<ant:delete file="target/cas.war" />
 
 		<ant:delete dir="${basedir}/lib/war" />
+
+		<j:if test="${artifactsDir}">
+			<copy todir="${artifactsDir}" file="${dist.dir}/${release.gzip}" />
+			<copy todir="${artifactsDir}" file="${dist.dir}/${release.zip}" />
+		</j:if>
 	</goal>
 </project>
