@@ -1,0 +1,1 @@
+This folder contains resources used by the CAS 2.0 XMLBeans view.
