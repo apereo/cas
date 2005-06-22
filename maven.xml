@@ -11,6 +11,14 @@
 
     <postGoal name="site">
         <attainGoal name="dashboard:report-single"/>
+
+		<j:if test="${not empty siteDir}">
+		<ant:copy todir="${siteDir}">
+			<ant:fileset dir="target/docs/">
+				<ant:include name="**" />
+			</ant:fileset>
+		</ant:copy>
+		</j:if>
     </postGoal>
 
 	<preGoal name="war:init">
