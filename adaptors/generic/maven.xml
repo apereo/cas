@@ -4,7 +4,7 @@
    xmlns:util="jelly:util"
    xmlns:maven="jelly:maven"
   >
-
+<echo>Using root dir: ${basedir}</echo>
     <postGoal name="jar:jar">
         <j:if test="${context.getVariable('signature.alias') != null}">
         	<echo>signature.alias defined; signing JAR(s)...</echo>
