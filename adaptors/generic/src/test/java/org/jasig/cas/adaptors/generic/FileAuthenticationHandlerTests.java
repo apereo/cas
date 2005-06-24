@@ -31,6 +31,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         super.setUp();
         this.authenticationHandler = new FileAuthenticationHandler();
         this.authenticationHandler.setFileName("authentication.txt");
+        this.authenticationHandler.afterPropertiesSet();
 
     }
 
@@ -52,13 +53,9 @@ public class FileAuthenticationHandlerTests extends TestCase {
         try {
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
                 new URL("http://www.rutgers.edu"));
-            this.authenticationHandler.authenticate(c);
+            assertFalse(this.authenticationHandler.supports(c));
         } catch (MalformedURLException e) {
             fail("MalformedURLException caught.");
-        } catch (UnsupportedCredentialsException e) {
-            // this is okay
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught.");
         }
     }
 
