@@ -56,15 +56,11 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            this.authenticationHandler
-                .authenticate(new HttpBasedServiceCredentials(new URL(
-                    "http://www.rutgers.edu")));
+            assertFalse(this.authenticationHandler
+                .supports(new HttpBasedServiceCredentials(new URL(
+                    "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
-        } catch (UnsupportedCredentialsException e) {
-            // this is okay
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught.");
         }
     }
 
@@ -102,9 +98,9 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         c.setPassword("user");
 
         try {
-            assertFalse(this.authenticationHandler.authenticate(c));
+            assertTrue(this.authenticationHandler.authenticate(c));
         } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
+            fail("Exception expected as null should never be in map.");
         }
     }
 
@@ -115,9 +111,9 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         c.setPassword(null);
 
         try {
-            assertFalse(this.authenticationHandler.authenticate(c));
+            assertTrue(this.authenticationHandler.authenticate(c));
         } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
+            fail("Exception expected as null should never be in map.");
         }
     }
 
