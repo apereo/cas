@@ -5,6 +5,7 @@
 	<body>
 		<links>
 			<item name="JA-SIG" href="http://www.ja-sig.org" />
+			<item name="Wiki" href="http://jasigch.princeton.edu:9000/display/CAS" />
 			<item name="Yale" href="http://www.yale.edu" />
 			<item name="Rutgers" href="http://www.rutgers.edu" />
 		</links>
