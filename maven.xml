@@ -23,7 +23,7 @@
     
     <postGoal name="jar">
     	<j:if test="${not empty mavenRepository}">
-		    <copy todir="{mavenRepository}/cas" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		    <copy todir="${mavenRepository}/cas" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
 		</j:if>
 	</postGoal>
 
