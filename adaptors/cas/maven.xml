@@ -5,7 +5,7 @@
    xmlns:maven="jelly:maven"
   >
 
-    <postGoal name="jar:jar">
+    <postGoal name="jar:jar">  
         <j:if test="${context.getVariable('signature.alias') != null}">
         	<echo>signature.alias defined; signing JAR(s)...</echo>
 			<ant:signjar lazy="true" alias="${signature.alias}" storepass="${signature.storepass}" keystore="${signature.keystore}">
@@ -14,5 +14,13 @@
 				</fileset>
 			</ant:signjar>
         </j:if>
+        
+    	<j:if test="${not empty mavenRepository}">
+		    <copy todir="${mavenRepository}/cas/jars/" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		</j:if>
+		
+		<j:if test="${not empty artifactsDir}">
+			<copy todir="${artifactsDir}" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		</j:if>
     </postGoal>
 </project>
