@@ -29,7 +29,7 @@
 	<classpathentry kind="var" path="MAVEN_REPO/nekohtml/jars/nekohtml-0.9.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-preview3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-support-preview3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2.2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
