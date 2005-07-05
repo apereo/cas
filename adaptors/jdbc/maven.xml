@@ -14,5 +14,13 @@
 				</fileset>
 			</ant:signjar>
         </j:if>
+        
+    	<j:if test="${not empty mavenRepository}">
+		    <copy todir="${mavenRepository}/cas/jars/" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		</j:if>
+		
+		<j:if test="${not empty artifactsDir}">
+			<copy todir="${artifactsDir}" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		</j:if>
     </postGoal>
 </project>
