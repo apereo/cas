@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationEvent;
 public abstract class AbstractEvent extends ApplicationEvent {
 
     /** The date the event was published. */
-    private final Date publishedDate;
+    private final long publishedDate;
 
     /**
      * Constructor that passes the source object to the super class.
@@ -30,7 +30,7 @@ public abstract class AbstractEvent extends ApplicationEvent {
      */
     public AbstractEvent(final Object o) {
         super(o);
-        this.publishedDate = new Date();
+        this.publishedDate = System.currentTimeMillis();
     }
 
     /**
@@ -39,7 +39,7 @@ public abstract class AbstractEvent extends ApplicationEvent {
      * @return the Date this event was published.
      */
     public final Date getPublishedDate() {
-        return this.publishedDate;
+        return new Date(this.publishedDate);
     }
 
     public final String toString() {
