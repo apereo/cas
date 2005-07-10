@@ -163,4 +163,62 @@ public class TgtThrottlingMethodBeforeAdvice implements MethodBeforeAdvice {
         this.unexpiredTgtPresentations.put(tgtId, new Integer(getUnexpiredTgtPresentations(tgtId) + 1));
       }
 
+
+    /**
+     * Get the number of seconds between our expiring tgtId presentations.
+     * @return seconds between expiring tgtid presentations
+     */
+    public int getExpirationIntervalSeconds() {
+        return expirationIntervalSeconds;
+    }
+
+    /**
+     * Set the number of seconds between expirations of tgtId presentations.
+     * Changes to the expiration interval take effect at the conclusion of the
+     * interval currently in progress (i.e., when the thread wakes up, does its work, 
+     * and then goes to sleep again for the then-current interval.)
+     * @param expirationIntervalSeconds seconds between expiring tgtid presentations
+     */
+    public void setExpirationIntervalSeconds(int expirationIntervalSeconds) {
+        this.expirationIntervalSeconds = expirationIntervalSeconds;
+    }
+    
+    
+    /**
+     * Get the number of presentations of each ticket granting ticket id that we will expire
+     * each time we expire tgtid presentations.
+     * @return number of tgtid presentations expired each interval
+     */
+    public int getExpireQuantity() {
+        return expireQuantity;
+    }
+
+    /**
+     * Set the number of presentations of each ticket granting ticket id that we will expire
+     * each time we expire tgtid presentations.
+     * @param expireQuantity number of tgtid presentations to expire at a time
+     */
+    public void setExpireQuantity(int expireQuantity) {
+        this.expireQuantity = expireQuantity;
+    }
+
+    
+    /**
+     * Get the number of active tgtid presentations this Advice will allow before it blocks
+     * an attempt to use a tgt id.
+     * @return allowed quantity of unexpired tgtid presentations.
+     */
+    public int getQuantityAllowed() {
+        return quantityAllowed;
+    }
+
+    /**
+     * Set the number of active tgtID presentations this Advice will allow before it blocks
+     * an attempt to use a tgt id.
+     * @param quantityAllowed allowed quantity of active tgt ID presentations.
+     */
+    public void setQuantityAllowed(int quantityAllowed) {
+        this.quantityAllowed = quantityAllowed;
+    }
+
 }
