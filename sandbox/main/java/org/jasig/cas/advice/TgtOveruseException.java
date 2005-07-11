@@ -6,15 +6,22 @@
 package org.jasig.cas.advice;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketValidationException;
+import org.jasig.cas.ticket.TicketException;
 
 /**
  * Exception indicating failure to validate a potentially otherwise valid ticket
  * granting ticket id because it has been overused.
  */
-public class TgtOveruseException extends TicketValidationException {
+public class TgtOveruseException extends TicketException {
 
     private static final long serialVersionUID = -1931457301226439078L;
+
+    /**
+     * Code we will present to the TicketException superclass and which
+     * TicketException will present in answer to getCode(). Codes are mapped to
+     * messages, by default in messages.properties.
+     */
+    public static final String TGT_OVERUSE_CODE = "TGT_OVERUSE";
 
     /**
      * Non-null String ticket granting ticket identifier which was overused,
@@ -35,6 +42,9 @@ public class TgtOveruseException extends TicketValidationException {
     }
 
     public TgtOveruseException(String overusedTgtId, Service targetService) {
+        // configure the TicketException superclass to use the String code
+        // appropriate for this exception
+        super(TGT_OVERUSE_CODE);
 
         if (overusedTgtId == null) {
             throw new IllegalArgumentException(
@@ -44,6 +54,19 @@ public class TgtOveruseException extends TicketValidationException {
         this.overusedTgtId = overusedTgtId;
 
         this.targetService = targetService;
+    }
+
+    public String getMessage() {
+        if (this.targetService == null) {
+            return "The ticket granting ticket ["
+                + this.overusedTgtId
+                + "] is overused and so was denied in its attempt to obtain a service ticket";
+        } else {
+            return "The ticket granting ticket ["
+                + this.overusedTgtId
+                + "] is overused and so was denied in its attempt to obtain a service ticket to access service ["
+                + this.targetService + "]";
+        }
     }
 
     /**
