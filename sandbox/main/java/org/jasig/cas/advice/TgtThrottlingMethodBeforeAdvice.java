@@ -33,7 +33,12 @@ import org.springframework.aop.MethodBeforeAdvice;
  * will abort the method call by throwing {@link TgtOveruseException}. This
  * exception, or a superclass, should be mapped to an appropriate error
  * response. This advice is intended for use on the CentralAuthenticationService
- * grantServiceTicket methods.
+ * grantServiceTicket methods.  In the default CAS 3 web layer, the Login web flow
+ * will catch the {@link TgtOveruseException} and expose it to the JSP view. By
+ * mapping the {@link TgtOveruseException#TGT_OVERUSE_CODE} to a message in
+ * messages.properties, you can configure the login UI to display a message to the end user
+ * advising that he or she has made too many requests too recently and that 
+ * he or she might wait a while before trying again.
  * </p>
  * <p>
  * Policy is implemented in terms of "unexpired TGT presentations". Each time a
