@@ -15,5 +15,9 @@
 			<item name="Service Authentication" href="/use_cases/serviceAuthentication.html" />
 		</menu>
 		
+		<menu name="Documentation">
+			<item name="Using JSP 1.2" href="/views/jsp12.html" />
+		</menu>
+		
 	</body>
 </project>
