@@ -34,7 +34,9 @@ public abstract class AbstractEvent extends ApplicationEvent {
     }
 
     /**
-     * Method to retrieve the date this event was published.
+     * Method to retrieve the date this event was published. The Date returned
+     * by this method is a copy - changing it will not change the Date instances
+     * returned by subsequent calls to this method.
      * 
      * @return the Date this event was published.
      */
