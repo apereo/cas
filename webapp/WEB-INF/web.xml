@@ -150,9 +150,7 @@
 	</session-config>
 
 	<error-page>
-		<exception-type>
-			org.springframework.context.ApplicationContextException
-		</exception-type>
+		<exception-type>org.springframework.context.ApplicationContextException</exception-type>
 		<location>/WEB-INF/view/jsp/brokenContext.jsp</location>
 	</error-page>
 
@@ -163,6 +161,6 @@
 
 	<error-page>
 		<error-code>404</error-code>
-		<location>/index.jsp</location>
+		<location>/</location>
 	</error-page>
 </web-app>

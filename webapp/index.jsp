@@ -1,1 +1,1 @@
-<jsp:forward page="/login" /> 
+<%response.sendRedirect("login");%>
