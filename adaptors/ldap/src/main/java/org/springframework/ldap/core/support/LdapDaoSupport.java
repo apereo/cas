@@ -55,7 +55,7 @@ public abstract class LdapDaoSupport implements InitializingBean {
     public final void afterPropertiesSet() throws Exception {
         if (this.ldapTemplate == null) {
             throw new IllegalArgumentException(
-                "dataSource or ldapTemplate is required");
+                "contextSource or ldapTemplate is required.");
         }
         initDao();
     }
