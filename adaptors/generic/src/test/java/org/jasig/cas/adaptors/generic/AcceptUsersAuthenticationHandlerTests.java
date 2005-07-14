@@ -18,8 +18,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id: AcceptUsersAuthenticationHandlerTests.java,v 1.3 2005/02/27
- * 05:49:26 sbattaglia Exp $
+ * @version $Revision$ $Date$
  */
 public class AcceptUsersAuthenticationHandlerTests extends TestCase {
 
@@ -27,7 +26,7 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
 
     final private AcceptUsersAuthenticationHandler authenticationHandler;
 
-    public AcceptUsersAuthenticationHandlerTests() {
+    public AcceptUsersAuthenticationHandlerTests() throws Exception {
         this.users = new HashMap();
 
         this.users.put("scott", "rutgers");
@@ -37,6 +36,7 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler = new AcceptUsersAuthenticationHandler();
 
         this.authenticationHandler.setUsers(this.users);
+        this.authenticationHandler.afterPropertiesSet();
     }
 
     public void testSupportsProperUserCredentials() throws Exception {
