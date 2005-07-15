@@ -305,7 +305,7 @@
 			<type>jar</type>
 			<url>http://jakarta.apache.org/commons/attributes/</url>
 			<properties>
-				<war.bundle>true</war.bundle>
+				<war.bundle>false</war.bundle>
 			</properties>
 		</dependency>
 
@@ -398,16 +398,6 @@
 			<version>1.2.8</version>
 			<type>jar</type>
 			<url>http://logging.apache.org/log4j/docs/</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>opensaml</groupId>
-			<artifactId>opensaml</artifactId>
-			<version>1.0.1</version>
-			<type>jar</type>
-			<url>http://www.opensaml.org</url>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
@@ -587,16 +577,6 @@
 			<groupId>oro</groupId>
 			<artifactId>oro</artifactId>
 			<version>2.0.8</version>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-
-		<!-- for CAS 2.0 service response -->
-		<dependency>
-			<groupId>xmlbeans</groupId>
-			<artifactId>xbean</artifactId>
-			<version>1.0.4</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
