@@ -32,7 +32,6 @@ public class Cas20ProxyFailureResponseView extends
 
 	// get our superclass's default xmlOptions object
 	private final XmlOptions xmlOptions = super.getXmlOptions();
-	private String htmlContentType;
 
 	/* (non-Javadoc)
 	 * @see org.springframework.web.servlet.View#render(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
