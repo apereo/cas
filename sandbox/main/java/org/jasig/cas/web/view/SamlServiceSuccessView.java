@@ -3,7 +3,7 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.views;
+package org.jasig.cas.web.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;

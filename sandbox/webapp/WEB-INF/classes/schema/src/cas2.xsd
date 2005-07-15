@@ -42,7 +42,7 @@
    This specification is subject to change.
 
    Author:  Drew Mazurek
-   Version: $Id: cas2.xsd,v 1.1 2005/02/14 16:19:06 dmazurek Exp $
+   Version: $Id$
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            xmlns:cas="http://www.yale.edu/tp/cas" 
