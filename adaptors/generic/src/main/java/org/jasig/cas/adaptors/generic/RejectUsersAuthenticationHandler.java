@@ -7,6 +7,8 @@ package org.jasig.cas.adaptors.generic;
 
 import java.util.Collection;
 
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -14,22 +16,11 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * AuthenticationHandler which fails to authenticate a user purporting to be one
  * of the blocked usernames, and blindly authenticates all other users.
  * <p>
- * Note that the current implementation of AuthenticationManagerImpl tries all
- * AuthenitcationHandlers supporting a particular Credentials until it finds one
- * that succeeds. Since this implementation succeeds on all but those it is
- * configured to reject, adding it to the default AuthenticationManagerImpl has
- * the consequence that all users not explicitly rejected will be available for
- * authentication using any password (regardless of other handlers). Also note
- * that since this implementation does not throw any AuthenticationExceptions,
- * but only returns false for rejected users, rejecting a user using this
- * AuthenticationHandler will not prevent another AuthenticationHandler from
- * authenticating those credentials.
- * <p>
- * This is, under the current implementation of AuthenticationManagerImpl,
- * adding an instance of RejectUsersAuthenticationHandler to the
- * authenticationManager's List of AuthenticationHandlers will have no effect
- * for rejected users and will have the effect of allowing all other users to
- * authenticate regardless of presented password.
+ * Note that RejectUsersAuthenticationHandler throws an exception when the user
+ * is found in the map. This is done to indicate that this is an extreme case
+ * and any AuthenticationManager checking the RejectUsersAuthenticationHandler
+ * should not continue checking other Authentication Handlers on the failure of
+ * RejectUsersAuthenticationHandler to authenticate someone.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -42,9 +33,14 @@ public final class RejectUsersAuthenticationHandler extends
     private Collection users;
 
     public boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials) {
+        final UsernamePasswordCredentials credentials)
+        throws AuthenticationException {
 
-        return !this.users.contains(credentials.getUsername());
+        if (this.users.contains(credentials.getUsername())) {
+            throw new BlockedCredentialsAuthenticationException();
+        }
+
+        return true;
     }
 
     public void afterPropertiesSetInternal() throws Exception {
