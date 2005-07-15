@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<extend>${basedir}/../project.xml</extend>
+	<pomVersion>3</pomVersion>
+	<artifactId>cas-server-sandbox</artifactId>
+	<name>JA-SIG Central Authentication Service - Adaptors</name>
+	<groupId>cas</groupId>
+	<repository>
+		<connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas</connection>
+		<developerConnection>scm:cvs:pserver:${maven.username}@uportal.org:/home/cvs/jasig:cas</developerConnection>
+		<url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/adaptors/</url>
+	</repository>
+	<dependencies>
+		<dependency>
+			<groupId>cas</groupId>
+			<artifactId>cas-server</artifactId>
+			<version>3.0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		
+		<!-- for CAS 2.0 service response -->
+		<dependency>
+			<groupId>xmlbeans</groupId>
+			<artifactId>xbean</artifactId>
+			<version>1.0.4</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		
+		<!-- for SAML views -->
+		<dependency>
+			<groupId>opensaml</groupId>
+			<artifactId>opensaml</artifactId>
+			<version>1.0.1</version>
+			<type>jar</type>
+			<url>http://www.opensaml.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+	</dependencies>
+	<build>
+		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<unitTestSourceDirectory>${basedir}/src/test/java</unitTestSourceDirectory>
+		<unitTest>
+			<includes>
+				<include>**/*Tests.java</include>
+			</includes>
+			<excludes>
+				<exclude>**/Abstract*Tests.java</exclude>
+			</excludes>
+			<resources>
+				<resource>
+					<directory>${basedir}/src/test/resources</directory>
+					<includes>
+						<include>**/**</include>
+						<include>**/*.txt</include>
+					</includes>
+					<excludes>
+						<exclude>**/*.java</exclude>
+					</excludes>
+					<filtering>false</filtering>
+				</resource>
+			</resources>
+		</unitTest>
+		<resources>
+			<resource>
+				<directory>${rootdir}</directory>
+				<targetPath>META-INF</targetPath>
+				<includes>
+					<include>notice.txt</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<includes>
+					<include>**/**</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+	</build>
+</project>
