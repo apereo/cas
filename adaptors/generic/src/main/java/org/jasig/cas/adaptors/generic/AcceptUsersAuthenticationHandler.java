@@ -26,50 +26,51 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @since 3.0
  */
 public final class AcceptUsersAuthenticationHandler extends
-		AbstractUsernamePasswordAuthenticationHandler {
+    AbstractUsernamePasswordAuthenticationHandler {
 
-	/** The list of users we will accept. */
-	private Map users;
+    /** The list of users we will accept. */
+    private Map users;
 
-	public boolean authenticateUsernamePasswordInternal(
-			final UsernamePasswordCredentials credentials) {
+    public boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials) {
 
-		if (!this.users.containsKey(credentials.getUsername())) {
-			return false;
-		}
+        final String cachedPassword = (String) this.users.get(credentials
+            .getUsername());
 
-		final String cachedPassword = (String) this.users.get(credentials
-				.getUsername());
-		final String encodedPassword = this.getPasswordEncoder().encode(
-				credentials.getPassword());
+        if (cachedPassword == null) {
+            return false;
+        }
 
-		return (cachedPassword.equals(encodedPassword));
-	}
+        final String encodedPassword = this.getPasswordEncoder().encode(
+            credentials.getPassword());
 
-	protected void afterPropertiesSetInternal() throws Exception {
-		if (this.users == null) {
-			throw new IllegalStateException("users must be set on "
-					+ this.getClass().getName());
-		}
+        return (cachedPassword.equals(encodedPassword));
+    }
 
-		for (Iterator iter = this.users.keySet().iterator(); iter.hasNext();) {
-			final Object key = iter.next();
-			final Object value = this.users.get(key);
+    protected void afterPropertiesSetInternal() throws Exception {
+        if (this.users == null) {
+            throw new IllegalStateException("users must be set on "
+                + this.getClass().getName());
+        }
 
-			if (value == null) {
-				getLog().error(
-						"Cannot have null password for user [" + key + "]");
-				throw new IllegalStateException(
-						"Cannot have null password for user [" + key + "]");
-			}
-		}
-	}
+        for (Iterator iter = this.users.keySet().iterator(); iter.hasNext();) {
+            final Object key = iter.next();
+            final Object value = this.users.get(key);
 
-	/**
-	 * @param users
-	 *            The users to set.
-	 */
-	public void setUsers(final Map users) {
-		this.users = users;
-	}
+            if (value == null) {
+                getLog().error(
+                    "Cannot have null password for user [" + key + "]");
+                throw new IllegalStateException(
+                    "Cannot have null password for user [" + key + "]");
+            }
+        }
+    }
+
+    /**
+     * @param users
+     *            The users to set.
+     */
+    public void setUsers(final Map users) {
+        this.users = users;
+    }
 }

@@ -12,15 +12,13 @@ import java.util.Collection;
 
 import org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Id: RejectUsersAuthenticationHandlerTests.java,v 1.3 2005/02/27
- * 05:49:26 sbattaglia Exp $
+ * @version $Revision$ $Date$
  */
 public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
@@ -47,8 +45,6 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
-        } catch (UnsupportedCredentialsException e) {
-            fail("UnsupportedCredentialsException caught");
         } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
