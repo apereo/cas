@@ -16,8 +16,7 @@ package org.jasig.cas.validation;
  * @since 3.0
  */
 public class Cas20ProtocolValidationSpecification extends
-    AbstractCasProtocolValidationSpecification implements
-    ValidationSpecification {
+    AbstractCasProtocolValidationSpecification {
 
     public Cas20ProtocolValidationSpecification() {
         super();
