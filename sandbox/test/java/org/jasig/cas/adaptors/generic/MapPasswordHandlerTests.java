@@ -246,6 +246,11 @@ public class MapPasswordHandlerTests extends TestCase {
      * An ad-hoc credentials that MapPasswordHandler ought not to support.
      */
     private class UnsupportedCredentials implements Credentials {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7166496244172616112L;
         // does nothing
     }
 }
