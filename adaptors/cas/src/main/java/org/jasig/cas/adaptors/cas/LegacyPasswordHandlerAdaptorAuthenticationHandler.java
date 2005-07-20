@@ -25,45 +25,42 @@ import edu.yale.its.tp.cas.auth.PasswordHandler;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LegacyPasswordHandlerAdaptorAuthenticationHandler
-    implements AuthenticationHandler, InitializingBean {
+public class LegacyPasswordHandlerAdaptorAuthenticationHandler implements
+		AuthenticationHandler, InitializingBean {
 
-    private PasswordHandler passwordHandler;
+	private PasswordHandler passwordHandler;
 
-    /**
-     * AuthenticationHandler method
-     */
-    public boolean authenticate(final Credentials credentials) {
-    	
-        final LegacyCasCredentials casCredentials = (LegacyCasCredentials) credentials;
+	/**
+	 * AuthenticationHandler method
+	 */
+	public boolean authenticate(final Credentials credentials) {
 
-        return this.passwordHandler.authenticate(casCredentials
-            .getServletRequest(), casCredentials.getUsername(), casCredentials
-            .getPassword());
-    }
+		final LegacyCasCredentials casCredentials = (LegacyCasCredentials) credentials;
 
-    public boolean supports(final Credentials credentials) {
-        if (credentials == null)
-            return false;
+		return this.passwordHandler.authenticate(casCredentials
+				.getServletRequest(), casCredentials.getUsername(),
+				casCredentials.getPassword());
+	}
 
-        return LegacyCasCredentials.class.equals(credentials.getClass());
-    }
+	public boolean supports(final Credentials credentials) {
+		if (credentials == null)
+			return false;
 
-    /**
-     * @param passwordHandler CAS 2 PasswordHandler object to be adapted
-     * to the new AuthenticationHandler interface.
-     */
-    public void setPasswordHandler(final PasswordHandler passwordHandler) {
-        this.passwordHandler = passwordHandler;
-    }
+		return LegacyCasCredentials.class.equals(credentials.getClass());
+	}
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-        if (this.passwordHandler == null) {
-            throw new IllegalStateException("passwordHandler must be set on " //$NON-NLS-1$
-                + this.getClass().getName());
-        }
-    }
+	/**
+	 * @param passwordHandler CAS 2 PasswordHandler object to be adapted
+	 * to the new AuthenticationHandler interface.
+	 */
+	public void setPasswordHandler(final PasswordHandler passwordHandler) {
+		this.passwordHandler = passwordHandler;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		if (this.passwordHandler == null) {
+			throw new IllegalStateException("passwordHandler must be set on "
+					+ this.getClass().getName());
+		}
+	}
 }
