@@ -47,7 +47,6 @@ public interface PasswordHandler extends AuthHandler {
      * @param password the password paremeter presented on the request
      * @return true to authenticate the request as the username, false to fail the authentication
      * @since CAS 2.0
-     * @deprecated CAS 3 provides new AuthenticationHandler APIs.
      * @see TrustHandler
      */
     boolean authenticate(ServletRequest request, String username,
