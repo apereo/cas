@@ -30,5 +30,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/xmlbeans/jars/xbean-1.0.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Xerces"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
