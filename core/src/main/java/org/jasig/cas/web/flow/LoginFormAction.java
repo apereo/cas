@@ -25,10 +25,10 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
-import org.springframework.web.flow.Event;
-import org.springframework.web.flow.RequestContext;
-import org.springframework.web.flow.action.FormAction;
-import org.springframework.web.flow.action.FormObjectAccessor;
+import org.springframework.webflow.Event;
+import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.action.FormAction;
+import org.springframework.webflow.action.FormObjectAccessor;
 
 /**
  * Action in flow of Login that attempts to collect and process credentials
@@ -152,7 +152,7 @@ public final class LoginFormAction extends FormAction {
         } catch (final TicketException e) {
             final FormObjectAccessor accessor = new FormObjectAccessor(context);
             final Errors errors = accessor.getFormErrors(this
-                .getFormObjectName(), this.getErrorsScope());
+                .getFormObjectName(), this.getFormErrorsScope());
             errors.reject(e.getCode(), e.getCode());
             return error();
         }

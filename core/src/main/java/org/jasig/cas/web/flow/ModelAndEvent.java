@@ -8,7 +8,7 @@ package org.jasig.cas.web.flow;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.web.flow.Event;
+import org.springframework.webflow.Event;
 
 /**
  * Holder for both Model and Event in the CAS work flow. Note that these are

@@ -10,9 +10,9 @@ import javax.servlet.http.Cookie;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.flow.MockRequestContext;
-import org.springframework.web.flow.Event;
-import org.springframework.web.flow.execution.servlet.ServletEvent;
+import org.springframework.webflow.Event;
+import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.webflow.test.MockRequestContext;
 
 import junit.framework.TestCase;
 

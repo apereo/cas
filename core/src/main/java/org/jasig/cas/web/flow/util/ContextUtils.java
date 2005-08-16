@@ -8,8 +8,8 @@ package org.jasig.cas.web.flow.util;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.flow.RequestContext;
-import org.springframework.web.flow.execution.servlet.ServletEvent;
+import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.servlet.ServletEvent;
 
 /**
  * Common utilities for extracting information from the RequestContext.

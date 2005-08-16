@@ -18,7 +18,7 @@ import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.flow.RequestContext;
+import org.springframework.webflow.RequestContext;
 
 /**
  * <p>
