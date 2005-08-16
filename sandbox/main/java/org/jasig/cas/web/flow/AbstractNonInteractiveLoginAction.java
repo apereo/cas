@@ -23,7 +23,7 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.BindUtils;
-import org.springframework.web.flow.RequestContext;
+import org.springframework.webflow.RequestContext;
 
 /**
  * Webflow Action that allows for the non-interactive check for a credential.

@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.flow.execution.NoSuchFlowExecutionException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.webflow.execution.NoSuchFlowExecutionException;
 
 /**
  * The NoSuchFlowExecutionResolver catches the NoSuchFlowExecutionException

@@ -7,9 +7,9 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
-import org.springframework.web.flow.RequestContext;
-import org.springframework.web.flow.ViewDescriptor;
-import org.springframework.web.flow.ViewDescriptorCreator;
+import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.ViewDescriptorCreator;
 
 /**
  * Custom View Descriptor that allows the Web Flow to have an end state that

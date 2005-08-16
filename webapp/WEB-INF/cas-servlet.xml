@@ -36,7 +36,7 @@
 
 	<bean
 		id="loginFlow"
-		class="org.springframework.web.flow.config.XmlFlowFactoryBean">
+		class="org.springframework.webflow.config.XmlFlowFactoryBean">
 	   <property
 			name="location"
 	   		value="/WEB-INF/logon-webflow.xml" />
@@ -95,7 +95,7 @@
 
 	<bean
 		id="loginController"
-		class="org.springframework.web.flow.mvc.FlowController">
+		class="org.springframework.webflow.mvc.FlowController">
 		<property
 			name="flow"
 			ref="loginFlow" />

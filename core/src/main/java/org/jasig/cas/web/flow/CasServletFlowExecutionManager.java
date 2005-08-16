@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.springframework.web.flow.execution.servlet.ServletFlowExecutionManager;
+import org.springframework.webflow.execution.servlet.ServletFlowExecutionManager;
 
 /**
  * Specific subclass of FlowExecutionManager to override default value for

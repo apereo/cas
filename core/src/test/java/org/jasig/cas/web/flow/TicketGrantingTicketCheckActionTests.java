@@ -12,8 +12,8 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.flow.MockRequestContext;
-import org.springframework.web.flow.execution.servlet.ServletEvent;
+import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * @author Scott Battaglia

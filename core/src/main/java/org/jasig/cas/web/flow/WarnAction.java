@@ -13,7 +13,7 @@ import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.flow.RequestContext;
+import org.springframework.webflow.RequestContext;
 
 /**
  * Action for determining whether the warning page needs to be displayed or not.

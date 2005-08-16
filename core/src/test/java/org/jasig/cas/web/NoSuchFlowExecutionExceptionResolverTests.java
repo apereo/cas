@@ -7,9 +7,9 @@ package org.jasig.cas.web;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.flow.execution.NoSuchFlowExecutionException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.webflow.execution.NoSuchFlowExecutionException;
 
 import junit.framework.TestCase;
 
