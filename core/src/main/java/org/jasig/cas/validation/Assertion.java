@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.validation;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -18,7 +19,7 @@ import org.jasig.cas.authentication.principal.Service;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public interface Assertion {
+public interface Assertion extends Serializable {
 
     /**
      * Get a List of Authentications which represent the owners of the

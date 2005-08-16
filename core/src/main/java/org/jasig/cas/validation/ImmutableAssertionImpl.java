@@ -23,7 +23,10 @@ import org.jasig.cas.authentication.principal.Service;
  */
 public final class ImmutableAssertionImpl implements Assertion {
 
-    /** The list of principals. */
+    /** Unique Id for Serialization. */
+	private static final long serialVersionUID = -1921502350732798866L;
+
+	/** The list of principals. */
     private final List principals;
 
     /** Was this the result of a new login. */
