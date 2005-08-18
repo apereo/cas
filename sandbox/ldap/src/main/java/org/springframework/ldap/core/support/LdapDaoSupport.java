@@ -48,7 +48,7 @@ public abstract class LdapDaoSupport implements InitializingBean {
     /**
      * @param ldapTemplate The ldapTemplate to set.
      */
-    public void setLdapTemplate(LdapTemplate ldapTemplate) {
+    public void setLdapTemplate(final LdapTemplate ldapTemplate) {
         this.ldapTemplate = ldapTemplate;
     }
 
@@ -84,7 +84,7 @@ public abstract class LdapDaoSupport implements InitializingBean {
      * 
      * @param con Ldap Context to close
      */
-    protected final void closeContextIfNecessary(DirContext con) {
+    protected final void closeContextIfNecessary(final DirContext con) {
         LdapUtils.closeContext(con);
     }
 }
