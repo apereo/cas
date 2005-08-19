@@ -52,6 +52,15 @@ public final class LoginFormAction extends FormAction {
     /** Core we delegate to for handling all ticket related tasks. */
     private CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * Amount of time to keep the TicketGrantingTicket Cookie around for.
+     * Negative values denote browser/session length, zero indicates destroy
+     * ticket and a positive value is a time value in seconds.
+     * <p>
+     * Default value is -1
+     */
+    private int cookieTimeout = -1;
+
     protected void onBind(final RequestContext context,
         final Object formObject, final BindException errors) {
         final HttpServletRequest request = ContextUtils
@@ -172,7 +181,7 @@ public final class LoginFormAction extends FormAction {
         final HttpServletRequest request, final HttpServletResponse response) {
         final Cookie cookie = new Cookie(id, value);
         cookie.setSecure(true);
-        cookie.setMaxAge(-1);
+        cookie.setMaxAge(this.cookieTimeout);
         cookie.setPath(request.getContextPath());
         response.addCookie(cookie);
     }
@@ -228,5 +237,9 @@ public final class LoginFormAction extends FormAction {
                 "CredentialsBinder does not support supplied FormObjectClass: "
                     + this.getClass().getName());
         }
+    }
+
+    public void setCookieTimeout(final int cookieTimeout) {
+        this.cookieTimeout = cookieTimeout;
     }
 }
