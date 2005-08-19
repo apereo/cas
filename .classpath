@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="adaptors/generic/src/test/resources"/>
-	<classpathentry kind="src" path="sandbox/ldap/src/test/java"/>
+	<classpathentry kind="src" path="sandbox/src/main/java"/>
+	<classpathentry kind="src" path="sandbox/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/generic/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/generic/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/jdbc/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/cas/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/cas/src/test/java"/>
-	<classpathentry kind="src" path="sandbox/main/java"/>
-	<classpathentry kind="src" path="sandbox/test/java"/>
 	<classpathentry kind="src" path="sandbox/resources"/>
-	<classpathentry kind="src" path="sandbox/ldap/src/main/java"/>
 	<classpathentry kind="src" path="core/src/main/java"/>
 	<classpathentry kind="src" path="core/src/test/java"/>
 	<classpathentry kind="src" path="core/src/test/resources"/>
