@@ -3,8 +3,10 @@ package org.jasig.cas.services.advice;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.services.DefaultServiceRegistry;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
@@ -78,7 +80,7 @@ public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvi
     }
     
     public void testTicketGrantingTicketExistsServiceDoesNot() throws Throwable {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", new MockAuthentication(), new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket("test2", new SimpleService("test"), new NeverExpiresExpirationPolicy());
         
         this.monitor.afterReturning(null, null, new Object[] {s}, null);
@@ -88,7 +90,7 @@ public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvi
     }
     
     public void testTicketGrantingTicketAndServiceExist() throws Throwable {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", new MockAuthentication(), new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket("test2", new SimpleService("test"), new NeverExpiresExpirationPolicy());
         final RegisteredService service = new RegisteredService("test", true, true, "test", null);
         this.serviceRegistryManager.addService(service);
@@ -98,4 +100,8 @@ public class CallbackServicesOnTicketGrantingTicketDestructionAfterReturningAdvi
         
         assertFalse(this.singleSignoutMap.containsKey(t.getId()));
      }
+    
+    private Authentication getAuthentication() {
+        return new ImmutableAuthentication(new SimplePrincipal("test"));
+    }
 }
