@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -68,12 +70,12 @@ public class MonitorServiceTicketsAfterReturningAdviceTests extends TestCase {
     }
     
     public void testTicketIsNotServiceTicket() throws Throwable {
-        this.advice.afterReturning(null, null, new Object[] {new TicketGrantingTicketImpl("Test", new MockAuthentication(), new NeverExpiresExpirationPolicy())}, null);
+        this.advice.afterReturning(null, null, new Object[] {new TicketGrantingTicketImpl("Test", getAuthentication(), new NeverExpiresExpirationPolicy())}, null);
         assertTrue(this.singleSignoutMap.isEmpty());
     }
     
     public void testTestNoTicketGrantingTicketInMap() throws Throwable {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", new MockAuthentication(), new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket("test2", new SimpleService("test"), new NeverExpiresExpirationPolicy());
         
         this.advice.afterReturning(null, null, new Object[] {s}, null);
@@ -84,7 +86,7 @@ public class MonitorServiceTicketsAfterReturningAdviceTests extends TestCase {
     }
     
     public void testTestTicketGrantingTicketInMap() throws Throwable {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", new MockAuthentication(), new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket("test2", new SimpleService("test"), new NeverExpiresExpirationPolicy());
         
         this.singleSignoutMap.put(t.getId(), new HashSet());
@@ -93,5 +95,9 @@ public class MonitorServiceTicketsAfterReturningAdviceTests extends TestCase {
         assertTrue(this.singleSignoutMap.containsKey(t.getId()));
         Set set = (Set) this.singleSignoutMap.get(t.getId());
         assertTrue(set.contains(s));
+    }
+    
+    private Authentication getAuthentication() {
+        return new ImmutableAuthentication(new SimplePrincipal("test"));
     }
 }
