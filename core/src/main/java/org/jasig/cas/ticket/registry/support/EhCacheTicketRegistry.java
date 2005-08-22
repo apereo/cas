@@ -105,8 +105,9 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
             log.debug("Ticket [" + ticketId + "] found in registry.");
             return ticket;
         } catch (Exception ex) {
-            throw new IllegalStateException(
-                "Ticket registry threw an exception: " + ex.getMessage());
+            IllegalStateException ise = new IllegalStateException();
+            ise.initCause(ex);
+            throw ise;
         }
     }
 
@@ -130,7 +131,9 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
             }
             return Collections.unmodifiableCollection(items);
         } catch (Exception e) {
-            throw new IllegalStateException(e.getMessage());
+            IllegalStateException ise = new IllegalStateException();
+            ise.initCause(e);
+            throw ise;
         }
     }
 
