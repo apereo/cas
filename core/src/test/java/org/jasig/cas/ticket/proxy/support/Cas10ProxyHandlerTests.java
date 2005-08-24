@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import junit.framework.TestCase;
@@ -24,7 +24,7 @@ public class Cas10ProxyHandlerTests extends TestCase {
     }
 
     public void testCredentialsAndProxy() {
-        assertNull(this.proxyHandler.handle(new UsernamePasswordCredentials(),
-            "test"));
+        assertNull(this.proxyHandler.handle(TestUtils
+            .getCredentialsWithSameUsernameAndPassword(), "test"));
     }
 }
