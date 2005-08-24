@@ -97,6 +97,28 @@ public class LoginFormActionTests extends
 
         assertEquals("noService", this.logonFormAction.submit(context).getId());
     }
+    
+    public void testSetCookieValue() throws Exception {
+        MockRequestContext context = new MockRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        context.setSourceEvent(new ServletEvent(request,
+            response));
+
+        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        credentials.setUsername("test");
+        credentials.setPassword("test");
+
+        ContextUtils.addAttribute(context, "credentials", credentials);
+        ContextUtils.addAttribute(context,
+            "org.springframework.validation.BindException.credentials",
+            new BindException(credentials, "credentials"));
+        
+        this.logonFormAction.setCookieTimeout(5);
+
+        assertEquals("noService", this.logonFormAction.submit(context).getId());
+        assertEquals(5, response.getCookies()[0].getMaxAge());
+    }
 
     public void testWarn() throws Exception {
         MockRequestContext context = new MockRequestContext();
