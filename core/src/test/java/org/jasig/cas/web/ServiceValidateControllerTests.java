@@ -8,8 +8,8 @@ package org.jasig.cas.web;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.mock.MockValidationSpecification;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
@@ -32,13 +32,6 @@ public class ServiceValidateControllerTests extends
 
     private ServiceValidateController serviceValidateController;
 
-    private UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials();
-
-    public ServiceValidateControllerTests() {
-        usernamePasswordCredentials.setUsername("test");
-        usernamePasswordCredentials.setPassword("test");
-    }
-
     protected void onSetUp() throws Exception {
         StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
@@ -51,7 +44,7 @@ public class ServiceValidateControllerTests extends
 
     private HttpServletRequest getHttpServletRequest() throws TicketException {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(usernamePasswordCredentials);
+            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().grantServiceTicket(tId,
             new SimpleService("test"));
         final String sId2 = getCentralAuthenticationService()
@@ -82,7 +75,7 @@ public class ServiceValidateControllerTests extends
 
     public void testValidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(usernamePasswordCredentials);
+            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
@@ -121,7 +114,7 @@ public class ServiceValidateControllerTests extends
 
     public void testInvalidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(usernamePasswordCredentials);
+            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
@@ -139,7 +132,7 @@ public class ServiceValidateControllerTests extends
     public void testValidServiceTicketWithPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(usernamePasswordCredentials);
+            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
@@ -157,7 +150,7 @@ public class ServiceValidateControllerTests extends
     public void testValidServiceTicketWithBadPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(usernamePasswordCredentials);
+            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 
@@ -176,7 +169,7 @@ public class ServiceValidateControllerTests extends
     public void testValidServiceTicketWithInvalidPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(usernamePasswordCredentials);
+            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, new SimpleService("test"));
 

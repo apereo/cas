@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.services.advice;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.services.DefaultServiceRegistry;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
@@ -62,7 +62,7 @@ public class ServiceRequiresAuthenticationMethodBeforeAdviceTests extends
 
     public void testRequiresAuthHasAuth() throws Exception {
         this.advice.before(null, new Object[] {"ticketId",
-            new SimpleService("TestAuth"), new UsernamePasswordCredentials()},
-            null);
+            new SimpleService("TestAuth"),
+            TestUtils.getCredentialsWithSameUsernameAndPassword()}, null);
     }
 }

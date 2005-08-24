@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.validation;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
@@ -31,85 +32,40 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     }
 
     public void testValidationPasses() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredentials c = TestUtils.getCredentialsWithSameUsernameAndPassword();
         final BindException b = new BindException(c, "credentials");
-        c.setUsername("test");
-        c.setPassword("test");
-
         this.validator.validate(c, b);
-
         assertFalse(b.hasErrors());
     }
 
     public void testValidationFailsPasswordNull() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        final BindException b = new BindException(c, "credentials");
-        c.setUsername("test");
-        c.setPassword(null);
-
-        this.validator.validate(c, b);
-
-        assertTrue(b.hasErrors());
-        assertEquals(b.getErrorCount(), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", null), 1);
     }
 
     public void testValidationFailsPasswordBlank() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        final BindException b = new BindException(c, "credentials");
-        c.setUsername("test");
-        c.setPassword("");
-
-        this.validator.validate(c, b);
-
-        assertTrue(b.hasErrors());
-        assertEquals(b.getErrorCount(), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", ""), 1);
     }
 
     public void testValidationFailsUsernameNull() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        final BindException b = new BindException(c, "credentials");
-        c.setUsername(null);
-        c.setPassword("hello");
-
-        this.validator.validate(c, b);
-
-        assertTrue(b.hasErrors());
-        assertEquals(b.getErrorCount(), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, "hello"), 1);
     }
 
     public void testValidationFailsUsernameBlank() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        final BindException b = new BindException(c, "credentials");
-        c.setUsername("");
-        c.setPassword("hello");
-
-        this.validator.validate(c, b);
-
-        assertTrue(b.hasErrors());
-        assertEquals(b.getErrorCount(), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("", "hello"), 1);
     }
 
     public void testValidationFailsUsernameAndPasswordBlank() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        final BindException b = new BindException(c, "credentials");
-        c.setUsername("");
-        c.setPassword("");
-
-        this.validator.validate(c, b);
-
-        assertTrue(b.hasErrors());
-        assertEquals(b.getErrorCount(), 2);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("", ""), 2);
     }
 
     public void testValidationFailsUsernameAndPasswordNull() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null), 2);
+    }
+    
+    private void commonTests(final UsernamePasswordCredentials c, int errorCountExpected) {
         final BindException b = new BindException(c, "credentials");
-        c.setUsername(null);
-        c.setPassword(null);
-
         this.validator.validate(c, b);
-
         assertTrue(b.hasErrors());
-        assertEquals(b.getErrorCount(), 2);
+        assertEquals(b.getErrorCount(), errorCountExpected);
     }
 }

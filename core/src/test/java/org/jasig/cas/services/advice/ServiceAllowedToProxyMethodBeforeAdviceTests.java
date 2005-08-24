@@ -9,8 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.services.DefaultServiceRegistry;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
@@ -36,13 +36,6 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
             new URL("http://www.rutgers.edu"));
 
         ((ServiceRegistryManager) this.serviceRegistry).addService(r);
-    }
-
-    private UsernamePasswordCredentials getUsernamePasswordCredentials() {
-        final UsernamePasswordCredentials cred = new UsernamePasswordCredentials();
-        cred.setPassword("a");
-        cred.setUsername("a");
-        return cred;
     }
 
     public void testAfterPropertiesSetNoTicketRegistry() {
@@ -72,23 +65,25 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
     public void testServiceFoundById() throws TicketException,
         UnauthorizedServiceException {
         String ticketGrantingTicketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(getUsernamePasswordCredentials());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicketId,
                 new SimpleService("test"));
         this.advice.before(null, new Object[] {serviceTicketId,
-            getUsernamePasswordCredentials()}, null);
+            TestUtils.getCredentialsWithSameUsernameAndPassword()}, null);
     }
 
     public void testServiceFoundByUrl() throws TicketException,
         UnauthorizedServiceException {
         String ticketGrantingTicketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(getUsernamePasswordCredentials());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicketId,
                 new SimpleService("http://www.rutgers.edu"));
         this.advice.before(null, new Object[] {serviceTicketId,
-            getUsernamePasswordCredentials()}, null);
+            TestUtils.getCredentialsWithSameUsernameAndPassword()}, null);
     }
 
     public void testServiceNoProxying() throws TicketException,
@@ -103,13 +98,14 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
 
     private void callAdvice() throws TicketException {
         String ticketGrantingTicketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(getUsernamePasswordCredentials());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicketId,
                 new SimpleService("test2"));
         try {
             this.advice.before(null, new Object[] {serviceTicketId,
-                getUsernamePasswordCredentials()}, null);
+                TestUtils.getCredentialsWithSameUsernameAndPassword()}, null);
             fail("Exception expected.");
         } catch (UnauthorizedServiceException e) {
             return;
