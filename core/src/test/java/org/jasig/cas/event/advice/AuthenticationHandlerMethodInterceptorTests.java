@@ -37,97 +37,55 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
     }
 
     public void testAuthenticationEventWithBooleanTrue() throws Throwable {
-        MethodInvocation methodInvocation = new MethodInvocation(){
-
-            public Method getMethod() {
-                return SimpleTestUsernamePasswordAuthenticationHandler.class
-                    .getDeclaredMethods()[0];
-            }
-
-            public Object[] getArguments() {
-                return new Object[] {new UsernamePasswordCredentials()};
-            }
-
-            public AccessibleObject getStaticPart() {
-                return null;
-            }
-
-            public Object getThis() {
-                return null;
-            }
-
-            public Object proceed() throws Throwable {
-                return Boolean.TRUE;
-            }
-
-        };
-        this.advice.invoke(methodInvocation);
+        this.advice.invoke(new BooleanMethodInvocation(Boolean.TRUE));
         assertNotNull(this.event);
         assertTrue(this.event.isSuccessfulAuthentication());
     }
 
     public void testAuthenticationEventWithBooleanFalse() throws Throwable {
-        MethodInvocation methodInvocation = new MethodInvocation(){
-
-            public Method getMethod() {
-                return SimpleTestUsernamePasswordAuthenticationHandler.class
-                    .getDeclaredMethods()[0];
-            }
-
-            public Object[] getArguments() {
-                return new Object[] {new UsernamePasswordCredentials()};
-            }
-
-            public AccessibleObject getStaticPart() {
-                return null;
-            }
-
-            public Object getThis() {
-                return null;
-            }
-
-            public Object proceed() throws Throwable {
-                return Boolean.FALSE;
-            }
-
-        };
-        this.advice.invoke(methodInvocation);
+        this.advice.invoke(new BooleanMethodInvocation(Boolean.FALSE));
         assertNotNull(this.event);
         assertFalse(this.event.isSuccessfulAuthentication());
     }
 
     public void testAuthenticationEventWithException() throws Throwable {
-        MethodInvocation methodInvocation = new MethodInvocation(){
-
-            public Method getMethod() {
-                return SimpleTestUsernamePasswordAuthenticationHandler.class
-                    .getDeclaredMethods()[0];
-            }
-
-            public Object[] getArguments() {
-                return new Object[] {new UsernamePasswordCredentials()};
-            }
-
-            public AccessibleObject getStaticPart() {
-                return null;
-            }
-
-            public Object getThis() {
-                return null;
-            }
-
-            public Object proceed() throws Throwable {
-                throw BadUsernameOrPasswordAuthenticationException.ERROR;
-            }
-
-        };
         try {
-            this.advice.invoke(methodInvocation);
+            this.advice.invoke(new BooleanMethodInvocation(BadUsernameOrPasswordAuthenticationException.ERROR));
         } catch (AuthenticationException e) {
             // ok
         }
         assertNotNull(this.event);
         assertFalse(this.event.isSuccessfulAuthentication());
+    }
+    
+    protected class BooleanMethodInvocation implements MethodInvocation {
+        private final Object returnObject;
+        protected BooleanMethodInvocation(final Object returnObject) {
+            this.returnObject = returnObject;
+        }
+        public Method getMethod() {
+            return SimpleTestUsernamePasswordAuthenticationHandler.class
+                .getDeclaredMethods()[0];
+        }
+
+        public Object[] getArguments() {
+            return new Object[] {new UsernamePasswordCredentials()};
+        }
+
+        public AccessibleObject getStaticPart() {
+            return null;
+        }
+
+        public Object getThis() {
+            return null;
+        }
+
+        public Object proceed() throws Throwable {
+            if (returnObject instanceof Throwable) {
+                throw (Throwable) returnObject;
+            }
+            return returnObject;
+        }
     }
 
     protected class MockApplicationEventPublisher implements

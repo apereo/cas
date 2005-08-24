@@ -38,6 +38,13 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
         ((ServiceRegistryManager) this.serviceRegistry).addService(r);
     }
 
+    private UsernamePasswordCredentials getUsernamePasswordCredentials() {
+        final UsernamePasswordCredentials cred = new UsernamePasswordCredentials();
+        cred.setPassword("a");
+        cred.setUsername("a");
+        return cred;
+    }
+
     public void testAfterPropertiesSetNoTicketRegistry() {
         try {
             this.advice.setTicketRegistry(null);
@@ -59,70 +66,50 @@ public class ServiceAllowedToProxyMethodBeforeAdviceTests extends
     }
 
     public void testServiceNotFound() throws TicketException {
-        UsernamePasswordCredentials cred = new UsernamePasswordCredentials();
-        cred.setPassword("a");
-        cred.setUsername("a");
-
-        String ticketGrantingTicketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(cred);
-        String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketGrantingTicketId,
-                new SimpleService("test2"));
-        try {
-            this.advice
-                .before(null, new Object[] {serviceTicketId, cred}, null);
-            fail("Exception expected.");
-        } catch (UnauthorizedServiceException e) {
-            return;
-        }
+        callAdvice();
     }
 
     public void testServiceFoundById() throws TicketException,
         UnauthorizedServiceException {
-        UsernamePasswordCredentials cred = new UsernamePasswordCredentials();
-        cred.setPassword("a");
-        cred.setUsername("a");
-
         String ticketGrantingTicketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(cred);
+            .createTicketGrantingTicket(getUsernamePasswordCredentials());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicketId,
                 new SimpleService("test"));
-        this.advice.before(null, new Object[] {serviceTicketId, cred}, null);
+        this.advice.before(null, new Object[] {serviceTicketId,
+            getUsernamePasswordCredentials()}, null);
     }
 
     public void testServiceFoundByUrl() throws TicketException,
         UnauthorizedServiceException {
-        UsernamePasswordCredentials cred = new UsernamePasswordCredentials();
-        cred.setPassword("a");
-        cred.setUsername("a");
-
         String ticketGrantingTicketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(cred);
+            .createTicketGrantingTicket(getUsernamePasswordCredentials());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicketId,
                 new SimpleService("http://www.rutgers.edu"));
-        this.advice.before(null, new Object[] {serviceTicketId, cred}, null);
+        this.advice.before(null, new Object[] {serviceTicketId,
+            getUsernamePasswordCredentials()}, null);
     }
 
     public void testServiceNoProxying() throws TicketException,
         MalformedURLException {
-        UsernamePasswordCredentials cred = new UsernamePasswordCredentials();
-        cred.setPassword("a");
-        cred.setUsername("a");
 
         RegisteredService r = new RegisteredService("test2", false, false,
             null, new URL("http://www.rutgers.com"));
         ((ServiceRegistryManager) this.serviceRegistry).addService(r);
 
+        callAdvice();
+    }
+
+    private void callAdvice() throws TicketException {
         String ticketGrantingTicketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(cred);
+            .createTicketGrantingTicket(getUsernamePasswordCredentials());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketGrantingTicketId,
                 new SimpleService("test2"));
         try {
-            this.advice
-                .before(null, new Object[] {serviceTicketId, cred}, null);
+            this.advice.before(null, new Object[] {serviceTicketId,
+                getUsernamePasswordCredentials()}, null);
             fail("Exception expected.");
         } catch (UnauthorizedServiceException e) {
             return;
