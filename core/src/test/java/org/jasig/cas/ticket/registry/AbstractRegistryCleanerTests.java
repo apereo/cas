@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.mock.MockAuthentication;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -45,7 +45,7 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     public void testCleanRegistryOfExpiredTicketsAllExpired() {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, new MockAuthentication(),
+                + i, TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
@@ -59,14 +59,14 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     public void testCleanRegistryOneNonExpired() {
         for (int i = 0; i < 10; i++) {
             TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, new MockAuthentication(),
+                + i, TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
             ticket.expire();
             this.ticketRegistry.addTicket(ticket);
         }
 
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
-            "testNoExpire", new MockAuthentication(),
+            "testNoExpire", TestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
 

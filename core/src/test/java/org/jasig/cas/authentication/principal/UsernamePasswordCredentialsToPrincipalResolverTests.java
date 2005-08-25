@@ -5,8 +5,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.jasig.cas.TestUtils;
 
 import junit.framework.TestCase;
 
@@ -15,12 +14,14 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class UsernamePasswordCredentialsToPrincipalResolverTests extends TestCase {
+public class UsernamePasswordCredentialsToPrincipalResolverTests extends
+    TestCase {
 
     private CredentialsToPrincipalResolver resolver = new UsernamePasswordCredentialsToPrincipalResolver();
 
     public void testValidSupportsCredentials() {
-        assertTrue(this.resolver.supports(new UsernamePasswordCredentials()));
+        assertTrue(this.resolver.supports(TestUtils
+            .getCredentialsWithSameUsernameAndPassword()));
     }
 
     public void testNullSupportsCredentials() {
@@ -28,31 +29,15 @@ public class UsernamePasswordCredentialsToPrincipalResolverTests extends TestCas
     }
 
     public void testInvalidSupportsCredentials() {
-        try {
-            assertFalse(this.resolver.supports(new HttpBasedServiceCredentials(
-                new URL("http://www.rutgers.edu"))));
-        } catch (MalformedURLException e) {
-            fail("Invalid URL supplied.");
-        }
+        assertFalse(this.resolver.supports(TestUtils
+            .getHttpBasedServiceCredentials()));
     }
 
     public void testValidCredentials() {
-        UsernamePasswordCredentials request = new UsernamePasswordCredentials();
-        request.setUsername("test");
-        Principal p = this.resolver.resolvePrincipal(request);
+        Principal p = this.resolver.resolvePrincipal(TestUtils
+            .getCredentialsWithSameUsernameAndPassword());
 
-        assertEquals(p.getId(), request.getUsername());
-    }
-
-    public void testInvalidCredentials() {
-        UsernamePasswordCredentials request = new UsernamePasswordCredentials();
-        request.setUsername(null);
-        try {
-            this.resolver.resolvePrincipal(request);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-
-        fail("IllegalArgumentException expected.");
+        assertEquals(p.getId(), TestUtils
+            .getCredentialsWithSameUsernameAndPassword().getUsername());
     }
 }

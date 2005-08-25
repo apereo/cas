@@ -8,7 +8,12 @@ package org.jasig.cas;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
@@ -46,11 +51,31 @@ public final class TestUtils {
     
     public static HttpBasedServiceCredentials getHttpBasedServiceCredentials(final String url) {
         try {
-            HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
                 new URL(url));
             return c;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException();
         }
+    }
+    
+    public static Principal getPrincipal() {
+        return getPrincipal("test");
+    }
+    
+    public static Principal getPrincipal(final String name) {
+        return new SimplePrincipal(name);
+    }
+    
+    public static Authentication getAuthentication() {
+        return new ImmutableAuthentication(getPrincipal());
+    }
+    
+    public static Authentication getAuthenticationWithService() {
+        return new ImmutableAuthentication(new SimpleService("test"));
+    }
+    
+    public static Authentication getAuthentication(final String name) {
+        return new ImmutableAuthentication(getPrincipal(name));
     }
 }

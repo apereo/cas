@@ -19,9 +19,7 @@ public class UnsupportedCredentialsExceptionTests extends TestCase {
     }
 
     public void testGetCode() {
-        AuthenticationException e = new UnsupportedCredentialsException();
-        assertEquals("error.authentication.credentials.unsupported", e
-            .getCode());
+        assertEquals("error.authentication.credentials.unsupported",
+            new UnsupportedCredentialsException().getCode());
     }
-
 }
