@@ -81,10 +81,10 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
         }
 
         public Object proceed() throws Throwable {
-            if (returnObject instanceof Throwable) {
-                throw (Throwable) returnObject;
+            if (this.returnObject instanceof Throwable) {
+                throw (Throwable) this.returnObject;
             }
-            return returnObject;
+            return this.returnObject;
         }
     }
 

@@ -5,13 +5,7 @@
  */
 package org.jasig.cas.validation;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.validation.Cas10ProtocolValidationSpecification;
 
 import junit.framework.TestCase;
@@ -25,72 +19,42 @@ public class Cas10ProtocolValidationSpecificationTests extends TestCase {
 
     public void testRenewGettersAndSettersFalse() {
         Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
-
         s.setRenew(false);
-
         assertFalse(s.isRenew());
     }
 
     public void testRenewGettersAndSettersTrue() {
         Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
-
         s.setRenew(true);
-
         assertTrue(s.isRenew());
     }
 
     public void testRenewAsTrueAsConstructor() {
-        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
-            true);
-
-        assertTrue(s.isRenew());
+        assertTrue(new Cas10ProtocolValidationSpecification(true).isRenew());
     }
 
     public void testRenewAsFalseAsConstructor() {
-        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
-            false);
-
-        assertFalse(s.isRenew());
+        assertFalse(new Cas10ProtocolValidationSpecification(false).isRenew());
     }
 
     public void testSatisfiesSpecOfTrue() {
-        final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
-            true);
-        list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new ImmutableAssertionImpl(list,
-            new SimpleService("test"), true);
-        assertTrue(s.isSatisfiedBy(assertion));
+        assertTrue(new Cas10ProtocolValidationSpecification(true)
+            .isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
     public void testNotSatisfiesSpecOfTrue() {
-        final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
-            true);
-        list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new ImmutableAssertionImpl(list,
-            new SimpleService("test"), false);
-        assertFalse(s.isSatisfiedBy(assertion));
+        assertFalse(new Cas10ProtocolValidationSpecification(true)
+            .isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
     public void testSatisfiesSpecOfFalse() {
-        final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
-            false);
-        list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new ImmutableAssertionImpl(list,
-            new SimpleService("test"), true);
-        assertTrue(s.isSatisfiedBy(assertion));
+        assertTrue(new Cas10ProtocolValidationSpecification(false)
+            .isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
     public void testSatisfiesSpecOfFalse2() {
-        final List list = new ArrayList();
-        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification(
-            false);
-        list.add(new SimplePrincipal("test"));
-        final Assertion assertion = new ImmutableAssertionImpl(list,
-            new SimpleService("test"), false);
-        assertTrue(s.isSatisfiedBy(assertion));
+        assertTrue(new Cas10ProtocolValidationSpecification(false)
+            .isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
 }

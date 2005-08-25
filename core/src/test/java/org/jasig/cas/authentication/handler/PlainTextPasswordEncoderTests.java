@@ -19,7 +19,7 @@ public class PlainTextPasswordEncoderTests extends TestCase {
 
     private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
-    private final String CONST_TO_ENCODE = "CAS IS COOL";
+    private final static String CONST_TO_ENCODE = "CAS IS COOL";
 
     public void testNullValueToTranslate() {
         assertEquals(null, this.passwordEncoder.encode(null));

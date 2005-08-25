@@ -7,7 +7,6 @@ package org.jasig.cas.web.view;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,23 +37,23 @@ public class Cas10ResponseViewTests extends TestCase {
     String response;
 
     protected void setUp() throws Exception {
-        model = new HashMap();
+        this.model = new HashMap();
         List list = new ArrayList();
         list.add(new ImmutableAuthentication(new SimplePrincipal("test")));
-        model.put(WebConstants.ASSERTION, new ImmutableAssertionImpl(list,
+        this.model.put(WebConstants.ASSERTION, new ImmutableAssertionImpl(list,
             new SimpleService("TestService"), true));
     }
 
     public void testSuccessView() throws Exception {
         this.view.setSuccessResponse(true);
-        this.view.render(model, new MockHttpServletRequest(),
+        this.view.render(this.model, new MockHttpServletRequest(),
             new MockWriterHttpMockHttpServletResponse());
         assertEquals("yes\ntest\n", this.response);
     }
 
     public void testFailureView() throws Exception {
         this.view.setSuccessResponse(false);
-        this.view.render(model, new MockHttpServletRequest(),
+        this.view.render(this.model, new MockHttpServletRequest(),
             new MockWriterHttpMockHttpServletResponse());
         assertEquals("no\n\n", this.response);
     }
@@ -62,7 +61,7 @@ public class Cas10ResponseViewTests extends TestCase {
     protected class MockWriterHttpMockHttpServletResponse extends
         MockHttpServletResponse {
 
-        public PrintWriter getWriter() throws UnsupportedEncodingException {
+        public PrintWriter getWriter() {
             try {
                 return new MockPrintWriter(new ByteArrayOutputStream());
             } catch (Exception e) {

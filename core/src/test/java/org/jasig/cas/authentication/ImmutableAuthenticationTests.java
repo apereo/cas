@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
@@ -49,8 +50,7 @@ public class ImmutableAuthenticationTests extends TestCase {
     }
 
     public void testNullHashMap() {
-        assertNotNull(new ImmutableAuthentication(new SimplePrincipal("test"),
-            null).getAttributes());
+        assertNotNull(TestUtils.getAuthentication().getAttributes());
     }
 
     public void testHashCode() {

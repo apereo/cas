@@ -7,7 +7,8 @@ package org.jasig.cas.authentication;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Service;
 
 import junit.framework.TestCase;
 
@@ -18,48 +19,42 @@ import junit.framework.TestCase;
  */
 public class SimpleServiceTests extends TestCase {
 
+    private final static String CONST_ID = "test";
+
     public void testNullId() {
         try {
-            new SimpleService(null);
+            TestUtils.getService(null);
+            fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
             return;
         }
-
-        fail("IllegalArgumentException expected.");
     }
 
     public void testProperId() {
-        final String id = "test";
-        SimpleService service = new SimpleService(id);
-
-        assertEquals(id, service.getId());
+        assertEquals(CONST_ID, TestUtils.getService(CONST_ID).getId());
     }
 
     public void testHashCode() {
-        final String id = "test";
-        SimpleService service = new SimpleService(id);
-
-        assertEquals(HashCodeBuilder.reflectionHashCode(service), service
-            .hashCode());
+        assertEquals(
+            HashCodeBuilder.reflectionHashCode(TestUtils.getService()),
+            TestUtils.getService().hashCode());
     }
 
     public void testToString() {
-        final String id = "test";
-        SimpleService service = new SimpleService(id);
-
+        Service service = TestUtils.getService();
         assertEquals(ToStringBuilder.reflectionToString(service), service
             .toString());
     }
 
     public void testEqualsWithNull() {
-        assertFalse(new SimpleService("test").equals(null));
+        assertFalse(TestUtils.getService().equals(null));
     }
 
     public void testEqualsWithBadClass() {
-        assertFalse(new SimpleService("test").equals("test"));
+        assertFalse(TestUtils.getService().equals("test"));
     }
 
     public void testEquals() {
-        assertTrue(new SimpleService("test").equals(new SimpleService("test")));
+        assertTrue(TestUtils.getService().equals(TestUtils.getService()));
     }
 }
