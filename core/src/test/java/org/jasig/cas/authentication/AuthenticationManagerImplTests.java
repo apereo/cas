@@ -5,19 +5,14 @@
  */
 package org.jasig.cas.authentication;
 
-import java.net.URL;
-
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 
 /**
@@ -25,65 +20,51 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrinc
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class AuthenticationManagerImplTests extends AbstractCentralAuthenticationServiceTest {
+public class AuthenticationManagerImplTests extends
+    AbstractCentralAuthenticationServiceTest {
 
     public void testSuccessfulAuthentication() throws Exception {
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        Principal p = new SimplePrincipal("test");
-        c.setUsername("test");
-        c.setPassword("test");
-
-        try {
-            Authentication authentication = getAuthenticationManager().authenticate(c);
-            assertEquals(p, authentication.getPrincipal());
-        } catch (AuthenticationException e) {
-            fail(e.getMessage());
-        }
+        Authentication authentication = getAuthenticationManager()
+            .authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertEquals(TestUtils.getPrincipal(), authentication.getPrincipal());
     }
 
     public void testFailedAuthentication() throws Exception {
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setUsername("test");
-        c.setPassword("tt");
-
         try {
-            getAuthenticationManager().authenticate(c);
+            getAuthenticationManager().authenticate(
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+                    "test", "tt"));
             fail("Authentication should have failed.");
         } catch (AuthenticationException e) {
             return;
         }
     }
 
-    public void testNoHandlerFound() throws Exception {
+    public void testNoHandlerFound() throws AuthenticationException {
         try {
-            getAuthenticationManager().authenticate(new Credentials() {
+            getAuthenticationManager().authenticate(new Credentials(){
 
-                /**
-                 * Comment for <code>serialVersionUID</code>
-                 */
                 private static final long serialVersionUID = -4897240037527663222L;
                 // there is nothing to do here
             });
             fail("Authentication should have failed.");
         } catch (UnsupportedCredentialsException e) {
             return;
-        } catch (AuthenticationException e) {
-            fail("UnsupportedCredentialsException expected.");
         }
     }
 
     public void testNoResolverFound() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-        manager.setAuthenticationHandlers(new AuthenticationHandler[] {new HttpBasedServiceCredentialsAuthenticationHandler()});
-        manager.setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()});
+        manager
+            .setAuthenticationHandlers(new AuthenticationHandler[] {new HttpBasedServiceCredentialsAuthenticationHandler()});
+        manager
+            .setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()});
         manager.afterPropertiesSet();
         try {
-            manager.authenticate(new HttpBasedServiceCredentials(new URL("https://www.yale.edu")));
+            manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
             fail("Authentication should have failed.");
         } catch (UnsupportedCredentialsException e) {
             return;
-        } catch (AuthenticationException e) {
-            fail("UnsupportedCredentialsException expected.");
         }
     }
 }

@@ -43,28 +43,13 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     }
 
     public void testCleanRegistryOfExpiredTicketsAllExpired() {
-        for (int i = 0; i < 10; i++) {
-            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
-            ticket.expire();
-            this.ticketRegistry.addTicket(ticket);
-        }
-
+        populateRegistryWithExpiredTickets();
         this.registryCleaner.clean();
-
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
     public void testCleanRegistryOneNonExpired() {
-        for (int i = 0; i < 10; i++) {
-            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
-                + i, TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
-            ticket.expire();
-            this.ticketRegistry.addTicket(ticket);
-        }
-
+        populateRegistryWithExpiredTickets();
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
             "testNoExpire", TestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
@@ -73,5 +58,15 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
         this.registryCleaner.clean();
 
         assertEquals(this.ticketRegistry.getTickets().size(), 1);
+    }
+
+    private void populateRegistryWithExpiredTickets() {
+        for (int i = 0; i < 10; i++) {
+            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test"
+                + i, TestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
+            ticket.expire();
+            this.ticketRegistry.addTicket(ticket);
+        }
     }
 }

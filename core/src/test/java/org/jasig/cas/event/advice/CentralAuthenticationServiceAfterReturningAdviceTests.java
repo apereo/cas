@@ -9,11 +9,11 @@ import java.lang.reflect.Method;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.event.TicketEvent;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.context.ApplicationEvent;
@@ -47,15 +47,14 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
     }
 
     public void testCreateTicketGrantingTicket() throws Throwable {
-        Method method = CentralAuthenticationService.class.getMethod(
+        final Method method = CentralAuthenticationService.class.getMethod(
             "createTicketGrantingTicket", new Class[] {Credentials.class});
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setPassword("a");
-        c.setUsername("a");
-        String ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(c);
+        final String ticketId = getCentralAuthenticationService()
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        this.advice.afterReturning(ticketId, method, new Object[] {c}, null);
+        this.advice.afterReturning(ticketId, method, new Object[] {TestUtils
+            .getCredentialsWithSameUsernameAndPassword()}, null);
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.CREATE_TICKET_GRANTING_TICKET, this.event
@@ -65,11 +64,9 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
     public void testDestroyTicketGrantingTicket() throws Throwable {
         Method method = CentralAuthenticationService.class.getMethod(
             "destroyTicketGrantingTicket", new Class[] {String.class});
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setPassword("a");
-        c.setUsername("a");
         String ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(c);
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
 
         this.advice.afterReturning(null, method, new Object[] {ticketId}, null);
@@ -83,18 +80,18 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
         Method method = CentralAuthenticationService.class.getMethod(
             "delegateTicketGrantingTicket", new Class[] {String.class,
                 Credentials.class});
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setPassword("a");
-        c.setUsername("a");
         String ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(c);
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
         String ticketGrantingTicketId = getCentralAuthenticationService()
-            .delegateTicketGrantingTicket(serviceTicketId, c);
+            .delegateTicketGrantingTicket(serviceTicketId,
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
 
         this.advice.afterReturning(ticketGrantingTicketId, method,
-            new Object[] {serviceTicketId, c}, null);
+            new Object[] {serviceTicketId,
+                TestUtils.getCredentialsWithSameUsernameAndPassword()}, null);
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.CREATE_TICKET_GRANTING_TICKET, this.event
@@ -104,11 +101,9 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
     public void testGrantServiceTicket() throws Throwable {
         Method method = CentralAuthenticationService.class.getMethod(
             "grantServiceTicket", new Class[] {String.class, Service.class});
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setPassword("a");
-        c.setUsername("a");
         String ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(c);
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
 
@@ -123,11 +118,9 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
     public void testValidateServiceTicket() throws Throwable {
         Method method = CentralAuthenticationService.class.getMethod(
             "validateServiceTicket", new Class[] {String.class, Service.class});
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        c.setPassword("a");
-        c.setUsername("a");
         String ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(c);
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
         Assertion assertion = getCentralAuthenticationService()

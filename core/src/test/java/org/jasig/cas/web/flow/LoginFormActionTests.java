@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -42,6 +43,8 @@ public class LoginFormActionTests extends
             .setCentralAuthenticationService(getCentralAuthenticationService());
         this.logonFormAction.afterPropertiesSet();
     }
+    
+
 
     public void testSubmitBadCredentials() throws Exception {
         MockRequestContext context = new MockRequestContext();
@@ -49,153 +52,79 @@ public class LoginFormActionTests extends
         context.setSourceEvent(new ServletEvent(request,
             new MockHttpServletResponse()));
 
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("test");
-        credentials.setPassword("test2");
-
-        ContextUtils.addAttribute(context, "credentials", credentials);
+        ContextUtils.addAttribute(context, "credentials", TestUtils
+            .getCredentialsWithDifferentUsernameAndPassword("test", "test2"));
         ContextUtils.addAttribute(context,
             "org.springframework.validation.BindException.credentials",
-            new BindException(credentials, "credentials"));
+            new BindException(
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+                    "test", "test2"), "credentials"));
 
         assertEquals("error", this.logonFormAction.submit(context).getId());
     }
 
     public void testSubmitProperCredentialsWithService() throws Exception {
-        MockRequestContext context = new MockRequestContext();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request,
-            new MockHttpServletResponse()));
+        final MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.addParameter("service", "test");
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("test");
-        credentials.setPassword("test");
 
-        ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
-            new BindException(credentials, "credentials"));
-
-        assertEquals("warn", this.logonFormAction.submit(context).getId());
+        assertEquals("warn", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testSubmitProperCredentialsWithNoService() throws Exception {
-        MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request,
-            new MockHttpServletResponse()));
-
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("test");
-        credentials.setPassword("test");
-
-        ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
-            new BindException(credentials, "credentials"));
-
-        assertEquals("noService", this.logonFormAction.submit(context).getId());
+        assertEquals("noService", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
     }
-    
+
     public void testSetCookieValue() throws Exception {
-        MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        context.setSourceEvent(new ServletEvent(request,
-            response));
 
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("test");
-        credentials.setPassword("test");
-
-        ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
-            new BindException(credentials, "credentials"));
-        
         this.logonFormAction.setCookieTimeout(5);
 
-        assertEquals("noService", this.logonFormAction.submit(context).getId());
+        assertEquals("noService", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request, response)).getId());
         assertEquals(5, response.getCookies()[0].getMaxAge());
     }
 
     public void testWarn() throws Exception {
-        MockRequestContext context = new MockRequestContext();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request,
-            new MockHttpServletResponse()));
-
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addParameter("warn", "on");
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("test");
-        credentials.setPassword("test");
 
-        ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
-            new BindException(credentials, "credentials"));
-
-        assertEquals("noService", this.logonFormAction.submit(context).getId());
-        MockHttpServletResponse response = (MockHttpServletResponse) ContextUtils
-            .getHttpServletResponse(context);
+        assertEquals("noService", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request, response)).getId());
         assertNotNull(response.getCookie(WebConstants.COOKIE_PRIVACY));
         assertEquals(WebConstants.COOKIE_DEFAULT_FILLED_VALUE, response
             .getCookie(WebConstants.COOKIE_PRIVACY).getValue());
     }
 
     public void testRenewIsTrue() throws Exception {
-        MockRequestContext context = new MockRequestContext();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request,
-            new MockHttpServletResponse()));
+        final MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.addParameter("service", "true");
         request.addParameter("renew", "true");
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("test");
-        credentials.setPassword("test");
 
         final String ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(credentials);
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});
 
-        ContextUtils.addAttribute(context, "credentials", credentials);
-        ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
-            new BindException(credentials, "credentials"));
-
-        assertEquals("warn", this.logonFormAction.submit(context).getId());
+        assertEquals("warn", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testRenewIsTrueWithDifferentCredentials() throws Exception {
-        MockRequestContext context = new MockRequestContext();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request,
-            new MockHttpServletResponse()));
+        final MockHttpServletRequest request = new MockHttpServletRequest();
 
         request.addParameter("service", "true");
         request.addParameter("renew", "true");
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("test");
-        credentials.setPassword("test");
-
-        final UsernamePasswordCredentials credentials2 = new UsernamePasswordCredentials();
-        credentials2.setUsername("test2");
-        credentials2.setPassword("test2");
 
         final String ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(credentials);
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword("test2"));
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});
 
-        ContextUtils.addAttribute(context, "credentials", credentials2);
-        ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
-            new BindException(credentials, "credentials"));
-
-        assertEquals("warn", this.logonFormAction.submit(context).getId());
+        assertEquals("warn", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testAfterPropertiesSetCas() {
