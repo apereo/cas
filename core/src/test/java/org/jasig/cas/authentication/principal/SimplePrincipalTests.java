@@ -19,18 +19,15 @@ public class SimplePrincipalTests extends TestCase {
     public void testNullId() {
         try {
             new SimplePrincipal(null);
+            fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
             return;
         }
-
-        fail("IllegalArgumentException expected.");
     }
 
     public void testProperId() {
         final String id = "test";
-        SimplePrincipal principal = new SimplePrincipal(id);
-
-        assertEquals(id, principal.getId());
+        assertEquals(id, new SimplePrincipal(id).getId());
     }
 
     public void testEqualsWithNull() {
@@ -48,8 +45,7 @@ public class SimplePrincipalTests extends TestCase {
 
     public void testToString() {
         final String id = "test";
-        SimplePrincipal principal = new SimplePrincipal(id);
-
+        final SimplePrincipal principal = new SimplePrincipal(id);
         assertEquals(ToStringBuilder.reflectionToString(principal), principal
             .toString());
     }

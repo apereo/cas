@@ -9,11 +9,10 @@ import java.util.Properties;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.stat.support.TicketStatisticsImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -144,9 +143,9 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
     
     public void testProxyTicket() {
         TicketStatisticsImpl ts = new TicketStatisticsImpl();
-        TicketGrantingTicketImpl tgtParent = new TicketGrantingTicketImpl("parentTicket", new MockAuthentication(new SimplePrincipal("test")), new NeverExpiresExpirationPolicy());
+        TicketGrantingTicketImpl tgtParent = new TicketGrantingTicketImpl("parentTicket", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket stChild = tgtParent.grantServiceTicket("childTicket", new SimpleService("test"), new NeverExpiresExpirationPolicy());
-        TicketGrantingTicket tgtPgt = stChild.grantTicketGrantingTicket("pgtId", new MockAuthentication(new SimpleService("test")), new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket tgtPgt = stChild.grantTicketGrantingTicket("pgtId", TestUtils.getAuthenticationWithService(), new NeverExpiresExpirationPolicy());
         ServiceTicket stProxy = tgtPgt.grantServiceTicket("proxyId", new SimpleService("test"), new NeverExpiresExpirationPolicy());
         
         TicketRegistry t = new DefaultTicketRegistry();

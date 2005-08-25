@@ -6,7 +6,6 @@
 package org.jasig.cas.util;
 
 import org.jasig.cas.util.DefaultLongNumericGenerator;
-import org.jasig.cas.util.LongNumericGenerator;
 
 import junit.framework.TestCase;
 
@@ -18,58 +17,40 @@ import junit.framework.TestCase;
 public class DefaultLongNumericGeneratorTests extends TestCase {
 
     public void testNoWrap() {
-        LongNumericGenerator generator = new DefaultLongNumericGenerator(
-            Long.MAX_VALUE, false);
-
         try {
-            generator.getNextLong();
+            new DefaultLongNumericGenerator(Long.MAX_VALUE, false)
+                .getNextLong();
+            fail("Expected IllegalStateException");
         } catch (IllegalStateException e) {
             return;
         }
-
-        fail("Expected IllegalStateException");
     }
 
     public void testWrap() {
-        LongNumericGenerator generator = new DefaultLongNumericGenerator(
-            Long.MAX_VALUE, true);
-
-        try {
-            long response = generator.getNextLong();
-            assertEquals(response, 1);
-        } catch (IllegalStateException e) {
-            fail("Unexpected IllegalStateException");
-        }
+        assertEquals(1, new DefaultLongNumericGenerator(Long.MAX_VALUE, true)
+            .getNextLong());
     }
 
     public void testInitialValue() {
-        LongNumericGenerator generator = new DefaultLongNumericGenerator(10L,
-            true);
-
-        long response = generator.getNextLong();
-
-        assertEquals(10L + 1, response);
+        assertEquals(10L + 1, new DefaultLongNumericGenerator(10L, true)
+            .getNextLong());
     }
 
     public void testIncrementWithNoWrap() {
-        LongNumericGenerator generator = new DefaultLongNumericGenerator();
-
-        assertEquals(1, generator.getNextLong());
+        assertEquals(1, new DefaultLongNumericGenerator().getNextLong());
     }
 
     public void testMinimumSize() {
-        LongNumericGenerator generator = new DefaultLongNumericGenerator();
-        assertEquals(1, generator.minLength());
+        assertEquals(1, new DefaultLongNumericGenerator().minLength());
     }
 
     public void testMaximumLength() {
-        LongNumericGenerator generator = new DefaultLongNumericGenerator(false);
-        assertEquals(Long.toString(Long.MAX_VALUE).length(), generator
-            .maxLength());
+        assertEquals(Long.toString(Long.MAX_VALUE).length(),
+            new DefaultLongNumericGenerator(false).maxLength());
     }
 
     public void testToString() {
-        LongNumericGenerator generator = new DefaultLongNumericGenerator(false);
-        assertEquals("1", generator.getNextNumberAsString());
+        assertEquals("1", new DefaultLongNumericGenerator(false)
+            .getNextNumberAsString());
     }
 }

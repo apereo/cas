@@ -10,11 +10,9 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
-import org.jasig.cas.mock.MockAuthentication;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -41,7 +39,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testGetAuthentication() {
-        Authentication authentication = new MockAuthentication();
+        Authentication authentication = TestUtils.getAuthentication();
 
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -50,27 +48,23 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testIsRootTrue() {
-        Authentication authentication = new MockAuthentication();
-
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertTrue(t.isRoot());
     }
 
     public void testIsRootFalse() {
-        Authentication authentication = new MockAuthentication();
         TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertFalse(t.isRoot());
     }
 
     public void testGetChainedPrincipalsWithOne() {
-        Principal principal = new SimplePrincipal("Test");
-        Authentication authentication = new MockAuthentication(principal);
+        Authentication authentication = TestUtils.getAuthentication();
         List principals = new ArrayList();
         principals.add(authentication);
 
@@ -81,10 +75,8 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testGetChainedPrincipalsWithTwo() {
-        Principal principal = new SimplePrincipal("Test");
-        Principal principal1 = new SimplePrincipal("Test1");
-        Authentication authentication = new MockAuthentication(principal);
-        Authentication authentication1 = new MockAuthentication(principal1);
+        Authentication authentication = TestUtils.getAuthentication();
+        Authentication authentication1 = TestUtils.getAuthentication("test1");
         List principals = new ArrayList();
         principals.add(authentication);
         principals.add(authentication1);
@@ -98,10 +90,8 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testServiceTicketAsFromInitialCredentials() {
-        Authentication authentication = new MockAuthentication();
-
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
             new NeverExpiresExpirationPolicy());
@@ -111,10 +101,8 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testServiceTicketAsFromNotInitialCredentials() {
-        Authentication authentication = new MockAuthentication();
-
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
             new NeverExpiresExpirationPolicy());
@@ -127,37 +115,30 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testHashCode() {
-        Authentication authentication = new MockAuthentication();
-
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertEquals(HashCodeBuilder.reflectionHashCode(t), t.hashCode());
     }
 
     public void testToString() {
-        Authentication authentication = new MockAuthentication();
-
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertEquals(ToStringBuilder.reflectionToString(t), t.toString());
     }
 
     public void testIncrementTimeUpdated() {
-        Authentication authentication = new MockAuthentication();
-
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.updateLastTimeUsed();
         assertEquals(t.getLastTimeUsed(), System.currentTimeMillis());
     }
 
     public void testNoIdOrPolicy() {
-        Authentication authentication = new MockAuthentication();
         try {
-            new TicketGrantingTicketImpl(null, null, authentication, null);
+            new TicketGrantingTicketImpl(null, null, TestUtils.getAuthentication(), null);
 
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {

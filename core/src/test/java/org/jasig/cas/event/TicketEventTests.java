@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.event;
 
-import org.jasig.cas.mock.MockAuthentication;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 public class TicketEventTests extends TestCase {
 
     private TicketGrantingTicket tgt = new TicketGrantingTicketImpl("test1",
-        new MockAuthentication(), new NeverExpiresExpirationPolicy());
+        TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
     private TicketEvent ticketEvent1 = new TicketEvent(this.tgt,
         TicketEvent.CREATE_TICKET_GRANTING_TICKET);
