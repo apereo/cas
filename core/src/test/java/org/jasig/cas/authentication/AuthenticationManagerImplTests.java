@@ -24,9 +24,8 @@ public class AuthenticationManagerImplTests extends
     AbstractCentralAuthenticationServiceTest {
 
     public void testSuccessfulAuthentication() throws Exception {
-        Authentication authentication = getAuthenticationManager()
-            .authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
-        assertEquals(TestUtils.getPrincipal(), authentication.getPrincipal());
+        assertEquals(TestUtils.getPrincipal(), getAuthenticationManager()
+            .authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()).getPrincipal());
     }
 
     public void testFailedAuthentication() throws Exception {
