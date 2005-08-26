@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -111,15 +111,16 @@ public class AssertionImplTests extends TestCase {
 
         assertTrue(assertion.equals(assertion1));
     }
-    
+
     public void testGetService() {
         final Service service = new SimpleService("test");
-        
+
         final List list = new ArrayList();
         list.add(new SimplePrincipal("test"));
 
-        final Assertion assertion = new ImmutableAssertionImpl(list, service, false);
-        
+        final Assertion assertion = new ImmutableAssertionImpl(list, service,
+            false);
+
         assertEquals(service, assertion.getService());
     }
 
@@ -133,6 +134,5 @@ public class AssertionImplTests extends TestCase {
         assertEquals(ToStringBuilder.reflectionToString(assertion), assertion
             .toString());
     }
-    
-    
+
 }

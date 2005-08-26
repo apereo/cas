@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.mock.MockValidationSpecification;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
@@ -44,14 +43,16 @@ public class ServiceValidateControllerTests extends
 
     private HttpServletRequest getHttpServletRequest() throws TicketException {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().grantServiceTicket(tId,
             TestUtils.getService());
         final String sId2 = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService().getId());
+        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+            .getId());
         request.addParameter(WebConstants.TICKET, sId2);
         request.addParameter(WebConstants.RENEW, "true");
 
@@ -75,12 +76,14 @@ public class ServiceValidateControllerTests extends
 
     public void testValidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService().getId());
+        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+            .getId());
         request.addParameter(WebConstants.TICKET, sId);
 
         assertEquals(ViewNames.CONST_SERVICE_SUCCESS,
@@ -108,19 +111,22 @@ public class ServiceValidateControllerTests extends
                     .getViewName());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (RuntimeException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
     public void testInvalidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService().getId());
+        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+            .getId());
         request.addParameter(WebConstants.TICKET, sId);
 
         assertEquals(ViewNames.CONST_SERVICE_FAILURE,
@@ -131,12 +137,14 @@ public class ServiceValidateControllerTests extends
     public void testValidServiceTicketWithPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService().getId());
+        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+            .getId());
         request.addParameter(WebConstants.TICKET, sId);
         request
             .addParameter(WebConstants.PGTURL, "https://www.acs.rutgers.edu");
@@ -149,12 +157,14 @@ public class ServiceValidateControllerTests extends
     public void testValidServiceTicketWithBadPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService().getId());
+        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+            .getId());
         request.addParameter(WebConstants.TICKET, sId);
         request.addParameter(WebConstants.PGTURL, "http://www.acs.rutgers.edu");
 
@@ -168,12 +178,14 @@ public class ServiceValidateControllerTests extends
     public void testValidServiceTicketWithInvalidPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+            .createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService().getId());
+        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+            .getId());
         request.addParameter(WebConstants.TICKET, sId);
         request.addParameter(WebConstants.PGTURL, "duh");
 

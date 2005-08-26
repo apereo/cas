@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -31,30 +31,34 @@ public class SimpleServiceTests extends TestCase {
     }
 
     public void testProperId() {
-        assertEquals("Ids are not equal.", CONST_ID, TestUtils.getService(CONST_ID).getId());
+        assertEquals("Ids are not equal.", CONST_ID, TestUtils.getService(
+            CONST_ID).getId());
     }
 
     public void testHashCode() {
-        assertEquals("HashCodes are not equal.",
-            HashCodeBuilder.reflectionHashCode(TestUtils.getService()),
-            TestUtils.getService().hashCode());
+        assertEquals("HashCodes are not equal.", HashCodeBuilder
+            .reflectionHashCode(TestUtils.getService()), TestUtils.getService()
+            .hashCode());
     }
 
     public void testToString() {
         Service service = TestUtils.getService();
-        assertEquals("ToStrings are not equal.", ToStringBuilder.reflectionToString(service), service
-            .toString());
+        assertEquals("ToStrings are not equal.", ToStringBuilder
+            .reflectionToString(service), service.toString());
     }
 
     public void testEqualsWithNull() {
-        assertFalse("Service matches null.", TestUtils.getService().equals(null));
+        assertFalse("Service matches null.", TestUtils.getService()
+            .equals(null));
     }
 
     public void testEqualsWithBadClass() {
-        assertFalse("Services matches String class.", TestUtils.getService().equals("test"));
+        assertFalse("Services matches String class.", TestUtils.getService()
+            .equals("test"));
     }
 
     public void testEquals() {
-        assertTrue("Services are not equal.", TestUtils.getService().equals(TestUtils.getService()));
+        assertTrue("Services are not equal.", TestUtils.getService().equals(
+            TestUtils.getService()));
     }
 }

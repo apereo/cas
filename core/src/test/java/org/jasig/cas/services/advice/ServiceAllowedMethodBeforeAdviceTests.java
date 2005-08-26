@@ -23,6 +23,7 @@ import junit.framework.TestCase;
  * @since 3.0
  */
 public class ServiceAllowedMethodBeforeAdviceTests extends TestCase {
+
     private ServiceAllowedMethodBeforeAdvice advice;
 
     private ServiceRegistry serviceRegistry;

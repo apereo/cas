@@ -96,7 +96,7 @@ public class SafeDispatcherServletTests extends TestCase {
 
         fail("Should have thrown ApplicationContextException since init() failed.");
     }
-    
+
     public void testServiceSucceeds() {
         this.mockConfig = new MockServletConfig(this.mockContext, "cas");
         this.safeServlet.init(this.mockConfig);

@@ -37,8 +37,9 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
         ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
             new NoSuchFlowExecutionException("test")));
-        
-        assertEquals(request.getRequestURI(), ((RedirectView) model.getView()).getUrl());
+
+        assertEquals(request.getRequestURI(), ((RedirectView) model.getView())
+            .getUrl());
     }
 
 }

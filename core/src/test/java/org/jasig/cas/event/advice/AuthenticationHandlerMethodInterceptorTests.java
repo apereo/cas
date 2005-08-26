@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -50,19 +50,23 @@ public class AuthenticationHandlerMethodInterceptorTests extends TestCase {
 
     public void testAuthenticationEventWithException() throws Throwable {
         try {
-            this.advice.invoke(new BooleanMethodInvocation(BadUsernameOrPasswordAuthenticationException.ERROR));
+            this.advice.invoke(new BooleanMethodInvocation(
+                BadUsernameOrPasswordAuthenticationException.ERROR));
         } catch (AuthenticationException e) {
             // ok
         }
         assertNotNull(this.event);
         assertFalse(this.event.isSuccessfulAuthentication());
     }
-    
+
     protected class BooleanMethodInvocation implements MethodInvocation {
+
         private final Object returnObject;
+
         protected BooleanMethodInvocation(final Object returnObject) {
             this.returnObject = returnObject;
         }
+
         public Method getMethod() {
             return SimpleTestUsernamePasswordAuthenticationHandler.class
                 .getDeclaredMethods()[0];

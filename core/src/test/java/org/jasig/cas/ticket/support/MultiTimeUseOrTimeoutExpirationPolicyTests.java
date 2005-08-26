@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -31,8 +31,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(
             NUMBER_OF_USES, TIMEOUT);
 
-        this.ticket = new TicketGrantingTicketImpl("test",
-            TestUtils.getAuthentication(), this.expirationPolicy);
+        this.ticket = new TicketGrantingTicketImpl("test", TestUtils
+            .getAuthentication(), this.expirationPolicy);
 
         super.setUp();
     }

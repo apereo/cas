@@ -28,11 +28,9 @@ import org.springframework.webflow.execution.servlet.ServletEvent;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.2
- *
  */
 public final class TestUtils {
 
@@ -49,9 +47,10 @@ public final class TestUtils {
     private static final String CONST_WEBFLOW_BIND_EXCEPTION = "org.springframework.validation.BindException.credentials";
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
-    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
-    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
 
+    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
+
+    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
 
     private TestUtils() {
         // do not instanciate
@@ -68,11 +67,13 @@ public final class TestUtils {
     }
 
     public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword() {
-        return getCredentialsWithDifferentUsernameAndPassword(CONST_USERNAME, CONST_PASSWORD);
+        return getCredentialsWithDifferentUsernameAndPassword(CONST_USERNAME,
+            CONST_PASSWORD);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
-        //noinspection LocalVariableOfConcreteClass
+    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword(
+        final String username, final String password) {
+        // noinspection LocalVariableOfConcreteClass
         final UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
@@ -91,8 +92,7 @@ public final class TestUtils {
     public static HttpBasedServiceCredentials getHttpBasedServiceCredentials(
         final String url) {
         try {
-            return new HttpBasedServiceCredentials(
-                new URL(url));
+            return new HttpBasedServiceCredentials(new URL(url));
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException();
         }
@@ -141,21 +141,24 @@ public final class TestUtils {
         return new ImmutableAssertionImpl(list, TestUtils.getService(),
             fromNewLogin);
     }
-    
+
     public static MockRequestContext getContext() {
         return getContext(new MockHttpServletRequest());
     }
-    
-    public static MockRequestContext getContext(final MockHttpServletRequest request) {
+
+    public static MockRequestContext getContext(
+        final MockHttpServletRequest request) {
         return getContext(request, new MockHttpServletResponse());
     }
-    
-    public static MockRequestContext getContext(final MockHttpServletRequest request, final MockHttpServletResponse response) {
+
+    public static MockRequestContext getContext(
+        final MockHttpServletRequest request,
+        final MockHttpServletResponse response) {
         final MockRequestContext context = new MockRequestContext();
         context.setSourceEvent(new ServletEvent(request, response));
         return context;
     }
-    
+
     public static MockRequestContext getContextWithCredentials(
         final MockHttpServletRequest request) {
         return getContextWithCredentials(request, new MockHttpServletResponse());
@@ -167,10 +170,11 @@ public final class TestUtils {
         final MockRequestContext context = getContext(request, response);
         ContextUtils.addAttribute(context, CONST_CREDENTIALS, TestUtils
             .getCredentialsWithSameUsernameAndPassword());
-        ContextUtils.addAttribute(context,
-            CONST_WEBFLOW_BIND_EXCEPTION,
-            new BindException(TestUtils
-                .getCredentialsWithSameUsernameAndPassword(), CONST_CREDENTIALS));
+        ContextUtils
+            .addAttribute(context, CONST_WEBFLOW_BIND_EXCEPTION,
+                new BindException(TestUtils
+                    .getCredentialsWithSameUsernameAndPassword(),
+                    CONST_CREDENTIALS));
 
         return context;
     }
