@@ -34,7 +34,6 @@ public final class UsernamePasswordCredentialsToPrincipalResolver implements
      * 
      * @param credentials the Username and Password provided as credentials.
      * @return an instance of the principal where the id is the username.
-     * @throws IllegalArgumentException if the Credentials passed in are null.
      */
     public Principal resolvePrincipal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
