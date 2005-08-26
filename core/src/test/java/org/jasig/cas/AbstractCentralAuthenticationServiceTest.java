@@ -10,11 +10,9 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public abstract class AbstractCentralAuthenticationServiceTest extends
     AbstractDependencyInjectionSpringContextTests {
@@ -22,15 +20,15 @@ public abstract class AbstractCentralAuthenticationServiceTest extends
     private CentralAuthenticationService centralAuthenticationService;
 
     private TicketRegistry ticketRegistry;
-    
+
     private AuthenticationManager authenticationManager;
 
-    
     public AuthenticationManager getAuthenticationManager() {
         return this.authenticationManager;
     }
 
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+    public void setAuthenticationManager(
+        AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 

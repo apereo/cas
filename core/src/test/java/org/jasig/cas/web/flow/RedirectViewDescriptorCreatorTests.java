@@ -13,19 +13,17 @@ import org.springframework.webflow.test.MockRequestContext;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class RedirectViewDescriptorCreatorTests extends TestCase {
 
     private static final String SERVICE = "service";
-    
+
     private static final String TICKET = "ticket";
-  
-    private RedirectViewDescriptorCreator redirectViewDescriptorCreator;    
+
+    private RedirectViewDescriptorCreator redirectViewDescriptorCreator;
 
     protected void setUp() throws Exception {
         this.redirectViewDescriptorCreator = new RedirectViewDescriptorCreator();
@@ -33,22 +31,27 @@ public class RedirectViewDescriptorCreatorTests extends TestCase {
 
     public void testGetViewDescriptor() {
         final MockRequestContext context = new MockRequestContext();
-        ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE, SERVICE);
-        ContextUtils.addAttributeToFlowScope(context, WebConstants.TICKET, TICKET);
-        
-        final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator.createViewDescriptor(context);
-        
+        ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE,
+            SERVICE);
+        ContextUtils.addAttributeToFlowScope(context, WebConstants.TICKET,
+            TICKET);
+
+        final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator
+            .createViewDescriptor(context);
+
         assertEquals(SERVICE, viewDescriptor.getViewName());
         assertTrue(viewDescriptor.getModel().containsValue(TICKET));
-    } 
-    
+    }
+
     public void testGetViewDescriptorNoTicket() {
         final MockRequestContext context = new MockRequestContext();
-        ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE, SERVICE);
-        
-        final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator.createViewDescriptor(context);
-        
+        ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE,
+            SERVICE);
+
+        final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator
+            .createViewDescriptor(context);
+
         assertEquals(SERVICE, viewDescriptor.getViewName());
         assertFalse(viewDescriptor.getModel().containsValue(TICKET));
-    } 
+    }
 }

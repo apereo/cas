@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -24,6 +24,7 @@ public class CentralAuthenticationServiceImplTests extends
             getCentralAuthenticationService().createTicketGrantingTicket(null);
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (IllegalArgumentException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -33,6 +34,7 @@ public class CentralAuthenticationServiceImplTests extends
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -51,6 +53,7 @@ public class CentralAuthenticationServiceImplTests extends
             getCentralAuthenticationService().destroyTicketGrantingTicket(null);
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (IllegalArgumentException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -78,6 +81,7 @@ public class CentralAuthenticationServiceImplTests extends
                 serviceTicketId);
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (ClassCastException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -101,6 +105,7 @@ public class CentralAuthenticationServiceImplTests extends
                 TestUtils.getService());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -127,6 +132,7 @@ public class CentralAuthenticationServiceImplTests extends
                 serviceTicketId, TestUtils.getBadHttpBasedServiceCredentials());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -143,6 +149,7 @@ public class CentralAuthenticationServiceImplTests extends
                 serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -153,6 +160,7 @@ public class CentralAuthenticationServiceImplTests extends
                 null, null);
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (IllegalArgumentException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -161,6 +169,7 @@ public class CentralAuthenticationServiceImplTests extends
             getCentralAuthenticationService().grantServiceTicket(null, null);
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (IllegalArgumentException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -185,6 +194,7 @@ public class CentralAuthenticationServiceImplTests extends
                 TestUtils.getBadHttpBasedServiceCredentials());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -195,11 +205,11 @@ public class CentralAuthenticationServiceImplTests extends
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         try {
             getCentralAuthenticationService().grantServiceTicket(
-                ticketGrantingTicket,
-                TestUtils.getService(),
+                ticketGrantingTicket, TestUtils.getService(),
                 TestUtils.getCredentialsWithSameUsernameAndPassword("test1"));
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -246,6 +256,7 @@ public class CentralAuthenticationServiceImplTests extends
                 serviceTicket, new SimpleService("test2"));
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -264,6 +275,7 @@ public class CentralAuthenticationServiceImplTests extends
                 serviceTicket, TestUtils.getService());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -273,6 +285,7 @@ public class CentralAuthenticationServiceImplTests extends
                 TestUtils.getService());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
+            // nothing to do here, exception is expected.
         }
     }
 
@@ -283,6 +296,7 @@ public class CentralAuthenticationServiceImplTests extends
             getCentralAuthenticationService().validateServiceTicket(null, null);
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (IllegalArgumentException e) {
+            // nothing to do here, exception is expected.
         }
     }
 

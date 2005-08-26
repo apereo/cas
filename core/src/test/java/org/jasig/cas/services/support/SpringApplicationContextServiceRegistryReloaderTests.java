@@ -1,6 +1,7 @@
-/* Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
- * See license distributed with this file and
- * available online at http://www.uportal.org/license.html
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services.support;
 
@@ -50,7 +51,7 @@ public class SpringApplicationContextServiceRegistryReloaderTests extends
     public void testReloadServiceRegistry() throws Exception {
         this.reloader.reloadServiceRegistry();
         assertEquals(1, this.serviceRegistry.getServices().size());
-        
+
         // check the if statement if it gets set to false.
         this.reloader.reloadServiceRegistry();
         assertEquals(1, this.serviceRegistry.getServices().size());

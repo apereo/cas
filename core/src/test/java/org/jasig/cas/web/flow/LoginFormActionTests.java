@@ -43,8 +43,6 @@ public class LoginFormActionTests extends
             .setCentralAuthenticationService(getCentralAuthenticationService());
         this.logonFormAction.afterPropertiesSet();
     }
-    
-
 
     public void testSubmitBadCredentials() throws Exception {
         MockRequestContext context = new MockRequestContext();
@@ -56,8 +54,9 @@ public class LoginFormActionTests extends
             .getCredentialsWithDifferentUsernameAndPassword());
         ContextUtils.addAttribute(context,
             "org.springframework.validation.BindException.credentials",
-            new BindException(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword(), "credentials"));
+            new BindException(TestUtils
+                .getCredentialsWithDifferentUsernameAndPassword(),
+                "credentials"));
 
         assertEquals("error", this.logonFormAction.submit(context).getId());
     }
@@ -67,12 +66,14 @@ public class LoginFormActionTests extends
 
         request.addParameter("service", "test");
 
-        assertEquals("warn", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
+        assertEquals("warn", this.logonFormAction.submit(
+            TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testSubmitProperCredentialsWithNoService() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        assertEquals("noService", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
+        assertEquals("noService", this.logonFormAction.submit(
+            TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testSetCookieValue() throws Exception {
@@ -81,7 +82,8 @@ public class LoginFormActionTests extends
 
         this.logonFormAction.setCookieTimeout(5);
 
-        assertEquals("noService", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request, response)).getId());
+        assertEquals("noService", this.logonFormAction.submit(
+            TestUtils.getContextWithCredentials(request, response)).getId());
         assertEquals(5, response.getCookies()[0].getMaxAge());
     }
 
@@ -90,7 +92,8 @@ public class LoginFormActionTests extends
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addParameter("warn", "on");
 
-        assertEquals("noService", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request, response)).getId());
+        assertEquals("noService", this.logonFormAction.submit(
+            TestUtils.getContextWithCredentials(request, response)).getId());
         assertNotNull(response.getCookie(WebConstants.COOKIE_PRIVACY));
         assertEquals(WebConstants.COOKIE_DEFAULT_FILLED_VALUE, response
             .getCookie(WebConstants.COOKIE_PRIVACY).getValue());
@@ -108,7 +111,8 @@ public class LoginFormActionTests extends
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});
 
-        assertEquals("warn", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
+        assertEquals("warn", this.logonFormAction.submit(
+            TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testRenewIsTrueWithDifferentCredentials() throws Exception {
@@ -123,7 +127,8 @@ public class LoginFormActionTests extends
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});
 
-        assertEquals("warn", this.logonFormAction.submit(TestUtils.getContextWithCredentials(request)).getId());
+        assertEquals("warn", this.logonFormAction.submit(
+            TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testAfterPropertiesSetCas() {

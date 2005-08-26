@@ -9,7 +9,6 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.Credentials;
 
-
 public class MockAuthenticationMetaDataPopulator implements
     AuthenticationMetaDataPopulator {
 

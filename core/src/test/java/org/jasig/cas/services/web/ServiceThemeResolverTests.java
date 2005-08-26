@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -36,8 +36,7 @@ public class ServiceThemeResolverTests extends TestCase {
         this.resolver.setDefaultThemeName(DEFAULT_THEME);
         this.resolver.setServiceRegistry(this.registry);
 
-        this.service = new RegisteredService("test", false, false, "test",
-            null);
+        this.service = new RegisteredService("test", false, false, "test", null);
         ((ServiceRegistryManager) this.registry).addService(this.service);
     }
 

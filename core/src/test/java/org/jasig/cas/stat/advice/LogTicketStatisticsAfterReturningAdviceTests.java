@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -24,11 +24,9 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
 
@@ -140,42 +138,49 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
             fail("Throwable not expected.");
         }
     }
-    
+
     public void testProxyTicket() {
         TicketStatisticsImpl ts = new TicketStatisticsImpl();
-        TicketGrantingTicketImpl tgtParent = new TicketGrantingTicketImpl("parentTicket", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-        ServiceTicket stChild = tgtParent.grantServiceTicket("childTicket", new SimpleService("test"), new NeverExpiresExpirationPolicy());
-        TicketGrantingTicket tgtPgt = stChild.grantTicketGrantingTicket("pgtId", TestUtils.getAuthenticationWithService(), new NeverExpiresExpirationPolicy());
-        ServiceTicket stProxy = tgtPgt.grantServiceTicket("proxyId", new SimpleService("test"), new NeverExpiresExpirationPolicy());
-        
+        TicketGrantingTicketImpl tgtParent = new TicketGrantingTicketImpl(
+            "parentTicket", TestUtils.getAuthentication(),
+            new NeverExpiresExpirationPolicy());
+        ServiceTicket stChild = tgtParent.grantServiceTicket("childTicket",
+            new SimpleService("test"), new NeverExpiresExpirationPolicy());
+        TicketGrantingTicket tgtPgt = stChild.grantTicketGrantingTicket(
+            "pgtId", TestUtils.getAuthenticationWithService(),
+            new NeverExpiresExpirationPolicy());
+        ServiceTicket stProxy = tgtPgt.grantServiceTicket("proxyId",
+            new SimpleService("test"), new NeverExpiresExpirationPolicy());
+
         TicketRegistry t = new DefaultTicketRegistry();
         t.addTicket(tgtParent);
         t.addTicket(stChild);
         t.addTicket(tgtPgt);
         t.addTicket(stProxy);
-        
+
         LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
         advice.setTicketRegistry(t);
         advice.setTicketStatsManager(ts);
         Properties p = new Properties();
-        p.put("grantServiceTicket",
-            "incrementNumberOfServiceTicketsVended");
+        p.put("grantServiceTicket", "incrementNumberOfServiceTicketsVended");
         advice.setStatsStateMutators(p);
-        
+
         try {
-            advice.afterReturning(stProxy.getId(), CentralAuthenticationService.class
-                .getMethod("grantServiceTicket",
-                    new Class[] {String.class, Service.class}), null,
+            advice.afterReturning(stProxy.getId(),
+                CentralAuthenticationService.class.getMethod(
+                    "grantServiceTicket", new Class[] {String.class,
+                        Service.class}), null,
                 new CentralAuthenticationServiceImpl());
             assertEquals(1, ts.getNumberOfProxyTicketsVended());
         } catch (Throwable e) {
             fail("Throwable not expected.");
         }
-        
-       try {
-            advice.afterReturning(stChild.getId(), CentralAuthenticationService.class
-                .getMethod("grantServiceTicket",
-                    new Class[] {String.class, Service.class}), null,
+
+        try {
+            advice.afterReturning(stChild.getId(),
+                CentralAuthenticationService.class.getMethod(
+                    "grantServiceTicket", new Class[] {String.class,
+                        Service.class}), null,
                 new CentralAuthenticationServiceImpl());
             assertEquals(1, ts.getNumberOfProxyTicketsVended());
         } catch (Throwable e) {

@@ -18,14 +18,16 @@ import org.springframework.web.servlet.view.RedirectView;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LogoutControllerTests extends AbstractCentralAuthenticationServiceTest {
+public class LogoutControllerTests extends
+    AbstractCentralAuthenticationServiceTest {
 
     private LogoutController logoutController;
 
     protected void onSetUp() throws Exception {
         super.onSetUp();
-        this.logoutController = new LogoutController();        
-        this.logoutController.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.logoutController = new LogoutController();
+        this.logoutController
+            .setCentralAuthenticationService(getCentralAuthenticationService());
         this.logoutController.afterPropertiesSet();
     }
 
@@ -41,7 +43,6 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         assertTrue(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView);
     }
-    
 
     public void testLogoutForServiceWithNoFollowRedirects() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();

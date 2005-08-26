@@ -20,10 +20,11 @@ import junit.framework.TestCase;
 public class SafeContextLoaderListenerTests extends TestCase {
 
     private MockServletContext servletContext;
+
     private ServletContextEvent servletContextEvent;
+
     private SafeContextLoaderListener listener;
 
-    
     protected void setUp() throws Exception {
         this.listener = new SafeContextLoaderListener();
         this.servletContext = new MockServletContext();
@@ -47,7 +48,7 @@ public class SafeContextLoaderListenerTests extends TestCase {
 
         this.listener.contextInitialized(this.servletContextEvent);
     }
-    
+
     public void testContextDestroy() {
         this.listener.contextDestroyed(this.servletContextEvent);
     }

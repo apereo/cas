@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -47,9 +47,8 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testInvalidUsernamePassword() {
         try {
-            assertFalse(this.authenticationHandler
-                .authenticate(TestUtils
-                    .getCredentialsWithDifferentUsernameAndPassword()));
+            assertFalse(this.authenticationHandler.authenticate(TestUtils
+                .getCredentialsWithDifferentUsernameAndPassword()));
         } catch (AuthenticationException ae) {
             // this is okay
         }

@@ -14,18 +14,16 @@ import org.springframework.webflow.test.MockRequestContext;
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class ContextUtilsTests extends TestCase {
 
     private MockRequestContext requestContext;
-    
+
     private MockHttpServletRequest request;
-    
+
     private MockHttpServletResponse response;
 
     protected void setUp() throws Exception {
@@ -38,17 +36,20 @@ public class ContextUtilsTests extends TestCase {
 
     public void testAddGetAttribute() {
         ContextUtils.addAttribute(this.requestContext, "test", "test");
-        assertEquals("test", (String) ContextUtils.getAttribute(this.requestContext, "test"));
+        assertEquals("test", (String) ContextUtils.getAttribute(
+            this.requestContext, "test"));
     }
-    
+
     public void testGetHttpServletRequest() {
-        assertEquals(this.request, ContextUtils.getHttpServletRequest(this.requestContext));
+        assertEquals(this.request, ContextUtils
+            .getHttpServletRequest(this.requestContext));
     }
-   
+
     public void testGetHttpServletResponse() {
-        assertEquals(this.response, ContextUtils.getHttpServletResponse(this.requestContext));
+        assertEquals(this.response, ContextUtils
+            .getHttpServletResponse(this.requestContext));
     }
-    
+
     public void testGetHttpServletRequestThrowsException() {
         this.requestContext.setSourceEvent(new Event("test"));
         try {
@@ -58,7 +59,7 @@ public class ContextUtilsTests extends TestCase {
             return;
         }
     }
-    
+
     public void testGetHttpServletResponseThrowsException() {
         this.requestContext.setSourceEvent(new Event("test"));
         try {
@@ -68,9 +69,11 @@ public class ContextUtilsTests extends TestCase {
             return;
         }
     }
-    
+
     public void testAddGetAttributeFromFlowScope() {
-        ContextUtils.addAttributeToFlowScope(this.requestContext, "test", "test");
-        assertEquals("test", ContextUtils.getAttributeFromFlowScope(this.requestContext, "test"));
+        ContextUtils.addAttributeToFlowScope(this.requestContext, "test",
+            "test");
+        assertEquals("test", ContextUtils.getAttributeFromFlowScope(
+            this.requestContext, "test"));
     }
 }

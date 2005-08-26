@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -32,37 +32,45 @@ public class UsernamePasswordCredentialsValidatorTests extends TestCase {
     }
 
     public void testValidationPasses() {
-        final UsernamePasswordCredentials c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final UsernamePasswordCredentials c = TestUtils
+            .getCredentialsWithSameUsernameAndPassword();
         final BindException b = new BindException(c, "credentials");
         this.validator.validate(c, b);
         assertFalse(b.hasErrors());
     }
 
     public void testValidationFailsPasswordNull() {
-        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", null), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+            "test", null), 1);
     }
 
     public void testValidationFailsPasswordBlank() {
-        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", ""), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+            "test", ""), 1);
     }
 
     public void testValidationFailsUsernameNull() {
-        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, "hello"), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+            null, "hello"), 1);
     }
 
     public void testValidationFailsUsernameBlank() {
-        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("", "hello"), 1);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+            "", "hello"), 1);
     }
 
     public void testValidationFailsUsernameAndPasswordBlank() {
-        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword("", ""), 2);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+            "", ""), 2);
     }
 
     public void testValidationFailsUsernameAndPasswordNull() {
-        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null), 2);
+        commonTests(TestUtils.getCredentialsWithDifferentUsernameAndPassword(
+            null, null), 2);
     }
-    
-    private void commonTests(final UsernamePasswordCredentials c, int errorCountExpected) {
+
+    private void commonTests(final UsernamePasswordCredentials c,
+        int errorCountExpected) {
         final BindException b = new BindException(c, "credentials");
         this.validator.validate(c, b);
         assertTrue(b.hasErrors());
