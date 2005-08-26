@@ -53,12 +53,11 @@ public class LoginFormActionTests extends
             new MockHttpServletResponse()));
 
         ContextUtils.addAttribute(context, "credentials", TestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("test", "test2"));
+            .getCredentialsWithDifferentUsernameAndPassword());
         ContextUtils.addAttribute(context,
             "org.springframework.validation.BindException.credentials",
             new BindException(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                    "test", "test2"), "credentials"));
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword(), "credentials"));
 
         assertEquals("error", this.logonFormAction.submit(context).getId());
     }

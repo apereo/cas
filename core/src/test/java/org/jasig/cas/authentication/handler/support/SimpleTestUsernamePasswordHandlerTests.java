@@ -49,8 +49,7 @@ public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
         try {
             assertFalse(this.authenticationHandler
                 .authenticate(TestUtils
-                    .getCredentialsWithDifferentUsernameAndPassword("test",
-                        "test1")));
+                    .getCredentialsWithDifferentUsernameAndPassword()));
         } catch (AuthenticationException ae) {
             // this is okay
         }

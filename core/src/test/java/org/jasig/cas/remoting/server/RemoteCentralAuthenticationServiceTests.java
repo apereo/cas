@@ -74,7 +74,7 @@ public class RemoteCentralAuthenticationServiceTests extends
         try {
             this.remoteCentralAuthenticationService.setValidators(null);
             this.remoteCentralAuthenticationService
-                .createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test1", "test2"));
+                .createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail("TicketException expected.");
         } catch (TicketException e) {
             return;

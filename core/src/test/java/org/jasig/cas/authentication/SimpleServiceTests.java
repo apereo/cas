@@ -31,30 +31,30 @@ public class SimpleServiceTests extends TestCase {
     }
 
     public void testProperId() {
-        assertEquals(CONST_ID, TestUtils.getService(CONST_ID).getId());
+        assertEquals("Ids are not equal.", CONST_ID, TestUtils.getService(CONST_ID).getId());
     }
 
     public void testHashCode() {
-        assertEquals(
+        assertEquals("HashCodes are not equal.",
             HashCodeBuilder.reflectionHashCode(TestUtils.getService()),
             TestUtils.getService().hashCode());
     }
 
     public void testToString() {
         Service service = TestUtils.getService();
-        assertEquals(ToStringBuilder.reflectionToString(service), service
+        assertEquals("ToStrings are not equal.", ToStringBuilder.reflectionToString(service), service
             .toString());
     }
 
     public void testEqualsWithNull() {
-        assertFalse(TestUtils.getService().equals(null));
+        assertFalse("Service matches null.", TestUtils.getService().equals(null));
     }
 
     public void testEqualsWithBadClass() {
-        assertFalse(TestUtils.getService().equals("test"));
+        assertFalse("Services matches String class.", TestUtils.getService().equals("test"));
     }
 
     public void testEquals() {
-        assertTrue(TestUtils.getService().equals(TestUtils.getService()));
+        assertTrue("Services are not equal.", TestUtils.getService().equals(TestUtils.getService()));
     }
 }

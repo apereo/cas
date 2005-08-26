@@ -31,8 +31,7 @@ public class AuthenticationManagerImplTests extends
     public void testFailedAuthentication() throws Exception {
         try {
             getAuthenticationManager().authenticate(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword(
-                    "test", "tt"));
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail("Authentication should have failed.");
         } catch (AuthenticationException e) {
             return;
