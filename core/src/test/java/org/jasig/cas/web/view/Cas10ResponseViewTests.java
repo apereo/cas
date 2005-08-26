@@ -58,7 +58,7 @@ public class Cas10ResponseViewTests extends TestCase {
         assertEquals("no\n\n", this.response);
     }
 
-    protected class MockWriterHttpMockHttpServletResponse extends
+    private class MockWriterHttpMockHttpServletResponse extends
         MockHttpServletResponse {
 
         public PrintWriter getWriter() {
@@ -70,7 +70,7 @@ public class Cas10ResponseViewTests extends TestCase {
         }
     }
 
-    protected class MockPrintWriter extends PrintWriter {
+    private class MockPrintWriter extends PrintWriter {
 
         public MockPrintWriter(OutputStream out, boolean autoFlush) {
             super(out, autoFlush);

@@ -36,8 +36,29 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public final class TestUtils {
 
+    private static final String CONST_USERNAME = "test";
+
+    private static final String CONST_PASSWORD = "test1";
+
+    private static final String CONST_GOOD_URL = "https://www.acs.rutgers.edu";
+
+    private static final String CONST_BAD_URL = "http://www.acs.rutgers.edu";
+
+    private static final String CONST_CREDENTIALS = "credentials";
+
+    private static final String CONST_WEBFLOW_BIND_EXCEPTION = "org.springframework.validation.BindException.credentials";
+
+    private static final String[] CONST_NO_PRINCIPALS = new String[0];
+    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
+    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
+
+
+    private TestUtils() {
+        // do not instanciate
+    }
+
     public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword() {
-        return getCredentialsWithSameUsernameAndPassword("test");
+        return getCredentialsWithSameUsernameAndPassword(CONST_USERNAME);
     }
 
     public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword(
@@ -46,8 +67,12 @@ public final class TestUtils {
             username);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword(
-        final String username, final String password) {
+    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword() {
+        return getCredentialsWithDifferentUsernameAndPassword(CONST_USERNAME, CONST_PASSWORD);
+    }
+
+    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword(final String username, final String password) {
+        //noinspection LocalVariableOfConcreteClass
         final UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
@@ -56,26 +81,25 @@ public final class TestUtils {
     }
 
     public static HttpBasedServiceCredentials getHttpBasedServiceCredentials() {
-        return getHttpBasedServiceCredentials("https://www.acs.rutgers.edu");
+        return getHttpBasedServiceCredentials(CONST_GOOD_URL);
     }
 
     public static HttpBasedServiceCredentials getBadHttpBasedServiceCredentials() {
-        return getHttpBasedServiceCredentials("http://www.acs.rutgers.edu");
+        return getHttpBasedServiceCredentials(CONST_BAD_URL);
     }
 
     public static HttpBasedServiceCredentials getHttpBasedServiceCredentials(
         final String url) {
         try {
-            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
+            return new HttpBasedServiceCredentials(
                 new URL(url));
-            return c;
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException();
         }
     }
 
     public static Principal getPrincipal() {
-        return getPrincipal("test");
+        return getPrincipal(CONST_USERNAME);
     }
 
     public static Principal getPrincipal(final String name) {
@@ -83,7 +107,7 @@ public final class TestUtils {
     }
 
     public static Service getService() {
-        return getService("test");
+        return getService(CONST_USERNAME);
     }
 
     public static Service getService(final String name) {
@@ -103,7 +127,7 @@ public final class TestUtils {
     }
 
     public static Assertion getAssertion(final boolean fromNewLogin) {
-        return getAssertion(fromNewLogin, new String[0]);
+        return getAssertion(fromNewLogin, CONST_NO_PRINCIPALS);
     }
 
     public static Assertion getAssertion(final boolean fromNewLogin,
@@ -141,12 +165,12 @@ public final class TestUtils {
         final MockHttpServletRequest request,
         final MockHttpServletResponse response) {
         final MockRequestContext context = getContext(request, response);
-        ContextUtils.addAttribute(context, "credentials", TestUtils
+        ContextUtils.addAttribute(context, CONST_CREDENTIALS, TestUtils
             .getCredentialsWithSameUsernameAndPassword());
         ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
+            CONST_WEBFLOW_BIND_EXCEPTION,
             new BindException(TestUtils
-                .getCredentialsWithSameUsernameAndPassword(), "credentials"));
+                .getCredentialsWithSameUsernameAndPassword(), CONST_CREDENTIALS));
 
         return context;
     }

@@ -12,8 +12,6 @@ import java.util.Map;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import junit.framework.TestCase;
 
@@ -26,44 +24,42 @@ public class ImmutableAuthenticationTests extends TestCase {
 
     private Authentication authentication;
 
-    private Principal principal = new SimplePrincipal("test");
-
-    private Map obj = new HashMap();
+    private Map attributes = new HashMap();
 
     protected void setUp() throws Exception {
         super.setUp();
-        this.authentication = new ImmutableAuthentication(this.principal,
-            this.obj);
+        this.authentication = new ImmutableAuthentication(TestUtils.getPrincipal(),
+            this.attributes);
     }
 
     public void testGetters() {
-        assertEquals(this.authentication.getPrincipal(), this.principal);
-        assertEquals(this.authentication.getAttributes(), this.obj);
+        assertEquals("Principals are not equal", TestUtils.getPrincipal(), this.authentication.getPrincipal());
+        assertEquals("Authentication Attributes not equal.", this.authentication.getAttributes(), this.attributes);
     }
 
     public void testAuthenticatedDate() {
-        Date date1 = this.authentication.getAuthenticatedDate();
-        Date date2 = this.authentication.getAuthenticatedDate();
+        Date dateFromFirstCall = this.authentication.getAuthenticatedDate();
+        Date dateFromSecondCall = this.authentication.getAuthenticatedDate();
 
-        assertNotSame(date1, date2);
-        assertEquals(date1, date2);
+        assertNotSame("Dates are the same.", dateFromFirstCall, dateFromSecondCall);
+        assertEquals("Dates are not equal.", dateFromFirstCall, dateFromSecondCall);
     }
 
     public void testNullHashMap() {
-        assertNotNull(TestUtils.getAuthentication().getAttributes());
+        assertNotNull("Attributes are null.", TestUtils.getAuthentication().getAttributes());
     }
 
     public void testHashCode() {
-        assertEquals(HashCodeBuilder.reflectionHashCode(this.authentication),
+        assertEquals("Hashcodes do not match.", HashCodeBuilder.reflectionHashCode(this.authentication),
             this.authentication.hashCode());
     }
 
     public void testToString() {
-        assertEquals(ToStringBuilder.reflectionToString(this.authentication),
+        assertEquals("toString values do not match.", ToStringBuilder.reflectionToString(this.authentication),
             this.authentication.toString());
     }
 
     public void testEquals() {
-        assertTrue(this.authentication.equals(this.authentication));
+        assertTrue("Authentications are not equal", this.authentication.equals(this.authentication));
     }
 }

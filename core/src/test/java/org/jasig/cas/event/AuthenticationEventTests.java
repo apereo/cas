@@ -20,52 +20,44 @@ import junit.framework.TestCase;
  */
 public class AuthenticationEventTests extends TestCase {
 
-    private AuthenticationEvent authenticationEvent;
-
     public void testGetCredentials() {
-        this.authenticationEvent = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), true,
-            AuthenticationHandler.class);
-
-        assertEquals(TestUtils.getCredentialsWithSameUsernameAndPassword(),
-            this.authenticationEvent.getCredentials());
+        assertEquals("Credentials are not equal.", TestUtils.getCredentialsWithSameUsernameAndPassword(),
+                new AuthenticationEvent(TestUtils
+                        .getCredentialsWithSameUsernameAndPassword(), true,
+                        AuthenticationHandler.class).getCredentials());
     }
 
     public void testIsSuccessful() {
-        this.authenticationEvent = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), true,
-            AuthenticationHandler.class);
-        assertTrue(this.authenticationEvent.isSuccessfulAuthentication());
+        assertTrue("Authentication success is false.", new AuthenticationEvent(TestUtils
+                .getCredentialsWithSameUsernameAndPassword(), true,
+                AuthenticationHandler.class).isSuccessfulAuthentication());
     }
 
     public void testIsNotSuccessful() {
-        this.authenticationEvent = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), false,
-            AuthenticationHandler.class);
-        assertFalse(this.authenticationEvent.isSuccessfulAuthentication());
+        assertFalse("Authentication success is true.", new AuthenticationEvent(TestUtils
+                .getCredentialsWithSameUsernameAndPassword(), false,
+                AuthenticationHandler.class).isSuccessfulAuthentication());
     }
 
     public void testPublishedDate() {
-        this.authenticationEvent = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), false,
-            AuthenticationHandler.class);
-        assertEquals(new Date(), this.authenticationEvent.getPublishedDate());
+        assertEquals("Dates not equal.", new Date(), new AuthenticationEvent(TestUtils
+                .getCredentialsWithSameUsernameAndPassword(), false,
+                AuthenticationHandler.class).getPublishedDate());
     }
 
     public void testAuthenticationClass() {
-        this.authenticationEvent = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), false,
-            AuthenticationHandler.class);
-        assertEquals(AuthenticationHandler.class, this.authenticationEvent
-            .getAuthenticationHandlerClass());
+        assertEquals("AuthenticationHandler classes not equal.", AuthenticationHandler.class, new AuthenticationEvent(TestUtils
+                .getCredentialsWithSameUsernameAndPassword(), false,
+                AuthenticationHandler.class)
+                .getAuthenticationHandlerClass());
     }
 
     public void testToString() {
-        this.authenticationEvent = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), true,
-            AuthenticationHandler.class);
-        assertEquals(ToStringBuilder
-            .reflectionToString(this.authenticationEvent),
-            this.authenticationEvent.toString());
+        final AuthenticationEvent authenticationEvent = new AuthenticationEvent(TestUtils
+                .getCredentialsWithSameUsernameAndPassword(), true,
+                AuthenticationHandler.class);
+        assertEquals("ToStrings not equal.", ToStringBuilder
+                .reflectionToString(authenticationEvent),
+                authenticationEvent.toString());
     }
 }
