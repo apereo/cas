@@ -269,7 +269,7 @@
 		<dependency>
 			<groupId>clover</groupId>
 			<artifactId>clover</artifactId>
-			<version>1.3.5</version>
+			<version>1.3.9</version>
 			<type>jar</type>
 			<url>http://www.cenqua.com/clover/</url>
 			<properties>
@@ -602,8 +602,7 @@
 		
 		<dependency>
 			<groupId>maven</groupId>
-			<artifactId>plugins</artifactId>
-			<jar>maven-jira-plugin-1.1.2.jar</jar>
+			<artifactId>maven-jira-plugin</artifactId>
 			<version>1.1.2</version>
 			<type>plugin</type>
 		</dependency>
@@ -715,7 +714,7 @@
 		<report>maven-findbugs-plugin</report>
 	    <report>maven-license-plugin</report>
 <!--	    <report>maven-multiproject-plugin</report>-->
-		<report>maven-multichanges-report</report>
+<!-- 		<report>maven-multichanges-report</report>-->
 <!--	    <report>maven-statcvs-plugin</report>-->
 <!--	    <report>maven-dashboard-plugin</report>-->
 <!--	    <report>maven-developer-activity-plugin</report>-->
