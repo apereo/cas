@@ -6,6 +6,7 @@
 package org.jasig.cas.authentication.principal;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -60,7 +61,11 @@ public class UsernamePasswordCredentials implements Credentials {
         return toStringBuilder.append("userName", this.username).toString();
     }
 
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
-    }    
+    }
+
+    public final int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
 }
