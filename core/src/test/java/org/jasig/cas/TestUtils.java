@@ -34,7 +34,7 @@ import org.springframework.webflow.test.MockRequestContext;
  */
 public final class TestUtils {
 
-    private static final String CONST_USERNAME = "test";
+    public static final String CONST_USERNAME = "test";
 
     private static final String CONST_PASSWORD = "test1";
 

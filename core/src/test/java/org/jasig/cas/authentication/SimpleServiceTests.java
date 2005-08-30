@@ -19,8 +19,6 @@ import junit.framework.TestCase;
  */
 public class SimpleServiceTests extends TestCase {
 
-    private final static String CONST_ID = "test";
-
     public void testNullId() {
         try {
             TestUtils.getService(null);
@@ -31,8 +29,8 @@ public class SimpleServiceTests extends TestCase {
     }
 
     public void testProperId() {
-        assertEquals("Ids are not equal.", CONST_ID, TestUtils.getService(
-            CONST_ID).getId());
+        assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils
+            .getService().getId());
     }
 
     public void testHashCode() {
@@ -54,7 +52,7 @@ public class SimpleServiceTests extends TestCase {
 
     public void testEqualsWithBadClass() {
         assertFalse("Services matches String class.", TestUtils.getService()
-            .equals("test"));
+            .equals(new Object()));
     }
 
     public void testEquals() {
