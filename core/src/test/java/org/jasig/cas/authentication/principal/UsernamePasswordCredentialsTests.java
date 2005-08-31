@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import junit.framework.TestCase;
 
 /**
@@ -38,9 +40,7 @@ public class UsernamePasswordCredentialsTests extends TestCase {
 
         c.setUsername(userName);
 
-        assertEquals(
-            c.getClass().getName() + "@" + Integer.toHexString(c.hashCode())
-                + "[userName=" + userName + "]", c.toString());
+        assertEquals(new ToStringBuilder(c).append("userName", c.getUsername())
+            .toString(), c.toString());
     }
-
 }
