@@ -57,8 +57,8 @@ public class UsernamePasswordCredentials implements Credentials {
     }
 
     public final String toString() {
-        ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-        return toStringBuilder.append("userName", this.username).toString();
+        return new ToStringBuilder(this).append("userName", this.username)
+            .toString();
     }
 
     public final boolean equals(final Object obj) {
