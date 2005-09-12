@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -46,7 +43,6 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         final String proxyIou = this.uniqueTicketIdGenerator
             .getNewTicketId(PGTIOU_PREFIX);
         final StringBuffer stringBuffer = new StringBuffer();
-        String response = null;
 
         stringBuffer.append(serviceCredentials.getCallbackUrl()
             .toExternalForm());
@@ -62,19 +58,9 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append("&pgtId=");
         stringBuffer.append(proxyGrantingTicketId);
 
-        try {
-            response = UrlUtils.getResponseBodyFromUrl(new URL(stringBuffer
-                .toString()));
-        } catch (MalformedURLException e) {
-            log.debug(e);
-        }
+        UrlUtils.getResponseCodeFromString(stringBuffer.toString());
 
-        if (response == null) {
-            log.info("Could not send ProxyIou of " + proxyIou
-                + " for service: " + serviceCredentials.getCallbackUrl());
-            return null;
-        }
-        log.info("Sent ProxyIou of " + proxyIou + " for service: "
+        log.debug("Sent ProxyIou of " + proxyIou + " for service: "
             + serviceCredentials.getCallbackUrl());
         return proxyIou;
     }

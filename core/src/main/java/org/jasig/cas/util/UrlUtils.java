@@ -5,11 +5,8 @@
  */
 package org.jasig.cas.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,39 +27,25 @@ public final class UrlUtils {
         // we do not want this able to be extended.
     }
 
-    /**
-     * Method to retrieve the response from a HTTP request for a specific URL.
-     * 
-     * @param url The URL to contact.
-     * @return the body of the response.
-     */
-    public static String getResponseBodyFromUrl(final URL url) {
-        BufferedReader bufferedReader = null;
-        final StringBuffer buf = new StringBuffer();
-
+    public static int getResponseCodeFromString(final String url) {
         try {
-            final URLConnection connection = url.openConnection();
-
-            connection.setRequestProperty("Connection", "close");
-            bufferedReader = new BufferedReader(new InputStreamReader(
-                connection.getInputStream()));
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                buf.append(line);
-                buf.append("\n");
-                line = bufferedReader.readLine();
-            }
+            return getResponseCodeFromUrl(new URL(url));
         } catch (Exception e) {
             LOG.error(e, e);
-        } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-            } catch (IOException e) {
-                LOG.error(e, e);
-            }
+            return HttpURLConnection.HTTP_INTERNAL_ERROR;
         }
-        return buf.toString().length() > 0 ? buf.toString() : null;
+    }
+
+    public static int getResponseCodeFromUrl(final URL url) {
+        try {
+            final HttpURLConnection connection = (HttpURLConnection) url
+                .openConnection();
+
+            connection.setRequestProperty("Connection", "close");
+            return connection.getResponseCode();
+        } catch (Exception e) {
+            LOG.error(e, e);
+            return HttpURLConnection.HTTP_INTERNAL_ERROR;
+        }
     }
 }

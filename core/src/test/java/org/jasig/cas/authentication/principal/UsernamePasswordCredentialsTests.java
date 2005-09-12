@@ -5,7 +5,9 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.TestUtils;
 
 import junit.framework.TestCase;
 
@@ -35,12 +37,14 @@ public class UsernamePasswordCredentialsTests extends TestCase {
     }
 
     public void testToString() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        final String userName = "test";
-
-        c.setUsername(userName);
+        final UsernamePasswordCredentials c = TestUtils.getCredentialsWithSameUsernameAndPassword();
 
         assertEquals(new ToStringBuilder(c).append("userName", c.getUsername())
             .toString(), c.toString());
+    }
+    
+    public void testHashCOde() {
+        final UsernamePasswordCredentials c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        assertEquals(HashCodeBuilder.reflectionHashCode(c), c.hashCode());
     }
 }

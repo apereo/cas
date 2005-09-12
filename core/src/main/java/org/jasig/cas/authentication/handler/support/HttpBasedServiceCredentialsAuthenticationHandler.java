@@ -5,12 +5,15 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import java.net.HttpURLConnection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.UrlUtils;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class to validate the credentials presented by communicating with the web
@@ -26,20 +29,26 @@ import org.jasig.cas.util.UrlUtils;
  * @since 3.0
  */
 public final class HttpBasedServiceCredentialsAuthenticationHandler implements
-    AuthenticationHandler {
+    AuthenticationHandler, InitializingBean {
 
     /** The string representing the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
 
-    /** Do we allow null responses. Usually indicates a redirect or not */
-    private boolean allowNullResponses = false;
+    /** The default status codes we accept. */
+    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
+        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
+        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
+        HttpURLConnection.HTTP_ACCEPTED};
+
+    /** List of HTTP status codes considered valid by this AuthenticationHandler. */
+    private int[] acceptableCodes;
 
     /** Log instance. */
     private final Log log = LogFactory.getLog(getClass());
 
     public boolean authenticate(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
-        String response = null;
+        int response;
         if (!serviceCredentials.getCallbackUrl().getProtocol().equals(
             PROTOCOL_HTTPS)) {
             return false;
@@ -47,10 +56,17 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
         log
             .debug("Attempting to resolve credentials for "
                 + serviceCredentials);
-        response = UrlUtils.getResponseBodyFromUrl(serviceCredentials
+
+        response = UrlUtils.getResponseCodeFromUrl(serviceCredentials
             .getCallbackUrl());
 
-        return this.allowNullResponses || response != null;
+        for (int i = 0; i < this.acceptableCodes.length; i++) {
+            if (response == this.acceptableCodes[i]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -64,12 +80,17 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
     }
 
     /**
-     * Method to programmatically set whether this AuthenticationHandler will
-     * follow redirects.
-     * 
-     * @param allowNullResponses
+     * Set the acceptable HTTP status codes that we will use to determine if the response
+     * from the URL was correct.
+     * @param acceptableCodes an array of status code integers.
      */
-    public void setAllowNullResponses(final boolean allowNullResponses) {
-        this.allowNullResponses = allowNullResponses;
+    public void setAcceptableCodes(final int[] acceptableCodes) {
+        this.acceptableCodes = acceptableCodes;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if (this.acceptableCodes == null) {
+            this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
+        }
     }
 }

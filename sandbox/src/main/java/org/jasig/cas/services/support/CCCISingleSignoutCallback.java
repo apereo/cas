@@ -35,7 +35,7 @@ public final class CCCISingleSignoutCallback implements SingleSignoutCallback {
                 + ((callbackUrl.getQuery() != null) ? "&" : "?") + "ticket=~"
                 + serviceTicketId);
 
-            UrlUtils.getResponseBodyFromUrl(callbackUrl);
+            UrlUtils.getResponseCodeFromUrl(callbackUrl);
         } catch (Exception e) {
             log.error(e);
             return false;

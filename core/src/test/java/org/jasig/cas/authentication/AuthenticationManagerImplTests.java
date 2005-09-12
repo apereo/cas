@@ -55,8 +55,10 @@ public class AuthenticationManagerImplTests extends
 
     public void testNoResolverFound() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
+        HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
+        authenticationHandler.afterPropertiesSet();
         manager
-            .setAuthenticationHandlers(new AuthenticationHandler[] {new HttpBasedServiceCredentialsAuthenticationHandler()});
+            .setAuthenticationHandlers(new AuthenticationHandler[] {authenticationHandler});
         manager
             .setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()});
         manager.afterPropertiesSet();
