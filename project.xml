@@ -593,13 +593,15 @@
 		</dependency>
 		
 		<!-- MAVEN PLUGINS -->
+		<!-- 
 		<dependency>
 			<groupId>maven-plugins</groupId>
 			<artifactId>maven-findbugs-plugin</artifactId>
 			<version>0.9.1</version>
 			<type>plugin</type>
 		</dependency>
-		
+		 -->
+		 
 		<dependency>
 			<groupId>maven</groupId>
 			<artifactId>maven-jira-plugin</artifactId>
@@ -624,7 +626,7 @@
 		<dependency>
 			<groupId>maven</groupId>
 			<artifactId>maven-clover-plugin</artifactId>
-			<version>1.8</version>
+			<version>1.10</version>
 			<type>plugin</type>
 		</dependency>
 		
@@ -701,12 +703,12 @@
 	</build>
 	<reports>
 		<report>maven-changes-plugin</report>
-<!--		<report>maven-changelog-plugin</report> -->
+		<report>maven-changelog-plugin</report>
 		<report>maven-checkstyle-plugin</report>
 		<report>maven-clover-plugin</report>
 		<report>maven-javadoc-plugin</report>
 		<report>maven-jdepend-plugin</report>
-<!--		<report>maven-junit-report-plugin</report>-->
+		<report>maven-junit-report-plugin</report>
 		<report>maven-jxr-plugin</report>
 		<report>maven-pmd-plugin</report>
 		<report>maven-simian-plugin</report>
@@ -715,9 +717,9 @@
 	    <report>maven-license-plugin</report>
 <!--	    <report>maven-multiproject-plugin</report>-->
 <!-- 		<report>maven-multichanges-report</report>-->
-<!--	    <report>maven-statcvs-plugin</report>-->
-<!--	    <report>maven-dashboard-plugin</report>-->
-<!--	    <report>maven-developer-activity-plugin</report>-->
-<!--	    <report>maven-file-activity-plugin</report>-->
+	    <report>maven-statcvs-plugin</report>
+	    <report>maven-dashboard-plugin</report>
+        <report>maven-developer-activity-plugin</report>
+	    <report>maven-file-activity-plugin</report>
 </reports>
 </project>

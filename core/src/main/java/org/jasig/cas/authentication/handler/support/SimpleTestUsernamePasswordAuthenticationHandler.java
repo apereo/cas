@@ -39,6 +39,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
     }
 
     protected void afterPropertiesSetInternal() throws Exception {
+        super.afterPropertiesSetInternal();
         getLog()
             .warn(
                 this.getClass().getName()

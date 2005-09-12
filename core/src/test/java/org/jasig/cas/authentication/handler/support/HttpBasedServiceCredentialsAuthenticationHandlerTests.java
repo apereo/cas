@@ -6,8 +6,6 @@
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import junit.framework.TestCase;
 
 /**
@@ -18,10 +16,11 @@ import junit.framework.TestCase;
 public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
     TestCase {
 
-    final private AuthenticationHandler authenticationHandler;
+    private HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler;
 
-    public HttpBasedServiceCredentialsAuthenticationHandlerTests() {
+    protected void setUp() throws Exception {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
+        this.authenticationHandler.afterPropertiesSet();
     }
 
     public void testSupportsProperUserCredentials() {
@@ -35,41 +34,24 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
     }
 
     public void testAcceptsProperCertificateCredentials() {
-        try {
-            assertTrue(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials()));
-        } catch (AuthenticationException e) {
-            fail("We should not have gotten an error.");
-        }
+        assertTrue(this.authenticationHandler.authenticate(TestUtils
+            .getHttpBasedServiceCredentials()));
     }
 
     public void testRejectsInProperCertificateCredentials() {
-        try {
-            assertFalse(this.authenticationHandler
-                .authenticate(TestUtils
-                    .getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
-        } catch (AuthenticationException e) {
-            // this is okay;
-        }
+        assertFalse(this.authenticationHandler.authenticate(TestUtils
+            .getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
     }
 
     public void testRejectsNonHttpsCredentials() {
-        try {
-            assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials("http://www.jasig.org")));
-        } catch (AuthenticationException e) {
-            // this is okay.
-        }
+        assertFalse(this.authenticationHandler.authenticate(TestUtils
+            .getHttpBasedServiceCredentials("http://www.jasig.org")));
     }
 
-    public void testAllowNullResponse() {
-        try {
-            ((HttpBasedServiceCredentialsAuthenticationHandler) this.authenticationHandler)
-                .setAllowNullResponses(true);
-            assertTrue(this.authenticationHandler.authenticate(TestUtils
-                .getHttpBasedServiceCredentials()));
-        } catch (AuthenticationException e) {
-            fail("We should not have gotten an error.");
-        }
+    public void testNoAcceptableStatusCode() throws Exception {
+        this.authenticationHandler.setAcceptableCodes(new int[0]);
+        this.authenticationHandler.afterPropertiesSet();
+        assertFalse(this.authenticationHandler.authenticate(TestUtils
+            .getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
     }
 }
