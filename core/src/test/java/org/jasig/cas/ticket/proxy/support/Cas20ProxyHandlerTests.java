@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
@@ -19,15 +20,13 @@ import junit.framework.TestCase;
  */
 public class Cas20ProxyHandlerTests extends TestCase {
 
-    public void testAfterPropertiesSetBad() {
-        Cas20ProxyHandler handler = new Cas20ProxyHandler();
-
-        try {
-            handler.afterPropertiesSet();
-
-        } catch (Exception e) {
-            fail("Exception not expected.");
-        }
+    private Cas20ProxyHandler handler;
+    
+    
+    
+    protected void setUp() throws Exception {
+        this.handler = new Cas20ProxyHandler();
+        this.handler.afterPropertiesSet();
     }
 
     public void testAfterPropertiesSet() {
@@ -43,23 +42,21 @@ public class Cas20ProxyHandlerTests extends TestCase {
     }
 
     public void testValidProxyTicketWithoutQueryString() throws Exception {
-        Cas20ProxyHandler handler = new Cas20ProxyHandler();
-        handler.afterPropertiesSet();
-        assertNotNull(handler.handle(new HttpBasedServiceCredentials(new URL(
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(new URL(
             "http://www.rutgers.edu/")), "proxyGrantingTicketId"));
     }
 
     public void testValidProxyTicketWithQueryString() throws Exception {
         Cas20ProxyHandler handler = new Cas20ProxyHandler();
         handler.afterPropertiesSet();
-        assertNotNull(handler.handle(new HttpBasedServiceCredentials(new URL(
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(new URL(
             "http://www.rutgers.edu/?test=test")), "proxyGrantingTicketId"));
     }
 
     public void testNonValidProxyTicket() throws Exception {
-        Cas20ProxyHandler handler = new Cas20ProxyHandler();
-        handler.afterPropertiesSet();
-        assertNull(handler.handle(new HttpBasedServiceCredentials(new URL(
-            "http://www.rutgers.edu:9090")), "proxyGrantingTicketId"));
+        this.handler.setAcceptableCodes(new int[] {HttpURLConnection.HTTP_BAD_GATEWAY});
+        this.handler.afterPropertiesSet();
+        assertNull(this.handler.handle(new HttpBasedServiceCredentials(new URL(
+            "http://www.rutgers.edu")), "proxyGrantingTicketId"));
     }
 }
