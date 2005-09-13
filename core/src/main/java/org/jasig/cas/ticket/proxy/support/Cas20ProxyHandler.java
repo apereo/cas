@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
+import java.net.HttpURLConnection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -34,6 +36,15 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     /** The PGTIOU ticket prefix. */
     private static final String PGTIOU_PREFIX = "PGTIOU";
 
+    /** The default status codes we accept. */
+    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
+        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
+        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
+        HttpURLConnection.HTTP_ACCEPTED};
+
+    /** List of HTTP status codes considered valid by this AuthenticationHandler. */
+    private int[] acceptableCodes;
+
     /** Generate unique ids. */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
@@ -58,11 +69,21 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append("&pgtId=");
         stringBuffer.append(proxyGrantingTicketId);
 
-        UrlUtils.getResponseCodeFromString(stringBuffer.toString());
+        final int responseCode = UrlUtils
+            .getResponseCodeFromString(stringBuffer.toString());
 
-        log.debug("Sent ProxyIou of " + proxyIou + " for service: "
+        for (int i = 0; i < this.acceptableCodes.length; i++) {
+            if (responseCode == this.acceptableCodes[i]) {
+                log.debug("Sent ProxyIou of " + proxyIou + " for service: "
+                    + serviceCredentials.getCallbackUrl());
+
+                return proxyIou;
+            }
+        }
+
+        log.debug("Failed to send ProxyIou of " + proxyIou + " for service: "
             + serviceCredentials.getCallbackUrl());
-        return proxyIou;
+        return null;
     }
 
     /**
@@ -73,12 +94,25 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 
+    /**
+     * Set the acceptable HTTP status codes that we will use to determine if the response
+     * from the URL was correct.
+     * @param acceptableCodes an array of status code integers.
+     */
+    public void setAcceptableCodes(final int[] acceptableCodes) {
+        this.acceptableCodes = acceptableCodes;
+    }
+
     public void afterPropertiesSet() throws Exception {
         if (this.uniqueTicketIdGenerator == null) {
             this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
             log.info("No UniqueTicketIdGenerator specified for "
                 + this.getClass().getName() + ".  Using "
                 + this.uniqueTicketIdGenerator.getClass().getName());
+        }
+
+        if (this.acceptableCodes == null) {
+            this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
         }
     }
 }
