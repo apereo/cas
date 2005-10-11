@@ -87,7 +87,10 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
                 if (test != null) {
                     return true;
                 }
-            } finally {
+            } catch (Exception e) {
+                return false;
+            }
+                finally {
                 org.springframework.ldap.support.LdapUtils.closeContext(test);
             }
         }
