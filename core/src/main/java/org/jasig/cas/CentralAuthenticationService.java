@@ -64,8 +64,9 @@ public interface CentralAuthenticationService {
      * @return the ServiceTicket for target Service.
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(final String ticketGrantingTicketId, final Service service,
-        final Credentials credentials) throws TicketException;
+    String grantServiceTicket(final String ticketGrantingTicketId,
+        final Service service, final Credentials credentials)
+        throws TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -75,8 +76,8 @@ public interface CentralAuthenticationService {
      * @return ServiceTicket if valid for the service
      * @throws TicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(final String serviceTicketId, final Service service)
-        throws TicketException;
+    Assertion validateServiceTicket(final String serviceTicketId,
+        final Service service) throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket. This has the effect of invalidating any

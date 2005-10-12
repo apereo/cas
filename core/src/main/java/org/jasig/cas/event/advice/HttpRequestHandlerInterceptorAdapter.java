@@ -16,8 +16,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
  * HandlerInterceptor that will on a successful completion of a page rendering,
- * publish a PageRequestHttpRequestEvent.  PageRequestHttpRequestEvents encapsulate the
- * HttpServletRequest object in order to allow EventHandlerse to 
+ * publish a PageRequestHttpRequestEvent. PageRequestHttpRequestEvents
+ * encapsulate the HttpServletRequest object in order to allow EventHandlerse to
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -39,8 +39,7 @@ public final class HttpRequestHandlerInterceptorAdapter extends
     public void afterCompletion(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
         final Exception ex) throws Exception {
-        final HttpRequestEvent event = new HttpRequestEvent(
-            request);
+        final HttpRequestEvent event = new HttpRequestEvent(request);
         this.applicationEventPublisher.publishEvent(event);
     }
 }

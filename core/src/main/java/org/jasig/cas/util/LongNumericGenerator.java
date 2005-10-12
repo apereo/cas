@@ -6,7 +6,7 @@
 package org.jasig.cas.util;
 
 /**
- * Interface to guaranteed to return a long.   
+ * Interface to guaranteed to return a long.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

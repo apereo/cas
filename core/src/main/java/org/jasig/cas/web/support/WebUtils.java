@@ -20,7 +20,7 @@ public final class WebUtils {
     private WebUtils() {
         // private constructor so we can't instanciate the class.
     }
-    
+
     /**
      * Method to retrieve the requested Cookie value or null if the cookie does
      * not exist.
