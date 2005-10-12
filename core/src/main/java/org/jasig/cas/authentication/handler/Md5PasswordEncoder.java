@@ -11,8 +11,8 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Implementation of the password handler that returns the MD5 hash of any
- * plaintext password passed into the encoder. Returns the equivalent Md5
- * Hash you would get from a PHP hash.
+ * plaintext password passed into the encoder. Returns the equivalent Md5 Hash
+ * you would get from a PHP hash.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -27,7 +27,7 @@ public final class Md5PasswordEncoder implements PasswordEncoder {
     private static final String ALGORITHM_NAME = "MD5";
 
     /**
-     * @throws SecurityException if the Algorithm can't be found. 
+     * @throws SecurityException if the Algorithm can't be found.
      */
     public String encode(final String password) {
 

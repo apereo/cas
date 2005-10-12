@@ -24,7 +24,7 @@ public final class TestEventHandler implements EventHandler {
         System.out.println(event.toString());
     }
 
-    /** 
+    /**
      * @return always returns true.
      */
     public boolean supports(final ApplicationEvent event) {

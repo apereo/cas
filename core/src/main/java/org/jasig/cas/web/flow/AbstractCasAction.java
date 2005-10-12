@@ -39,12 +39,13 @@ public abstract class AbstractCasAction extends AbstractAction {
 
         final ModelAndEvent modelAndEvent = doExecuteInternal(requestContext,
             attributes);
-        
+
         final Map model = modelAndEvent.getModel();
-        
+
         for (Iterator iter = model.keySet().iterator(); iter.hasNext();) {
             Object key = iter.next();
-            ContextUtils.addAttributeToFlowScope(requestContext, (String) key, model.get(key));
+            ContextUtils.addAttributeToFlowScope(requestContext, (String) key,
+                model.get(key));
         }
 
         return modelAndEvent.getEvent();

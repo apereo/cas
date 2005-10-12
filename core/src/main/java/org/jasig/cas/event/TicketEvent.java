@@ -46,6 +46,7 @@ public class TicketEvent extends AbstractEvent {
 
     /**
      * Constructs a TicketEvent with the Ticket as the source.
+     * 
      * @param ticket the source Ticket
      * @param ticketEventType the event type.
      */

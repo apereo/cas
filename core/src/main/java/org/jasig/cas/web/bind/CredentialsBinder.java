@@ -12,10 +12,8 @@ import org.jasig.cas.authentication.principal.Credentials;
  * Interface for a class that can bind items stored in the request to a
  * particular credentials implementation. This allows for binding beyond the
  * basic JavaBean/Request parameter binding that is handled by Spring
- * automatically.
- * 
- * Implementations are free to pass part or all of the HttpServletRequest
- * to the Credentials.
+ * automatically. Implementations are free to pass part or all of the
+ * HttpServletRequest to the Credentials.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$

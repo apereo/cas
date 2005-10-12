@@ -6,8 +6,8 @@
 package org.jasig.cas.authentication.principal;
 
 /**
- * CredentialsToPrincipalResolvers extract information from the Credentials provided
- * and determine the Principal represented by those credentials.
+ * CredentialsToPrincipalResolvers extract information from the Credentials
+ * provided and determine the Principal represented by those credentials.
  * <p>
  * A minimal Principal object just has one ID value. This can be extended with
  * richer objects containing more properties. The SimplePrincipal class
@@ -39,9 +39,9 @@ package org.jasig.cas.authentication.principal;
 public interface CredentialsToPrincipalResolver {
 
     /**
-     * Turn Credentials into a Principal object by analyzing the information provided
-     * in the Credentials and constructing a Principal object based on that information
-     * or information derived from the Credentials object.
+     * Turn Credentials into a Principal object by analyzing the information
+     * provided in the Credentials and constructing a Principal object based on
+     * that information or information derived from the Credentials object.
      * 
      * @param credentials from which to resolve Principal
      * @return resolved Principal

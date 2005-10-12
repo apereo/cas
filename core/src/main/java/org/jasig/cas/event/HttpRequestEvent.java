@@ -86,7 +86,7 @@ public class HttpRequestEvent extends AbstractEvent {
     public final String getReferrer() {
         return getRequest().getHeader(HEADER_REFERRER);
     }
-    
+
     /**
      * Method to retrieve HttpServletRequest.
      * 

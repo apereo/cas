@@ -108,7 +108,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
 
         list.add(this.getAuthentication());
         list.addAll(this.getGrantingTicket().getChainedAuthentications());
-        
 
         return Collections.unmodifiableList(list);
     }

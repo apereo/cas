@@ -95,8 +95,9 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     }
 
     /**
-     * Set the acceptable HTTP status codes that we will use to determine if the response
-     * from the URL was correct.
+     * Set the acceptable HTTP status codes that we will use to determine if the
+     * response from the URL was correct.
+     * 
      * @param acceptableCodes an array of status code integers.
      */
     public void setAcceptableCodes(final int[] acceptableCodes) {
