@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0.2RC1</currentVersion>
+	<currentVersion>3.0.2</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -14,14 +14,24 @@
 	<logo></logo>
 	<description>CAS 3.0 is an enterprise single sign on for the web.  It supports clients from both web browsers and web services.</description>
 	<shortDescription>CAS is enterprise Single Sign On for the web.</shortDescription>
-	<url>http://jasigch.princeton.edu:9000/display/CAS</url>
-	<issueTrackingUrl>http://jasigch.princeton.edu:9000/jira/secure/BrowseProject.jspa?id=10007</issueTrackingUrl>
+	<url>https://clearinghouse.ja-sig.org/wiki/spaces/viewspacesummary.action?key=CAS</url>
+	<issueTrackingUrl>https://clearinghouse.ja-sig.org/issues/browse/CAS</issueTrackingUrl>
 	<repository>
 		<connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas3</connection>
 		<developerConnection>scm:cvs:pserver:${maven.username}@www.uportal.org:/home/cvs/jasig:cas3</developerConnection>
 		<url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/</url>
 	</repository>
 	<versions>
+		<version>
+			<id>3.0.2</id>
+			<name>3.0.2</name>
+			<tag>cas-3-0-2-final</tag>
+		</version>
+		<version>
+			<id>3.0.2-rc1</id>
+			<name>3.0.2-rc1</name>
+			<tag>cas-3-0-2-rc1</tag>
+		</version>
 		<version>
 			<id>3.0.1</id>
 			<name>3.0.1</name>
@@ -61,11 +71,6 @@
 			<id>3.0-m1</id>
 			<name>3.0-m1</name>
 			<tag>cas-3-0-m1</tag>
-		</version>
-		<version>
-			<id>3.0.2-rc1</id>
-			<name>3.0.2-rc1</name>
-			<tag>cas-3-0-2-rc1</tag>
 		</version>
 	</versions>
 	<mailingLists>
