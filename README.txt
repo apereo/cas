@@ -1,6 +1,6 @@
 CENTRAL AUTHENTICATION SERVICE (CAS)
 --------------------------------------------------------------------
-http://jasigch.princeton.edu:9000/display/CAS
+https://clearinghouse.ja-sig.org/wiki/display/CAS/Home
 
 1.  INTRODUCTION
 
