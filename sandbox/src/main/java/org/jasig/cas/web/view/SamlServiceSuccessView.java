@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.web.support.WebConstants;
@@ -61,13 +62,13 @@ public class SamlServiceSuccessView implements View {
 			if (assertion==null) 
 				throw internalError;
 			
-			List/*<Principal>*/ chainedPrincipals = 
+		Authentication[] chainedPrincipals = 
 				assertion.getChainedAuthentications();
-			if (chainedPrincipals==null || chainedPrincipals.size()==0)
+			if (chainedPrincipals==null || chainedPrincipals.length==0)
 				throw internalError;
 			
 			// For the moment, lets just handle the non-proxy chain response.
-			Principal principal = (Principal) chainedPrincipals.get(0);
+			Principal principal = (Principal) chainedPrincipals[0];
 			String username = principal.getId();
 			
 			// I have to find out what the right string is here.

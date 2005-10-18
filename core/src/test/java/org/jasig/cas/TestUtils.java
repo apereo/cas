@@ -133,10 +133,10 @@ public final class TestUtils {
     public static Assertion getAssertion(final boolean fromNewLogin,
         final String[] extraPrincipals) {
         final List list = new ArrayList();
-        list.add(TestUtils.getPrincipal());
+        list.add(TestUtils.getAuthentication());
 
         for (int i = 0; i < extraPrincipals.length; i++) {
-            list.add(TestUtils.getPrincipal(extraPrincipals[i]));
+            list.add(TestUtils.getAuthentication(extraPrincipals[i]));
         }
         return new ImmutableAssertionImpl(list, TestUtils.getService(),
             fromNewLogin);

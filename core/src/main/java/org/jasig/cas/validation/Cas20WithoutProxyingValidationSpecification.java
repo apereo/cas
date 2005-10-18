@@ -28,6 +28,6 @@ public class Cas20WithoutProxyingValidationSpecification extends
     }
 
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        return (assertion.getChainedAuthentications().size() == 1);
+        return (assertion.getChainedAuthentications().length == 1);
     }
 }

@@ -5,12 +5,12 @@
  */
 package org.jasig.cas.validation;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 
 /**
@@ -50,13 +50,14 @@ public final class ImmutableAssertionImpl implements Assertion {
                 "principals cannot be null or empty.");
         }
 
-        this.principals = Collections.unmodifiableList(principals);
+        this.principals = principals;
         this.service = service;
         this.fromNewLogin = fromNewLogin;
     }
 
-    public List getChainedAuthentications() {
-        return this.principals;
+    public Authentication[] getChainedAuthentications() {
+        return (Authentication[]) this.principals
+            .toArray(new Authentication[0]);
     }
 
     public boolean isFromNewLogin() {
