@@ -193,44 +193,31 @@
 	<!-- XFIRE -->
 		<dependency>
 			<groupId>xfire</groupId>
-			<artifactId>xfire-core</artifactId>
-			<version>1.0-M4</version>
+			<artifactId>xfire-all</artifactId>
+			<version>1.0-M5</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+		
 		<dependency>
-			<groupId>xfire</groupId>
-			<artifactId>xfire-java</artifactId>
-			<version>1.0-M4</version>
+			<groupId>yom</groupId>
+			<artifactId>yom</artifactId>
+			<version>1.0-alpha-2</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+		
 		<dependency>
-			<groupId>xfire</groupId>
-			<artifactId>xfire-spring</artifactId>
-			<version>1.0-M4</version>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.1-beta-6</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		<dependency>
-			<groupId>xfire</groupId>
-			<artifactId>xfire-xmlbeans</artifactId>
-			<version>1.0-M4</version>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>xfire</groupId>
-			<artifactId>xfire-plexus</artifactId>
-			<version>1.0-M4</version>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
+
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
