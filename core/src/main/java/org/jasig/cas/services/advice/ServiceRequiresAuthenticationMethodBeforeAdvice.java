@@ -11,10 +11,10 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.services.RegisteredService;
 
 /**
- * Advice to confirm that if a service forces the concept of a renew = true
- * (i.e. opting out of Single-sign on) then they need to have passed in a set of
- * Credentials which means they called the grantServiceTicket with the third
- * parameter set to a form of Credentials.
+ * Advice to confirm that if a service forces the concept of a renew = true,
+ * (for example, opting out of Single-sign on) then they need to have passed in
+ * a set of Credentials which means they called the grantServiceTicket with the
+ * third parameter set to a form of Credentials.
  * <p>
  * The behavior for this advice is only defined for the grantedServiceTicket
  * methods.

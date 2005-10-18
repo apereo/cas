@@ -72,7 +72,8 @@ public final class LoginFormAction extends FormAction {
     }
 
     /**
-     * Method follows the following flow of events:
+     * This method submits the information to the CentralAuthenticationService.
+     * It follows the following flow:
      * <ul>
      * <li> If renew is true and there is a TicketGrantingTicket, attempt to
      * generate a service ticket with the supplied credentials.</li>
