@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
@@ -46,20 +48,20 @@ public class AssertionImplTests extends TestCase {
     public void testGettersForChainedPrincipals() {
         final List list = new ArrayList();
 
-        list.add(new SimplePrincipal("test"));
-        list.add(new SimplePrincipal("test1"));
-        list.add(new SimplePrincipal("test2"));
+        list.add(TestUtils.getAuthentication("test"));
+        list.add(TestUtils.getAuthentication("test1"));
+        list.add(TestUtils.getAuthentication("test2"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);
 
-        assertEquals(list, assertion.getChainedAuthentications());
+        assertEquals(list.toArray(new Authentication[0]).length, assertion.getChainedAuthentications().length);
     }
 
     public void testGetterFalseForNewLogin() {
         final List list = new ArrayList();
 
-        list.add(new SimplePrincipal("test"));
+        list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), false);
@@ -70,7 +72,7 @@ public class AssertionImplTests extends TestCase {
     public void testGetterTrueForNewLogin() {
         final List list = new ArrayList();
 
-        list.add(new SimplePrincipal("test"));
+        list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);
@@ -80,7 +82,7 @@ public class AssertionImplTests extends TestCase {
 
     public void testEqualsWithNull() {
         final List list = new ArrayList();
-        list.add(new SimplePrincipal("test"));
+        list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);
@@ -90,7 +92,7 @@ public class AssertionImplTests extends TestCase {
 
     public void testEqualsWithInvalidObject() {
         final List list = new ArrayList();
-        list.add(new SimplePrincipal("test"));
+        list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);
@@ -101,8 +103,8 @@ public class AssertionImplTests extends TestCase {
     public void testEqualsWithValidObject() {
         final List list = new ArrayList();
         final List list1 = new ArrayList();
-        list.add(new SimplePrincipal("test"));
-        list1.add(new SimplePrincipal("test"));
+        list.add(TestUtils.getAuthentication());
+        list1.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);

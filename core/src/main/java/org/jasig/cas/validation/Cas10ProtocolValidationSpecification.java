@@ -28,6 +28,6 @@ public final class Cas10ProtocolValidationSpecification extends
     }
 
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
-        return (assertion.getChainedAuthentications().size() == 1);
+        return (assertion.getChainedAuthentications().length == 1);
     }
 }

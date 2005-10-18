@@ -8,7 +8,6 @@ package org.jasig.cas.web.view;
 import java.io.PrintWriter;
 
 import java.util.Map;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -54,15 +53,14 @@ public class Cas20ValidationSuccessResponseView extends
 		 * The username is the last element in the list, and the most
 		 * recently visited proxy is at the beginning of the list.
 		 */
-		final List authentications = assertion.getChainedAuthentications();
+		final Authentication[] authentications = assertion.getChainedAuthentications();
 		final ServiceResponseDocument responseDoc =
 			ServiceResponseDocument.Factory.newInstance(xmlOptions);
 		final ServiceResponseType serviceResponse = 
 			responseDoc.addNewServiceResponse();
 		final AuthenticationSuccessType authSuccess = 
 			serviceResponse.addNewAuthenticationSuccess();
-		authSuccess.setUser(((Authentication)authentications
-                        .get(authentications.size()-1)).getPrincipal().getId());
+		authSuccess.setUser((authentications[authentications.length-1]).getPrincipal().getId());
         
 		// do we have a PGTIOU? if so, add it.
 		final String pgtIou = (String)model.get(WebConstants.PGTIOU);
@@ -71,11 +69,11 @@ public class Cas20ValidationSuccessResponseView extends
 		}
 		
 		// is there a proxy chain? if so, add it.
-		if(authentications.size() > 1) {
+		if(authentications.length > 1) {
 			final ProxiesType proxies = authSuccess.addNewProxies();
 			// skip i=authentications.size()-1 -- username
-			for(int i=0,n=authentications.size()-1;i<n;i++) {
-				proxies.addProxy(((Authentication)authentications.get(i))
+			for(int i=0,n=authentications.length-1;i<n;i++) {
+				proxies.addProxy((authentications[i])
 						.getPrincipal().getId());
 			}
 		}

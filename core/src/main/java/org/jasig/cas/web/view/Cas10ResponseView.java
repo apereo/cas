@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.web.servlet.View;
@@ -40,8 +39,8 @@ public final class Cas10ResponseView implements View {
         if (this.successResponse) {
             response.getWriter().print(
                 "yes\n"
-                    + ((Authentication) assertion.getChainedAuthentications()
-                        .get(0)).getPrincipal().getId() + "\n");
+                    + (assertion.getChainedAuthentications()[0]).getPrincipal()
+                        .getId() + "\n");
         } else {
             response.getWriter().print("no\n\n");
         }
