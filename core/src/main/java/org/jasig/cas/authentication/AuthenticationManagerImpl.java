@@ -159,7 +159,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
      * authenticationMetaDataPopulators to set.
      */
     public void setAuthenticationMetaDataPopulators(
-        final AuthenticationMetaDataPopulator[] authenticationAttributesPopulators) {
-        this.authenticationMetaDataPopulators = authenticationAttributesPopulators;
+        final AuthenticationMetaDataPopulator[] authenticationMetaDataPopulators) {
+        this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
     }
 }
