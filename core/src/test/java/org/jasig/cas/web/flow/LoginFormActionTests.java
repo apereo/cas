@@ -35,13 +35,13 @@ import org.springframework.webflow.test.MockRequestContext;
 public class LoginFormActionTests extends
     AbstractCentralAuthenticationServiceTest {
 
-    private LoginFormAction logonFormAction;
+    private LoginFormAction loginFormAction;
 
     protected void onSetUp() throws Exception {
-        this.logonFormAction = new LoginFormAction();
-        this.logonFormAction
+        this.loginFormAction = new LoginFormAction();
+        this.loginFormAction
             .setCentralAuthenticationService(getCentralAuthenticationService());
-        this.logonFormAction.afterPropertiesSet();
+        this.loginFormAction.afterPropertiesSet();
     }
 
     public void testSubmitBadCredentials() throws Exception {
@@ -58,7 +58,7 @@ public class LoginFormActionTests extends
                 .getCredentialsWithDifferentUsernameAndPassword(),
                 "credentials"));
 
-        assertEquals("error", this.logonFormAction.submit(context).getId());
+        assertEquals("error", this.loginFormAction.submit(context).getId());
     }
 
     public void testSubmitProperCredentialsWithService() throws Exception {
@@ -66,13 +66,13 @@ public class LoginFormActionTests extends
 
         request.addParameter("service", "test");
 
-        assertEquals("warn", this.logonFormAction.submit(
+        assertEquals("warn", this.loginFormAction.submit(
             TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testSubmitProperCredentialsWithNoService() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        assertEquals("noService", this.logonFormAction.submit(
+        assertEquals("noService", this.loginFormAction.submit(
             TestUtils.getContextWithCredentials(request)).getId());
     }
 
@@ -80,9 +80,9 @@ public class LoginFormActionTests extends
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        this.logonFormAction.setCookieTimeout(5);
+        this.loginFormAction.setCookieTimeout(5);
 
-        assertEquals("noService", this.logonFormAction.submit(
+        assertEquals("noService", this.loginFormAction.submit(
             TestUtils.getContextWithCredentials(request, response)).getId());
         assertEquals(5, response.getCookies()[0].getMaxAge());
     }
@@ -92,7 +92,7 @@ public class LoginFormActionTests extends
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addParameter("warn", "on");
 
-        assertEquals("noService", this.logonFormAction.submit(
+        assertEquals("noService", this.loginFormAction.submit(
             TestUtils.getContextWithCredentials(request, response)).getId());
         assertNotNull(response.getCookie(WebConstants.COOKIE_PRIVACY));
         assertEquals(WebConstants.COOKIE_DEFAULT_FILLED_VALUE, response
@@ -111,7 +111,7 @@ public class LoginFormActionTests extends
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});
 
-        assertEquals("warn", this.logonFormAction.submit(
+        assertEquals("warn", this.loginFormAction.submit(
             TestUtils.getContextWithCredentials(request)).getId());
     }
 
@@ -127,14 +127,14 @@ public class LoginFormActionTests extends
         request.setCookies(new Cookie[] {new Cookie(WebConstants.COOKIE_TGC_ID,
             ticketGrantingTicket)});
 
-        assertEquals("warn", this.logonFormAction.submit(
+        assertEquals("warn", this.loginFormAction.submit(
             TestUtils.getContextWithCredentials(request)).getId());
     }
 
     public void testAfterPropertiesSetCas() {
         try {
-            this.logonFormAction.setCentralAuthenticationService(null);
-            this.logonFormAction.afterPropertiesSet();
+            this.loginFormAction.setCentralAuthenticationService(null);
+            this.loginFormAction.afterPropertiesSet();
             fail("Exception expected.");
         } catch (Exception e) {
             return;
@@ -143,8 +143,8 @@ public class LoginFormActionTests extends
 
     public void testAfterPropertiesSetBadCredentials() {
         try {
-            this.logonFormAction.setFormObjectClass(Object.class);
-            this.logonFormAction.afterPropertiesSet();
+            this.loginFormAction.setFormObjectClass(Object.class);
+            this.loginFormAction.afterPropertiesSet();
             fail("Exception expected.");
         } catch (Exception e) {
             return;
@@ -153,9 +153,9 @@ public class LoginFormActionTests extends
 
     public void testAfterPropertiesSetDifferentCredentials() {
         try {
-            this.logonFormAction
+            this.loginFormAction
                 .setFormObjectClass(HttpBasedServiceCredentials.class);
-            this.logonFormAction.setValidator(new Validator(){
+            this.loginFormAction.setValidator(new Validator(){
 
                 public boolean supports(Class arg0) {
                     return true;
@@ -165,7 +165,7 @@ public class LoginFormActionTests extends
                     // do nothing
                 }
             });
-            this.logonFormAction.setCredentialsBinder(new CredentialsBinder(){
+            this.loginFormAction.setCredentialsBinder(new CredentialsBinder(){
 
                 public void bind(HttpServletRequest request,
                     Credentials credentials) {
@@ -176,7 +176,7 @@ public class LoginFormActionTests extends
                     return false;
                 }
             });
-            this.logonFormAction.afterPropertiesSet();
+            this.loginFormAction.afterPropertiesSet();
             fail("Exception expected.");
         } catch (Exception e) {
             return;
@@ -185,14 +185,14 @@ public class LoginFormActionTests extends
 
     public void testOnBindNoBinding() throws IllegalAccessException,
         InvocationTargetException {
-        this.logonFormAction
+        this.loginFormAction
             .setFormObjectClass(UsernamePasswordCredentials.class);
-        this.logonFormAction.setCredentialsBinder(null);
+        this.loginFormAction.setCredentialsBinder(null);
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setSourceEvent(new ServletEvent(request,
             new MockHttpServletResponse()));
-        Method[] methods = this.logonFormAction.getClass().getDeclaredMethods();
+        Method[] methods = this.loginFormAction.getClass().getDeclaredMethods();
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         Method method = null;
@@ -205,15 +205,15 @@ public class LoginFormActionTests extends
             }
         }
 
-        method.invoke(this.logonFormAction, new Object[] {context, c,
+        method.invoke(this.loginFormAction, new Object[] {context, c,
             new BindException(c, "credentials")});
     }
 
     public void testBinding() throws IllegalAccessException,
         InvocationTargetException {
-        this.logonFormAction
+        this.loginFormAction
             .setFormObjectClass(UsernamePasswordCredentials.class);
-        this.logonFormAction.setCredentialsBinder(new CredentialsBinder(){
+        this.loginFormAction.setCredentialsBinder(new CredentialsBinder(){
 
             public void bind(HttpServletRequest request, Credentials credentials) {
                 UsernamePasswordCredentials c = (UsernamePasswordCredentials) credentials;
@@ -228,7 +228,7 @@ public class LoginFormActionTests extends
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setSourceEvent(new ServletEvent(request,
             new MockHttpServletResponse()));
-        Method[] methods = this.logonFormAction.getClass().getDeclaredMethods();
+        Method[] methods = this.loginFormAction.getClass().getDeclaredMethods();
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         Method method = null;
@@ -241,7 +241,7 @@ public class LoginFormActionTests extends
             }
         }
 
-        method.invoke(this.logonFormAction, new Object[] {context, c,
+        method.invoke(this.loginFormAction, new Object[] {context, c,
             new BindException(c, "credentials")});
         assertEquals("test", c.getUsername());
     }

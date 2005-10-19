@@ -18,7 +18,7 @@ Authentication process by the system administrators. If one of these plugin
 elements recognizes the Credentials, validates their integrity, and maps them to 
 the identity of a user in the local system, then CAS has logged someone on and 
 creates a TGT.</p>
-<p>The results of the logon are somewhat opaque. The TGT references an 
+<p>The results of the login are somewhat opaque. The TGT references an 
 Authentication object that references a Principal. Minimally the Principal 
 contains a simple ID string. What else the Principal or Authentication object 
 contain are transparent to CAS. These objects must be Serializable, because the 

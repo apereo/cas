@@ -13,7 +13,7 @@ import org.jasig.cas.authentication.principal.Service;
 /**
  * Return from CentralAuthenticationService.validateServiceTicket(String,
  * Service), the Assertion contains a chain of Principal objects. The first is
- * the User's logon Principal, while any others are Proxy Principals.
+ * the User's login Principal, while any others are Proxy Principals.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
