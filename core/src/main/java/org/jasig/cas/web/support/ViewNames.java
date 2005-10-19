@@ -23,15 +23,6 @@ public abstract class ViewNames {
     /** View for logging out of CAS. */
     public static final String CONST_LOGOUT = "casLogoutView";
 
-    /** View for confirming logon (warn) of CAS. */
-    public static final String CONST_LOGON_CONFIRM = "casLogonConfirmView";
-
-    /** View for showing the logon form for CAS. */
-    public static final String CONST_LOGON = "casLogonView";
-
-    /** Generic Success View for CAS if there is no service. */
-    public static final String CONST_LOGON_SUCCESS = "casLogonGenericSuccessView";
-
     /** View if Service Ticket Validation Fails. */
     public static final String CONST_SERVICE_FAILURE = "casServiceFailureView";
 

@@ -2,7 +2,7 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="logonFlow" start-state="ticketGrantingTicketCheck">
+<webflow id="loginFlow" start-state="ticketGrantingTicketCheck">
 	<!-- 
 		The TicketGrantingTicketCheck reads the TGT cookie and looks for the TicketId and attempts to use it to generate a service ticket.
 		It also handles the gateway functions.
@@ -10,9 +10,9 @@
 	<action-state id="ticketGrantingTicketCheck">
 		<action bean="ticketGrantingTicketCheckAction" />
 		<transition on="success" to="warn" />
-		<transition on="error" to="viewLogonForm" />
+		<transition on="error" to="viewLoginForm" />
 		<transition on="gateway" to="redirect" />
-		<transition on="noService" to="viewGenericLogon" />
+		<transition on="noService" to="viewGenericLogin" />
 	</action-state>
 
 	<!--  
@@ -21,20 +21,20 @@
 	 -->
 
 	<!-- 
-		View of the Logon Form which normally displays username/password fields.
+		View of the Login Form which normally displays username/password fields.
 	-->
-	<view-state id="viewLogonForm" view="casLogonView">
+	<view-state id="viewLoginForm" view="casLoginView">
 		<transition on="submit" to="bindAndValidate" />
 	</view-state>
 
 	<!-- 
 		This action does the automatic Spring Binding that matches parameters from the request object to properties on
-		the form object.  On error, it goes back to the viewLogonForm.  Otherwise it continues the submission process.
+		the form object.  On error, it goes back to the viewLoginForm.  Otherwise it continues the submission process.
 	-->
 	<action-state id="bindAndValidate">
 		<action bean="loginFormAction" />
 		<transition on="success" to="submit" />
-		<transition on="error" to="viewLogonForm" />
+		<transition on="error" to="viewLoginForm" />
 	</action-state>
 
 	<!-- 
@@ -43,9 +43,9 @@
 	-->
 	<action-state id="submit">
 		<action bean="loginFormAction" method="submit" />
-		<transition on="noService" to="viewGenericLogon" />
+		<transition on="noService" to="viewGenericLogin" />
 		<transition on="warn" to="warn" />
-		<transition on="error" to="viewLogonForm" />
+		<transition on="error" to="viewLoginForm" />
 	</action-state>
 
 	<!-- 
@@ -59,16 +59,16 @@
 	</action-state>
 
 	<!-- 
-		the "viewGenericLogon" is the end state for when a user attempts to logon without coming directly from a service.
+		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
 		They have only initialized their single-sign on session.
 	-->
-	<end-state id="viewGenericLogon" view="casLogonGenericSuccessView" />
+	<end-state id="viewGenericLogin" view="casLoginGenericSuccessView" />
 
 	<!-- 
 		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a 
 		view defines in default_views.properties that display the "Please click here to go to the service." message.
 	-->
-	<end-state id="showWarningView" view="casLogonConfirmView" />
+	<end-state id="showWarningView" view="casLoginConfirmView" />
 
 
 	<!-- 
