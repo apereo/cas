@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -33,7 +33,7 @@ public final class LegacyCasTrustedCredentials implements Credentials {
     /**
      * @param servletRequest The servletRequest to set.
      */
-    public void setServletRequest(ServletRequest servletRequest) {
+    public void setServletRequest(final ServletRequest servletRequest) {
         this.servletRequest = servletRequest;
     }
 }

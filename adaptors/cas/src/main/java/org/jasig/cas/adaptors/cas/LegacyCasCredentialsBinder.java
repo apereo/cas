@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -30,7 +30,7 @@ public final class LegacyCasCredentialsBinder implements CredentialsBinder {
         }
     }
 
-    public boolean supports(Class clazz) {
+    public boolean supports(final Class clazz) {
         return !(clazz == null)
             && (clazz.equals(LegacyCasCredentials.class) || clazz
                 .equals(LegacyCasTrustedCredentials.class));

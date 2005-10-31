@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -8,6 +8,7 @@ package org.jasig.cas.adaptors.cas;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import edu.yale.its.tp.cas.auth.TrustHandler;
@@ -43,13 +44,7 @@ public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements Aut
         this.trustHandler = trustHandler;
     }
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
     public void afterPropertiesSet() throws Exception {
-        if (this.trustHandler == null) {
-            throw new IllegalStateException("trustHandler must be set on "
-                + this.getClass().getName());
-        }
+        Assert.notNull(this.trustHandler);
     }
 }
