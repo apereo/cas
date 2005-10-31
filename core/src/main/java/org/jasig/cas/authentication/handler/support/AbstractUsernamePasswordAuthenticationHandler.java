@@ -26,6 +26,18 @@ import org.springframework.beans.factory.InitializingBean;
 public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     AuthenticationHandler, InitializingBean {
 
+    /** Default class to support if one is not supplied. */
+    private static final Class DEFAULT_CLASS = UsernamePasswordCredentials.class;
+
+    /** Class that this instance will support. */
+    private Class classToSupport;
+
+    /**
+     * Boolean to determine whether to support subclasses of the class to
+     * support.
+     */
+    private boolean supportSubClasses = true;
+
     /**
      * PasswordEncoder to be used by subclasses to encode passwords for
      * comparing against a resource.
@@ -65,6 +77,13 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
                 "No PasswordEncoder set.  Using default: "
                     + this.passwordEncoder.getClass().getName());
         }
+
+        if (this.classToSupport == null) {
+            this.classToSupport = DEFAULT_CLASS;
+            getLog().info(
+                "No Class to Support set.  Using default: "
+                    + this.classToSupport.getName());
+        }
         afterPropertiesSetInternal();
     }
 
@@ -98,6 +117,26 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     }
 
     /**
+     * Method to set the class to support.
+     * 
+     * @param classToSupport the class we want this handler to support
+     * explicitly.
+     */
+    public void setClassToSupport(final Class classToSupport) {
+        this.classToSupport = classToSupport;
+    }
+
+    /**
+     * Method to set whether this handler will support subclasses of the
+     * supported class.
+     * 
+     * @param supportSubClasses boolean of whether to support subclasses or not.
+     */
+    public void setSupportSubClasses(final boolean supportSubClasses) {
+        this.supportSubClasses = supportSubClasses;
+    }
+
+    /**
      * Sets the PasswordEncoder to be used with this class.
      * 
      * @param passwordEncoder the PasswordEncoder to use when encoding
@@ -109,11 +148,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
 
     /**
      * @return true if the credentials are not null and the credentials class is
-     * assignable from UsernamePasswordCredentials.
+     * equal to the class defined in classToSupport.
      */
     public final boolean supports(final Credentials credentials) {
         return credentials != null
-            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
-                .getClass());
+            && (this.classToSupport.equals(credentials.getClass()) || (this.classToSupport
+                .isAssignableFrom(credentials.getClass()))
+                && this.supportSubClasses);
     }
 }
