@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -8,10 +8,8 @@ package org.jasig.cas.adaptors.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
@@ -25,29 +23,20 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class BindModeSearchDatabaseAuthenticationHandler extends
-    JdbcDaoSupport implements AuthenticationHandler {
+public final class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    public boolean authenticate(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
-        final String username = uRequest.getUsername();
-        final String password = uRequest.getPassword();
+    protected boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+        final String username = credentials.getUsername();
+        final String password = credentials.getPassword();
 
         try {
-            Connection c = this.getJdbcTemplate().getDataSource()
+            final Connection c = this.getJdbcTemplate().getDataSource()
                 .getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this
                 .getJdbcTemplate().getDataSource());
             return true;
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             return false;
         }
     }
-
-    public boolean supports(Credentials credentials) {
-        return credentials != null
-            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
-                .getClass());
-    }
-
 }

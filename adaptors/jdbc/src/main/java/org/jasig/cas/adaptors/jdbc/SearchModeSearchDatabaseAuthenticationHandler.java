@@ -1,19 +1,13 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.handler.PasswordEncoder;
-import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.util.Assert;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -27,10 +21,8 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @since 3.0
  */
 
-public class SearchModeSearchDatabaseAuthenticationHandler extends
-    JdbcDaoSupport implements AuthenticationHandler {
-
-    protected final Log log = LogFactory.getLog(getClass());
+public final class SearchModeSearchDatabaseAuthenticationHandler extends
+    AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
 
@@ -40,41 +32,23 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String tableUsers;
 
-    private PasswordEncoder passwordTranslator;
-
     private String sql;
 
-    public boolean authenticate(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
-        final String encyptedPassword = this.passwordTranslator.encode(uRequest
-            .getPassword());
+    protected boolean authenticateUsernamePasswordInternal(
+        UsernamePasswordCredentials credentials) throws AuthenticationException {
+        final String encyptedPassword = getPasswordEncoder().encode(
+            credentials.getPassword());
 
         final int count = getJdbcTemplate().queryForInt(this.sql,
-            new Object[] {uRequest.getUsername(), encyptedPassword});
+            new Object[] {credentials.getUsername(), encyptedPassword});
 
         return count > 0;
     }
 
-    public boolean supports(Credentials credentials) {
-        return credentials != null
-            && UsernamePasswordCredentials.class.isAssignableFrom(credentials
-                .getClass());
-    }
-
     protected void initDao() throws Exception {
-        if (this.fieldPassword == null || this.fieldUser == null
-            || this.tableUsers == null) {
-            throw new IllegalStateException(
-                "fieldPassword, fieldUser and tableUsers must be set on "
-                    + this.getClass().getName());
-        }
-
-        if (this.passwordTranslator == null) {
-            this.passwordTranslator = new PlainTextPasswordEncoder();
-            log
-                .info("PasswordTranslator not set.  Using default PasswordTranslator of class "
-                    + this.passwordTranslator.getClass().getName());
-        }
+        Assert.notNull(this.fieldPassword);
+        Assert.notNull(this.fieldUser);
+        Assert.notNull(this.tableUsers);
 
         this.sql = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser
             + " = ? And " + this.fieldPassword + " = ?";
@@ -92,13 +66,6 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
      */
     public void setFieldUser(final String fieldUser) {
         this.fieldUser = fieldUser;
-    }
-
-    /**
-     * @param passwordTranslator The passwordTranslator to set.
-     */
-    public void setPasswordTranslator(final PasswordEncoder passwordTranslator) {
-        this.passwordTranslator = passwordTranslator;
     }
 
     /**
