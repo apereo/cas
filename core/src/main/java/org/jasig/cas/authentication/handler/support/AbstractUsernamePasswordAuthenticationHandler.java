@@ -122,7 +122,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
      * @param classToSupport the class we want this handler to support
      * explicitly.
      */
-    public void setClassToSupport(final Class classToSupport) {
+    public final void setClassToSupport(final Class classToSupport) {
         this.classToSupport = classToSupport;
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
      * 
      * @param supportSubClasses boolean of whether to support subclasses or not.
      */
-    public void setSupportSubClasses(final boolean supportSubClasses) {
+    public final void setSupportSubClasses(final boolean supportSubClasses) {
         this.supportSubClasses = supportSubClasses;
     }
 
