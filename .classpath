@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="adaptors/generic/src/test/resources"/>
+	<classpathentry kind="src" path="adaptors/ldap/src/main/java"/>
 	<classpathentry kind="src" path="sandbox/src/main/java"/>
 	<classpathentry kind="src" path="sandbox/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/generic/src/main/java"/>
@@ -29,5 +30,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2.5.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-pr5.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-binding-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-ldap-1.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
