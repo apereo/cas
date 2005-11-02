@@ -107,8 +107,7 @@
 		<ant:gzip src="${dist.dir}/${release.tar}" zipfile="${dist.dir}/${release.gzip}">
 		</ant:gzip>
 		
-		<ant:checksum file="${dist.dir}/${release.tar}" algorithm="MD5" />
-
+		<ant:checksum file="${dist.dir}/${release.gzip}" algorithm="MD5" />
 		<ant:checksum file="${dist.dir}/${release.zip}" algorithm="MD5" />
 		
 		<ant:delete file="${dist.dir}/${release.tar}" />
