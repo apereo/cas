@@ -22,6 +22,16 @@
     </postGoal>
     
     <postGoal name="jar">
+    
+        <j:if test="${context.getVariable('signature.alias') != null}">
+        	<echo>signature.alias defined; signing JAR(s)...</echo>
+			<ant:signjar lazy="true" alias="${signature.alias}" storepass="${signature.storepass}" keystore="${signature.keystore}" keypass="${signature.keypass}">
+				<fileset dir="${maven.build.dir}">
+					<include name="*.jar"/>
+				</fileset>
+			</ant:signjar>
+        </j:if>
+   
     	<j:if test="${not empty mavenRepository}">
 		    <copy todir="${mavenRepository}/cas/jars/" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
 		</j:if>
@@ -97,6 +107,10 @@
 		<ant:gzip src="${dist.dir}/${release.tar}" zipfile="${dist.dir}/${release.gzip}">
 		</ant:gzip>
 		
+		<ant:checksum file="${dist.dir}/${release.tar}" algorithm="MD5" />
+
+		<ant:checksum file="${dist.dir}/${release.zip}" algorithm="MD5" />
+		
 		<ant:delete file="${dist.dir}/${release.tar}" />
 		<ant:delete file="target/cas.war" />
 
@@ -105,6 +119,8 @@
 		<j:if test="${not empty artifactsDir}">
 			<copy todir="${artifactsDir}" file="${dist.dir}/${release.gzip}" />
 			<copy todir="${artifactsDir}" file="${dist.dir}/${release.zip}" />
+			<copy todir="${artifactsDir}" file="${dist.dir}/${release.gzip}.MD5" />
+			<copy todir="${artifactsDir}" file="${dist.dir}/${release.zip}.MD5" />
 		</j:if>
 	</goal>
 </project>
