@@ -41,7 +41,9 @@ public final class DefaultTicketRegistry implements TicketRegistry {
             throw new IllegalArgumentException("ticket cannot be null");
         }
 
-        log.debug("Added ticket [" + ticket.getId() + "] to registry.");
+        if (log.isDebugEnabled()) {
+            log.debug("Added ticket [" + ticket.getId() + "] to registry.");
+        }
         this.cache.put(ticket.getId(), ticket);
     }
 
@@ -72,7 +74,9 @@ public final class DefaultTicketRegistry implements TicketRegistry {
     }
 
     public synchronized Ticket getTicket(final String ticketId) {
-        log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+        }
         final Ticket ticket = (Ticket) this.cache.get(ticketId);
 
         if (ticket != null) {
@@ -83,7 +87,10 @@ public final class DefaultTicketRegistry implements TicketRegistry {
     }
 
     public synchronized boolean deleteTicket(final String ticketId) {
-        log.debug("Removing ticket [" + ticketId + "] from registry");
+        if (log.isDebugEnabled()) {
+            log.debug("Removing ticket [" + ticketId + "] from registry");
+        }
+
         return (this.cache.remove(ticketId) != null);
     }
 

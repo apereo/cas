@@ -76,7 +76,9 @@ public final class LogoutController extends AbstractController implements
 
     private void destroyCookie(final HttpServletRequest request,
         final HttpServletResponse response, final String id) {
-        log.debug("Destroying cookie with id: " + id);
+        if (log.isDebugEnabled()) {
+            log.debug("Destroying cookie with id: " + id);
+        }
         Cookie cookie = new Cookie(id, "");
         cookie.setMaxAge(0);
         cookie.setPath(request.getContextPath());

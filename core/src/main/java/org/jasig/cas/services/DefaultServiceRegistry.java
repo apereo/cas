@@ -42,31 +42,41 @@ public final class DefaultServiceRegistry implements ServiceRegistry,
     }
 
     public void addService(final RegisteredService service) {
-        log
-            .debug("Adding service [" + service.getId()
+        if (log.isDebugEnabled()) {
+            log.debug("Adding service [" + service.getId()
                 + "] to serviceRegistry");
+        }
         this.services.put(service.getId(), service);
     }
 
     public boolean deleteService(final String serviceId) {
-        log.debug("Deleting service[" + serviceId + "] from Service Registry.");
+        if (log.isDebugEnabled()) {
+            log.debug("Deleting service[" + serviceId
+                + "] from Service Registry.");
+        }
         return this.services.remove(serviceId) != null;
     }
 
     public RegisteredService getService(final String serviceId) {
         RegisteredService authenticatedService = (RegisteredService) this.services
             .get(serviceId);
-        log.debug("Attempting to retrieve service [" + serviceId
-            + "] from Service Registry");
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to retrieve service [" + serviceId
+                + "] from Service Registry");
+        }
         if (authenticatedService != null) {
-            log.debug("Successfully retrieved service [" + serviceId
-                + "] from Service Registry.");
+            if (log.isDebugEnabled()) {
+                log.debug("Successfully retrieved service [" + serviceId
+                    + "] from Service Registry.");
+            }
         }
         return authenticatedService;
     }
 
     public void clear() {
-        log.debug("Clearing all entries from Service Registry");
+        if (log.isDebugEnabled()) {
+            log.debug("Clearing all entries from Service Registry");
+        }
         this.services.clear();
     }
 }

@@ -74,15 +74,19 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
         for (int i = 0; i < this.acceptableCodes.length; i++) {
             if (responseCode == this.acceptableCodes[i]) {
-                log.debug("Sent ProxyIou of " + proxyIou + " for service: "
-                    + serviceCredentials.getCallbackUrl());
+                if (log.isDebugEnabled()) {
+                    log.debug("Sent ProxyIou of " + proxyIou + " for service: "
+                        + serviceCredentials.getCallbackUrl());
+                }
 
                 return proxyIou;
             }
         }
 
-        log.debug("Failed to send ProxyIou of " + proxyIou + " for service: "
-            + serviceCredentials.getCallbackUrl());
+        if (log.isDebugEnabled()) {
+            log.debug("Failed to send ProxyIou of " + proxyIou
+                + " for service: " + serviceCredentials.getCallbackUrl());
+        }
         return null;
     }
 

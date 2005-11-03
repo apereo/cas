@@ -80,7 +80,9 @@ public final class SpringApplicationContextServiceRegistryReloader implements
 
                 this.applicationContext.refresh();
 
-                log.debug("Clearing out previous ServiceRegistry entries.");
+                if (log.isDebugEnabled()) {
+                    log.debug("Clearing out previous ServiceRegistry entries.");
+                }
                 this.serviceRegistryManager.clear();
 
                 for (final Iterator iter = this.applicationContext
@@ -88,8 +90,10 @@ public final class SpringApplicationContextServiceRegistryReloader implements
                     .iterator(); iter.hasNext();) {
                     final RegisteredService authenticatedService = (RegisteredService) iter
                         .next();
-                    log.debug("Adding [" + authenticatedService.getId()
-                        + "] to ServiceRegistry");
+                    if (log.isDebugEnabled()) {
+                        log.debug("Adding [" + authenticatedService.getId()
+                            + "] to ServiceRegistry");
+                    }
                     this.serviceRegistryManager
                         .addService(authenticatedService);
                 }

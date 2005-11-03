@@ -38,8 +38,10 @@ public final class UsernamePasswordCredentialsToPrincipalResolver implements
     public Principal resolvePrincipal(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
 
-        log.debug("Creating SimplePrincipal for ["
-            + usernamePasswordCredentials.getUsername() + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Creating SimplePrincipal for ["
+                + usernamePasswordCredentials.getUsername() + "]");
+        }
 
         return new SimplePrincipal(usernamePasswordCredentials.getUsername());
     }
