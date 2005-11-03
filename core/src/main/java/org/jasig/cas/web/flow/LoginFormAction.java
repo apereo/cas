@@ -23,7 +23,7 @@ import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -61,11 +61,12 @@ public final class LoginFormAction extends FormAction {
      */
     private int cookieTimeout = -1;
 
-    protected void onBind(final RequestContext context,
-        final Object formObject, final BindException errors) {
+    protected void doBind(final RequestContext context, final DataBinder binder)
+        throws Exception {
+        super.doBind(context, binder);
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
-        final Credentials credentials = (Credentials) formObject;
+        final Credentials credentials = (Credentials) binder.getTarget();
         if (this.credentialsBinder != null) {
             this.credentialsBinder.bind(request, credentials);
         }
