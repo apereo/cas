@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.util.HashMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationException;
@@ -106,8 +105,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                 final Principal principal = this.credentialsToPrincipalResolvers[i]
                     .resolvePrincipal(credentials);
 
-                authentication = new ImmutableAuthentication(principal,
-                    new HashMap());
+                authentication = new MutableAuthentication(principal);
                 break;
             }
         }
@@ -123,7 +121,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                 .populateAttributes(authentication, credentials);
         }
 
-        return authentication;
+        return new ImmutableAuthentication(authentication.getPrincipal(),
+            authentication.getAttributes());
     }
 
     public void afterPropertiesSet() throws Exception {
