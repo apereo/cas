@@ -99,13 +99,17 @@ public final class CentralAuthenticationServiceImpl implements
         }
 
         synchronized (this.ticketRegistry) {
-            log.debug("Removing ticket [" + ticketGrantingTicketId
-                + "] from registry.");
+            if (log.isDebugEnabled()) {
+                log.debug("Removing ticket [" + ticketGrantingTicketId
+                    + "] from registry.");
+            }
             final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
                 .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
             if (ticket != null) {
-                log.debug("Ticket found.  Expiring and then deleting.");
+                if (log.isDebugEnabled()) {
+                    log.debug("Ticket found.  Expiring and then deleting.");
+                }
                 ticket.expire();
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
             }
@@ -159,8 +163,10 @@ public final class CentralAuthenticationServiceImpl implements
 
             // TODO we need a better way of handling this
             if (credentials != null) {
-                log
-                    .debug("We received a renew=true request, so setting fromNewLogin to true");
+                if (log.isDebugEnabled()) {
+                    log
+                        .debug("We received a renew=true request, so setting fromNewLogin to true");
+                }
                 serviceTicket.setFromNewLogin(true);
             }
 
@@ -240,14 +246,18 @@ public final class CentralAuthenticationServiceImpl implements
                 .getTicket(serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null) {
-                log.debug("ServiceTicket [" + serviceTicketId
-                    + "] does not exist.");
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceTicket [" + serviceTicketId
+                        + "] does not exist.");
+                }
                 throw new InvalidTicketException();
             }
 
             if (serviceTicket.isExpired()) {
-                log.debug("ServiceTicket [" + serviceTicketId
-                    + "] has expired.");
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceTicket [" + serviceTicketId
+                        + "] has expired.");
+                }
                 this.ticketRegistry.deleteTicket(serviceTicketId);
                 throw new InvalidTicketException();
             }
@@ -264,8 +274,10 @@ public final class CentralAuthenticationServiceImpl implements
             }
 
             if (!service.equals(serviceTicket.getService())) {
-                log.debug("ServiceTicket [" + serviceTicketId
-                    + "] does not match supplied service.");
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceTicket [" + serviceTicketId
+                        + "] does not match supplied service.");
+                }
                 throw new TicketValidationException();
             }
 
@@ -280,8 +292,10 @@ public final class CentralAuthenticationServiceImpl implements
      */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
-        log.debug("Attempting to create TicketGrantingTicket for "
-            + credentials);
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to create TicketGrantingTicket for "
+                + credentials);
+        }
         if (credentials == null) {
             throw new IllegalArgumentException(
                 "credentials is a required field.");

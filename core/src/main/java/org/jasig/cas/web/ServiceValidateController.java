@@ -143,8 +143,10 @@ public final class ServiceValidateController extends AbstractController
                 .validateServiceTicket(serviceTicketId, new SimpleService(
                     service));
             if (!authenticationSpecification.isSatisfiedBy(assertion)) {
-                log.debug("ServiceTicket [" + serviceTicketId
-                    + "] does not satisfy authentication specification.");
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceTicket [" + serviceTicketId
+                        + "] does not satisfy authentication specification.");
+                }
 
                 model.put(WebConstants.CODE, "INVALID_TICKET");
                 model.put(WebConstants.DESC, getMessageSourceAccessor()

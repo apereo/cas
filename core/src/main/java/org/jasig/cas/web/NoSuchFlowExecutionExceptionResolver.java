@@ -42,8 +42,10 @@ public final class NoSuchFlowExecutionExceptionResolver implements
             return null;
         }
 
-        log.debug("Error getting flow information for URL:"
-            + request.getRequestURI(), exception);
+        if (log.isDebugEnabled()) {
+            log.debug("Error getting flow information for URL:"
+                + request.getRequestURI(), exception);
+        }
 
         return new ModelAndView(new RedirectView(request.getRequestURI()));
     }

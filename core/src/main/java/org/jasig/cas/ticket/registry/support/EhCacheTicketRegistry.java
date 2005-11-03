@@ -56,7 +56,9 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
                 "Cannot add null Ticket to the registry.");
         }
 
-        log.debug("Added ticket [" + ticket.getId() + "] to registry.");
+        if (log.isDebugEnabled()) {
+            log.debug("Added ticket [" + ticket.getId() + "] to registry.");
+        }
         this.cache.put(new Element(ticket.getId(), ticket));
     }
 
@@ -90,7 +92,9 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
      * @throws IllegalStateException if the cache throws an exception.
      */
     public Ticket getTicket(final String ticketId) {
-        log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to retrieve ticket [" + ticketId + "]");
+        }
         if (ticketId == null) {
             return null;
         }
@@ -102,7 +106,11 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
             }
 
             Ticket ticket = (Ticket) element.getValue();
-            log.debug("Ticket [" + ticketId + "] found in registry.");
+
+            if (log.isDebugEnabled()) {
+                log.debug("Ticket [" + ticketId + "] found in registry.");
+            }
+
             return ticket;
         } catch (Exception ex) {
             IllegalStateException ise = new IllegalStateException();
@@ -112,7 +120,9 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
     }
 
     public boolean deleteTicket(final String ticketId) {
-        log.debug("Removing ticket [" + ticketId + "] from registry");
+        if (log.isDebugEnabled()) {
+            log.debug("Removing ticket [" + ticketId + "] from registry");
+        }
         return this.cache.remove(ticketId);
     }
 
