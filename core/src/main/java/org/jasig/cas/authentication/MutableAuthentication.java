@@ -7,7 +7,6 @@ package org.jasig.cas.authentication;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
 
@@ -21,33 +20,19 @@ import org.jasig.cas.authentication.principal.Principal;
  * @version $Revision$ $Date$
  * @since 3.0.3
  */
-public final class MutableAuthentication implements Authentication {
+public final class MutableAuthentication extends AbstractAuthentication {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4415875344376642246L;
 
-    /** A Principal object representing the authenticated entity. */
-    private final Principal principal;
-
     /** The date/time this authentication object became valid. */
     private final Date authenticatedDate = new Date();
 
-    /** Associated authentication attributes. */
-    private final Map attributes = new HashMap();
-
     public MutableAuthentication(final Principal principal) {
-        this.principal = principal;
-    }
-
-    public Principal getPrincipal() {
-        return this.principal;
+        super(principal, new HashMap());
     }
 
     public Date getAuthenticatedDate() {
         return this.authenticatedDate;
-    }
-
-    public Map getAttributes() {
-        return this.attributes;
     }
 }

@@ -14,19 +14,20 @@ import org.jasig.cas.TestUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ImmutableAuthenticationTests extends AbstractAuthenticationTests {
+public class MutableAuthenticationTests extends AbstractAuthenticationTests {
 
     protected void setUp() throws Exception {
         super.setUp();
-        this.authentication = new ImmutableAuthentication(TestUtils
-            .getPrincipal(), this.attributes);
+        this.authentication = new MutableAuthentication(TestUtils
+            .getPrincipal());
+        this.attributes = this.authentication.getAttributes();
     }
 
     public void testAuthenticatedDate() {
         Date dateFromFirstCall = this.authentication.getAuthenticatedDate();
         Date dateFromSecondCall = this.authentication.getAuthenticatedDate();
 
-        assertNotSame("Dates are the same.", dateFromFirstCall,
+        assertSame("Dates are the same.", dateFromFirstCall,
             dateFromSecondCall);
         assertEquals("Dates are not equal.", dateFromFirstCall,
             dateFromSecondCall);
