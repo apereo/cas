@@ -55,7 +55,7 @@ public class Cas20ValidationSuccessResponseView extends
 		 */
 		final Authentication[] authentications = assertion.getChainedAuthentications();
 		final ServiceResponseDocument responseDoc =
-			ServiceResponseDocument.Factory.newInstance(xmlOptions);
+			ServiceResponseDocument.Factory.newInstance(this.xmlOptions);
 		final ServiceResponseType serviceResponse = 
 			responseDoc.addNewServiceResponse();
 		final AuthenticationSuccessType authSuccess = 
@@ -81,6 +81,6 @@ public class Cas20ValidationSuccessResponseView extends
 		response.setContentType(super.getHttpContentType() + "; charset="
 				+ super.getHttpCharset());
 		final PrintWriter out = response.getWriter();
-		responseDoc.save(out,xmlOptions);
+		responseDoc.save(out,this.xmlOptions);
 	}
 }

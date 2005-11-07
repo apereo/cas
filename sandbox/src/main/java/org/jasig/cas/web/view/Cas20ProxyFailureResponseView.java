@@ -45,7 +45,7 @@ public class Cas20ProxyFailureResponseView extends
 			.get(WebConstants.DESC);
 		
 		final ServiceResponseDocument responseDoc =
-			ServiceResponseDocument.Factory.newInstance(xmlOptions);
+			ServiceResponseDocument.Factory.newInstance(this.xmlOptions);
 		final ServiceResponseType serviceResponse = 
 			responseDoc.addNewServiceResponse();
 		final ProxyFailureType proxyFailure = 
@@ -56,7 +56,7 @@ public class Cas20ProxyFailureResponseView extends
 		response.setContentType(super.getHttpContentType() + "; charset="
 				+ super.getHttpCharset());
 		final PrintWriter out = response.getWriter();
-		responseDoc.save(out,xmlOptions);
+		responseDoc.save(out,this.xmlOptions);
 	}
 	
 
