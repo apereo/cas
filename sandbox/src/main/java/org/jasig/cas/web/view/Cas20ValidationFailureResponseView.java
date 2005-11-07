@@ -21,40 +21,44 @@ import edu.yale.tp.cas.ServiceResponseType;
 import edu.yale.tp.cas.AuthenticationFailureType;
 
 /**
- * <p>CAS 2.0 validation failure response view, implemented in XMLBeans.</p>
+ * <p>
+ * CAS 2.0 validation failure response view, implemented in XMLBeans.
+ * </p>
  * 
  * @author Drew Mazurek
  * @version $Revision$ $Date$
  * @since 3.0.1
  */
 public class Cas20ValidationFailureResponseView extends
-		AbstractCas20ResponseView implements View {
+    AbstractCas20ResponseView implements View {
 
-	// get our superclass's default xmlOptions object
-	private final XmlOptions xmlOptions = super.getXmlOptions();
+    // get our superclass's default xmlOptions object
+    private final XmlOptions xmlOptions = super.getXmlOptions();
 
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.View#render(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public void render(Map model, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		final String code = (String) model
-			.get(WebConstants.CODE);
-		final String description = (String) model
-			.get(WebConstants.DESC);
-		
-		final ServiceResponseDocument responseDoc =
-			ServiceResponseDocument.Factory.newInstance(xmlOptions);
-		final ServiceResponseType serviceResponse = 
-			responseDoc.addNewServiceResponse();
-		final AuthenticationFailureType authFailure = 
-			serviceResponse.addNewAuthenticationFailure();
-		authFailure.setCode(code);
-		authFailure.setStringValue(description);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.web.servlet.View#render(java.util.Map,
+     * javax.servlet.http.HttpServletRequest,
+     * javax.servlet.http.HttpServletResponse)
+     */
+    public void render(Map model, HttpServletRequest request,
+        HttpServletResponse response) throws Exception {
+        final String code = (String) model.get(WebConstants.CODE);
+        final String description = (String) model.get(WebConstants.DESC);
 
-		response.setContentType(super.getHttpContentType() + "; charset="
-				+ super.getHttpCharset());
-		final PrintWriter out = response.getWriter();
-		responseDoc.save(out,xmlOptions);
-	}
+        final ServiceResponseDocument responseDoc = ServiceResponseDocument.Factory
+            .newInstance(this.xmlOptions);
+        final ServiceResponseType serviceResponse = responseDoc
+            .addNewServiceResponse();
+        final AuthenticationFailureType authFailure = serviceResponse
+            .addNewAuthenticationFailure();
+        authFailure.setCode(code);
+        authFailure.setStringValue(description);
+
+        response.setContentType(super.getHttpContentType() + "; charset="
+            + super.getHttpCharset());
+        final PrintWriter out = response.getWriter();
+        responseDoc.save(out, this.xmlOptions);
+    }
 }
