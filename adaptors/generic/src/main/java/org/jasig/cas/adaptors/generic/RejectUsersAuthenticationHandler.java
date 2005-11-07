@@ -11,6 +11,7 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.util.Assert;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one
@@ -44,10 +45,7 @@ public final class RejectUsersAuthenticationHandler extends
     }
 
     public void afterPropertiesSetInternal() throws Exception {
-        if (this.users == null) {
-            throw new IllegalStateException(
-                "You must provide a list of users that are not allowed to use the system.");
-        }
+        Assert.notNull(this.users);
     }
 
     /**
