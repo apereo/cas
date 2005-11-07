@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,14 +15,18 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindException;
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -180,7 +187,7 @@ public class LoginFormActionTests extends
         }
     }
 
-/*    public void testOnBindNoBinding() throws IllegalAccessException,
+    public void testOnBindNoBinding() throws IllegalAccessException,
         InvocationTargetException {
         this.loginFormAction
             .setFormObjectClass(UsernamePasswordCredentials.class);
@@ -189,24 +196,27 @@ public class LoginFormActionTests extends
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setSourceEvent(new ServletEvent(request,
             new MockHttpServletResponse()));
+        context.setLastEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
         Method[] methods = this.loginFormAction.getClass().getDeclaredMethods();
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         Method method = null;
 
+        /*     protected void doBind(final RequestContext context, final DataBinder binder)*/
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals("onBind")
-                && methods[i].getParameterTypes().length == 3) {
+            if (methods[i].getName().equals("doBind")
+                && methods[i].getParameterTypes().length == 2) {
                 method = methods[i];
                 break;
             }
         }
+        
+        DataBinder binder = new WebDataBinder(c, "credentials");
 
-        method.invoke(this.loginFormAction, new Object[] {context, c,
-            new BindException(c, "credentials")});
-    }*/
+        method.invoke(this.loginFormAction, new Object[] {context, binder});
+    }
 
-    /*
     public void testBinding() throws IllegalAccessException,
         InvocationTargetException {
         this.loginFormAction
@@ -226,22 +236,25 @@ public class LoginFormActionTests extends
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setSourceEvent(new ServletEvent(request,
             new MockHttpServletResponse()));
+        context.setLastEvent(new ServletEvent(request,
+            new MockHttpServletResponse()));
         Method[] methods = this.loginFormAction.getClass().getDeclaredMethods();
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         Method method = null;
 
         for (int i = 0; i < methods.length; i++) {
-            if (methods[i].getName().equals("onBind")
-                && methods[i].getParameterTypes().length == 3) {
+            if (methods[i].getName().equals("doBind")
+                && methods[i].getParameterTypes().length == 2) {
                 method = methods[i];
                 break;
             }
         }
+        
+        DataBinder binder = new WebDataBinder(c, "credentials");
 
-        method.invoke(this.loginFormAction, new Object[] {context, c,
-            new BindException(c, "credentials")});
+        method.invoke(this.loginFormAction, new Object[] {context, binder});
+
         assertEquals("test", c.getUsername());
     }
-    */
 }
