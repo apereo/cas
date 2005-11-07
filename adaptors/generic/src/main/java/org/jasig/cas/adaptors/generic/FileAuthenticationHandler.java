@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.util.Assert;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -58,15 +59,14 @@ public final class FileAuthenticationHandler extends
                 if (credentials.getUsername().equals(userName)) {
                     if (this.getPasswordEncoder().encode(
                         credentials.getPassword()).equals(password)) {
-                        bufferedReader.close();
                         return true;
                     }
                     break;
                 }
                 line = bufferedReader.readLine();
             }
-        } catch (Exception e) {
-            getLog().error(e);
+        } catch (final Exception e) {
+            getLog().error(e, e);
         } finally {
             try {
                 if (bufferedReader != null) {
@@ -76,15 +76,13 @@ public final class FileAuthenticationHandler extends
                 getLog().error(e);
             }
         }
+
         return false;
     }
 
     protected void afterPropertiesSetInternal() throws Exception {
-        if (this.fileName == null || this.separator == null) {
-            throw new IllegalStateException(
-                "fileName, and separator must be set on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(this.fileName);
+        Assert.notNull(this.separator);
     }
 
     /**

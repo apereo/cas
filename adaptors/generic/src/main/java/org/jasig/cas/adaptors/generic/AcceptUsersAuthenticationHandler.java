@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.util.Assert;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -48,21 +49,13 @@ public final class AcceptUsersAuthenticationHandler extends
     }
 
     protected void afterPropertiesSetInternal() throws Exception {
-        if (this.users == null) {
-            throw new IllegalStateException("users must be set on "
-                + this.getClass().getName());
-        }
+        Assert.notNull(this.users);
 
-        for (Iterator iter = this.users.keySet().iterator(); iter.hasNext();) {
+        for (final Iterator iter = this.users.keySet().iterator(); iter.hasNext();) {
             final Object key = iter.next();
             final Object value = this.users.get(key);
-
-            if (value == null) {
-                getLog().error(
-                    "Cannot have null password for user [" + key + "]");
-                throw new IllegalStateException(
-                    "Cannot have null password for user [" + key + "]");
-            }
+            
+            Assert.notNull(value, "Cannot have null password for user [" + key + "]");
         }
     }
 
