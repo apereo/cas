@@ -34,7 +34,6 @@ import org.springframework.webflow.test.MockRequestContext;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-// TODO re-enable tests
 public class LoginFormActionTests extends
     AbstractCentralAuthenticationServiceTest {
 
@@ -210,7 +209,7 @@ public class LoginFormActionTests extends
                 break;
             }
         }
-        
+
         DataBinder binder = new WebDataBinder(c, "credentials");
 
         method.invoke(this.loginFormAction, new Object[] {context, binder});
@@ -249,7 +248,7 @@ public class LoginFormActionTests extends
                 break;
             }
         }
-        
+
         DataBinder binder = new WebDataBinder(c, "credentials");
 
         method.invoke(this.loginFormAction, new Object[] {context, binder});
