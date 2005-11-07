@@ -26,7 +26,6 @@ import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.execution.servlet.ServletEvent;
 import org.springframework.webflow.test.MockRequestContext;
 
