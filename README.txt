@@ -43,3 +43,8 @@ The "target" directory contains the following distinct jar files and wars:
 
 * Servlet Container that can handle JSP 2.0 (i.e. Tomcat 5.0.28)
 
+6. NOTE
+If building CAS from the source, running the test cases currently, requires an active Internet connection.
+Please see: http://maven.apache.org/faq.html#ignoring-broken-tests on how to disable the tests.
+
+
