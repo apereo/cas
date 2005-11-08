@@ -21,16 +21,6 @@
 			</properties>
 		</dependency>
 		
-		<!-- for CAS 2.0 service response -->
-		<dependency>
-			<groupId>xmlbeans</groupId>
-			<artifactId>xbean</artifactId>
-			<version>1.0.4</version>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		
 		<!-- for SAML views -->
 		<dependency>
 			<groupId>opensaml</groupId>

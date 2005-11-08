@@ -25,7 +25,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/jwebunit/jars/jwebunit-1.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.6.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/nekohtml/jars/nekohtml-0.9.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/xmlbeans/jars/xbean-1.0.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-1.2.5.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2.5.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-pr5.jar"/>
