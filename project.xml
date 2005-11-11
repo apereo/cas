@@ -629,5 +629,5 @@
 	    <report>maven-dashboard-plugin</report>
         <report>maven-developer-activity-plugin</report>
 	    <report>maven-file-activity-plugin</report>
-</reports>
+	</reports>
 </project>
