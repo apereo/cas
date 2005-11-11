@@ -26,7 +26,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
     final private RejectUsersAuthenticationHandler authenticationHandler;
 
-    public RejectUsersAuthenticationHandlerTests() {
+    public RejectUsersAuthenticationHandlerTests() throws Exception {
         this.users = new ArrayList();
 
         this.users.add("scott");
@@ -36,6 +36,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler = new RejectUsersAuthenticationHandler();
 
         this.authenticationHandler.setUsers(this.users);
+        this.authenticationHandler.afterPropertiesSet();
     }
 
     public void testSupportsProperUserCredentials() {
