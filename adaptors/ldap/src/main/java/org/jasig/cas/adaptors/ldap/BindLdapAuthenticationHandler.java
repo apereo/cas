@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -15,11 +15,9 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.jasig.cas.adaptors.ldap.util.LdapUtils;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.ldap.core.SearchResultCallbackHandler;
-import org.springframework.ldap.core.support.LdapDaoSupport;
 
 /**
  * Handler to do LDAP bind.
@@ -28,8 +26,8 @@ import org.springframework.ldap.core.support.LdapDaoSupport;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
-    AuthenticationHandler {
+public class BindLdapAuthenticationHandler extends
+    AbstractLdapUsernamePasswordAuthenticationHandler {
 
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
 
@@ -51,13 +49,15 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
 
     private boolean allowMultipleAccounts;
 
-    public boolean authenticate(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
+    protected final boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials)
+        throws AuthenticationException {
 
         final List values = (List) this.getLdapTemplate().search(
             this.searchBase,
-            LdapUtils.getFilterWithValues(this.filter, uRequest.getUsername()),
-            this.getSearchControls(), new SearchResultCallbackHandler(){
+            LdapUtils.getFilterWithValues(this.filter, credentials
+                .getUsername()), this.getSearchControls(),
+            new SearchResultCallbackHandler(){
 
                 private final List cns = new ArrayList();
 
@@ -82,15 +82,15 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
             DirContext test = null;
             try {
                 test = this.getContextSource().getDirContext(
-                    dn + "," + this.searchBase, uRequest.getPassword());
+                    composeCompleteDnToCheck(dn, credentials),
+                    credentials.getPassword());
 
                 if (test != null) {
                     return true;
                 }
             } catch (Exception e) {
                 return false;
-            }
-                finally {
+            } finally {
                 org.springframework.ldap.support.LdapUtils.closeContext(test);
             }
         }
@@ -98,7 +98,12 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
         return false;
     }
 
-    protected SearchControls getSearchControls() {
+    protected String composeCompleteDnToCheck(final String dn,
+        final UsernamePasswordCredentials credentials) {
+        return dn + "," + this.searchBase;
+    }
+
+    private final SearchControls getSearchControls() {
         final SearchControls constraints = new SearchControls();
         constraints.setSearchScope(this.scope);
         constraints.setReturningAttributes(new String[0]);
@@ -108,7 +113,7 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
         return constraints;
     }
 
-    protected void initDao() throws Exception {
+    protected final void initDao() throws Exception {
         for (int i = 0; i < VALID_SCOPE_VALUES.length; i++) {
             if (this.scope == VALID_SCOPE_VALUES[i]) {
                 return;
@@ -118,12 +123,7 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
         throw new IllegalStateException("You must set a scope.");
     }
 
-    public boolean supports(Credentials credentials) {
-        return credentials != null
-            && credentials.getClass().equals(UsernamePasswordCredentials.class);
-    }
-
-    public void setScope(final int scope) {
+    public final void setScope(final int scope) {
         this.scope = scope;
     }
 
@@ -137,28 +137,28 @@ public class BindLdapAuthenticationHandler extends LdapDaoSupport implements
     /**
      * @param maxNumberResults The maxNumberResults to set.
      */
-    public void setMaxNumberResults(final int maxNumberResults) {
+    public final void setMaxNumberResults(final int maxNumberResults) {
         this.maxNumberResults = maxNumberResults;
     }
 
     /**
      * @param searchBase The searchBase to set.
      */
-    public void setSearchBase(final String searchBase) {
+    public final void setSearchBase(final String searchBase) {
         this.searchBase = searchBase;
     }
 
     /**
      * @param timeout The timeout to set.
      */
-    public void setTimeout(final int timeout) {
+    public final void setTimeout(final int timeout) {
         this.timeout = timeout;
     }
 
     /**
      * @param filter The filter to set.
      */
-    public void setFilter(final String filter) {
+    public final void setFilter(final String filter) {
         this.filter = filter;
     }
 }
