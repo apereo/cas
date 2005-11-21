@@ -8,11 +8,10 @@ package org.jasig.cas.adaptors.ldap;
 import javax.naming.directory.DirContext;
 
 import org.jasig.cas.adaptors.ldap.util.LdapUtils;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.ldap.core.support.LdapDaoSupport;
+import org.springframework.util.Assert;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
@@ -23,25 +22,27 @@ import org.springframework.ldap.core.support.LdapDaoSupport;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class FastBindLdapAuthenticationHandler extends LdapDaoSupport
-    implements AuthenticationHandler {
+public final class FastBindLdapAuthenticationHandler extends
+    AbstractLdapUsernamePasswordAuthenticationHandler {
 
     /** The filter path to the uid of the user. */
     private String filter;
 
-    public boolean authenticate(final Credentials request) {
-        final UsernamePasswordCredentials uRequest = (UsernamePasswordCredentials) request;
+    protected boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials)
+        throws AuthenticationException {
         DirContext dirContext = null;
         try {
             dirContext = this.getContextSource().getDirContext(
-            LdapUtils.getFilterWithValues(this.filter, uRequest.getUsername()),
-            uRequest.getPassword());
+                LdapUtils.getFilterWithValues(this.filter, credentials
+                    .getUsername()), credentials.getPassword());
             return true;
         } catch (DataAccessResourceFailureException e) {
             return false;
         } finally {
             if (dirContext != null) {
-                org.springframework.ldap.support.LdapUtils.closeContext(dirContext);
+                org.springframework.ldap.support.LdapUtils
+                    .closeContext(dirContext);
             }
         }
     }
@@ -53,21 +54,7 @@ public final class FastBindLdapAuthenticationHandler extends LdapDaoSupport
         this.filter = filter;
     }
 
-    /**
-     * @return true if the credentials is not null and the class equals
-     * UsernamePasswordCredentials.
-     */
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-            && credentials.getClass().equals(UsernamePasswordCredentials.class);
-    }
-
     protected void initDao() throws Exception {
-        super.initDao();
-
-        if (this.filter == null) {
-            throw new IllegalStateException("filter must be set on "
-                + this.getClass().getName());
-        }
+        Assert.notNull(this.filter);
     }
 }
