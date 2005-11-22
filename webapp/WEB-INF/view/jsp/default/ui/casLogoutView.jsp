@@ -50,7 +50,6 @@
 			<p style="margin-top:-.5em;border:1px solid #ccc;background-color:#ffc;color:#000;padding:5px;">
 				The service from which you arrived has supplied a 
 				<a href="${url}">link you may follow by clicking here</a>.<br /><br />
-			  ({$url})
 			</p>
 			</c:if>
 		</div>
