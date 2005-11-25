@@ -19,7 +19,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
+ * @since 3.0.3
  */
 public final class FastBindLdapAuthenticationHandler extends
     AbstractLdapUsernamePasswordAuthenticationHandler {

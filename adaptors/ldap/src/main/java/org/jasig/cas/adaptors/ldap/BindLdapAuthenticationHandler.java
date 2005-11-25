@@ -24,7 +24,7 @@ import org.springframework.ldap.core.SearchResultCallbackHandler;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
+ * @since 3.0.3
  */
 public class BindLdapAuthenticationHandler extends
     AbstractLdapUsernamePasswordAuthenticationHandler {
