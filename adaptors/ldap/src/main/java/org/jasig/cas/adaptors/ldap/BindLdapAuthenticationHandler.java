@@ -29,24 +29,30 @@ import org.springframework.ldap.core.SearchResultCallbackHandler;
 public class BindLdapAuthenticationHandler extends
     AbstractLdapUsernamePasswordAuthenticationHandler {
 
+    /** The default maximum number of results to return. */
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
 
+    /** The default timeout. */
     private static final int DEFAULT_TIMEOUT = 1000;
 
+    /** The list of valid scope values. */
     private static final int[] VALID_SCOPE_VALUES = new int[] {
         SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
         SearchControls.SUBTREE_SCOPE};
 
+    /** The search base to find the user under. */
     private String searchBase;
 
+    /** The scope. */
     private int scope = SearchControls.SUBTREE_SCOPE;
 
-    private String filter;
-
+    /** The maximum number of results to return. */
     private int maxNumberResults = DEFAULT_MAX_NUMBER_OF_RESULTS;
 
+    /** The amount of time to wait. */
     private int timeout = DEFAULT_TIMEOUT;
 
+    /** Boolean of whether multiple accounts are allowed. */
     private boolean allowMultipleAccounts;
 
     protected final boolean authenticateUsernamePasswordInternal(
@@ -55,7 +61,7 @@ public class BindLdapAuthenticationHandler extends
 
         final List values = (List) this.getLdapTemplate().search(
             this.searchBase,
-            LdapUtils.getFilterWithValues(this.filter, credentials
+            LdapUtils.getFilterWithValues(getFilter(), credentials
                 .getUsername()), this.getSearchControls(),
             new SearchResultCallbackHandler(){
 
@@ -153,12 +159,5 @@ public class BindLdapAuthenticationHandler extends
      */
     public final void setTimeout(final int timeout) {
         this.timeout = timeout;
-    }
-
-    /**
-     * @param filter The filter to set.
-     */
-    public final void setFilter(final String filter) {
-        this.filter = filter;
     }
 }

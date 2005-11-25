@@ -11,7 +11,6 @@ import org.jasig.cas.adaptors.ldap.util.LdapUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.util.Assert;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
@@ -25,16 +24,13 @@ import org.springframework.util.Assert;
 public final class FastBindLdapAuthenticationHandler extends
     AbstractLdapUsernamePasswordAuthenticationHandler {
 
-    /** The filter path to the uid of the user. */
-    private String filter;
-
     protected boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
         DirContext dirContext = null;
         try {
             dirContext = this.getContextSource().getDirContext(
-                LdapUtils.getFilterWithValues(this.filter, credentials
+                LdapUtils.getFilterWithValues(getFilter(), credentials
                     .getUsername()), credentials.getPassword());
             return true;
         } catch (DataAccessResourceFailureException e) {
@@ -45,16 +41,5 @@ public final class FastBindLdapAuthenticationHandler extends
                     .closeContext(dirContext);
             }
         }
-    }
-
-    /**
-     * @param filter The filter to set.
-     */
-    public void setFilter(String filter) {
-        this.filter = filter;
-    }
-
-    protected void initDao() throws Exception {
-        Assert.notNull(this.filter);
     }
 }
