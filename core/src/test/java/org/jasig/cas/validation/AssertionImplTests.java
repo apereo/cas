@@ -55,7 +55,8 @@ public class AssertionImplTests extends TestCase {
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);
 
-        assertEquals(list.toArray(new Authentication[0]).length, assertion.getChainedAuthentications().length);
+        assertEquals(list.toArray(new Authentication[0]).length, assertion
+            .getChainedAuthentications().length);
     }
 
     public void testGetterFalseForNewLogin() {

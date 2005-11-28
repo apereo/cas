@@ -17,7 +17,6 @@ import org.springframework.util.Assert;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.3
- *
  */
 public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
@@ -35,6 +34,7 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
 
     /**
      * Method to return the jdbcTemplate
+     * 
      * @return a fully created JdbcTemplate.
      */
     protected final JdbcTemplate getJdbcTemplate() {
@@ -48,6 +48,7 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
 
     /**
      * Template method to do additional set up in the dao implementations.
+     * 
      * @throws Exception if there is a problem during set up.
      */
     protected void initDao() throws Exception {

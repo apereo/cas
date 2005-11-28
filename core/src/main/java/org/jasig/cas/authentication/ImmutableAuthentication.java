@@ -30,8 +30,7 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
     private static final long serialVersionUID = 3906647483978365235L;
 
     /** The date/time this authentication object became valid. */
-   final Date authenticatedDate;
-
+    final Date authenticatedDate;
 
     /**
      * Constructor that accepts both a principal and a map.

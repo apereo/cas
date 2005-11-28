@@ -37,14 +37,16 @@ public class UsernamePasswordCredentialsTests extends TestCase {
     }
 
     public void testToString() {
-        final UsernamePasswordCredentials c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final UsernamePasswordCredentials c = TestUtils
+            .getCredentialsWithSameUsernameAndPassword();
 
         assertEquals(new ToStringBuilder(c).append("userName", c.getUsername())
             .toString(), c.toString());
     }
-    
+
     public void testHashCOde() {
-        final UsernamePasswordCredentials c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final UsernamePasswordCredentials c = TestUtils
+            .getCredentialsWithSameUsernameAndPassword();
         assertEquals(HashCodeBuilder.reflectionHashCode(c), c.hashCode());
     }
 }

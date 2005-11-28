@@ -25,11 +25,13 @@ public final class QueryDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected boolean authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredentials credentials)
+        throws AuthenticationException {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
-        final String encryptedPassword = this.getPasswordEncoder()
-            .encode(password);
+        final String encryptedPassword = this.getPasswordEncoder().encode(
+            password);
         final String dbPassword = (String) getJdbcTemplate().queryForObject(
             this.sql, new Object[] {username}, String.class);
         return dbPassword.equals(encryptedPassword);

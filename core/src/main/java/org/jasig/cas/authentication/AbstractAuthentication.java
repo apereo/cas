@@ -36,7 +36,7 @@ public abstract class AbstractAuthentication implements Authentication {
         this.principal = principal;
         this.attributes = attributes;
     }
-    
+
     public final Map getAttributes() {
         return this.attributes;
     }

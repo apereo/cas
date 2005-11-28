@@ -201,7 +201,10 @@ public class LoginFormActionTests extends
 
         Method method = null;
 
-        /*     protected void doBind(final RequestContext context, final DataBinder binder)*/
+        /*
+         * protected void doBind(final RequestContext context, final DataBinder
+         * binder)
+         */
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().equals("doBind")
                 && methods[i].getParameterTypes().length == 2) {

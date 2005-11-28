@@ -172,13 +172,15 @@ public final class CentralAuthenticationServiceImpl implements
 
             this.ticketRegistry.addTicket(serviceTicket);
 
-            log.info("Granted service ticket ["
-                + serviceTicket.getId()
-                + "] for service ["
-                + service.getId()
-                + "] for user ["
-                + serviceTicket.getGrantingTicket().getAuthentication()
-                    .getPrincipal().getId() + "]");
+            if (log.isInfoEnabled()) {
+                log.info("Granted service ticket ["
+                    + serviceTicket.getId()
+                    + "] for service ["
+                    + service.getId()
+                    + "] for user ["
+                    + serviceTicket.getGrantingTicket().getAuthentication()
+                        .getPrincipal().getId() + "]");
+            }
 
             return serviceTicket.getId();
         }
