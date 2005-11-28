@@ -51,17 +51,18 @@ public final class AcceptUsersAuthenticationHandler extends
     protected void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.users);
 
-        for (final Iterator iter = this.users.keySet().iterator(); iter.hasNext();) {
+        for (final Iterator iter = this.users.keySet().iterator(); iter
+            .hasNext();) {
             final Object key = iter.next();
             final Object value = this.users.get(key);
-            
-            Assert.notNull(value, "Cannot have null password for user [" + key + "]");
+
+            Assert.notNull(value, "Cannot have null password for user [" + key
+                + "]");
         }
     }
 
     /**
-     * @param users
-     *            The users to set.
+     * @param users The users to set.
      */
     public void setUsers(final Map users) {
         this.users = users;

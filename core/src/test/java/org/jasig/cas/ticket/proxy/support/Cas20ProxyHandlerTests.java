@@ -21,9 +21,7 @@ import junit.framework.TestCase;
 public class Cas20ProxyHandlerTests extends TestCase {
 
     private Cas20ProxyHandler handler;
-    
-    
-    
+
     protected void setUp() throws Exception {
         this.handler = new Cas20ProxyHandler();
         this.handler.afterPropertiesSet();
@@ -42,19 +40,21 @@ public class Cas20ProxyHandlerTests extends TestCase {
     }
 
     public void testValidProxyTicketWithoutQueryString() throws Exception {
-        assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(new URL(
-            "http://www.rutgers.edu/")), "proxyGrantingTicketId"));
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(
+            new URL("http://www.rutgers.edu/")), "proxyGrantingTicketId"));
     }
 
     public void testValidProxyTicketWithQueryString() throws Exception {
         Cas20ProxyHandler handler = new Cas20ProxyHandler();
         handler.afterPropertiesSet();
-        assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(new URL(
-            "http://www.rutgers.edu/?test=test")), "proxyGrantingTicketId"));
+        assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(
+            new URL("http://www.rutgers.edu/?test=test")),
+            "proxyGrantingTicketId"));
     }
 
     public void testNonValidProxyTicket() throws Exception {
-        this.handler.setAcceptableCodes(new int[] {HttpURLConnection.HTTP_BAD_GATEWAY});
+        this.handler
+            .setAcceptableCodes(new int[] {HttpURLConnection.HTTP_BAD_GATEWAY});
         this.handler.afterPropertiesSet();
         assertNull(this.handler.handle(new HttpBasedServiceCredentials(new URL(
             "http://www.rutgers.edu")), "proxyGrantingTicketId"));

@@ -21,7 +21,8 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements AuthenticationHandler, InitializingBean {
+public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements
+    AuthenticationHandler, InitializingBean {
 
     private TrustHandler trustHandler;
 

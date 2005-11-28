@@ -53,9 +53,12 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
     public void clean() {
         final List ticketsToRemove = new ArrayList();
         final Collection ticketsInCache;
-        log
-            .info("Starting cleaning of expired tickets from ticket registry at ["
-                + new Date() + "]");
+
+        if (log.isInfoEnabled()) {
+            log
+                .info("Starting cleaning of expired tickets from ticket registry at ["
+                    + new Date() + "]");
+        }
 
         synchronized (this.ticketRegistry) {
             ticketsInCache = this.ticketRegistry.getTickets();
@@ -70,8 +73,10 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
         }
 
         synchronized (this.ticketRegistry) {
-            log.info(ticketsToRemove.size()
-                + " found to be removed.  Removing now.");
+            if (log.isInfoEnabled()) {
+                log.info(ticketsToRemove.size()
+                    + " found to be removed.  Removing now.");
+            }
 
             for (final Iterator iter = ticketsToRemove.iterator(); iter
                 .hasNext();) {
@@ -79,9 +84,11 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
         }
-        log
-            .info("Finished cleaning of expired tickets from ticket registry at ["
-                + new Date() + "]");
+        if (log.isDebugEnabled()) {
+            log
+                .info("Finished cleaning of expired tickets from ticket registry at ["
+                    + new Date() + "]");
+        }
     }
 
     /**

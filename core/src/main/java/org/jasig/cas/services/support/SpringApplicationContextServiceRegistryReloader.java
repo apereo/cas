@@ -64,17 +64,21 @@ public final class SpringApplicationContextServiceRegistryReloader implements
     private ClassPathXmlApplicationContext applicationContext;
 
     public void reloadServiceRegistry() {
-        log.info("Checking if service list changed since last reload.");
+        if (log.isDebugEnabled()) {
+            log.info("Checking if service list changed since last reload.");
+        }
         final long currentTimeLastModified = this.serviceRegistryFile
             .lastModified();
 
         if (this.timeLastModified != currentTimeLastModified) {
             this.timeLastModified = currentTimeLastModified;
 
-            log
-                .info("Last modified time changed on "
-                    + this.serviceRegistryFile.getName()
-                    + ".  File most likely modified.  Regenerating ServiceRegistry.");
+            if (log.isInfoEnabled()) {
+                log
+                    .info("Last modified time changed on "
+                        + this.serviceRegistryFile.getName()
+                        + ".  File most likely modified.  Regenerating ServiceRegistry.");
+            }
 
             synchronized (this.serviceRegistryManager) {
 

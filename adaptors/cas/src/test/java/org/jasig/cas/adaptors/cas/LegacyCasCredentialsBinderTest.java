@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 /**
  * Partial testcase for LegacyCasCredentialsBinder.
+ * 
  * @version $Revision$ $Date$
  */
 public class LegacyCasCredentialsBinderTest extends TestCase {
@@ -30,9 +31,9 @@ public class LegacyCasCredentialsBinderTest extends TestCase {
     }
 
     /**
-     * Tests that we support LegacyCasCredentials and LegacyCasTrustedCredentials 
-     * and that we do not support some adhoc Credentials that are not and
-     * do not subclass these credentials.
+     * Tests that we support LegacyCasCredentials and
+     * LegacyCasTrustedCredentials and that we do not support some adhoc
+     * Credentials that are not and do not subclass these credentials.
      */
     public void testSupports() {
         assertTrue(this.credentialsBinder.supports(LegacyCasCredentials.class));
@@ -52,7 +53,8 @@ public class LegacyCasCredentialsBinderTest extends TestCase {
     }
 
     /**
-     * We test that we do not support these adhoc non-legacy do-nothing credentials.
+     * We test that we do not support these adhoc non-legacy do-nothing
+     * credentials.
      */
     private class AdHocUnsupportedCredentials implements Credentials {
 

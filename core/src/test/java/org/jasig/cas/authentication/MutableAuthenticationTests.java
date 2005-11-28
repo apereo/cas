@@ -27,8 +27,7 @@ public class MutableAuthenticationTests extends AbstractAuthenticationTests {
         Date dateFromFirstCall = this.authentication.getAuthenticatedDate();
         Date dateFromSecondCall = this.authentication.getAuthenticatedDate();
 
-        assertSame("Dates are the same.", dateFromFirstCall,
-            dateFromSecondCall);
+        assertSame("Dates are the same.", dateFromFirstCall, dateFromSecondCall);
         assertEquals("Dates are not equal.", dateFromFirstCall,
             dateFromSecondCall);
     }

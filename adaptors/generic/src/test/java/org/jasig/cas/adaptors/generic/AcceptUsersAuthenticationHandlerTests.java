@@ -49,7 +49,8 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            assertFalse(this.authenticationHandler.supports(new HttpBasedServiceCredentials(new URL(
+            assertFalse(this.authenticationHandler
+                .supports(new HttpBasedServiceCredentials(new URL(
                     "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
