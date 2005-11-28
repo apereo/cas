@@ -7,6 +7,7 @@ package org.jasig.cas.adaptors.ldap;
 
 import javax.naming.directory.DirContext;
 
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.ldap.support.ContextSource;
@@ -16,7 +17,7 @@ import junit.framework.TestCase;
 
 public class FastBindLdapAuthenticationHandlerTests extends TestCase {
     
-    public void testSuccessfulLdapCall() {
+    public void testSuccessfulLdapCall() throws AuthenticationException {
         FastBindLdapAuthenticationHandler handler = new FastBindLdapAuthenticationHandler();
         handler.setFilter("uid=%u,ou=Special Users,dc=rutgers,dc=edu");
         handler.setContextSource(new SuccessfulLdapContextSource());
@@ -27,7 +28,7 @@ public class FastBindLdapAuthenticationHandlerTests extends TestCase {
         assertTrue(handler.authenticate(upc));
     }
     
-    public void testFailedLdapCall() {
+    public void testFailedLdapCall() throws AuthenticationException {
         FastBindLdapAuthenticationHandler handler = new FastBindLdapAuthenticationHandler();
         handler.setFilter("uid=%u,ou=Special Users,dc=rutgers,dc=edu");
         handler.setContextSource(new FailedLdapContextSource());
