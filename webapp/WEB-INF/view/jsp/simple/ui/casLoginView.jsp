@@ -12,11 +12,11 @@
 	<form method="post" action="login">
 	
 	<!-- Begin error message generating Server-Side tags -->
-	<spring:bind path="credentials.*">
-	  <c:forEach var="error" items="${status.errorMessages}">
-	      <br />${error}
+	<spring:hasBindErrors name="credentials">
+	  <c:forEach var="error" items="${errors.allErrors}">
+	      <br /><spring:message code="${error.code}" />
 	  </c:forEach>
-	</spring:bind>
+	</spring:hasBindErrors>
 	<!-- End error message generating Server-Side tags -->
 	
 	<p>Userid 
