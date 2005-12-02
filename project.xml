@@ -286,7 +286,7 @@
 		<dependency>
 			<groupId>commons-discovery</groupId>
 			<artifactId>commons-discovery</artifactId>
-			<version>0.2-dev</version>
+			<version>0.2</version>
 			<type>jar</type>
 			<url>http://jakarta.apache.org/commons/discovery/</url>
 			<properties>
@@ -539,7 +539,7 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>maven</groupId>
+			<groupId>commons-attributes</groupId>
 			<artifactId>commons-attributes-plugin</artifactId>
 			<version>2.1</version>
 			<type>plugin</type>
