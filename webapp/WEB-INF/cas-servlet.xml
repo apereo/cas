@@ -169,7 +169,7 @@ uncomment this to allow access to web service
 		id="xFireCentralAuthenticationService"
 		class="org.codehaus.xfire.spring.remoting.XFireExporter">
 		<property
-			name="service"
+			name="serviceBean"
 			ref="remoteCentralAuthenticationService" />
 		<property
 			name="serviceInterface"

@@ -94,6 +94,7 @@
 			<email>scott_battaglia@rutgers.edu</email>
 			<organization>Rutgers, the State University of New Jersey</organization>
 			<roles>
+				<role>Project Admin</role>
 				<role>Developer</role>
 			</roles>
 			<timezone>-5</timezone>
@@ -194,12 +195,13 @@
 		<dependency>
 			<groupId>xfire</groupId>
 			<artifactId>xfire-all</artifactId>
-			<version>1.0-M5</version>
+			<version>1.0-SNAPSHOT</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
 		
+		<!-- 
 		<dependency>
 			<groupId>yom</groupId>
 			<artifactId>yom</artifactId>
@@ -208,32 +210,44 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+		 -->
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.1-beta-6</version>
+			<version>1.1-beta-8</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
 
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-            <version>1.0</version>
+
+		<dependency>
+			<groupId>jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.0</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-        </dependency>
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax</artifactId>
-            <version>1.1.1-dev</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>stax</groupId>
+			<artifactId>stax-api</artifactId>
+			<version>1.0</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-        </dependency>
+		</dependency>
+		
+		<dependency>
+			<groupId>woodstox</groupId>
+			<artifactId>wstx-asl</artifactId>
+			<version>2.0.3</version>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+
         <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
@@ -601,7 +615,7 @@
 				<filtering>false</filtering>
 			</resource>
 			<resource>
-				<directory>${basedir}/src/main/resources</directory>
+				<directory>${basedir}/core/src/main/resources</directory>
 				<includes>
 					<include>**/**</include>
 				</includes>
