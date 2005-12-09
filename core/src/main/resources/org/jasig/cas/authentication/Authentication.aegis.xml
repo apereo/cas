@@ -1,0 +1,5 @@
+<mappings>
+	<mapping>
+ 		<property name="attributes" keyType="java.lang.String" componentType="java.lang.String" />
+	</mapping>
+</mappings> 
