@@ -13,7 +13,7 @@ import org.jasig.cas.authentication.principal.Principal;
 /**
  * Mutable implementation of Authentication interface.
  * <p>
- * Instanciators of the ImmutableAuthentication class must take care that the
+ * Instanciators of the MutableAuthentication class must take care that the
  * map they provide is serializable (i.e. HashMap).
  * 
  * @author Scott Battaglia
