@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0.3RC1</currentVersion>
+	<currentVersion>3.0.3RC2</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -12,10 +12,19 @@
 	<inceptionYear>2004</inceptionYear>
 	<package>org.jasig.cas</package>
 	<logo></logo>
-	<description>CAS 3.0 is an enterprise single sign on for the web.  It supports clients from both web browsers and web services.</description>
-	<shortDescription>CAS is enterprise Single Sign On for the web.</shortDescription>
-	<url>https://clearinghouse.ja-sig.org/wiki/spaces/viewspacesummary.action?key=CAS</url>
-	<issueTrackingUrl>https://clearinghouse.ja-sig.org/issues/browse/CAS</issueTrackingUrl>
+	<description>
+		CAS 3.0 is an enterprise single sign on for the web. It supports
+		clients from both web browsers and web services.
+	</description>
+	<shortDescription>
+		CAS is enterprise Single Sign On for the web.
+	</shortDescription>
+	<url>
+		http://www.ja-sig.org/wiki/spaces/viewspacesummary.action?key=CAS
+	</url>
+	<issueTrackingUrl>
+		http://www.ja-sig.org/issues/browse/CAS
+	</issueTrackingUrl>
 	<repository>
 		<connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas3</connection>
 		<developerConnection>scm:cvs:pserver:${maven.username}@www.uportal.org:/home/cvs/jasig:cas3</developerConnection>
@@ -23,9 +32,14 @@
 	</repository>
 	<versions>
 		<version>
+			<id>3.0.3-rc2</id>
+			<name>3.0.3-rc2</name>
+			<tag>cas-3-0-3-rc2</tag>
+		</version>
+		<version>
 			<id>3.0.3-rc1</id>
-			<name>3.0.2-rc1</name>
-			<tag>cas-3-0-2-rc1</tag>
+			<name>3.0.3-rc1</name>
+			<tag>cas-3-0-3-rc1</tag>
 		</version>
 		<version>
 			<id>3.0.2</id>
@@ -97,7 +111,9 @@
 			<name>Scott Battaglia</name>
 			<id>sbattaglia</id>
 			<email>scott_battaglia@rutgers.edu</email>
-			<organization>Rutgers, the State University of New Jersey</organization>
+			<organization>
+				Rutgers, the State University of New Jersey
+			</organization>
 			<roles>
 				<role>Project Admin</role>
 				<role>Developer</role>
@@ -128,7 +144,9 @@
 			<name>Dmitriy Kopylenko</name>
 			<id>dkopylen</id>
 			<email>dkopylen@rutgers.edu</email>
-			<organization>Rutgers, the State University of New Jersey</organization>
+			<organization>
+				Rutgers, the State University of New Jersey
+			</organization>
 			<roles>
 				<role>Developer</role>
 			</roles>
@@ -158,7 +176,9 @@
 			<name>William G. Thompson, Jr.</name>
 			<id>wgthom</id>
 			<email>wgthom@rutgers.edu</email>
-			<organization>Rutgers, the State University of New Jersey</organization>
+			<organization>
+				Rutgers, the State University of New Jersey
+			</organization>
 			<roles>
 				<role>Project Admin</role>
 				<role>Developer</role>
@@ -175,7 +195,7 @@
 			</roles>
 			<timezone>-5</timezone>
 		</developer>
-		
+
 	</developers>
 	<licenses>
 		<license>
@@ -196,7 +216,7 @@
 			</properties>
 		</dependency>
 
-	<!-- XFIRE -->
+		<!-- XFIRE -->
 		<dependency>
 			<groupId>xfire</groupId>
 			<artifactId>xfire-all</artifactId>
@@ -205,17 +225,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
-		<!-- 
-		<dependency>
-			<groupId>yom</groupId>
-			<artifactId>yom</artifactId>
-			<version>1.0-alpha-2</version>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		 -->
+
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
@@ -225,7 +235,6 @@
 			</properties>
 		</dependency>
 
-
 		<dependency>
 			<groupId>jdom</groupId>
 			<artifactId>jdom</artifactId>
@@ -234,7 +243,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>stax</groupId>
 			<artifactId>stax-api</artifactId>
@@ -243,7 +252,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>woodstox</groupId>
 			<artifactId>wstx-asl</artifactId>
@@ -253,16 +262,18 @@
 			</properties>
 		</dependency>
 
-        <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-            <version>1.4</version>
-            <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.4</version>
+			<url>
+				http://www-124.ibm.com/developerworks/projects/wsdl4j/
+			</url>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-        </dependency>
-		
+		</dependency>
+
 		<!-- for unit and compatibility tests -->
 		<dependency>
 			<groupId>cas</groupId>
@@ -272,7 +283,7 @@
 				<war.bundle>false</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
@@ -312,7 +323,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-attributes</groupId>
 			<artifactId>commons-attributes-api</artifactId>
@@ -323,7 +334,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-attributes</groupId>
 			<artifactId>commons-attributes-compiler</artifactId>
@@ -365,6 +376,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
@@ -375,7 +387,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>httpunit</groupId>
 			<artifactId>httpunit</artifactId>
@@ -386,7 +398,7 @@
 				<war.bundle>false</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>nekohtml</groupId>
 			<artifactId>nekohtml</artifactId>
@@ -397,7 +409,7 @@
 				<war.bundle>false</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>jwebunit</groupId>
 			<artifactId>jwebunit</artifactId>
@@ -476,7 +488,7 @@
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>springframework</groupId>
 			<artifactId>spring-webflow</artifactId>
@@ -486,8 +498,8 @@
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-		</dependency>	
-		
+		</dependency>
+
 		<dependency>
 			<groupId>springframework</groupId>
 			<artifactId>spring-binding</artifactId>
@@ -497,7 +509,7 @@
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-		</dependency>	
+		</dependency>
 
 		<dependency>
 			<groupId>taglibs</groupId>
@@ -509,7 +521,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>oro</groupId>
 			<artifactId>oro</artifactId>
@@ -518,77 +530,72 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
-		
+
 		<!-- MAVEN PLUGINS -->
 		<!-- 
-		<dependency>
+			<dependency>
 			<groupId>maven-plugins</groupId>
 			<artifactId>maven-findbugs-plugin</artifactId>
 			<version>0.9.1</version>
 			<type>plugin</type>
-		</dependency>
-		 -->
-		 
+			</dependency>
+		-->
+
 		<dependency>
 			<groupId>maven</groupId>
 			<artifactId>maven-jira-plugin</artifactId>
 			<version>1.1.2</version>
 			<type>plugin</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>maven</groupId>
 			<artifactId>maven-announcement-plugin</artifactId>
 			<version>1.3</version>
 			<type>plugin</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>maven</groupId>
 			<artifactId>maven-changes-plugin</artifactId>
 			<version>1.3</version>
 			<type>plugin</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>maven</groupId>
 			<artifactId>maven-clover-plugin</artifactId>
 			<version>1.10</version>
 			<type>plugin</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-attributes</groupId>
 			<artifactId>commons-attributes-plugin</artifactId>
 			<version>2.1</version>
 			<type>plugin</type>
 		</dependency>
-		
+
 		<dependency>
-		  <groupId>statcvs</groupId>
-		  <artifactId>maven-statcvs-plugin</artifactId>
-		  <version>2.7</version>
-		  <type>plugin</type>
+			<groupId>maven</groupId>
+			<artifactId>maven-multichanges-plugin</artifactId>
+			<version>1.1</version>
+			<type>plugin</type>
 		</dependency>
 
 		<dependency>
-		  <groupId>maven</groupId>
-		  <artifactId>maven-multichanges-plugin</artifactId>
-		  <version>1.1</version>
-		  <type>plugin</type>
-		</dependency>
-		
-		<dependency>
-		  <groupId>maven</groupId>
-		  <artifactId>maven-dashboard-plugin</artifactId>
-		  <version>1.6</version>
-		  <type>plugin</type>
+			<groupId>maven</groupId>
+			<artifactId>maven-dashboard-plugin</artifactId>
+			<version>1.6</version>
+			<type>plugin</type>
 		</dependency>
 	</dependencies>
 	<build>
 		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
 		<sourceDirectory>${basedir}/core/src/main/java</sourceDirectory>
-		<unitTestSourceDirectory>${basedir}/core/src/test/java</unitTestSourceDirectory>
+		<unitTestSourceDirectory>
+			${basedir}/core/src/test/java
+		</unitTestSourceDirectory>
 		<unitTest>
 			<includes>
 				<include>**/*Tests.java</include>
@@ -640,13 +647,13 @@
 		<report>maven-pmd-plugin</report>
 		<report>maven-simian-plugin</report>
 		<report>maven-tasklist-plugin</report>
-<!--	<report>maven-findbugs-plugin</report>-->
-	    <report>maven-license-plugin</report>
-<!--	    <report>maven-multiproject-plugin</report>-->
-<!-- 		<report>maven-multichanges-report</report>-->
-<!-- 	    <report>maven-statcvs-plugin</report> -->
-	    <report>maven-dashboard-plugin</report>
-        <report>maven-developer-activity-plugin</report>
-	    <report>maven-file-activity-plugin</report>
+		<!--	<report>maven-findbugs-plugin</report>-->
+		<report>maven-license-plugin</report>
+		<!--	    <report>maven-multiproject-plugin</report>-->
+		<!-- 		<report>maven-multichanges-report</report>-->
+		<!-- 	    <report>maven-statcvs-plugin</report> -->
+		<report>maven-dashboard-plugin</report>
+		<report>maven-developer-activity-plugin</report>
+		<report>maven-file-activity-plugin</report>
 	</reports>
 </project>
