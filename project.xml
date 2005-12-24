@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0.3RC2</currentVersion>
+	<currentVersion>3.0.3</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -31,6 +31,11 @@
 		<url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/</url>
 	</repository>
 	<versions>
+		<version>
+			<id>3.0.3</id>
+			<name>3.0.3</name>
+			<tag>cas-3-0-3-final</tag>
+		</version>
 		<version>
 			<id>3.0.3-rc2</id>
 			<name>3.0.3-rc2</name>

@@ -1,6 +1,6 @@
 CENTRAL AUTHENTICATION SERVICE (CAS)
 --------------------------------------------------------------------
-https://clearinghouse.ja-sig.org/wiki/display/CAS/Home
+http://www.ja-sig.org/wiki/display/CAS/Home
 
 1.  INTRODUCTION
 

@@ -1,4 +1,4 @@
-Central Authentication Service 3.0
+Central Authentication Service 3.0.3
 Quick Installation Guide
 ----------------------------------
 
@@ -6,7 +6,7 @@ This guide is meant to be a quickstart for you configure and install CAS
 as quickly and easily as possible.  If you need more information, 
 you can check the CAS website at 
 
-https://clearinghouse.ja-sig.org/wiki/display/CAS/Home
+httpw://www.ja-sig.org/wiki/display/CAS/Home
 
 and you can subscribe to the CAS mailing list by visiting:
 
