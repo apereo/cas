@@ -14,10 +14,8 @@ import java.util.List;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -31,11 +29,8 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class EhCacheTicketRegistry implements TicketRegistry,
+public final class EhCacheTicketRegistry extends AbstractTicketRegistry implements
     InitializingBean {
-
-    /** The Commons Logging log instance. */
-    private final Log log = LogFactory.getLog(getClass());
 
     /** The instance of an EhCache cache. */
     private Cache cache;
@@ -60,32 +55,6 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
             log.debug("Added ticket [" + ticket.getId() + "] to registry.");
         }
         this.cache.put(new Element(ticket.getId(), ticket));
-    }
-
-    /**
-     * @throws IllegalArgumentException if the class is null.
-     * @throws ClassCastException if the Ticket Class does not match the
-     * requested class.
-     */
-    public Ticket getTicket(final String ticketId, final Class clazz) {
-        if (clazz == null) {
-            throw new IllegalArgumentException(
-                "clazz argument must not be null.");
-        }
-
-        final Ticket ticket = this.getTicket(ticketId);
-
-        if (ticket == null) {
-            return null;
-        }
-
-        if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new ClassCastException("Ticket [" + ticket.getId()
-                + "] is of type " + ticket.getClass()
-                + " when we were expecting " + clazz);
-        }
-
-        return ticket;
     }
 
     /**
