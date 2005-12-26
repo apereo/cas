@@ -25,10 +25,7 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultTicketRegistry implements TicketRegistry {
-
-    /** The Commons Logging instance. */
-    private final Log log = LogFactory.getLog(getClass());
+public final class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     /** A HashMap to contain the tickets. */
     private final Map cache = new HashMap();
@@ -45,32 +42,6 @@ public final class DefaultTicketRegistry implements TicketRegistry {
             log.debug("Added ticket [" + ticket.getId() + "] to registry.");
         }
         this.cache.put(ticket.getId(), ticket);
-    }
-
-    /**
-     * @throws IllegalArgumentException if class is null.
-     * @throws ClassCastException if class does not match requested ticket
-     * class.
-     */
-    public synchronized Ticket getTicket(final String ticketId,
-        final Class clazz) {
-        if (clazz == null) {
-            throw new IllegalArgumentException("clazz cannot be null");
-        }
-
-        final Ticket ticket = this.getTicket(ticketId);
-
-        if (ticket == null) {
-            return null;
-        }
-
-        if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new ClassCastException("Ticket [" + ticket.getId()
-                + " is of type " + ticket.getClass()
-                + " when we were expecting " + clazz);
-        }
-
-        return ticket;
     }
 
     public synchronized Ticket getTicket(final String ticketId) {
