@@ -42,11 +42,15 @@ public final class NoSuchFlowExecutionExceptionResolver implements
             return null;
         }
 
+        final String urlToRedirectTo = request.getRequestURI()
+            + (request.getQueryString() != null ? "?"
+                + request.getQueryString() : "");
+
         if (log.isDebugEnabled()) {
             log.debug("Error getting flow information for URL:"
-                + request.getRequestURI(), exception);
+                + urlToRedirectTo, exception);
         }
 
-        return new ModelAndView(new RedirectView(request.getRequestURI()));
+        return new ModelAndView(new RedirectView(urlToRedirectTo));
     }
 }
