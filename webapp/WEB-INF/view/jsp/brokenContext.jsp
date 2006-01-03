@@ -22,7 +22,7 @@
 	</head>
 
 
-  <body onload="init();">
+  <body>
 	<!-- HEADER -->
 	<div style="	margin:0; padding:0; width:100%; clear:both; background:#b00 top left repeat scroll;">
 		<a style="display:block; margin:0; padding:0 0 0 3px; text-decoration:none; background-color:#b00; color:#ffc; font-size:1em; line-height:19px;" id="top">Java Architecture Special Interest Group</a>
