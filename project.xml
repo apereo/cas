@@ -284,9 +284,6 @@
 			<groupId>cas</groupId>
 			<artifactId>casclient</artifactId>
 			<version>2.1.1</version>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 
 		<dependency>
@@ -304,9 +301,6 @@
 			<version>1.3.9</version>
 			<type>jar</type>
 			<url>http://www.cenqua.com/clover/</url>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
@@ -346,9 +340,6 @@
 			<version>2.1</version>
 			<type>jar</type>
 			<url>http://jakarta.apache.org/commons/attributes/</url>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 
 		<dependency>
@@ -399,9 +390,6 @@
 			<version>1.6</version>
 			<type>jar</type>
 			<url>http://httpunit.sourceforge.net/</url>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 
 		<dependency>
@@ -410,9 +398,6 @@
 			<version>0.9.4</version>
 			<type>jar</type>
 			<url>http://httpunit.sourceforge.net/</url>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 
 		<dependency>
@@ -421,9 +406,6 @@
 			<version>1.2</version>
 			<type>jar</type>
 			<url>http://jwebunit.sourceforge.net/</url>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -431,9 +413,6 @@
 			<version>3.8.1</version>
 			<type>jar</type>
 			<url>http://www.junit.org</url>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -471,9 +450,6 @@
 			<version>2.4</version>
 			<type>jar</type>
 			<url>http://java.sun.com/j2ee/index.jsp</url>
-			<properties>
-				<war.bundle>false</war.bundle>
-			</properties>
 		</dependency>
 		<dependency>
 			<groupId>springframework</groupId>
