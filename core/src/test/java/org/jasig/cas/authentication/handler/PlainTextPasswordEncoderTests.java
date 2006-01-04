@@ -1,5 +1,5 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -15,7 +15,7 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class PlainTextPasswordEncoderTests extends TestCase {
+public final class PlainTextPasswordEncoderTests extends TestCase {
 
     private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
