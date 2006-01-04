@@ -33,12 +33,12 @@ import org.springframework.aop.MethodBeforeAdvice;
  * will abort the method call by throwing {@link TgtOveruseException}. This
  * exception, or a superclass, should be mapped to an appropriate error
  * response. This advice is intended for use on the CentralAuthenticationService
- * grantServiceTicket methods.  In the default CAS 3 web layer, the Login web flow
- * will catch the {@link TgtOveruseException} and expose it to the JSP view. By
- * mapping the {@link TgtOveruseException#TGT_OVERUSE_CODE} to a message in
- * messages.properties, you can configure the login UI to display a message to the end user
- * advising that he or she has made too many requests too recently and that 
- * he or she might wait a while before trying again.
+ * grantServiceTicket methods. In the default CAS 3 web layer, the Login web
+ * flow will catch the {@link TgtOveruseException} and expose it to the JSP
+ * view. By mapping the {@link TgtOveruseException#TGT_OVERUSE_CODE} to a
+ * message in messages.properties, you can configure the login UI to display a
+ * message to the end user advising that he or she has made too many requests
+ * too recently and that he or she might wait a while before trying again.
  * </p>
  * <p>
  * Policy is implemented in terms of "unexpired TGT presentations". Each time a
@@ -56,8 +56,9 @@ import org.springframework.aop.MethodBeforeAdvice;
  * within one minute to trigger the blocking response.
  * </p>
  * <p>
- * Use of this advice introduces a synchronization cost on every TGT presentation and intermittent
- * delays while the cleanup thread runs to expire presentations.
+ * Use of this advice introduces a synchronization cost on every TGT
+ * presentation and intermittent delays while the cleanup thread runs to expire
+ * presentations.
  * </p>
  * 
  * @version $Revision$ $Date$
@@ -71,155 +72,165 @@ public class TgtThrottlingMethodBeforeAdvice implements MethodBeforeAdvice {
     private int quantityAllowed = 60;
 
     /**
-     * Number of seconds we should allow to elapse between expiring presentations of TGTs.
-     * Changes to this field will take effect upon conclusion of the currently running interval.
+     * Number of seconds we should allow to elapse between expiring
+     * presentations of TGTs. Changes to this field will take effect upon
+     * conclusion of the currently running interval.
      */
-    private int expirationIntervalSeconds = 60;
+    protected int expirationIntervalSeconds = 60;
 
     /**
      * The number of TGT presentations we should expire for each TGT each
      * expiration interval.
      */
     private int expireQuantity = 60;
-    
+
     private Map unexpiredTgtPresentations = new HashMap();
 
-    private Thread unexpiredTgtPresentationsExiprationThread = new Thread() {
+    private Thread unexpiredTgtPresentationsExiprationThread = new Thread(){
+
         public void run() {
             try {
-              while (true) {
-                Thread.sleep(expirationIntervalSeconds * 1000);
-                expireTgtPresentations();
-              }
+                while (true) {
+                    Thread
+                        .sleep(TgtThrottlingMethodBeforeAdvice.this.expirationIntervalSeconds * 1000);
+                    expireTgtPresentations();
+                }
             } catch (InterruptedException ex) {
-              // ignore
+                // ignore
             }
-          }
+        }
     };
-    
+
     public TgtThrottlingMethodBeforeAdvice() {
         this.unexpiredTgtPresentationsExiprationThread.setDaemon(true);
         this.unexpiredTgtPresentationsExiprationThread.start();
     }
-    
 
-    
     public void before(Method method, Object[] arguments, Object target)
         throws Throwable {
 
         String tgtId = (String) arguments[0];
         Service service = (Service) arguments[1];
-        
+
         synchronized (this) {
             if (getUnexpiredTgtPresentations(tgtId) >= this.quantityAllowed) {
                 throw new TgtOveruseException(tgtId, service);
-            } else {
-                registerTgtPresentation(tgtId);
             }
+            registerTgtPresentation(tgtId);
         }
-
     }
-    
+
     /**
      * Method our expiration thread invokes to expire TGT presentations.
-     * Synchronized so that we do not access the Map in an inconsistent state and so that nothing
-     * attempts to read the map as we modify it.
+     * Synchronized so that we do not access the Map in an inconsistent state
+     * and so that nothing attempts to read the map as we modify it.
      */
-    private synchronized void expireTgtPresentations() {
-        // scoop up presented TGT IDs from Map so as to avoid modifying the Map in-place
+    protected synchronized void expireTgtPresentations() {
+        // scoop up presented TGT IDs from Map so as to avoid modifying the Map
+        // in-place
         Set tgtIds = this.unexpiredTgtPresentations.keySet();
         Iterator ki = tgtIds.iterator();
 
         // now, decrement and prune as appropriate
         while (ki.hasNext()) {
-          String tgtId = (String) ki.next();
-          int remainingUnexpiredTgtPresentations = getUnexpiredTgtPresentations(tgtId) - this.expireQuantity;
-          if (remainingUnexpiredTgtPresentations > 0) {
-              // after expiry, there are still active presentations we need to remember
-            this.unexpiredTgtPresentations.put(tgtId, new Integer(remainingUnexpiredTgtPresentations));
-          } else {
-              // after expiry, there are no remaining active presentations for this TGT that we need to remember.
-            this.unexpiredTgtPresentations.remove(tgtId);
-          }
+            String tgtId = (String) ki.next();
+            int remainingUnexpiredTgtPresentations = getUnexpiredTgtPresentations(tgtId)
+                - this.expireQuantity;
+            if (remainingUnexpiredTgtPresentations > 0) {
+                // after expiry, there are still active presentations we need to
+                // remember
+                this.unexpiredTgtPresentations.put(tgtId, new Integer(
+                    remainingUnexpiredTgtPresentations));
+            } else {
+                // after expiry, there are no remaining active presentations for
+                // this TGT that we need to remember.
+                this.unexpiredTgtPresentations.remove(tgtId);
+            }
         }
     }
-    
-    /** 
-     * Returns the number of "active" presentations for the given TGT ID. 
+
+    /**
+     * Returns the number of "active" presentations for the given TGT ID.
      * Synconrized so that we do not access the Map in an inconsistent state.
+     * 
      * @param tgtId the tgtId for which we seen the active presentation count
      * @return the number of unexpired presentations for the given tgt ID.
      */
     private synchronized int getUnexpiredTgtPresentations(String tgtId) {
-      Object o = this.unexpiredTgtPresentations.get(tgtId);
-      if (o == null) {
-        return 0;
-      } else {
+        Object o = this.unexpiredTgtPresentations.get(tgtId);
+        if (o == null) {
+            return 0;
+        }
         return ((Integer) o).intValue();
-      }
     }
-    
+
     /**
-     * Increments the recorded number of presentations of a particular TGT id, creating a new entry in our backing Map
-     * as necessary.
+     * Increments the recorded number of presentations of a particular TGT id,
+     * creating a new entry in our backing Map as necessary.
+     * 
      * @param tgtId Presented ticket granting ticket identifier.
      */
     private synchronized void registerTgtPresentation(String tgtId) {
-        this.unexpiredTgtPresentations.put(tgtId, new Integer(getUnexpiredTgtPresentations(tgtId) + 1));
-      }
-
+        this.unexpiredTgtPresentations.put(tgtId, new Integer(
+            getUnexpiredTgtPresentations(tgtId) + 1));
+    }
 
     /**
      * Get the number of seconds between our expiring tgtId presentations.
+     * 
      * @return seconds between expiring tgtid presentations
      */
     public int getExpirationIntervalSeconds() {
-        return expirationIntervalSeconds;
+        return this.expirationIntervalSeconds;
     }
 
     /**
      * Set the number of seconds between expirations of tgtId presentations.
      * Changes to the expiration interval take effect at the conclusion of the
-     * interval currently in progress (i.e., when the thread wakes up, does its work, 
-     * and then goes to sleep again for the then-current interval.)
-     * @param expirationIntervalSeconds seconds between expiring tgtid presentations
+     * interval currently in progress (i.e., when the thread wakes up, does its
+     * work, and then goes to sleep again for the then-current interval.)
+     * 
+     * @param expirationIntervalSeconds seconds between expiring tgtid
+     * presentations
      */
     public void setExpirationIntervalSeconds(int expirationIntervalSeconds) {
         this.expirationIntervalSeconds = expirationIntervalSeconds;
     }
-    
-    
+
     /**
-     * Get the number of presentations of each ticket granting ticket id that we will expire
-     * each time we expire tgtid presentations.
+     * Get the number of presentations of each ticket granting ticket id that we
+     * will expire each time we expire tgtid presentations.
+     * 
      * @return number of tgtid presentations expired each interval
      */
     public int getExpireQuantity() {
-        return expireQuantity;
+        return this.expireQuantity;
     }
 
     /**
-     * Set the number of presentations of each ticket granting ticket id that we will expire
-     * each time we expire tgtid presentations.
+     * Set the number of presentations of each ticket granting ticket id that we
+     * will expire each time we expire tgtid presentations.
+     * 
      * @param expireQuantity number of tgtid presentations to expire at a time
      */
     public void setExpireQuantity(int expireQuantity) {
         this.expireQuantity = expireQuantity;
     }
 
-    
     /**
-     * Get the number of active tgtid presentations this Advice will allow before it blocks
-     * an attempt to use a tgt id.
+     * Get the number of active tgtid presentations this Advice will allow
+     * before it blocks an attempt to use a tgt id.
+     * 
      * @return allowed quantity of unexpired tgtid presentations.
      */
     public int getQuantityAllowed() {
-        return quantityAllowed;
+        return this.quantityAllowed;
     }
 
     /**
-     * Set the number of active tgtID presentations this Advice will allow before it blocks
-     * an attempt to use a tgt id.
+     * Set the number of active tgtID presentations this Advice will allow
+     * before it blocks an attempt to use a tgt id.
+     * 
      * @param quantityAllowed allowed quantity of active tgt ID presentations.
      */
     public void setQuantityAllowed(int quantityAllowed) {

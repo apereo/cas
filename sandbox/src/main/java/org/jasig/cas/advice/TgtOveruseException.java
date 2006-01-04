@@ -61,12 +61,12 @@ public class TgtOveruseException extends TicketException {
             return "The ticket granting ticket ["
                 + this.overusedTgtId
                 + "] is overused and so was denied in its attempt to obtain a service ticket";
-        } else {
+        }
+        
             return "The ticket granting ticket ["
                 + this.overusedTgtId
                 + "] is overused and so was denied in its attempt to obtain a service ticket to access service ["
                 + this.targetService + "]";
-        }
     }
 
     /**
