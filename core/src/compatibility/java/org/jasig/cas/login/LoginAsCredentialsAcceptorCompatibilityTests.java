@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.jasig.cas.web.support.WebConstants;
-
 /**
  * 
  * @author Scott Battaglia
@@ -34,7 +32,7 @@ public class LoginAsCredentialsAcceptorCompatibilityTests extends AbstractLoginC
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
-        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        assertCookiePresent(COOKIE_TGC_ID);
         assertFormNotPresent();
         
         // TODO test logging in to another service

@@ -13,6 +13,10 @@ import net.sourceforge.jwebunit.WebTestCase;
 
 public abstract class AbstractCompatibilityTests extends WebTestCase {
 
+    public static final String LOGIN_TOKEN = "lt";
+    
+    public static final String COOKIE_TGC_ID = "CASTGC";
+    
 	/**
 	 * The name of our properties configuration while, which we expect on the
 	 * classpath.
