@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
@@ -23,7 +21,6 @@ import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
-import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -48,8 +45,11 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class ServiceValidateController extends AbstractController
     implements InitializingBean {
 
-    /** Logger to log events and errors. */
-    private final Log log = LogFactory.getLog(getClass());
+    /** View if Service Ticket Validation Fails. */
+    private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "casServiceFailureView";
+
+    /** View if Service Ticket Validation Succeeds. */
+    private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "casServiceSuccessView";
 
     /** The CORE which we will delegate all requests to. */
     private CentralAuthenticationService centralAuthenticationService;
@@ -67,34 +67,31 @@ public final class ServiceValidateController extends AbstractController
     private String failureView;
 
     public void afterPropertiesSet() throws Exception {
-        final String name = this.getClass().getName();
-
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService cannot be null on " + name);
+        Assert.notNull(this.centralAuthenticationService);
 
         if (this.validationSpecificationClass == null) {
             this.validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
-            log
+            logger
                 .info("No authentication specification class set.  Defaulting to "
                     + this.validationSpecificationClass.getName());
         }
 
         if (this.successView == null) {
-            this.successView = ViewNames.CONST_SERVICE_SUCCESS;
-            log.info("No successView specified.  Using default of "
+            this.successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
+            logger.info("No successView specified.  Using default of "
                 + this.successView);
         }
 
         if (this.failureView == null) {
-            this.failureView = ViewNames.CONST_SERVICE_FAILURE;
-            log.info("No failureView specified.  Using default of "
+            this.failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
+            logger.info("No failureView specified.  Using default of "
                 + this.failureView);
         }
 
         if (this.proxyHandler == null) {
             this.proxyHandler = new Cas20ProxyHandler();
             ((Cas20ProxyHandler) this.proxyHandler).afterPropertiesSet();
-            log.info("No proxyHandler specified.  Defaulting to "
+            logger.info("No proxyHandler specified.  Defaulting to "
                 + this.proxyHandler.getClass().getName());
         }
     }
@@ -132,10 +129,10 @@ public final class ServiceValidateController extends AbstractController
                         .delegateTicketGrantingTicket(serviceTicketId,
                             serviceCredentials);
                 } catch (TicketException e) {
-                    log.error("TicketException generating ticket for: "
+                    logger.error("TicketException generating ticket for: "
                         + pgtUrl, e);
                 } catch (MalformedURLException e) {
-                    log.error("Exception converting pgtUrl to class URL", e);
+                    logger.error("Exception converting pgtUrl to class URL", e);
                 }
             }
 
@@ -143,8 +140,8 @@ public final class ServiceValidateController extends AbstractController
                 .validateServiceTicket(serviceTicketId, new SimpleService(
                     service));
             if (!authenticationSpecification.isSatisfiedBy(assertion)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ServiceTicket [" + serviceTicketId
+                if (logger.isDebugEnabled()) {
+                    logger.debug("ServiceTicket [" + serviceTicketId
                         + "] does not satisfy authentication specification.");
                 }
 

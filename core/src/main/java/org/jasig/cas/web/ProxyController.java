@@ -10,13 +10,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.web.support.ViewNames;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -42,8 +39,11 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class ProxyController extends AbstractController implements
     InitializingBean {
 
-    /** Log instance. */
-    private final Log log = LogFactory.getLog(getClass());
+    /** View for if the creation of a "Proxy" Ticket Fails. */
+    private static final String CONST_PROXY_FAILURE = "casProxyFailureView";
+
+    /** View for if the creation of a "Proxy" Ticket Succeeds. */
+    private static final String CONST_PROXY_SUCCESS = "casProxySuccessView";
 
     /** CORE to delegate all non-web tier functionality to. */
     private CentralAuthenticationService centralAuthenticationService;
@@ -58,6 +58,9 @@ public final class ProxyController extends AbstractController implements
                 + this.getClass().getName());
     }
 
+    /**
+     * @return ModelAndView containing a view name of either <code>casProxyFailureView</code> or <code>casProxySuccessView</code>
+     */
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
@@ -71,19 +74,19 @@ public final class ProxyController extends AbstractController implements
             model.put(WebConstants.CODE, "INVALID_REQUEST");
             model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
                 "INVALID_REQUEST_PROXY", "INVALID_REQUEST_PROXY"));
-            return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
+            return new ModelAndView(CONST_PROXY_FAILURE, model);
         }
 
         try {
             final Service service = new SimpleService(targetService);
-            return new ModelAndView(ViewNames.CONST_PROXY_SUCCESS,
-                WebConstants.TICKET, this.centralAuthenticationService
-                    .grantServiceTicket(ticket, service));
+            return new ModelAndView(CONST_PROXY_SUCCESS, WebConstants.TICKET,
+                this.centralAuthenticationService.grantServiceTicket(ticket,
+                    service));
         } catch (TicketException e) {
             model.put(WebConstants.CODE, e.getCode());
             model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
                 e.getCode(), new Object[] {ticket}, e.getCode()));
-            return new ModelAndView(ViewNames.CONST_PROXY_FAILURE, model);
+            return new ModelAndView(CONST_PROXY_FAILURE, model);
         }
     }
 
