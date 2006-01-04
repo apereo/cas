@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.jasig.cas.web.support.WebConstants;
-
 /**
  * 
  * @author Scott Battaglia
@@ -63,7 +61,7 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
     	beginAt("/login?service=" + encodedService);
     	
     	// verify that login screen is painted
-    	assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+    	assertFormElementPresent(LOGIN_TOKEN);
     	
     	// establish SSO session
     	
@@ -94,7 +92,7 @@ public class LogoutCompatibilityTests extends AbstractCompatibilityTests {
     	// demonstrate lack of SSO session
         
         beginAt("/login?service=" + encodedService);
-        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        assertFormElementPresent(LOGIN_TOKEN);
         
         // demonstate that the second service ticket no longer validates
         

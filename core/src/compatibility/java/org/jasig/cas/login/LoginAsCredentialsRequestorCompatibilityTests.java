@@ -11,8 +11,6 @@ import java.net.URLEncoder;
 
 import net.sourceforge.jwebunit.HttpUnitDialog;
 
-import org.jasig.cas.web.support.WebConstants;
-
 /**
  * 
  * @author Scott Battaglia
@@ -22,7 +20,6 @@ import org.jasig.cas.web.support.WebConstants;
  *
  */
 public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLoginCompatibilityTests {
-    
     
     public LoginAsCredentialsRequestorCompatibilityTests() throws IOException {
         super();
@@ -35,7 +32,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     public void testLoginWithNoParams() {
     	final String URL = "/login";
     	beginAt(URL);
-    	assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+    	assertFormElementPresent(LOGIN_TOKEN);
     }
     
     public void testGatewayWithServiceWithNoTgt() throws UnsupportedEncodingException {
@@ -81,7 +78,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         setFormElement(FORM_PASSWORD, getGoodPassword());
         final String URL = "/login";
         submit();
-        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        assertCookiePresent(COOKIE_TGC_ID);
         beginAt(URL);
         assertFormNotPresent(FORM_USERNAME);
     }
@@ -100,7 +97,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         final String URL = "/login?gateway=" + GATEWAY;
         
         beginAt(URL);
-        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        assertFormElementPresent(LOGIN_TOKEN);
     }
     
     /**
@@ -188,12 +185,12 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
-        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        assertCookiePresent(COOKIE_TGC_ID);
         beginAt(renewUrl);
         
         // test that we're at the login screen (no ST was issued).
         assertFormPresent();
-        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        assertFormElementPresent(LOGIN_TOKEN);
     }
     
     /**
@@ -210,12 +207,12 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
-        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        assertCookiePresent(COOKIE_TGC_ID);
         beginAt(nonNullRenewUrl);
         
         // test that we're at the login screen (no ST was issued).
         assertFormPresent();
-        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        assertFormElementPresent(LOGIN_TOKEN);
         
         // test what when renew "is set" but no particular value is given
         // CAS server behaves as if renew=true
@@ -223,7 +220,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         beginAt(renewSetUrl);
         // test that we're at the login screen (no ST was issued).
         assertFormPresent();
-        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        assertFormElementPresent(LOGIN_TOKEN);
         
         
     }
@@ -236,7 +233,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     	beginAt("/login");
         assertFormElementPresent(FORM_USERNAME);
         assertFormElementPresent(FORM_PASSWORD);
-        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        assertFormElementPresent(LOGIN_TOKEN);
     }
     
     /**
@@ -258,7 +255,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
-        assertCookiePresent(WebConstants.COOKIE_TGC_ID);
+        assertCookiePresent(COOKIE_TGC_ID);
         
         // then, hit login with a service, renew, and gateway
         final String renewAndGatewayUrl = "/login?service=" + encodedService + "&renew=true&gateway=true";
@@ -266,7 +263,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         
         // test that we're at the login screen (no ST was issued).
         assertFormPresent();
-        assertFormElementPresent(WebConstants.LOGIN_TOKEN);
+        assertFormElementPresent(LOGIN_TOKEN);
     	
     }
 }
