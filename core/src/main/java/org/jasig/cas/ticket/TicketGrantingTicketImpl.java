@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -48,11 +49,8 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         final TicketGrantingTicket ticketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {
         super(id, ticketGrantingTicket, policy);
-
-        if (authentication == null) {
-            throw new IllegalArgumentException(
-                "authentication cannot be null on " + this.getClass().getName());
-        }
+        
+        Assert.notNull(authentication);
 
         this.authentication = authentication;
     }

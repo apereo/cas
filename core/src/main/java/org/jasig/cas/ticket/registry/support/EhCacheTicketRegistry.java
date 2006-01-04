@@ -46,10 +46,7 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
      * @throws IllegalArgumentException if the ticket is null.
      */
     public void addTicket(final Ticket ticket) {
-        if (ticket == null) {
-            throw new IllegalArgumentException(
-                "Cannot add null Ticket to the registry.");
-        }
+        Assert.notNull(ticket);
 
         if (log.isDebugEnabled()) {
             log.debug("Added ticket [" + ticket.getId() + "] to registry.");
@@ -69,20 +66,20 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
         }
 
         try {
-            Element element = this.cache.get(ticketId);
+            final Element element = this.cache.get(ticketId);
             if (element == null) {
                 return null;
             }
 
-            Ticket ticket = (Ticket) element.getValue();
+            final Ticket ticket = (Ticket) element.getValue();
 
             if (log.isDebugEnabled()) {
                 log.debug("Ticket [" + ticketId + "] found in registry.");
             }
 
             return ticket;
-        } catch (Exception ex) {
-            IllegalStateException ise = new IllegalStateException();
+        } catch (final Exception ex) {
+            final IllegalStateException ise = new IllegalStateException();
             ise.initCause(ex);
             throw ise;
         }
@@ -100,17 +97,17 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
      */
     public Collection getTickets() {
         try {
-            List keys = this.cache.getKeys();
-            Collection items = new ArrayList();
+            final List keys = this.cache.getKeys();
+            final Collection items = new ArrayList();
 
-            for (Iterator iter = keys.iterator(); iter.hasNext();) {
-                Serializable key = (Serializable) iter.next();
-                Element element = this.cache.get(key);
+            for (final Iterator iter = keys.iterator(); iter.hasNext();) {
+                final Serializable key = (Serializable) iter.next();
+                final Element element = this.cache.get(key);
                 items.add(element.getValue());
             }
             return Collections.unmodifiableCollection(items);
         } catch (Exception e) {
-            IllegalStateException ise = new IllegalStateException();
+            final IllegalStateException ise = new IllegalStateException();
             ise.initCause(e);
             throw ise;
         }

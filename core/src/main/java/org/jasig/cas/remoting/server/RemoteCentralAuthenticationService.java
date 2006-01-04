@@ -49,11 +49,7 @@ public final class RemoteCentralAuthenticationService implements
      */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketException {
-
-        if (credentials == null) {
-            throw new IllegalArgumentException(
-                "credentials is a required field.");
-        }
+        Assert.notNull(credentials);
 
         final Errors errors = validateCredentials(credentials);
         if (errors.hasErrors()) {

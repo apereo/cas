@@ -9,9 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
+import org.springframework.util.Assert;
 
 /**
  * Implementation of the TicketRegistry that is backed by a HashMap.
@@ -34,9 +33,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
      * @throws IllegalArgumentException if the Ticket is null.
      */
     public synchronized void addTicket(final Ticket ticket) {
-        if (ticket == null) {
-            throw new IllegalArgumentException("ticket cannot be null");
-        }
+        Assert.notNull(ticket);
 
         if (log.isDebugEnabled()) {
             log.debug("Added ticket [" + ticket.getId() + "] to registry.");
