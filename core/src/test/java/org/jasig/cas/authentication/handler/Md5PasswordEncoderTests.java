@@ -12,9 +12,9 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Md5PasswordEncoderTests extends TestCase {
+public final class Md5PasswordEncoderTests extends TestCase {
 
-    private PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
+    private final PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
 
     public void testNullPassword() {
         assertEquals(null, this.passwordEncoder.encode(null));

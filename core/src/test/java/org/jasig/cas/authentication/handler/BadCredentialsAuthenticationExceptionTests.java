@@ -12,7 +12,7 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class BadCredentialsAuthenticationExceptionTests extends TestCase {
+public final class BadCredentialsAuthenticationExceptionTests extends TestCase {
 
     public void testGetCode() {
         AuthenticationException e = new BadCredentialsAuthenticationException();
