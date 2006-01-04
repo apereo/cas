@@ -7,6 +7,8 @@ package org.jasig.cas.services;
 
 import java.net.URL;
 
+import org.springframework.util.Assert;
+
 /**
  * Class representing a service we have registered with the system.
  * RegisteredServices are assumed to be "approved" services and thus have
@@ -48,9 +50,7 @@ public final class RegisteredService {
     public RegisteredService(final String id, final boolean allowedToProxy,
         final boolean forceAuthentication, final String theme,
         final URL proxyUrl) {
-        if (id == null) {
-            throw new IllegalArgumentException("id is a required parameter.");
-        }
+        Assert.notNull(id);
 
         this.id = id;
         this.allowedToProxy = allowedToProxy;

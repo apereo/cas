@@ -7,6 +7,7 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -47,11 +48,9 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         final TicketGrantingTicket ticket, final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
-
-        if (ticket == null || service == null) {
-            throw new IllegalArgumentException(
-                "ticket and service are required parameters");
-        }
+        
+        Assert.notNull(ticket);
+        Assert.notNull(service);
 
         this.service = service;
         this.fromNewLogin = fromNewLogin;

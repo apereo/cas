@@ -7,6 +7,8 @@ package org.jasig.cas.authentication.principal;
 
 import java.net.URL;
 
+import org.springframework.util.Assert;
+
 /**
  * The Credentials representing an HTTP-based service. HTTP-based services (such
  * as web applications) are often represented by the URL entry point of the
@@ -32,10 +34,7 @@ public class HttpBasedServiceCredentials implements Credentials {
      * @throws IllegalArgumentException if the callbackUrl is null.
      */
     public HttpBasedServiceCredentials(final URL callbackUrl) {
-        if (callbackUrl == null) {
-            throw new IllegalArgumentException("callbackUrl must be set on "
-                + this.getClass().getName());
-        }
+        Assert.notNull(callbackUrl);
         this.callbackUrl = callbackUrl;
     }
 

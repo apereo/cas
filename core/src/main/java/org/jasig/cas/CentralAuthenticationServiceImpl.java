@@ -93,10 +93,7 @@ public final class CentralAuthenticationServiceImpl implements
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
-        if (ticketGrantingTicketId == null) {
-            throw new IllegalArgumentException(
-                "ticketGrantingTicketId cannot be null");
-        }
+        Assert.notNull(ticketGrantingTicketId);
 
         synchronized (this.ticketRegistry) {
             if (log.isDebugEnabled()) {
@@ -123,11 +120,9 @@ public final class CentralAuthenticationServiceImpl implements
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketException {
-
-        if (ticketGrantingTicketId == null || service == null) {
-            throw new IllegalArgumentException(
-                "ticketGrantingTicketId, credentials and service are required fields.");
-        }
+        
+        Assert.notNull(ticketGrantingTicketId);
+        Assert.notNull(service);
 
         final TicketGrantingTicket ticketGrantingTicket;
         synchronized (this.ticketRegistry) {
@@ -151,7 +146,7 @@ public final class CentralAuthenticationServiceImpl implements
                     if (!newPrincipal.equals(originalPrincipal)) {
                         throw new TicketCreationException();
                     }
-                } catch (AuthenticationException e) {
+                } catch (final AuthenticationException e) {
                     throw new TicketCreationException(e);
                 }
             }
@@ -198,11 +193,9 @@ public final class CentralAuthenticationServiceImpl implements
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
 
-        if (serviceTicketId == null || credentials == null) {
-            throw new IllegalArgumentException(
-                "serviceTicketId and credentials are required fields.");
-        }
-
+        Assert.notNull(serviceTicketId);
+        Assert.notNull(credentials);
+        
         try {
             final Authentication authentication = this.authenticationManager
                 .authenticate(credentials);
@@ -227,7 +220,7 @@ public final class CentralAuthenticationServiceImpl implements
 
                 return ticketGrantingTicket.getId();
             }
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
         }
     }
@@ -238,10 +231,8 @@ public final class CentralAuthenticationServiceImpl implements
      */
     public Assertion validateServiceTicket(final String serviceTicketId,
         final Service service) throws TicketException {
-        if (serviceTicketId == null || service == null) {
-            throw new IllegalArgumentException(
-                "serviceTicketId, and service cannot be null.");
-        }
+        Assert.notNull(serviceTicketId);
+        Assert.notNull(service);
 
         synchronized (this.ticketRegistry) {
             final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
@@ -294,13 +285,11 @@ public final class CentralAuthenticationServiceImpl implements
      */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
+        Assert.notNull(credentials);
+        
         if (log.isDebugEnabled()) {
             log.debug("Attempting to create TicketGrantingTicket for "
                 + credentials);
-        }
-        if (credentials == null) {
-            throw new IllegalArgumentException(
-                "credentials is a required field.");
         }
 
         try {
@@ -317,7 +306,7 @@ public final class CentralAuthenticationServiceImpl implements
 
                 return ticketGrantingTicket.getId();
             }
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
         }
     }

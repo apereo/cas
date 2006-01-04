@@ -8,6 +8,7 @@ package org.jasig.cas.ticket;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.util.Assert;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -49,10 +50,8 @@ public abstract class AbstractTicket implements Ticket {
      */
     public AbstractTicket(final String id, final TicketGrantingTicket ticket,
         final ExpirationPolicy expirationPolicy) {
-        if (expirationPolicy == null || id == null) {
-            throw new IllegalArgumentException(
-                "id and expirationPolicy are required parameters.");
-        }
+        Assert.notNull(expirationPolicy);
+        Assert.notNull(id);
 
         this.id = id;
         this.lastTimeUsed = System.currentTimeMillis();

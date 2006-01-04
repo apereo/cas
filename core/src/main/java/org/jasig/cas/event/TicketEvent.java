@@ -8,6 +8,7 @@ package org.jasig.cas.event;
 import java.io.Serializable;
 
 import org.jasig.cas.ticket.Ticket;
+import org.springframework.util.Assert;
 
 /**
  * Event representing an action taken on a ticket including the creation,
@@ -81,16 +82,8 @@ public class TicketEvent extends AbstractEvent {
         final TicketEventType ticketEventType, final String ticketId) {
         super((ticket == null) ? (Object) ticketId : ticket);
 
-        if (ticketEventType == null) {
-            throw new IllegalArgumentException(
-                "ticketEventType cannot be null on "
-                    + this.getClass().getName());
-        }
-
-        if (ticketId == null && ticket == null) {
-            throw new IllegalArgumentException(
-                "Either ticketId or Ticket need to be provided.");
-        }
+        Assert.notNull(ticketEventType);
+        Assert.isTrue(ticketId != null || ticket != null);
 
         if (ticket != null) {
             this.ticketId = ticket.getId();

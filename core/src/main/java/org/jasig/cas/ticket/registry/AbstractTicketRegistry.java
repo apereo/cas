@@ -8,6 +8,7 @@ package org.jasig.cas.ticket.registry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
+import org.springframework.util.Assert;
 
 /**
  * 
@@ -28,9 +29,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     public final synchronized Ticket getTicket(final String ticketId,
         final Class clazz) {
-        if (clazz == null) {
-            throw new IllegalArgumentException("clazz cannot be null");
-        }
+        Assert.notNull(clazz);
 
         final Ticket ticket = this.getTicket(ticketId);
 
@@ -46,5 +45,4 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
         return ticket;
     }
-
 }
