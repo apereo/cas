@@ -4,10 +4,10 @@
    xmlns:util="jelly:util"
    xmlns:maven="jelly:maven">
 
-	<preGoal name="site">
+<!-- 	<preGoal name="site">
 		<attainGoal name="statcvs" />
 		<attainGoal name="xdoc" />
-	</preGoal>
+	</preGoal> -->
 
     <postGoal name="site">
         <attainGoal name="dashboard:report-single"/>
