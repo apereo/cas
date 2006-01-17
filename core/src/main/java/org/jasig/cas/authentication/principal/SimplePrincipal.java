@@ -8,6 +8,7 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.util.Assert;
 
 /**
  * Simplest implementation of a Principal. Provides no additional attributes
@@ -33,9 +34,7 @@ public class SimplePrincipal implements Principal {
      * @throws IllegalArgumentException if the id is null
      */
     public SimplePrincipal(final String id) {
-        if (id == null) {
-            throw new IllegalArgumentException("id is a required parameter.");
-        }
+        Assert.notNull(id);
         this.id = id;
     }
 

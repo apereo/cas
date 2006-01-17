@@ -8,6 +8,7 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.util.Assert;
 
 /**
  * The simplest implementation of a representation of a service. Provides no
@@ -33,10 +34,7 @@ public class SimpleService implements Service {
      * @throws IllegalArgumentException if the ID is null
      */
     public SimpleService(final String id) {
-
-        if (id == null) {
-            throw new IllegalArgumentException("ID cannot be null");
-        }
+        Assert.notNull(id);
 
         this.id = id;
     }

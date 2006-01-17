@@ -12,6 +12,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
 
 /**
  * Default implementation of the Assertion interface which returns the minimum
@@ -45,10 +46,9 @@ public final class ImmutableAssertionImpl implements Assertion {
      */
     public ImmutableAssertionImpl(final List principals, final Service service,
         final boolean fromNewLogin) {
-        if (principals == null || service == null || principals.isEmpty()) {
-            throw new IllegalArgumentException(
-                "principals cannot be null or empty.");
-        }
+        Assert.notNull(principals);
+        Assert.notNull(service);
+        Assert.notEmpty(principals);
 
         this.principals = principals;
         this.service = service;
