@@ -45,19 +45,6 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     public abstract TicketRegistry getNewTicketRegistry() throws Exception;
 
     /**
-     * Method to add a null to the ticket cache. This should cause an illegal
-     * state exception.
-     */
-    public void testAddNullTicketToCache() {
-        try {
-            this.ticketRegistry.addTicket(null);
-            fail("IllegalargumentException expected.");
-        } catch (IllegalArgumentException e) {
-            // don't need to do anything
-        }
-    }
-
-    /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add
      * the ticket and return. Failure upon any exception.
      */
@@ -97,18 +84,6 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
         } catch (Exception e) {
             System.out.println(e);
             fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
-
-    public void testGetExistingTicketWithNoClass() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST", null);
-            fail("IllegalArgumentException expected.");
-        } catch (IllegalArgumentException e) {
-            return;
         }
     }
 

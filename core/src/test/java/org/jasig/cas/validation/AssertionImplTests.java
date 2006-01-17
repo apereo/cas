@@ -25,26 +25,6 @@ import junit.framework.TestCase;
  */
 public class AssertionImplTests extends TestCase {
 
-    public void testNullParameters() {
-        try {
-            new ImmutableAssertionImpl(null, null, false);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-
-        fail("IllegalArgumentException expected.");
-    }
-
-    public void testEmptyParameters() {
-        try {
-            new ImmutableAssertionImpl(new ArrayList(), null, false);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-
-        fail("IllegalArgumentException expected.");
-    }
-
     public void testGettersForChainedPrincipals() {
         final List list = new ArrayList();
 

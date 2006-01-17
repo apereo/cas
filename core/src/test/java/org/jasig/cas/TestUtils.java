@@ -38,8 +38,6 @@ public final class TestUtils {
 
     private static final String CONST_PASSWORD = "test1";
 
-    private static final String CONST_GOOD_URL = "https://www.acs.rutgers.edu";
-
     private static final String CONST_BAD_URL = "http://www.acs.rutgers.edu";
 
     private static final String CONST_CREDENTIALS = "credentials";
@@ -51,6 +49,8 @@ public final class TestUtils {
     public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
+    
+    public static final String CONST_GOOD_URL = "https://www.acs.rutgers.edu";
 
     private TestUtils() {
         // do not instanciate

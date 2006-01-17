@@ -19,15 +19,6 @@ import junit.framework.TestCase;
  */
 public class SimpleServiceTests extends TestCase {
 
-    public void testNullId() {
-        try {
-            TestUtils.getService(null);
-            fail("IllegalArgumentException expected.");
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-    }
-
     public void testProperId() {
         assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils
             .getService().getId());

@@ -57,16 +57,6 @@ public class RemoteCentralAuthenticationServiceTests extends
         }
     }
 
-    public void testNullCredentials() throws TicketException {
-        try {
-            this.remoteCentralAuthenticationService
-                .createTicketGrantingTicket(null);
-            fail("IllegalArgumentException expected.");
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-    }
-
     public void testValidCredentials() throws TicketException {
         this.remoteCentralAuthenticationService
             .createTicketGrantingTicket(TestUtils
