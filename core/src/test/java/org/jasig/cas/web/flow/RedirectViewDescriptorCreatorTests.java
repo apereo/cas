@@ -7,7 +7,10 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.ViewDescriptor;
+import org.springframework.webflow.execution.servlet.ServletEvent;
 import org.springframework.webflow.test.MockRequestContext;
 
 import junit.framework.TestCase;
@@ -31,9 +34,10 @@ public class RedirectViewDescriptorCreatorTests extends TestCase {
 
     public void testGetViewDescriptor() {
         final MockRequestContext context = new MockRequestContext();
-        ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE,
-            SERVICE);
-        ContextUtils.addAttributeToFlowScope(context, WebConstants.TICKET,
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", SERVICE);
+        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
+        ContextUtils.addAttribute(context, WebConstants.TICKET,
             TICKET);
 
         final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator
@@ -45,8 +49,9 @@ public class RedirectViewDescriptorCreatorTests extends TestCase {
 
     public void testGetViewDescriptorNoTicket() {
         final MockRequestContext context = new MockRequestContext();
-        ContextUtils.addAttributeToFlowScope(context, WebConstants.SERVICE,
-            SERVICE);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", SERVICE);
+        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
 
         final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator
             .createViewDescriptor(context);

@@ -1,15 +1,12 @@
 /*
- * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
 package org.jasig.cas.authentication.principal;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
 
@@ -18,13 +15,14 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class HttpBasedServiceCredentialsToPrincipalResolverTests extends
+public final class HttpBasedServiceCredentialsToPrincipalResolverTests extends
     TestCase {
 
     private CredentialsToPrincipalResolver resolver = new HttpBasedServiceCredentialsToPrincipalResolver();
 
     public void testInValidSupportsCredentials() {
-        assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
+        assertFalse(this.resolver.supports(TestUtils
+            .getCredentialsWithSameUsernameAndPassword()));
     }
 
     public void testNullSupportsCredentials() {
@@ -32,24 +30,13 @@ public class HttpBasedServiceCredentialsToPrincipalResolverTests extends
     }
 
     public void testValidSupportsCredentials() {
-        try {
-            assertTrue(this.resolver.supports(new HttpBasedServiceCredentials(
-                new URL("http://www.rutgers.edu"))));
-        } catch (MalformedURLException e) {
-            fail("Invalid URL supplied.");
-        }
+        assertTrue(this.resolver.supports(TestUtils
+            .getHttpBasedServiceCredentials()));
     }
 
     public void testValidCredentials() {
-        try {
-            HttpBasedServiceCredentials request = new HttpBasedServiceCredentials(
-                new URL("http://www.rutgers.edu"));
-
-            Principal p = this.resolver.resolvePrincipal(request);
-
-            assertEquals(p.getId(), request.getCallbackUrl().toExternalForm());
-        } catch (MalformedURLException e) {
-            fail("Invalid URL supplied.");
-        }
+        assertEquals(this.resolver.resolvePrincipal(
+            TestUtils.getHttpBasedServiceCredentials()).getId(), TestUtils
+            .getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
     }
 }

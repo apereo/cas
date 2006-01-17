@@ -18,16 +18,6 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 public class CentralAuthenticationServiceImplTests extends
     AbstractCentralAuthenticationServiceTest {
 
-    public void testNullCredentialsOnTicketGrantingTicketCreation()
-        throws TicketException {
-        try {
-            getCentralAuthenticationService().createTicketGrantingTicket(null);
-            fail(TestUtils.CONST_EXCEPTION_EXPECTED);
-        } catch (IllegalArgumentException e) {
-            // nothing to do here, exception is expected.
-        }
-    }
-
     public void testBadCredentialsOnTicketGrantingTicketCreation() {
         try {
             getCentralAuthenticationService().createTicketGrantingTicket(
@@ -45,15 +35,6 @@ public class CentralAuthenticationServiceImplTests extends
                     TestUtils.getCredentialsWithSameUsernameAndPassword()));
         } catch (TicketException e) {
             fail(TestUtils.CONST_EXCEPTION_NON_EXPECTED);
-        }
-    }
-
-    public void testDestroyTicketGrantingTicketWithNull() {
-        try {
-            getCentralAuthenticationService().destroyTicketGrantingTicket(null);
-            fail(TestUtils.CONST_EXCEPTION_EXPECTED);
-        } catch (IllegalArgumentException e) {
-            // nothing to do here, exception is expected.
         }
     }
 
@@ -149,26 +130,6 @@ public class CentralAuthenticationServiceImplTests extends
                 serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
-            // nothing to do here, exception is expected.
-        }
-    }
-
-    public void testDelegateTicketGrantingTicketWithNullParams()
-        throws TicketException {
-        try {
-            getCentralAuthenticationService().delegateTicketGrantingTicket(
-                null, null);
-            fail(TestUtils.CONST_EXCEPTION_EXPECTED);
-        } catch (IllegalArgumentException e) {
-            // nothing to do here, exception is expected.
-        }
-    }
-
-    public void testGrantServiceTicketWithNullParams() throws TicketException {
-        try {
-            getCentralAuthenticationService().grantServiceTicket(null, null);
-            fail(TestUtils.CONST_EXCEPTION_EXPECTED);
-        } catch (IllegalArgumentException e) {
             // nothing to do here, exception is expected.
         }
     }
@@ -288,16 +249,4 @@ public class CentralAuthenticationServiceImplTests extends
             // nothing to do here, exception is expected.
         }
     }
-
-    public void testValidateServiceTicketWithNullCredentials()
-        throws TicketException {
-
-        try {
-            getCentralAuthenticationService().validateServiceTicket(null, null);
-            fail(TestUtils.CONST_EXCEPTION_EXPECTED);
-        } catch (IllegalArgumentException e) {
-            // nothing to do here, exception is expected.
-        }
-    }
-
 }

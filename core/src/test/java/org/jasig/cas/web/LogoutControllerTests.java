@@ -8,7 +8,7 @@ package org.jasig.cas.web;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
@@ -21,13 +21,32 @@ import org.springframework.web.servlet.view.RedirectView;
 public class LogoutControllerTests extends
     AbstractCentralAuthenticationServiceTest {
 
+    private static final String COOKIE_TGC_ID = "CASTGC";
+    
     private LogoutController logoutController;
+    
+    private SecureCookieGenerator warnCookieGenerator;
+    
+    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected void onSetUp() throws Exception {
         super.onSetUp();
+        
+       this.warnCookieGenerator = new SecureCookieGenerator();
+        
+        this.warnCookieGenerator.setCookieName("test");
+        this.warnCookieGenerator.setCookieValue("true");
+        
+        this.ticketGrantingTicketCookieGenerator = new SecureCookieGenerator();
+        this.ticketGrantingTicketCookieGenerator.setCookieName(COOKIE_TGC_ID);
+        
+        
         this.logoutController = new LogoutController();
         this.logoutController
             .setCentralAuthenticationService(getCentralAuthenticationService());
+        this.logoutController.setLogoutView("test");
+        this.logoutController.setWarnCookieGenerator(this.warnCookieGenerator);
+        this.logoutController.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
         this.logoutController.afterPropertiesSet();
     }
 
@@ -54,7 +73,7 @@ public class LogoutControllerTests extends
 
     public void testLogoutCookie() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        Cookie cookie = new Cookie(WebConstants.COOKIE_TGC_ID, "test");
+        Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         request.setCookies(new Cookie[] {cookie});
         assertNotNull(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()));

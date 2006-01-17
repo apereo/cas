@@ -19,7 +19,7 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class SimpleTestUsernamePasswordHandlerTests extends TestCase {
+public final class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
 

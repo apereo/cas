@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;
@@ -20,13 +21,33 @@ import junit.framework.TestCase;
  */
 public class WarnActionTests extends TestCase {
 
+    private static final String COOKIE_PRIVACY = "CASPRIVACY";
+    
     private WarnAction warnAction = new WarnAction();
+    
+    private SecureCookieGenerator warnCookieGenerator;
+    
+    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
+    
+    protected void setUp() throws Exception {
+        this.warnAction = new WarnAction();
+        this.warnCookieGenerator = new SecureCookieGenerator();
+        
+        this.warnCookieGenerator.setCookieName(COOKIE_PRIVACY);
+        this.warnCookieGenerator.setCookieValue("true");
+        
+        this.ticketGrantingTicketCookieGenerator = new SecureCookieGenerator();
+        this.ticketGrantingTicketCookieGenerator.setCookieName("test");
+        
+        this.warnAction.setWarnCookieGenerator(this.warnCookieGenerator);
+        this.warnAction.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
+    }
 
     public void testWarnFromCookie() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setCookies(new Cookie[] {new Cookie(
-            WebConstants.COOKIE_PRIVACY,
-            WebConstants.COOKIE_DEFAULT_FILLED_VALUE)});
+            COOKIE_PRIVACY,
+            "true")});
 
         assertEquals("warn", this.warnAction.doExecute(
             TestUtils.getContext(request)).getId());

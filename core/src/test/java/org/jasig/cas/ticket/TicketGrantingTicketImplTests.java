@@ -135,15 +135,4 @@ public class TicketGrantingTicketImplTests extends TestCase {
         t.updateLastTimeUsed();
         assertEquals(t.getLastTimeUsed(), System.currentTimeMillis());
     }
-
-    public void testNoIdOrPolicy() {
-        try {
-            new TicketGrantingTicketImpl(null, null, TestUtils
-                .getAuthentication(), null);
-
-            fail("IllegalArgumentException expected.");
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-    }
 }
