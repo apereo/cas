@@ -7,6 +7,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewDescriptor;
 import org.springframework.webflow.ViewDescriptorCreator;
@@ -25,15 +26,14 @@ public final class RedirectViewDescriptorCreator implements
 
     /**
      * @return ViewDescriptor constructed from a ServiceUrl stored in the
-     * FlowScope as WebConstants.SERVICE and the model consisting of the ticket
-     * id stored in the flowscope.
+     * RequestScope as WebConstants.SERVICE and the model consisting of the
+     * ticket id stored in the request scope.
      */
-    public ViewDescriptor createViewDescriptor(
-        final RequestContext requestContext) {
-        final String service = (String) ContextUtils.getAttributeFromFlowScope(
-            requestContext, WebConstants.SERVICE);
-        final String ticket = (String) ContextUtils.getAttributeFromFlowScope(
-            requestContext, WebConstants.TICKET);
+    public ViewDescriptor createViewDescriptor(final RequestContext context) {
+        final String service = WebUtils.getRequestParameterAsString(
+            ContextUtils.getHttpServletRequest(context), WebConstants.SERVICE);
+        final String ticket = (String) ContextUtils.getAttribute(context,
+            WebConstants.TICKET);
 
         if (ticket != null) {
             final ViewDescriptor descriptor = new ViewDescriptor(service,

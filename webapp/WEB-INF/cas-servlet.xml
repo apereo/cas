@@ -162,6 +162,15 @@
 		<property
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
+		<property
+			name="logoutView"
+			value="casLogoutView" />
+		<property 
+			name="warnCookieGenerator"
+			ref="warnCookieGenerator" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 <!--
 uncomment this to allow access to web service
@@ -212,20 +221,73 @@ uncomment this to allow access to web service
 	</bean>
 
 	<bean
-		id="loginFormAction"
-		class="org.jasig.cas.web.flow.LoginFormAction">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
+		id="abstractLoginAction"
+		abstract="true"
+		class="org.jasig.cas.web.flow.AbstractLoginAction">
+		<property name="warnCookieGenerator" ref="warnCookieGenerator" />
+		<property name="ticketGrantingTicketCookieGenerator" ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 
-	<bean id="warnAction" class="org.jasig.cas.web.flow.WarnAction" />
+	<bean
+		id="abstractCasLoginAction"
+		abstract="true"
+		parent="abstractLoginAction"
+		class="org.jasig.cas.web.flow.AbstractCasLoginAction">
+		<property name="centralAuthenticationService" ref="centralAuthenticationService" />
+	</bean>
+	
+	<bean
+		id="authenticationViaFormAction"
+		parent="abstractCasLoginAction"
+		class="org.jasig.cas.web.flow.AuthenticationViaFormAction" />
+		
+	<bean
+		id="gatewayRequestCheckAction"
+		parent="abstractLoginAction"
+		class="org.jasig.cas.web.flow.GatewayRequestCheckAction" />
+	
+	<bean
+		id="generateServiceTicketAction"
+		parent="abstractCasLoginAction"
+		class="org.jasig.cas.web.flow.GenerateServiceTicketAction" />
+	
+	<bean
+		id="hasServiceCheckAction"
+		parent="abstractLoginAction"
+		class="org.jasig.cas.web.flow.HasServiceCheckAction" />
+		
+	<bean
+		id="renewRequestCheckAction"
+		parent="abstractLoginAction"
+		class="org.jasig.cas.web.flow.RenewRequestCheckAction" />
 
 	<bean
-		id="ticketGrantingTicketCheckAction"
-		class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
+		id="sendTicketGrantingTicketAction"
+		parent="abstractCasLoginAction"
+		class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction" />
+		
+	<bean
+		id="ticketGrantingTicketExistsAction"
+		parent="abstractLoginAction"
+		class="org.jasig.cas.web.flow.TicketGrantingTicketExistsAction" />
+		
+	<bean
+		id="warnAction"
+		parent="abstractLoginAction"
+		class="org.jasig.cas.web.flow.WarnAction" />	
+	
+	<bean id="warnCookieGenerator" class="org.jasig.cas.web.util.SecureCookieGenerator">
+		<property name="cookieSecure" value="true" />
+		<property name="cookieValue" value="true" />
+		<property name="cookieMaxAge" value="-1" />
+		<property name="cookieName" value="CASPRIVACY" />
+		<property name="cookiePath" value="/cas/" />
+	</bean>
+	
+	<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.util.SecureCookieGenerator">
+		<property name="cookieSecure" value="true" />
+		<property name="cookieMaxAge" value="-1" />
+		<property name="cookieName" value="CASTGC" />
+		<property name="cookiePath" value="/cas/" />
 	</bean>
 </beans>

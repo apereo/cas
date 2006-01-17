@@ -2,52 +2,73 @@
 <!DOCTYPE webflow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow.dtd">
 
-<webflow id="loginFlow" start-state="ticketGrantingTicketCheck">
-	<!-- 
-		The TicketGrantingTicketCheck reads the TGT cookie and looks for the TicketId and attempts to use it to generate a service ticket.
-		It also handles the gateway functions.
-	-->
-	<action-state id="ticketGrantingTicketCheck">
-		<action bean="ticketGrantingTicketCheckAction" />
-		<transition on="success" to="warn" />
-		<transition on="error" to="viewLoginForm" />
-		<transition on="gateway" to="redirect" />
-		<transition on="noService" to="viewGenericLogin" />
+<webflow id="loginFlow" start-state="ticketGrantingTicketExistsCheckAction">
+	<action-state id="ticketGrantingTicketExistsCheckAction">
+		<action bean="ticketGrantingTicketExistsAction" />
+		<transition on="ticketGrantingTicketExists" to="hasServiceCheck" />
+		<transition on="noTicketGrantingTicketExists" to="gatewayRequestCheck" />
 	</action-state>
-
-	<!--  
-		Note: If you needed to check for an alternate form of credentials such as a Client Certificate, it
-		would be beneficial to do it in between the TGT check and the action to display the login form.
-	 -->
-
+	
+	<action-state id="gatewayRequestCheck">
+		<action bean="gatewayRequestCheckAction" />
+		<transition on="gateway" to="redirect" />
+		<transition on="authenticationRequired" to="viewLoginForm" />
+	</action-state>
+	
+	<action-state id="hasServiceCheck">
+		<action bean="hasServiceCheckAction" />
+		<transition on="authenticatedButNoService" to="viewGenericLoginSuccess" />
+		<transition on="hasService" to="renewRequestCheck" />
+	</action-state>
+	
+	<action-state id="renewRequestCheck">
+		<action bean="renewRequestCheckAction" />
+		<transition on="authenticationRequired" to="viewLoginForm" />
+		<transition on="generateServiceTicket" to="generateServiceTicket" />
+	</action-state>
+	
 	<!-- 
-		View of the Login Form which normally displays username/password fields.
-	-->
+	<action-state id="startAuthenticate">
+		<action bean="x509Check" />
+		<transition on="success" to="sendTicketGrantingTicket" />
+		<transition on="error" to="viewLoginForm" />
+	</action-state>
+	 -->
 	<view-state id="viewLoginForm" view="casLoginView">
 		<transition on="submit" to="bindAndValidate" />
 	</view-state>
-
-	<!-- 
-		This action does the automatic Spring Binding that matches parameters from the request object to properties on
-		the form object.  On error, it goes back to the viewLoginForm.  Otherwise it continues the submission process.
-	-->
+	
 	<action-state id="bindAndValidate">
-		<action bean="loginFormAction" />
+		<action bean="authenticationViaFormAction" />
 		<transition on="success" to="submit" />
 		<transition on="error" to="viewLoginForm" />
 	</action-state>
-
-	<!-- 
-		The "submit" action is the action that occurs when a user submits a form.  It marshalls the
-		submitted credentials and attempts to obtain to obtain a TicketGrantingTicket (and optionally a ServiceTicket).
-	-->
+	
 	<action-state id="submit">
-		<action bean="loginFormAction" method="submit" />
-		<transition on="noService" to="viewGenericLogin" />
+		<action bean="authenticationViaFormAction" method="submit" />
 		<transition on="warn" to="warn" />
+		<transition on="success" to="sendTicketGrantingTicket" />
 		<transition on="error" to="viewLoginForm" />
 	</action-state>
-
+	
+	<action-state id="sendTicketGrantingTicket">
+		<action bean="sendTicketGrantingTicketAction" />
+		<transition on="success" to="serviceCheck" />
+	</action-state>
+	
+	<action-state id="serviceCheck">
+		<action bean="hasServiceCheckAction" />
+		<transition on="authenticatedButNoService" to="viewGenericLoginSuccess" />
+		<transition on="hasService" to="generateServiceTicket" />
+	</action-state>
+	
+	<action-state id="generateServiceTicket">
+		<action bean="generateServiceTicketAction" />
+		<transition on="success" to ="warn" />
+		<transition on="error" to="viewLoginForm" />
+		<transition on="gateway" to="redirect" />
+	</action-state>
+	
 	<!-- 
 		The "warn" action makes the determination of whether to redirect directly to the requested
 		service or display the "confirmation" page to go back to the server.
@@ -62,14 +83,13 @@
 		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
 		They have only initialized their single-sign on session.
 	-->
-	<end-state id="viewGenericLogin" view="casLoginGenericSuccessView" />
+	<end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView" />
 
 	<!-- 
 		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a 
 		view defines in default_views.properties that display the "Please click here to go to the service." message.
 	-->
 	<end-state id="showWarningView" view="casLoginConfirmView" />
-
 
 	<!-- 
 		The "redirect" end state allows CAS to properly end the workflow while still redirecting

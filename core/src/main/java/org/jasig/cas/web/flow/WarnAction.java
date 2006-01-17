@@ -5,14 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.support.WebUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
@@ -25,34 +20,24 @@ import org.springframework.webflow.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class WarnAction extends AbstractCasAction {
+public final class WarnAction extends AbstractLoginAction {
 
-    /**
-     * Event label for the event that will trigger the view state for warning
-     * before going back to the service.
-     */
+    /** Event to publish in the scenario where a warning is required. */
     private static final String EVENT_WARN = "warn";
 
+    protected Event doExecuteInternal(final RequestContext context,
+        final String ticketGrantingTicketId, final String service,
+        final boolean gateway, final boolean renew, final boolean warn) {
+        ContextUtils.addAttribute(context, WebConstants.SERVICE, service);
+        return warn ? warn() : redirect();
+    }
+
     /**
-     * Event label for the event that will trigger the end state of being
-     * redirected back to the service.
+     * Method to generate an event for a warning.
+     * 
+     * @return an event symbolized by the word "warn".
      */
-    private static final String EVENT_REDIRECT = "redirect";
-
-    protected ModelAndEvent doExecuteInternal(final RequestContext context,
-        final Map attributes) throws Exception {
-        final HttpServletRequest request = ContextUtils
-            .getHttpServletRequest(context);
-        final boolean warn = Boolean.valueOf(
-            WebUtils.getCookieValue(request, WebConstants.COOKIE_PRIVACY))
-            .booleanValue();
-        final boolean requestWarn = StringUtils.hasText(request
-            .getParameter(WebConstants.WARN));
-
-        if (warn && !requestWarn) {
-            return new ModelAndEvent(result(EVENT_WARN));
-        }
-
-        return new ModelAndEvent(result(EVENT_REDIRECT));
+    private final Event warn() {
+        return result(EVENT_WARN);
     }
 }
