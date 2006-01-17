@@ -7,6 +7,8 @@ package org.jasig.cas.services;
 
 import java.net.URL;
 
+import org.springframework.util.Assert;
+
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -35,9 +37,7 @@ public final class CallbackRegisteredService {
     public CallbackRegisteredService(final String id, final boolean allowedToProxy,
         final boolean forceAuthentication, final String theme,
         final SingleSignoutCallback singleSignoutCallback, final URL proxyUrl) {
-        if (id == null) {
-            throw new IllegalArgumentException("id is a required parameter.");
-        }
+        Assert.notNull(id);
 
         this.id = id;
         this.allowedToProxy = allowedToProxy;

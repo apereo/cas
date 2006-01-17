@@ -11,6 +11,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
@@ -27,11 +28,8 @@ public abstract class AbstractAuthentication implements Authentication {
 
     public AbstractAuthentication(final Principal principal,
         final Map attributes) {
-        if (principal == null || attributes == null) {
-            throw new IllegalArgumentException(
-                "principal and attributs cannot be null on "
-                    + this.getClass().getName());
-        }
+        Assert.notNull(principal);
+        Assert.notNull(attributes);
 
         this.principal = principal;
         this.attributes = attributes;
