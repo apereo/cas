@@ -46,7 +46,7 @@
 			<form method="post" action="">
 				<spring:hasBindErrors name="credentials">
 				  <c:forEach var="error" items="${errors.allErrors}">
-				      <br /><spring:message code="${error.code}" />
+				      <br /><spring:message code="${error.code}" text="${error.defaultMessage}" />
 				  </c:forEach>
 				</spring:hasBindErrors>
 				<fieldset>
