@@ -19,12 +19,28 @@ public final class WebUtils {
     private WebUtils() {
         // private constructor so we can't instanciate the class.
     }
-    
-    public static String getRequestParameterAsString(final HttpServletRequest request, final String parameter) {
+
+    /**
+     * Retrieve a parameter from the request as a String.
+     * 
+     * @param request the HttpServletRequest object to get the parameter from.
+     * @param parameter the name of the parameter.
+     * @return the String version of the paramater.
+     */
+    public static String getRequestParameterAsString(
+        final HttpServletRequest request, final String parameter) {
         return request.getParameter(parameter);
     }
-    
-    public static boolean getRequestParameterAsBoolean(final HttpServletRequest request, final String parameter) {
+
+    /**
+     * Retrieve the parameter from the request as a boolean.
+     * 
+     * @param request the HttpServletRequest object to get the parameter from.
+     * @param parameter the name of the parameter.
+     * @return the parameter value as a boolean
+     */
+    public static boolean getRequestParameterAsBoolean(
+        final HttpServletRequest request, final String parameter) {
         return request.getParameter(parameter) != null;
     }
 }
