@@ -22,11 +22,14 @@ import org.springframework.web.util.WebUtils;
  * @since 3.0.4
  */
 public final class SecureCookieGenerator extends CookieGenerator {
-    
-    private static final boolean DEFAULT_SECURE_VALUE = true; 
-    
+
+    /** Default value for the secure flag. */
+    private static final boolean DEFAULT_SECURE_VALUE = true;
+
+    /** The cookie value to store (versus a different one for each request) */
     private String cookieValue;
-    
+
+    /** Flag of whether the cookie should be marked as secure or not. */
     private boolean cookieSecure = DEFAULT_SECURE_VALUE;
 
     protected Cookie createCookie(final String cookieValue) {
@@ -34,26 +37,35 @@ public final class SecureCookieGenerator extends CookieGenerator {
         cookie.setSecure(this.cookieSecure);
         return cookie;
     }
-    
+
     public void addCookie(final HttpServletResponse response) {
         addCookie(response, this.cookieValue == null ? "" : this.cookieValue);
     }
-    
+
+    /**
+     * Retrieve the cookie value from the request.
+     * 
+     * @param request the HttpServletRequest to retrieve the cookie value from.
+     * @return the cookie value or null if the cookie does not exist.
+     */
     public String getCookieValue(final HttpServletRequest request) {
-        final Cookie cookie = WebUtils.getCookie(
-            request, getCookieName());
+        final Cookie cookie = WebUtils.getCookie(request, getCookieName());
         return cookie == null ? null : cookie.getValue();
     }
 
+    /**
+     * The cookie value we wish all cookies to have.
+     * 
+     * @return the cookie value.
+     */
     public String getCookieValue() {
         return this.cookieValue;
     }
 
-    
     public void setCookieValue(final String cookieValue) {
         this.cookieValue = cookieValue;
     }
-    
+
     public void setCookieSecure(final boolean cookieSecure) {
         this.cookieSecure = cookieSecure;
     }
