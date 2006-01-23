@@ -190,7 +190,6 @@ public final class AuthenticationViaFormAction extends FormAction implements
 
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
-        final String name = this.getClass().getName();
 
         Assert.notNull(this.centralAuthenticationService);
         Assert.notNull(this.warnCookieGenerator);
