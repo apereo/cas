@@ -21,4 +21,11 @@ public class DefaultUniqueTicketIdGeneratorTests extends TestCase {
         assertNotSame(generator.getNewTicketId("TEST"), generator
             .getNewTicketId("TEST"));
     }
+    
+    public void testSuffix() {
+        final String SUFFIX = "suffix";
+        DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
+        
+        assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
+    }
 }

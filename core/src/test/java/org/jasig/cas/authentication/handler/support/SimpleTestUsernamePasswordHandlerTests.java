@@ -9,6 +9,7 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
 
@@ -65,5 +66,26 @@ public final class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     public void testAfterPropertiesSet() throws Exception {
         this.authenticationHandler.afterPropertiesSet();
+    }
+    
+    public void testAlternateClass() {
+        this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
+        assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
+    }
+    
+    public void testAlternateClassWithSubclassSupport() {
+        this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
+        this.authenticationHandler.setSupportSubClasses(true);
+        assertTrue(this.authenticationHandler.supports(new ExtendedCredentials()));
+    }
+    
+    public void testAlternateClassWithNoSubclassSupport() {
+        this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
+        this.authenticationHandler.setSupportSubClasses(false);
+        assertFalse(this.authenticationHandler.supports(new ExtendedCredentials()));
+    }
+    
+    private class ExtendedCredentials extends UsernamePasswordCredentials {
+        // nothing to see here
     }
 }
