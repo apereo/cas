@@ -28,9 +28,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class ServiceValidateControllerTests extends
     AbstractCentralAuthenticationServiceTest {
 
-    private static final String CONST_SUCCESS_VIEW = "successView";
+    private static final String CONST_SUCCESS_VIEW = "casServiceSuccessView";
     
-    private static final String CONST_FAILURE_VIEW = "failureView";
+    private static final String CONST_FAILURE_VIEW = "casServiceFailureView";
     
     private ServiceValidateController serviceValidateController;
 
@@ -41,8 +41,6 @@ public class ServiceValidateControllerTests extends
         this.serviceValidateController
             .setCentralAuthenticationService(getCentralAuthenticationService());
         this.serviceValidateController.setApplicationContext(context);
-        this.serviceValidateController.setSuccessView(CONST_SUCCESS_VIEW);
-        this.serviceValidateController.setFailureView(CONST_FAILURE_VIEW);
         this.serviceValidateController.afterPropertiesSet();
     }
 
@@ -67,8 +65,8 @@ public class ServiceValidateControllerTests extends
     public void testAfterPropertesSetTestEverything() throws Exception {
         this.serviceValidateController
             .setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
-        this.serviceValidateController.setFailureView("test");
-        this.serviceValidateController.setSuccessView("test");
+        this.serviceValidateController.setSuccessView(CONST_SUCCESS_VIEW);
+        this.serviceValidateController.setFailureView(CONST_FAILURE_VIEW);
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
         this.serviceValidateController.afterPropertiesSet();
     }
