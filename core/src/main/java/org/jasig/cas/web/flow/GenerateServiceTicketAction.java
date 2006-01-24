@@ -20,7 +20,7 @@ import org.springframework.webflow.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public class GenerateServiceTicketAction extends AbstractCasLoginAction {
+public final class GenerateServiceTicketAction extends AbstractCasLoginAction {
 
     protected Event doExecuteInternal(final RequestContext context,
         final String ticketGrantingTicketId, final String service,

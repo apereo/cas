@@ -16,7 +16,7 @@ import org.springframework.util.StringUtils;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public class X509CertificateCredentialsToIdentifierPrincipalResolver extends
+public final class X509CertificateCredentialsToIdentifierPrincipalResolver extends
     AbstractX509CertificateCredentialsToPrincipalResolver implements
     InitializingBean {
 

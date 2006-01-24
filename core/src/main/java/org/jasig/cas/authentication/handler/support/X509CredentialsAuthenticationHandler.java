@@ -25,7 +25,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public class X509CredentialsAuthenticationHandler implements
+public final class X509CredentialsAuthenticationHandler implements
     AuthenticationHandler, InitializingBean {
 
     /** Instance of Logging. */
