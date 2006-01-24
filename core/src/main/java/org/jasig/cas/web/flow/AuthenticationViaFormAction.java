@@ -101,10 +101,10 @@ public final class AuthenticationViaFormAction extends FormAction implements
                     serviceTicketId);
                 setWarningCookie(response, warn);
                 return warn();
-            } catch (TicketException e) {
+            } catch (final TicketException e) {
                 if (e.getCause() != null
-                    && e.getCause().getClass().isAssignableFrom(
-                        AuthenticationException.class)) {
+                    && AuthenticationException.class.isAssignableFrom(
+                        e.getCause().getClass())) {
                     populateErrorsInstance(context, e);
                     return error();
                 }
