@@ -3,13 +3,15 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.handler;
+package org.jasig.cas.authentication.handler.support;
 
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.X509CertificateCredentials;
 import org.springframework.beans.factory.InitializingBean;
