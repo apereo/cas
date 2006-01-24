@@ -32,6 +32,10 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
     protected Principal resolvePrincipalInternal(
         final X509Certificate certificate) {
         String username = this.identifier;
+        
+        if (log.isInfoEnabled()) {
+            log.info("Creating principal for: " + certificate.getSubjectDN().getName());
+        }
 
         final String[] entries = certificate.getSubjectDN().getName().split(
             ENTRIES_DELIMITER);
@@ -39,7 +43,7 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
         for (int i = 0; i < entries.length; i++) {
             final String[] nameValuePair = entries[i]
                 .split(NAME_VALUE_PAIR_DELIMITER);
-            final String name = nameValuePair[0];
+            final String name = nameValuePair[0].trim();
             final String value = nameValuePair[1];
 
             if (log.isDebugEnabled()) {
@@ -50,6 +54,10 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
         }
 
         return new SimplePrincipal(username);
+    }
+    
+    public void setIdentifier(final String identifier) {
+        this.identifier = identifier;
     }
 
     public void afterPropertiesSet() throws Exception {
