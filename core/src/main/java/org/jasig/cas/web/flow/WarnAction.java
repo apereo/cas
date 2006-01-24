@@ -37,7 +37,7 @@ public final class WarnAction extends AbstractLoginAction {
      * 
      * @return an event symbolized by the word "warn".
      */
-    private final Event warn() {
+    private Event warn() {
         return result(EVENT_WARN);
     }
 }

@@ -24,7 +24,7 @@ import org.springframework.webflow.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public class TicketGrantingTicketExistsAction extends AbstractLoginAction {
+public final class TicketGrantingTicketExistsAction extends AbstractLoginAction {
 
     /** Event string to denote a TicketGrantingTicket exists. */
     private static final String EVENT_TICKET_GRANTING_TICKET_EXISTS = "ticketGrantingTicketExists";

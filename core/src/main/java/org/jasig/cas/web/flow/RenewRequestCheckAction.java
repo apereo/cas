@@ -37,7 +37,7 @@ public final class RenewRequestCheckAction extends AbstractLoginAction {
      * 
      * @return the event to notify of a generateServiceTicket request.
      */
-    private final Event generateServiceTicket() {
+    private Event generateServiceTicket() {
         return result(EVENT_GENERATE_SERVICE_TICKET);
     }
 }
