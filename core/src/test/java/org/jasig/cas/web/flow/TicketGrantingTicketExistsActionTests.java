@@ -25,7 +25,7 @@ public class TicketGrantingTicketExistsActionTests extends TestCase {
     }
 
     public void testTicketDoesntExists() {
-        assertEquals("ticketGrantingTicketExists", this.action
+        assertEquals("noTicketGrantingTicketExists", this.action
             .doExecuteInternal(new MockRequestContext(), null, "service",
                 true, true, true).getId());
     }
