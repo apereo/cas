@@ -10,8 +10,8 @@
 		class="org.jasig.cas.event.advice.HttpRequestHandlerInterceptorAdapter" />
 		
 	<bean
-		id="centralAuthenticationServiceAfterReturningAdvice"
-		class="org.jasig.cas.event.advice.CentralAuthenticationServiceAfterReturningAdvice">
+		id="centralAuthenticationServiceMethodInterceptor"
+		class="org.jasig.cas.event.advice.CentralAuthenticationServiceMethodInterceptor">
 		<property
 			name="ticketRegistry"
 			ref="ticketRegistry" />
@@ -52,7 +52,7 @@
 		class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
 		<constructor-arg>
 			<ref
-				local="centralAuthenticationServiceAfterReturningAdvice" />
+				local="centralAuthenticationServiceMethodInterceptor" />
 			</constructor-arg>
 		<property
 			name="patterns">

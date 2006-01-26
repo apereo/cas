@@ -5,8 +5,11 @@
  */
 package org.jasig.cas.event.advice;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.TestUtils;
@@ -24,14 +27,14 @@ import org.springframework.context.ApplicationEventPublisher;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class CentralAuthenticationServiceAfterReturningAdviceTests extends
+public class CentralAuthenticationServiceMethodInterceptorTests extends
     AbstractCentralAuthenticationServiceTest {
 
-    private CentralAuthenticationServiceAfterReturningAdvice advice = new CentralAuthenticationServiceAfterReturningAdvice();
+    private CentralAuthenticationServiceMethodInterceptor advice = new CentralAuthenticationServiceMethodInterceptor();
 
     TicketEvent event;
 
-    public CentralAuthenticationServiceAfterReturningAdviceTests() {
+    public CentralAuthenticationServiceMethodInterceptorTests() {
         super();
         this.advice
             .setApplicationEventPublisher(new MockApplicationEventPublisher());
@@ -53,8 +56,8 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        this.advice.afterReturning(ticketId, method, new Object[] {TestUtils
-            .getCredentialsWithSameUsernameAndPassword()}, null);
+        this.advice.invoke(new MockMethodInvocation(new Object[] {TestUtils
+            .getCredentialsWithSameUsernameAndPassword()}, method, ticketId));
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.CREATE_TICKET_GRANTING_TICKET, this.event
@@ -69,7 +72,7 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
 
-        this.advice.afterReturning(null, method, new Object[] {ticketId}, null);
+        this.advice.invoke(new MockMethodInvocation(new Object[] {ticketId}, method, null));
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.DESTROY_TICKET_GRANTING_TICKET, this.event
@@ -89,9 +92,8 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
             .delegateTicketGrantingTicket(serviceTicketId,
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        this.advice.afterReturning(ticketGrantingTicketId, method,
-            new Object[] {serviceTicketId,
-                TestUtils.getCredentialsWithSameUsernameAndPassword()}, null);
+        this.advice.invoke(new MockMethodInvocation(new Object[] {serviceTicketId,
+            TestUtils.getCredentialsWithSameUsernameAndPassword()}, method, ticketGrantingTicketId));
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.CREATE_TICKET_GRANTING_TICKET, this.event
@@ -107,8 +109,8 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
         String serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId, new SimpleService("test"));
 
-        this.advice.afterReturning(serviceTicketId, method, new Object[] {
-            ticketId, new SimpleService("test")}, null);
+        this.advice.invoke(new MockMethodInvocation(new Object[] {
+            ticketId, new SimpleService("test")}, method, serviceTicketId));
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.CREATE_SERVCE_TICKET, this.event
@@ -126,8 +128,8 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
         Assertion assertion = getCentralAuthenticationService()
             .validateServiceTicket(serviceTicketId, new SimpleService("test"));
 
-        this.advice.afterReturning(assertion, method, new Object[] {
-            serviceTicketId, new SimpleService("test")}, null);
+        this.advice.invoke(new MockMethodInvocation(new Object[] {
+            serviceTicketId, new SimpleService("test")}, method, assertion));
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.VALIDATE_SERVICE_TICKET, this.event
@@ -136,7 +138,7 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
 
     public void testInvalidMethod() throws Throwable {
         Method method = AuthenticationHandler.class.getDeclaredMethods()[0];
-        this.advice.afterReturning(null, method, new Object[] {}, null);
+        this.advice.invoke(new MockMethodInvocation(new Object[] {}, method, null));
 
         assertNull(this.event);
     }
@@ -145,7 +147,43 @@ public class CentralAuthenticationServiceAfterReturningAdviceTests extends
         ApplicationEventPublisher {
 
         public void publishEvent(ApplicationEvent arg0) {
-            CentralAuthenticationServiceAfterReturningAdviceTests.this.event = (TicketEvent) arg0;
+            CentralAuthenticationServiceMethodInterceptorTests.this.event = (TicketEvent) arg0;
         }
+    }
+    
+    protected class MockMethodInvocation implements MethodInvocation {
+        private Object[] arguments;
+        
+        private Method method;
+        
+        private Object returnValue;
+        
+        protected MockMethodInvocation(final Object[] arguments, final Method method, final Object returnValue) {
+            this.arguments = arguments;
+            this.method = method;
+            this.returnValue = returnValue;
+        }
+
+        public Method getMethod() {
+            return method;
+        }
+
+        public Object[] getArguments() {
+            return arguments;
+        }
+
+        public AccessibleObject getStaticPart() {
+            return null;
+        }
+
+        public Object getThis() {
+            return null;
+        }
+
+        public Object proceed() throws Throwable {
+            return returnValue;
+        }
+        
+        
     }
 }
