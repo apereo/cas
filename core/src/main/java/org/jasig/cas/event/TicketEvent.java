@@ -143,5 +143,9 @@ public class TicketEvent extends AbstractEvent {
         public String getEventTypeAsString() {
             return this.name;
         }
+        
+        public String toString() {
+            return this.name;
+        }
     }
 }
