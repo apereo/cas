@@ -57,7 +57,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
     }
     
     public void testValidCertificateWithNotTrustedIssuer() throws Exception {
-        ((X509CredentialsAuthenticationHandler) authenticationHandler).setTrustedIssuers(new String[] {"test"});
+        ((X509CredentialsAuthenticationHandler) this.authenticationHandler).setTrustedIssuers(new String[] {"test"});
         final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
         
         assertFalse(this.authenticationHandler.authenticate(credentials));
