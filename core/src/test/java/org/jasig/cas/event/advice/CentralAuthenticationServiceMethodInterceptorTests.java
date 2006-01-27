@@ -8,7 +8,6 @@ package org.jasig.cas.event.advice;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
-import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.CentralAuthenticationService;
@@ -165,11 +164,11 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
         }
 
         public Method getMethod() {
-            return method;
+            return this.method;
         }
 
         public Object[] getArguments() {
-            return arguments;
+            return this.arguments;
         }
 
         public AccessibleObject getStaticPart() {
@@ -181,7 +180,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
         }
 
         public Object proceed() throws Throwable {
-            return returnValue;
+            return this.returnValue;
         }
         
         

@@ -53,7 +53,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     public void testTgtToSet() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final String TICKET_VALUE = "test";
-        ContextUtils.addAttribute(this.context, AbstractCasLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, TICKET_VALUE);
+        ContextUtils.addAttribute(this.context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, TICKET_VALUE);
         this.context.setSourceEvent(new ServletEvent(new MockHttpServletRequest(), response));
         
         assertEquals("success", this.action.execute(this.context).getId());
@@ -65,7 +65,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final String TICKET_VALUE = "test";
         request.setCookies(new Cookie[] {new Cookie("TGT", "test5")});
-        ContextUtils.addAttribute(this.context, AbstractCasLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, TICKET_VALUE);
+        ContextUtils.addAttribute(this.context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, TICKET_VALUE);
         this.context.setSourceEvent(new ServletEvent(request, response));
         
         assertEquals("success", this.action.execute(this.context).getId());
