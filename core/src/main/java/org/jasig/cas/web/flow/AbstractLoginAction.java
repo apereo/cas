@@ -28,8 +28,6 @@ public abstract class AbstractLoginAction extends AbstractAction {
 
     private static final String EVENT_AUTHENTICATION_REQUIRED = "authenticationRequired";
 
-    private static final String EVENT_CONTINUE_CHECK = "continueCheck";
-
     private static final String EVENT_AUTHENTICATED_BUT_NO_SERVICE = "authenticatedButNoService";
 
     private static final String EVENT_GATEWAY = "gateway";
@@ -67,10 +65,6 @@ public abstract class AbstractLoginAction extends AbstractAction {
 
     protected final Event authenticationRequired() {
         return result(EVENT_AUTHENTICATION_REQUIRED);
-    }
-
-    protected final Event continueCheck() {
-        return result(EVENT_CONTINUE_CHECK);
     }
 
     protected final Event authenticatedButNoService() {
