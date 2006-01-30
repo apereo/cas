@@ -1,6 +1,17 @@
 <jsp:directive.include file="includes/top.jsp" />
 
 
+	<%--
+	NOTE: By default our example JSP page purposefully leaves out the url in the action attribute of a FORM tag.
+	This is to allow the page to POST to itself, retaining all the request paramteters that were initially presented
+	on the GET request.
+	
+	If you are going to provide a value for the action attribute, be sure to also place the request parameters in 
+	the action attribute.  Otherwise, CAS may exhibit unexpected behavior. E.x. if you forget to pass in the
+	service paramter, CAS will do a generic login rather than a redirect to the service.
+	
+	You can easily access request parameters via the Request object.
+	--%>
 	<form method="post" action="">
 	
 		<spring:hasBindErrors name="credentials">
