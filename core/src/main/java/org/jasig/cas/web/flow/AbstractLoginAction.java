@@ -108,11 +108,6 @@ public abstract class AbstractLoginAction extends AbstractAction {
         return this.ticketGrantingTicketCookieGenerator;
     }
 
-    
-    protected final SecureCookieGenerator getWarnCookieGenerator() {
-        return this.warnCookieGenerator;
-    }
-
     protected void initActionInternal() {
         // to be overwritten as needed
     }
