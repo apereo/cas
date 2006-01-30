@@ -30,6 +30,12 @@
 				<p>
 					<label for="password"><span class="accesskey">P</span>assword:</label><br />
 
+				<%--
+				NOTE: Certain browsers will offer the option of caching passwords for a user.  There is a non-standard attribute,
+				"autocomplete" that when set to "off" will tell certain browsers not to prompt to cache credentials.  For more
+				information, see the following web page:
+				http://www.geocities.com/technofundo/tech/web/ie_autocomplete.html
+				--%>
 					<input class="required" type="password" id="password" name="password" size="32" tabindex="2" accesskey="p" />
 				</p>
 
