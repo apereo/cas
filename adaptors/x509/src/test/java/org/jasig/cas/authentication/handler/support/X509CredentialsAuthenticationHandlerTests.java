@@ -7,9 +7,9 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.AbstractX509CertificateTests;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.principal.AbstractX509CertificateTests;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.authentication.principal.X509CertificateCredentials;
 
 /**
@@ -35,7 +35,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
     }
     
     public void testDoesntSupportClass() {
-        assertFalse(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
     }
     
     public void testInvalidCertificate() throws Exception {

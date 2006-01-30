@@ -7,7 +7,6 @@ package org.jasig.cas.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.AbstractX509CertificateTests;
 
 public class X509CertificateCredentialsToDistinguishedNamePrincipalResolverTests
     extends AbstractX509CertificateTests {
