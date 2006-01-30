@@ -7,10 +7,6 @@ package org.jasig.cas.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.AbstractX509CertificateTests;
-import org.jasig.cas.TestUtils;
-
-
 public class X509CertificateCredentialsToSerialNumberPrincipalResolverTests
     extends AbstractX509CertificateTests {
 
@@ -30,7 +26,7 @@ public class X509CertificateCredentialsToSerialNumberPrincipalResolverTests
     }
     
     public void testSupportFalse() {
-        assertFalse(this.resolver.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
     }
     
 }

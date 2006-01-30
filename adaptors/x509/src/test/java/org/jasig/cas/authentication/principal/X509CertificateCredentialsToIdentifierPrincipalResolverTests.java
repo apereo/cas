@@ -10,7 +10,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.AbstractX509CertificateTests;
 
 /**
  * @author Markus Härnvi, Altcom
@@ -28,12 +27,17 @@ public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
         credentials.setCertificate(getTestCertificate());
 
         X509CertificateCredentialsToIdentifierPrincipalResolver resolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
-        resolver.afterPropertiesSet();
         resolver.setIdentifier("$C, $CN");
+        resolver.afterPropertiesSet();
         assertEquals("The principals should match", resolver.resolvePrincipal(
             credentials).getId(), "SE, test testsson");
         assertFalse("The principals should not match", resolver
             .resolvePrincipal(credentials).getId().equals("SE, Altcom Test"));
+    }
+    
+    public void testCheckIdentifier() throws Exception {
+        X509CertificateCredentialsToIdentifierPrincipalResolver resolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
+        resolver.afterPropertiesSet();
     }
 
     private X509Certificate getTestCertificate() {
