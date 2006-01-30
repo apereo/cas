@@ -1,0 +1,48 @@
+.blurbs {width:31%;	float:left;}
+.blurbs li {margin-bottom: 15px;}
+
+#deployers li, .blurbs li li {margin-bottom: 0px;}
+
+.more a {padding-right:15px; background: url("../images/arrow-more.png") 100% 50% no-repeat;}
+
+#content h3 {padding:0; color:black; margin:15px 15px 10px 0;	border-bottom:solid 1px #aaa;}
+#content h3 img {float:right; border:0;}
+
+html,body,table {font-family:Verdana, sans-serif; font-size:12px;}
+
+html,body {padding:0; margin:0;}
+
+p {line-height:1.5em;}
+
+#header {clear:left; width:730px;	margin-left:auto;	margin-right:auto; left:50%;}
+#header img {margin-left:-20px;}
+
+#content {width:750px; margin-left:auto; margin-right:auto; left:50%;}
+#content .space {margin:auto 20px;}
+
+.blurb {font-size:14px;}
+
+#copyright {font-size:.9em; color:#999;	padding-top:3px;	text-align:center;}
+#copyright p {margin:0;}
+#copyright a {font-weight:bold; color:#aaa; text-decoration:none;}
+#copyright a:hover {color:#555; background:none;}
+
+a {color:#3b439f;}/* 323265 */
+a:hover {background:#e4ecec;}
+
+ul {list-style-type:none; padding:0; margin:0; color:#000;}
+ul li {background:transparent url("../images/bullet.gif") no-repeat 0 .5em; padding-left:1em; line-height:1.5em;}
+ul ul {margin-top:.5em;}
+
+ol li {line-height: 1.5em;}
+
+#welcome {background:#eee;  margin:1em 0 1em; padding:15px; url("../images/key-point_back.gif") right repeat-y; position:relative;}
+#welcome p {padding:0; margin-top:0;}
+#welcome ul {margin-bottom:5px;}
+#welcome ul li {line-height:1.5em;}
+#welcome:before {line-height:0.1; font-size:1px; background:transparent url("../images/key-point_tr.gif") no-repeat top right; margin:-15px -15px 0 -15px; height:15px; display:block; content:url("../images/key-point_tl.gif");}
+#welcome:after {display:block; clear:both; padding-top:15px; line-height:0.1; font-size:1px; content:url("../images/key-point_bl.gif"); margin:-15px; height:8px; background:transparent url("../images/key-point_br.gif") scroll no-repeat bottom right;}
+
+#welcome h3 {margin:0 0 .7em; padding:0;}
+
+#errors {padding-bottom: 20px; padding-top: 20px;}
