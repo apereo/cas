@@ -26,7 +26,7 @@ import org.springframework.webflow.RequestContext;
 public abstract class AbstractNonInteractiveCredentialsAction extends
     AbstractCasLoginAction {
 
-    protected Event doExecuteInternal(final RequestContext context,
+    protected final Event doExecuteInternal(final RequestContext context,
         final String ticketGrantingTicketId, final String service,
         final boolean gateway, final boolean renew, final boolean warn) {
 
