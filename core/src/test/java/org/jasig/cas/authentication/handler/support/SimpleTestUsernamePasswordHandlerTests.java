@@ -86,6 +86,8 @@ public final class SimpleTestUsernamePasswordHandlerTests extends TestCase {
     }
     
     private class ExtendedCredentials extends UsernamePasswordCredentials {
+
+        private static final long serialVersionUID = 406992293105518363L;
         // nothing to see here
     }
 }
