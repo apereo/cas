@@ -23,6 +23,7 @@ import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -56,23 +57,16 @@ public final class AuthenticationViaFormAction extends FormAction implements
     /** Generator for Ticket Granting Ticket Cookie. */
     private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    public Event bind(RequestContext context) throws Exception {
-        final Event event = super.bind(context);
-
-        if (event.getId().equals(ERROR_EVENT_ID)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Error in calling super.bind");
-            }
-            return event;
-        }
-
+    protected void doBind(final RequestContext context, final DataBinder binder)
+        throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
-        final Credentials credentials = (Credentials) getFormObject(context);
+        final Credentials credentials = (Credentials) binder.getTarget();
         if (this.credentialsBinder != null) {
             this.credentialsBinder.bind(request, credentials);
         }
-        return event;
+
+        super.doBind(context, binder);
     }
 
     public Event submit(final RequestContext context) throws Exception {
@@ -103,8 +97,8 @@ public final class AuthenticationViaFormAction extends FormAction implements
                 return warn();
             } catch (final TicketException e) {
                 if (e.getCause() != null
-                    && AuthenticationException.class.isAssignableFrom(
-                        e.getCause().getClass())) {
+                    && AuthenticationException.class.isAssignableFrom(e
+                        .getCause().getClass())) {
                     populateErrorsInstance(context, e);
                     return error();
                 }
