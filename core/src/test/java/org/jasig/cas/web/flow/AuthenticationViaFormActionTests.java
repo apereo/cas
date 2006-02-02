@@ -190,7 +190,7 @@ public class AuthenticationViaFormActionTests extends
             new BindException(TestUtils.getCredentialsWithSameUsernameAndPassword(),
                 "credentials"));
         
-        this.action.bind(context);
+        assertEquals("success", this.action.bindAndValidate(context).getId());
 
     }
     
@@ -218,7 +218,7 @@ public class AuthenticationViaFormActionTests extends
             
         };
         this.action.setCredentialsBinder(cb);
-        this.action.bind(context);
+        this.action.bindAndValidate(context);
         
         assertEquals("test2", c.getUsername());
 
