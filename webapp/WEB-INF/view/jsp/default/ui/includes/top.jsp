@@ -16,11 +16,11 @@
 			<div id="jasig-logo"><a href="http://www.ja-sig.org"><img src="images/jasig-logo.gif" width="71" height="19" alt="JA-SIG logo" /></a></div>
 			<form action="http://www.google.com/u/jasig" method="get" style="display:inline;margin:0;padding:0;">
 			<ul id="jasig-nav">
-				<li><a href="http://www.ja-sig.org">ja-sig.org</a>:</li>
 				<li><a href="http://www.ja-sig.org/products/">Products</a></li>
 				<li><a href="http://www.ja-sig.org/conferences.html">Conferences</a></li>
 				<li><a href="http://clearinghouse.ja-sig.org/">Clearinghouse</a></li>
 				<li><a href="http://www.ja-sig.org/facebook/">Community</a></li>
+				<li><a href="http://developer.ja-sig.org">Developers</a></li>
 				<li>
 					<input value="ja-sig.org" name="domains" type="hidden" />
 					<input value="ja-sig.org" name="sitesearch" type="hidden" />

@@ -24,14 +24,11 @@
 		  </div>
 		</spring:hasBindErrors>
 	
-		<div id="welcome" width="100%">
-			<div style="margin-left: auto; margin-right: auto; left: 50%">
+		<div id="welcome">
 			<p>Congratulations on bringing CAS online!  The default authentication handler authenticates where usernames equal passwords: go ahead, try it out. </p>
 			<p>For security reasons, please Log Out and Exit your web browser when you are done accessing services that require authentication!</p>
-			
 
-			
-			
+			<div style="margin-left: auto; margin-right: auto; left: 50%; width: 300px;">
 				<p><strong>Enter your JA-SIG NetID and Password.</strong></p>
 				<p>
 					<label for="username"><span class="accesskey">N</span>etID:</label><br />
@@ -57,7 +54,7 @@
 				<input type="hidden" name="_currentStateId" value="${currentStateId}" />
 				<input type="hidden" name="_eventId" value="submit" />
 
-				<p><input type="submit" class="button" accesskey="l" value="LOGIN" tabindex="4" />
+				<p style="text-align: center;"><input type="submit" class="button" accesskey="l" value="LOGIN" tabindex="4" />
 				   <input type="reset" class="button" accesskey="c" value="CLEAR" tabindex="5" /></p>
 			</div>
 		</div>
