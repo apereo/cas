@@ -274,7 +274,14 @@ uncomment this to allow access to web service
 	<bean
 		id="warnAction"
 		parent="abstractLoginAction"
-		class="org.jasig.cas.web.flow.WarnAction" />	
+		class="org.jasig.cas.web.flow.WarnAction" />
+
+<!--
+	<bean
+		id="x509Check"
+		parent="abstractCasLoginAction"
+		class="org.ja-sig.cas.web.flow.X509CertificateCredentialsNonInteractiveAction" />
+ -->
 	
 	<bean id="warnCookieGenerator" class="org.jasig.cas.web.util.SecureCookieGenerator">
 		<property name="cookieSecure" value="true" />
