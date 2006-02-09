@@ -6,9 +6,9 @@
   <name>JA-SIG Central Authentication Service - Legacy CAS AuthenticationHandler Adaptor</name>
   <siteDirectory></siteDirectory>
   <repository>
-    <connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas</connection>
-    <developerConnection>scm:cvs:pserver:${maven.username}@uportal.org:/home/cvs/jasig:cas</developerConnection>
-    <url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/adaptors/cas/</url>
+    <connection>scm:cvs:pserver:anonymous@developer.ja-sig.org:/home/cvs/jasig:cas</connection>
+    <developerConnection>scm:cvs:pserver:${maven.username}@developer.ja-sig.org:/home/cvs/jasig:cas</developerConnection>
+    <url>http://developer.ja-sig.org/source/viewrep/jasig/cas3/adaptors/cas</url>
   </repository>
   <build>
     <resources>

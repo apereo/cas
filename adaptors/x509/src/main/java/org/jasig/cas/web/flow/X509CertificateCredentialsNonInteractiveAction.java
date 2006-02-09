@@ -36,9 +36,11 @@ public final class X509CertificateCredentialsNonInteractiveAction extends
             .getAttribute(CERTIFICATE_REQUEST_ATTRIBUTE);
 
         if (certificates == null || certificates.length == 0) {
+            logger.debug("Certificates not found in request.");
             return null;
         }
 
+        logger.debug("Certificate found in request.");
         return new X509CertificateCredentials(certificates);
     }
 }

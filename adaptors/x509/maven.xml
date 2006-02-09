@@ -5,10 +5,11 @@
    xmlns:maven="jelly:maven"
   >
 <echo>Using root dir: ${basedir}</echo>
+
     <postGoal name="jar:jar">
         <j:if test="${context.getVariable('signature.alias') != null}">
         	<echo>signature.alias defined; signing JAR(s)...</echo>
-			<ant:signjar lazy="true" alias="${signature.alias}" storepass="${signature.storepass}" keystore="${signature.keystore}">
+			<ant:signjar lazy="true" alias="${signature.alias}" storepass="${signature.storepass}" keystore="${signature.keystore}"  keypass="${signature.keypass}">
 				<fileset dir="${maven.build.dir}">
 					<include name="*.jar"/>
 				</fileset>
