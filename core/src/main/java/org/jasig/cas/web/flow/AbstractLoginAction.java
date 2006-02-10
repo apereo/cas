@@ -36,9 +36,9 @@ public abstract class AbstractLoginAction extends AbstractAction {
 
     private static final String EVENT_REDIRECT = "redirect";
 
-    protected static final String REQUEST_PARAM_GATEWAY = "gateway";
+    public static final String REQUEST_PARAM_GATEWAY = "gateway";
 
-    protected static final String REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET = "ticketGrantingTicketId";
+    public static final String REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET = "ticketGrantingTicketId";
 
     private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
 
