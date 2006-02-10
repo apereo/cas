@@ -17,7 +17,7 @@ import org.springframework.webflow.RequestContext;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
- * credentials such as client certifices, NTML, etc.
+ * credentials such as client certifices, NTLM, etc.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
