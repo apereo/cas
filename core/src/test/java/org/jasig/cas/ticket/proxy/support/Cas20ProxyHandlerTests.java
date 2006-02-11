@@ -28,12 +28,11 @@ public class Cas20ProxyHandlerTests extends TestCase {
     }
 
     public void testAfterPropertiesSet() {
-        Cas20ProxyHandler handler = new Cas20ProxyHandler();
-        handler
+        this.handler
             .setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
 
         try {
-            handler.afterPropertiesSet();
+            this.handler.afterPropertiesSet();
         } catch (Exception e) {
             fail("Exception not expected.");
         }
@@ -45,8 +44,7 @@ public class Cas20ProxyHandlerTests extends TestCase {
     }
 
     public void testValidProxyTicketWithQueryString() throws Exception {
-        Cas20ProxyHandler handler = new Cas20ProxyHandler();
-        handler.afterPropertiesSet();
+        this.handler.afterPropertiesSet();
         assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(
             new URL("http://www.rutgers.edu/?test=test")),
             "proxyGrantingTicketId"));
