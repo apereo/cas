@@ -1,6 +1,4 @@
 <jsp:directive.include file="includes/top.jsp" />
-
-
 	<%--
 	NOTE: By default our example JSP page purposefully leaves out the url in the action attribute of a FORM tag.
 	This is to allow the page to POST to itself, retaining all the request paramteters that were initially presented
@@ -25,18 +23,18 @@
 		</spring:hasBindErrors>
 	
 		<div id="welcome">
-			<p>Congratulations on bringing CAS online!  The default authentication handler authenticates where usernames equal passwords: go ahead, try it out. </p>
-			<p>For security reasons, please Log Out and Exit your web browser when you are done accessing services that require authentication!</p>
+			<p><spring:message code="screen.welcome.welcome" /></p>
+			<p><spring:message code="screen.welcome.security" /></p>
 
 			<div style="margin-left: auto; margin-right: auto; left: 50%; width: 300px;">
-				<p><strong>Enter your JA-SIG NetID and Password.</strong></p>
+				<p><strong><spring:message code="screen.welcome.instructions" /></strong></p>
 				<p>
-					<label for="username"><span class="accesskey">N</span>etID:</label><br />
+					<label for="username"><spring:message code="screen.welcome.label.netid" /></label><br />
 					<input class="required" id="username" name="username" size="32" tabindex="1" accesskey="n" />
 				</p>
 
 				<p>
-					<label for="password"><span class="accesskey">P</span>assword:</label><br />
+					<label for="password"><spring:message code="screen.welcome.label.password" /></label><br />
 
 				<%--
 				NOTE: Certain browsers will offer the option of caching passwords for a user.  There is a non-standard attribute,
@@ -48,14 +46,28 @@
 				</p>
 
 				<p><input style="width:1.5em;border:0;padding:0;margin:0;" type="checkbox" id="warn" name="warn" value="true" tabindex="3" /> 
-				   <label for="warn"  accesskey="w"><span class="accesskey">W</span>arn me before logging me into other sites.</label></p>
+				   <label for="warn"  accesskey="w"><spring:message code="screen.welcome.label.warn" /></label></p>
 
 				<input type="hidden" name="lt" value="${flowExecutionId}" />
 				<input type="hidden" name="_currentStateId" value="${currentStateId}" />
 				<input type="hidden" name="_eventId" value="submit" />
 
-				<p style="text-align: center;"><input type="submit" class="button" accesskey="l" value="LOGIN" tabindex="4" />
-				   <input type="reset" class="button" accesskey="c" value="CLEAR" tabindex="5" /></p>
+				<p style="text-align: center;"><input type="submit" class="button" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" />
+				   <input type="reset" class="button" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" /></p>
+				<p style="text-align: center;">
+					Languages:
+					<c:set var="query" value="" />
+					<c:forEach var="item" items="${pageContext.request.parameterNames}" varStatus="status">
+						<c:if test="${item != 'locale'}">
+							<c:set var="query" value="${query}${item}=${param[item]}" />
+							<c:if test="${not status.last}">
+								<c:set var="query" value="${query}&amp;" />
+							</c:if>
+						</c:if>
+					</c:forEach>
+					<a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a> |
+					<a href="login?${query}${not empty query ? '&' : ''}locale=nl">Dutch</a>
+				</p>
 			</div>
 		</div>
 	</form>

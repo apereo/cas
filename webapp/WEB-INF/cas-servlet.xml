@@ -22,6 +22,15 @@
 			value="0" />
 	</bean>
 	
+	<!-- Locale Resolver -->
+	<bean
+		id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
+		
+	<bean
+		id="localeChangeInterceptor"
+		class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+	
 	<bean
 		id="urlBasedViewResolver"
 		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
@@ -44,7 +53,7 @@
 
 	<!-- Handler Mapping -->
 	<bean
-		id="handlerMapping"
+		id="handlerMappingA"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property
 			name="mappings">
@@ -53,6 +62,22 @@
 					key="/login">
 					loginController
 				</prop>
+			</props>
+		</property>
+		<property
+			name="interceptors">
+			<list>
+				<ref bean="localeChangeInterceptor" />
+			</list>
+		</property>
+	</bean>
+		
+	<bean
+		id="handlerMappingB"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property
+			name="mappings">
+			<props>
 				<prop
 					key="/logout">
 					logoutController
