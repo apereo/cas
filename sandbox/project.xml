@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>cas</groupId>
 			<artifactId>cas-server</artifactId>
-			<version>3.0.2-SNAPSHOT</version>
+			<version>3.0.4-RC1</version>
 			<type>jar</type>
 			<properties>
 				<war.bundle>true</war.bundle>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>opensaml</groupId>
 			<artifactId>opensaml</artifactId>
-			<version>1.0.1</version>
+			<version>1.1</version>
 			<type>jar</type>
 			<url>http://www.opensaml.org</url>
 			<properties>
