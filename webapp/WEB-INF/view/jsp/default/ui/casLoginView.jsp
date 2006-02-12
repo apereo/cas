@@ -30,7 +30,7 @@
 				<p><strong><spring:message code="screen.welcome.instructions" /></strong></p>
 				<p>
 					<label for="username"><spring:message code="screen.welcome.label.netid" /></label><br />
-					<input class="required" id="username" name="username" size="32" tabindex="1" accesskey="n" />
+					<input class="required" id="username" name="username" size="32" tabindex="1" accesskey="<spring:message code="screen.welcome.label.netid.accesskey" />" />
 				</p>
 
 				<p>
@@ -42,11 +42,11 @@
 				information, see the following web page:
 				http://www.geocities.com/technofundo/tech/web/ie_autocomplete.html
 				--%>
-					<input class="required" type="password" id="password" name="password" size="32" tabindex="2" accesskey="p" />
+					<input class="required" type="password" id="password" name="password" size="32" tabindex="2" accesskey="<spring:message code="screen.welcome.label.password.accesskey" />" />
 				</p>
 
 				<p><input style="width:1.5em;border:0;padding:0;margin:0;" type="checkbox" id="warn" name="warn" value="true" tabindex="3" /> 
-				   <label for="warn"  accesskey="w"><spring:message code="screen.welcome.label.warn" /></label></p>
+				   <label for="warn"  accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />"><spring:message code="screen.welcome.label.warn" /></label></p>
 
 				<input type="hidden" name="lt" value="${flowExecutionId}" />
 				<input type="hidden" name="_currentStateId" value="${currentStateId}" />
@@ -58,7 +58,7 @@
 					Languages:
 					<c:set var="query" value="" />
 					<c:forEach var="item" items="${pageContext.request.parameterNames}" varStatus="status">
-						<c:if test="${item != 'locale'}">
+						<c:if test="${item != 'locale' and item != 'password' and item != 'username' and item != 'lt' and item != '_currentStateId' and item != '_eventId'}">
 							<c:set var="query" value="${query}${item}=${param[item]}" />
 							<c:if test="${not status.last}">
 								<c:set var="query" value="${query}&amp;" />
