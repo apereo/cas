@@ -16,7 +16,7 @@ import org.jasig.cas.authentication.principal.X509CertificateCredentials;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
+ * @since 3.0.4
  *
  */
 public class X509CredentialsAuthenticationHandlerTests extends AbstractX509CertificateTests {
@@ -24,7 +24,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
 
     protected void setUp() throws Exception {
         final X509CredentialsAuthenticationHandler ah = new X509CredentialsAuthenticationHandler();
-        ah.setTrustedIssuers(new String[] {"rutgers", "JA-SIG"});
+        ah.setTrustedIssuer("JA-SIG");
         ah.afterPropertiesSet();
         
         this.authenticationHandler = ah;
@@ -57,7 +57,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
     }
     
     public void testValidCertificateWithNotTrustedIssuer() throws Exception {
-        ((X509CredentialsAuthenticationHandler) this.authenticationHandler).setTrustedIssuers(new String[] {"test"});
+        ((X509CredentialsAuthenticationHandler) this.authenticationHandler).setTrustedIssuer("test");
         final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
         
         assertFalse(this.authenticationHandler.authenticate(credentials));
