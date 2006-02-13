@@ -1,4 +1,4 @@
-#Mon Oct 03 11:40:53 EDT 2005
+#Mon Dec 12 09:57:37 EST 2005
 comment_clear_blank_lines=true
 comment_format_comments=true
 comment_format_header=true
@@ -10,7 +10,7 @@ comment_line_length=80
 comment_new_line_for_parameter=false
 comment_separate_root_tags=true
 eclipse.preferences.version=1
-formatter_settings_version=8
+formatter_settings_version=9
 internal.default.compliance=default
 org.eclipse.jdt.ui.exception.name=e
 org.eclipse.jdt.ui.gettersetter.use.is=true
