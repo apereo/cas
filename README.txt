@@ -1,6 +1,6 @@
 CENTRAL AUTHENTICATION SERVICE (CAS)
 --------------------------------------------------------------------
-http://www.ja-sig.org/wiki/display/CAS/Home
+http://www.ja-sig.org/products/cas/
 
 1.  INTRODUCTION
 
