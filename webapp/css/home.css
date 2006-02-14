@@ -36,7 +36,7 @@ ul ul {margin-top:.5em;}
 
 ol li {line-height: 1.5em;}
 
-#welcome {background:#eee;  margin:1em 0 1em; padding:15px; url("../images/key-point_back.gif") right repeat-y; position:relative;}
+#welcome {margin:1em 0 1em; padding:15px; background:#eee url("../images/key-point_back.gif") right repeat-y; position:relative;}
 #welcome p {padding:0; margin-top:0;}
 #welcome ul {margin-bottom:5px;}
 #welcome ul li {line-height:1.5em;}
