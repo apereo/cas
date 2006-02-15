@@ -66,8 +66,10 @@
 						</c:if>
 					</c:forEach>
 					<a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a> |
+					<a href="login?${query}${not empty query ? '&' : ''}locale=es">Spanish</a> |					
 					<a href="login?${query}${not empty query ? '&' : ''}locale=fr">French</a> |
-					<a href="login?${query}${not empty query ? '&' : ''}locale=nl">Dutch</a>
+					<a href="login?${query}${not empty query ? '&' : ''}locale=ru">Russian</a> |
+					<a href="login?${query}${not empty query ? '&' : ''}locale=nl">Nederlands</a>
 				</p>
 			</div>
 		</div>
