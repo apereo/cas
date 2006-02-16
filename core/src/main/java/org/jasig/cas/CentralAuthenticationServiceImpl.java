@@ -95,21 +95,19 @@ public final class CentralAuthenticationServiceImpl implements
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
-        synchronized (this.ticketRegistry) {
-            if (log.isDebugEnabled()) {
-                log.debug("Removing ticket [" + ticketGrantingTicketId
-                    + "] from registry.");
-            }
-            final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
-                .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        if (log.isDebugEnabled()) {
+            log.debug("Removing ticket [" + ticketGrantingTicketId
+                + "] from registry.");
+        }
+        final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
+            .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
-            if (ticket != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Ticket found.  Expiring and then deleting.");
-                }
-                ticket.expire();
-                this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+        if (ticket != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Ticket found.  Expiring and then deleting.");
             }
+            ticket.expire();
+            this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
         }
     }
 
@@ -120,65 +118,62 @@ public final class CentralAuthenticationServiceImpl implements
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketException {
-        
+
         Assert.notNull(ticketGrantingTicketId);
         Assert.notNull(service);
 
         final TicketGrantingTicket ticketGrantingTicket;
-        synchronized (this.ticketRegistry) {
-            ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
-                .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
+            .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
-            if (ticketGrantingTicket == null
-                || ticketGrantingTicket.isExpired()) {
-                throw new InvalidTicketException();
-            }
-
-            if (credentials != null) {
-                try {
-                    Authentication authentication = this.authenticationManager
-                        .authenticate(credentials);
-
-                    Principal originalPrincipal = ticketGrantingTicket
-                        .getAuthentication().getPrincipal();
-                    Principal newPrincipal = authentication.getPrincipal();
-
-                    if (!newPrincipal.equals(originalPrincipal)) {
-                        throw new TicketCreationException();
-                    }
-                } catch (final AuthenticationException e) {
-                    throw new TicketCreationException(e);
-                }
-            }
-
-            final ServiceTicket serviceTicket = ticketGrantingTicket
-                .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
-                    .getNewTicketId(ServiceTicket.PREFIX), service,
-                    this.serviceTicketExpirationPolicy);
-
-            // TODO we need a better way of handling this
-            if (credentials != null) {
-                if (log.isDebugEnabled()) {
-                    log
-                        .debug("We received a renew=true request, so setting fromNewLogin to true");
-                }
-                serviceTicket.setFromNewLogin(true);
-            }
-
-            this.ticketRegistry.addTicket(serviceTicket);
-
-            if (log.isInfoEnabled()) {
-                log.info("Granted service ticket ["
-                    + serviceTicket.getId()
-                    + "] for service ["
-                    + service.getId()
-                    + "] for user ["
-                    + serviceTicket.getGrantingTicket().getAuthentication()
-                        .getPrincipal().getId() + "]");
-            }
-
-            return serviceTicket.getId();
+        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+            throw new InvalidTicketException();
         }
+
+        if (credentials != null) {
+            try {
+                Authentication authentication = this.authenticationManager
+                    .authenticate(credentials);
+
+                Principal originalPrincipal = ticketGrantingTicket
+                    .getAuthentication().getPrincipal();
+                Principal newPrincipal = authentication.getPrincipal();
+
+                if (!newPrincipal.equals(originalPrincipal)) {
+                    throw new TicketCreationException();
+                }
+            } catch (final AuthenticationException e) {
+                throw new TicketCreationException(e);
+            }
+        }
+
+        final ServiceTicket serviceTicket = ticketGrantingTicket
+            .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
+                .getNewTicketId(ServiceTicket.PREFIX), service,
+                this.serviceTicketExpirationPolicy);
+
+        // TODO we need a better way of handling this
+        if (credentials != null) {
+            if (log.isDebugEnabled()) {
+                log
+                    .debug("We received a renew=true request, so setting fromNewLogin to true");
+            }
+            serviceTicket.setFromNewLogin(true);
+        }
+
+        this.ticketRegistry.addTicket(serviceTicket);
+
+        if (log.isInfoEnabled()) {
+            log.info("Granted service ticket ["
+                + serviceTicket.getId()
+                + "] for service ["
+                + service.getId()
+                + "] for user ["
+                + serviceTicket.getGrantingTicket().getAuthentication()
+                    .getPrincipal().getId() + "]");
+        }
+
+        return serviceTicket.getId();
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId,
@@ -195,31 +190,28 @@ public final class CentralAuthenticationServiceImpl implements
 
         Assert.notNull(serviceTicketId);
         Assert.notNull(credentials);
-        
+
         try {
             final Authentication authentication = this.authenticationManager
                 .authenticate(credentials);
 
             final ServiceTicket serviceTicket;
-            synchronized (this.ticketRegistry) {
-                serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(
-                    serviceTicketId, ServiceTicket.class);
+            serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(
+                serviceTicketId, ServiceTicket.class);
 
-                if (serviceTicket == null || serviceTicket.isExpired()) {
-                    throw new InvalidTicketException();
-                }
-
-                TicketGrantingTicket ticketGrantingTicket = serviceTicket
-                    .grantTicketGrantingTicket(
-                        this.ticketGrantingTicketUniqueTicketIdGenerator
-                            .getNewTicketId(TicketGrantingTicket.PREFIX),
-                        authentication,
-                        this.ticketGrantingTicketExpirationPolicy);
-
-                this.ticketRegistry.addTicket(ticketGrantingTicket);
-
-                return ticketGrantingTicket.getId();
+            if (serviceTicket == null || serviceTicket.isExpired()) {
+                throw new InvalidTicketException();
             }
+
+            TicketGrantingTicket ticketGrantingTicket = serviceTicket
+                .grantTicketGrantingTicket(
+                    this.ticketGrantingTicketUniqueTicketIdGenerator
+                        .getNewTicketId(TicketGrantingTicket.PREFIX),
+                    authentication, this.ticketGrantingTicketExpirationPolicy);
+
+            this.ticketRegistry.addTicket(ticketGrantingTicket);
+
+            return ticketGrantingTicket.getId();
         } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
         }
@@ -234,50 +226,48 @@ public final class CentralAuthenticationServiceImpl implements
         Assert.notNull(serviceTicketId);
         Assert.notNull(service);
 
-        synchronized (this.ticketRegistry) {
-            final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
-                .getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
+            .getTicket(serviceTicketId, ServiceTicket.class);
 
-            if (serviceTicket == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ServiceTicket [" + serviceTicketId
-                        + "] does not exist.");
-                }
-                throw new InvalidTicketException();
+        if (serviceTicket == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("ServiceTicket [" + serviceTicketId
+                    + "] does not exist.");
             }
-
-            if (serviceTicket.isExpired()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ServiceTicket [" + serviceTicketId
-                        + "] has expired.");
-                }
-                this.ticketRegistry.deleteTicket(serviceTicketId);
-                throw new InvalidTicketException();
-            }
-
-            serviceTicket.incrementCountOfUses();
-            serviceTicket.updateLastTimeUsed();
-
-            /*
-             * implemented this manual removal if expired so that registry does
-             * not grow too large.
-             */
-            if (serviceTicket.isExpired()) {
-                this.ticketRegistry.deleteTicket(serviceTicketId);
-            }
-
-            if (!service.equals(serviceTicket.getService())) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ServiceTicket [" + serviceTicketId
-                        + "] does not match supplied service.");
-                }
-                throw new TicketValidationException();
-            }
-
-            return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
-                .getChainedAuthentications(), serviceTicket.getService(),
-                serviceTicket.isFromNewLogin());
+            throw new InvalidTicketException();
         }
+
+        if (serviceTicket.isExpired()) {
+            if (log.isDebugEnabled()) {
+                log.debug("ServiceTicket [" + serviceTicketId
+                    + "] has expired.");
+            }
+            this.ticketRegistry.deleteTicket(serviceTicketId);
+            throw new InvalidTicketException();
+        }
+
+        serviceTicket.incrementCountOfUses();
+        serviceTicket.updateLastTimeUsed();
+
+        /*
+         * implemented this manual removal if expired so that registry does
+         * not grow too large.
+         */
+        if (serviceTicket.isExpired()) {
+            this.ticketRegistry.deleteTicket(serviceTicketId);
+        }
+
+        if (!service.equals(serviceTicket.getService())) {
+            if (log.isDebugEnabled()) {
+                log.debug("ServiceTicket [" + serviceTicketId
+                    + "] does not match supplied service.");
+            }
+            throw new TicketValidationException();
+        }
+
+        return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
+            .getChainedAuthentications(), serviceTicket.getService(),
+            serviceTicket.isFromNewLogin());
     }
 
     /**
@@ -286,7 +276,7 @@ public final class CentralAuthenticationServiceImpl implements
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
         Assert.notNull(credentials);
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Attempting to create TicketGrantingTicket for "
                 + credentials);
@@ -296,16 +286,14 @@ public final class CentralAuthenticationServiceImpl implements
             final Authentication authentication = this.authenticationManager
                 .authenticate(credentials);
 
-            synchronized (this.ticketRegistry) {
-                final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                    this.ticketGrantingTicketUniqueTicketIdGenerator
-                        .getNewTicketId(TicketGrantingTicket.PREFIX),
-                    authentication, this.ticketGrantingTicketExpirationPolicy);
+            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
+                this.ticketGrantingTicketUniqueTicketIdGenerator
+                    .getNewTicketId(TicketGrantingTicket.PREFIX),
+                authentication, this.ticketGrantingTicketExpirationPolicy);
 
-                this.ticketRegistry.addTicket(ticketGrantingTicket);
+            this.ticketRegistry.addTicket(ticketGrantingTicket);
 
-                return ticketGrantingTicket.getId();
-            }
+            return ticketGrantingTicket.getId();
         } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
         }
