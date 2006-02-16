@@ -51,6 +51,9 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
         int response;
         if (!serviceCredentials.getCallbackUrl().getProtocol().equals(
             PROTOCOL_HTTPS)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Authentication failed because url was not secure.");
+            }
             return false;
         }
         log
@@ -64,6 +67,12 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
             if (response == this.acceptableCodes[i]) {
                 return true;
             }
+        }
+
+        if (log.isDebugEnabled()) {
+            log
+                .debug("Authentication failed because returned status code was ["
+                    + response + "]");
         }
 
         return false;
