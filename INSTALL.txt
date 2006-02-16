@@ -1,4 +1,4 @@
-Central Authentication Service 3.0.4-RC1
+JA-SIG Central Authentication Service
 Quick Installation Guide
 ----------------------------------
 
