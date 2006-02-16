@@ -30,6 +30,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
 
     /** Is this service ticket the result of a new login. */
     private boolean fromNewLogin;
+    
+    private boolean grantedTicketAlready;
 
     /**
      * Constructs a new ServiceTicket with a Unique Id, a TicketGrantingTicket,
@@ -72,9 +74,14 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return this.getGrantingTicket().isExpired();
     }
 
-    public TicketGrantingTicket grantTicketGrantingTicket(final String id,
+    public synchronized TicketGrantingTicket grantTicketGrantingTicket(final String id,
         final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
+        if (this.grantedTicketAlready) {
+            throw new IllegalStateException("TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
+        }
+        this.grantedTicketAlready = true;
+
         return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
             authentication, expirationPolicy);
     }
