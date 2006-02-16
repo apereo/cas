@@ -54,6 +54,7 @@
 
 				<p style="text-align: center;"><input type="submit" class="button" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" />
 				   <input type="reset" class="button" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" /></p>
+			</div>
 				<p style="text-align: center;">
 					Languages:
 					<c:set var="query" value="" />
@@ -65,13 +66,12 @@
 							</c:if>
 						</c:if>
 					</c:forEach>
-					<a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a> |
-					<a href="login?${query}${not empty query ? '&' : ''}locale=es">Spanish</a> |					
-					<a href="login?${query}${not empty query ? '&' : ''}locale=fr">French</a> |
-					<a href="login?${query}${not empty query ? '&' : ''}locale=ru">Russian</a> |
-					<a href="login?${query}${not empty query ? '&' : ''}locale=nl">Nederlands</a>
-				</p>
-			</div>
+				<a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a> |
+				<a href="login?${query}${not empty query ? '&' : ''}locale=es">Español</a> |					
+				<a href="login?${query}${not empty query ? '&' : ''}locale=fr">Français</a> |
+				<a href="login?${query}${not empty query ? '&' : ''}locale=ru">Russian</a> |
+				<a href="login?${query}${not empty query ? '&' : ''}locale=nl">Nederlands</a>
+			</p>
 		</div>
 	</form>
 <jsp:directive.include file="includes/bottom.jsp" />
