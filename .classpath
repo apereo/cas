@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="sandbox/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/spnego/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/spnego/src/test/java"/>
 	<classpathentry kind="src" path="sandbox/src/test/java"/>
 	<classpathentry kind="src" path="sandbox/resources"/>
 	<classpathentry kind="src" path="adaptors/x509/src/main/java"/>
