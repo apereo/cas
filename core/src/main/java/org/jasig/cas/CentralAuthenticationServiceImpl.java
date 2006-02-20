@@ -236,18 +236,20 @@ public final class CentralAuthenticationServiceImpl implements
             }
             throw new InvalidTicketException();
         }
-
-        if (serviceTicket.isExpired()) {
-            if (log.isDebugEnabled()) {
-                log.debug("ServiceTicket [" + serviceTicketId
-                    + "] has expired.");
+        
+        synchronized (serviceTicket) {
+            if (serviceTicket.isExpired()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceTicket [" + serviceTicketId
+                        + "] has expired.");
+                }
+                this.ticketRegistry.deleteTicket(serviceTicketId);
+                throw new InvalidTicketException();
             }
-            this.ticketRegistry.deleteTicket(serviceTicketId);
-            throw new InvalidTicketException();
-        }
 
-        serviceTicket.incrementCountOfUses();
-        serviceTicket.updateLastTimeUsed();
+            serviceTicket.incrementCountOfUses();
+            serviceTicket.updateLastTimeUsed();
+        }
 
         /*
          * implemented this manual removal if expired so that registry does
