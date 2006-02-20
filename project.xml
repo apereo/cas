@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0.4</currentVersion>
+	<currentVersion>3.0.5-SNAPSHOT</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -220,7 +220,7 @@
 	<licenses>
 		<license>
 			<name>JA-SIG Collaborative License for Use</name>
-			<url>http://www.uportal.org/license.html</url>
+			<url>http://www.ja-sig.org/products/cas/overview/license/index.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -237,6 +237,7 @@
 		</dependency>
 
 		<!-- XFIRE -->
+		<!-- 
 		<dependency>
 			<groupId>xfire</groupId>
 			<artifactId>xfire-all</artifactId>
@@ -293,6 +294,7 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+		-->
 
 		<!-- for unit and compatibility tests -->
 		<dependency>
