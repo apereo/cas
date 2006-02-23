@@ -7,6 +7,7 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.util.Assert;
 
 /**
@@ -32,9 +33,15 @@ public final class QueryDatabaseAuthenticationHandler extends
         final String password = credentials.getPassword();
         final String encryptedPassword = this.getPasswordEncoder().encode(
             password);
-        final String dbPassword = (String) getJdbcTemplate().queryForObject(
-            this.sql, new Object[] {username}, String.class);
-        return dbPassword.equals(encryptedPassword);
+        
+        try {
+            final String dbPassword = (String) getJdbcTemplate().queryForObject(
+                this.sql, new Object[] {username}, String.class);
+            return dbPassword.equals(encryptedPassword);
+        } catch (final IncorrectResultSizeDataAccessException e) {
+            // this means the username was not found.
+            return false;
+        }
     }
 
     protected void initDao() throws Exception {
