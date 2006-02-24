@@ -3,8 +3,12 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.adaptors.remoteuser.authentication.principal;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.util.Assert;
 
 /**
  * Credentials that bear the fully resolved and authenticated Principal,
@@ -19,39 +23,34 @@ package org.jasig.cas.authentication.principal;
  * Rather, the code constructing these Credentials must be trusted to perform
  * appropriate authentication before issuing these credentials.
  * 
+ * @author Andrew Petro
+ * @version $Revision$ $Date$
  * @since 3.0.5
- * @version $revision:$ $date:$
  */
-public final class PrincipalBearingCredentials 
-    implements Credentials {
+public final class PrincipalBearingCredentials implements Credentials {
 
-    private static final long serialVersionUID = 1L;
-    
-    private Principal principal;
-    
-    /**
-     * Get the previously authenticated Principal.
-     * Returns null if no Principal authenticated.
-     * @return authenticated Principal or null
-     */
-    public Principal getPrincipal(){
-        return this.principal;
-    }
-    
-    /**
-     * Set the authenticated Principal, or null if there is no authenticated
-     * Principal.
-     * @param principal
-     */
-    public void setPrincipal(Principal principal) {
+    /** Unique id for serialization */
+    private static final long serialVersionUID = -3779730112251585974L;
+
+    /** The trusted principal. */
+    private final Principal principal;
+
+    public PrincipalBearingCredentials(final Principal principal) {
+        Assert.notNull(principal);
         this.principal = principal;
     }
-    
-    public String toString() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("PrincipalBearingCredentials bearing: ");
-        sb.append(this.principal);
-        return sb.toString();
+
+    /**
+     * Get the previously authenticated Principal.
+     * @return authenticated Principal
+     */
+    public Principal getPrincipal() {
+        return this.principal;
     }
-    
+
+    public String toString() {
+        final ToStringBuilder stringBuilder = new ToStringBuilder(this);
+        stringBuilder.append(this.principal);
+        return stringBuilder.toString();
+    }
 }
