@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.adaptors.remoteuser.web.flow;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.adaptors.remoteuser.authentication.principal.PrincipalBearingCredentials;
@@ -12,7 +14,6 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.flow.util.ContextUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 
 /**
@@ -26,25 +27,25 @@ import org.springframework.webflow.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.5
  */
-public final class TrustedPrincipalNonInteractiveCredentialsAction extends
+public final class PrincipalFromRequestGetPrincipalNonInteractiveCredentialsAction extends
     AbstractNonInteractiveCredentialsAction {
 
     protected Credentials constructCredentialsFromRequest(
         final RequestContext context) {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
-        final String remoteUser = request.getRemoteUser();
+        final Principal principal = request.getUserPrincipal();
 
-        if (StringUtils.hasText(remoteUser)) {
+        if (principal != null) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Remote  User [" + remoteUser + "] found in HttpServletRequest");
+                logger.debug("UserPrincipal [" + principal.getName() + "] found in HttpServletRequest");
             }
             return new PrincipalBearingCredentials(new SimplePrincipal(
-                remoteUser));
+                principal.getName()));
         }
         
         if (logger.isDebugEnabled()) {
-            logger.debug("Remote User not found in HttpServletRequest.");
+            logger.debug("UserPrincipal not found in HttpServletRequest.");
         }
 
         return null;
