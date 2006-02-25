@@ -1,0 +1,27 @@
+<project
+   xmlns:j="jelly:core"
+   xmlns:ant="jelly:ant"
+   xmlns:util="jelly:util"
+   xmlns:maven="jelly:maven"
+  >
+<echo>Using root dir: ${basedir}</echo>
+
+    <postGoal name="jar:jar">
+        <j:if test="${context.getVariable('signature.alias') != null}">
+        	<echo>signature.alias defined; signing JAR(s)...</echo>
+			<ant:signjar lazy="true" alias="${signature.alias}" storepass="${signature.storepass}" keystore="${signature.keystore}"  keypass="${signature.keypass}">
+				<fileset dir="${maven.build.dir}">
+					<include name="*.jar"/>
+				</fileset>
+			</ant:signjar>
+        </j:if>
+        
+    	<j:if test="${not empty mavenRepository}">
+		    <copy todir="${mavenRepository}/cas/jars/" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		</j:if>
+		
+		<j:if test="${not empty artifactsDir}">
+			<copy todir="${artifactsDir}" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		</j:if>
+    </postGoal>
+</project>
