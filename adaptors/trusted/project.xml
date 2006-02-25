@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <extend>${basedir}/../project.xml</extend>
+  <pomVersion>3</pomVersion>
+  <artifactId>cas-server-trusted</artifactId>
+  <name>JA-SIG Central Authentication Service - Trusted AuthenticationHandler Adaptor</name>
+  <siteDirectory></siteDirectory>
+  <repository>
+    <connection>scm:cvs:pserver:anonymous@developer.ja-sig.org:/home/cvs/jasig:cas</connection>
+    <developerConnection>scm:cvs:pserver:${maven.username}@developer.ja-sig.org:/home/cvs/jasig:cas</developerConnection>
+    <url>http://developer.ja-sig.org/source/viewrep/jasig/cas3/adaptors/x509</url>
+  </repository>
+</project>
+
