@@ -9,15 +9,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import net.sf.ldaptemplate.SearchExecutor;
+import net.sf.ldaptemplate.SearchResultCallbackHandler;
+
 import org.jasig.cas.adaptors.ldap.util.LdapUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.ldap.core.SearchResultCallbackHandler;
 
 /**
  * Handler to do LDAP bind.
@@ -59,30 +62,33 @@ public class BindLdapAuthenticationHandler extends
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
 
-        final List values = (List) this.getLdapTemplate().search(
-            this.searchBase,
-            LdapUtils.getFilterWithValues(getFilter(), credentials
-                .getUsername()), this.getSearchControls(),
+        final List cns = new ArrayList();
+        
+        final SearchControls searchControls = getSearchControls();
+        
+        final String base = this.searchBase;
+        
+        this.getLdapTemplate().search(
+            new SearchExecutor() {
+
+                public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
+                    return context.search(base, LdapUtils.getFilterWithValues(getFilter(), credentials
+                        .getUsername()), searchControls);
+                }
+            },
             new SearchResultCallbackHandler(){
 
-                private final List cns = new ArrayList();
-
-                public void processSearchResult(final SearchResult searchResult)
-                    throws NamingException {
-                    this.cns.add(searchResult.getName());
-                }
-
-                public Object getResult() {
-                    return this.cns;
+                public void handleSearchResult(final SearchResult searchResult) {
+                    cns.add(searchResult.getName());
                 }
             });
 
-        if (values == null || values.isEmpty()
-            || (values.size() > 1 && !this.allowMultipleAccounts)) {
+        if (cns == null || cns.isEmpty()
+            || (cns.size() > 1 && !this.allowMultipleAccounts)) {
             return false;
         }
 
-        for (final Iterator iter = values.iterator(); iter.hasNext();) {
+        for (final Iterator iter = cns.iterator(); iter.hasNext();) {
             final String dn = (String) iter.next();
 
             DirContext test = null;
@@ -97,7 +103,7 @@ public class BindLdapAuthenticationHandler extends
             } catch (Exception e) {
                 return false;
             } finally {
-                org.springframework.ldap.support.LdapUtils.closeContext(test);
+                LdapUtils.closeContext(test);
             }
         }
 

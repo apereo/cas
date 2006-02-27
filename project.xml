@@ -362,7 +362,7 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.0</version>
+			<version>2.1</version>
 			<type>jar</type>
 			<url>http://jakarta.apache.org/commons/lang/</url>
 			<properties>

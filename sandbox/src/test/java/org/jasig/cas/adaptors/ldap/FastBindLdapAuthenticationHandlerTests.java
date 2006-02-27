@@ -7,10 +7,11 @@ package org.jasig.cas.adaptors.ldap;
 
 import javax.naming.directory.DirContext;
 
+import org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.ldap.support.ContextSource;
 
 import junit.framework.TestCase;
 
@@ -40,24 +41,25 @@ public class FastBindLdapAuthenticationHandlerTests extends TestCase {
         
     }
     
-    protected class SuccessfulLdapContextSource implements ContextSource {
+    protected class SuccessfulLdapContextSource extends AuthenticatedLdapContextSource {
 
-        public DirContext getDirContext() {
+        public DirContext getReadOnlyContext() throws DataAccessException {
             return null;
         }
 
-        public DirContext getDirContext(String principal, String password) {
+        public DirContext getReadWriteContext() throws DataAccessException {
             return null;
         }
+
     }
 
-    protected class FailedLdapContextSource implements ContextSource {
+    protected class FailedLdapContextSource extends AuthenticatedLdapContextSource {
 
-        public DirContext getDirContext() {
+        public DirContext getReadOnlyContext() throws DataAccessException {
             throw new DataAccessResourceFailureException("");
         }
 
-        public DirContext getDirContext(String principal, String password) {
+        public DirContext getReadWriteContext() throws DataAccessException {
             throw new DataAccessResourceFailureException("");
         }
     }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="sandbox/src/main/java"/>
+	<classpathentry kind="src" path="adaptors/ldap/src/main/resources"/>
 	<classpathentry kind="src" path="adaptors/trusted/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/trusted/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/spnego/src/main/java"/>
@@ -25,7 +26,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-collections/jars/commons-collections-3.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/opensaml/jars/opensaml-1.1.jar"/>
@@ -36,6 +36,7 @@
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-mock-1.2.6.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-webflow-pr5.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-binding-1.0-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/springframework/jars/spring-ldap-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/ldaptemplate/jars/ldaptemplate-1.0-rc2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
