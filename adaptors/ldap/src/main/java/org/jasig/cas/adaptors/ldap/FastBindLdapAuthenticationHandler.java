@@ -37,7 +37,7 @@ public final class FastBindLdapAuthenticationHandler extends
             return false;
         } finally {
             if (dirContext != null) {
-                org.springframework.ldap.support.LdapUtils
+                LdapUtils
                     .closeContext(dirContext);
             }
         }
