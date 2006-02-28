@@ -4,10 +4,21 @@
    xmlns:util="jelly:util"
    xmlns:maven="jelly:maven">
 
-<!-- 	<preGoal name="site">
-		<attainGoal name="statcvs" />
-		<attainGoal name="xdoc" />
-	</preGoal> -->
+    <j:set var="rootdir">${basedir}</j:set>
+
+    <j:while test="${true}">
+        <util:available file="${rootdir}/core/project.xml">
+            <j:break/>
+        </util:available>
+        <j:set var="rootdir">${rootdir}/..</j:set>
+    </j:while>
+
+    <ant:dirname property="rootdirname" file="${rootdir}/project.xml"/>
+    <j:set var="rootdir">${rootdirname}</j:set>
+    <echo>Using root dir: ${rootdir}</echo>
+    
+    <echo>Setting rootdir to ${rootdir}</echo>
+    
 
     <postGoal name="site">
         <attainGoal name="dashboard:report-single"/>
