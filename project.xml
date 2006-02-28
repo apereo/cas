@@ -580,6 +580,13 @@
 			<version>1.1</version>
 			<type>plugin</type>
 		</dependency>
+		
+		<dependency>
+			<groupId>maven</groupId>
+			<artifactId>maven-multiproject-plugin</artifactId>
+			<version>1.4.1</version>
+			<type>plugin</type>
+		</dependency>
 
 		<dependency>
 			<groupId>maven</groupId>
