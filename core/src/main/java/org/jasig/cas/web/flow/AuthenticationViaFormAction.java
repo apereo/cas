@@ -18,13 +18,13 @@ import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.FormAction;
@@ -52,10 +52,10 @@ public final class AuthenticationViaFormAction extends FormAction implements
     private CentralAuthenticationService centralAuthenticationService;
 
     /** Generator for Warning Cookie. */
-    private SecureCookieGenerator warnCookieGenerator;
+    private CookieGenerator warnCookieGenerator;
 
     /** Generator for Ticket Granting Ticket Cookie. */
-    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected void doBind(final RequestContext context, final DataBinder binder)
         throws Exception {
@@ -81,8 +81,9 @@ public final class AuthenticationViaFormAction extends FormAction implements
             WebConstants.RENEW);
         final String service = WebUtils.getRequestParameterAsString(request,
             WebConstants.SERVICE);
-        final String ticketGrantingTicketIdFromCookie = this.ticketGrantingTicketCookieGenerator
-            .getCookieValue(request);
+        final String ticketGrantingTicketIdFromCookie = WebUtils
+            .getCookieValue(request, this.ticketGrantingTicketCookieGenerator
+                .getCookieName());
 
         if (renew && StringUtils.hasText(ticketGrantingTicketIdFromCookie)
             && StringUtils.hasText(service)) {
@@ -143,7 +144,7 @@ public final class AuthenticationViaFormAction extends FormAction implements
     private void setWarningCookie(final HttpServletResponse response,
         final boolean warn) {
         if (warn) {
-            this.warnCookieGenerator.addCookie(response);
+            this.warnCookieGenerator.addCookie(response, "true");
         } else {
             this.warnCookieGenerator.removeCookie(response);
         }
@@ -151,12 +152,11 @@ public final class AuthenticationViaFormAction extends FormAction implements
     }
 
     public void setTicketGrantingTicketCookieGenerator(
-        final SecureCookieGenerator ticketGrantingTicketCookieGenerator) {
+        final CookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
-    public void setWarnCookieGenerator(
-        final SecureCookieGenerator warnCookieGenerator) {
+    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
@@ -182,7 +182,7 @@ public final class AuthenticationViaFormAction extends FormAction implements
         this.credentialsBinder = credentialsBinder;
     }
 
-    public void afterPropertiesSet() {
+    public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
 
         Assert.notNull(this.centralAuthenticationService);

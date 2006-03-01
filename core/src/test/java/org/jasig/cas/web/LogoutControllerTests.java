@@ -8,10 +8,10 @@ package org.jasig.cas.web;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.CookieGenerator;
 
 /**
  * @author Scott Battaglia
@@ -25,19 +25,18 @@ public class LogoutControllerTests extends
     
     private LogoutController logoutController;
     
-    private SecureCookieGenerator warnCookieGenerator;
+    private CookieGenerator warnCookieGenerator;
     
-    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected void onSetUp() throws Exception {
         super.onSetUp();
         
-       this.warnCookieGenerator = new SecureCookieGenerator();
+       this.warnCookieGenerator = new CookieGenerator();
         
         this.warnCookieGenerator.setCookieName("test");
-        this.warnCookieGenerator.setCookieValue("true");
         
-        this.ticketGrantingTicketCookieGenerator = new SecureCookieGenerator();
+        this.ticketGrantingTicketCookieGenerator = new CookieGenerator();
         this.ticketGrantingTicketCookieGenerator.setCookieName(COOKIE_TGC_ID);
         
         

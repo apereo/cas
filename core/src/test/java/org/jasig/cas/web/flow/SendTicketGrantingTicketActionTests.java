@@ -9,10 +9,11 @@ import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.web.flow.util.ContextUtils;
-import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 
@@ -20,17 +21,17 @@ import org.springframework.webflow.test.MockRequestContext;
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
     
-    private SecureCookieGenerator warnCookieGenerator;
+    private CookieGenerator warnCookieGenerator;
     
-    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
     
     private MockRequestContext context;
 
     protected void onSetUp() throws Exception {
         this.action = new SendTicketGrantingTicketAction();
         
-        this.warnCookieGenerator = new SecureCookieGenerator();
-        this.ticketGrantingTicketCookieGenerator = new SecureCookieGenerator();
+        this.warnCookieGenerator = new CookieGenerator();
+        this.ticketGrantingTicketCookieGenerator = new CookieGenerator();
         
         this.ticketGrantingTicketCookieGenerator.setCookieName("TGT");
         this.warnCookieGenerator.setCookieName("WARN");
@@ -45,7 +46,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     }
     
     public void testNoTgtToSet() throws Exception {
-        this.context.setSourceEvent(new ServletEvent(new MockHttpServletRequest(), new MockHttpServletResponse()));
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         
         assertEquals("success", this.action.execute(this.context).getId());
     }
@@ -54,7 +55,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final String TICKET_VALUE = "test";
         ContextUtils.addAttribute(this.context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, TICKET_VALUE);
-        this.context.setSourceEvent(new ServletEvent(new MockHttpServletRequest(), response));
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), response));
         
         assertEquals("success", this.action.execute(this.context).getId());
         assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
@@ -66,7 +67,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         final String TICKET_VALUE = "test";
         request.setCookies(new Cookie[] {new Cookie("TGT", "test5")});
         ContextUtils.addAttribute(this.context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, TICKET_VALUE);
-        this.context.setSourceEvent(new ServletEvent(request, response));
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         
         assertEquals("success", this.action.execute(this.context).getId());
         assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());

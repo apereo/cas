@@ -23,8 +23,9 @@ import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -155,7 +156,7 @@ public final class TestUtils {
         final MockHttpServletRequest request,
         final MockHttpServletResponse response) {
         final MockRequestContext context = new MockRequestContext();
-        context.setSourceEvent(new ServletEvent(request, response));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         return context;
     }
 

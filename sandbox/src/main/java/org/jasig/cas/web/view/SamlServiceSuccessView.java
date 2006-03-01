@@ -27,105 +27,109 @@ import org.opensaml.SAMLSubject;
 import org.springframework.web.servlet.View;
 
 /**
- * This Spring View object is connected to an instance of 
- * org.jasig.cas.web.ServiceValidateController. It will be passed
- * control after a successful ST validation request. It will be
- * passed a Model containing an Assertion (in the CAS, not the
- * SAML sense) containing a chain of Principal objects. Its 
- * responsibility is to turn this information from the valid 
- * TGT chain into a SAML Response.
- * 
- * This is an extension to the CAS 2.0 protocol standard.
+ * This Spring View object is connected to an instance of
+ * org.jasig.cas.web.ServiceValidateController. It will be passed control after
+ * a successful ST validation request. It will be passed a Model containing an
+ * Assertion (in the CAS, not the SAML sense) containing a chain of Principal
+ * objects. Its responsibility is to turn this information from the valid TGT
+ * chain into a SAML Response. This is an extension to the CAS 2.0 protocol
+ * standard.
  * 
  * @author Howard Gilbert
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class SamlServiceSuccessView implements View {
-	
-	// This should be a parameter filled in by the configuration XML
-	private String issuer = "example.org";
 
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.View#render(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public void render(Map model, HttpServletRequest request,
-			HttpServletResponse response) {
-		try {
-			// This block is just careful not to throw Exceptions over the
-			// wall to the container. InternalError is handled locally and
-			// reflects an environmental contract violation.
-			InternalError internalError= new InternalError();
-			
-			Assertion assertion = (Assertion) model.get(WebConstants.ASSERTION);
-			if (assertion==null) 
-				throw internalError;
-			
-		Authentication[] chainedPrincipals = 
-				assertion.getChainedAuthentications();
-			if (chainedPrincipals==null || chainedPrincipals.length==0)
-				throw internalError;
-			
-			// For the moment, lets just handle the non-proxy chain response.
-			Principal principal = (Principal) chainedPrincipals[0];
-			String username = principal.getId();
-			
-			// I have to find out what the right string is here.
-			String authenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
-			Date authTime = new Date();
-			
-			// Now build the response from the bottom up.
-			SAMLNameIdentifier nameId = new SAMLNameIdentifier(username,null,null);
-			SAMLSubject authNSubject = new SAMLSubject(nameId,null,null,null);
-			List samlAssertions = new ArrayList();
-			SAMLStatement[] statements = {
-					new SAMLAuthenticationStatement(authNSubject, authenticationMethod, authTime, request
-					.getRemoteAddr(), null, null)};
+    // This should be a parameter filled in by the configuration XML
+    private String issuer = "example.org";
 
-			SAMLAssertion samlAssertion = new SAMLAssertion(this.issuer, 
-					new Date(System.currentTimeMillis()), 
-					new Date(System.currentTimeMillis() + 300000), 
-					null, null, Arrays.asList(statements));
-			samlAssertions.add(samlAssertion);
-			
-			// I think this should be the URL of the service validating the Ticket
-			// In reality, I have to get it from the Model, but currently its not
-			// there so we put in a dummy.
-			String serviceUrl = "service.example.org";
-			
-			SAMLResponse samlResponse = new SAMLResponse(null, serviceUrl, samlAssertions, null);
-			
-			response.setContentType("text/xml");
-			String serializedSaml = samlResponse.toString();
-			response.getWriter().print(serializedSaml);
-		} catch (InternalError ie) {
-			response.setStatus(500);
-			return;
-		} catch (Exception e) {
-			response.setStatus(500);
-			return;
-		}
+    public String getContentType() {
+        return "text/xml";
+    }
 
-	}
-	
-	private class InternalError extends Exception {
+    public void render(final Map model, final HttpServletRequest request,
+        final HttpServletResponse response) {
+        try {
+            // This block is just careful not to throw Exceptions over the
+            // wall to the container. InternalError is handled locally and
+            // reflects an environmental contract violation.
+            InternalError internalError = new InternalError();
+
+            Assertion assertion = (Assertion) model.get(WebConstants.ASSERTION);
+            if (assertion == null)
+                throw internalError;
+
+            Authentication[] chainedPrincipals = assertion
+                .getChainedAuthentications();
+            if (chainedPrincipals == null || chainedPrincipals.length == 0)
+                throw internalError;
+
+            // For the moment, lets just handle the non-proxy chain response.
+            Principal principal = (Principal) chainedPrincipals[0];
+            String username = principal.getId();
+
+            // I have to find out what the right string is here.
+            String authenticationMethod = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
+            Date authTime = new Date();
+
+            // Now build the response from the bottom up.
+            SAMLNameIdentifier nameId = new SAMLNameIdentifier(username, null,
+                null);
+            SAMLSubject authNSubject = new SAMLSubject(nameId, null, null, null);
+            List samlAssertions = new ArrayList();
+            SAMLStatement[] statements = {new SAMLAuthenticationStatement(
+                authNSubject, authenticationMethod, authTime, request
+                    .getRemoteAddr(), null, null)};
+
+            SAMLAssertion samlAssertion = new SAMLAssertion(this.issuer,
+                new Date(System.currentTimeMillis()), new Date(System
+                    .currentTimeMillis() + 300000), null, null, Arrays
+                    .asList(statements));
+            samlAssertions.add(samlAssertion);
+
+            // I think this should be the URL of the service validating the
+            // Ticket
+            // In reality, I have to get it from the Model, but currently its
+            // not
+            // there so we put in a dummy.
+            String serviceUrl = "service.example.org";
+
+            SAMLResponse samlResponse = new SAMLResponse(null, serviceUrl,
+                samlAssertions, null);
+
+            response.setContentType("text/xml");
+            String serializedSaml = samlResponse.toString();
+            response.getWriter().print(serializedSaml);
+        } catch (InternalError ie) {
+            response.setStatus(500);
+            return;
+        } catch (Exception e) {
+            response.setStatus(500);
+            return;
+        }
+
+    }
+
+    private class InternalError extends Exception {
 
         /**
          * Unique id for serialization
          */
-        private static final long serialVersionUID = 1L;}
+        private static final long serialVersionUID = 1L;
+    }
 
-	/**
-	 * @return Returns the issuer.
-	 */
-	public String getIssuer() {
-		return this.issuer;
-	}
-	/**
-	 * @param issuer The issuer to set.
-	 */
-	public void setIssuer(String issuer) {
-		this.issuer = issuer;
-	}
+    /**
+     * @return Returns the issuer.
+     */
+    public String getIssuer() {
+        return this.issuer;
+    }
+
+    /**
+     * @param issuer The issuer to set.
+     */
+    public void setIssuer(String issuer) {
+        this.issuer = issuer;
+    }
 }

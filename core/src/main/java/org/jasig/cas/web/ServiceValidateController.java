@@ -25,7 +25,7 @@ import org.jasig.cas.web.support.WebConstants;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.BindUtils;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -117,9 +117,9 @@ public final class ServiceValidateController extends AbstractController
                 "INVALID_REQUEST", "INVALID_REQUEST"));
             return new ModelAndView(this.failureView, model);
         }
-
-        BindUtils.bind(request, authenticationSpecification,
-            "authenticationSpecification");
+        
+        ServletRequestDataBinder binder = new ServletRequestDataBinder(authenticationSpecification, "authenticationSpecification");
+        binder.bind(request);
         try {
             if (StringUtils.hasText(pgtUrl)) {
                 try {

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.web.support.WebConstants;
-import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.AbstractView;
 
 /**
  * Custom View to Return the CAS 1.0 Protocol Response. Implemented as a view
@@ -23,7 +23,7 @@ import org.springframework.web.servlet.View;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class Cas10ResponseView implements View {
+public final class Cas10ResponseView extends AbstractView {
 
     /**
      * Indicate whether this view will be generating the success response or
@@ -31,8 +31,9 @@ public final class Cas10ResponseView implements View {
      */
     private boolean successResponse;
 
-    public void render(final Map model, final HttpServletRequest request,
-        final HttpServletResponse response) throws Exception {
+    protected void renderMergedOutputModel(final Map model,
+        final HttpServletRequest request, final HttpServletResponse response)
+        throws Exception {
         final Assertion assertion = (Assertion) model
             .get(WebConstants.ASSERTION);
 
