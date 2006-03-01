@@ -11,10 +11,11 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -31,20 +32,20 @@ public final class GenerateServiceTicketActionTests extends
     
     private String ticketGrantingTicket;
     
-    private SecureCookieGenerator tgtCookieGenerator;
+    private CookieGenerator tgtCookieGenerator;
     
-    private SecureCookieGenerator warnCookieGenerator;
+    private CookieGenerator warnCookieGenerator;
 
     protected void onSetUp() throws Exception {
         this.action = new GenerateServiceTicketAction();
-        this.tgtCookieGenerator = new SecureCookieGenerator();
+        this.tgtCookieGenerator = new CookieGenerator();
         this.tgtCookieGenerator.setCookieName("TGT");
         
-        this.warnCookieGenerator = new SecureCookieGenerator();
+        this.warnCookieGenerator = new CookieGenerator();
         this.warnCookieGenerator.setCookieName("WARN");
         
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-        this.action.setWarnCookieGenerator(new SecureCookieGenerator());
+        this.action.setWarnCookieGenerator(new CookieGenerator());
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
         
@@ -54,7 +55,7 @@ public final class GenerateServiceTicketActionTests extends
     public void testServiceTicketFromCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         request.setCookies(new Cookie[] {new Cookie("TGT", this.ticketGrantingTicket)});
         
@@ -66,7 +67,7 @@ public final class GenerateServiceTicketActionTests extends
     public void testTicketGrantingTicketFromRequest() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         ContextUtils.addAttribute(context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, this.ticketGrantingTicket);
         
@@ -78,7 +79,7 @@ public final class GenerateServiceTicketActionTests extends
     public void testTicketGrantingTicketNoTgt() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         ContextUtils.addAttribute(context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, "bleh");
         
@@ -88,14 +89,11 @@ public final class GenerateServiceTicketActionTests extends
     public void testTicketGrantingTicketNotTgtButGateway() throws Exception {
         MockRequestContext context = new MockRequestContext();
         MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         request.addParameter("gateway", "true");
         ContextUtils.addAttribute(context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, "bleh");
         
         assertEquals("gateway", this.action.execute(context).getId());
     }
-    
-    
-
 }

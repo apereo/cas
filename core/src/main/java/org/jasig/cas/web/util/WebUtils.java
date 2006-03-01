@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.web.util;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -42,5 +43,10 @@ public final class WebUtils {
     public static boolean getRequestParameterAsBoolean(
         final HttpServletRequest request, final String parameter) {
         return request.getParameter(parameter) != null;
+    }
+    
+    public static String getCookieValue(final HttpServletRequest request, final String cookieName) {
+        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, cookieName);
+        return cookie == null ? null : cookie.getValue();
     }
 }

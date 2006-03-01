@@ -32,11 +32,12 @@ import org.springframework.web.servlet.View;
  */
 public class SamlServiceFailureView implements View {
 
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.View#render(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	public void render(Map model, HttpServletRequest request,
-			HttpServletResponse response) {
+	public String getContentType() {
+        return "text/xml";
+    }
+
+	public void render(final Map model, final HttpServletRequest request,
+			final HttpServletResponse response) {
 		
 		// In OpenSAML, the way to get a bad status response is to
 		// create a SAMLException object with the status info.

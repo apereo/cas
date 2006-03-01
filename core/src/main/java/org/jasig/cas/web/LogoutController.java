@@ -10,12 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.SecureCookieGenerator;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.CookieGenerator;
 
 /**
  * Controller to delete ticket granting ticket cookie in order to log out of
@@ -34,10 +36,10 @@ public final class LogoutController extends AbstractController implements
     private CentralAuthenticationService centralAuthenticationService;
 
     /** CookieGenerator for TGT Cookie */
-    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** CookieGenerator for Warn Cookie */
-    private SecureCookieGenerator warnCookieGenerator;
+    private CookieGenerator warnCookieGenerator;
 
     /** Logout view name. */
     private String logoutView;
@@ -60,8 +62,8 @@ public final class LogoutController extends AbstractController implements
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator
-            .getCookieValue(request);
+        final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName());
         final String service = request.getParameter(WebConstants.SERVICE);
 
         if (ticketGrantingTicketId != null) {
@@ -76,17 +78,20 @@ public final class LogoutController extends AbstractController implements
             return new ModelAndView(new RedirectView(service));
         }
 
-        return new ModelAndView(this.logoutView, WebConstants.LOGOUT, request
-            .getParameter(WebConstants.LOGOUT));
+        if (StringUtils.hasText(request.getParameter(WebConstants.LOGOUT))) {
+            return new ModelAndView(this.logoutView, WebConstants.LOGOUT,
+                request.getParameter(WebConstants.LOGOUT));
+        }
+
+        return new ModelAndView(this.logoutView);
     }
 
     public void setTicketGrantingTicketCookieGenerator(
-        final SecureCookieGenerator ticketGrantingTicketCookieGenerator) {
+        final CookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
-    public void setWarnCookieGenerator(
-        final SecureCookieGenerator warnCookieGenerator) {
+    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 

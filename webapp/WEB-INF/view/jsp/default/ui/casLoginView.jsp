@@ -48,8 +48,7 @@
 				<p><input style="width:1.5em;border:0;padding:0;margin:0;" type="checkbox" id="warn" name="warn" value="true" tabindex="3" /> 
 				   <label for="warn"  accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />"><spring:message code="screen.welcome.label.warn" /></label></p>
 
-				<input type="hidden" name="lt" value="${flowExecutionId}" />
-				<input type="hidden" name="_currentStateId" value="${currentStateId}" />
+				<input type="hidden" name="lt" value="${flowExecutionKey}" />
 				<input type="hidden" name="_eventId" value="submit" />
 
 				<p style="text-align: center;"><input type="submit" class="button" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" />

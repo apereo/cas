@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.jasig.cas.web.util.WebUtils;
 import org.springframework.util.Assert;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
@@ -40,16 +40,16 @@ public abstract class AbstractLoginAction extends AbstractAction {
 
     public static final String REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET = "ticketGrantingTicketId";
 
-    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
 
-    private SecureCookieGenerator warnCookieGenerator;
+    private CookieGenerator warnCookieGenerator;
 
     protected final Event doExecute(final RequestContext context)
         throws Exception {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
-        final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator
-            .getCookieValue(request);
+        final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName());
         final String service = WebUtils.getRequestParameterAsString(request,
             WebConstants.SERVICE);
         final boolean gateway = WebUtils.getRequestParameterAsBoolean(request,
@@ -57,7 +57,8 @@ public abstract class AbstractLoginAction extends AbstractAction {
         final boolean renew = WebUtils.getRequestParameterAsBoolean(request,
             WebConstants.RENEW);
         final boolean warn = Boolean.valueOf(
-            this.warnCookieGenerator.getCookieValue(request)).booleanValue();
+            WebUtils.getCookieValue(request, this.warnCookieGenerator
+                .getCookieName())).booleanValue();
 
         return doExecuteInternal(context, ticketGrantingTicketId, service,
             gateway, renew, warn);
@@ -94,17 +95,16 @@ public abstract class AbstractLoginAction extends AbstractAction {
     }
 
     public final void setTicketGrantingTicketCookieGenerator(
-        final SecureCookieGenerator ticketGrantingTicketCookieGenerator) {
+        final CookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
     public final void setWarnCookieGenerator(
-        final SecureCookieGenerator warnCookieGenerator) {
+        final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    
-    protected final SecureCookieGenerator getTicketGrantingTicketCookieGenerator() {
+    protected final CookieGenerator getTicketGrantingTicketCookieGenerator() {
         return this.ticketGrantingTicketCookieGenerator;
     }
 

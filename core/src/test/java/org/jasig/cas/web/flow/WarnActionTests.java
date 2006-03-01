@@ -9,8 +9,8 @@ import javax.servlet.http.Cookie;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.SecureCookieGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.util.CookieGenerator;
 
 import junit.framework.TestCase;
 
@@ -25,18 +25,17 @@ public class WarnActionTests extends TestCase {
     
     private WarnAction warnAction = new WarnAction();
     
-    private SecureCookieGenerator warnCookieGenerator;
+    private CookieGenerator warnCookieGenerator;
     
-    private SecureCookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
     
     protected void setUp() throws Exception {
         this.warnAction = new WarnAction();
-        this.warnCookieGenerator = new SecureCookieGenerator();
+        this.warnCookieGenerator = new CookieGenerator();
         
         this.warnCookieGenerator.setCookieName(COOKIE_PRIVACY);
-        this.warnCookieGenerator.setCookieValue("true");
         
-        this.ticketGrantingTicketCookieGenerator = new SecureCookieGenerator();
+        this.ticketGrantingTicketCookieGenerator = new CookieGenerator();
         this.ticketGrantingTicketCookieGenerator.setCookieName("test");
         
         this.warnAction.setWarnCookieGenerator(this.warnCookieGenerator);

@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.webflow.execution.NoSuchFlowExecutionException;
+import org.springframework.webflow.FlowArtifactException;
 
 import junit.framework.TestCase;
 
@@ -36,7 +36,7 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
         request.setRequestURI("test");
         ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
-            new NoSuchFlowExecutionException("test")));
+            new FlowArtifactException("test", String.class)));
 
         assertEquals(request.getRequestURI(), ((RedirectView) model.getView())
             .getUrl());
@@ -48,7 +48,7 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
         request.setQueryString("test=test");
         ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
-            new NoSuchFlowExecutionException("test")));
+            new FlowArtifactException("test", String.class)));
 
         assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())
             .getUrl());

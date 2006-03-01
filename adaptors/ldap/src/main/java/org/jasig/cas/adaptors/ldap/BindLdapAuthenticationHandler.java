@@ -100,8 +100,8 @@ public class BindLdapAuthenticationHandler extends
                 if (test != null) {
                     return true;
                 }
-            } catch (Exception e) {
-                return false;
+            } catch (final Exception e) {
+                // if we catch an exception, just try the next cn
             } finally {
                 LdapUtils.closeContext(test);
             }

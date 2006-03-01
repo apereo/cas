@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 
 /**
  * Common utilities for extracting information from the RequestContext.
@@ -35,13 +35,13 @@ public final class ContextUtils {
      */
     public static HttpServletRequest getHttpServletRequest(
         final RequestContext context) {
-        if (context.getSourceEvent() instanceof ServletEvent) {
-            return ((ServletEvent) context.getSourceEvent()).getRequest();
+        if (context.getExternalContext().getClass().equals(ServletExternalContext.class)) {
+            return ((ServletExternalContext) context.getExternalContext()).getRequest();
         }
 
         throw new IllegalStateException(
             "Cannot obtain HttpServletRequest from event of type: "
-                + context.getSourceEvent().getClass().getName());
+                + context.getExternalContext().getClass().getName());
     }
 
     /**
@@ -55,13 +55,13 @@ public final class ContextUtils {
      */
     public static HttpServletResponse getHttpServletResponse(
         final RequestContext context) {
-        if (context.getSourceEvent() instanceof ServletEvent) {
-            return ((ServletEvent) context.getSourceEvent()).getResponse();
+        if (context.getExternalContext().getClass().equals(ServletExternalContext.class)) {
+            return ((ServletExternalContext) context.getExternalContext()).getResponse();
         }
 
         throw new IllegalStateException(
             "Cannot obtain HttpServletResponse from event of type: "
-                + context.getSourceEvent().getClass().getName());
+                + context.getExternalContext().getClass().getName());
     }
 
     /**

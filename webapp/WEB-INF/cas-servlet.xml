@@ -43,14 +43,6 @@
 		id="errorHandlerResolver" 
 		class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
-	<bean
-		id="loginFlow"
-		class="org.springframework.webflow.config.XmlFlowFactoryBean">
-	   <property
-			name="location"
-	   		value="/WEB-INF/login-webflow.xml" />
-	</bean>
-
 	<!-- Handler Mapping -->
 	<bean
 		id="handlerMappingA"
@@ -120,19 +112,27 @@
 
 	<bean
 		id="loginController"
-		class="org.springframework.webflow.mvc.FlowController">
+		class="org.springframework.webflow.executor.mvc.FlowController">
+		<constructor-arg ref="flowRegistry" />
 		<property
-			name="flow"
-			ref="loginFlow" />
+			name="defaultFlowId"
+			value="login-webflow" />
 		<property
-			name="flowExecutionManager">
+			name="parameterExtractor">
 			<bean
-				class="org.jasig.cas.web.flow.CasServletFlowExecutionManager">
+				class="org.springframework.webflow.executor.support.FlowExecutorParameterExtractor">
 				<property
-					name="flow"
-					ref="loginFlow" />
+					name="flowExecutionKeyParameterName"
+					value="lt" />
+				<property
+					name="defaultFlowId"
+					value="login-webflow" />
 			</bean>
 		</property>
+	</bean>
+	
+	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
+	        <property name="flowLocations" value="/WEB-INF/login-webflow.xml"/>
 	</bean>
 
 	<bean id="proxyValidateController"
@@ -308,15 +308,14 @@ uncomment this to allow access to web service
 		class="org.jasig.cas.web.flow.X509CertificateCredentialsNonInteractiveAction" />
  -->
 	
-	<bean id="warnCookieGenerator" class="org.jasig.cas.web.util.SecureCookieGenerator">
+	<bean id="warnCookieGenerator" class="org.springframework.web.util.CookieGenerator">
 		<property name="cookieSecure" value="true" />
-		<property name="cookieValue" value="true" />
 		<property name="cookieMaxAge" value="-1" />
 		<property name="cookieName" value="CASPRIVACY" />
 		<property name="cookiePath" value="/cas/" />
 	</bean>
 	
-	<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.util.SecureCookieGenerator">
+	<bean id="ticketGrantingTicketCookieGenerator" class="org.springframework.web.util.CookieGenerator">
 		<property name="cookieSecure" value="true" />
 		<property name="cookieMaxAge" value="-1" />
 		<property name="cookieName" value="CASTGC" />

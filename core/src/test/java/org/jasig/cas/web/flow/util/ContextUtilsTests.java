@@ -7,8 +7,9 @@ package org.jasig.cas.web.flow.util;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import junit.framework.TestCase;
@@ -30,8 +31,8 @@ public class ContextUtilsTests extends TestCase {
         this.request = new MockHttpServletRequest();
         this.response = new MockHttpServletResponse();
         this.requestContext = new MockRequestContext();
-        ServletEvent event = new ServletEvent(this.request, this.response);
-        this.requestContext.setSourceEvent(event);
+        ServletExternalContext event = new ServletExternalContext(new MockServletContext(), this.request, this.response);
+        this.requestContext.setExternalContext(event);
     }
 
     public void testAddGetAttribute() {
@@ -51,7 +52,7 @@ public class ContextUtilsTests extends TestCase {
     }
 
     public void testGetHttpServletRequestThrowsException() {
-        this.requestContext.setSourceEvent(new Event("test"));
+        this.requestContext.setExternalContext(new MockExternalContext());
         try {
             ContextUtils.getHttpServletRequest(this.requestContext);
             fail("Exception expected.");
@@ -61,7 +62,7 @@ public class ContextUtilsTests extends TestCase {
     }
 
     public void testGetHttpServletResponseThrowsException() {
-        this.requestContext.setSourceEvent(new Event("test"));
+        this.requestContext.setExternalContext(new MockExternalContext());
         try {
             ContextUtils.getHttpServletResponse(this.requestContext);
             fail("Exception expected.");

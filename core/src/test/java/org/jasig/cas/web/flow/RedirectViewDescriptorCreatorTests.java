@@ -9,8 +9,9 @@ import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.ViewDescriptor;
-import org.springframework.webflow.execution.servlet.ServletEvent;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.webflow.ViewSelection;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import junit.framework.TestCase;
@@ -26,22 +27,22 @@ public class RedirectViewDescriptorCreatorTests extends TestCase {
 
     private static final String TICKET = "ticket";
 
-    private RedirectViewDescriptorCreator redirectViewDescriptorCreator;
+    private RedirectViewSelector redirectViewDescriptorCreator;
 
     protected void setUp() throws Exception {
-        this.redirectViewDescriptorCreator = new RedirectViewDescriptorCreator();
+        this.redirectViewDescriptorCreator = new RedirectViewSelector();
     }
 
     public void testGetViewDescriptor() {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", SERVICE);
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         ContextUtils.addAttribute(context, WebConstants.TICKET,
             TICKET);
 
-        final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator
-            .createViewDescriptor(context);
+        final ViewSelection viewDescriptor = this.redirectViewDescriptorCreator
+            .makeSelection(context);
 
         assertEquals(SERVICE, viewDescriptor.getViewName());
         assertTrue(viewDescriptor.getModel().containsValue(TICKET));
@@ -51,10 +52,10 @@ public class RedirectViewDescriptorCreatorTests extends TestCase {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", SERVICE);
-        context.setSourceEvent(new ServletEvent(request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final ViewDescriptor viewDescriptor = this.redirectViewDescriptorCreator
-            .createViewDescriptor(context);
+        final ViewSelection viewDescriptor = this.redirectViewDescriptorCreator
+        .makeSelection(context);
 
         assertEquals(SERVICE, viewDescriptor.getViewName());
         assertFalse(viewDescriptor.getModel().containsValue(TICKET));

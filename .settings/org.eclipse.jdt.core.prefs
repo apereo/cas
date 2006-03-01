@@ -1,4 +1,4 @@
-#Sat Feb 11 13:56:00 EST 2006
+#Tue Feb 28 08:47:25 EST 2006
 eclipse.preferences.version=1
 org.eclipse.jdt.core.codeComplete.argumentPrefixes=
 org.eclipse.jdt.core.codeComplete.argumentSuffixes=
@@ -19,8 +19,8 @@ org.eclipse.jdt.core.compiler.problem.annotationSuperInterface=warning
 org.eclipse.jdt.core.compiler.problem.assertIdentifier=warning
 org.eclipse.jdt.core.compiler.problem.autoboxing=ignore
 org.eclipse.jdt.core.compiler.problem.deprecation=warning
-org.eclipse.jdt.core.compiler.problem.deprecationInDeprecatedCode=disabled
-org.eclipse.jdt.core.compiler.problem.deprecationWhenOverridingDeprecatedMethod=disabled
+org.eclipse.jdt.core.compiler.problem.deprecationInDeprecatedCode=enabled
+org.eclipse.jdt.core.compiler.problem.deprecationWhenOverridingDeprecatedMethod=enabled
 org.eclipse.jdt.core.compiler.problem.discouragedReference=warning
 org.eclipse.jdt.core.compiler.problem.emptyStatement=warning
 org.eclipse.jdt.core.compiler.problem.enumIdentifier=warning
@@ -282,6 +282,7 @@ org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_parenthesize
 org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_switch=insert
 org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_synchronized=insert
 org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_while=insert
+org.eclipse.jdt.core.formatter.insert_space_before_parenthesized_expression_in_return=insert
 org.eclipse.jdt.core.formatter.insert_space_before_postfix_operator=do not insert
 org.eclipse.jdt.core.formatter.insert_space_before_prefix_operator=do not insert
 org.eclipse.jdt.core.formatter.insert_space_before_question_in_conditional=insert
