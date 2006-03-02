@@ -53,6 +53,20 @@ public interface Ticket extends Serializable {
     long getLastTimeUsed();
 
     /**
+     * Method to return the time the Ticket was created.
+     * 
+     * @return the time the ticket was created.
+     */
+    long getCreationTime();
+
+    /**
+     * Method to return the second to last time the ticket was used.
+     * 
+     * @return the second to last the time ticket was used.
+     */
+    long getPreviousLastTimeUsed();
+
+    /**
      * Increment by one the number of uses.
      */
     void incrementCountOfUses();
