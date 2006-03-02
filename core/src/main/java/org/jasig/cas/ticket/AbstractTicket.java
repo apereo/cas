@@ -35,6 +35,12 @@ public abstract class AbstractTicket implements Ticket {
 
     /** The last time this ticket was used. */
     private long lastTimeUsed;
+    
+    /** The previous last time this ticket was used. */
+    private long previousLastTimeUsed;
+    
+    /** The time the ticket was created. */
+    private long creationTime;
 
     /** The number of times this was used. */
     private int countOfUses;
@@ -54,6 +60,7 @@ public abstract class AbstractTicket implements Ticket {
         Assert.notNull(id);
 
         this.id = id;
+        this.creationTime = System.currentTimeMillis();
         this.lastTimeUsed = System.currentTimeMillis();
         this.expirationPolicy = expirationPolicy;
         this.ticketGrantingTicket = ticket;
@@ -76,7 +83,16 @@ public abstract class AbstractTicket implements Ticket {
     }
 
     public final void updateLastTimeUsed() {
+        this.previousLastTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = System.currentTimeMillis();
+    }
+    
+    public final long getCreationTime() {
+        return this.creationTime;
+    }
+
+    public final long getPreviousLastTimeUsed() {
+        return this.previousLastTimeUsed;
     }
 
     public final TicketGrantingTicket getGrantingTicket() {
