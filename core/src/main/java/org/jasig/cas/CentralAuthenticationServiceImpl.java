@@ -126,8 +126,18 @@ public final class CentralAuthenticationServiceImpl implements
         ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
             .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
-        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+        if (ticketGrantingTicket == null) {
             throw new InvalidTicketException();
+        }
+        
+        synchronized (ticketGrantingTicket) {
+            if (ticketGrantingTicket.isExpired()) {
+                this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+                throw new InvalidTicketException();                
+            }
+
+            ticketGrantingTicket.updateLastTimeUsed();
+            ticketGrantingTicket.incrementCountOfUses();
         }
 
         if (credentials != null) {
@@ -146,11 +156,11 @@ public final class CentralAuthenticationServiceImpl implements
                 throw new TicketCreationException(e);
             }
         }
-
+        
         final ServiceTicket serviceTicket = ticketGrantingTicket
-            .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
-                .getNewTicketId(ServiceTicket.PREFIX), service,
-                this.serviceTicketExpirationPolicy);
+        .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), service,
+            this.serviceTicketExpirationPolicy);
 
         // TODO we need a better way of handling this
         if (credentials != null) {
