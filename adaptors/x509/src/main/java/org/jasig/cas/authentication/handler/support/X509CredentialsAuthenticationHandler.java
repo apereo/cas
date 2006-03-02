@@ -72,7 +72,12 @@ public final class X509CredentialsAuthenticationHandler implements
                     }
                     return true;
                 }
-
+                
+                if (log.isDebugEnabled()) {
+                    log.debug("Trusted Issuer [" + principal.getName()
+                        + "] not found for certificate issued for ["
+                        + certificate.getSerialNumber().toString() + "]");
+                }
             } catch (final Exception e) {
                 if (log.isWarnEnabled()) {
                     log.warn("Certficiate [" + certificate + "] expired.");
