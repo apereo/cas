@@ -49,8 +49,6 @@ public final class PrincipalBearingCredentials implements Credentials {
     }
 
     public String toString() {
-        final ToStringBuilder stringBuilder = new ToStringBuilder(this);
-        stringBuilder.append(this.principal);
-        return stringBuilder.toString();
+        return ToStringBuilder.reflectionToString(this);
     }
 }
