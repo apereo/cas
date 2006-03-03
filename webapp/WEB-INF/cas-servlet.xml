@@ -113,14 +113,16 @@
 	<bean
 		id="loginController"
 		class="org.springframework.webflow.executor.mvc.FlowController">
-		<constructor-arg ref="flowRegistry" />
+		<property
+			name="flowLocator"
+			ref="flowRegistry" />
 		<property
 			name="defaultFlowId"
 			value="login-webflow" />
 		<property
-			name="parameterExtractor">
+			name="argumentExtractor">
 			<bean
-				class="org.springframework.webflow.executor.support.FlowExecutorParameterExtractor">
+				class="org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor">
 				<property
 					name="flowExecutionKeyParameterName"
 					value="lt" />
