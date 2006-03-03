@@ -95,10 +95,5 @@
 		The "redirect" end state allows CAS to properly end the workflow while still redirecting
 		the user back to the service required.
 	-->
-	
 	<end-state id="redirect" view="externalRedirect:${requestScope.service}${requestScope.service.indexOf('?') != -1 ? '&amp;' : '?'}ticket=${requestScope.ticket}" />
-<!-- 
-	<end-state id="redirect"
-		view="class:org.jasig.cas.web.flow.RedirectViewDescriptorCreator" />
- -->
 </flow>
