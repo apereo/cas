@@ -73,7 +73,7 @@ public final class ContextUtils {
      */
     public static void addAttribute(final RequestContext context,
         final String attributeName, final Object attribute) {
-        context.getRequestScope().setAttribute(attributeName, attribute);
+        context.getRequestScope().put(attributeName, attribute);
     }
 
     /**
@@ -85,7 +85,7 @@ public final class ContextUtils {
      */
     public static Object getAttribute(final RequestContext context,
         final String attributeName) {
-        return context.getRequestScope().getAttribute(attributeName);
+        return context.getRequestScope().get(attributeName);
     }
 
     /**
@@ -97,7 +97,7 @@ public final class ContextUtils {
      */
     public static void addAttributeToFlowScope(final RequestContext context,
         final String attributeName, final Object attribute) {
-        context.getFlowScope().setAttribute(attributeName, attribute);
+        context.getFlowScope().put(attributeName, attribute);
     }
 
     /**
@@ -109,6 +109,6 @@ public final class ContextUtils {
      */
     public static Object getAttributeFromFlowScope(
         final RequestContext context, final String attributeName) {
-        return context.getFlowScope().getAttribute(attributeName);
+        return context.getFlowScope().get(attributeName);
     }
 }
