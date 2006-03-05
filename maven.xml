@@ -18,7 +18,6 @@
     <echo>Using root dir: ${rootdir}</echo>
     
     <echo>Setting rootdir to ${rootdir}</echo>
-    
 
     <postGoal name="site">
         <attainGoal name="dashboard:report-single"/>
@@ -56,10 +55,6 @@
 	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${basedir}/lib/jmxremote_optional.jar" />
 	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${basedir}/lib/jmxremote.jar" />
 	</preGoal>
-	
-	<goal name="maven-multichanges-report:register">
-		<attainGoal name="multichanges:report" />
-	</goal>
 	
 	<goal name="cas:release">
 		<attainGoal name="war" />
