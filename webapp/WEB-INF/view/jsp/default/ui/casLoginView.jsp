@@ -69,7 +69,9 @@
 				<a href="login?${query}${not empty query ? '&' : ''}locale=es">Español</a> |					
 				<a href="login?${query}${not empty query ? '&' : ''}locale=fr">Français</a> |
 				<a href="login?${query}${not empty query ? '&' : ''}locale=ru">Russian</a> |
-				<a href="login?${query}${not empty query ? '&' : ''}locale=nl">Nederlands</a>
+				<a href="login?${query}${not empty query ? '&' : ''}locale=nl">Nederlands</a> |
+				<a href="login?${query}${not empty query ? '&' : ''}locale=sv">Svenskt</a> |
+				<a href="login?${query}${not empty query ? '&' : ''}locale=it">Italiano</a>
 			</p>
 		</div>
 	</form>
