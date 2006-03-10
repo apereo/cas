@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.4
+ * <p>This is a published and supported CAS Server 3 API.</p>
  *
  */
 public abstract class AbstractTicketRegistry implements TicketRegistry {

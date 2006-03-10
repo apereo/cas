@@ -33,6 +33,7 @@ package org.jasig.cas.authentication.principal;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
+ * <p>This is a published and supported CAS Server 3 API.</p>
  * @see org.jasig.cas.authentication.principal.Principal
  * @see org.jasig.cas.authentication.principal.Credentials
  */
