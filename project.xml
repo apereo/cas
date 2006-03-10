@@ -239,9 +239,9 @@
 		<!-- XFIRE -->
 		<!-- 
 		<dependency>
-			<groupId>xfire</groupId>
+			<groupId>org.codehaus.xfire</groupId>
 			<artifactId>xfire-all</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
@@ -277,7 +277,7 @@
 		<dependency>
 			<groupId>woodstox</groupId>
 			<artifactId>wstx-asl</artifactId>
-			<version>2.0.3</version>
+			<version>2.9</version>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
@@ -286,7 +286,7 @@
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
-			<version>1.4</version>
+			<version>1.5.2</version>
 			<url>
 				http://www-124.ibm.com/developerworks/projects/wsdl4j/
 			</url>
