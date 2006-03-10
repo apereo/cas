@@ -43,14 +43,18 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     private int[] acceptableCodes;
 
+    /** Boolean variable denoting whether secure connection is required or not. */
+    private boolean requireSecure = true;
+
     /** Log instance. */
     private final Log log = LogFactory.getLog(getClass());
 
     public boolean authenticate(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         int response;
-        if (!serviceCredentials.getCallbackUrl().getProtocol().equals(
-            PROTOCOL_HTTPS)) {
+        if (this.requireSecure
+            && !serviceCredentials.getCallbackUrl().getProtocol().equals(
+                PROTOCOL_HTTPS)) {
             if (log.isDebugEnabled()) {
                 log.debug("Authentication failed because url was not secure.");
             }
@@ -96,6 +100,15 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
      */
     public void setAcceptableCodes(final int[] acceptableCodes) {
         this.acceptableCodes = acceptableCodes;
+    }
+
+    /**
+     * Set whether a secure url is required or not.
+     * 
+     * @param requireSecure true if its required, false if not. Default is true.
+     */
+    public void setRequireSecure(final boolean requireSecure) {
+        this.requireSecure = requireSecure;
     }
 
     public void afterPropertiesSet() throws Exception {
