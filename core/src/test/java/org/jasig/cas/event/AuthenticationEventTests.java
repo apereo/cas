@@ -41,9 +41,14 @@ public class AuthenticationEventTests extends TestCase {
     }
 
     public void testPublishedDate() {
-        assertEquals("Dates not equal.", new Date(), new AuthenticationEvent(
+        final long startDate = System.currentTimeMillis();
+        final Date publishedDate = new AuthenticationEvent(
             TestUtils.getCredentialsWithSameUsernameAndPassword(), false,
-            AuthenticationHandler.class).getPublishedDate());
+            AuthenticationHandler.class).getPublishedDate();
+        final long endDate = System.currentTimeMillis();
+        
+        assertTrue(startDate <= publishedDate.getTime());
+        assertTrue(endDate >= publishedDate.getTime());
     }
 
     public void testAuthenticationClass() {

@@ -84,8 +84,10 @@ public class AssertionImplTests extends TestCase {
     public void testEqualsWithValidObject() {
         final List list = new ArrayList();
         final List list1 = new ArrayList();
-        list.add(TestUtils.getAuthentication());
-        list1.add(TestUtils.getAuthentication());
+
+        final Authentication auth = TestUtils.getAuthentication();
+        list.add(auth);
+        list1.add(auth);
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
             list, new SimpleService("test"), true);
