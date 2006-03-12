@@ -132,7 +132,11 @@ public class TicketGrantingTicketImplTests extends TestCase {
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
+        final long beforeLastTimeUsed = System.currentTimeMillis();
         t.updateLastTimeUsed();
-        assertEquals(t.getLastTimeUsed(), System.currentTimeMillis());
+        final long afterLastTimeUsed = System.currentTimeMillis();
+        
+        assertTrue(beforeLastTimeUsed <= t.getLastTimeUsed());
+        assertTrue(afterLastTimeUsed >= t.getLastTimeUsed());
     }
 }
