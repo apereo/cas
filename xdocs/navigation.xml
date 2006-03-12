@@ -19,5 +19,15 @@
 			<item name="Using JSP 1.2" href="/views/jsp12.html" />
 		</menu>
 		
+		<menu name="Adaptors">
+			<item name="Generic" href="/multiproject/cas-server-generic/index.html" />
+			<item name="JDBC" href="/multiproject/cas-server-jdbc/index.html" />
+			<item name="LDAP" href="/multiproject/cas-server-ldap/index.html" />
+			<item name="Legacy CAS" href="/multiproject/cas-server-legacycas/index.html" />
+			<item name="SPNEGO" href="/multiproject/cas-server-SPNEGO/index.html" />
+			<item name="Trusted" href="/multiproject/cas-server-trusted/index.html" />
+			<item name="X.509" href="/multiproject/cas-server-x509/index.html" />
+		</menu>
+		
 	</body>
 </project>
