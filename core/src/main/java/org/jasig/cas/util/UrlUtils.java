@@ -8,6 +8,8 @@ package org.jasig.cas.util;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,6 +45,12 @@ public final class UrlUtils {
 
             connection.setRequestProperty("Connection", "close");
             return connection.getResponseCode();
+        } catch (SSLHandshakeException e) {
+            LOG.error(e, e);
+            LOG
+                .error("This exception is generally an indication that your JVM keystore does not trust the server certificate being returned by the server at the URL: "
+                    + url.toExternalForm());
+            return HttpURLConnection.HTTP_INTERNAL_ERROR;
         } catch (Exception e) {
             LOG.error(e, e);
             return HttpURLConnection.HTTP_INTERNAL_ERROR;
