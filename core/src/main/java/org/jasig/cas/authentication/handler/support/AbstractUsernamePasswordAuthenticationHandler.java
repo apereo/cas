@@ -46,7 +46,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     private PasswordEncoder passwordEncoder;
 
     /** Instance of logging for subclasses. */
-    private Log log = LogFactory.getLog(this.getClass());
+    protected Log log = LogFactory.getLog(this.getClass());
 
     /**
      * Method automatically handles conversion to UsernamePasswordCredentials
