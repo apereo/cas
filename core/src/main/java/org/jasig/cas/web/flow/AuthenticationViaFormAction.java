@@ -185,9 +185,9 @@ public final class AuthenticationViaFormAction extends FormAction implements
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
 
-        Assert.notNull(this.centralAuthenticationService);
-        Assert.notNull(this.warnCookieGenerator);
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator);
+        Assert.notNull(this.centralAuthenticationService, "centralAuthenticationService cannot be null");
+        Assert.notNull(this.warnCookieGenerator, "warnCookieGenerator cannot be null");
+        Assert.notNull(this.ticketGrantingTicketCookieGenerator, "ticketGrantingTicketCookieGenerator cannot be null");
 
         if (this.getFormObjectClass() == null) {
             this.setFormObjectClass(UsernamePasswordCredentials.class);

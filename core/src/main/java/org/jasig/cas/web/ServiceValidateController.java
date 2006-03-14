@@ -67,7 +67,7 @@ public final class ServiceValidateController extends AbstractController
     private String failureView;
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.centralAuthenticationService);
+        Assert.notNull(this.centralAuthenticationService, "centralAuthenticationService cannot be null");
 
         if (this.validationSpecificationClass == null) {
             this.validationSpecificationClass = Cas20ProtocolValidationSpecification.class;

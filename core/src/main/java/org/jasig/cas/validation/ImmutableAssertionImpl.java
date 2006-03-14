@@ -46,9 +46,9 @@ public final class ImmutableAssertionImpl implements Assertion {
      */
     public ImmutableAssertionImpl(final List principals, final Service service,
         final boolean fromNewLogin) {
-        Assert.notNull(principals);
-        Assert.notNull(service);
-        Assert.notEmpty(principals);
+        Assert.notNull(principals, "principals cannot be null");
+        Assert.notNull(service, "service cannot be null");
+        Assert.notEmpty(principals, "principals cannot be empty");
 
         this.principals = principals;
         this.service = service;

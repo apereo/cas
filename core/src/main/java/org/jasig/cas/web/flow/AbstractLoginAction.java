@@ -89,8 +89,8 @@ public abstract class AbstractLoginAction extends AbstractAction {
         final boolean gateway, final boolean renew, final boolean warn);
 
     protected final void initAction() {
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator);
-        Assert.notNull(this.warnCookieGenerator);
+        Assert.notNull(this.ticketGrantingTicketCookieGenerator, "ticketGrantingTicketCookieGenerator cannot be null");
+        Assert.notNull(this.warnCookieGenerator, "warnCookieGenerator cannot be null");
         initActionInternal();
     }
 

@@ -34,7 +34,7 @@ public class HttpBasedServiceCredentials implements Credentials {
      * @throws IllegalArgumentException if the callbackUrl is null.
      */
     public HttpBasedServiceCredentials(final URL callbackUrl) {
-        Assert.notNull(callbackUrl);
+        Assert.notNull(callbackUrl, "callbackUrl cannot be null");
         this.callbackUrl = callbackUrl;
     }
 

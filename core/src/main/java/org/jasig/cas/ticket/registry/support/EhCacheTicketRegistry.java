@@ -46,7 +46,7 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
      * @throws IllegalArgumentException if the ticket is null.
      */
     public void addTicket(final Ticket ticket) {
-        Assert.notNull(ticket);
+        Assert.notNull(ticket, "ticket cannot be null");
 
         if (log.isDebugEnabled()) {
             log.debug("Added ticket [" + ticket.getId() + "] to registry.");

@@ -34,7 +34,7 @@ public class SimpleService implements Service {
      * @throws IllegalArgumentException if the ID is null
      */
     public SimpleService(final String id) {
-        Assert.notNull(id);
+        Assert.notNull(id, "id cannot be null");
 
         this.id = id;
     }

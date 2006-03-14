@@ -54,9 +54,9 @@ public final class LogoutController extends AbstractController implements
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService must be set on "
                 + this.getClass().getName());
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator);
-        Assert.notNull(this.warnCookieGenerator);
-        Assert.hasText(this.logoutView);
+        Assert.notNull(this.ticketGrantingTicketCookieGenerator, "ticketGrantingTicketCookieGenerator cannot be null");
+        Assert.notNull(this.warnCookieGenerator, "warnCookieGenerator cannot be null");
+        Assert.hasText(this.logoutView, "logoutView must have text.");
     }
 
     protected ModelAndView handleRequestInternal(

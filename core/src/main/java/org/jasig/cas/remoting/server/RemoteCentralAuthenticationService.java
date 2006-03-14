@@ -49,7 +49,7 @@ public final class RemoteCentralAuthenticationService implements
      */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketException {
-        Assert.notNull(credentials);
+        Assert.notNull(credentials, "credentials cannot be null");
 
         final Errors errors = validateCredentials(credentials);
         if (errors.hasErrors()) {

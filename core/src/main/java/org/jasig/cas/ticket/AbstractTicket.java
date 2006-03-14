@@ -56,8 +56,8 @@ public abstract class AbstractTicket implements Ticket {
      */
     public AbstractTicket(final String id, final TicketGrantingTicket ticket,
         final ExpirationPolicy expirationPolicy) {
-        Assert.notNull(expirationPolicy);
-        Assert.notNull(id);
+        Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
+        Assert.notNull(id, "id cannot be null");
 
         this.id = id;
         this.creationTime = System.currentTimeMillis();

@@ -51,8 +51,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
         
-        Assert.notNull(ticket);
-        Assert.notNull(service);
+        Assert.notNull(ticket, "ticket cannot be null");
+        Assert.notNull(service, "service cannot be null");
 
         this.service = service;
         this.fromNewLogin = fromNewLogin;

@@ -28,8 +28,8 @@ public abstract class AbstractAuthentication implements Authentication {
 
     public AbstractAuthentication(final Principal principal,
         final Map attributes) {
-        Assert.notNull(principal);
-        Assert.notNull(attributes);
+        Assert.notNull(principal, "principal cannot be null");
+        Assert.notNull(attributes, "attributes cannot be null");
 
         this.principal = principal;
         this.attributes = attributes;
