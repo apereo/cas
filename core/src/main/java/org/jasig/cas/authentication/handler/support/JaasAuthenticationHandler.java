@@ -88,7 +88,7 @@ public final class JaasAuthenticationHandler extends
 	 * accepted in the callback array. This code based loosely on example given
 	 * in Sun's javadoc for CallbackHandler interface.
 	 */
-	private class UsernamePasswordCallbackHandler implements CallbackHandler {
+	protected class UsernamePasswordCallbackHandler implements CallbackHandler {
 		/** The username of the principal we are trying to authenticate. */
 		private final String userName;
 
@@ -103,7 +103,7 @@ public final class JaasAuthenticationHandler extends
 		 * @param password
 		 *            Password to be used for authentication
 		 */
-		private UsernamePasswordCallbackHandler(final String userName,
+		protected UsernamePasswordCallbackHandler(final String userName,
 				final String password) {
 			this.userName = userName;
 			this.password = password;

@@ -245,7 +245,7 @@ public class MapPasswordHandlerTests extends TestCase {
     /**
      * An ad-hoc credentials that MapPasswordHandler ought not to support.
      */
-    private class UnsupportedCredentials implements Credentials {
+    protected class UnsupportedCredentials implements Credentials {
 
 		/**
 		 * 
