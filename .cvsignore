@@ -2,8 +2,8 @@ build
 dist
 target
 bin
+docs
 *.jpage
-doc
 build.properties
 velocity.log
 .clover

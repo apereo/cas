@@ -1,0 +1,78 @@
+<document>
+  <properties>
+    <title>Changelog</title>
+    <author email="scott_battaglia@rutgers.edu">Scott Battaglia</author>
+  </properties>
+  <body>
+
+  	<release version="3.0-rc1" date="2005-05-26">
+  		<action dev="sbattaglia" type="add">
+  			Test Coverage increased to 90+%
+  		</action>
+  		<action dev="apetro" type="add">
+  			Failed Deployment treated as normal error to allow for standard error handling.
+  		</action>
+  		<action dev="sbattaglia" type="add">
+  			Login Use Case defined by Web Flow to allow for more flexible configuration than previously allowed by LoginController.
+  		</action>
+  	</release>
+  
+	<release version="3.0-m3" date="2005-04-22">
+		<action dev="hgilbert" type="add">
+			SAML View Response
+		</action>
+		<action dev="sbattaglia" type="add">
+			Well-defined Ticket Exception Heirarchy
+		</action>
+		<action dev="sbattaglia" type="add">
+			AttributesPopulator now checks Credentials
+		</action>
+		<action dev="sbattaglia" type="add">
+			Test Coverage at 89%
+		</action>
+		<action dev="sbattaglia" type="add">
+			Web Services front end via XFire
+		</action>
+	</release>
+
+
+    <release version="3.0-m2" date="2005-03-28">
+
+      <action dev="sbattaglia" type="add">
+		Ability to allow services to skin (theme) views.
+      </action> 
+
+      <action dev="sbattaglia" type="add">
+		Ability to pass arbitrary attributes to view.
+      </action> 
+
+      <action dev="sbattaglia" type="add">
+		Services White List
+      </action> 
+
+      <action dev="sbattaglia" type="add" issue="CAS-56">
+		Expose Ticket Statistics via JMX
+      </action> 
+
+      <action dev="sbattaglia" type="add" issue="CAS-85">
+        Easier use of attributes in Authentication by introduction of Map.
+      </action> 
+
+      <action dev="sbattaglia" type="add" issue="CAS-14">
+        Project Management using Maven
+      </action> 
+      <action dev="sbattaglia" type="add" issue="CAS-76">
+        Ability to do Single Sign Out (example of CCCI sign out)
+      </action> 
+      <action dev="sbattaglia" type="add">
+        Test Coverage increased to 56+%
+      </action>              
+    </release>
+
+    <release version="3.0-m1" date="2005-02-11">
+      <action dev="sbattaglia" type="add">
+        Initial release of the CAS 3.0
+      </action>              
+    </release>
+  </body>
+</document>
