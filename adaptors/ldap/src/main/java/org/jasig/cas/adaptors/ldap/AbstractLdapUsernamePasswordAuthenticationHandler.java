@@ -58,8 +58,8 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     }
 
     protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.ldapTemplate);
-        Assert.notNull(this.filter);
+        Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
+        Assert.notNull(this.filter, "filter cannot be null");
         initDao();
     }
 

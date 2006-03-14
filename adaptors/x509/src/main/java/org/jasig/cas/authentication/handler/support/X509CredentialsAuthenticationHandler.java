@@ -93,7 +93,7 @@ public final class X509CredentialsAuthenticationHandler implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.trustedIssuer);
+        Assert.notNull(this.trustedIssuer, "trustedIssuer cannot be null");
 
         if (!StringUtils.hasText(this.subjectDnPattern)) {
             log.info("Using default Subject DN Pattern: "

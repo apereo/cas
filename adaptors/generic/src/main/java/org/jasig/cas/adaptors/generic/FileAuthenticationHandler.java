@@ -81,8 +81,8 @@ public final class FileAuthenticationHandler extends
     }
 
     protected void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.fileName);
-        Assert.notNull(this.separator);
+        Assert.notNull(this.fileName, "the fileName cannot be null");
+        Assert.notNull(this.separator, "the separator cannot be null");
     }
 
     /**

@@ -45,7 +45,7 @@ public final class QueryDatabaseAuthenticationHandler extends
     }
 
     protected void initDao() throws Exception {
-        Assert.notNull(this.sql);
+        Assert.notNull(this.sql, "the SQL statement cannot be null");
     }
 
     /**
