@@ -530,28 +530,31 @@
 		</dependency>
 
 		<!-- MAVEN PLUGINS -->
-		<!-- 
-			<dependency>
-			<groupId>maven-plugins</groupId>
-			<artifactId>maven-findbugs-plugin</artifactId>
-			<version>0.9.1</version>
-			<type>plugin</type>
-			</dependency>
-		-->
-
 		<dependency>
 			<groupId>maven</groupId>
-			<artifactId>maven-jira-plugin</artifactId>
-			<version>1.1.2</version>
+			<artifactId>maven-simian-plugin</artifactId>
+			<version>1.6</version>
 			<type>plugin</type>
 		</dependency>
 
-
+		<dependency>
+			<groupId>maven</groupId>
+			<artifactId>maven-checkstyle-plugin</artifactId>
+			<version>3.0</version>
+			<type>plugin</type>
+		</dependency>
 
 		<dependency>
 			<groupId>maven</groupId>
 			<artifactId>maven-clover-plugin</artifactId>
-			<version>1.10</version>
+			<version>1.11</version>
+			<type>plugin</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>maven</groupId>
+			<artifactId>maven-pmd-plugin</artifactId>
+			<version>1.7</version>
 			<type>plugin</type>
 		</dependency>
 
