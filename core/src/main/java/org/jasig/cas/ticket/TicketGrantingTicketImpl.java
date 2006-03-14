@@ -50,7 +50,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         final Authentication authentication, final ExpirationPolicy policy) {
         super(id, ticketGrantingTicket, policy);
         
-        Assert.notNull(authentication);
+        Assert.notNull(authentication, "authentication cannot be null");
 
         this.authentication = authentication;
     }

@@ -119,8 +119,8 @@ public final class CentralAuthenticationServiceImpl implements
         final Service service, final Credentials credentials)
         throws TicketException {
 
-        Assert.notNull(ticketGrantingTicketId);
-        Assert.notNull(service);
+        Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
+        Assert.notNull(service, "service cannot be null");
 
         final TicketGrantingTicket ticketGrantingTicket;
         ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
@@ -198,8 +198,8 @@ public final class CentralAuthenticationServiceImpl implements
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
 
-        Assert.notNull(serviceTicketId);
-        Assert.notNull(credentials);
+        Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
+        Assert.notNull(credentials, "credentials cannot be null");
 
         try {
             final Authentication authentication = this.authenticationManager
@@ -233,8 +233,8 @@ public final class CentralAuthenticationServiceImpl implements
      */
     public Assertion validateServiceTicket(final String serviceTicketId,
         final Service service) throws TicketException {
-        Assert.notNull(serviceTicketId);
-        Assert.notNull(service);
+        Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
+        Assert.notNull(service, "service cannot be null");
 
         final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
             .getTicket(serviceTicketId, ServiceTicket.class);
@@ -287,7 +287,7 @@ public final class CentralAuthenticationServiceImpl implements
      */
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
-        Assert.notNull(credentials);
+        Assert.notNull(credentials, "credentials cannot be null");
 
         if (log.isDebugEnabled()) {
             log.debug("Attempting to create TicketGrantingTicket for "

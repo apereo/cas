@@ -33,7 +33,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
      * @throws IllegalArgumentException if the Ticket is null.
      */
     public synchronized void addTicket(final Ticket ticket) {
-        Assert.notNull(ticket);
+        Assert.notNull(ticket, "ticket cannot be null");
 
         if (log.isDebugEnabled()) {
             log.debug("Added ticket [" + ticket.getId() + "] to registry.");

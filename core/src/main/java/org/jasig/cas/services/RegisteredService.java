@@ -50,7 +50,7 @@ public final class RegisteredService {
     public RegisteredService(final String id, final boolean allowedToProxy,
         final boolean forceAuthentication, final String theme,
         final URL proxyUrl) {
-        Assert.notNull(id);
+        Assert.notNull(id, "id cannot be null");
 
         this.id = id;
         this.allowedToProxy = allowedToProxy;

@@ -30,7 +30,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     public final synchronized Ticket getTicket(final String ticketId,
         final Class clazz) {
-        Assert.notNull(clazz);
+        Assert.notNull(clazz, "clazz cannot be null");
 
         final Ticket ticket = this.getTicket(ticketId);
 

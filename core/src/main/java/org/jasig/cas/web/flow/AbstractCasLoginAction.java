@@ -30,6 +30,6 @@ public abstract class AbstractCasLoginAction extends AbstractLoginAction {
     }
 
     protected void initActionInternal() {
-        Assert.notNull(this.centralAuthenticationService);
+        Assert.notNull(this.centralAuthenticationService, "centralAuthenticationService cannot be null");
     }
 }

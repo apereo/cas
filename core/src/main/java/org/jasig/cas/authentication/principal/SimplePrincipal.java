@@ -34,7 +34,7 @@ public class SimplePrincipal implements Principal {
      * @throws IllegalArgumentException if the id is null
      */
     public SimplePrincipal(final String id) {
-        Assert.notNull(id);
+        Assert.notNull(id, "id cannot be null");
         this.id = id;
     }
 
