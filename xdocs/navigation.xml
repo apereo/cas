@@ -29,5 +29,6 @@
 			<item name="X.509" href="/multiproject/cas-server-x509/index.html" />
 		</menu>
 		
+		<item name="CAS Server" href="/multiproject/cas-server/index.html" />
 	</body>
 </project>
