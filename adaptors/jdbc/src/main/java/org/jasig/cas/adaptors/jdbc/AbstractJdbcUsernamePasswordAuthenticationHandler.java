@@ -42,7 +42,7 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
     }
 
     protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.jdbcTemplate);
+        Assert.notNull(this.jdbcTemplate, "jdbcTemplate cannot be null (DataSource is required)");
         initDao();
     }
 

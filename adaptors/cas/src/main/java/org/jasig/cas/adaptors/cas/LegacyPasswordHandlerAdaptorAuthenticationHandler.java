@@ -55,6 +55,6 @@ public final class LegacyPasswordHandlerAdaptorAuthenticationHandler implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.passwordHandler);
+        Assert.notNull(this.passwordHandler, "the passwordHandler cannot be null");
     }
 }

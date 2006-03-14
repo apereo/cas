@@ -46,6 +46,6 @@ public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.trustHandler);
+        Assert.notNull(this.trustHandler, "the trustHandler cannot be null");
     }
 }

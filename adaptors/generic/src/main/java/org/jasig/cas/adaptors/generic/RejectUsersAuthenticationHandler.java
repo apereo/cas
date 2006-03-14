@@ -45,7 +45,7 @@ public final class RejectUsersAuthenticationHandler extends
     }
 
     public void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.users);
+        Assert.notNull(this.users, "the users collection cannot be null");
     }
 
     /**

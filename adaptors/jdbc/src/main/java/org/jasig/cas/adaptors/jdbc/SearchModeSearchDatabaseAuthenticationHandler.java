@@ -46,9 +46,9 @@ public final class SearchModeSearchDatabaseAuthenticationHandler extends
     }
 
     protected void initDao() throws Exception {
-        Assert.notNull(this.fieldPassword);
-        Assert.notNull(this.fieldUser);
-        Assert.notNull(this.tableUsers);
+        Assert.notNull(this.fieldPassword, "fieldPassword cannot be null");
+        Assert.notNull(this.fieldUser, "fieldUser cannot be null");
+        Assert.notNull(this.tableUsers, "tableUsers cannot be null");
 
         this.sql = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser
             + " = ? And " + this.fieldPassword + " = ?";
