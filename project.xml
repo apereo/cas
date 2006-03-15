@@ -567,51 +567,7 @@
 
 
 	</dependencies>
-	<build>
-		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
-		<sourceDirectory>${basedir}/core/src/main/java</sourceDirectory>
-		<unitTestSourceDirectory>
-			${basedir}/core/src/test/java
-		</unitTestSourceDirectory>
-		<unitTest>
-			<includes>
-				<include>**/*Tests.java</include>
-			</includes>
-			<excludes>
-				<exclude>**/Abstract*Tests.java</exclude>
-			</excludes>
-			<resources>
-				<resource>
-					<directory>${basedir}/core/src/test/resources</directory>
-					<includes>
-						<include>**/**</include>
-						<include>**/*.txt</include>
-					</includes>
-					<excludes>
-						<exclude>**/*.java</exclude>
-					</excludes>
-					<filtering>false</filtering>
-				</resource>
-			</resources>
-		</unitTest>
-		<resources>
-			<resource>
-				<directory>${rootdir}</directory>
-				<targetPath>META-INF</targetPath>
-				<includes>
-					<include>notice.txt</include>
-				</includes>
-				<filtering>false</filtering>
-			</resource>
-			<resource>
-				<directory>${basedir}/core/src/main/resources</directory>
-				<includes>
-					<include>**/**</include>
-				</includes>
-				<filtering>false</filtering>
-			</resource>
-		</resources>
-	</build>
+
 	<reports>
 		<report>maven-checkstyle-plugin</report>
 		<report>maven-clover-plugin</report>

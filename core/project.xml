@@ -9,19 +9,52 @@
   <repository>
     <connection>scm:cvs:pserver:anonymous@uportal.org:/home/cvs/jasig:cas</connection>
     <developerConnection>scm:cvs:pserver:${maven.username}@uportal.org:/home/cvs/jasig:cas</developerConnection>
-    <url>http://www.uportal.org/cgi-bin/viewcvs.cgi/cas3/core/</url>
+    <url>http://developer.ja-sig.org/source/</url>
   </repository>
-  <build>
-    <resources>
-      <resource>
-        <directory>${basedir}/../</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>notice.txt</include>
-        </includes>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
-  </build>
+	<build>
+		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<unitTestSourceDirectory>
+			${basedir}/src/test/java
+		</unitTestSourceDirectory>
+		<unitTest>
+			<includes>
+				<include>**/*Tests.java</include>
+			</includes>
+			<excludes>
+				<exclude>**/Abstract*Tests.java</exclude>
+			</excludes>
+			<resources>
+				<resource>
+					<directory>${basedir}/src/test/resources</directory>
+					<includes>
+						<include>**/**</include>
+						<include>**/*.txt</include>
+					</includes>
+					<excludes>
+						<exclude>**/*.java</exclude>
+					</excludes>
+					<filtering>false</filtering>
+				</resource>
+			</resources>
+		</unitTest>
+		<resources>
+			<resource>
+				<directory>${rootdir}</directory>
+				<targetPath>META-INF</targetPath>
+				<includes>
+					<include>notice.txt</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<includes>
+					<include>**/**</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+	</build>
 </project>
 
