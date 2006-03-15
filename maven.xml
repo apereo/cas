@@ -19,9 +19,7 @@
     
     <echo>Setting rootdir to ${rootdir}</echo>
 
-    <postGoal name="site">
-        <attainGoal name="dashboard:report-single"/>
-
+    <postGoal name="multiproject">
 		<j:if test="${not empty siteDir}">
 		<ant:copy todir="${siteDir}">
 			<ant:fileset dir="target/docs/">
