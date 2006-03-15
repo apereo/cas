@@ -11,4 +11,48 @@
     <developerConnection>scm:cvs:pserver:${maven.username}@developer.ja-sig.org:/home/cvs/jasig:cas</developerConnection>
     <url>http://developer.ja-sig.org/source/</url>
   </repository>
+  
+	<build>
+		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<unitTestSourceDirectory>${basedir}/src/test/java</unitTestSourceDirectory>
+		<unitTest>
+			<includes>
+				<include>**/*Tests.java</include>
+			</includes>
+			<excludes>
+				<exclude>**/Abstract*Tests.java</exclude>
+			</excludes>
+			<resources>
+				<resource>
+					<directory>${basedir}/src/test/resources</directory>
+					<includes>
+						<include>**/**</include>
+						<include>**/*.txt</include>
+					</includes>
+					<excludes>
+						<exclude>**/*.java</exclude>
+					</excludes>
+					<filtering>false</filtering>
+				</resource>
+			</resources>
+		</unitTest>
+		<resources>
+			<resource>
+				<directory>${rootdir}</directory>
+				<targetPath>META-INF</targetPath>
+				<includes>
+					<include>notice.txt</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<includes>
+					<include>**/**</include>
+				</includes>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+	</build>
 </project>
