@@ -5,7 +5,7 @@
    xmlns:maven="jelly:maven">
 
     <j:set var="rootdir">${basedir}</j:set>
-
+    
     <j:while test="${true}">
         <util:available file="${rootdir}/core/project.xml">
             <j:break/>
@@ -29,7 +29,7 @@
 		</j:if>
     </postGoal>
     
-    <postGoal name="jar">
+    <postGoal name="jar:jar">
     
         <j:if test="${context.getVariable('signature.alias') != null}">
         	<echo>signature.alias defined; signing JAR(s)...</echo>
@@ -43,24 +43,37 @@
     	<j:if test="${not empty mavenRepository}">
 		    <copy todir="${mavenRepository}/cas/jars/" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
 		</j:if>
+		
+		<j:if test="${not empty artifactsDir}">
+			<copy todir="${artifactsDir}" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
+		</j:if>
+		
+		<copy todir="${rootdir}/target" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
 	</postGoal>
 
 	<preGoal name="war:init">
 		<attainGoal name="clean" />
 		<attainGoal name="jar" />
 		<j:set var="maven.test.skip">true</j:set>
-	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${maven.build.dir}/${pom.artifactId}-${pom.currentVersion}.jar" />
-	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${basedir}/lib/jmxremote_optional.jar" />
-	    <copy todir="${maven.build.dir}/${pom.artifactId}/WEB-INF/lib" file="${basedir}/lib/jmxremote.jar" />
+	    <copy todir="${rootdir}/target/${pom.artifactId}/WEB-INF/lib" file="${rootdir}/target/${pom.artifactId}-${pom.currentVersion}.jar" />
+	    <copy todir="${rootdir}/target/${pom.artifactId}/WEB-INF/lib" file="${rootdir}/lib/jmxremote_optional.jar" />
+	    <copy todir="${rootdir}/target/${pom.artifactId}/WEB-INF/lib" file="${rootdir}/lib/jmxremote.jar" />
 	</preGoal>
 	
+	<postGoal name="war">
+		<ant:delete dir="${rootdir}/target/classes" />
+		<ant:delete dir="${rootdir}/target/commons-attributes" />
+		<ant:delete dir="${rootdir}/target/commons-attributes-unittest" />
+		<ant:delete dir="${rootdir}/target/test-classes" />
+		<ant:delete dir="${rootdir}/target/test-reports" />
+	</postGoal>
+	
 	<goal name="cas:release">
-		<attainGoal name="war" />
 		<j:set var="maven.javadoc.destdir">${basedir}/docs</j:set>
 		<attainGoal name="javadoc" />
 
-		<ant:mkdir dir="${basedir}/lib/war" />
-		<ant:copy todir="${basedir}/lib/war">
+		<ant:mkdir dir="${rootdir}/lib/war" />
+		<ant:copy todir="${rootdir}/lib/war">
 			<ant:fileset dir="target/${pom.artifactId}/WEB-INF/lib/">
 				<ant:include name="**" />
 			</ant:fileset>
@@ -70,6 +83,7 @@
 		<ant:mkdir dir="${dist.dir}" />
 		<ant:fileset id="release" dir=".">
 			<ant:include name="target/cas.war" />
+			<ant:include name="target/*.jar" />
 			<ant:include name="docs/**" />
 			<ant:include name="core/*.xml" />
 			<ant:include name="core/*.txt" />
@@ -92,6 +106,7 @@
 		<ant:tar destfile="${dist.dir}/${release.tar}">
 			<ant:tarfileset dir="." prefix="${release.path}">
 				<ant:include name="target/cas.war" />
+				<ant:include name="target/*.jar" />
 				<ant:include name="docs/**" />
 				<ant:include name="core/*.xml" />
 				<ant:include name="core/*.txt" />

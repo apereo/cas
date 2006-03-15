@@ -569,8 +569,8 @@
 	
 	<build>
 		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
-		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-		<unitTestSourceDirectory>${basedir}/src/test/java</unitTestSourceDirectory>
+		<sourceDirectory>${basedir}/core/src/main/java</sourceDirectory>
+		<unitTestSourceDirectory>${basedir}/core/src/test/java</unitTestSourceDirectory>
 		<unitTest>
 			<includes>
 				<include>**/*Tests.java</include>
@@ -580,7 +580,7 @@
 			</excludes>
 			<resources>
 				<resource>
-					<directory>${basedir}/src/test/resources</directory>
+					<directory>${basedir}/core/src/test/resources</directory>
 					<includes>
 						<include>**/**</include>
 						<include>**/*.txt</include>
@@ -602,7 +602,7 @@
 				<filtering>false</filtering>
 			</resource>
 			<resource>
-				<directory>${basedir}/src/main/resources</directory>
+				<directory>${basedir}/core/src/main/resources</directory>
 				<includes>
 					<include>**/**</include>
 				</includes>
