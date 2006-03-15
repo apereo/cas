@@ -9,25 +9,11 @@
 		<connection>scm:cvs:pserver:anonymous@developer.ja-sig.org:/home/cvs/jasig:cas3</connection>
 		<url>http://developer.ja-sig.org/source/</url>
 	</repository>  
-	
-	<!-- 
-	<dependencies>
-		<dependency>
-			<groupId>maven</groupId>
-			<artifactId>commons-attributes-plugin</artifactId>
-			<version>2.1</version>
-			<type>plugin</type>
-		</dependency>
-	</dependencies>
-		 -->	
-  
   
   <reports>
-<!--     <report>maven-statcvs-plugin</report> -->
     <report>maven-license-plugin</report>
-    <report>maven-changes-plugin</report>
-    <report>maven-dashboard-plugin</report>
     <report>maven-multiproject-plugin</report>
+    <report>maven-dashboard-plugin</report>
   </reports>
 </project>
 
