@@ -72,7 +72,7 @@ public final class X509CredentialsAuthenticationHandler implements
                     }
                     return true;
                 }
-                
+
                 if (log.isDebugEnabled()) {
                     log.debug("Trusted Issuer [" + principal.getName()
                         + "] not found for certificate issued for ["
@@ -109,7 +109,13 @@ public final class X509CredentialsAuthenticationHandler implements
     }
 
     private boolean isCertificateFromTrustedIssuer(final Principal principal) {
-        return (principal.getName().equals(this.trustedIssuer));
+        final boolean result = principal.getName().equals(this.trustedIssuer);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Attempted to match [" + principal.getName()
+                + "] against [" + this.trustedIssuer + "].  Result: " + result);
+        }
+        return result;
     }
 
     private boolean doesCertificateSubjectDnMatchPattern(
