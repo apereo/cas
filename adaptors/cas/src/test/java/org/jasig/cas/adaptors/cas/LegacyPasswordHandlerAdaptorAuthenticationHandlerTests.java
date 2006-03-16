@@ -26,6 +26,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
     protected void setUp() throws Exception {
         super.setUp();
         this.lphaah = new LegacyPasswordHandlerAdaptorAuthenticationHandler();
+        this.lphaah.setPasswordHandler(new MockPasswordHandler());
         this.lphaah.afterPropertiesSet();
     }
 
@@ -48,6 +49,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
      * @throws AuthenticationException as a failure modality
      */
     public void testAuthenticateMissingHandler() {
+        this.lphaah.setPasswordHandler(null);
         try {
             this.lphaah.authenticate(new LegacyCasCredentials());
         } catch (NullPointerException npe) {
