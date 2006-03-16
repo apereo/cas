@@ -26,6 +26,7 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
     protected void setUp() throws Exception {
         super.setUp();
         this.lphaah = new LegacyPasswordHandlerAdaptorAuthenticationHandler();
+        this.lphaah.afterPropertiesSet();
     }
 
     protected void tearDown() throws Exception {

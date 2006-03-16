@@ -7,7 +7,6 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.AbstractX509CertificateTests;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.authentication.principal.X509CertificateCredentials;
@@ -20,14 +19,12 @@ import org.jasig.cas.authentication.principal.X509CertificateCredentials;
  *
  */
 public class X509CredentialsAuthenticationHandlerTests extends AbstractX509CertificateTests {
-    private AuthenticationHandler authenticationHandler;
+    private X509CredentialsAuthenticationHandler authenticationHandler;
 
     protected void setUp() throws Exception {
-        final X509CredentialsAuthenticationHandler ah = new X509CredentialsAuthenticationHandler();
-        ah.setTrustedIssuer("JA-SIG");
-        ah.afterPropertiesSet();
-        
-        this.authenticationHandler = ah;
+        this.authenticationHandler = new X509CredentialsAuthenticationHandler();
+        this.authenticationHandler.setTrustedIssuer("JA-SIG");
+        this.authenticationHandler.afterPropertiesSet();        
     }
     
     public void testSupportsClass() {
@@ -57,9 +54,17 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
     }
     
     public void testValidCertificateWithNotTrustedIssuer() throws Exception {
-        ((X509CredentialsAuthenticationHandler) this.authenticationHandler).setTrustedIssuer("test");
+        this.authenticationHandler.setTrustedIssuer("test");
         final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
         
         assertFalse(this.authenticationHandler.authenticate(credentials));
+    }
+    
+    public void testValidCertificateWithCustomDistinguishedDn() throws Exception {
+        this.authenticationHandler.setSubjectDnPattern("s.*");
+        this.authenticationHandler.afterPropertiesSet();
+        final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        
+        assertTrue(this.authenticationHandler.authenticate(credentials));
     }
 }

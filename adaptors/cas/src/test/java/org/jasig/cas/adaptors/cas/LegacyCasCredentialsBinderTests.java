@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  * 
  * @version $Revision$ $Date$
  */
-public class LegacyCasCredentialsBinderTest extends TestCase {
+public class LegacyCasCredentialsBinderTests extends TestCase {
 
     private CredentialsBinder credentialsBinder = new LegacyCasCredentialsBinder();
 
