@@ -26,6 +26,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
     protected void setUp() throws Exception {
         super.setUp();
         this.legacyTrustAdaptor = new LegacyTrustHandlerAdaptorAuthenticationHandler();
+        this.legacyTrustAdaptor.afterPropertiesSet();
     }
 
     protected void tearDown() throws Exception {

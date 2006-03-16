@@ -7,6 +7,7 @@ package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import junit.framework.TestCase;
 
@@ -27,4 +28,10 @@ public final class PrincipalBearingCredentialsAuthenticationHandlerTests
         PrincipalBearingCredentials credentials = new PrincipalBearingCredentials(new SimplePrincipal("scott"));
         assertTrue(this.handler.authenticate(credentials));
     }    
+    
+    public void testSupports() {
+        PrincipalBearingCredentials credentials = new PrincipalBearingCredentials(new SimplePrincipal("scott"));
+        assertTrue(this.handler.supports(credentials));
+        assertFalse(this.handler.supports(new UsernamePasswordCredentials()));
+    }
 }
