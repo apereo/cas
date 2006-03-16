@@ -2,7 +2,6 @@ build
 dist
 target
 bin
-docs
 *.jpage
 build.properties
 velocity.log
