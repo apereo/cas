@@ -26,6 +26,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
     protected void setUp() throws Exception {
         super.setUp();
         this.legacyTrustAdaptor = new LegacyTrustHandlerAdaptorAuthenticationHandler();
+        this.legacyTrustAdaptor.setTrustHandler(new MockTrustHandler());
         this.legacyTrustAdaptor.afterPropertiesSet();
     }
 
@@ -63,6 +64,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      */
     public void testNoTrustHandler() {
         LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
+        this.legacyTrustAdaptor.setTrustHandler(null);
 
         try {
             this.legacyTrustAdaptor.authenticate(trustedCredentials);
