@@ -19,7 +19,7 @@ public class JaasAuthenticationHandlerTests extends TestCase {
 
     protected void setUp() throws Exception {
         String pathPrefix = System.getProperty("user.dir");
-        pathPrefix = pathPrefix.indexOf("/doc") == -1 ? pathPrefix : pathPrefix.substring(0, pathPrefix.indexOf("/doc")-1); 
+        pathPrefix = pathPrefix.indexOf("/doc") == -1 ? pathPrefix : pathPrefix.substring(0, pathPrefix.indexOf("/doc")); 
         log.info("PATH PREFIX: " + pathPrefix);
         
         final String pathToConfig = pathPrefix + "/core/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
