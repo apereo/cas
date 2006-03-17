@@ -3,14 +3,15 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.flow;
+package org.jasig.cas.adaptors.x509.web.flow;
 
 import java.security.cert.X509Certificate;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.X509CertificateCredentials;
+import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.springframework.webflow.RequestContext;
 

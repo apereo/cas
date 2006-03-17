@@ -3,12 +3,15 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * Abstract class in support of multiple resolvers for X509 Certificates.

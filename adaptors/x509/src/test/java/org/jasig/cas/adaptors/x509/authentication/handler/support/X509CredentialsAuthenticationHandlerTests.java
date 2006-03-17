@@ -3,13 +3,14 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.handler.support;
+package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.principal.AbstractX509CertificateTests;
+import org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
+import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.authentication.principal.X509CertificateCredentials;
 
 /**
  * 
