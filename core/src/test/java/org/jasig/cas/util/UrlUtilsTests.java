@@ -15,4 +15,10 @@ public final class UrlUtilsTests extends TestCase {
         assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, UrlUtils
             .getResponseCodeFromString("fa"));
     }
+    
+    public void testHandshakeError() {
+        assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, UrlUtils
+            .getResponseCodeFromString("https://jira.acs.rutgers.edu/"));
+    }
+
 }
