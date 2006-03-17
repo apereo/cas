@@ -1,6 +1,5 @@
 <project>
 	<pomVersion>3</pomVersion>
-	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
 	<currentVersion>3.0.5-SNAPSHOT</currentVersion>
@@ -566,7 +565,7 @@
 		</dependency>
 		
 	</dependencies>
-	
+
 	<build>
 		<nagEmailAddress>scott_battaglia@rutgers.edu</nagEmailAddress>
 		<sourceDirectory>${basedir}/core/src/main/java</sourceDirectory>

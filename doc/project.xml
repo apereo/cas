@@ -12,9 +12,8 @@
   
   <reports>
     <report>maven-license-plugin</report>
-    <report>maven-multiproject-plugin</report>
     <report>maven-dashboard-plugin</report>
-    <report>maven-clover-plugin</report>
+    <report>maven-multiproject-plugin</report>
   </reports>
 </project>
 
