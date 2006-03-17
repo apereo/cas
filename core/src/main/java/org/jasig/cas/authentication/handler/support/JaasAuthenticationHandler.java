@@ -55,6 +55,9 @@ public final class JaasAuthenticationHandler extends
 			throws AuthenticationException {
 
 		try {
+            if (log.isDebugEnabled()) {
+                log.debug("Attempting authentication for: " + credentials.getUsername());
+            }
 			final LoginContext lc = new LoginContext(this.realm,
 					new UsernamePasswordCallbackHandler(credentials
 							.getUsername(), credentials.getPassword()));
@@ -62,9 +65,16 @@ public final class JaasAuthenticationHandler extends
 			lc.login();
 			lc.logout();
 		} catch (final LoginException fle) {
+            if (log.isDebugEnabled()) {
+                log.debug("Authentication failed for: " + credentials.getUsername());
+            }
+            fle.printStackTrace();
 			return false;
 		}
-
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Authentication succeeded for: " + credentials.getUsername());
+        }
 		return true;
 	}
 
@@ -81,6 +91,10 @@ public final class JaasAuthenticationHandler extends
 						Configuration.getConfiguration(),
 						"Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
 	}
+    
+    public void setRealm(final String realm) {
+        this.realm = realm;
+    }
 
 	/**
 	 * A simple JAAS CallbackHandler which accepts a Name String and Password

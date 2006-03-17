@@ -147,7 +147,7 @@ public class ServiceTicketImplTests extends TestCase {
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
             new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
-        TicketGrantingTicket t1 = s.grantTicketGrantingTicket(
+        s.grantTicketGrantingTicket(
             this.uniqueTicketIdGenerator
                 .getNewTicketId(TicketGrantingTicket.PREFIX), a,
             new NeverExpiresExpirationPolicy());
