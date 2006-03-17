@@ -51,6 +51,15 @@ public class LegacyCasCredentialsBinderTests extends TestCase {
 
         assertEquals(request, credentials.getServletRequest());
     }
+    
+    public void testBindMethodWithTrust() {
+        HttpServletRequest request = new MockHttpServletRequest();
+        LegacyCasTrustedCredentials credentials = new LegacyCasTrustedCredentials();
+
+        this.credentialsBinder.bind(request, credentials);
+
+        assertEquals(request, credentials.getServletRequest());
+    }
 
     /**
      * We test that we do not support these adhoc non-legacy do-nothing
