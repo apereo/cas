@@ -139,4 +139,26 @@ public class ServiceTicketImplTests extends TestCase {
 
         assertEquals(a, t1.getAuthentication());
     }
+    
+    public void testTicketGrantingTicketGrantedTwice() {
+        Authentication a = TestUtils.getAuthentication();
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils
+            .getAuthentication(), new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
+            new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000));
+        TicketGrantingTicket t1 = s.grantTicketGrantingTicket(
+            this.uniqueTicketIdGenerator
+                .getNewTicketId(TicketGrantingTicket.PREFIX), a,
+            new NeverExpiresExpirationPolicy());
+        
+        try {
+            s.grantTicketGrantingTicket(this.uniqueTicketIdGenerator
+                .getNewTicketId(TicketGrantingTicket.PREFIX), a,
+            new NeverExpiresExpirationPolicy());
+            fail("Exception expected.");
+        } catch (Exception e) {
+            return;
+        }
+    }
 }

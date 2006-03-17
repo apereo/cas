@@ -6,6 +6,8 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -89,6 +91,27 @@ public class CentralAuthenticationServiceImplTests extends
             // nothing to do here, exception is expected.
         }
     }
+    
+    public void testGrantServiceTicketWithExpiredTicketGrantingTicket()
+    throws TicketException {
+        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(new ExpirationPolicy() {
+
+            public boolean isExpired(final Ticket ticket) {
+                return true;
+            }});
+    final String ticketId = getCentralAuthenticationService()
+        .createTicketGrantingTicket(
+            TestUtils.getCredentialsWithSameUsernameAndPassword());
+    try {
+        getCentralAuthenticationService().grantServiceTicket(ticketId,
+            TestUtils.getService());
+        fail(TestUtils.CONST_EXCEPTION_EXPECTED);
+    } catch (TicketException e) {
+        // nothing to do here, exception is expected.
+    } finally {
+        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
+    }
+}
 
     public void testDelegateTicketGrantingTicketWithProperParams()
         throws TicketException {

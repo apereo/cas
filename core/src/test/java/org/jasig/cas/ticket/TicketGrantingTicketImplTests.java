@@ -73,6 +73,34 @@ public class TicketGrantingTicketImplTests extends TestCase {
 
         assertEquals(principals, t.getChainedAuthentications());
     }
+    
+    public void testCheckCreationTime() {
+        Authentication authentication = TestUtils.getAuthentication();
+        List principals = new ArrayList();
+        principals.add(authentication);
+        
+        final long startTime = System.currentTimeMillis();
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy());
+        final long finishTime = System.currentTimeMillis();
+        
+        assertTrue(startTime <= t.getCreationTime() && finishTime >= t.getCreationTime());
+    }
+    
+    public void testPreviousUpdatedTime() throws Exception {
+        Authentication authentication = TestUtils.getAuthentication();
+        List principals = new ArrayList();
+        principals.add(authentication);
+        
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            authentication, new NeverExpiresExpirationPolicy());
+        t.updateLastTimeUsed();
+        final long lastTimeUsed = t.getLastTimeUsed();
+        Thread.sleep(2000);
+        t.updateLastTimeUsed();
+        
+        assertEquals(lastTimeUsed, t.getPreviousLastTimeUsed());
+    }
 
     public void testGetChainedPrincipalsWithTwo() {
         Authentication authentication = TestUtils.getAuthentication();
