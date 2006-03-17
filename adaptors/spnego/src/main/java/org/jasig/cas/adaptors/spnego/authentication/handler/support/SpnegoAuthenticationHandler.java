@@ -28,6 +28,6 @@ public final class SpnegoAuthenticationHandler implements AuthenticationHandler 
     }
 
     public boolean supports(final Credentials credentials) {
-        return SpnegoCredentials.class.equals(credentials.getClass());
+        return credentials != null && SpnegoCredentials.class.equals(credentials.getClass());
     }
 }
