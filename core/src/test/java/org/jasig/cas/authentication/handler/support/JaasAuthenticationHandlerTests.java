@@ -5,18 +5,23 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.TestUtils;
 
 import junit.framework.TestCase;
 
 public class JaasAuthenticationHandlerTests extends TestCase {
 
+    private final Log log = LogFactory.getLog(this.getClass());
+    
     private JaasAuthenticationHandler handler;
 
     protected void setUp() throws Exception {
         final String pathPrefix = System.getProperty("user.dir");
-        final String pathToConfig = pathPrefix + "/core/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
+        log.info("PATH PREFIX: " + pathPrefix);
         
+        final String pathToConfig = pathPrefix + "/core/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
         System.setProperty("java.security.auth.login.config", pathToConfig);
         this.handler = new JaasAuthenticationHandler();
         this.handler.afterPropertiesSet();
