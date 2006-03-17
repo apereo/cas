@@ -307,7 +307,7 @@ uncomment this to allow access to web service
 	<bean
 		id="x509Check"
 		parent="abstractCasLoginAction"
-		class="org.jasig.cas.web.flow.X509CertificateCredentialsNonInteractiveAction" />
+		class="org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction" />
  -->
 	
 	<bean id="warnCookieGenerator" class="org.springframework.web.util.CookieGenerator">

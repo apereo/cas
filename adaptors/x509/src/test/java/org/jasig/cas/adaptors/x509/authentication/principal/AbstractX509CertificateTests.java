@@ -3,7 +3,7 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.math.BigInteger;
 import java.security.InvalidKeyException;

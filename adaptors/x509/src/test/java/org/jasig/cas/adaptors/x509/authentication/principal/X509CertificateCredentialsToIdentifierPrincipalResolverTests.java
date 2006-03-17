@@ -3,12 +3,15 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToIdentifierPrincipalResolver;
 
 
 /**
