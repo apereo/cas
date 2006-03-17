@@ -50,7 +50,7 @@ public final class SpnegoUtils {
                 final byte out[] = context.acceptSecContext(token, 0, token.length);
                 return Base64.encodeBase64(out);
             } catch (final GSSException gsse) {
-                // this should not ever happen so we'll log it as fatal and move on
+                // this should never happen so we'll log it as fatal and move on
                 LOG.fatal(gsse.getMessage(), gsse);
             }
         }

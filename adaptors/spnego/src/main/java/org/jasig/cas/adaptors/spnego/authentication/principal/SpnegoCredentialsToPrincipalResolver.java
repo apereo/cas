@@ -48,6 +48,6 @@ public final class SpnegoCredentialsToPrincipalResolver implements
     }
 
     public boolean supports(final Credentials credentials) {
-        return SpnegoCredentials.class.equals(credentials.getClass());
+        return credentials != null && SpnegoCredentials.class.equals(credentials.getClass());
     }
 }
