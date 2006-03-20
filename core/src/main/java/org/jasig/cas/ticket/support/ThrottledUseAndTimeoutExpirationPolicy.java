@@ -19,10 +19,11 @@ import org.jasig.cas.ticket.Ticket;
  * @version $Revision$ $Date$
  * @since 3.0.5
  */
-public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationPolicy {
+public final class ThrottledUseAndTimeoutExpirationPolicy implements
+    ExpirationPolicy {
 
     private Log log = LogFactory.getLog(this.getClass());
-    
+
     /** Static ID for serialization. */
     private static final long serialVersionUID = -848036845536731268L;
 
@@ -44,17 +45,27 @@ public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationP
     public boolean isExpired(final Ticket ticket) {
         if (ticket.getCountOfUses() == 0
             && (System.currentTimeMillis() - ticket.getLastTimeUsed() < this.timeToKillInMilliSeconds)) {
-            log.debug(ticket.getId() + " is not expired due to a count of zero and the time being less than the timeToKillInMilliseconds");
+            if (log.isDebugEnabled()) {
+                log
+                    .debug(ticket.getId()
+                        + " is not expired due to a count of zero and the time being less than the timeToKillInMilliseconds");
+            }
             return false;
         }
 
         if ((System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds)) {
-            log.debug(ticket.getId() + " is expired due to the time being greater than the timeToKillInMilliseconds");
+            if (log.isDebugEnabled()) {
+                log
+                    .debug(ticket.getId()
+                        + " is expired due to the time being greater than the timeToKillInMilliseconds");
+            }
             return true;
         }
 
         if ((System.currentTimeMillis() - ticket.getLastTimeUsed() <= this.timeInBetweenUsesInMilliSeconds)) {
-            log.debug(ticket.getId() + " is expired due to the time being less than the waiting period.");
+            log
+                .warn(ticket.getId()
+                    + " is expired due to the time being less than the waiting period.");
             return true;
         }
 
