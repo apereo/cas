@@ -76,7 +76,7 @@ public class SpnegoCredentialsNonInteractiveAction extends
         }
         
         response.setHeader("WWW-Authenticate", "Negotiate "
-            + outputToken);
+            + Base64.encodeBase64(outputToken));
         return new SpnegoCredentials(gssContext);
     }
 }
