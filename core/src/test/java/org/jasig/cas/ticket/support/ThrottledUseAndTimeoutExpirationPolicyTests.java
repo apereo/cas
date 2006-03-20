@@ -6,7 +6,6 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 
