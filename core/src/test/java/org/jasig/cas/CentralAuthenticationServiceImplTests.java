@@ -95,6 +95,7 @@ public class CentralAuthenticationServiceImplTests extends
     public void testGrantServiceTicketWithExpiredTicketGrantingTicket()
     throws TicketException {
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(new ExpirationPolicy() {
+            private static final long serialVersionUID = 1L;
 
             public boolean isExpired(final Ticket ticket) {
                 return true;
