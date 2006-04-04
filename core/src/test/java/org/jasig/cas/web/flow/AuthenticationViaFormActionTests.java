@@ -227,7 +227,7 @@ public class AuthenticationViaFormActionTests extends
         final CredentialsBinder c = new CredentialsBinder() {
 
             public void bind(final HttpServletRequest request, final Credentials credentials) {
-                // TODO nothing to do here
+                // nothing to do here
             }
 
             public boolean supports(final Class clazz) {
@@ -250,7 +250,7 @@ public class AuthenticationViaFormActionTests extends
         final CredentialsBinder c = new CredentialsBinder() {
 
             public void bind(final HttpServletRequest request, final Credentials credentials) {
-                // TODO nothing to do here
+                // nothing to do here
             }
 
             public boolean supports(final Class clazz) {

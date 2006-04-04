@@ -86,21 +86,6 @@ public class TicketGrantingTicketImplTests extends TestCase {
         
         assertTrue(startTime <= t.getCreationTime() && finishTime >= t.getCreationTime());
     }
-    
-    public void testPreviousUpdatedTime() throws Exception {
-        Authentication authentication = TestUtils.getAuthentication();
-        List principals = new ArrayList();
-        principals.add(authentication);
-        
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            authentication, new NeverExpiresExpirationPolicy());
-        t.updateLastTimeUsed();
-        final long lastTimeUsed = t.getLastTimeUsed();
-        Thread.sleep(2000);
-        t.updateLastTimeUsed();
-        
-        assertEquals(lastTimeUsed, t.getPreviousLastTimeUsed());
-    }
 
     public void testGetChainedPrincipalsWithTwo() {
         Authentication authentication = TestUtils.getAuthentication();
@@ -122,10 +107,9 @@ public class TicketGrantingTicketImplTests extends TestCase {
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
-            new NeverExpiresExpirationPolicy());
+            new NeverExpiresExpirationPolicy(), false);
 
         assertTrue(s.isFromNewLogin());
-        assertEquals(t.getCountOfUses(), 1);
     }
 
     public void testServiceTicketAsFromNotInitialCredentials() {
@@ -133,13 +117,12 @@ public class TicketGrantingTicketImplTests extends TestCase {
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
-            new NeverExpiresExpirationPolicy());
+            new NeverExpiresExpirationPolicy(), false);
         s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
-            new NeverExpiresExpirationPolicy());
+            new NeverExpiresExpirationPolicy(), false);
 
         assertFalse(s.isFromNewLogin());
-        assertEquals(t.getCountOfUses(), 2);
     }
 
     public void testHashCode() {
@@ -154,17 +137,5 @@ public class TicketGrantingTicketImplTests extends TestCase {
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertEquals(ToStringBuilder.reflectionToString(t), t.toString());
-    }
-
-    public void testIncrementTimeUpdated() {
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-
-        final long beforeLastTimeUsed = System.currentTimeMillis();
-        t.updateLastTimeUsed();
-        final long afterLastTimeUsed = System.currentTimeMillis();
-        
-        assertTrue(beforeLastTimeUsed <= t.getLastTimeUsed());
-        assertTrue(afterLastTimeUsed >= t.getLastTimeUsed());
     }
 }

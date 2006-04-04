@@ -145,12 +145,12 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
             "parentTicket", TestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         ServiceTicket stChild = tgtParent.grantServiceTicket("childTicket",
-            new SimpleService("test"), new NeverExpiresExpirationPolicy());
+            new SimpleService("test"), new NeverExpiresExpirationPolicy(), false);
         TicketGrantingTicket tgtPgt = stChild.grantTicketGrantingTicket(
             "pgtId", TestUtils.getAuthenticationWithService(),
             new NeverExpiresExpirationPolicy());
         ServiceTicket stProxy = tgtPgt.grantServiceTicket("proxyId",
-            new SimpleService("test"), new NeverExpiresExpirationPolicy());
+            new SimpleService("test"), new NeverExpiresExpirationPolicy(), false);
 
         TicketRegistry t = new DefaultTicketRegistry();
         t.addTicket(tgtParent);

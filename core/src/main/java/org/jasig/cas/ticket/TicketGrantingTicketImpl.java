@@ -73,11 +73,11 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     }
 
     public synchronized ServiceTicket grantServiceTicket(final String id,
-        final Service service, final ExpirationPolicy expirationPolicy) {
+        final Service service, final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
-            service, this.getCountOfUses() == 0, expirationPolicy);
+            service, this.getCountOfUses() == 0 || credentialsProvided, expirationPolicy);
 
-        this.incrementCountOfUses();
+        updateState();
 
         return serviceTicket;
     }

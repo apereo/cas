@@ -40,7 +40,7 @@ public interface TicketGrantingTicket extends Ticket {
      * principal of the TicketGrantingTicket
      */
     ServiceTicket grantServiceTicket(String id, Service service,
-        ExpirationPolicy expirationPolicy);
+        ExpirationPolicy expirationPolicy, boolean credentialsProvided);
 
     /**
      * Explicitly expire a ticket.

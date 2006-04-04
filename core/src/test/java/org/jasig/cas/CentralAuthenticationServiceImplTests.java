@@ -7,8 +7,8 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 
@@ -97,7 +97,7 @@ public class CentralAuthenticationServiceImplTests extends
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(new ExpirationPolicy() {
             private static final long serialVersionUID = 1L;
 
-            public boolean isExpired(final Ticket ticket) {
+            public boolean isExpired(final TicketState ticket) {
                 return true;
             }});
     final String ticketId = getCentralAuthenticationService()

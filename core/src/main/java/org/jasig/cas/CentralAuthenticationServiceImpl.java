@@ -129,15 +129,13 @@ public final class CentralAuthenticationServiceImpl implements
         if (ticketGrantingTicket == null) {
             throw new InvalidTicketException();
         }
-        
+
+        // XXX is synchronization needed here?
         synchronized (ticketGrantingTicket) {
             if (ticketGrantingTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
                 throw new InvalidTicketException();                
             }
-
-            ticketGrantingTicket.updateLastTimeUsed();
-            ticketGrantingTicket.incrementCountOfUses();
         }
 
         if (credentials != null) {
@@ -145,9 +143,9 @@ public final class CentralAuthenticationServiceImpl implements
                 Authentication authentication = this.authenticationManager
                     .authenticate(credentials);
 
-                Principal originalPrincipal = ticketGrantingTicket
+                final Principal originalPrincipal = ticketGrantingTicket
                     .getAuthentication().getPrincipal();
-                Principal newPrincipal = authentication.getPrincipal();
+                final Principal newPrincipal = authentication.getPrincipal();
 
                 if (!newPrincipal.equals(originalPrincipal)) {
                     throw new TicketCreationException();
@@ -160,16 +158,7 @@ public final class CentralAuthenticationServiceImpl implements
         final ServiceTicket serviceTicket = ticketGrantingTicket
         .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), service,
-            this.serviceTicketExpirationPolicy);
-
-        // TODO we need a better way of handling this
-        if (credentials != null) {
-            if (log.isDebugEnabled()) {
-                log
-                    .debug("We received a renew=true request, so setting fromNewLogin to true");
-            }
-            serviceTicket.setFromNewLogin(true);
-        }
+            this.serviceTicketExpirationPolicy, credentials != null);
 
         this.ticketRegistry.addTicket(serviceTicket);
 
@@ -247,39 +236,34 @@ public final class CentralAuthenticationServiceImpl implements
             throw new InvalidTicketException();
         }
         
-        synchronized (serviceTicket) {
-            if (serviceTicket.isExpired()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("ServiceTicket [" + serviceTicketId
-                        + "] has expired.");
+        try {
+            synchronized (serviceTicket) {
+                if (serviceTicket.isExpired()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("ServiceTicket [" + serviceTicketId
+                            + "] has expired.");
+                    }
+                    throw new InvalidTicketException();
                 }
+    
+                if (!serviceTicket.isValidFor(service)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("ServiceTicket [" + serviceTicketId
+                            + "] does not match supplied service.");
+                    }
+        
+                    throw new TicketValidationException();
+                }
+            }
+
+            return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
+                .getChainedAuthentications(), serviceTicket.getService(),
+                serviceTicket.isFromNewLogin());
+        } finally {
+            if (serviceTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(serviceTicketId);
-                throw new InvalidTicketException();
             }
-
-            serviceTicket.incrementCountOfUses();
-            serviceTicket.updateLastTimeUsed();
         }
-
-        /*
-         * implemented this manual removal if expired so that registry does
-         * not grow too large.
-         */
-        if (serviceTicket.isExpired()) {
-            this.ticketRegistry.deleteTicket(serviceTicketId);
-        }
-
-        if (!service.equals(serviceTicket.getService())) {
-            if (log.isDebugEnabled()) {
-                log.debug("ServiceTicket [" + serviceTicketId
-                    + "] does not match supplied service.");
-            }
-            throw new TicketValidationException();
-        }
-
-        return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
-            .getChainedAuthentications(), serviceTicket.getService(),
-            serviceTicket.isFromNewLogin());
     }
 
     /**

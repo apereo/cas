@@ -6,7 +6,7 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketState;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
@@ -34,9 +34,9 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
         this.numberOfUses = numberOfUses;
     }
 
-    public boolean isExpired(final Ticket ticket) {
-        return (ticket == null)
-            || (ticket.getCountOfUses() >= this.numberOfUses)
-            || (System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
+    public boolean isExpired(final TicketState ticketState) {
+        return (ticketState == null)
+            || (ticketState.getCountOfUses() >= this.numberOfUses)
+            || (System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
     }
 }

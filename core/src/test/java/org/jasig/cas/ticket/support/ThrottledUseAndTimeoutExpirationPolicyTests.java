@@ -6,7 +6,8 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 
 import junit.framework.TestCase;
@@ -22,7 +23,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
 
     private ThrottledUseAndTimeoutExpirationPolicy expirationPolicy;
 
-    private Ticket ticket;
+    private TicketGrantingTicket ticket;
 
     protected void setUp() throws Exception {
         this.expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
@@ -51,7 +52,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
     
     public void testTicketUsedButWithTimeout() {
         try {
-            this.ticket.incrementCountOfUses();
+            this.ticket.grantServiceTicket("test", new SimpleService("test"), new NeverExpiresExpirationPolicy(), false);
             Thread.sleep(TIMEOUT -10); // this failed when it was only +1...not
             // accurate??
             assertFalse(this.ticket.isExpired());
@@ -61,8 +62,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
     }
     
     public void testNotWaitingEnoughTime() {
-        this.ticket.incrementCountOfUses();
-        this.ticket.updateLastTimeUsed();
+        this.ticket.grantServiceTicket("test", new SimpleService("test"), new NeverExpiresExpirationPolicy(), false);
         assertTrue(this.ticket.isExpired());
     }
 }
