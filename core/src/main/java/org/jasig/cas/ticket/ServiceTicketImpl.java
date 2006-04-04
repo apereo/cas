@@ -29,8 +29,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     private final Service service;
 
     /** Is this service ticket the result of a new login. */
-    private boolean fromNewLogin;
-    
+    private final boolean fromNewLogin;
+
     private boolean grantedTicketAlready;
 
     /**
@@ -50,7 +50,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         final TicketGrantingTicket ticket, final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
-        
+
         Assert.notNull(ticket, "ticket cannot be null");
         Assert.notNull(service, "service cannot be null");
 
@@ -62,10 +62,6 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return this.fromNewLogin;
     }
 
-    public void setFromNewLogin(final boolean fromNewLogin) {
-        this.fromNewLogin = fromNewLogin;
-    }
-
     public Service getService() {
         return this.service;
     }
@@ -74,13 +70,20 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return this.getGrantingTicket().isExpired();
     }
 
-    public synchronized TicketGrantingTicket grantTicketGrantingTicket(final String id,
-        final Authentication authentication,
+    public boolean isValidFor(final Service serviceToValidate) {
+        updateState();
+        return this.service.equals(serviceToValidate);
+    }
+
+    public synchronized TicketGrantingTicket grantTicketGrantingTicket(
+        final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
         if (this.grantedTicketAlready) {
-            throw new IllegalStateException("TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
+            throw new IllegalStateException(
+                "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
         }
         this.grantedTicketAlready = true;
+        updateState();
 
         return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
             authentication, expirationPolicy);

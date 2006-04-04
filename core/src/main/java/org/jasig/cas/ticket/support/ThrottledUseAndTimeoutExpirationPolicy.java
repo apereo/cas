@@ -8,7 +8,7 @@ package org.jasig.cas.ticket.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketState;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -42,30 +42,27 @@ public final class ThrottledUseAndTimeoutExpirationPolicy implements
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
-    public boolean isExpired(final Ticket ticket) {
-        if (ticket.getCountOfUses() == 0
-            && (System.currentTimeMillis() - ticket.getLastTimeUsed() < this.timeToKillInMilliSeconds)) {
+    public boolean isExpired(final TicketState ticketState) {
+        if (ticketState.getCountOfUses() == 0
+            && (System.currentTimeMillis() - ticketState.getLastTimeUsed() < this.timeToKillInMilliSeconds)) {
             if (log.isDebugEnabled()) {
                 log
-                    .debug(ticket.getId()
-                        + " is not expired due to a count of zero and the time being less than the timeToKillInMilliseconds");
+                    .debug("Ticket is not expired due to a count of zero and the time being less than the timeToKillInMilliseconds");
             }
             return false;
         }
 
-        if ((System.currentTimeMillis() - ticket.getLastTimeUsed() >= this.timeToKillInMilliSeconds)) {
+        if ((System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds)) {
             if (log.isDebugEnabled()) {
                 log
-                    .debug(ticket.getId()
-                        + " is expired due to the time being greater than the timeToKillInMilliseconds");
+                    .debug("Ticket is expired due to the time being greater than the timeToKillInMilliseconds");
             }
             return true;
         }
 
-        if ((System.currentTimeMillis() - ticket.getLastTimeUsed() <= this.timeInBetweenUsesInMilliSeconds)) {
+        if ((System.currentTimeMillis() - ticketState.getLastTimeUsed() <= this.timeInBetweenUsesInMilliSeconds)) {
             log
-                .warn(ticket.getId()
-                    + " is expired due to the time being less than the waiting period.");
+                .warn("Ticket is expired due to the time being less than the waiting period.");
             return true;
         }
 

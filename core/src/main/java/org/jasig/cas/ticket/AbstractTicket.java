@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public abstract class AbstractTicket implements Ticket {
+public abstract class AbstractTicket implements Ticket, TicketState {
 
     /** The ExpirationPolicy this ticket will be following. */
     private final ExpirationPolicy expirationPolicy;
@@ -70,33 +70,31 @@ public abstract class AbstractTicket implements Ticket {
         return this.id;
     }
 
-    public final int getCountOfUses() {
-        return this.countOfUses;
-    }
-
-    public final long getLastTimeUsed() {
-        return this.lastTimeUsed;
-    }
-
-    public final void incrementCountOfUses() {
-        this.countOfUses++;
-    }
-
-    public final void updateLastTimeUsed() {
+    protected final void updateState() {
         this.previousLastTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = System.currentTimeMillis();
+        this.countOfUses++;
+    }
+    
+    public final int getCountOfUses() {
+        return this.countOfUses;
     }
     
     public final long getCreationTime() {
         return this.creationTime;
     }
 
-    public final long getPreviousLastTimeUsed() {
-        return this.previousLastTimeUsed;
-    }
-
     public final TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
+    }
+    
+    public final long getLastTimeUsed() {
+        return this.lastTimeUsed;
+    }
+
+    
+    public final long getPreviousTimeUsed() {
+        return this.previousLastTimeUsed;
     }
 
     public final boolean isExpired() {

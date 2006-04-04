@@ -6,7 +6,7 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketState;
 
 /**
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
@@ -22,7 +22,7 @@ public final class NeverExpiresExpirationPolicy implements ExpirationPolicy {
     /** Serializable Unique ID. */
     private static final long serialVersionUID = 3833747698242303540L;
 
-    public boolean isExpired(final Ticket ticket) {
+    public boolean isExpired(final TicketState ticketState) {
         return false;
     }
 }
