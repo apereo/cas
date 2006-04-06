@@ -58,7 +58,7 @@ public class Cas10ResponseViewTests extends TestCase {
         assertEquals("no\n\n", this.response);
     }
 
-    private class MockWriterHttpMockHttpServletResponse extends
+    protected class MockWriterHttpMockHttpServletResponse extends
         MockHttpServletResponse {
 
         public PrintWriter getWriter() {
