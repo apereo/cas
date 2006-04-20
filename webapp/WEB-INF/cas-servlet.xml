@@ -41,7 +41,7 @@
 	
 	<bean
 		id="errorHandlerResolver" 
-		class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
+		class="org.jasig.cas.web.NoSuchConversationExceptionResolver" />
 
 	<!-- Handler Mapping -->
 	<bean
@@ -314,13 +314,13 @@ uncomment this to allow access to web service
 		<property name="cookieSecure" value="true" />
 		<property name="cookieMaxAge" value="-1" />
 		<property name="cookieName" value="CASPRIVACY" />
-		<property name="cookiePath" value="/cas/" />
+		<property name="cookiePath" value="/cas" />
 	</bean>
 	
 	<bean id="ticketGrantingTicketCookieGenerator" class="org.springframework.web.util.CookieGenerator">
 		<property name="cookieSecure" value="true" />
 		<property name="cookieMaxAge" value="-1" />
 		<property name="cookieName" value="CASTGC" />
-		<property name="cookiePath" value="/cas/" />
+		<property name="cookiePath" value="/cas" />
 	</bean>
 </beans>
