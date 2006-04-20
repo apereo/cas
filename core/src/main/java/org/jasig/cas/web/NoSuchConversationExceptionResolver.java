@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.webflow.FlowArtifactException;
+import org.springframework.webflow.execution.repository.NoSuchConversationException;
 
 /**
  * The NoSuchFlowExecutionResolver catches the NoSuchFlowExecutionException
@@ -28,7 +28,7 @@ import org.springframework.webflow.FlowArtifactException;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class NoSuchFlowExecutionExceptionResolver implements
+public final class NoSuchConversationExceptionResolver implements
     HandlerExceptionResolver {
 
     /** Instance of a log. */
@@ -38,7 +38,7 @@ public final class NoSuchFlowExecutionExceptionResolver implements
         final HttpServletResponse response, final Object handler,
         final Exception exception) {
 
-        if (!exception.getClass().equals(FlowArtifactException.class)) {
+        if (!exception.getClass().equals(NoSuchConversationException.class)) {
             return null;
         }
 
