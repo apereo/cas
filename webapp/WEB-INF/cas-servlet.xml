@@ -264,6 +264,13 @@ uncomment this to allow access to web service
 	</bean>
 	
 	<bean
+		id="automaticCookiePathSetterAction"
+		class="org.jasig.cas.web.flow.AutomaticCookiePathSetterAction">
+		<property name="warnCookieGenerator" ref="warnCookieGenerator" />
+		<property name="ticketGrantingTicketCookieGenerator" ref="ticketGrantingTicketCookieGenerator" />
+	</bean>
+	
+	<bean
 		id="authenticationViaFormAction"
 		parent="abstractCasLoginAction"
 		class="org.jasig.cas.web.flow.AuthenticationViaFormAction" />

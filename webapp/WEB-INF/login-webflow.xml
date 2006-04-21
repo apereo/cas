@@ -2,7 +2,13 @@
 <!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
-<flow start-state="ticketGrantingTicketExistsCheckAction">
+<flow start-state="automaticCookiePathSetter">
+
+	<action-state id="automaticCookiePathSetter">
+		<action bean="automaticCookiePathSetterAction" />
+		<transition on="success" to="ticketGrantingTicketExistsCheckAction" />
+	</action-state>
+
 	<action-state id="ticketGrantingTicketExistsCheckAction">
 		<action bean="ticketGrantingTicketExistsAction" />
 		<transition on="ticketGrantingTicketExists" to="hasServiceCheck" />
