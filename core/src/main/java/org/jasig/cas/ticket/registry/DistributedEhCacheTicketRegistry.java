@@ -57,7 +57,6 @@ public final class DistributedEhCacheTicketRegistry implements TicketRegistry, I
         if (ServiceTicket.class.isAssignableFrom(ticket.getClass())) {
             this.serviceTicketCache.put(new Element(ticket.getId(), ticket));
         }
-
         if (TicketGrantingTicket.class.isAssignableFrom(ticket.getClass())) {
             this.ticketGrantingTicketCache.put(new Element(ticket.getId(),
                 ticket));
@@ -65,27 +64,31 @@ public final class DistributedEhCacheTicketRegistry implements TicketRegistry, I
     }
 
     public Ticket getTicket(final String ticketId, final Class clazz) {
-        if (ServiceTicket.class.equals(clazz)) {
-            final Element element = this.serviceTicketCache.get(ticketId);
-
-            if (element != null) {
-                final ServiceTicket ticket = (ServiceTicket) element.getValue();
-
-                return new ProxiedServiceTicket(ticket, this.serviceTicketCache);
+        final Element element = this.serviceTicketCache.get(ticketId);
+        
+        if (element != null) {
+            final ServiceTicket ticket = (ServiceTicket) element.getValue();
+            
+            if (!ServiceTicket.class.equals(clazz)) {
+                throw new ClassCastException();
             }
-        }
 
-        if (TicketGrantingTicket.class.equals(clazz)) {
-            final Element element = this.ticketGrantingTicketCache
+            return new ProxiedServiceTicket(ticket, this.serviceTicketCache);
+        }
+        
+        final Element tgtElement = this.ticketGrantingTicketCache
                 .get(ticketId);
 
-            if (element != null) {
-                final TicketGrantingTicket ticket = (TicketGrantingTicket) element
-                    .getValue();
-
-                return new ProxiedTicketGrantingTicket(ticket,
-                    this.ticketGrantingTicketCache);
+        if (tgtElement != null) {
+            final TicketGrantingTicket ticket = (TicketGrantingTicket) tgtElement
+                .getValue();
+            
+            if (!TicketGrantingTicket.class.equals(clazz)) {
+                throw new ClassCastException();
             }
+
+            return new ProxiedTicketGrantingTicket(ticket,
+                this.ticketGrantingTicketCache);
         }
 
         return null;
@@ -103,7 +106,7 @@ public final class DistributedEhCacheTicketRegistry implements TicketRegistry, I
         final Element tgtElement = this.ticketGrantingTicketCache.get(ticketId);
 
         if (tgtElement != null) {
-            final TicketGrantingTicket ticket = (TicketGrantingTicket) element
+            final TicketGrantingTicket ticket = (TicketGrantingTicket) tgtElement
                 .getValue();
 
             return new ProxiedTicketGrantingTicket(ticket,
@@ -127,12 +130,12 @@ public final class DistributedEhCacheTicketRegistry implements TicketRegistry, I
             tickets.add(element.getValue());
         }
         
-        for (final Iterator iter = this.ticketGrantingTicketCache.getKeys().iterator(); iter.hasNext();) {
+        for (final Iterator iter = this.serviceTicketCache.getKeys().iterator(); iter.hasNext();) {
             final Serializable key = (Serializable) iter.next();
             final Element element = this.serviceTicketCache.get(key);
             tickets.add(element.getValue());
         }
-        
+       
         return Collections.unmodifiableCollection(tickets);
     }
 
@@ -187,6 +190,16 @@ public final class DistributedEhCacheTicketRegistry implements TicketRegistry, I
 
         public boolean isExpired() {
             return this.serviceTicket.isExpired();
+        }
+        
+        public boolean equals(final Object obj) {
+            System.out.println("ServiceTicket: " + this.serviceTicket.getClass());
+            System.out.println("Obj: " + obj.getClass());
+            return this.serviceTicket.equals(obj);
+        }
+        
+        public String toString() {
+            return this.serviceTicket.toString();
         }
     }
 
@@ -245,7 +258,15 @@ public final class DistributedEhCacheTicketRegistry implements TicketRegistry, I
         }
 
         public boolean isRoot() {
-            return this.isRoot();
+            return this.ticket.isRoot();
+        }
+        
+        public boolean equals(final Object obj) {
+            return this.ticket.equals(obj);
+        }
+        
+        public String toString() {
+            return this.ticket.toString();
         }
     }
 }

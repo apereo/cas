@@ -11,6 +11,7 @@ import java.util.Iterator;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -122,6 +123,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
                 new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -167,6 +169,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
             assertEquals("The size of the empty registry is not zero.",
                 this.ticketRegistry.getTickets().size(), 0);
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -178,10 +181,13 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                 "TEST" + i, TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
+            tickets.add(st);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
+            this.ticketRegistry.addTicket(st);
         }
-
+        
         try {
             Collection ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
@@ -189,7 +195,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
                 ticketRegistryTickets.size(), tickets.size());
 
             for (Iterator iter = tickets.iterator(); iter.hasNext();) {
-                final TicketGrantingTicket ticket = (TicketGrantingTicket) iter
+                final Ticket ticket = (Ticket) iter
                     .next();
 
                 if (!ticketRegistryTickets.contains(ticket)) {

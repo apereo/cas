@@ -10,4 +10,13 @@
         <property name="timeToLive"><value>300</value></property>
         <property name="timeToIdle"><value>300</value></property>
     </bean>
+    
+    <bean id="cache2" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <property name="cacheManager"><ref local="cacheManager"/></property>
+        <property name="maxElementsInMemory"><value>5000</value></property>
+        <property name="overflowToDisk"><value>false</value></property>
+        <property name="timeToLive"><value>300</value></property>
+        <property name="timeToIdle"><value>300</value></property>
+        <property name="cacheName" value="cache2" />
+    </bean>
 </beans>
