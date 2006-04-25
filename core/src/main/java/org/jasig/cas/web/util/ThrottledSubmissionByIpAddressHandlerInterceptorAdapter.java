@@ -21,6 +21,9 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 /**
  * Implementation of a HandlerInterceptorAdapter that keeps track of a mapping
  * of IP Addresses to number of failures to authenticate.
+ * <p>
+ * Implementation attempts to optimize access by using the last quad in an IP
+ * address as a form of poor man's lock.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -29,17 +32,23 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     extends HandlerInterceptorAdapter implements InitializingBean {
 
+    private static final int MAX_SIZE_OF_MAP_ARRAY = 256;
+
     /** Default value for the failure threshhold before you're locked out. */
-    private static final BigInteger DEFAULT_FAILURE_THRESHHOLD = BigInteger.valueOf(100);
+    private static final BigInteger DEFAULT_FAILURE_THRESHHOLD = BigInteger
+        .valueOf(100);
 
     /** The default timeout (in seconds) to clear one failure attempt. */
     private static final int DEFAULT_FAILURE_TIMEOUT = 60;
-    
+
     /** Cache of the starting Integer. */
     protected static final BigInteger ONE = BigInteger.valueOf(1);
-    
-    /** The map of restricted IPs mapped to failures. */
-    private Map restrictedIpAddresses = new HashMap();
+
+    /**
+     * The array of maps of restricted IPs mapped to failures. (simulating
+     * buckets)
+     */
+    private Map[] restrictedIpAddressMaps;
 
     /** The threshhold before we stop someone from authenticating. */
     private BigInteger failureThreshhold = DEFAULT_FAILURE_THRESHHOLD;
@@ -55,18 +64,21 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
             return;
         }
 
-        // XXX can we synchronize on IP Address?
-        synchronized (this.restrictedIpAddresses) {
-            final String remoteIpAddress = request.getRemoteAddr();
-            final BigInteger original = (BigInteger) this.restrictedIpAddresses
-                .get(remoteIpAddress);
+        final String remoteAddr = request.getRemoteAddr();
+        final String lastQuad = remoteAddr.substring(remoteAddr
+            .lastIndexOf(".") + 1);
+        final int intVersionOfLastQuad = Integer.parseInt(lastQuad);
+        final Map quadMap = this.restrictedIpAddressMaps[intVersionOfLastQuad - 1];
+
+        synchronized (quadMap) {
+            final BigInteger original = (BigInteger) quadMap.get(remoteAddr);
             BigInteger integer = ONE;
 
             if (original != null) {
                 integer = original.add(ONE);
             }
 
-            this.restrictedIpAddresses.put(remoteIpAddress, integer);
+            quadMap.put(remoteAddr, integer);
 
             if (integer.compareTo(this.failureThreshhold) == 1) {
                 modelAndView.setViewName("casFailureAuthenticationThreshhold");
@@ -88,8 +100,12 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     }
 
     public void afterPropertiesSet() throws Exception {
-        final Thread thread = new ExpirationThread(this.restrictedIpAddresses,
-            this.failureTimeout);
+        for (int i = 0; i < MAX_SIZE_OF_MAP_ARRAY; i++) {
+            this.restrictedIpAddressMaps[i] = new HashMap();
+        }
+
+        final Thread thread = new ExpirationThread(
+            this.restrictedIpAddressMaps, this.failureTimeout);
         thread.setDaemon(true);
         thread.start();
     }
@@ -97,14 +113,14 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     protected final class ExpirationThread extends Thread {
 
         /** Reference to the map of restricted IP addresses. */
-        private Map restrictedIpAddresses;
+        private Map[] restrictedIpAddressMaps;
 
         /** The timeout failure. */
         private int failureTimeout;
 
-        public ExpirationThread(final Map restrictedIpAdddresses,
+        public ExpirationThread(final Map[] restrictedIpAddressMaps,
             final int failureTimeout) {
-            this.restrictedIpAddresses = restrictedIpAdddresses;
+            this.restrictedIpAddressMaps = restrictedIpAddressMaps;
             this.failureTimeout = failureTimeout;
         }
 
@@ -120,20 +136,24 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         }
 
         private void cleanUpFailures() {
-            final Set keys = this.restrictedIpAddresses.keySet();
+            final int length = this.restrictedIpAddressMaps.length;
+            for (int i = 0; i < length; i++) {
+                final Map map = this.restrictedIpAddressMaps[i];
 
-            synchronized (this.restrictedIpAddresses) {
-                for (final Iterator iter = keys.iterator(); iter.hasNext();) {
-                    final Object key = iter.next();
-                    final BigInteger integer = (BigInteger) this.restrictedIpAddresses
-                        .get(key);
-                    final BigInteger newValue = integer.subtract(ONE);
+                synchronized (map) {
+                    final Set keys = map.keySet();
+                    for (final Iterator iter = keys.iterator(); iter.hasNext();) {
+                        final Object key = iter.next();
+                        final BigInteger integer = (BigInteger) map.get(key);
+                        final BigInteger newValue = integer.subtract(ONE);
 
-                    if (newValue.equals(BigInteger.ZERO)) {
-                        this.restrictedIpAddresses.remove(key);
-                    } else {
-                        this.restrictedIpAddresses.put(key, newValue);
+                        if (newValue.equals(BigInteger.ZERO)) {
+                            map.remove(key);
+                        } else {
+                            map.put(key, newValue);
+                        }
                     }
+
                 }
             }
         }
