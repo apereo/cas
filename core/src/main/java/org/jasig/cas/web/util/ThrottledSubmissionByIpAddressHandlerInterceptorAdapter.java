@@ -71,14 +71,14 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         final Map quadMap = this.restrictedIpAddressMaps[intVersionOfLastQuad - 1];
 
         synchronized (quadMap) {
-            final BigInteger original = (BigInteger) quadMap.get(remoteAddr);
+            final BigInteger original = (BigInteger) quadMap.get(lastQuad);
             BigInteger integer = ONE;
 
             if (original != null) {
                 integer = original.add(ONE);
             }
 
-            quadMap.put(remoteAddr, integer);
+            quadMap.put(lastQuad, integer);
 
             if (integer.compareTo(this.failureThreshhold) == 1) {
                 modelAndView.setViewName("casFailureAuthenticationThreshhold");
@@ -100,6 +100,8 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     }
 
     public void afterPropertiesSet() throws Exception {
+        this.restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
+
         for (int i = 0; i < MAX_SIZE_OF_MAP_ARRAY; i++) {
             this.restrictedIpAddressMaps[i] = new HashMap();
         }
@@ -147,6 +149,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
                         final BigInteger integer = (BigInteger) map.get(key);
                         final BigInteger newValue = integer.subtract(ONE);
 
+                        System.out.println("For key: " + key + " new value is: " + newValue.toString());
                         if (newValue.equals(BigInteger.ZERO)) {
                             map.remove(key);
                         } else {
