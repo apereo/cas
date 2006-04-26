@@ -7,6 +7,11 @@ package org.jasig.cas.ticket.proxy.support;
 
 import java.net.HttpURLConnection;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.contrib.ssl.StrictSSLProtocolSocketFactory;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -14,7 +19,6 @@ import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.jasig.cas.util.UrlUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -35,7 +39,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     /** The PGTIOU ticket prefix. */
     private static final String PGTIOU_PREFIX = "PGTIOU";
-
+    
     /** The default status codes we accept. */
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
         HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
@@ -47,6 +51,9 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     /** Generate unique ids. */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
+    
+    /** Instance of Apache Commons HttpClient */
+    private HttpClient httpClient;
 
     public String handle(final Credentials credentials,
         final String proxyGrantingTicketId) {
@@ -69,18 +76,25 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append("&pgtId=");
         stringBuffer.append(proxyGrantingTicketId);
 
-        final int responseCode = UrlUtils
-            .getResponseCodeFromString(stringBuffer.toString());
+        final GetMethod getMethod = new GetMethod(stringBuffer.toString());
+        try {
+            this.httpClient.executeMethod(getMethod);
+            final int responseCode = getMethod.getStatusCode();
+            for (int i = 0; i < this.acceptableCodes.length; i++) {
+                if (responseCode == this.acceptableCodes[i]) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Sent ProxyIou of " + proxyIou + " for service: "
+                            + serviceCredentials.getCallbackUrl());
+                    }
 
-        for (int i = 0; i < this.acceptableCodes.length; i++) {
-            if (responseCode == this.acceptableCodes[i]) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Sent ProxyIou of " + proxyIou + " for service: "
-                        + serviceCredentials.getCallbackUrl());
+                    return proxyIou;
                 }
-
-                return proxyIou;
-            }
+             }
+        } catch (final Exception e) {
+            log.error(e,e);
+            // do nothing
+        } finally {
+            getMethod.releaseConnection();
         }
 
         if (log.isDebugEnabled()) {
@@ -107,6 +121,10 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     public void setAcceptableCodes(final int[] acceptableCodes) {
         this.acceptableCodes = acceptableCodes;
     }
+    
+    public void setHttpClient(final HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
 
     public void afterPropertiesSet() throws Exception {
         if (this.uniqueTicketIdGenerator == null) {
@@ -114,6 +132,15 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
             log.info("No UniqueTicketIdGenerator specified for "
                 + this.getClass().getName() + ".  Using "
                 + this.uniqueTicketIdGenerator.getClass().getName());
+        }
+        
+        if (this.httpClient == null) {
+            this.httpClient = new HttpClient();
+            Protocol myhttps = new Protocol(
+                    "https",
+                    (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(),
+                    443);
+            Protocol.registerProtocol("https", myhttps);
         }
 
         if (this.acceptableCodes == null) {
