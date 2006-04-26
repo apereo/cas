@@ -8,10 +8,7 @@ package org.jasig.cas.ticket.registry;
 import net.sf.ehcache.Cache;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -102,7 +99,7 @@ public class DistributedEhCacheTicketRegistryTests extends AbstractTicketRegistr
         assertEquals(s2, s);
         
         try {
-            final ServiceTicket s3 = (ServiceTicket) this.ticketRegistry.getTicket(s.getId(), TicketGrantingTicket.class);
+            this.ticketRegistry.getTicket(s.getId(), TicketGrantingTicket.class);
             fail("Exception expected.");
         } catch (final ClassCastException e) {
             return;
