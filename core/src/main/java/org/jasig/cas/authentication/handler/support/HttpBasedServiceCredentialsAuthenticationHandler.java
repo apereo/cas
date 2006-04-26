@@ -7,12 +7,16 @@ package org.jasig.cas.authentication.handler.support;
 
 import java.net.HttpURLConnection;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.contrib.ssl.StrictSSLProtocolSocketFactory;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.protocol.Protocol;
+import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.util.UrlUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -49,9 +53,11 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
     /** Log instance. */
     private final Log log = LogFactory.getLog(getClass());
 
+    /** Instance of Apache Commons HttpClient */
+    private HttpClient httpClient;
+
     public boolean authenticate(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
-        int response;
         if (this.requireSecure
             && !serviceCredentials.getCallbackUrl().getProtocol().equals(
                 PROTOCOL_HTTPS)) {
@@ -64,19 +70,28 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
             .debug("Attempting to resolve credentials for "
                 + serviceCredentials);
 
-        response = UrlUtils.getResponseCodeFromUrl(serviceCredentials
-            .getCallbackUrl());
-
-        for (int i = 0; i < this.acceptableCodes.length; i++) {
-            if (response == this.acceptableCodes[i]) {
-                return true;
+        final GetMethod getMethod = new GetMethod(serviceCredentials
+            .getCallbackUrl().toExternalForm());
+        int responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
+        try {
+            this.httpClient.executeMethod(getMethod);
+            responseCode = getMethod.getStatusCode();
+            for (int i = 0; i < this.acceptableCodes.length; i++) {
+                if (responseCode == this.acceptableCodes[i]) {
+                    return true;
+                }
             }
+        } catch (final Exception e) {
+            log.error(e, e);
+            // do nothing
+        } finally {
+            getMethod.releaseConnection();
         }
 
         if (log.isDebugEnabled()) {
             log
                 .debug("Authentication failed because returned status code was ["
-                    + response + "]");
+                    + responseCode + "]");
         }
 
         return false;
@@ -102,6 +117,11 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
         this.acceptableCodes = acceptableCodes;
     }
 
+    /** Sets the HttpClient which will do all of the connection stuff. */
+    public void setHttpClient(final HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
     /**
      * Set whether a secure url is required or not.
      * 
@@ -114,6 +134,15 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
     public void afterPropertiesSet() throws Exception {
         if (this.acceptableCodes == null) {
             this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
+        }
+
+        if (this.httpClient == null) {
+            this.httpClient = new HttpClient();
+            Protocol myhttps = new Protocol(
+                    "https",
+                    (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(),
+                    443);
+            Protocol.registerProtocol("https", myhttps);
         }
     }
 }
