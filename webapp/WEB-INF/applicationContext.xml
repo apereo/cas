@@ -20,6 +20,15 @@
 	</bean>
 	
 	<bean
+		id="httpClient"
+		class="org.jasig.cas.util.HttpClient3FactoryBean">
+		<property
+			name="soTimeout"
+			value="60" />
+	</bean>
+	
+	
+	<bean
 		id="serviceTicketUniqueIdGenerator"
 		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg
