@@ -33,7 +33,7 @@ public class DistributedEhCacheTicketRegistryTests extends AbstractTicketRegistr
     
     private Cache cache2;
 
-    private DistributedEhCacheTicketRegistry ticketRegistry;
+    private EhCacheTicketRegistry ticketRegistry;
 
     public DistributedEhCacheTicketRegistryTests() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
@@ -43,7 +43,7 @@ public class DistributedEhCacheTicketRegistryTests extends AbstractTicketRegistr
         
         this.cache2 = (Cache) context
         .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME_2);
-        this.ticketRegistry = new DistributedEhCacheTicketRegistry();
+        this.ticketRegistry = new EhCacheTicketRegistry();
         this.ticketRegistry.setServiceTicketCache(this.cache);
         this.ticketRegistry.setTicketGrantingTicketCache(this.cache2);
         this.ticketRegistry.afterPropertiesSet();
