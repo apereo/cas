@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -49,7 +50,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         final TicketGrantingTicket ticketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {
         super(id, ticketGrantingTicket, policy);
-        
+
         Assert.notNull(authentication, "authentication cannot be null");
 
         this.authentication = authentication;
@@ -73,9 +74,11 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     }
 
     public synchronized ServiceTicket grantServiceTicket(final String id,
-        final Service service, final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
+        final Service service, final ExpirationPolicy expirationPolicy,
+        final boolean credentialsProvided) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
-            service, this.getCountOfUses() == 0 || credentialsProvided, expirationPolicy);
+            service, this.getCountOfUses() == 0 || credentialsProvided,
+            expirationPolicy);
 
         updateState();
 
@@ -108,5 +111,25 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         list.addAll(this.getGrantingTicket().getChainedAuthentications());
 
         return Collections.unmodifiableList(list);
+    }
+
+    public boolean equals(final Object object) {
+        if (object == null
+            || !TicketGrantingTicket.class.isAssignableFrom(object.getClass())) {
+            return false;
+        }
+
+        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) object;
+
+        return new EqualsBuilder().append(
+            ticketGrantingTicket.getAuthentication(), this.getAuthentication())
+            .append(ticketGrantingTicket.getChainedAuthentications(),
+                this.getChainedAuthentications()).append(
+                ticketGrantingTicket.getCreationTime(), this.getCreationTime())
+            .append(ticketGrantingTicket.getGrantingTicket(),
+                this.getGrantingTicket()).append(ticketGrantingTicket.getId(),
+                this.getId()).append(ticketGrantingTicket.isExpired(),
+                this.isExpired()).append(ticketGrantingTicket.isRoot(),
+                this.isRoot()).isEquals();
     }
 }
