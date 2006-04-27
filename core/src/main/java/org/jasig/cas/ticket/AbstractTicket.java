@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.ticket;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.util.Assert;
@@ -102,10 +101,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     protected abstract boolean isExpiredInternal();
-
-    public final boolean equals(final Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
-    }
 
     public final int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);

@@ -22,7 +22,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  */
-public class DistributedEhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
+public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
 
     private static final String APPLICATION_CONTEXT_FILE_NAME = "ehcacheContext.xml";
 
@@ -35,7 +35,7 @@ public class DistributedEhCacheTicketRegistryTests extends AbstractTicketRegistr
 
     private EhCacheTicketRegistry ticketRegistry;
 
-    public DistributedEhCacheTicketRegistryTests() throws Exception {
+    public EhCacheTicketRegistryTests() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
             APPLICATION_CONTEXT_FILE_NAME);
         this.cache = (Cache) context
@@ -95,8 +95,7 @@ public class DistributedEhCacheTicketRegistryTests extends AbstractTicketRegistr
         assertEquals(s.toString(), s2.toString());
         assertNotNull(s2.grantTicketGrantingTicket("test", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         
-        // XXX this is cheating, knowing what order the equals method is called in
-        assertEquals(s2, s);
+        assertEquals(s, s2);
         
         try {
             this.ticketRegistry.getTicket(s.getId(), TicketGrantingTicket.class);
