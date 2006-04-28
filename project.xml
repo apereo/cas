@@ -412,7 +412,7 @@
 		<dependency>
 			<groupId>ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-			<version>1.2beta4</version>
+			<version>1.2</version>
 			<type>jar</type>
 			<url>http://ehcache.sourceforge.net</url>
 			<properties>
