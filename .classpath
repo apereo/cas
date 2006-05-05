@@ -2,8 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="adaptors/trusted/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/trusted/src/test/java"/>
-	<classpathentry kind="src" path="adaptors/spnego/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/spnego/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/x509/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/x509/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/ldap/src/main/java"/>
