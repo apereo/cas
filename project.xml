@@ -520,7 +520,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflow</artifactId>
-			<version>1.0-ea</version>
+			<version>1.0-rc1</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -531,7 +531,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-binding</artifactId>
-			<version>1.0-ea</version>
+			<version>1.0-rc1</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
