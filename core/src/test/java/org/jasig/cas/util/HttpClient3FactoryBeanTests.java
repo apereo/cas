@@ -25,7 +25,6 @@ public class HttpClient3FactoryBeanTests extends TestCase {
         
         
         this.httpClient3FactoryBean.setAuthenticationPreemptive(CONST_TRUE);
-        this.httpClient3FactoryBean.setConnectionManagerClass(MultiThreadedHttpConnectionManager.class);
         this.httpClient3FactoryBean.setConnectionManagerTimeout(CONST_TIMEOUT);
         this.httpClient3FactoryBean.setContentCharset(CONST_ENCODING);
         this.httpClient3FactoryBean.setCookiePolicy("policy");
