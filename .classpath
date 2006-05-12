@@ -37,7 +37,7 @@
 	<classpathentry kind="var" path="MAVEN_REPO/ldaptemplate/jars/ldaptemplate-1.0-rc2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-codec/jars/commons-codec-1.3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-3.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-contrib-3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

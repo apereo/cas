@@ -249,7 +249,7 @@
 		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
-			<version>3.0</version>
+			<version>3.0.1</version>
 			<url>http://jakarta.apache.org/commons/httpclient/</url>
 			<properties>
 				<war.bundle>true</war.bundle>
