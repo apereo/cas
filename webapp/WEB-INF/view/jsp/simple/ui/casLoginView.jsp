@@ -9,7 +9,7 @@
 		<title>JA-SIG  Central  Authentication  Service (CAS)</title>
 	</head>
   <body>
-	<form method="post" action="login">
+	<form method="post" action="login?${request.queryString}">
 	
 	<!-- Begin error message generating Server-Side tags -->
 	<spring:hasBindErrors name="credentials">
