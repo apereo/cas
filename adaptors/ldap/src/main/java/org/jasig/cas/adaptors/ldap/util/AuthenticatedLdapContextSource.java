@@ -24,6 +24,8 @@ public class AuthenticatedLdapContextSource extends LdapContextSource {
 
     environment.put(Context.SECURITY_PRINCIPAL, principal);
     environment.put(Context.SECURITY_CREDENTIALS, password);
+    
+    environment.remove("com.sun.jndi.ldap.connect.pool"); // remove this since we're modifying principal
 
     try {
         return getDirContextInstance(environment);
