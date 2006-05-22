@@ -4,12 +4,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <!-- Minimal Web pages, starting point for Web Designers -->
 
+<%@page import="org.springframework.util.StringUtils"%>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 	<head>
 		<title>JA-SIG  Central  Authentication  Service (CAS)</title>
 	</head>
   <body>
-	<form method="post" action="login?${request.queryString}">
+	<form method="post" action="<%=response.encodeRedirectURL("login" + (StringUtils.hasText(request.getQueryString()) ? "?" + request.getQueryString() : ""))%>">
 	
 	<!-- Begin error message generating Server-Side tags -->
 	<spring:hasBindErrors name="credentials">

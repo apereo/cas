@@ -1,1 +1,1 @@
-<%response.sendRedirect(request.getContextPath() + "/login");%>
+<%response.sendRedirect(response.encodeUrl(request.getContextPath() + "/login"));%>
