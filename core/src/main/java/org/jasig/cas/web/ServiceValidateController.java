@@ -103,7 +103,7 @@ public final class ServiceValidateController extends AbstractController
             .getParameter(WebConstants.TICKET);
         final String service = request.getParameter(WebConstants.SERVICE);
         final Map model = new HashMap();
-        final ValidationSpecification authenticationSpecification = this
+        final ValidationSpecification validationSpecification = this
             .getCommandClass();
         final Assertion assertion;
         final String pgtUrl = request.getParameter(WebConstants.PGTURL);
@@ -118,7 +118,7 @@ public final class ServiceValidateController extends AbstractController
             return new ModelAndView(this.failureView, model);
         }
         
-        ServletRequestDataBinder binder = new ServletRequestDataBinder(authenticationSpecification, "authenticationSpecification");
+        final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
         binder.bind(request);
         try {
             if (StringUtils.hasText(pgtUrl)) {
@@ -139,10 +139,10 @@ public final class ServiceValidateController extends AbstractController
             assertion = this.centralAuthenticationService
                 .validateServiceTicket(serviceTicketId, new SimpleService(
                     service));
-            if (!authenticationSpecification.isSatisfiedBy(assertion)) {
+            if (!validationSpecification.isSatisfiedBy(assertion)) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("ServiceTicket [" + serviceTicketId
-                        + "] does not satisfy authentication specification.");
+                        + "] does not satisfy validation specification.");
                 }
 
                 model.put(WebConstants.CODE, "INVALID_TICKET");
