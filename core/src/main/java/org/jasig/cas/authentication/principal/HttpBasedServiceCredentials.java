@@ -48,4 +48,18 @@ public class HttpBasedServiceCredentials implements Credentials {
     public final String toString() {
         return this.callbackUrl.toExternalForm();
     }
+    
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        
+        if (!this.getClass().equals(object.getClass())) {
+            return false;
+        }
+        
+        final HttpBasedServiceCredentials c = (HttpBasedServiceCredentials) object;
+        
+        return c.getCallbackUrl().equals(this.getCallbackUrl());
+    }
 }
