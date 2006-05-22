@@ -1,3 +1,4 @@
+<%@page import="org.springframework.util.StringUtils"%>
 <jsp:directive.include file="includes/top.jsp" />
 	<%--
 	NOTE: By default our example JSP page purposefully leaves out the url in the action attribute of a FORM tag.
@@ -10,7 +11,7 @@
 	
 	You can easily access request parameters via the Request object.
 	--%>
-	<form method="post" action="">
+	<form method="post" action="<%=response.encodeRedirectURL("login" + (StringUtils.hasText(request.getQueryString()) ? "?" + request.getQueryString() : ""))%>">
 	
 		<spring:hasBindErrors name="credentials">
 			<div id="errors">
