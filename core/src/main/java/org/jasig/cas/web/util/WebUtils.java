@@ -60,6 +60,6 @@ public final class WebUtils {
             return url;
         }
         
-        return url.substring(0, url.indexOf(";jsession") -1);
+        return url.substring(0, url.indexOf(";jsession"));
     }
 }
