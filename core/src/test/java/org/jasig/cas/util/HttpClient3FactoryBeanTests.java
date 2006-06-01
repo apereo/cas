@@ -34,6 +34,9 @@ public class HttpClient3FactoryBeanTests extends TestCase {
         this.httpClient3FactoryBean.setStrict(CONST_TRUE);
         this.httpClient3FactoryBean.setStrict(false);
         this.httpClient3FactoryBean.setVersion(HttpVersion.HTTP_1_1);
+        this.httpClient3FactoryBean.setDefaultMaxConnectionsPerHost(CONST_TIMEOUT);
+        this.httpClient3FactoryBean.setMaxTotalConnections(CONST_TIMEOUT);
+        this.httpClient3FactoryBean.setConnectionTimeout(CONST_TIMEOUT);
         
         this.httpClient3FactoryBean.afterPropertiesSet();
         final HttpClient client = (HttpClient) this.httpClient3FactoryBean.getObject();
@@ -48,6 +51,9 @@ public class HttpClient3FactoryBeanTests extends TestCase {
         assertEquals(CONST_TIMEOUT, client.getParams().getSoTimeout());
         assertEquals(HttpVersion.HTTP_1_1, client.getParams().getVersion());
         assertEquals(HttpClient.class, this.httpClient3FactoryBean.getObjectType());
+        assertEquals(CONST_TIMEOUT, client.getHttpConnectionManager().getParams().getDefaultMaxConnectionsPerHost());
+        assertEquals(CONST_TIMEOUT, client.getHttpConnectionManager().getParams().getMaxTotalConnections());
+        assertEquals(CONST_TIMEOUT, client.getHttpConnectionManager().getParams().getConnectionTimeout());
         assertTrue(this.httpClient3FactoryBean.isSingleton());
     }
 }
