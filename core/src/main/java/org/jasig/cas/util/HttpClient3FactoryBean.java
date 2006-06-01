@@ -23,7 +23,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
+ * @since 3.0.5
  * 
  */
 public final class HttpClient3FactoryBean implements FactoryBean,
