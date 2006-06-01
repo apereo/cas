@@ -49,4 +49,17 @@ public final class WebUtils {
         final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, cookieName);
         return cookie == null ? null : cookie.getValue();
     }
+    
+    /**
+     * Remove the jsession from the url.
+     * @param url the url to strip the jsession from.
+     * @return the url without the jsession
+     */
+    public static String stripJessionFromUrl(final String url) {
+        if (!url.contains(";jsession")) {
+            return url;
+        }
+        
+        return url.substring(0, url.indexOf(";jsession") -1);
+    }
 }

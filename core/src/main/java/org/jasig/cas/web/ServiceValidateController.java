@@ -22,6 +22,7 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -138,7 +139,7 @@ public final class ServiceValidateController extends AbstractController
 
             assertion = this.centralAuthenticationService
                 .validateServiceTicket(serviceTicketId, new SimpleService(
-                    service));
+                    WebUtils.stripJessionFromUrl(service)));
             if (!validationSpecification.isSatisfiedBy(assertion)) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("ServiceTicket [" + serviceTicketId

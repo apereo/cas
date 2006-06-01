@@ -91,7 +91,7 @@ public final class AuthenticationViaFormAction extends FormAction implements
             try {
                 final String serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketIdFromCookie,
-                        new SimpleService(service), credentials);
+                        new SimpleService(WebUtils.stripJessionFromUrl(service)), credentials);
                 ContextUtils.addAttribute(context, WebConstants.TICKET,
                     serviceTicketId);
                 setWarningCookie(response, warn);
