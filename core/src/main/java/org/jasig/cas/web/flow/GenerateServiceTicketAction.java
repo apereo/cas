@@ -9,6 +9,7 @@ import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -33,7 +34,7 @@ public final class GenerateServiceTicketAction extends AbstractCasLoginAction {
                 .grantServiceTicket(
                     ticketGrantingTicketFromRequest != null
                         ? ticketGrantingTicketFromRequest
-                        : ticketGrantingTicketId, new SimpleService(service));
+                        : ticketGrantingTicketId, new SimpleService(WebUtils.stripJessionFromUrl(service)));
             ContextUtils.addAttribute(context, WebConstants.TICKET,
                 serviceTicketId);
             return success();

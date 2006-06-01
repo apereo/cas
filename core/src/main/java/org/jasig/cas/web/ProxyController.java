@@ -15,6 +15,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -78,7 +79,7 @@ public final class ProxyController extends AbstractController implements
         }
 
         try {
-            final Service service = new SimpleService(targetService);
+            final Service service = new SimpleService(WebUtils.stripJessionFromUrl(targetService));
             return new ModelAndView(CONST_PROXY_SUCCESS, WebConstants.TICKET,
                 this.centralAuthenticationService.grantServiceTicket(ticket,
                     service));

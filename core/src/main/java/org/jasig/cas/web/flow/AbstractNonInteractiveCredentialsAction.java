@@ -11,6 +11,7 @@ import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -42,7 +43,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             try {
                 final String serviceTicketId = getCentralAuthenticationService()
                     .grantServiceTicket(ticketGrantingTicketId,
-                        new SimpleService(service), credentials);
+                        new SimpleService(WebUtils.stripJessionFromUrl(service)), credentials);
                 ContextUtils.addAttribute(context, WebConstants.TICKET,
                     serviceTicketId);
                 return success();
