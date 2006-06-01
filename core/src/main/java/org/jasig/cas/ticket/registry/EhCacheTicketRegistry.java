@@ -199,9 +199,6 @@ public final class EhCacheTicketRegistry implements TicketRegistry,
         }
 
         public boolean equals(final Object obj) {
-            System.out.println("ServiceTicket: "
-                + this.serviceTicket.getClass());
-            System.out.println("Obj: " + obj.getClass());
             return this.serviceTicket.equals(obj);
         }
 
