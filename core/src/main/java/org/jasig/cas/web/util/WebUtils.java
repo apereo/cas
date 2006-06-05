@@ -45,11 +45,6 @@ public final class WebUtils {
         return request.getParameter(parameter) != null;
     }
     
-    public static String getCookieValue(final HttpServletRequest request, final String cookieName) {
-        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, cookieName);
-        return cookie == null ? null : cookie.getValue();
-    }
-    
     /**
      * Remove the jsession from the url.
      * @param url the url to strip the jsession from.
@@ -61,5 +56,10 @@ public final class WebUtils {
         }
         
         return url.substring(0, url.indexOf(";jsession"));
+    }
+    
+    public static String getCookieValue(final HttpServletRequest request, final String cookieName) {
+        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, cookieName);
+        return cookie == null ? null : cookie.getValue();
     }
 }
