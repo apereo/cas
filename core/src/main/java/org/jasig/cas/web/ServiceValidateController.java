@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.web;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +42,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class ServiceValidateController extends AbstractController
-    implements InitializingBean {
+public class ServiceValidateController extends AbstractController implements
+    InitializingBean {
 
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "casServiceFailureView";
@@ -67,8 +66,13 @@ public final class ServiceValidateController extends AbstractController
     /** The view to redirect to on a validation failure. */
     private String failureView;
 
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.centralAuthenticationService, "centralAuthenticationService cannot be null");
+    protected void afterPropertiesSetInternal() throws Exception {
+        // nothing to do
+    }
+
+    public final void afterPropertiesSet() throws Exception {
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null");
 
         if (this.validationSpecificationClass == null) {
             this.validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
@@ -95,9 +99,33 @@ public final class ServiceValidateController extends AbstractController
             logger.info("No proxyHandler specified.  Defaulting to "
                 + this.proxyHandler.getClass().getName());
         }
+
+        afterPropertiesSetInternal();
     }
 
-    protected ModelAndView handleRequestInternal(
+    /**
+     * Overrideable method to determine which credentials to use to grant a
+     * proxy granting ticket. Default is to use the pgtUrl.
+     * 
+     * @param request the HttpServletRequest object.
+     * @return the credentials or null if there was an error or no credentials
+     * provided.
+     */
+    protected Credentials getServiceCredentialsFromRequest(
+        final HttpServletRequest request) {
+        final String pgtUrl = request.getParameter(WebConstants.PGTURL);
+        if (StringUtils.hasText(pgtUrl)) {
+            try {
+                return new HttpBasedServiceCredentials(new URL(pgtUrl));
+            } catch (final Exception e) {
+                logger.error("Error constructing pgtUrl", e);
+            }
+        }
+
+        return null;
+    }
+
+    protected final ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         final String serviceTicketId = request
@@ -107,7 +135,6 @@ public final class ServiceValidateController extends AbstractController
         final ValidationSpecification validationSpecification = this
             .getCommandClass();
         final Assertion assertion;
-        final String pgtUrl = request.getParameter(WebConstants.PGTURL);
         String proxyGrantingTicketId = null;
         Credentials serviceCredentials = null;
 
@@ -118,22 +145,20 @@ public final class ServiceValidateController extends AbstractController
                 "INVALID_REQUEST", "INVALID_REQUEST"));
             return new ModelAndView(this.failureView, model);
         }
-        
-        final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
+
+        final ServletRequestDataBinder binder = new ServletRequestDataBinder(
+            validationSpecification, "validationSpecification");
         binder.bind(request);
         try {
-            if (StringUtils.hasText(pgtUrl)) {
+            serviceCredentials = getServiceCredentialsFromRequest(request);
+            if (serviceCredentials != null) {
                 try {
-                    serviceCredentials = new HttpBasedServiceCredentials(
-                        new URL(pgtUrl));
                     proxyGrantingTicketId = this.centralAuthenticationService
                         .delegateTicketGrantingTicket(serviceTicketId,
                             serviceCredentials);
                 } catch (TicketException e) {
                     logger.error("TicketException generating ticket for: "
-                        + pgtUrl, e);
-                } catch (MalformedURLException e) {
-                    logger.error("Exception converting pgtUrl to class URL", e);
+                        + serviceCredentials, e);
                 }
             }
 
@@ -152,7 +177,7 @@ public final class ServiceValidateController extends AbstractController
                 return new ModelAndView(this.failureView, model);
             }
 
-            if (StringUtils.hasText(pgtUrl) && proxyGrantingTicketId != null) {
+            if (serviceCredentials != null && proxyGrantingTicketId != null) {
                 final String proxyIou = this.proxyHandler.handle(
                     serviceCredentials, proxyGrantingTicketId);
                 model.put(WebConstants.PGTIOU, proxyIou);
