@@ -5,10 +5,7 @@
  */
 package org.jasig.cas.authentication;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Service;
 
 import junit.framework.TestCase;
 
@@ -22,18 +19,6 @@ public class SimpleServiceTests extends TestCase {
     public void testProperId() {
         assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils
             .getService().getId());
-    }
-
-    public void testHashCode() {
-        assertEquals("HashCodes are not equal.", HashCodeBuilder
-            .reflectionHashCode(TestUtils.getService()), TestUtils.getService()
-            .hashCode());
-    }
-
-    public void testToString() {
-        Service service = TestUtils.getService();
-        assertEquals("ToStrings are not equal.", ToStringBuilder
-            .reflectionToString(service), service.toString());
     }
 
     public void testEqualsWithNull() {

@@ -8,8 +8,6 @@ package org.jasig.cas.ticket;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.SimpleService;
@@ -123,19 +121,5 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new NeverExpiresExpirationPolicy(), false);
 
         assertFalse(s.isFromNewLogin());
-    }
-
-    public void testHashCode() {
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-
-        assertEquals(HashCodeBuilder.reflectionHashCode(t), t.hashCode());
-    }
-
-    public void testToString() {
-        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-
-        assertEquals(ToStringBuilder.reflectionToString(t), t.toString());
     }
 }

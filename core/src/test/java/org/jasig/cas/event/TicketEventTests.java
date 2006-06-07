@@ -51,9 +51,4 @@ public class TicketEventTests extends TestCase {
         assertEquals("DESTROY_TICKET_GRANTING_TICKET", this.ticketEvent2
             .getTicketEventType().getEventTypeAsString());
     }
-    
-    public void testToString() {
-        assertEquals("CREATE_TICKET_GRANTING_TICKET", this.ticketEvent1
-            .getTicketEventType().toString());
-    }
 }

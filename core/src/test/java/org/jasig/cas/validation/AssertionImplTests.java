@@ -8,7 +8,6 @@ package org.jasig.cas.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -108,16 +107,4 @@ public class AssertionImplTests extends TestCase {
 
         assertEquals(service, assertion.getService());
     }
-
-    public void testToString() {
-        final List list = new ArrayList();
-
-        list.add(new SimplePrincipal("test"));
-
-        final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, new SimpleService("test"), true);
-        assertEquals(ToStringBuilder.reflectionToString(assertion), assertion
-            .toString());
-    }
-
 }
