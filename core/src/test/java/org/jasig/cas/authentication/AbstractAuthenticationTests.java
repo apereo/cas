@@ -8,8 +8,6 @@ package org.jasig.cas.authentication;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.TestUtils;
 
 import junit.framework.TestCase;
@@ -35,18 +33,6 @@ public abstract class AbstractAuthenticationTests extends TestCase {
     public final void testNullHashMap() {
         assertNotNull("Attributes are null.", TestUtils.getAuthentication()
             .getAttributes());
-    }
-
-    public final void testHashCode() {
-        assertEquals("Hashcodes do not match.", HashCodeBuilder
-            .reflectionHashCode(this.authentication), this.authentication
-            .hashCode());
-    }
-
-    public final void testToString() {
-        assertEquals("toString values do not match.", ToStringBuilder
-            .reflectionToString(this.authentication), this.authentication
-            .toString());
     }
 
     public final void testEquals() {

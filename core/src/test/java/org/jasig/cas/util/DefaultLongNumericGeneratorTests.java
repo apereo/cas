@@ -48,9 +48,4 @@ public class DefaultLongNumericGeneratorTests extends TestCase {
         assertEquals(Long.toString(Long.MAX_VALUE).length(),
             new DefaultLongNumericGenerator(false).maxLength());
     }
-
-    public void testToString() {
-        assertEquals("1", new DefaultLongNumericGenerator(false)
-            .getNextNumberAsString());
-    }
 }

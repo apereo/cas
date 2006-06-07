@@ -7,7 +7,6 @@ package org.jasig.cas.event;
 
 import java.util.Date;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 
@@ -56,14 +55,5 @@ public class AuthenticationEventTests extends TestCase {
             AuthenticationHandler.class, new AuthenticationEvent(TestUtils
                 .getCredentialsWithSameUsernameAndPassword(), false,
                 AuthenticationHandler.class).getAuthenticationHandlerClass());
-    }
-
-    public void testToString() {
-        final AuthenticationEvent authenticationEvent = new AuthenticationEvent(
-            TestUtils.getCredentialsWithSameUsernameAndPassword(), true,
-            AuthenticationHandler.class);
-        assertEquals("ToStrings not equal.", ToStringBuilder
-            .reflectionToString(authenticationEvent), authenticationEvent
-            .toString());
     }
 }
