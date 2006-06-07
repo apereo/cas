@@ -13,6 +13,9 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -24,99 +27,115 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.5
- * 
  */
 public final class HttpClient3FactoryBean implements FactoryBean,
-		InitializingBean {
+    InitializingBean, DisposableBean {
 
-	/** Instance of HttpClient. */
-	private HttpClient httpClient;
-    
+    /** Instance of Commons Logging. */
+    private Log log = LogFactory.getLog(this.getClass());
+
+    /** Instance of HttpClient. */
+    private HttpClient httpClient;
+
     /** Instance of HttpConnectionManager */
     private MultiThreadedHttpConnectionManager manager = new MultiThreadedHttpConnectionManager();
 
-	/** Instance of HttpClientParams to populate the HttpClient with. */
-	private HttpClientParams httpClientParams = new HttpClientParams();
-    
-    /** Instance of HttpConnectionManagerParams to populate the HttpConnectionManager. */
+    /** Instance of HttpClientParams to populate the HttpClient with. */
+    private HttpClientParams httpClientParams = new HttpClientParams();
+
+    /**
+     * Instance of HttpConnectionManagerParams to populate the
+     * HttpConnectionManager.
+     */
     private HttpConnectionManagerParams httpConnectionManagerParams = new HttpConnectionManagerParams();
 
-	public void afterPropertiesSet() throws Exception {
-		this.httpClient = new HttpClient(this.httpClientParams);
-        this.httpClientParams.setConnectionManagerClass(MultiThreadedHttpConnectionManager.class);
+    public void afterPropertiesSet() throws Exception {
+        this.httpClient = new HttpClient(this.httpClientParams);
+        this.httpClientParams
+            .setConnectionManagerClass(MultiThreadedHttpConnectionManager.class);
         this.manager.setParams(this.httpConnectionManagerParams);
         this.httpClient.setHttpConnectionManager(this.manager);
-        
+
         this.httpConnectionManagerParams.setStaleCheckingEnabled(true);
 
-		Protocol myhttps = new Protocol("https",
-				(ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(),
-				443);
-		Protocol.registerProtocol("https", myhttps);
-	}
+        Protocol myhttps = new Protocol("https",
+            (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(), 443);
+        Protocol.registerProtocol("https", myhttps);
+    }
 
-	public Object getObject() throws Exception {
-		return this.httpClient;
-	}
+    public void destroy() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Shutting down MultiThreadedHttpConnectionManager...");
+        }
 
-	public Class getObjectType() {
-		return HttpClient.class;
-	}
+        this.manager.shutdown();
+    }
 
-	public boolean isSingleton() {
-		return true;
-	}
+    public Object getObject() throws Exception {
+        return this.httpClient;
+    }
 
-	public void setStrict(final boolean strict) {
-		if (strict) {
-			this.httpClientParams.makeStrict();
-		} else {
-			this.httpClientParams.makeLenient();
-		}
-	}
+    public Class getObjectType() {
+        return HttpClient.class;
+    }
 
-	public void setAuthenticationPreemptive(final boolean value) {
-		this.httpClientParams.setAuthenticationPreemptive(value);
-	}
+    public boolean isSingleton() {
+        return true;
+    }
 
-	public void setConnectionManagerTimeout(final long timeout) {
-		this.httpClientParams.setConnectionManagerTimeout(timeout);
-	}
+    public void setStrict(final boolean strict) {
+        if (strict) {
+            this.httpClientParams.makeStrict();
+        } else {
+            this.httpClientParams.makeLenient();
+        }
+    }
 
-	public void setContentCharset(final String charset) {
-		this.httpClientParams.setContentCharset(charset);
-	}
+    public void setAuthenticationPreemptive(final boolean value) {
+        this.httpClientParams.setAuthenticationPreemptive(value);
+    }
 
-	public void setCookiePolicy(final String policy) {
-		this.httpClientParams.setCookiePolicy(policy);
-	}
+    public void setConnectionManagerTimeout(final long timeout) {
+        this.httpClientParams.setConnectionManagerTimeout(timeout);
+    }
 
-	public void setCredentialCharset(final String charset) {
-		this.httpClientParams.setCredentialCharset(charset);
-	}
+    public void setContentCharset(final String charset) {
+        this.httpClientParams.setContentCharset(charset);
+    }
 
-	public void setHttpElementCharset(final String charset) {
-		this.httpClientParams.setHttpElementCharset(charset);
-	}
+    public void setCookiePolicy(final String policy) {
+        this.httpClientParams.setCookiePolicy(policy);
+    }
 
-	public void setSoTimeout(final int timeout) {
-		this.httpClientParams.setSoTimeout(timeout);
+    public void setCredentialCharset(final String charset) {
+        this.httpClientParams.setCredentialCharset(charset);
+    }
+
+    public void setHttpElementCharset(final String charset) {
+        this.httpClientParams.setHttpElementCharset(charset);
+    }
+
+    public void setSoTimeout(final int timeout) {
+        this.httpClientParams.setSoTimeout(timeout);
         this.httpConnectionManagerParams.setSoTimeout(timeout);
-	}
+    }
 
-	public void setVersion(final HttpVersion version) {
-		this.httpClientParams.setVersion(version);
-	}
+    public void setVersion(final HttpVersion version) {
+        this.httpClientParams.setVersion(version);
+    }
 
     public void setDefaultMaxConnectionsPerHost(final int maxHostConnections) {
-        this.httpConnectionManagerParams.setDefaultMaxConnectionsPerHost(maxHostConnections);
+        this.httpConnectionManagerParams
+            .setDefaultMaxConnectionsPerHost(maxHostConnections);
     }
 
     public void setMaxTotalConnections(final int maxTotalConnections) {
-        this.httpConnectionManagerParams.setMaxTotalConnections(maxTotalConnections);
+        this.httpConnectionManagerParams
+            .setMaxTotalConnections(maxTotalConnections);
     }
-    
+
     public void setConnectionTimeout(final int connectionTimeout) {
-        this.httpConnectionManagerParams.setConnectionTimeout(connectionTimeout);
+        this.httpConnectionManagerParams
+            .setConnectionTimeout(connectionTimeout);
     }
 }
