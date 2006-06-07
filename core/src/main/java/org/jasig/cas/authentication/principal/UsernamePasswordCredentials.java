@@ -5,10 +5,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * UsernamePasswordCredentials respresents the username and password that a user
  * may provide in order to prove the authenticity of who they say they are.
@@ -57,16 +53,21 @@ public class UsernamePasswordCredentials implements Credentials {
         this.username = userName;
     }
 
-    public final String toString() {
-        return new ToStringBuilder(this).append("userName", this.username)
-            .toString();
+    public String toString() {
+        return this.username;
     }
 
-    public final boolean equals(final Object obj) {
-        return EqualsBuilder.reflectionEquals(this, obj);
+    public boolean equals(final Object obj) {
+        if (obj == null || !obj.getClass().equals(this.getClass())) {
+            return false;
+        }
+        
+        final UsernamePasswordCredentials c = (UsernamePasswordCredentials) obj;
+        
+        return this.username.equals(c.getUsername()) && this.password.equals(c.getPassword());
     }
 
-    public final int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+    public int hashCode() {
+        return this.username.hashCode() ^ this.password.hashCode();
     }
 }
