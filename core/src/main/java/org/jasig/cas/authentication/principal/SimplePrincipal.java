@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -42,19 +39,21 @@ public class SimplePrincipal implements Principal {
         return this.id;
     }
 
-    public final boolean equals(final Object o) {
+    public boolean equals(final Object o) {
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }
-
-        return EqualsBuilder.reflectionEquals(this, o);
+        
+        final SimplePrincipal p = (SimplePrincipal) o;
+        
+        return this.id.equals(p.getId());
     }
 
-    public final String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    public String toString() {
+        return this.id;
     }
 
-    public final int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+    public int hashCode() {
+        return super.hashCode() ^ this.id.hashCode();
     }
 }
