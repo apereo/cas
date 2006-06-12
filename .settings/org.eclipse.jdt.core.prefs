@@ -1,4 +1,4 @@
-#Tue Feb 28 08:47:25 EST 2006
+#Wed Apr 05 10:24:27 EDT 2006
 eclipse.preferences.version=1
 org.eclipse.jdt.core.codeComplete.argumentPrefixes=
 org.eclipse.jdt.core.codeComplete.argumentSuffixes=
@@ -121,6 +121,7 @@ org.eclipse.jdt.core.formatter.compact_else_if=true
 org.eclipse.jdt.core.formatter.continuation_indentation=1
 org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer=1
 org.eclipse.jdt.core.formatter.format_guardian_clause_on_one_line=false
+org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_annotation_declaration_header=true
 org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_enum_constant_header=true
 org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_enum_declaration_header=true
 org.eclipse.jdt.core.formatter.indent_body_declarations_compare_to_type_header=true
@@ -139,6 +140,7 @@ org.eclipse.jdt.core.formatter.insert_new_line_before_closing_brace_in_array_ini
 org.eclipse.jdt.core.formatter.insert_new_line_before_else_in_if_statement=do not insert
 org.eclipse.jdt.core.formatter.insert_new_line_before_finally_in_try_statement=do not insert
 org.eclipse.jdt.core.formatter.insert_new_line_before_while_in_do_statement=do not insert
+org.eclipse.jdt.core.formatter.insert_new_line_in_empty_annotation_declaration=insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_anonymous_type_declaration=insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_block=insert
 org.eclipse.jdt.core.formatter.insert_new_line_in_empty_enum_constant=insert
