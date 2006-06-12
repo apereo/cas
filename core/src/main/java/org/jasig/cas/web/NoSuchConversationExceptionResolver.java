@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.webflow.execution.repository.NoSuchConversationException;
+import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
 
 /**
  * The NoSuchFlowExecutionResolver catches the NoSuchFlowExecutionException

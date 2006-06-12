@@ -134,11 +134,13 @@ public final class AuthenticationViaFormAction extends FormAction implements
 
     private void populateErrorsInstance(final RequestContext context,
         final TicketException e) {
-        final FormObjectAccessor accessor = new FormObjectAccessor(context);
-        final Errors errors = accessor.getFormErrors(this.getFormObjectName(),
-            this.getFormErrorsScope());
-        errors.reject(e.getCode(), e.getCode());
-
+        
+        try {
+            final Errors errors = getFormErrors(context);
+            errors.reject(e.getCode(), e.getCode());
+        } catch (final Exception fe) {
+            logger.error(fe, fe);
+        }
     }
 
     private void setWarningCookie(final HttpServletResponse response,
