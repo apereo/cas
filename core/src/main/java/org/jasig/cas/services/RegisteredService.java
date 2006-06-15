@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class RegisteredService {
+public class RegisteredService {
 
     /** The unique String to identify this service. */
     private final String id;
@@ -62,28 +62,28 @@ public final class RegisteredService {
     /**
      * @return Returns the allowedToProxy.
      */
-    public boolean isAllowedToProxy() {
+    public final boolean isAllowedToProxy() {
         return this.allowedToProxy;
     }
 
     /**
      * @return Returns the forceAuthentication.
      */
-    public boolean isForceAuthentication() {
+    public final boolean isForceAuthentication() {
         return this.forceAuthentication;
     }
 
     /**
      * @return Returns the id.
      */
-    public String getId() {
+    public final String getId() {
         return this.id;
     }
 
     /**
      * @return Returns the theme.
      */
-    public String getTheme() {
+    public final String getTheme() {
         return this.theme;
     }
 
@@ -92,7 +92,7 @@ public final class RegisteredService {
      * 
      * @return the Proxy URL or null if there is none.
      */
-    public URL getProxyUrl() {
+    public final URL getProxyUrl() {
         return this.proxyUrl;
     }
 }
