@@ -79,7 +79,7 @@ public final class ProxyController extends AbstractController implements
         }
 
         try {
-            final Service service = new SimpleService(WebUtils.stripJessionFromUrl(targetService));
+            final Service service = new SimpleService(WebUtils.stripJsessionFromUrl(targetService));
             return new ModelAndView(CONST_PROXY_SUCCESS, WebConstants.TICKET,
                 this.centralAuthenticationService.grantServiceTicket(ticket,
                     service));

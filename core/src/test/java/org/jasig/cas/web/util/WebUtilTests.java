@@ -11,7 +11,7 @@ import junit.framework.TestCase;
 public class WebUtilTests extends TestCase {
 
     public void testStripJsession() {
-        assertEquals("test", WebUtils.stripJessionFromUrl("test"));
-        assertEquals("http://www.cnn.com", WebUtils.stripJessionFromUrl("http://www.cnn.com;jsession=fsfsadfsdfsafsd"));
+        assertEquals("test", WebUtils.stripJsessionFromUrl("test"));
+        assertEquals("http://www.cnn.com", WebUtils.stripJsessionFromUrl("http://www.cnn.com;jsession=fsfsadfsdfsafsd"));
     }
 }

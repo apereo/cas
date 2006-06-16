@@ -50,7 +50,7 @@ public final class WebUtils {
      * @param url the url to strip the jsession from.
      * @return the url without the jsession
      */
-    public static String stripJessionFromUrl(final String url) {
+    public static String stripJsessionFromUrl(final String url) {
         if (url.indexOf(";jsession") == -1) {
             return url;
         }

@@ -34,7 +34,7 @@ public final class GenerateServiceTicketAction extends AbstractCasLoginAction {
                 .grantServiceTicket(
                     ticketGrantingTicketFromRequest != null
                         ? ticketGrantingTicketFromRequest
-                        : ticketGrantingTicketId, new SimpleService(WebUtils.stripJessionFromUrl(service)));
+                        : ticketGrantingTicketId, new SimpleService(WebUtils.stripJsessionFromUrl(service)));
             ContextUtils.addAttribute(context, WebConstants.TICKET,
                 serviceTicketId);
             return success();

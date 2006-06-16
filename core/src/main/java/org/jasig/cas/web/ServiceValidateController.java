@@ -164,7 +164,7 @@ public class ServiceValidateController extends AbstractController implements
 
             assertion = this.centralAuthenticationService
                 .validateServiceTicket(serviceTicketId, new SimpleService(
-                    WebUtils.stripJessionFromUrl(service)));
+                    WebUtils.stripJsessionFromUrl(service)));
             if (!validationSpecification.isSatisfiedBy(assertion)) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("ServiceTicket [" + serviceTicketId
