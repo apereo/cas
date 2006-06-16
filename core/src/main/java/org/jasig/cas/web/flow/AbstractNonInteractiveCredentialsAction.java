@@ -43,7 +43,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             try {
                 final String serviceTicketId = getCentralAuthenticationService()
                     .grantServiceTicket(ticketGrantingTicketId,
-                        new SimpleService(WebUtils.stripJessionFromUrl(service)), credentials);
+                        new SimpleService(WebUtils.stripJsessionFromUrl(service)), credentials);
                 ContextUtils.addAttribute(context, WebConstants.TICKET,
                     serviceTicketId);
                 return success();
