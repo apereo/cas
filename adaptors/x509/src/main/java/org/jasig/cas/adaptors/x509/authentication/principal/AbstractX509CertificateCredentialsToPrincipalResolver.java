@@ -36,7 +36,7 @@ public abstract class AbstractX509CertificateCredentialsToPrincipalResolver
         return principal;
     }
 
-    public final boolean supports(final Credentials credentials) {
+    public boolean supports(final Credentials credentials) {
         return credentials != null
             && X509CertificateCredentials.class.isAssignableFrom(credentials
                 .getClass());

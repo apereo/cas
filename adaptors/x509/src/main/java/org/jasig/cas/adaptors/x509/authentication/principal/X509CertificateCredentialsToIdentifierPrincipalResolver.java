@@ -54,6 +54,10 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
 
             username = username.replaceAll("\\$" + name, value);
         }
+        
+        if (this.identifier.equals(username)) {
+            return null;
+        }
 
         return new SimplePrincipal(username);
     }
