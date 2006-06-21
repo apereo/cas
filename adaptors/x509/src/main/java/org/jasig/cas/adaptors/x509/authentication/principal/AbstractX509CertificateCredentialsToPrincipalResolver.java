@@ -26,10 +26,11 @@ public abstract class AbstractX509CertificateCredentialsToPrincipalResolver
     protected Log log = LogFactory.getLog(this.getClass());
 
     public final Principal resolvePrincipal(final Credentials credentials) {
-        final Principal principal = resolvePrincipalInternal(((X509CertificateCredentials) credentials).getCertificate());
+        final Principal principal = resolvePrincipalInternal(((X509CertificateCredentials) credentials)
+            .getCertificate());
         
         if (log.isInfoEnabled()) {
-            log.info("Created Principal for: " + principal.getId());
+            log.info("Created Principal for: " + principal == null ? "No principal created." : principal.getId());
         }
         
         return principal;

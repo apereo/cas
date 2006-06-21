@@ -105,18 +105,30 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         }
 
         Authentication authentication = null;
+        foundSupported = false;
 
         for (int i = 0; i < this.credentialsToPrincipalResolvers.length; i++) {
             if (this.credentialsToPrincipalResolvers[i].supports(credentials)) {
                 final Principal principal = this.credentialsToPrincipalResolvers[i]
                     .resolvePrincipal(credentials);
-
-                authentication = new MutableAuthentication(principal);
-                break;
+                foundSupported = true;
+                if (principal != null) {
+                    authentication = new MutableAuthentication(principal);
+                    break;
+                }
             }
         }
 
         if (authentication == null) {
+            if (foundSupported) {
+                if (log.isDebugEnabled()) {
+                    log
+                        .debug("CredentialsToPrincipalResolver found but no principal returned.");
+                }
+
+                throw BadCredentialsAuthenticationException.ERROR;
+            }
+
             log.error("CredentialsToPrincipalResolver not found for "
                 + credentials.getClass().getName());
             throw UnsupportedCredentialsException.ERROR;
