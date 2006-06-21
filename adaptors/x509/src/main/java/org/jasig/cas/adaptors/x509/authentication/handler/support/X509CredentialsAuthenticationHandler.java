@@ -39,7 +39,7 @@ public final class X509CredentialsAuthenticationHandler implements
     /** Instance of Logging. */
     private final Log log = LogFactory.getLog(getClass());
 
-    /** The list of trusted issuers. */
+    /** The name of trusted issuer. */
     private String trustedIssuer;
 
     /** Deployer supplied pattern to match subject DNs against. */
