@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.Principal;
  */
 public abstract class AbstractX509CertificateCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
+
     /** Log instance. */
     protected Log log = LogFactory.getLog(this.getClass());
 
@@ -30,7 +31,11 @@ public abstract class AbstractX509CertificateCredentialsToPrincipalResolver
             .getCertificate());
         
         if (log.isInfoEnabled()) {
-            log.info("Created Principal for: " + principal == null ? "No principal created." : principal.getId());
+            if (principal !=null) {
+                log.info("Created principal for: " + principal.getId());
+            } else {
+                log.info("No principal created.");
+            }
         }
         
         return principal;
