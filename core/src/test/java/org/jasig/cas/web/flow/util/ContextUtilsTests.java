@@ -70,11 +70,4 @@ public class ContextUtilsTests extends TestCase {
             return;
         }
     }
-
-    public void testAddGetAttributeFromFlowScope() {
-        ContextUtils.addAttributeToFlowScope(this.requestContext, "test",
-            "test");
-        assertEquals("test", ContextUtils.getAttributeFromFlowScope(
-            this.requestContext, "test"));
-    }
 }

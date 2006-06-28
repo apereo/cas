@@ -96,28 +96,4 @@ public final class ContextUtils {
     public static boolean getParameterAsBoolean(final RequestContext context, final String parameterName) {
         return StringUtils.hasText(context.getExternalContext().getRequestParameterMap().get(parameterName));
     }
-
-    /**
-     * Convenience method to add an attribute to the flow scope.
-     * 
-     * @param context the RequestContext to add the attribute to.
-     * @param attributeName The name of the attribute.
-     * @param attribute the value of the attribute.
-     */
-    public static void addAttributeToFlowScope(final RequestContext context,
-        final String attributeName, final Object attribute) {
-        context.getFlowScope().put(attributeName, attribute);
-    }
-
-    /**
-     * Convenience method to retrieve an attribute from the flow scope.
-     * 
-     * @param context the RequestContext to retrieve the attribute from.
-     * @param attributeName The name of the attribute.
-     * @return the value of the attribute.
-     */
-    public static Object getAttributeFromFlowScope(
-        final RequestContext context, final String attributeName) {
-        return context.getFlowScope().get(attributeName);
-    }
 }
