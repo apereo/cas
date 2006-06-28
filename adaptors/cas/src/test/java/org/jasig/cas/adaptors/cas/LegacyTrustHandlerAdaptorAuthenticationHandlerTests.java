@@ -69,8 +69,6 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
         try {
             this.legacyTrustAdaptor.authenticate(trustedCredentials);
         } catch (NullPointerException npe) {
-            // TODO: revisit whether we should allow this dependency to ever be
-            // null.
             return;
         }
 

@@ -54,7 +54,6 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
             this.lphaah.authenticate(new LegacyCasCredentials());
         } catch (NullPointerException npe) {
             // throws NPE when dependency is not satisified.
-            // TODO: Reconsider other approaches to avoid this NPE.
             return;
         }
         fail("Behavior we were trying to document was an NPE that wasn't thrown?");
