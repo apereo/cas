@@ -40,8 +40,6 @@ public final class GenerateServiceTicketAction extends AbstractCasLoginAction {
             return success();
         } catch (final TicketException e) {
             if (gateway) {
-                logger.debug("Unable to retrieve a new service ticket.");
-                ContextUtils.addAttribute(context, WebConstants.SERVICE, service);
                 return gateway();
             }
         }

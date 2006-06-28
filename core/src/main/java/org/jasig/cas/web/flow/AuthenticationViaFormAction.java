@@ -56,8 +56,7 @@ public final class AuthenticationViaFormAction extends FormAction implements
     /** Generator for Ticket Granting Ticket Cookie. */
     private CookieGenerator ticketGrantingTicketCookieGenerator;
 
-    protected void doBind(final RequestContext context, final DataBinder binder)
-        throws Exception {
+    protected void doBind(final RequestContext context, final DataBinder binder) {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
         final Credentials credentials = (Credentials) binder.getTarget();

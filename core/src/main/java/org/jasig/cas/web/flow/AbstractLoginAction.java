@@ -50,12 +50,9 @@ public abstract class AbstractLoginAction extends AbstractAction {
             .getHttpServletRequest(context);
         final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
             this.ticketGrantingTicketCookieGenerator.getCookieName());
-        final String service = WebUtils.getRequestParameterAsString(request,
-            WebConstants.SERVICE);
-        final boolean gateway = WebUtils.getRequestParameterAsBoolean(request,
-            REQUEST_PARAM_GATEWAY);
-        final boolean renew = WebUtils.getRequestParameterAsBoolean(request,
-            WebConstants.RENEW);
+        final String service = ContextUtils.getParameterAsString(context, WebConstants.SERVICE);
+        final boolean gateway = ContextUtils.getParameterAsBoolean(context, REQUEST_PARAM_GATEWAY);
+        final boolean renew = ContextUtils.getParameterAsBoolean(context, WebConstants.RENEW);
         final boolean warn = Boolean.valueOf(
             WebUtils.getCookieValue(request, this.warnCookieGenerator
                 .getCookieName())).booleanValue();

@@ -8,6 +8,7 @@ package org.jasig.cas.web.flow.util;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
@@ -86,6 +87,14 @@ public final class ContextUtils {
     public static Object getAttribute(final RequestContext context,
         final String attributeName) {
         return context.getRequestScope().get(attributeName);
+    }
+    
+    public static String getParameterAsString(final RequestContext context, final String parameterName) {
+        return context.getExternalContext().getRequestParameterMap().get(parameterName);
+    }
+    
+    public static boolean getParameterAsBoolean(final RequestContext context, final String parameterName) {
+        return StringUtils.hasText(context.getExternalContext().getRequestParameterMap().get(parameterName));
     }
 
     /**
