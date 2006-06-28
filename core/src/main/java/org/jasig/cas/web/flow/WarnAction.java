@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.web.flow.util.ContextUtils;
-import org.jasig.cas.web.support.WebConstants;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -28,7 +26,6 @@ public final class WarnAction extends AbstractLoginAction {
     protected Event doExecuteInternal(final RequestContext context,
         final String ticketGrantingTicketId, final String service,
         final boolean gateway, final boolean renew, final boolean warn) {
-        ContextUtils.addAttribute(context, WebConstants.SERVICE, service);
         return warn ? warn() : redirect();
     }
 
