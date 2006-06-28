@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.web.flow.util.ContextUtils;
+import org.jasig.cas.web.support.WebConstants;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -26,6 +28,7 @@ public final class GatewayRequestCheckAction extends AbstractLoginAction {
         final String ticketGrantingTicketId, final String service,
         final boolean gateway, final boolean renew, final boolean warn) {
         if (gateway && StringUtils.hasText(service)) {
+            ContextUtils.addAttribute(request, WebConstants.SERVICE, service); 
             return gateway();
         }
 
