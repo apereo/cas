@@ -5,7 +5,10 @@ var eventobj;
 
 // SET FOCUS TO FIRST ELEMENT AND HIDE/SHOW ELEMENTS IF JAVASCRIPT ENABLED
 	function init(){
-		if(document.forms[0].elements[1] != null)	document.forms[0].elements[1].focus();
+		if(document.forms[1].elements[0] != null) {
+			document.forms[1].elements[0].focus();
+			document.forms[1].elements[0].select();
+		}
 	}
 
 // REGULAR EXPRESSION TO HIGHLIGHT ONLY FORM ELEMENTS
