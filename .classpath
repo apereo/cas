@@ -21,7 +21,7 @@
 	<classpathentry kind="src" path="sandbox/src/test/java"/>
 	<classpathentry kind="src" path="sandbox/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.2.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar"/>
@@ -30,8 +30,8 @@
 	<classpathentry kind="var" path="MAVEN_REPO/jwebunit/jars/jwebunit-1.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.6.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/nekohtml/jars/nekohtml-0.9.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-2.0-rc1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-mock-2.0-rc1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-2.0-rc2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-mock-2.0-rc2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-webflow-1.0-rc3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-binding-1.0-rc3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/ldaptemplate/jars/ldaptemplate-1.0-rc2.jar"/>
