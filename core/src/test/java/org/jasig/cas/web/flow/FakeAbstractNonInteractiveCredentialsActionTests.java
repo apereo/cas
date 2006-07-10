@@ -71,7 +71,7 @@ public class FakeAbstractNonInteractiveCredentialsActionTests extends
         
         final MockRequestContext mock = new MockRequestContext();
         
-        assertEquals("success", action.doExecuteInternal(mock, ticket, "test", false, true, false).getId());
+        assertEquals("warn", action.doExecuteInternal(mock, ticket, "test", false, true, false).getId());
         assertNotNull(ContextUtils.getAttribute(mock, WebConstants.TICKET));
     }
     
