@@ -96,6 +96,31 @@
 			<ant:include name="core/src/main/java/**" />
 			<ant:include name="core/src/test/java/**" />
 			<ant:include name="core/src/test/resources/**" />
+			
+			<ant:include name="adaptors/cas/src/main/java/**" />
+			<ant:include name="adaptors/cas/src/test/java/**" />
+			<ant:include name="adaptors/cas/*.xml" />
+			
+			<ant:include name="adaptors/generic/src/main/java/**" />
+			<ant:include name="adaptors/generic/src/test/java/**" />
+			<ant:include name="adaptors/generic/*.xml" />
+			
+			<ant:include name="adaptors/jdbc/src/main/java/**" />
+			<ant:include name="adaptors/jdbc/src/test/java/**" />
+			<ant:include name="adaptors/jdbc/*.xml" />
+			
+			<ant:include name="adaptors/ldap/src/main/java/**" />
+			<ant:include name="adaptors/ldap/src/test/java/**" />
+			<ant:include name="adaptors/ldap/*.xml" />
+			
+			<ant:include name="adaptors/trusted/src/main/java/**" />
+			<ant:include name="adaptors/trusted/src/test/java/**" />
+			<ant:include name="adaptors/trusted/*.xml" />
+			
+			<ant:include name="adaptors/x509/src/main/java/**" />
+			<ant:include name="adaptors/x509/src/test/java/**" />
+			<ant:include name="adaptors/x509/*.xml" />
+			
 			<ant:include name="*.txt" />
 			<ant:include name="project.properties" />
 			<ant:include name="*.xml" />
@@ -119,6 +144,31 @@
 				<ant:include name="core/src/main/java/**" />
 				<ant:include name="core/src/test/java/**" />
 				<ant:include name="core/src/test/resources/**" />
+				
+				<ant:include name="adaptors/cas/src/main/java/**" />
+				<ant:include name="adaptors/cas/src/test/java/**" />
+				<ant:include name="adaptors/cas/*.xml" />
+				
+				<ant:include name="adaptors/generic/src/main/java/**" />
+				<ant:include name="adaptors/generic/src/test/java/**" />
+				<ant:include name="adaptors/generic/*.xml" />
+				
+				<ant:include name="adaptors/jdbc/src/main/java/**" />
+				<ant:include name="adaptors/jdbc/src/test/java/**" />
+				<ant:include name="adaptors/jdbc/*.xml" />
+				
+				<ant:include name="adaptors/ldap/src/main/java/**" />
+				<ant:include name="adaptors/ldap/src/test/java/**" />
+				<ant:include name="adaptors/ldap/*.xml" />
+				
+				<ant:include name="adaptors/trusted/src/main/java/**" />
+				<ant:include name="adaptors/trusted/src/test/java/**" />
+				<ant:include name="adaptors/trusted/*.xml" />
+				
+				<ant:include name="adaptors/x509/src/main/java/**" />
+				<ant:include name="adaptors/x509/src/test/java/**" />
+				<ant:include name="adaptors/x509/*.xml" />
+
 				<ant:include name="*.txt" />
 				<ant:include name="project.properties" />
 				<ant:include name="*.xml" />
