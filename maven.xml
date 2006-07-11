@@ -99,7 +99,6 @@
 			
 			<ant:include name="adaptors/**/src/main/java/**" />
 			<ant:include name="adaptors/**/src/test/java/**" />
-			<ant:include name="adaptors/**/target/*.jar" />
 			<ant:include name="adaptors/**/*.xml" />
 			
 			<ant:include name="*.txt" />
@@ -128,7 +127,6 @@
 				
 				<ant:include name="adaptors/**/src/main/java/**" />
 				<ant:include name="adaptors/**/src/test/java/**" />
-				<ant:include name="adaptors/**/target/*.jar" />
 				<ant:include name="adaptors/**/*.xml" />
 
 				<ant:include name="*.txt" />
