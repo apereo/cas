@@ -5,10 +5,16 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.jasig.cas.ticket.Ticket;
 import org.jboss.cache.CacheException;
+import org.jboss.cache.Node;
 import org.jboss.cache.TreeCache;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -66,9 +72,24 @@ public final class JBossCacheTicketRegistry extends AbstractTicketRegistry imple
     }
 
     public Collection getTickets() {
-        
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            final Node node = this.cache.get(FQN_TICKET);
+
+            if (node == null) {
+                return Collections.EMPTY_LIST;
+            }
+            
+            final Set keys = node.getDataKeys();
+            final List list = new ArrayList();
+            synchronized (this.cache) {
+                for (final Iterator iter = keys.iterator(); iter.hasNext();) {
+                    list.add(node.get(iter.next()));
+                }
+            }
+            return list;
+        } catch (final CacheException e) {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     public void afterPropertiesSet() throws Exception {
