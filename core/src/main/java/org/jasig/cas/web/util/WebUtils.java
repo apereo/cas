@@ -44,22 +44,34 @@ public final class WebUtils {
         final HttpServletRequest request, final String parameter) {
         return request.getParameter(parameter) != null;
     }
-    
+
     /**
      * Remove the jsession from the url.
+     * 
      * @param url the url to strip the jsession from.
      * @return the url without the jsession
      */
     public static String stripJsessionFromUrl(final String url) {
-        if (url.indexOf(";jsession") == -1) {
+        final int jsessionPosition = url.indexOf(";jsession");
+
+        if (jsessionPosition == -1) {
             return url;
         }
-        
-        return url.substring(0, url.indexOf(";jsession"));
+
+        final int questionMarkPosition = url.indexOf("?");
+
+        if (questionMarkPosition < jsessionPosition) {
+            return url.substring(0, url.indexOf(";jsession"));
+        }
+
+        return url.substring(0, jsessionPosition)
+            + url.substring(questionMarkPosition);
     }
-    
-    public static String getCookieValue(final HttpServletRequest request, final String cookieName) {
-        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, cookieName);
+
+    public static String getCookieValue(final HttpServletRequest request,
+        final String cookieName) {
+        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
+            request, cookieName);
         return cookie == null ? null : cookie.getValue();
     }
 }
