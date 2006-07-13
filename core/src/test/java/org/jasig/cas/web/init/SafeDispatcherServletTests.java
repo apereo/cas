@@ -107,6 +107,7 @@ public class SafeDispatcherServletTests extends TestCase {
         try {
             this.safeServlet.service(mockRequest, mockResponse);
         } catch (ApplicationContextException e) {
+            System.out.println(e);
             fail("Unexpected exception.");
         } catch (Exception e) {
             return;

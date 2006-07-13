@@ -43,6 +43,10 @@ public final class JBossCacheFactoryBean implements FactoryBean, DisposableBean,
         return true;
     }
 
+    public void setConfigLocation(final Resource configLocation) {
+        this.configLocation = configLocation;
+    }
+
     public void destroy() throws Exception {
         log.info("Shutting down TreeCache service.");
         this.cache.stopService();
