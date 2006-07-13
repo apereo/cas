@@ -334,6 +334,25 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+		
+		<dependency>
+			<groupId>commons-attributes</groupId>
+			<artifactId>commons-attributes-api</artifactId>
+			<version>2.1</version>
+			<type>jar</type>
+			<url>http://jakarta.apache.org/commons/attributes/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-attributes</groupId>
+			<artifactId>commons-attributes-compiler</artifactId>
+			<version>2.1</version>
+			<type>jar</type>
+			<url>http://jakarta.apache.org/commons/attributes/</url>
+		</dependency>
 		-->
 
 		<!-- for unit and compatibility tests -->
@@ -359,16 +378,7 @@
 			<type>jar</type>
 			<url>http://www.cenqua.com/clover/</url>
 		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.1</version>
-			<type>jar</type>
-			<url>http://jakarta.apache.org/commons/collections/</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
+
 		<dependency>
 			<groupId>commons-discovery</groupId>
 			<artifactId>commons-discovery</artifactId>
@@ -380,24 +390,7 @@
 			</properties>
 		</dependency>
 
-		<dependency>
-			<groupId>commons-attributes</groupId>
-			<artifactId>commons-attributes-api</artifactId>
-			<version>2.1</version>
-			<type>jar</type>
-			<url>http://jakarta.apache.org/commons/attributes/</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
 
-		<dependency>
-			<groupId>commons-attributes</groupId>
-			<artifactId>commons-attributes-compiler</artifactId>
-			<version>2.1</version>
-			<type>jar</type>
-			<url>http://jakarta.apache.org/commons/attributes/</url>
-		</dependency>
 
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -415,16 +408,6 @@
 			<version>1.1</version>
 			<type>jar</type>
 			<url>http://jakarta.apache.org/commons/logging/</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>ehcache</groupId>
-			<artifactId>ehcache</artifactId>
-			<version>1.2.1</version>
-			<type>jar</type>
-			<url>http://ehcache.sourceforge.net</url>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
@@ -567,6 +550,85 @@
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
+		</dependency>
+		
+		<!--  JBOSS CACHE DEPENDENCIES -->
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+			<version>1.3.4</version>
+			<type>jar</type>
+			<url>http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html</url>
+		</dependency>
+		
+		<dependency>
+			<groupId>trove</groupId>
+			<artifactId>trove</artifactId>
+			<version>1.0.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-common</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-j2ee</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-jmx</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-serialization</artifactId>
+			<version>1.0.0RC1</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-cache</artifactId>
+			<version>1.4.0.CR2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-minimal</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-system</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jgroups</groupId>
+			<artifactId>jgroups</artifactId>
+			<version>2.2.9.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jdbm</groupId>
+			<artifactId>jdbm</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
 		</dependency>
 
 		<!-- MAVEN PLUGINS -->
