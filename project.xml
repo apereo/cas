@@ -335,6 +335,9 @@
 			</properties>
 		</dependency>
 		
+
+		-->
+		
 		<dependency>
 			<groupId>commons-attributes</groupId>
 			<artifactId>commons-attributes-api</artifactId>
@@ -353,7 +356,6 @@
 			<type>jar</type>
 			<url>http://jakarta.apache.org/commons/attributes/</url>
 		</dependency>
-		-->
 
 		<!-- for unit and compatibility tests -->
 		<dependency>
