@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
@@ -49,6 +48,6 @@ public final class PrincipalBearingCredentials implements Credentials {
     }
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return this.principal.toString();
     }
 }
