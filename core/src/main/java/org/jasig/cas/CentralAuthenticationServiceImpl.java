@@ -249,7 +249,7 @@ public final class CentralAuthenticationServiceImpl implements
                 if (!serviceTicket.isValidFor(service)) {
                     if (log.isDebugEnabled()) {
                         log.debug("ServiceTicket [" + serviceTicketId
-                            + "] does not match supplied service.");
+                            + "] does not match supplied service: " + service);
                     }
         
                     throw new TicketValidationException();
