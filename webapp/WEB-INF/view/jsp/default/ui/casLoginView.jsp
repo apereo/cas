@@ -1,5 +1,5 @@
 <jsp:directive.include file="includes/top.jsp" />
-	<form method="post" action="<%=response.encodeRedirectURL("login" + (request.getQueryString().length > 0 ? "?" + request.getQueryString() : ""))%>">
+	<form method="post" action="<%=response.encodeRedirectURL("login" + (request.getQueryString() != null && request.getQueryString().length() > 0 ? "?" + request.getQueryString() : ""))%>">
 	
 		<spring:hasBindErrors name="credentials">
 			<div id="errors">
