@@ -41,7 +41,7 @@
 	
 	<bean
 		id="errorHandlerResolver" 
-		class="org.jasig.cas.web.NoSuchConversationExceptionResolver" />
+		class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
 	<!-- Handler Mapping -->
 	<bean
