@@ -26,7 +26,7 @@ public final class LdapUtils {
     private static final Log logger = LogFactory.getLog(LdapUtils.class);
     
     private LdapUtils() {
-        // private constructor so that no one can instanciate.
+        // private constructor so that no one can instantiate.
     }
 
     /**
@@ -39,8 +39,8 @@ public final class LdapUtils {
      */
     public static String getFilterWithValues(final String filter,
         final String userName) {
-        Properties properties = new Properties();
-        String[] userDomain;
+        final Properties properties = new Properties();
+        final String[] userDomain;
         String newFilter = filter;
 
         properties.setProperty("%u", userName);
@@ -52,7 +52,7 @@ public final class LdapUtils {
         if (userDomain.length > 1) {
             properties.setProperty("%d", userDomain[1]);
 
-            String[] dcArray = userDomain[1].split("\\.");
+            final String[] dcArray = userDomain[1].split("\\.");
 
             for (int i = 0; i < dcArray.length; i++) {
                 properties.setProperty("%" + (i + 1), dcArray[dcArray.length
@@ -60,9 +60,9 @@ public final class LdapUtils {
             }
         }
 
-        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
-            String key = (String) iter.next();
-            String value = properties.getProperty(key, "");
+        for (final Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
+            final String key = (String) iter.next();
+            final String value = properties.getProperty(key, "");
 
             newFilter = newFilter.replaceFirst(key, value);
         }
