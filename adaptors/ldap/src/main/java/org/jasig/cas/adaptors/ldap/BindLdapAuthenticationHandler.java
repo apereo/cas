@@ -135,6 +135,46 @@ public class BindLdapAuthenticationHandler extends
         throw new IllegalStateException("You must set a scope.");
     }
 
+    /**
+     * Method to return whether multiple accounts are allowed.
+     * @return true if multiple accounts are allowed, false otherwise.
+     */
+    protected boolean isAllowMultipleAccounts() {
+        return this.allowMultipleAccounts;
+    }
+
+    /**
+     * Method to return the max number of results allowed.
+     * @return the maximum number of results.
+     */
+    protected int getMaxNumberResults() {
+        return this.maxNumberResults;
+    }
+
+    /**
+     * Method to return the scope.
+     * @return the scope
+     */
+    protected int getScope() {
+        return this.scope;
+    }
+
+    /**
+     * Method to return the search base.
+     * @return the search base.
+     */
+    protected String getSearchBase() {
+        return this.searchBase;
+    }
+
+    /**
+     * Method to return the timeout. 
+     * @return the timeout.
+     */
+    protected int getTimeout() {
+        return this.timeout;
+    }
+
     public final void setScope(final int scope) {
         this.scope = scope;
     }
