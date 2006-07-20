@@ -9,8 +9,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
-import org.springframework.webflow.execution.repository.conversation.impl.SimpleConversationId;
+import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 import junit.framework.TestCase;
 
@@ -21,10 +21,10 @@ import junit.framework.TestCase;
  */
 public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
 
-    private NoSuchConversationExceptionResolver resolver;
+    private NoSuchFlowExecutionExceptionResolver resolver;
 
     protected void setUp() throws Exception {
-        this.resolver = new NoSuchConversationExceptionResolver();
+        this.resolver = new NoSuchFlowExecutionExceptionResolver();
     }
 
     public void testNullPointerException() {
@@ -37,7 +37,15 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
         request.setRequestURI("test");
         ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
-            new NoSuchConversationException(new SimpleConversationId("test"))));
+            new NoSuchFlowExecutionException(new FlowExecutionKey(){
+            
+                private static final long serialVersionUID = 1443616250214416520L;
+
+                public String toString() {
+                    return "test";
+                }
+            
+            }, new RuntimeException())));
 
         assertEquals(request.getRequestURI(), ((RedirectView) model.getView())
             .getUrl());
@@ -49,7 +57,15 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
         request.setQueryString("test=test");
         ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
-            new NoSuchConversationException(new SimpleConversationId("test"))));
+            new NoSuchFlowExecutionException(new FlowExecutionKey(){
+                
+                private static final long serialVersionUID = -4750073902540974152L;
+
+                public String toString() {
+                    return "test";
+                }
+            
+            }, new RuntimeException())));
 
         assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())
             .getUrl());

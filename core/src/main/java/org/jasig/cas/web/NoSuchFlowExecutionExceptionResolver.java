@@ -13,7 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.webflow.execution.repository.conversation.NoSuchConversationException;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 /**
  * The NoSuchFlowExecutionResolver catches the NoSuchFlowExecutionException
@@ -28,7 +28,7 @@ import org.springframework.webflow.execution.repository.conversation.NoSuchConve
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class NoSuchConversationExceptionResolver implements
+public final class NoSuchFlowExecutionExceptionResolver implements
     HandlerExceptionResolver {
 
     /** Instance of a log. */
@@ -38,7 +38,7 @@ public final class NoSuchConversationExceptionResolver implements
         final HttpServletResponse response, final Object handler,
         final Exception exception) {
 
-        if (!exception.getClass().equals(NoSuchConversationException.class)) {
+        if (!exception.getClass().equals(NoSuchFlowExecutionException.class)) {
             return null;
         }
 
