@@ -53,11 +53,8 @@ public final class HttpClient3FactoryBean implements FactoryBean,
     private HttpConnectionManagerParams httpConnectionManagerParams = new HttpConnectionManagerParams();
 
     public void afterPropertiesSet() throws Exception {
-        this.httpClient = new HttpClient(this.httpClientParams);
-        this.httpClientParams
-            .setConnectionManagerClass(MultiThreadedHttpConnectionManager.class);
+        this.httpClient = new HttpClient(this.httpClientParams, this.manager);
         this.manager.setParams(this.httpConnectionManagerParams);
-        this.httpClient.setHttpConnectionManager(this.manager);
 
         this.httpConnectionManagerParams.setStaleCheckingEnabled(true);
 
