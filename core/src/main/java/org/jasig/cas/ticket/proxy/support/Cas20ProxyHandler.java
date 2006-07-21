@@ -62,19 +62,21 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
             .getNewTicketId(PGTIOU_PREFIX);
         final StringBuffer stringBuffer = new StringBuffer();
 
-        stringBuffer.append(serviceCredentials.getCallbackUrl()
-            .toExternalForm());
-
-        if (serviceCredentials.getCallbackUrl().getQuery() != null) {
-            stringBuffer.append("&");
-        } else {
-            stringBuffer.append("?");
+        synchronized (stringBuffer) {
+            stringBuffer.append(serviceCredentials.getCallbackUrl()
+                .toExternalForm());
+    
+            if (serviceCredentials.getCallbackUrl().getQuery() != null) {
+                stringBuffer.append("&");
+            } else {
+                stringBuffer.append("?");
+            }
+    
+            stringBuffer.append("pgtIou=");
+            stringBuffer.append(proxyIou);
+            stringBuffer.append("&pgtId=");
+            stringBuffer.append(proxyGrantingTicketId);
         }
-
-        stringBuffer.append("pgtIou=");
-        stringBuffer.append(proxyIou);
-        stringBuffer.append("&pgtId=");
-        stringBuffer.append(proxyGrantingTicketId);
 
         final GetMethod getMethod = new GetMethod(stringBuffer.toString());
         try {
