@@ -24,7 +24,19 @@
 		class="org.jasig.cas.util.HttpClient3FactoryBean">
 		<property
 			name="soTimeout"
-			value="60" />
+			value="5000" />
+		<property
+			name="connectionManagerTimeout"
+			value="5000" />
+		<property
+			name="connectionTimeout"
+			value="5000" />
+		<property
+			name="defaultMaxConnectionsPerHost"
+			value="50" />
+		<property
+			name="maxTotalConnections"
+			value="50" />
 	</bean>
 	
 	
