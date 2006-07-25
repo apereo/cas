@@ -38,7 +38,7 @@ import org.springframework.webflow.action.FormAction;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public final class AuthenticationViaFormAction extends FormAction implements
+public class AuthenticationViaFormAction extends FormAction implements
     InitializingBean {
 
     /**
@@ -56,7 +56,7 @@ public final class AuthenticationViaFormAction extends FormAction implements
     /** Generator for Ticket Granting Ticket Cookie. */
     private CookieGenerator ticketGrantingTicketCookieGenerator;
 
-    protected void doBind(final RequestContext context, final DataBinder binder) {
+    protected final void doBind(final RequestContext context, final DataBinder binder) {
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
         final Credentials credentials = (Credentials) binder.getTarget();
@@ -67,7 +67,7 @@ public final class AuthenticationViaFormAction extends FormAction implements
         super.doBind(context, binder);
     }
 
-    public Event submit(final RequestContext context) throws Exception {
+    public final Event submit(final RequestContext context) throws Exception {
         final Credentials credentials = (Credentials) getFormObject(context);
         final HttpServletRequest request = ContextUtils
             .getHttpServletRequest(context);
@@ -126,11 +126,11 @@ public final class AuthenticationViaFormAction extends FormAction implements
         }
     }
 
-    private Event warn() {
+    private final Event warn() {
         return result("warn");
     }
 
-    private void populateErrorsInstance(final RequestContext context,
+    private final void populateErrorsInstance(final RequestContext context,
         final TicketException e) {
         
         try {
@@ -141,7 +141,7 @@ public final class AuthenticationViaFormAction extends FormAction implements
         }
     }
 
-    private void setWarningCookie(final HttpServletResponse response,
+    private final void setWarningCookie(final HttpServletResponse response,
         final boolean warn) {
         if (warn) {
             this.warnCookieGenerator.addCookie(response, "true");
@@ -151,16 +151,16 @@ public final class AuthenticationViaFormAction extends FormAction implements
 
     }
 
-    public void setTicketGrantingTicketCookieGenerator(
+    public final void setTicketGrantingTicketCookieGenerator(
         final CookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
-    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+    public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    public void setCentralAuthenticationService(
+    public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
@@ -178,11 +178,11 @@ public final class AuthenticationViaFormAction extends FormAction implements
      * Credentials (or more sophisticated consideration of the
      * HttpServletRequest parameters).
      */
-    public void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
+    public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public final void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
 
         Assert.notNull(this.centralAuthenticationService, "centralAuthenticationService cannot be null");
