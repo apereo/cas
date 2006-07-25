@@ -78,17 +78,21 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                 foundSupported = true;
                 if (!this.authenticationHandlers[i].authenticate(credentials)) {
                     if (log.isInfoEnabled()) {
-                        log.info("AuthenticationHandler: "
-                            + this.authenticationHandlers[i].getClass()
-                                .getName()
-                            + " failed to authenticate the user.");
+                        log
+                            .info("AuthenticationHandler: "
+                                + this.authenticationHandlers[i].getClass()
+                                    .getName()
+                                + " failed to authenticate the user which provided the following credentials: "
+                                + credentials.toString());
                     }
                 } else {
                     if (log.isInfoEnabled()) {
-                        log.info("AuthenticationHandler: "
-                            + this.authenticationHandlers[i].getClass()
-                                .getName()
-                            + " successfully authenticated the user.");
+                        log
+                            .info("AuthenticationHandler: "
+                                + this.authenticationHandlers[i].getClass()
+                                    .getName()
+                                + " successfully authenticated the user which provided the following credentials: "
+                                + credentials.toString());
                     }
                     authenticated = true;
                     break;
