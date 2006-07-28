@@ -54,7 +54,7 @@ public class CentralAuthenticationServiceMethodInterceptor implements MethodInte
                 TicketEvent.CREATE_TICKET_GRANTING_TICKET);
         } else if (methodName.equals("grantServiceTicket")) {
             ticketEvent = new TicketEvent(ticket,
-                TicketEvent.CREATE_SERVCE_TICKET);
+                TicketEvent.CREATE_SERVICE_TICKET);
         } else if (methodName.equals("destroyTicketGrantingTicket")) {
             ticketEvent = new TicketEvent(
                 TicketEvent.DESTROY_TICKET_GRANTING_TICKET, (String) method.getArguments()[0]);
