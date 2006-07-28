@@ -8,10 +8,7 @@ package org.jasig.cas.ticket.proxy.support;
 import java.net.HttpURLConnection;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.contrib.ssl.StrictSSLProtocolSocketFactory;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;

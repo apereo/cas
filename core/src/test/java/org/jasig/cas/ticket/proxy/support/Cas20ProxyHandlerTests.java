@@ -25,6 +25,7 @@ public class Cas20ProxyHandlerTests extends TestCase {
 
     protected void setUp() throws Exception {
         this.handler = new Cas20ProxyHandler();
+        this.handler.setHttpClient(new HttpClient());
         this.handler.afterPropertiesSet();
     }
 
