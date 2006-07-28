@@ -112,7 +112,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             ticketId, new SimpleService("test")}, method, serviceTicketId));
 
         assertNotNull(this.event);
-        assertEquals(TicketEvent.CREATE_SERVCE_TICKET, this.event
+        assertEquals(TicketEvent.CREATE_SERVICE_TICKET, this.event
             .getTicketEventType());
     }
 
