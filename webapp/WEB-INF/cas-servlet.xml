@@ -142,6 +142,9 @@
 		<property
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
+		<property
+			name="proxyHandler"
+			ref="proxy20Handler" />
 	</bean>
 
 	<bean
@@ -153,6 +156,9 @@
 		<property
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
+		<property
+			name="proxyHandler"
+			ref="proxy20Handler" />
 	</bean>
 
 	<bean
