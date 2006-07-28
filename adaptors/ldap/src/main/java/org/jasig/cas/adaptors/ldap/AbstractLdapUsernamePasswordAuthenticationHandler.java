@@ -29,6 +29,9 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
 
     /** The filter path to the uid of the user. */
     private String filter;
+    
+    /** Whether the LdapTemplate should ignore partial results. */
+    private boolean ignorePartialResultException = false;
 
     /**
      * Method to set the datasource and generate a JdbcTemplate.
@@ -38,6 +41,10 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     public final void setContextSource(final AuthenticatedLdapContextSource contextSource) {
         this.contextSource = contextSource;
         this.ldapTemplate = new LdapTemplate(contextSource);
+    }
+    
+    public final void setIgnorePartialResultException(final boolean ignorePartialResultException) {
+        this.ignorePartialResultException = ignorePartialResultException;
     }
 
     /**
@@ -60,6 +67,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
         Assert.notNull(this.filter, "filter cannot be null");
+        this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
         initDao();
     }
 
