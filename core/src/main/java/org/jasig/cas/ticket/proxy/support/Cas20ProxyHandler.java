@@ -20,6 +20,7 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
@@ -129,6 +130,8 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     }
 
     public void afterPropertiesSet() throws Exception {
+        Assert.notNull(this.httpClient, "httpClient cannot be null.");
+
         if (this.uniqueTicketIdGenerator == null) {
             this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
             log.info("No UniqueTicketIdGenerator specified for "
@@ -136,16 +139,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
                 + this.uniqueTicketIdGenerator.getClass().getName());
         }
         
-        if (this.httpClient == null) {
-            this.httpClient = new HttpClient();
-            Protocol myhttps = new Protocol(
-                    "https",
-                    (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(),
-                    443);
-            Protocol.registerProtocol("https", myhttps);
-        }
-
-        if (this.acceptableCodes == null) {
+           if (this.acceptableCodes == null) {
             this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
         }
     }
