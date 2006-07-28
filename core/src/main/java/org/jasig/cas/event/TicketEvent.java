@@ -25,7 +25,7 @@ public class TicketEvent extends AbstractEvent {
         "CREATE_TICKET_GRANTING_TICKET");
 
     /** TicketEvent of type Create Service Ticket. */
-    public static final TicketEventType CREATE_SERVCE_TICKET = new TicketEventType(
+    public static final TicketEventType CREATE_SERVICE_TICKET = new TicketEventType(
         "CREATE_SERVICE_TICKET");
 
     /** TicketEvent of type Destroy Ticket Granting Ticket. */
