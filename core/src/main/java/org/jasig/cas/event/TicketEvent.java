@@ -128,7 +128,7 @@ public class TicketEvent extends AbstractEvent {
      * @version $Revision$ $Date$
      * @since 3.0
      */
-    protected static final class TicketEventType implements Serializable {
+    public static final class TicketEventType implements Serializable {
 
         /** Serializable Unique Id. */
         private static final long serialVersionUID = 3258689897039671865L;
