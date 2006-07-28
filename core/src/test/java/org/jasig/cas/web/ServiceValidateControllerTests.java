@@ -7,6 +7,7 @@ package org.jasig.cas.web;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockValidationSpecification;
@@ -40,6 +41,10 @@ public class ServiceValidateControllerTests extends
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController
             .setCentralAuthenticationService(getCentralAuthenticationService());
+        final Cas20ProxyHandler proxyHandler = new Cas20ProxyHandler();
+        proxyHandler.setHttpClient(new HttpClient());
+        proxyHandler.afterPropertiesSet();
+        this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
         this.serviceValidateController.afterPropertiesSet();
     }
