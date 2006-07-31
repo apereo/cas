@@ -55,5 +55,7 @@ public class HttpClient3FactoryBeanTests extends TestCase {
         assertEquals(CONST_TIMEOUT, client.getHttpConnectionManager().getParams().getMaxTotalConnections());
         assertEquals(CONST_TIMEOUT, client.getHttpConnectionManager().getParams().getConnectionTimeout());
         assertTrue(this.httpClient3FactoryBean.isSingleton());
+        
+        this.httpClient3FactoryBean.destroy();
     }
 }
