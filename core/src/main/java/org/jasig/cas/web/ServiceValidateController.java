@@ -124,6 +124,10 @@ public class ServiceValidateController extends AbstractController implements
 
         return null;
     }
+    
+    protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
+        binder.setRequiredFields(new String[] {"renew"});
+    }
 
     protected final ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
@@ -148,6 +152,7 @@ public class ServiceValidateController extends AbstractController implements
 
         final ServletRequestDataBinder binder = new ServletRequestDataBinder(
             validationSpecification, "validationSpecification");
+        initBinder(request, binder);
         binder.bind(request);
         try {
             serviceCredentials = getServiceCredentialsFromRequest(request);
