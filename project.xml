@@ -32,6 +32,11 @@
 	</repository>
 	<versions>
 		<version>
+			<id>3.0.5-rc3</id>
+			<name>3.0.5-rc3</name>
+			<tag>cas-3-0-5-rc3</tag>
+		</version>
+		<version>
 			<id>3.0.5-rc2</id>
 			<name>3.0.5-rc2</name>
 			<tag>cas-3-0-5-rc2</tag>
@@ -552,85 +557,6 @@
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-		</dependency>
-		
-		<!--  JBOSS CACHE DEPENDENCIES -->
-		<dependency>
-			<groupId>concurrent</groupId>
-			<artifactId>concurrent</artifactId>
-			<version>1.3.4</version>
-			<type>jar</type>
-			<url>http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html</url>
-		</dependency>
-		
-		<dependency>
-			<groupId>trove</groupId>
-			<artifactId>trove</artifactId>
-			<version>1.0.2</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-common</artifactId>
-			<version>4.0.3</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-j2ee</artifactId>
-			<version>4.0.3</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-jmx</artifactId>
-			<version>4.0.3</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-serialization</artifactId>
-			<version>1.0.0RC1</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-cache</artifactId>
-			<version>1.4.0.CR2</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-minimal</artifactId>
-			<version>4.0.3</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-system</artifactId>
-			<version>4.0.3</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jgroups</groupId>
-			<artifactId>jgroups</artifactId>
-			<version>2.2.9.2</version>
-			<type>jar</type>
-		</dependency>
-		
-		<dependency>
-			<groupId>jdbm</groupId>
-			<artifactId>jdbm</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
 		</dependency>
 
 		<!-- MAVEN PLUGINS -->
