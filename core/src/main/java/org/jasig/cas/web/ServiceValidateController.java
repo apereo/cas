@@ -74,6 +74,11 @@ public class ServiceValidateController extends AbstractController implements
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService cannot be null");
 
+        Assert
+            .notNull(
+                this.proxyHandler,
+                "proxyHandler cannot be null.  You may be seeing this because previous versions of CAS automatically set this.  Due to the use of HttpClient, this is no longer possible.");
+
         if (this.validationSpecificationClass == null) {
             this.validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
             logger
@@ -91,13 +96,6 @@ public class ServiceValidateController extends AbstractController implements
             this.failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
             logger.info("No failureView specified.  Using default of "
                 + this.failureView);
-        }
-
-        if (this.proxyHandler == null) {
-            this.proxyHandler = new Cas20ProxyHandler();
-            ((Cas20ProxyHandler) this.proxyHandler).afterPropertiesSet();
-            logger.info("No proxyHandler specified.  Defaulting to "
-                + this.proxyHandler.getClass().getName());
         }
 
         afterPropertiesSetInternal();
@@ -124,8 +122,9 @@ public class ServiceValidateController extends AbstractController implements
 
         return null;
     }
-    
-    protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
+
+    protected void initBinder(final HttpServletRequest request,
+        final ServletRequestDataBinder binder) {
         binder.setRequiredFields(new String[] {"renew"});
     }
 
