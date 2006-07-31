@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.TestUtils;
+
 import junit.framework.TestCase;
 
 /**
@@ -31,4 +33,17 @@ public class UsernamePasswordCredentialsTests extends TestCase {
 
         assertEquals(password, c.getPassword());
     }
-}
+    
+    public void testEquals() {
+        assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(null));
+        assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(TestUtils.getCredentialsWithDifferentUsernameAndPassword()));
+    }
+    
+    public void testHashCode() {
+        final UsernamePasswordCredentials c = TestUtils.getCredentialsWithDifferentUsernameAndPassword();
+        
+        assertEquals(c.getUsername().hashCode() ^ c.getPassword().hashCode(), c.hashCode());
+    }
+        
+    }
