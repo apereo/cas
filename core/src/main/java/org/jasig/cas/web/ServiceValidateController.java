@@ -16,7 +16,6 @@ import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
-import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
