@@ -61,8 +61,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         final StringBuffer stringBuffer = new StringBuffer();
 
         synchronized (stringBuffer) {
-            stringBuffer.append(serviceCredentials.getCallbackUrl()
-                .toExternalForm());
+            stringBuffer.append(serviceCredentials.toString());
     
             if (serviceCredentials.getCallbackUrl().getQuery() != null) {
                 stringBuffer.append("&");
@@ -84,7 +83,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
                 if (responseCode == this.acceptableCodes[i]) {
                     if (log.isDebugEnabled()) {
                         log.debug("Sent ProxyIou of " + proxyIou + " for service: "
-                            + serviceCredentials.getCallbackUrl());
+                            + serviceCredentials.toString());
                     }
 
                     return proxyIou;
@@ -99,7 +98,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
         if (log.isDebugEnabled()) {
             log.debug("Failed to send ProxyIou of " + proxyIou
-                + " for service: " + serviceCredentials.getCallbackUrl());
+                + " for service: " + serviceCredentials.toString());
         }
         return null;
     }
