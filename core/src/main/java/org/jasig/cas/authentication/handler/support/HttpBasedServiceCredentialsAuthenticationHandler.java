@@ -70,8 +70,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
             .debug("Attempting to resolve credentials for "
                 + serviceCredentials);
 
-        final GetMethod getMethod = new GetMethod(serviceCredentials
-            .getCallbackUrl().toExternalForm());
+        final GetMethod getMethod = new GetMethod(serviceCredentials.toString());
         int responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
         try {
             this.httpClient.executeMethod(getMethod);
