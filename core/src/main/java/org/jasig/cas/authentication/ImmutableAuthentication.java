@@ -7,7 +7,6 @@ package org.jasig.cas.authentication;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
