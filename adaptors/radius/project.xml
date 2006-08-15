@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <extend>${basedir}/../project.xml</extend>
+  <pomVersion>3</pomVersion>
+  <artifactId>cas-server-radius</artifactId>
+  <name>JA-SIG Central Authentication Service - RADIUS AuthenticationHandler Adaptor</name>
+  <siteDirectory></siteDirectory>
+  <repository>
+    <connection>scm:cvs:pserver:anonymous@developer.ja-sig.org:/home/cvs/jasig:cas</connection>
+    <developerConnection>scm:cvs:pserver:${maven.username}@developer.ja-sig.org:/home/cvs/jasig:cas</developerConnection>
+    <url>http://developer.ja-sig.org/source/viewrep/jasig/cas3/adaptors/cas</url>
+  </repository>
+  
+	<dependencies>
+  		<dependency>
+			<groupId>net.sf.jradius</groupId>
+			<artifactId>jradius</artifactId>
+			<version>20060406</version>
+			<type>jar</type>
+			<url>http://jradius.sourceforge.net/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		
+  		<dependency>
+			<groupId>net.sf.jradius</groupId>
+			<artifactId>jradius-dictionary</artifactId>
+			<version>20060406</version>
+			<type>jar</type>
+			<url>http://jradius.sourceforge.net/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		
+  		<dependency>
+			<groupId>gnu-crypto</groupId>
+			<artifactId>gnu-crypto</artifactId>
+			<version>2.0.1</version>
+			<type>jar</type>
+			<url>http://gnu.rtin.bz/software/gnu-crypto/#downloading</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+	</dependencies>
+</project>
+
