@@ -285,6 +285,27 @@
 				<war.bundle>true</war.bundle>
 			</properties>
 		</dependency>
+		
+  		<dependency>
+			<groupId>net.sf.ldaptemplate</groupId>
+			<artifactId>ldaptemplate</artifactId>
+			<version>1.0.2</version>
+			<type>jar</type>
+			<url>http://ldaptemplate.sourceforge.net/</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>	
+		
+  		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.1</version>
+			<type>jar</type>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>	
 
 		<!-- XFIRE -->
 		<!-- 

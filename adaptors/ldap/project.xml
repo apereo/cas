@@ -10,28 +10,5 @@
     <developerConnection>scm:cvs:pserver:${maven.username}@developer.ja-sig.org:/home/cvs/jasig:cas</developerConnection>
     <url>http://developer.ja-sig.org/source/viewrep/jasig/cas3/adaptors/ldap</url>
   </repository>
-  
-	<dependencies>
-  		<dependency>
-			<groupId>net.sf.ldaptemplate</groupId>
-			<artifactId>ldaptemplate</artifactId>
-			<version>1.0.2</version>
-			<type>jar</type>
-			<url>http://ldaptemplate.sourceforge.net/</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>	
-		
-  		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.1</version>
-			<type>jar</type>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>	
-  	</dependencies>
 </project>
 
