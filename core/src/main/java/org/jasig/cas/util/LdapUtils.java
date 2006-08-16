@@ -3,7 +3,7 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.adaptors.ldap.util;
+package org.jasig.cas.util;
 
 import java.util.Iterator;
 import java.util.Properties;
