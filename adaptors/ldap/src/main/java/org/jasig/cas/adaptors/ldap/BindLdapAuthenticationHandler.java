@@ -18,9 +18,9 @@ import javax.naming.directory.SearchResult;
 import net.sf.ldaptemplate.SearchExecutor;
 import net.sf.ldaptemplate.SearchResultCallbackHandler;
 
-import org.jasig.cas.adaptors.ldap.util.LdapUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.LdapUtils;
 
 /**
  * Handler to do LDAP bind.

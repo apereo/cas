@@ -7,9 +7,9 @@ package org.jasig.cas.adaptors.ldap;
 
 import javax.naming.directory.DirContext;
 
-import org.jasig.cas.adaptors.ldap.util.LdapUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.LdapUtils;
 import org.springframework.dao.DataAccessResourceFailureException;
 
 /**
