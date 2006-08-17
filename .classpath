@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="adaptors/trusted/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/radius/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/radius/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/trusted/src/test/java"/>
 	<classpathentry kind="src" path="adaptors/x509/src/main/java"/>
@@ -49,12 +48,13 @@
 	<classpathentry kind="var" path="MAVEN_REPO/jboss/jars/jboss-jmx-4.0.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jboss/jars/jboss-minimal-4.0.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jboss/jars/jboss-system-4.0.3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jboss/jars/jboss-cache-1.4.0.CR2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jboss/jars/jboss-cache-1.4.0.SP1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jboss/jars/jboss-serialization-1.0.0RC1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jdbm/jars/jdbm-1.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jgroups/jars/jgroups-2.2.9.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/net.sf.ldaptemplate/jars/ldaptemplate-1.0.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/net.sf.jradius/jars/jradius-20060406.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/net.sf.jradius/jars/jradius-dictionary-20060406.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/gnu-crypto/jars/gnu-crypto-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
