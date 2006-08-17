@@ -43,7 +43,7 @@
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>
-		</dependency>
+		</dependency>	
 	</dependencies>
 </project>
 

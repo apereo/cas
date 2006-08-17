@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>cas</groupId>
 			<artifactId>cas-server</artifactId>
-			<version>3.0.5-SNAPSHOT</version>
+			<version>3.0.6-SNAPSHOT</version>
 			<type>jar</type>
 			<properties>
 				<war.bundle>true</war.bundle>
@@ -80,7 +80,7 @@
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-cache</artifactId>
-			<version>1.4.0.CR2</version>
+			<version>1.4.0.SP1</version>
 			<type>jar</type>
 		</dependency>
 		
