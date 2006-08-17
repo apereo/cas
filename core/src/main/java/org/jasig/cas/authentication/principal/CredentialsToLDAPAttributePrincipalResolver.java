@@ -187,11 +187,9 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
             }
 
             if (principalList.size() > 1) {
-                if (log.isDebugEnabled()) {
-                    log.debug("LDAP: search returned multiple results"
-                        + " for value=\"" + lookupAttributeValue + "\""
-                        + " which is not allowed.");
-                }
+                log.error("LDAP: search returned multiple results"
+                    + " for value=\"" + lookupAttributeValue + "\""
+                    + " which is not allowed.");
 
                 return null;
             }
