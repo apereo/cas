@@ -174,14 +174,6 @@ public final class JRadiusServerImpl implements RadiusServer {
             final RadiusPacket response = radiusClient.authenticate(request,
                 this.radiusAuthenticator, this.retries);
 
-            // timeout
-            if (response == null) {
-                LOG
-                    .debug("Authentication request timed out from server for host:"
-                        + this.inetAddress.getCanonicalHostName());
-                return false;
-            }
-
             // accepted
             if (response instanceof AccessAccept) {
                 LOG.debug("Authentication request suceeded for host:"
