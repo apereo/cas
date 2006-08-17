@@ -58,7 +58,7 @@ public class AbstractX509CertificateTests extends TestCase {
         }
 
         public int getBasicConstraints() {
-            return 0;
+            return -1;
         }
 
         public Principal getIssuerDN() {
