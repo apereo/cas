@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0.5
+ * @since 3.0.6
  *
  */
 public final class JBossCacheTicketRegistry extends AbstractTicketRegistry implements InitializingBean {
@@ -111,6 +111,9 @@ public final class JBossCacheTicketRegistry extends AbstractTicketRegistry imple
     }
     
     private Ticket getProxiedTicketInstance(final Ticket ticket) {
+        if (ticket == null) {
+            return null;
+        }
         if (ticket instanceof ServiceTicket) {
             return new ProxiedServiceTicket((ServiceTicket) ticket, this.cache);
         }
