@@ -14,7 +14,6 @@
 	<classpathentry kind="src" path="adaptors/cas/src/main/java"/>
 	<classpathentry kind="src" path="adaptors/cas/src/test/java"/>
 	<classpathentry kind="src" path="core/src/main/java"/>
-	<classpathentry kind="src" path="core/src/main/resources"/>
 	<classpathentry kind="src" path="core/src/test/java"/>
 	<classpathentry kind="src" path="core/src/test/resources"/>
 	<classpathentry kind="src" path="core/src/compatibility/java"/>
