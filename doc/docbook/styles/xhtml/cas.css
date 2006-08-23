@@ -1,0 +1,168 @@
+A {
+    color: #003399;
+}
+
+A:active {
+    color: #003399;
+}
+
+A:visited {
+    color: #888888;
+}
+
+P, DL, DT, DD, BLOCKQUOTE {
+    color: #000000;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    padding-top: 0px;
+    /*border: 1px solid black;*/
+}
+
+OL, UL, P {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+P, BLOCKQUOTE {
+    font-size: 90%;
+}
+
+P.releaseinfo {
+    font-size: 120%; font-weight: bold; 
+    font-family: Arial, helvetica, sans-serif;
+    padding-top: 10px;
+}
+
+P.pubdate {
+    font-size: 120%; font-weight: bold; 
+    font-family: Arial, helvetica, sans-serif;
+}
+
+td {
+    font-size: 80%;
+}
+
+
+TD, TH, SPAN {
+    color: #000000;
+}
+
+BLOCKQUOTE {
+    margin-right: 0px;
+}
+
+H1, H2, H3, H4, H5, H6    {
+    color: #000000;
+    font-weight:500;
+    margin-top:0px;
+    padding-top:14px;
+    font-family: Arial, helvetica, sans-serif;
+    margin-bottom: 0px;
+}
+
+H2.title {
+    font-weight:800;
+    margin-bottom: 8px;
+}
+
+H2.subtitle {
+    font-weight:800;
+    margin-bottom: 20px;
+}
+
+H3.author {
+    color: #000000;
+    font-weight:500;
+    margin-top:0px;
+    padding-top:0px;
+    font-family: Arial, helvetica, sans-serif;
+    margin-bottom: 0px;
+}
+
+TABLE  {
+    border-collapse: collapse;
+    border-spacing:0;
+    border: 1px thin black;
+    empty-cells: hide;
+}
+
+TD  {
+    padding: 4pt;
+}
+
+H1 { 
+    font-size: 150%; 
+}
+H2 { 
+    font-size: 110%; 
+}
+H3 {
+    font-size: 100%; font-weight: bold; 
+}
+H4 { 
+    font-size: 90%; font-weight: bold;
+}
+H5 {
+    font-size: 90%; font-style: italic; 
+}
+H6 { 
+    font-size: 100%; font-style: italic; 
+}
+
+TT {
+    font-size: 90%;
+    font-family: "Courier New", Courier, monospace;
+    color: #000000;
+}
+
+.navheader, .navfooter {    
+    background-color: #e4eff3;
+}
+
+PRE {
+    font-size: 90%;
+    padding: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #CCCCCC;
+    background-color: #F4F4F4;
+}
+
+UL, OL, LI {
+    list-style: disc;
+}
+
+HR  {
+    width: 100%;
+    height: 1px;
+    background-color: #CCCCCC;
+    border-width: 0px;
+    padding: 0px;
+    color: #CCCCCC;
+}
+
+.variablelist { 
+    padding-top: 10; 
+    padding-bottom:10; 
+    margin:0;
+}
+
+/*(.itemizedlist, UL { 
+    padding-top: 0; 
+    padding-bottom:0; 
+    margin:0; 
+}*/
+
+.term { 
+    font-weight:bold;
+}
+
+.mediaobject {
+    padding-top: 30px; 
+    padding-bottom: 30px; 
+}
+
+.legalnotice {
+    font-size: 70%;
+}
+    
