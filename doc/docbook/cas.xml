@@ -216,34 +216,34 @@
 					
 					<para>
 						<programlisting>
-						&lt;bean id="contextSource" class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"&gt;
-							&lt;property name="authenticatedReadOnly" value="true"/&gt;
-							&lt;property name="password" value="{password_goes_here}"/&gt;
-							&lt;property name="pooled" value="true"/&gt;
-							&lt;property name="urls"&gt;
-								&lt;list&gt;
-									&lt;value&gt;ldap://ldap.rutgers.edu:636/&lt;/value&gt;
-									&lt;value&gt;ldap://ldap2.rutgers.edu:636/&lt;/value&gt;
-								&lt;/list&gt;
-							&lt;/property&gt;
-							&lt;property name="userName" value="{username_goes_here}"/&gt;
-							&lt;property name="baseEnvironmentProperties"&gt;
-								&lt;map&gt;
-									&lt;entry&gt;
-										&lt;key&gt;
-											&lt;value&gt;java.naming.security.protocol&lt;/value&gt;
-										&lt;/key&gt;
-										&lt;value&gt;ssl&lt;/value&gt;
-									&lt;/entry&gt;
-									&lt;entry&gt;
-										&lt;key&gt;
-											&lt;value&gt;java.naming.security.authentication&lt;/value&gt;
-										&lt;/key&gt;
-										&lt;value&gt;simple&lt;/value&gt;
-									&lt;/entry&gt;
-								&lt;/map&gt;
-							&lt;/property&gt;
-						&lt;/bean&gt;
+			&lt;bean id="contextSource" class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"&gt;
+				&lt;property name="authenticatedReadOnly" value="true"/&gt;
+				&lt;property name="password" value="{password_goes_here}"/&gt;
+				&lt;property name="pooled" value="true"/&gt;
+				&lt;property name="urls"&gt;
+					&lt;list&gt;
+						&lt;value&gt;ldap://ldap.rutgers.edu:636/&lt;/value&gt;
+						&lt;value&gt;ldap://ldap2.rutgers.edu:636/&lt;/value&gt;
+					&lt;/list&gt;
+				&lt;/property&gt;
+				&lt;property name="userName" value="{username_goes_here}"/&gt;
+				&lt;property name="baseEnvironmentProperties"&gt;
+					&lt;map&gt;
+						&lt;entry&gt;
+							&lt;key&gt;
+								&lt;value&gt;java.naming.security.protocol&lt;/value&gt;
+							&lt;/key&gt;
+							&lt;value&gt;ssl&lt;/value&gt;
+						&lt;/entry&gt;
+						&lt;entry&gt;
+							&lt;key&gt;
+								&lt;value&gt;java.naming.security.authentication&lt;/value&gt;
+							&lt;/key&gt;
+							&lt;value&gt;simple&lt;/value&gt;
+						&lt;/entry&gt;
+					&lt;/map&gt;
+				&lt;/property&gt;
+			&lt;/bean&gt;
 						</programlisting>
 					</para>
 					<para>NOTE: You may or may not have all these properties set.  This is just an example.</para>
@@ -258,11 +258,11 @@
 					with this.</para>
 					<para>
 						<programlisting>
-							&lt;bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"&gt;
-								&lt;property name="filter" value="uid=%u" /&gt;
-								&lt;property name="searchBase" value="ou=people,dc=rutgers,dc=edu" /&gt;
-								&lt;property name="contextSource" ref="contextSource" /&gt;
-							&lt;/bean&gt;
+			&lt;bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"&gt;
+				&lt;property name="filter" value="uid=%u" /&gt;
+				&lt;property name="searchBase" value="ou=people,dc=rutgers,dc=edu" /&gt;
+				&lt;property name="contextSource" ref="contextSource" /&gt;
+			&lt;/bean&gt;
 						</programlisting>
 					</para>
 				</sect2>
@@ -321,45 +321,45 @@
 				<para>Below, you'll find an example configuration for two RADIUS servers and failoverOnException.  This authenticationHandler is configured within the "authenticationHandlers" property of the AuthenticationManagerImpl.  Usually, it would replace the test authentication handler.</para>
 				<para>
 				<programlisting>
-					&lt;bean
-						class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler"&gt;
-						&lt;property
-							name="servers"&gt;
-							&lt;list&gt;
+			&lt;bean
+				class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler"&gt;
+				&lt;property
+					name="servers"&gt;
+					&lt;list&gt;
+						&lt;bean
+							class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"&gt;
+							&lt;constructor-arg index="0" value="radius1.example.org" /&gt;
+							&lt;constructor-arg index="1" value="THIS_IS_MY_SHARED_SECRET" /&gt;
+							&lt;constructor-arg index="2"&gt;
 								&lt;bean
-									class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"&gt;
-									&lt;constructor-arg index="0" value="radius1.example.org" /&gt;
-									&lt;constructor-arg index="1" value="THIS_IS_MY_SHARED_SECRET" /&gt;
-									&lt;constructor-arg index="2"&gt;
-										&lt;bean
-											class="net.sf.jradius.client.auth.PAPAuthenticator" /&gt;
-									&lt;/constructor-arg&gt;
-									&lt;constructor-arg index="3" value="AUTHENTICATION_PORT333" /&gt;
-									&lt;constructor-arg index="4" value="ACCOUNTING_PORT333" /&gt;
-					
-									&lt;constructor-arg index="5" value="SOCKET_TIMEOUT" /&gt;
-									&lt;constructor-arg index="6" value="NUMBER_OF_RETRIES" /&gt;
-								&lt;/bean&gt;
+									class="net.sf.jradius.client.auth.PAPAuthenticator" /&gt;
+							&lt;/constructor-arg&gt;
+							&lt;constructor-arg index="3" value="AUTHENTICATION_PORT333" /&gt;
+							&lt;constructor-arg index="4" value="ACCOUNTING_PORT333" /&gt;
+			
+							&lt;constructor-arg index="5" value="SOCKET_TIMEOUT" /&gt;
+							&lt;constructor-arg index="6" value="NUMBER_OF_RETRIES" /&gt;
+						&lt;/bean&gt;
+						&lt;bean
+							class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"&gt;
+							&lt;constructor-arg index="0" value="radius2.example.org" /&gt;
+							&lt;constructor-arg index="1" value="THIS_IS_MY_SHARED_SECRET" /&gt;
+							&lt;constructor-arg index="2"&gt;
 								&lt;bean
-									class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"&gt;
-									&lt;constructor-arg index="0" value="radius2.example.org" /&gt;
-									&lt;constructor-arg index="1" value="THIS_IS_MY_SHARED_SECRET" /&gt;
-									&lt;constructor-arg index="2"&gt;
-										&lt;bean
-											class="net.sf.jradius.client.auth.PAPAuthenticator" /&gt;
-									&lt;/constructor-arg&gt;
-									&lt;constructor-arg index="3" value="AUTHENTICATION_PORT333" /&gt;
-									&lt;constructor-arg index="4" value="ACCOUNTING_PORT333" /&gt;
-					
-									&lt;constructor-arg index="5" value="SOCKET_TIMEOUT" /&gt;
-									&lt;constructor-arg index="6" value="NUMBER_OF_RETRIES" /&gt;
-								&lt;/bean&gt;
-							&lt;/list&gt;
-						&lt;/property&gt;
-						&lt;property
-							name="failoverOnException"
-							value="true" /&gt;
-					&lt;/bean&gt;
+									class="net.sf.jradius.client.auth.PAPAuthenticator" /&gt;
+							&lt;/constructor-arg&gt;
+							&lt;constructor-arg index="3" value="AUTHENTICATION_PORT333" /&gt;
+							&lt;constructor-arg index="4" value="ACCOUNTING_PORT333" /&gt;
+			
+							&lt;constructor-arg index="5" value="SOCKET_TIMEOUT" /&gt;
+							&lt;constructor-arg index="6" value="NUMBER_OF_RETRIES" /&gt;
+						&lt;/bean&gt;
+					&lt;/list&gt;
+				&lt;/property&gt;
+				&lt;property
+					name="failoverOnException"
+					value="true" /&gt;
+			&lt;/bean&gt;
 				</programlisting>
 				</para>
 			</sect1>
@@ -404,42 +404,115 @@
 						class="org.jasig.cas.authentication.handler.support.JaasAuthenticationHandler" /&gt;				
 				</programlisting>
 				</para>
-				
-				
-				
+
 				<sect2>
 				<title>Example jaas.conf File</title>
 				<para>Below, you'll find an example jaas.conf file which would contain your JAAS configuration information.</para>
 				<para>A JAAS Configuration file is configured as a system property, i.e. -Djava.security.krb5.conf=/etc/krb5.conf</para>
 				<para>
 				<programlisting>
-					/** 
-					 * Login Configuration for JAAS.   First try Kerberos, then LDAP, then AD
-					 * Note that a valid krb5.conf must be supplied to the JVM for Kerberos auth
-					 *   -Djava.security.krb5.conf=/etc/krb5.conf
-					 */
-					CAS {
-					  com.ibm.security.auth.module.Krb5LoginModule sufficient
-						debug=FALSE;
-					  edu.uconn.netid.jaas.LDAPLoginModule sufficient
-						java.naming.provider.url="ldap://ldap.my.org:389/dc=my,dc=org"
-						java.naming.security.principal="uid=cas,dc=my,dc=org"
-						java.naming.security.credentials="password"
-						Attribute="uid"
-						startTLS="true";
-					  edu.uconn.netid.jaas.LDAPLoginModule sufficient
-						java.naming.provider.url="ldaps://ad.my.org:636/dc=ad,dc=my,dc=org"
-						java.naming.security.principal="cas@ad.my.org"
-						java.naming.security.credentials="password"
-						Attribute="sAMAccountName";
-					};		
+			/** 
+			 * Login Configuration for JAAS.   First try Kerberos, then LDAP, then AD
+			 * Note that a valid krb5.conf must be supplied to the JVM for Kerberos auth
+			 *   -Djava.security.krb5.conf=/etc/krb5.conf
+			 */
+			CAS {
+			  com.ibm.security.auth.module.Krb5LoginModule sufficient
+				debug=FALSE;
+			  edu.uconn.netid.jaas.LDAPLoginModule sufficient
+				java.naming.provider.url="ldap://ldap.my.org:389/dc=my,dc=org"
+				java.naming.security.principal="uid=cas,dc=my,dc=org"
+				java.naming.security.credentials="password"
+				Attribute="uid"
+				startTLS="true";
+			  edu.uconn.netid.jaas.LDAPLoginModule sufficient
+				java.naming.provider.url="ldaps://ad.my.org:636/dc=ad,dc=my,dc=org"
+				java.naming.security.principal="cas@ad.my.org"
+				java.naming.security.credentials="password"
+				Attribute="sAMAccountName";
+			};		
 				</programlisting>
 				</para>
 				</sect2>
 			</sect1>
+		</chapter>
+		
+		<chapter id="cas">
+			<title>Legacy CAS Password Handler Authentication Handler Adaptor</title>
 			
+			<para>Please note that though we support adapting CAS2 PasswordHandlers to CAS3 Authentication Handlers we recommend you upgrade to an Authentication Handler (especially since we have many generic solutions).</para>
 			
+			<sect1 id="cas-dependencies">
+				<title>Dependencies</title>
+				<itemizedlist>
+					<listitem><para>Your original PasswordHandler</para></listitem>
+					<listitem><para>The cas-server-legacycas-VERSION.jar</para></listitem>
+					<listitem><para>Original CAS2 jar</para></listitem>
+				</itemizedlist>
+				<para>The jars should be placed in the localPlugins/lib directory.  All source code should be placed in the localPlugins/src directory.</para>
+			</sect1>
 
+			<sect1 id="cas-core-classes">
+				<title>Core Classes</title>
+				<sect2>
+					<title>LegacyCasCredentials</title>
+					<para>This class is an extension of the traditional CAS3 UsernamePasswordCredentials to include the HttpServletRequest, which all CAS2 password handler classes expect.</para>
+				</sect2>
+				<sect2>
+					<title>LegacyCasCredentialsBinder</title>
+					<para>The legacy binder allows for additional binding beyond the normal Spring request parameter/property binding.  In this case it sets the request property on the LegacyCasCredentials.</para>
+				</sect2>
+				<sect2>
+					<title>LegacyCasPasswordHandlerAdaptorAuthenticationHandler</title>
+					<para>This class basically extracts the properties from the LegacyCasCredentials and passes them to the PasswordHandler.</para>
+				</sect2>
+			</sect1>
+			
+			<sect1 id="cas-configuration">
+				<title>Configuration</title>
+				
+				<para>In your cas-servlet.xml, look for the <literal>AuthenticationViaForm</literal> bean, generally defined as follows:</para>
+				<para>
+				<programlisting>
+		&lt;bean
+			id="authenticationViaFormAction"
+			parent="abstractCasLoginAction"
+			class="org.jasig.cas.web.flow.AuthenticationViaFormAction" /&gt;
+			</programlisting>
+			</para>
+			
+			<para>Modify it so that it looks like this:</para>
+			<para>
+			<programlisting>
+		&lt;bean
+			id="authenticationViaFormAction"
+			parent="abstractCasLoginAction"
+			class="org.jasig.cas.web.flow.AuthenticationViaFormAction"&gt;
+			&lt;property name="formObjectClass" value="org.jasig.cas.adaptors.cas.LegacyCasCredentials" /&gt;
+			&lt;property name="formObjectName" value="credentials" /&gt;
+			&lt;property name="credentialsBinder"&gt;
+			&lt;bean
+				class="org.jasig.cas.adaptors.cas.LegacyCasCredentialsBinder" /&gt;
+			&lt;/property&gt;
+		&lt;/bean&gt;
+				</programlisting>
+				</para>
+				<para>This configuration tells the FormAction to use the LegacyCasCredentials and the LegacyCasCredentialsBinder.</para>
+				<para>Finally, in your deployerConfigContext.xml, you'll need to define your password handler.  In most cases you'll want to replace the existing test handler definition with the following:</para>
+				
+				<para>
+				<programlisting>
+          &lt;bean
+              class="org.jasig.cas.adaptors.cas.LegacyPasswordHandlerAdaptorAuthenticationHandler"&gt;
+              &lt;property name="passwordHandler"&gt;
+                  &lt;bean
+                     class="edu.someschoool.its.cas.MySpecialPasswordHandler"/&gt;
+              &lt;/property&gt;
+          &lt;/bean&gt;
+				</programlisting>
+				</para>
+				<para>Note that <literal>edu.someschoool.its.cas.MySpecialPasswordHandler</literal> should be replaced with your PasswordHandler class name.</para>
+			</sect1>
 		</chapter>
 <!-- 
 		<chapter id="x509">
@@ -448,13 +521,7 @@
 		<chapter id="database">
 		</chapter>
 		
-		<chapter id="jaas">
-		</chapter>
-		
 		<chapter id="trusted">
-		</chapter>
-
-		<chapter id="cas">
 		</chapter>
  -->			
 	</part>
