@@ -39,8 +39,8 @@
 			
 			<sect1 id="what-is-cas">
 				<title>What is CAS</title>
-				
-				<para>TODO</para>
+				<para>JA-SIG Central Authentication Service is an enterprise level, open-source, single sign on solutiion with a Java server 
+				component and various client libraries written in a multitude of languages including PHP, PL/SQL, Java, and more.</para>
 			</sect1>
 			
 			<sect1 id="history">
@@ -50,7 +50,7 @@
 				initially only supported 1-tier, centralized single sign on. In 2002, Yale released a new version of CAS (2.0) that provided 
 				n-tier, proxiable, single sign-on.</para>
 
-				<para>In Septembr of 2004, Yale University and Rutgers, the State University of New Jersey held initial discussions about a 
+				<para>In September of 2004, Yale University and Rutgers, the State University of New Jersey held initial discussions about a 
 				new version of CAS.  In December of 2005, CAS became a JA-SIG project.  Though the protocol did not change, CAS 3.0 
 				introduced a completely new architecture that enabled deployers to easily extend and plug-in to the CAS server without 
 				modifying the code.  This enabled new levels of sharing amongst deployers!  The architecture for CAS has not changed much 
