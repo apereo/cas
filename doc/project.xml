@@ -9,6 +9,15 @@
 		<connection>scm:cvs:pserver:anonymous@developer.ja-sig.org:/home/cvs/jasig:cas3</connection>
 		<url>http://developer.ja-sig.org/source/</url>
 	</repository>  
+	
+	<dependencies>
+		<dependency>
+			<groupId>maven-plugins</groupId>
+			<artifactId>maven-sdocbook-plugin</artifactId>
+			<version>1.4.1</version>
+			<type>plugin</type>
+		</dependency>
+	</dependencies>
   
   <reports>
     <report>maven-license-plugin</report>

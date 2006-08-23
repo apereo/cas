@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<book>
+	<bookinfo>
+		<title>JA-SIG Central Authentication Service</title>
+		<subtitle>Reference Documentation</subtitle>
+		<releaseinfo>3.0.6</releaseinfo>
+		<authorgroup>
+			<author>
+				<firstname>Scott</firstname>
+				<surname>Battaglia</surname>
+			</author>
+		</authorgroup>
+	</bookinfo>
+	<toc></toc>
+	
+	<preface id="preface">
+		<title>Preface</title>
+		
+		<para>JA-SIG Central Authentication Service provides an enterprise single sign on solution with an open and well-documented protocol, 
+		a plethora of client libraries, and a Java server component.   As you will discover as you venture through this reference guide, we 
+		have tried to provide you with a useful and highly configurable single sign on solution.
+		</para>
+	</preface>
+	
+	<part id="overall-architcture">
+		<title>Overall Architecture</title>
+		
+		<partintro>
+			<para>Like most software, CAS has certain central interfaces, classes, and conceptual abstractions that are commonly used 
+			throughout the application.  In this part of the reference guide we will introduce CAS before examining these central elements 
+			that are necessary to successfully planning and executing a CAS deployment.</para>
+		</partintro>
+		
+		<chapter id="introduction">
+			<title>Introduction</title>
+			
+			<sect1 id="what-is-cas">
+				<title>What is CAS</title>
+				
+				<para>TODO</para>
+			</sect1>
+			
+			<sect1 id="history">
+				<title>History</title>
+				
+				<para>The Central Authentication Service project began in 2001 at Yale University, initially developed by Shawn Bayern.  It 
+				initially only supported 1-tier, centralized single sign on. In 2002, Yale released a new version of CAS (2.0) that provided 
+				n-tier, proxiable, single sign-on.</para>
+
+				<para>In Septembr of 2004, Yale University and Rutgers, the State University of New Jersey held initial discussions about a 
+				new version of CAS.  In December of 2005, CAS became a JA-SIG project.  Though the protocol did not change, CAS 3.0 
+				introduced a completely new architecture that enabled deployers to easily extend and plug-in to the CAS server without 
+				modifying the code.  This enabled new levels of sharing amongst deployers!  The architecture for CAS has not changed much 
+				since its June 2005 release, and has allowed rapid development of new features and add-ons.</para>
+			</sect1>
+			
+			<sect1 id="release-numbering">
+				<title>Release Numbering</title>
+				
+				<para>It is useful to understand how CAS release numbers work, as it will help you identify he effort (or lack thereof) 
+				involved in migrating to future releases of the project.  Officially, the CAS project uses teh Apache Portable Runtime 
+				Project versioning guidelines, which can be viewed at <literal>http://apr.apache.org/versioning.html</literal>. We quote the 
+				introduction contained on that page for your convenience:</para>
+				
+				<para><quote>Versions are denoted using a standard triplet of integers: MAJOR.MINOR.PATCH. The basic intent is that MAJOR 
+				versions are incompatible, large-scale upgrades of the API. MINOR versions retain source and binary compatibility with older 
+				minor versions, and changes in the PATCH level are perfectly compatible, forwards and backwards.</quote></para>
+				
+				<para>Note that we make every attempt for the CAS API to be perfectly compatible.  However, there have been a few instances
+				in patch releases where we were upgrading libraries that were stabalizing their own APIs.  In those instances, CAS may not
+				have been perfectly compatible.  In these few instances we will expend every effort to make the differences as apparent
+				as possible.</para>
+			</sect1>
+		</chapter>
+		
+		<chapter id="technical-overview">
+			<title>Technical Overview</title>
+			
+			<sect1 id="runtime-environment">
+				<title>Runtime Environment</title>
+				
+				<para>CAS is written to execute within a standard Java 1.4 Runtime Environment.  It also supports Java 5.0, though it does not
+				take advantage of any specific Java 5.0 features.  As CAS aims to operate in a self-contained manner, there is no need to 
+				place any special configuration files into your Java Runtime Environment.  The only exception to this is if you are using a
+				Java Authenticaton and Authorization Service (JAAS) policy file.</para>
+				
+				<para>Out of the box, CAS, with its example JSP pages, is designed to run on a container that supports the Servlet 2.4
+				specification.  A good container is the Tomcat 5.x series, though any Servlet 2.4 will work.  In addition, by modifying the 
+				JSP pages to use the old JSTL tags, one can get CAS to run on a Servlet 2.3 container such as Tomcat 4.x.  However, in many 
+				cases it is not worth the effort.</para>
+			</sect1>
+			
+			<sect1 id="shared-components">
+				<title>Shared Components</title>
+				
+				<para>TODO</para>
+			</sect1>
+			
+			<sect1 id="common-authentication">
+				<title>Common Authentication</title>
+				<para>TODO</para>
+			</sect1>
+			
+			<sect1 id="common-conclusion">
+				<title>Conclusion</title>
+				<para>TODO</para>
+			</sect1>
+		</chapter>
+	
+	</part>
+	
+	<part id="authentication">
+		<title>Authentication</title>
+		
+		<partintro>
+			<para>As a single sign on solution, CAS has no preference on what back-end authentication solution you use to authenticate your users.  Out of the box, CAS supports many different types of authentication including LDAP, database, X.509 Certificates, and JAAS.</para>
+		</partintro>
+		
+		<chapter id="ldap">
+			<title>LDAP Authentication Handlers</title>
+			
+			<sect1 id="ldap-dependencies">
+				<title>Dependencies</title>
+				<para>The JA-SIG LDAP Authentication Handlers depend on a few libraries:</para>
+				<itemizedlist>
+				<listitem><para>LdapTemplate - <literal>http://ldaptemplate.sf.net</literal></para></listitem>
+				<listitem><para>JA-SIG LDAP Authentication Handler JAR  - <literal>${project.home}/target/cas-server-ldap-VERSION.jar</literal></para></listitem>
+				</itemizedlist>
+				
+				<para>These required dependencies should be placed in the <literal>${project.homee}/localPlugins/lib</literal> directory.</para>				
+			</sect1>
+			
+			<sect1 id="ldap-core-classes">
+				<title>Core Classes</title>
+				
+				<sect2>
+					<title>FastBindLdapAuthenticationHandler</title>
+					<para>This is the most straight-forward implementation of LDAP authentication. It simply tries to bind to the directory 
+					with the credentials provided by the user. Since the user is not aware of the LDAP tree, you have to configure the 
+					handler to try and bind to a certain preconfigured node. This means you can only use this method if you are able to 
+					configure the user's node in advance. Else you'll need to use the search-and-bind method (explained below).</para>
+					
+					<para>The <literal>FastBindLdapAuthenticationHandler supports the following properties:</literal></para>
+					
+					<itemizedlist>
+						<listitem><para><literal>filter</literal> - The filter property is the LDAP filter that will be used for the search. When constructing the filter, wherever you want the username to appear, place a "%u".</para></listitem>
+						<listitem><para><literal>ignorePartialResultException</literal> - This property informs LdapTemplate to ignore PartialResultExceptions that may get thrown when connecting to an Active Directory.</para></listitem>
+						<listitem><para><literal>contextSource</literal> - This is a reference to a AuthenticatedLdapContextSource (see below) which will contain the settings for connecting to the LDAP server.</para></listitem>
+					</itemizedlist>
+				</sect2>
+				
+				<sect2>
+					<title>BindLdapAuthenticationHandler</title>
+					<para>This method first does a general search for the user before it tries to bind to the directory. When it finds the 
+					user it attemps to do a bind with the DN that resulted from the search and the password from the user's submitted 
+					credentials. Note that for this method you will need a special user that is allowed to search the directory (OR allow 
+					anonymous access to search the directory).</para>
+					
+					<itemizedlist>
+						<listitem><para><literal>filter</literal> - The filter property is the LDAP filter that will be used for the search. 
+						When constructing the filter, wherever you want the username to appear, place a "%u".</para></listitem>
+						<listitem><para><literal>ignorePartialResultException</literal> - This property informs LdapTemplate to ignore 
+						PartialResultExceptions that may get thrown when connecting to an Active Directory.</para></listitem>
+						<listitem><para><literal>contextSource</literal> - This is a reference to a AuthenticatedLdapContextSource (see 
+						below) which will contain the settings for connecting to the LDAP server.</para></listitem>
+						<listitem><para><literal>allowMultipleAccounts</literal> - </para></listitem>
+						<listitem><para><literal>maxNumberOfResults</literal> - this is the maximum number of results we allow.</para>
+						</listitem>
+						<listitem><para><literal>scope</literal> - One of the predefined "SearchControl" Scopes: SearchControls.OBJECT_SCOPE,
+						 SearchControls.ONELEVEL_SCOPE, or SearchControls.SUBTREE_SCOPE</para></listitem>
+						<listitem><para><literal>searchBase</literal> - The search base is the node in the directory from where the search 
+						will be performed.</para></listitem>
+						<listitem><para><literal>timeout</literal> - This is the amount of time we are willing to wait for the search 
+						results to return.</para></listitem>
+					</itemizedlist>
+				</sect2>
+				
+				<sect2>
+					<title>AuthenticatedLdapContextSource</title>
+					<para>This class is an extension of LdapTemplate's LdapContextSource.  Its extended to allow it to retrieve specific 
+					<literal>DirContext</literal>s while re-using existing environment settings.  Its additional method is modeled after the 
+					Java <literal>DataSource</literal>.</para>
+					<para>The LdapContextSource defines some important properties, listed below (note some of this is copied directly from 
+					the JavaDocs):</para>
+					<itemizedlist>
+						<listitem><para><literal>authenticatedReadOnly</literal> - Set to true if an authenticated environment should be 
+						created for read-only operations.</para></listitem>
+						<listitem><para><literal>baseEnvironmentProperties</literal> - If any custom environment properties are needed, 
+						these can be set using this method.</para></listitem>
+						<listitem><para><literal>password</literal> - Set the password (credentials) to use for getting authenticated 
+						contexts.</para></listitem>
+						<listitem><para><literal>pooled</literal> - Set whether the pooling flag should be used.  Note that even if pooling 
+						is set, the additional method provided by AuthenticatedLdapContextSource will not use pooling.</para></listitem>
+						<listitem><para><literal>url</literal> or <literal>urls</literal> - the url(s) to the LDAP server.  Specifying a list of servers automatically configures redundancy so it is highly recommended to do so.  Port 636 is the typical LDAP SSL port, 389 is the standard LDAP port. Java SDK v1.4.2+ interprets correctly ldap:// or ldaps:// without specifying the port. If you're using an older JDK you cannot specify the ldaps:// protocol so you'll need to explicitly define a port and set the protocol to SSL in the environment properties.</para></listitem>
+						<listitem><para><literal>userName</literal> - the username (principal) for getting authenticated contexts.</para>
+						</listitem>
+					</itemizedlist>
+					<para>Please note that the JVM needs to trust the certificate of your SSL enabled LDAP server, else CAS will refuse to connect to your LDAP server. You can add the LDAP server's certificate to the JVM trust store ($JAVA_HOME/jre/lib/security/cacerts) to solve that issue.</para>
+				</sect2>
+			</sect1>
+			
+			<sect1 id="ldap-configuration">
+				<title>Configuration</title>
+				
+				<para>Note that all of the configuration items listed below should happen in the 
+				<literal>${project.home}/webapp/WEB-INF/deployerConfigContext.xml</literal></para>
+				
+				<sect2>
+					<title>Set up the AuthenticatedLdapContextSource</title>
+					
+					<para>Within the <literal>&lt;beans&gt;...&lt;/beans&gt;</literal>, place your AuthenticatedLdapContextSource bean.  
+					Your configuration will look something like this:</para>
+					
+					<para>
+						<programlisting>
+						&lt;bean id="contextSource" class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"&gt;
+							&lt;property name="authenticatedReadOnly" value="true"/&gt;
+							&lt;property name="password" value="{password_goes_here}"/&gt;
+							&lt;property name="pooled" value="true"/&gt;
+							&lt;property name="urls"&gt;
+								&lt;list&gt;
+									&lt;value&gt;ldap://ldap.rutgers.edu:636/&lt;/value&gt;
+									&lt;value&gt;ldap://ldap2.rutgers.edu:636/&lt;/value&gt;
+								&lt;/list&gt;
+							&lt;/property&gt;
+							&lt;property name="userName" value="{username_goes_here}"/&gt;
+							&lt;property name="baseEnvironmentProperties"&gt;
+								&lt;map&gt;
+									&lt;entry&gt;
+										&lt;key&gt;
+											&lt;value&gt;java.naming.security.protocol&lt;/value&gt;
+										&lt;/key&gt;
+										&lt;value&gt;ssl&lt;/value&gt;
+									&lt;/entry&gt;
+									&lt;entry&gt;
+										&lt;key&gt;
+											&lt;value&gt;java.naming.security.authentication&lt;/value&gt;
+										&lt;/key&gt;
+										&lt;value&gt;simple&lt;/value&gt;
+									&lt;/entry&gt;
+								&lt;/map&gt;
+							&lt;/property&gt;
+						&lt;/bean&gt;
+						</programlisting>
+					</para>
+					<para>NOTE: You may or may not have all these properties set.  This is just an example.</para>
+				</sect2>
+				
+				<sect2>
+					<title>Set Up the *LdapAuthenticationHandlers.</title>
+					<para>Both Ldap Authentication Handlers are set up in almost the same way (just different class names and properties), 
+					so we're only going to show one here.</para>
+					<para>This AuthenticationHandler is configured as a bean within the <literal>authenticationHandlers</literal> property 
+					on the authenticationManager.  You'll most likely want to remove the test authentication handler there, and replace it 
+					with this.</para>
+					<para>
+						<programlisting>
+							&lt;bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"&gt;
+								&lt;property name="filter" value="uid=%u" /&gt;
+								&lt;property name="searchBase" value="ou=people,dc=rutgers,dc=edu" /&gt;
+								&lt;property name="contextSource" ref="contextSource" /&gt;
+							&lt;/bean&gt;
+						</programlisting>
+					</para>
+				</sect2>
+			</sect1>
+		</chapter>
+		
+		<chapter id="radius">
+			<title>RADIUS Authentication Handlers</title>
+			
+			<sect1 id="radius-dependencies">
+				<title>Dependencies</title>
+				<para>The JA-SIG RADIUS Authentication Handlers depend on a few libraries:</para>
+				<itemizedlist>
+				<listitem><para>JRADIUS Client and Dictionary - <literal>http://jradius.sourceforge.net/</literal></para></listitem>
+				<listitem><para>GNU Crypto - <literal>http://gnu.rtin.bz/software/gnu-crypto/#downloading</literal></para></listitem>
+				<listitem><para>JA-SIG RADIUS Authentication Handler JAR  - <literal>${project.home}/target/cas-server-RADIUS-VERSION.jar</literal></para></listitem>
+				</itemizedlist>
+				
+				<para>These required dependencies should be placed in the <literal>${project.homee}/localPlugins/lib</literal> directory.</para>				
+			</sect1>
+			
+			<sect1 id="radius-core-classes">
+				<title>Core Classes</title>
+				
+				<sect2>
+					<title>RadiusAuthenticationHandler</title>
+					<para>The <literal>RadiusAuthenticationHandler</literal> is the class that will take your credentials and authenticate them against a RADIUS server.  It is able to handle two types of failovers: failover on an authentication failure, and failover on a server exception.  It can be configured with the following properties:</para>
+					<itemizedlist>
+						<listitem><para><literal>failoverOnAuthenticationFailure</literal> - boolean to determine whether we should try the next server if there is an authentication failure.</para></listitem>
+						<listitem><para><literal>failoverOnException</literal> - boolean to determine whether we should try the next server if an exception is thrown.</para></listitem>
+						<listitem><para><literal>servers</literal> - takes an array of servers which are the RADIUS servers we would like to connect to. The handler tries them in the order they are configured.</para></listitem>
+					</itemizedlist>
+				</sect2>
+				
+				<sect2>
+					<title>JRadiusServerImpl</title>
+					<para>The <literal>JRadiusServerImpl</literal> is one implementation of the more generic <literal>RadiusServer</literal> interface.  Its underlying implementation relies on the JRADIUS library.  Each instance represents one RADIUS server and has various configuration options.</para>
+					<itemizedlist>
+					<listitem><para><literal>accountingPort</literal> - the accounting port that this server uses.</para></listitem>
+					<listitem><para><literal>authenticationPort</literal> - the authentication port this server uses.</para></listitem>
+					<listitem><para><literal>radiusAuthenticator</literal> - the RADIUS authenticator to use. Defaults to PAP.</para></listitem>
+					<listitem><para><literal>retries</literal> - the number of times to keep retrying a particular server.</para></listitem>
+					<listitem><para><literal>sharedSecret</literal> - the secret key used to communicate with the server.</para></listitem>
+					<listitem><para><literal>socketTimeout</literal> - the amount of time to wait before timing out.</para></listitem>
+					<listitem><para><literal>hostName</literal> - the hostname of the RADIUS server.</para></listitem>
+					</itemizedlist>
+				</sect2>
+			</sect1>
+			
+			<sect1 id="radius-configuration">
+				<title>Configuration</title>
+				
+				<para>Note that all of the configuration items listed below should happen in the 
+				<literal>${project.home}/webapp/WEB-INF/deployerConfigContext.xml</literal></para>
+				
+				<para>Below, you'll find an example configuration for two RADIUS servers and failoverOnException.  This authenticationHandler is configured within the "authenticationHandlers" property of the AuthenticationManagerImpl.  Usually, it would replace the test authentication handler.</para>
+				<para>
+				<programlisting>
+					&lt;bean
+						class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler"&gt;
+						&lt;property
+							name="servers"&gt;
+							&lt;list&gt;
+								&lt;bean
+									class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"&gt;
+									&lt;constructor-arg index="0" value="radius1.example.org" /&gt;
+									&lt;constructor-arg index="1" value="THIS_IS_MY_SHARED_SECRET" /&gt;
+									&lt;constructor-arg index="2"&gt;
+										&lt;bean
+											class="net.sf.jradius.client.auth.PAPAuthenticator" /&gt;
+									&lt;/constructor-arg&gt;
+									&lt;constructor-arg index="3" value="AUTHENTICATION_PORT333" /&gt;
+									&lt;constructor-arg index="4" value="ACCOUNTING_PORT333" /&gt;
+					
+									&lt;constructor-arg index="5" value="SOCKET_TIMEOUT" /&gt;
+									&lt;constructor-arg index="6" value="NUMBER_OF_RETRIES" /&gt;
+								&lt;/bean&gt;
+								&lt;bean
+									class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"&gt;
+									&lt;constructor-arg index="0" value="radius2.example.org" /&gt;
+									&lt;constructor-arg index="1" value="THIS_IS_MY_SHARED_SECRET" /&gt;
+									&lt;constructor-arg index="2"&gt;
+										&lt;bean
+											class="net.sf.jradius.client.auth.PAPAuthenticator" /&gt;
+									&lt;/constructor-arg&gt;
+									&lt;constructor-arg index="3" value="AUTHENTICATION_PORT333" /&gt;
+									&lt;constructor-arg index="4" value="ACCOUNTING_PORT333" /&gt;
+					
+									&lt;constructor-arg index="5" value="SOCKET_TIMEOUT" /&gt;
+									&lt;constructor-arg index="6" value="NUMBER_OF_RETRIES" /&gt;
+								&lt;/bean&gt;
+							&lt;/list&gt;
+						&lt;/property&gt;
+						&lt;property
+							name="failoverOnException"
+							value="true" /&gt;
+					&lt;/bean&gt;
+				</programlisting>
+				</para>
+			</sect1>
+		</chapter>
+		
+		<chapter id="jaas">
+			<title>JAAS Authentication Handlers</title>
+			
+			<para>Briefly, JAAS is a standard API provided by Java 1.4 and higher which provides PAM-like authentication and authorization. An external file is used to configure JAAS. Using JAAS with CAS allows modification of the authentication process without having to rebuild and redeploy CAS, and allows for PAM-style multi-module "stacked" authentication.</para>
+			<para>Links</para>
+			<itemizedlist>
+				<listitem><para>JAAS Reference Guide - <literal>http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/JAASRefGuide.html</literal></para></listitem>
+				<listitem><para>JAAS Tutorial - <literal>http://java.sun.com/j2se/1.5.0/docs/guide/security/jaas/tutorials/</literal></para></listitem>
+			</itemizedlist>
+			
+			<sect1 id="jaas-dependencies">
+				<title>Dependencies</title>
+				<para>The JAAS Authentication Handler has no external dependencies.</para>
+			</sect1>
+			
+			<sect1 id="jaas-core-classes">
+				<title>Core Classes</title>
+				<sect2>
+					<title>JaasAuthenticationHandler</title>
+					<para>The <literal>JaasAuthenticationHandler</literal> is a hook into the Java Authentication and Authorization Service and delegates all authentication to the underlying runtime and its configured JAAS file.  Therefore it only has one property:</para>
+					<itemizedlist>
+						<listitem><para><literal>realm</literal> - the realm within the JAAS configuration file we are going to use.  Defaults to CAS.</para></listitem>
+					</itemizedlist>
+				</sect2>
+			</sect1>
+			
+			<sect1 id="jaas-configuration">
+				<title>Configuration</title>
+
+				<para>Note that all of the configuration items listed below should happen in the 
+				<literal>${project.home}/webapp/WEB-INF/deployerConfigContext.xml</literal></para>
+				
+				<para>Like other handlers, the JAAS Authentication Handler is simply configured in the deployerConfigContext.xml.  Within the AuthenticationManager's "authenticationHandlers" property, place the following configuration (replacing the example Test handler):</para>
+				<para>
+				<programlisting>
+					&lt;bean
+						class="org.jasig.cas.authentication.handler.support.JaasAuthenticationHandler" /&gt;				
+				</programlisting>
+				</para>
+				
+				
+				
+				<sect2>
+				<title>Example jaas.conf File</title>
+				<para>Below, you'll find an example jaas.conf file which would contain your JAAS configuration information.</para>
+				<para>A JAAS Configuration file is configured as a system property, i.e. -Djava.security.krb5.conf=/etc/krb5.conf</para>
+				<para>
+				<programlisting>
+					/** 
+					 * Login Configuration for JAAS.   First try Kerberos, then LDAP, then AD
+					 * Note that a valid krb5.conf must be supplied to the JVM for Kerberos auth
+					 *   -Djava.security.krb5.conf=/etc/krb5.conf
+					 */
+					CAS {
+					  com.ibm.security.auth.module.Krb5LoginModule sufficient
+						debug=FALSE;
+					  edu.uconn.netid.jaas.LDAPLoginModule sufficient
+						java.naming.provider.url="ldap://ldap.my.org:389/dc=my,dc=org"
+						java.naming.security.principal="uid=cas,dc=my,dc=org"
+						java.naming.security.credentials="password"
+						Attribute="uid"
+						startTLS="true";
+					  edu.uconn.netid.jaas.LDAPLoginModule sufficient
+						java.naming.provider.url="ldaps://ad.my.org:636/dc=ad,dc=my,dc=org"
+						java.naming.security.principal="cas@ad.my.org"
+						java.naming.security.credentials="password"
+						Attribute="sAMAccountName";
+					};		
+				</programlisting>
+				</para>
+				</sect2>
+			</sect1>
+			
+			
+
+		</chapter>
+<!-- 
+		<chapter id="x509">
+		</chapter>
+		
+		<chapter id="database">
+		</chapter>
+		
+		<chapter id="jaas">
+		</chapter>
+		
+		<chapter id="trusted">
+		</chapter>
+
+		<chapter id="cas">
+		</chapter>
+ -->			
+	</part>
+			
+</book>
