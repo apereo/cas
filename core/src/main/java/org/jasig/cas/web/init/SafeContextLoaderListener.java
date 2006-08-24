@@ -61,14 +61,13 @@ public final class SafeContextLoaderListener implements ServletContextListener {
         try {
             this.delegate.contextInitialized(sce);
         } catch (Throwable t) {
-            // no matter what went wrong, our role is to capture this error and
-            // prevent
-            // it from blocking initialization of the context.
-
-            // logging overkill so that our deployer will find a record of this
-            // problem
-            // even if unfamiliar with Commons Logging and properly configuring
-            // it.
+            /*
+             * no matter what went wrong, our role is to capture this error and
+             * prevent it from blocking initialization of the context. logging
+             * overkill so that our deployer will find a record of this problem
+             * even if unfamiliar with Commons Logging and properly configuring
+             * it.
+             */
 
             final String message = "SafeContextLoaderListener: \n"
                 + "The Spring ContextLoaderListener we wrap threw on contextInitialized.\n"
