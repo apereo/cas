@@ -84,8 +84,10 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
         }
         this.grantedTicketAlready = true;
-        // XXX this is causing ticket validation to fail (because a ticket can
-        // only be "used" once): updateState();
+        /*
+         * XXX this is causing ticket validation to fail (because a ticket can
+         * only be "used" once): updateState();
+         */
 
         return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
             authentication, expirationPolicy);

@@ -137,10 +137,9 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
 
         if (this.httpClient == null) {
             this.httpClient = new HttpClient();
-            Protocol myhttps = new Protocol(
-                    "https",
-                    (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(),
-                    443);
+            Protocol myhttps = new Protocol("https",
+                (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(),
+                443);
             Protocol.registerProtocol("https", myhttps);
         }
     }

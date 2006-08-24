@@ -12,7 +12,9 @@ package org.jasig.cas.authentication.principal;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * <p>This is a published and supported CAS Server 3 API.</p>
+ * <p>
+ * This is a published and supported CAS Server 3 API.
+ * </p>
  */
 public class UsernamePasswordCredentials implements Credentials {
 
@@ -61,10 +63,11 @@ public class UsernamePasswordCredentials implements Credentials {
         if (obj == null || !obj.getClass().equals(this.getClass())) {
             return false;
         }
-        
+
         final UsernamePasswordCredentials c = (UsernamePasswordCredentials) obj;
-        
-        return this.username.equals(c.getUsername()) && this.password.equals(c.getPassword());
+
+        return this.username.equals(c.getUsername())
+            && this.password.equals(c.getPassword());
     }
 
     public int hashCode() {

@@ -36,7 +36,7 @@ public interface ServiceTicket extends Ticket {
      * @return true if it is, false otherwise.
      */
     boolean isFromNewLogin();
-    
+
     boolean isValidFor(Service service);
 
     /**

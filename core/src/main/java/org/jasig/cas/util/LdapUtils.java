@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 public final class LdapUtils {
 
     private static final Log logger = LogFactory.getLog(LdapUtils.class);
-    
+
     private LdapUtils() {
         // private constructor so that no one can instantiate.
     }
@@ -60,7 +60,8 @@ public final class LdapUtils {
             }
         }
 
-        for (final Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
+        for (final Iterator iter = properties.keySet().iterator(); iter
+            .hasNext();) {
             final String key = (String) iter.next();
             final String value = properties.getProperty(key, "");
 
@@ -69,7 +70,7 @@ public final class LdapUtils {
 
         return newFilter;
     }
-    
+
     /**
      * Close the given context and ignore any thrown exception. This is useful
      * for typical finally blocks in manual Ldap statements.

@@ -83,7 +83,8 @@ public class TicketEvent extends AbstractEvent {
         super((ticket == null) ? (Object) ticketId : ticket);
 
         Assert.notNull(ticketEventType, "ticketEventType cannot be null");
-        Assert.isTrue(ticketId != null || ticket != null, "ticketId or ticket is required");
+        Assert.isTrue(ticketId != null || ticket != null,
+            "ticketId or ticket is required");
 
         if (ticket != null) {
             this.ticketId = ticket.getId();
@@ -143,7 +144,7 @@ public class TicketEvent extends AbstractEvent {
         public String getEventTypeAsString() {
             return this.name;
         }
-        
+
         public String toString() {
             return this.name;
         }

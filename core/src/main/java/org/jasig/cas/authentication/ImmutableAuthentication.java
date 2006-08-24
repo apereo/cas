@@ -40,7 +40,8 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
      */
     public ImmutableAuthentication(final Principal principal,
         final Map attributes) {
-        super(principal, attributes == null || attributes.isEmpty() ? Collections.EMPTY_MAP : Collections.unmodifiableMap(attributes));
+        super(principal, attributes == null || attributes.isEmpty()
+            ? Collections.EMPTY_MAP : Collections.unmodifiableMap(attributes));
 
         this.authenticatedDate = new Date();
     }

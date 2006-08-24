@@ -42,8 +42,11 @@ public final class HttpClient3FactoryBean implements FactoryBean,
 
     /** Instance of HttpClientParams to populate the HttpClient with. */
     private HttpClientParams httpClientParams = new HttpClientParams();
-    
-    /** Boolean to determine whether to use strict host name checking or not. Enabled by default. */
+
+    /**
+     * Boolean to determine whether to use strict host name checking or not.
+     * Enabled by default.
+     */
     private boolean useStrictHostNameChecking = true;
 
     /**
@@ -59,7 +62,8 @@ public final class HttpClient3FactoryBean implements FactoryBean,
         this.httpConnectionManagerParams.setStaleCheckingEnabled(true);
 
         if (!this.useStrictHostNameChecking) {
-            log.warn("Strict host name checking disabled.  DO NOT DO THIS IN PRODUCTION.");
+            log
+                .warn("Strict host name checking disabled.  DO NOT DO THIS IN PRODUCTION.");
         }
 
         final StrictSSLProtocolSocketFactory factory = new StrictSSLProtocolSocketFactory();
@@ -145,7 +149,8 @@ public final class HttpClient3FactoryBean implements FactoryBean,
             .setConnectionTimeout(connectionTimeout);
     }
 
-    public void setUseStrictHostNameChecking(final boolean useStrictHostNameChecking) {
+    public void setUseStrictHostNameChecking(
+        final boolean useStrictHostNameChecking) {
         this.useStrictHostNameChecking = useStrictHostNameChecking;
-    } 
+    }
 }
