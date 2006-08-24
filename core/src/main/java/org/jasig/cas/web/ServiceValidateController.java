@@ -6,21 +6,16 @@
 package org.jasig.cas.web;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
-import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -50,6 +45,12 @@ public class ServiceValidateController extends AbstractController implements
     /** View if Service Ticket Validation Succeeds. */
     private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "casServiceSuccessView";
 
+    /** Constant representing the PGTIOU in the model. */
+    private static final String MODEL_PROXY_GRANTING_TICKET_IOU = "pgtIou";
+
+    /** Constant representing the Assertion in the model. */
+    private static final String MODEL_ASSERTION = "assertion";
+
     /** The CORE which we will delegate all requests to. */
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -65,6 +66,9 @@ public class ServiceValidateController extends AbstractController implements
     /** The view to redirect to on a validation failure. */
     private String failureView;
 
+    /** Extracts parameters from Request object. */
+    private CasArgumentExtractor casArgumentExtractor;
+
     protected void afterPropertiesSetInternal() throws Exception {
         // nothing to do
     }
@@ -72,6 +76,8 @@ public class ServiceValidateController extends AbstractController implements
     public final void afterPropertiesSet() throws Exception {
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService cannot be null");
+        Assert.notNull(this.casArgumentExtractor,
+            "casArgumentExtractor cannot be null.");
 
         Assert
             .notNull(
@@ -110,7 +116,8 @@ public class ServiceValidateController extends AbstractController implements
      */
     protected Credentials getServiceCredentialsFromRequest(
         final HttpServletRequest request) {
-        final String pgtUrl = request.getParameter(WebConstants.PGTURL);
+        final String pgtUrl = this.casArgumentExtractor
+            .extractProxyGrantingTicketCallbackUrl(request);
         if (StringUtils.hasText(pgtUrl)) {
             try {
                 return new HttpBasedServiceCredentials(new URL(pgtUrl));
@@ -130,30 +137,20 @@ public class ServiceValidateController extends AbstractController implements
     protected final ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final String serviceTicketId = request
-            .getParameter(WebConstants.TICKET);
-        final String service = request.getParameter(WebConstants.SERVICE);
-        final Map model = new HashMap();
-        final ValidationSpecification validationSpecification = this
-            .getCommandClass();
-        final Assertion assertion;
-        String proxyGrantingTicketId = null;
-        Credentials serviceCredentials = null;
 
-        if (!StringUtils.hasText(service)
-            || !StringUtils.hasText(serviceTicketId)) {
-            model.put(WebConstants.CODE, "INVALID_REQUEST");
-            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
-                "INVALID_REQUEST", "INVALID_REQUEST"));
-            return new ModelAndView(this.failureView, model);
+        if (!this.casArgumentExtractor.isServicePresent(request)
+            || !this.casArgumentExtractor.isTicketPresent(request)) {
+            return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
         }
 
-        final ServletRequestDataBinder binder = new ServletRequestDataBinder(
-            validationSpecification, "validationSpecification");
-        initBinder(request, binder);
-        binder.bind(request);
+        final String serviceTicketId = this.casArgumentExtractor
+            .extractTicketFrom(request);
+
         try {
-            serviceCredentials = getServiceCredentialsFromRequest(request);
+            final Credentials serviceCredentials = getServiceCredentialsFromRequest(request);
+            String proxyGrantingTicketId = null;
+
+            // XXX should be able to validate AND THEN use
             if (serviceCredentials != null) {
                 try {
                     proxyGrantingTicketId = this.centralAuthenticationService
@@ -165,35 +162,50 @@ public class ServiceValidateController extends AbstractController implements
                 }
             }
 
-            assertion = this.centralAuthenticationService
-                .validateServiceTicket(serviceTicketId, new SimpleService(
-                    WebUtils.stripJsessionFromUrl(service)));
+            final Assertion assertion = this.centralAuthenticationService
+                .validateServiceTicket(serviceTicketId,
+                    this.casArgumentExtractor.extractServiceFrom(request));
+
+            final ValidationSpecification validationSpecification = this
+                .getCommandClass();
+            final ServletRequestDataBinder binder = new ServletRequestDataBinder(
+                validationSpecification, "validationSpecification");
+            initBinder(request, binder);
+            binder.bind(request);
+
             if (!validationSpecification.isSatisfiedBy(assertion)) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("ServiceTicket [" + serviceTicketId
                         + "] does not satisfy validation specification.");
                 }
-
-                model.put(WebConstants.CODE, "INVALID_TICKET");
-                model.put(WebConstants.DESC, getMessageSourceAccessor()
-                    .getMessage("INVALID_TICKET_SPEC", "INVALID_TICKET_SPEC"));
-                return new ModelAndView(this.failureView, model);
+                return generateErrorView("INVALID_TICKET",
+                    "INVALID_TICKET_SPEC", null);
             }
+
+            final ModelAndView success = new ModelAndView(this.successView);
+            success.addObject(MODEL_ASSERTION, assertion);
 
             if (serviceCredentials != null && proxyGrantingTicketId != null) {
                 final String proxyIou = this.proxyHandler.handle(
                     serviceCredentials, proxyGrantingTicketId);
-                model.put(WebConstants.PGTIOU, proxyIou);
+                success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
             }
-            model.put(WebConstants.ASSERTION, assertion);
 
-            return new ModelAndView(this.successView, model);
+            return success;
         } catch (TicketException te) {
-            model.put(WebConstants.CODE, te.getCode());
-            model.put(WebConstants.DESC, getMessageSourceAccessor().getMessage(
-                te.getCode(), new Object[] {serviceTicketId}, te.getCode()));
-            return new ModelAndView(this.failureView, model);
+            return generateErrorView(te.getCode(), te.getCode(),
+                new Object[] {serviceTicketId});
         }
+    }
+
+    private ModelAndView generateErrorView(final String code,
+        final String description, final Object[] args) {
+        final ModelAndView modelAndView = new ModelAndView(this.failureView);
+        modelAndView.addObject("code", code);
+        modelAndView.addObject("description", getMessageSourceAccessor()
+            .getMessage(description, args, description));
+
+        return modelAndView;
     }
 
     private ValidationSpecification getCommandClass() {
@@ -212,6 +224,11 @@ public class ServiceValidateController extends AbstractController implements
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setCasArgumentExtractor(
+        final CasArgumentExtractor casArgumentExtractor) {
+        this.casArgumentExtractor = casArgumentExtractor;
     }
 
     /**

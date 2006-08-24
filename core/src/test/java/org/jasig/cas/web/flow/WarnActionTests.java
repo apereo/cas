@@ -8,7 +8,7 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.util.CookieGenerator;
 
@@ -29,6 +29,8 @@ public class WarnActionTests extends TestCase {
     
     private CookieGenerator ticketGrantingTicketCookieGenerator;
     
+    private CasArgumentExtractor casArgumentExtractor;
+    
     protected void setUp() throws Exception {
         this.warnAction = new WarnAction();
         this.warnCookieGenerator = new CookieGenerator();
@@ -38,8 +40,8 @@ public class WarnActionTests extends TestCase {
         this.ticketGrantingTicketCookieGenerator = new CookieGenerator();
         this.ticketGrantingTicketCookieGenerator.setCookieName("test");
         
-        this.warnAction.setWarnCookieGenerator(this.warnCookieGenerator);
-        this.warnAction.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
+        this.casArgumentExtractor = new CasArgumentExtractor(this.ticketGrantingTicketCookieGenerator, this.warnCookieGenerator);
+        this.warnAction.setCasArgumentExtractor(this.casArgumentExtractor);
     }
 
     public void testWarnFromCookie() throws Exception {
@@ -54,7 +56,7 @@ public class WarnActionTests extends TestCase {
 
     public void testWarnFromRequestParameter() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.WARN, "true");
+        request.addParameter(this.casArgumentExtractor.getWarnParameterName(), "true");
 
         assertEquals("redirect", this.warnAction.doExecute(
             TestUtils.getContext(request)).getId());

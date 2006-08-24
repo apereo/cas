@@ -11,7 +11,6 @@ import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingC
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
-import org.jasig.cas.web.flow.util.ContextUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 
@@ -31,8 +30,7 @@ public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
 
     protected Credentials constructCredentialsFromRequest(
         final RequestContext context) {
-        final HttpServletRequest request = ContextUtils
-            .getHttpServletRequest(context);
+        final HttpServletRequest request = getCasArgumentExtractor().getHttpServletRequest(context);
         final String remoteUser = request.getRemoteUser();
 
         if (StringUtils.hasText(remoteUser)) {

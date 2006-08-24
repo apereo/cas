@@ -32,29 +32,9 @@ public final class TicketGrantingTicketExistsAction extends AbstractLoginAction 
     /** Event string to denote a TicketGrantingTicket does not exist. */
     private static final String EVENT_NO_TICKET_GRANTING_TICKET_EXISTS = "noTicketGrantingTicketExists";
 
-    protected Event doExecuteInternal(final RequestContext request,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
-
-        return ticketGrantingTicketId == null ? noTicketGrantingTicketExists()
-            : ticketGrantingTicketExists();
-    }
-
-    /**
-     * Method to create a noTicketGrantingTicketExists event.
-     * 
-     * @return an Event symbolized by the text "noTicketGrantingTicketExists".
-     */
-    private Event noTicketGrantingTicketExists() {
-        return result(EVENT_NO_TICKET_GRANTING_TICKET_EXISTS);
-    }
-
-    /**
-     * Method to create a ticketGrantingTicketExists event.
-     * 
-     * @return an Event symbolized by the text "ticketGrantingTicketExists".
-     */
-    private Event ticketGrantingTicketExists() {
-        return result(EVENT_TICKET_GRANTING_TICKET_EXISTS);
+    protected Event doExecute(final RequestContext context) {
+        return getCasArgumentExtractor().isTicketGrantingTicketCookiePresent(
+            context) ? result(EVENT_TICKET_GRANTING_TICKET_EXISTS)
+            : result(EVENT_NO_TICKET_GRANTING_TICKET_EXISTS);
     }
 }

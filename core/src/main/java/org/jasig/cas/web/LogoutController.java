@@ -9,11 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.WebUtils;
+import org.jasig.cas.authentication.principal.Service;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -50,21 +48,28 @@ public final class LogoutController extends AbstractController implements
      */
     private boolean followServiceRedirects;
 
+    private CasArgumentExtractor casArgumentExtractor;
+
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService must be set on "
                 + this.getClass().getName());
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator, "ticketGrantingTicketCookieGenerator cannot be null");
-        Assert.notNull(this.warnCookieGenerator, "warnCookieGenerator cannot be null");
+        Assert.notNull(this.ticketGrantingTicketCookieGenerator,
+            "ticketGrantingTicketCookieGenerator cannot be null");
+        Assert.notNull(this.warnCookieGenerator,
+            "warnCookieGenerator cannot be null");
         Assert.hasText(this.logoutView, "logoutView must have text.");
+        Assert.notNull(this.casArgumentExtractor,
+            "casArgumentExtractor cannot be null.");
     }
 
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
-            this.ticketGrantingTicketCookieGenerator.getCookieName());
-        final String service = request.getParameter(WebConstants.SERVICE);
+        final String ticketGrantingTicketId = this.casArgumentExtractor
+            .extractTicketGrantingTicketFromCookie(request);
+        final Service service = this.casArgumentExtractor
+            .extractServiceFrom(request);
 
         if (ticketGrantingTicketId != null) {
             this.centralAuthenticationService
@@ -75,12 +80,7 @@ public final class LogoutController extends AbstractController implements
         }
 
         if (this.followServiceRedirects && service != null) {
-            return new ModelAndView(new RedirectView(service));
-        }
-
-        if (StringUtils.hasText(request.getParameter(WebConstants.LOGOUT))) {
-            return new ModelAndView(this.logoutView, WebConstants.LOGOUT,
-                request.getParameter(WebConstants.LOGOUT));
+            return new ModelAndView(new RedirectView(service.getId()));
         }
 
         return new ModelAndView(this.logoutView);
@@ -110,5 +110,10 @@ public final class LogoutController extends AbstractController implements
 
     public void setLogoutView(final String logoutView) {
         this.logoutView = logoutView;
+    }
+
+    public void setCasArgumentExtractor(
+        final CasArgumentExtractor casArgumentExtractor) {
+        this.casArgumentExtractor = casArgumentExtractor;
     }
 }

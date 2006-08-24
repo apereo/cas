@@ -9,8 +9,7 @@ import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.web.flow.util.ContextUtils;
-import org.jasig.cas.web.support.WebConstants;
+import org.jasig.cas.web.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -35,6 +34,8 @@ public final class GenerateServiceTicketActionTests extends
     private CookieGenerator tgtCookieGenerator;
     
     private CookieGenerator warnCookieGenerator;
+    
+    private CasArgumentExtractor casArgumentExtractor;
 
     protected void onSetUp() throws Exception {
         this.action = new GenerateServiceTicketAction();
@@ -45,9 +46,8 @@ public final class GenerateServiceTicketActionTests extends
         this.warnCookieGenerator.setCookieName("WARN");
         
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-        this.action.setWarnCookieGenerator(new CookieGenerator());
-        this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
-        this.action.setWarnCookieGenerator(this.warnCookieGenerator);
+        this.casArgumentExtractor = new CasArgumentExtractor(this.tgtCookieGenerator, this.warnCookieGenerator);
+        this.action.setCasArgumentExtractor(this.casArgumentExtractor);
         
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
@@ -61,7 +61,7 @@ public final class GenerateServiceTicketActionTests extends
         
         this.action.execute(context);
         
-        assertNotNull(ContextUtils.getAttribute(context, WebConstants.TICKET));
+        assertNotNull(this.casArgumentExtractor.getServiceTicketFrom(context));
     }
     
     public void testTicketGrantingTicketFromRequest() throws Exception {
@@ -69,11 +69,11 @@ public final class GenerateServiceTicketActionTests extends
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
-        ContextUtils.addAttribute(context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, this.ticketGrantingTicket);
+        this.casArgumentExtractor.putTicketGrantingTicketIn(context, this.ticketGrantingTicket);
         
         this.action.execute(context);
         
-        assertNotNull(ContextUtils.getAttribute(context, WebConstants.TICKET));
+        assertNotNull(this.casArgumentExtractor.getServiceTicketFrom(context));
     }
     
     public void testTicketGrantingTicketNoTgt() throws Exception {
@@ -81,7 +81,7 @@ public final class GenerateServiceTicketActionTests extends
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
-        ContextUtils.addAttribute(context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, "bleh");
+        this.casArgumentExtractor.putTicketGrantingTicketIn(context, "bleh");
         
         assertEquals("error", this.action.execute(context).getId());
     }
@@ -92,7 +92,7 @@ public final class GenerateServiceTicketActionTests extends
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         request.addParameter("gateway", "true");
-        ContextUtils.addAttribute(context, AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET, "bleh");
+        this.casArgumentExtractor.putTicketGrantingTicketIn(context, "bleh");
         
         assertEquals("gateway", this.action.execute(context).getId());
     }

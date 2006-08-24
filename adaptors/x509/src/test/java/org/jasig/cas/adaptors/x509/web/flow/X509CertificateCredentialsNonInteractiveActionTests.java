@@ -18,6 +18,7 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.web.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -30,9 +31,10 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
     AbstractX509CertificateTests {
     
     private X509CertificateCredentialsNonInteractiveAction action;
-
+    
     protected void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
+        this.action.setCasArgumentExtractor(new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator()));
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
 
@@ -53,16 +55,14 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
         centralAuthenticationService.afterPropertiesSet();
         
-        this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());
-        this.action.setWarnCookieGenerator(new CookieGenerator());
         this.action.setCentralAuthenticationService(centralAuthenticationService);
+        this.action.afterPropertiesSet();
     }
     
     public void testNoCredentialsResultsInError() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertEquals("error", this.action.execute(context).getId());
-//        assertEquals("error", this.action.doExecuteInternal(context, "test", "test", false, false, false).getId());
     }
     
     public void testCredentialsResultsInSuccess() throws Exception {
@@ -71,10 +71,5 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         request.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {VALID_CERTIFICATE});
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals("success", this.action.execute(context).getId());
-//        assertEquals("success", this.action.doExecuteInternal(context, "test", "test", false, false, false).getId());
-        
     }
-    
-    
-
 }

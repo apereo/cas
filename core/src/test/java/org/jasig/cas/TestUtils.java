@@ -20,7 +20,6 @@ import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
-import org.jasig.cas.web.flow.util.ContextUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -169,10 +168,9 @@ public final class TestUtils {
         final MockHttpServletRequest request,
         final MockHttpServletResponse response) {
         final MockRequestContext context = getContext(request, response);
-        ContextUtils.addAttribute(context, CONST_CREDENTIALS, TestUtils
+        context.getRequestScope().put(CONST_CREDENTIALS, TestUtils
             .getCredentialsWithSameUsernameAndPassword());
-        ContextUtils
-            .addAttribute(context, CONST_WEBFLOW_BIND_EXCEPTION,
+        context.getRequestScope().put(CONST_WEBFLOW_BIND_EXCEPTION,
                 new BindException(TestUtils
                     .getCredentialsWithSameUsernameAndPassword(),
                     CONST_CREDENTIALS));

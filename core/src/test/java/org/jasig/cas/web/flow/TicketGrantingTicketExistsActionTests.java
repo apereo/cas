@@ -5,6 +5,14 @@
  */
 package org.jasig.cas.web.flow;
 
+import javax.servlet.http.Cookie;
+
+import org.jasig.cas.web.CasArgumentExtractor;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import junit.framework.TestCase;
@@ -17,17 +25,34 @@ import junit.framework.TestCase;
 public class TicketGrantingTicketExistsActionTests extends TestCase {
 
     private TicketGrantingTicketExistsAction action = new TicketGrantingTicketExistsAction();
+    
+    private CookieGenerator tgtCookieGenerator = new CookieGenerator();
+
+    protected void setUp() throws Exception {
+        this.tgtCookieGenerator.setCookieName("tgt");
+        final CasArgumentExtractor casArgumentExtractor = new CasArgumentExtractor(this.tgtCookieGenerator, new CookieGenerator());
+        this.action.setCasArgumentExtractor(casArgumentExtractor);
+        this.action.afterPropertiesSet();
+    }
 
     public void testTicketExists() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        
+        request.setCookies(new Cookie[] {new Cookie(this.tgtCookieGenerator.getCookieName(), "test")});
+        
+        final MockRequestContext requestContext = new MockRequestContext();
+        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        
         assertEquals("ticketGrantingTicketExists", this.action
-            .doExecuteInternal(new MockRequestContext(), "test", "service",
-                true, true, true).getId());
+            .doExecute(requestContext).getId());
     }
 
     public void testTicketDoesntExists() {
+        final MockRequestContext requestContext = new MockRequestContext();
+        requestContext.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        
         assertEquals("noTicketGrantingTicketExists", this.action
-            .doExecuteInternal(new MockRequestContext(), null, "service",
-                true, true, true).getId());
+            .doExecute(requestContext).getId());
     }
 
 }

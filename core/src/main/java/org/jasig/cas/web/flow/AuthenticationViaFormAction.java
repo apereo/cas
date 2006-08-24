@@ -6,25 +6,18 @@
 package org.jasig.cas.web.flow;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
+import org.jasig.cas.web.CasArgumentExtractor;
 import org.jasig.cas.web.bind.CredentialsBinder;
-import org.jasig.cas.web.flow.util.ContextUtils;
-import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.WebUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.FormAction;
@@ -38,8 +31,7 @@ import org.springframework.webflow.action.FormAction;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public class AuthenticationViaFormAction extends FormAction implements
-    InitializingBean {
+public class AuthenticationViaFormAction extends FormAction {
 
     /**
      * Binder that allows additional binding of form object beyond Spring
@@ -50,14 +42,15 @@ public class AuthenticationViaFormAction extends FormAction implements
     /** Core we delegate to for handling all ticket related tasks. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    /** Generator for Warning Cookie. */
-    private CookieGenerator warnCookieGenerator;
+    /**
+     * CasArgumentExtractor so that actions don't need to know about cookie
+     * generators, etc.
+     */
+    private CasArgumentExtractor casArgumentExtractor;
 
-    /** Generator for Ticket Granting Ticket Cookie. */
-    private CookieGenerator ticketGrantingTicketCookieGenerator;
-
-    protected final void doBind(final RequestContext context, final DataBinder binder) {
-        final HttpServletRequest request = ContextUtils
+    protected final void doBind(final RequestContext context,
+        final DataBinder binder) {
+        final HttpServletRequest request = this.casArgumentExtractor
             .getHttpServletRequest(context);
         final Credentials credentials = (Credentials) binder.getTarget();
         if (this.credentialsBinder != null) {
@@ -69,30 +62,24 @@ public class AuthenticationViaFormAction extends FormAction implements
 
     public final Event submit(final RequestContext context) throws Exception {
         final Credentials credentials = (Credentials) getFormObject(context);
-        final HttpServletRequest request = ContextUtils
-            .getHttpServletRequest(context);
-        final HttpServletResponse response = ContextUtils
-            .getHttpServletResponse(context);
-        final boolean warn = WebUtils.getRequestParameterAsBoolean(request,
-            WebConstants.WARN);
-        final boolean renew = WebUtils.getRequestParameterAsBoolean(request,
-            WebConstants.RENEW);
-        final String service = WebUtils.getRequestParameterAsString(request,
-            WebConstants.SERVICE);
-        final String ticketGrantingTicketIdFromCookie = WebUtils
-            .getCookieValue(request, this.ticketGrantingTicketCookieGenerator
-                .getCookieName());
 
-        if (renew && StringUtils.hasText(ticketGrantingTicketIdFromCookie)
-            && StringUtils.hasText(service)) {
+        if (this.casArgumentExtractor.isRenewPresent(context)
+            && this.casArgumentExtractor
+                .isTicketGrantingTicketCookiePresent(context)
+            && this.casArgumentExtractor.isServicePresent(context)) {
+
+            final String ticketGrantingTicketIdFromCookie = this.casArgumentExtractor
+                .extractTicketGrantingTicketFromCookie(context);
 
             try {
                 final String serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketIdFromCookie,
-                        new SimpleService(WebUtils.stripJsessionFromUrl(service)), credentials);
-                ContextUtils.addAttribute(context, WebConstants.TICKET,
+                        this.casArgumentExtractor.extractServiceFrom(context),
+                        credentials);
+                this.casArgumentExtractor.putServiceTicketIn(context,
                     serviceTicketId);
-                setWarningCookie(response, warn);
+                this.casArgumentExtractor
+                    .putWarnCookieIfRequestParameterPresent(context);
                 return warn();
             } catch (final TicketException e) {
                 if (e.getCause() != null
@@ -113,12 +100,11 @@ public class AuthenticationViaFormAction extends FormAction implements
         }
 
         try {
-            final String ticketGrantingTicketId = this.centralAuthenticationService
-                .createTicketGrantingTicket(credentials);
-            ContextUtils.addAttribute(context,
-                AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET,
-                ticketGrantingTicketId);
-            setWarningCookie(response, warn);
+            this.casArgumentExtractor.putTicketGrantingTicketIn(context,
+                this.centralAuthenticationService
+                    .createTicketGrantingTicket(credentials));
+            this.casArgumentExtractor
+                .putWarnCookieIfRequestParameterPresent(context);
             return success();
         } catch (final TicketException e) {
             populateErrorsInstance(context, e);
@@ -132,7 +118,7 @@ public class AuthenticationViaFormAction extends FormAction implements
 
     private final void populateErrorsInstance(final RequestContext context,
         final TicketException e) {
-        
+
         try {
             final Errors errors = getFormErrors(context);
             errors.reject(e.getCode(), e.getCode());
@@ -141,23 +127,9 @@ public class AuthenticationViaFormAction extends FormAction implements
         }
     }
 
-    private final void setWarningCookie(final HttpServletResponse response,
-        final boolean warn) {
-        if (warn) {
-            this.warnCookieGenerator.addCookie(response, "true");
-        } else {
-            this.warnCookieGenerator.removeCookie(response);
-        }
-
-    }
-
-    public final void setTicketGrantingTicketCookieGenerator(
-        final CookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
-
-    public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
+    public final void setCasArgumentExtractor(
+        final CasArgumentExtractor casArgumentExtractor) {
+        this.casArgumentExtractor = casArgumentExtractor;
     }
 
     public final void setCentralAuthenticationService(
@@ -178,16 +150,16 @@ public class AuthenticationViaFormAction extends FormAction implements
      * Credentials (or more sophisticated consideration of the
      * HttpServletRequest parameters).
      */
-    public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
+    public final void setCredentialsBinder(
+        final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
 
-    public final void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
-
-        Assert.notNull(this.centralAuthenticationService, "centralAuthenticationService cannot be null");
-        Assert.notNull(this.warnCookieGenerator, "warnCookieGenerator cannot be null");
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator, "ticketGrantingTicketCookieGenerator cannot be null");
+    protected void initAction() {
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null");
+        Assert.notNull(this.casArgumentExtractor,
+            "casArgumentExtractor canont be null.");
 
         if (this.getFormObjectClass() == null) {
             this.setFormObjectClass(UsernamePasswordCredentials.class);
@@ -205,9 +177,9 @@ public class AuthenticationViaFormAction extends FormAction implements
                 .getFormObjectClass()),
                 "CommandClass must be of type Credentials.");
 
-        if (this.credentialsBinder != null
-            && !this.credentialsBinder.supports(this.getFormObjectClass())) {
-            throw new IllegalStateException(
+        if (this.credentialsBinder != null) {
+            Assert.isTrue(this.credentialsBinder.supports(this
+                .getFormObjectClass()),
                 "CredentialsBinder does not support supplied FormObjectClass: "
                     + this.getClass().getName());
         }

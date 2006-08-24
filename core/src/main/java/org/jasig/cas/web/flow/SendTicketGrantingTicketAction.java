@@ -5,9 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.jasig.cas.web.flow.util.ContextUtils;
+import org.jasig.cas.CentralAuthenticationService;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -21,29 +20,38 @@ import org.springframework.webflow.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public final class SendTicketGrantingTicketAction extends
-    AbstractCasLoginAction {
+public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
 
-    protected Event doExecuteInternal(final RequestContext context,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
-        final HttpServletResponse response = ContextUtils
-            .getHttpServletResponse(context);
-        final String ticketGrantingTicketFromRequest = (String) ContextUtils
-            .getAttribute(context, REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET);
+    private CentralAuthenticationService centralAuthenticationService;
+
+    protected Event doExecute(final RequestContext context) {
+        final String ticketGrantingTicketId = getCasArgumentExtractor()
+            .extractTicketGrantingTicketFromCookie(context);
+        final String ticketGrantingTicketFromRequest = getCasArgumentExtractor()
+            .getTicketGrantingTicketFrom(context);
 
         if (ticketGrantingTicketFromRequest == null) {
             return success();
         }
 
         if (ticketGrantingTicketId != null) {
-            getCentralAuthenticationService().destroyTicketGrantingTicket(
-                ticketGrantingTicketId);
+            this.centralAuthenticationService
+                .destroyTicketGrantingTicket(ticketGrantingTicketId);
         }
 
-        getTicketGrantingTicketCookieGenerator().addCookie(response,
+        getCasArgumentExtractor().putTicketGrantingTicketInCookie(context,
             ticketGrantingTicketFromRequest);
 
         return success();
+    }
+
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    protected void initActionInternal() throws Exception {
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null.");
     }
 }

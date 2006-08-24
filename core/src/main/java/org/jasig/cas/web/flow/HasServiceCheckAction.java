@@ -5,13 +5,12 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
- * Method to check if a service was provide. If it was, a "hasService" event is
- * returned. Otherwise, the "authenticatedButNoService" event is returned.
+ * Method to check if a service was provide. If it was, a "success" event is
+ * returned. Otherwise, the "error" event is returned.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -19,13 +18,8 @@ import org.springframework.webflow.RequestContext;
  */
 public final class HasServiceCheckAction extends AbstractLoginAction {
 
-    protected Event doExecuteInternal(final RequestContext request,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
-        if (StringUtils.hasText(service)) {
-            return hasService();
-        }
-
-        return authenticatedButNoService();
+    protected Event doExecute(final RequestContext context) {
+        return getCasArgumentExtractor().isServicePresent(context) ? success()
+            : error();
     }
 }

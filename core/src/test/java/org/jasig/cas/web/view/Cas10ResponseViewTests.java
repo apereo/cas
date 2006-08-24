@@ -18,7 +18,6 @@ import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
-import org.jasig.cas.web.support.WebConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -40,7 +39,7 @@ public class Cas10ResponseViewTests extends TestCase {
         this.model = new HashMap();
         List list = new ArrayList();
         list.add(new ImmutableAuthentication(new SimplePrincipal("test")));
-        this.model.put(WebConstants.ASSERTION, new ImmutableAssertionImpl(list,
+        this.model.put("assertion", new ImmutableAssertionImpl(list,
             new SimpleService("TestService"), true));
     }
 

@@ -5,16 +5,15 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
  * Action to check if there is a gateway set and there is a service to redirect
- * to. If so, a <code>gateway</code> event is published to denote that we
+ * to. If so, a <code>success</code> event is published to denote that we
  * should gateway.
  * <p>
- * Otherwise, an <code>authenticationRequired</code> event is published.
+ * Otherwise, an <code>error</code> event is published.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -22,13 +21,12 @@ import org.springframework.webflow.RequestContext;
  */
 public final class GatewayRequestCheckAction extends AbstractLoginAction {
 
-    protected Event doExecuteInternal(final RequestContext request,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
-        if (gateway && StringUtils.hasText(service)) {
-            return gateway();
+    protected Event doExecute(final RequestContext context) {
+        if (getCasArgumentExtractor().isGatewayPresent(context)
+            && getCasArgumentExtractor().isServicePresent(context)) {
+            return success();
         }
 
-        return authenticationRequired();
+        return error();
     }
 }
