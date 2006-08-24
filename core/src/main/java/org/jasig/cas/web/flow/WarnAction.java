@@ -23,18 +23,11 @@ public final class WarnAction extends AbstractLoginAction {
     /** Event to publish in the scenario where a warning is required. */
     private static final String EVENT_WARN = "warn";
 
-    protected Event doExecuteInternal(final RequestContext context,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
-        return warn ? warn() : redirect();
-    }
+    /** Event to publish in the scenario when just a redirect is required. */
+    private static final String EVENT_REDIRECT = "redirect";
 
-    /**
-     * Method to generate an event for a warning.
-     * 
-     * @return an event symbolized by the word "warn".
-     */
-    private Event warn() {
-        return result(EVENT_WARN);
+    protected Event doExecute(final RequestContext context) throws Exception {
+        return getCasArgumentExtractor().isWarnCookiePresent(context)
+            ? result(EVENT_WARN) : result(EVENT_REDIRECT);
     }
 }

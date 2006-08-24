@@ -149,7 +149,8 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
                         final BigInteger integer = (BigInteger) map.get(key);
                         final BigInteger newValue = integer.subtract(ONE);
 
-                        System.out.println("For key: " + key + " new value is: " + newValue.toString());
+                        System.out.println("For key: " + key
+                            + " new value is: " + newValue.toString());
                         if (newValue.equals(BigInteger.ZERO)) {
                             map.remove(key);
                         } else {

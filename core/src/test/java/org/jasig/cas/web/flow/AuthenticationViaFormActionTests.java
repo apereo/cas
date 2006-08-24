@@ -12,8 +12,9 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.web.CasArgumentExtractor;
 import org.jasig.cas.web.bind.CredentialsBinder;
-import org.jasig.cas.web.flow.util.ContextUtils;
+import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -54,8 +55,9 @@ public class AuthenticationViaFormActionTests extends
         this.warnCookieGenerator.setCookiePath("/");
         
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-        this.action.setTicketGrantingTicketCookieGenerator(this.cookieGenerator);
-        this.action.setWarnCookieGenerator(this.warnCookieGenerator);
+        
+        final CasArgumentExtractor casArgumentExtractor = new CasArgumentExtractor(this.cookieGenerator, this.warnCookieGenerator);
+        this.action.setCasArgumentExtractor(casArgumentExtractor);
         this.action.afterPropertiesSet();
     }
     
@@ -67,7 +69,7 @@ public class AuthenticationViaFormActionTests extends
         request.addParameter("password", "test");
           
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        ContextUtils.addAttribute(context, "credentials", TestUtils.getCredentialsWithSameUsernameAndPassword());
+        context.getRequestScope().put("credentials", TestUtils.getCredentialsWithSameUsernameAndPassword());
         this.action.bind(context);
         assertEquals("success", this.action.submit(context).getId());
     }
@@ -82,7 +84,7 @@ public class AuthenticationViaFormActionTests extends
         request.addParameter("warn", "true");
           
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        ContextUtils.addAttribute(context, "credentials", TestUtils.getCredentialsWithSameUsernameAndPassword());
+        context.getRequestScope().put("credentials", TestUtils.getCredentialsWithSameUsernameAndPassword());
         this.action.bind(context);
         assertEquals("success", this.action.submit(context).getId());
         assertNotNull(response.getCookie(this.warnCookieGenerator.getCookieName()));
@@ -99,7 +101,7 @@ public class AuthenticationViaFormActionTests extends
         request.addParameter("service", "test");
           
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        ContextUtils.addAttribute(context, "credentials", TestUtils.getCredentialsWithSameUsernameAndPassword());
+        context.getRequestScope().put("credentials", TestUtils.getCredentialsWithSameUsernameAndPassword());
         this.action.bind(context);
         assertEquals("success", this.action.submit(context).getId());
         assertNotNull(response.getCookie(this.warnCookieGenerator.getCookieName()));
@@ -114,9 +116,8 @@ public class AuthenticationViaFormActionTests extends
         
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         
-        ContextUtils.addAttribute(context, "credentials", TestUtils.getCredentialsWithDifferentUsernameAndPassword());
-        ContextUtils.addAttribute(context,
-            "org.springframework.validation.BindException.credentials",
+        context.getRequestScope().put("credentials", TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        context.getRequestScope().put("org.springframework.validation.BindException.credentials",
             new BindException(TestUtils
                 .getCredentialsWithDifferentUsernameAndPassword(),
                 "credentials"));
@@ -168,8 +169,8 @@ public class AuthenticationViaFormActionTests extends
         request.addParameter("service", "test");
         
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        ContextUtils.addAttribute(context, "credentials", TestUtils.getCredentialsWithDifferentUsernameAndPassword());
-        ContextUtils.addAttribute(context,
+        context.getRequestScope().put("credentials", TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        context.getRequestScope().put(
             "org.springframework.validation.BindException.credentials",
             new BindException(TestUtils.getCredentialsWithDifferentUsernameAndPassword(),
                 "credentials"));
@@ -230,9 +231,10 @@ public class AuthenticationViaFormActionTests extends
             this.action.setCredentialsBinder(c);
             this.action.afterPropertiesSet();
             fail("Exception expected.");
-        } catch (IllegalStateException e) {
-            // this is okay
+        } catch (BeanInitializationException e) {
+            return;
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
     }

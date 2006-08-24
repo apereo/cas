@@ -10,11 +10,11 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.web.support.WebConstants;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.util.CookieGenerator;
 
 /**
  * @author Scott Battaglia
@@ -26,10 +26,14 @@ public class ProxyControllerTests extends
 
     private ProxyController proxyController;
 
+    private CasArgumentExtractor casArgumentExtractor;
+
     protected void onSetUp() throws Exception {
         this.proxyController = new ProxyController();
         this.proxyController
             .setCentralAuthenticationService(getCentralAuthenticationService());
+        this.casArgumentExtractor = new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator());
+        this.proxyController.setCasArgumentExtractor(this.casArgumentExtractor);
         this.proxyController.afterPropertiesSet();
 
         StaticApplicationContext context = new StaticApplicationContext();
@@ -42,17 +46,18 @@ public class ProxyControllerTests extends
         assertEquals("INVALID_REQUEST", this.proxyController
             .handleRequestInternal(new MockHttpServletRequest(),
                 new MockHttpServletResponse()).getModel()
-            .get(WebConstants.CODE));
+            .get("code"));
     }
 
     public void testNonExistantPGT() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.PROXY_GRANTING_TICKET, "TestService");
-        request.addParameter(WebConstants.TARGET_SERVICE, "service");
+        request.addParameter(this.casArgumentExtractor.getProxyGrantingTicketParameterName(), "TestService");
+        request.addParameter(this.casArgumentExtractor
+            .getTargetServiceParameterName(), "service");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(
-            WebConstants.CODE));
+            "code"));
     }
 
     public void testExistingPGT() throws Exception {
@@ -62,11 +67,12 @@ public class ProxyControllerTests extends
         getTicketRegistry().addTicket(ticket);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request
-            .addParameter(WebConstants.PROXY_GRANTING_TICKET, ticket.getId());
-        request.addParameter(WebConstants.TARGET_SERVICE, "service");
+            .addParameter(this.casArgumentExtractor.getProxyGrantingTicketParameterName(), ticket.getId());
+        request.addParameter(this.casArgumentExtractor
+            .getTargetServiceParameterName(), "service");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(
-            WebConstants.TICKET));
+            "ticket"));
     }
 }

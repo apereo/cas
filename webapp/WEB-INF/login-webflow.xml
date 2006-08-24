@@ -17,14 +17,14 @@
 	
 	<action-state id="gatewayRequestCheck">
 		<action bean="gatewayRequestCheckAction" />
-		<transition on="gateway" to="redirect" />
-		<transition on="authenticationRequired" to="viewLoginForm" />
+		<transition on="success" to="redirect" />
+		<transition on="error" to="viewLoginForm" />
 	</action-state>
 	
 	<action-state id="hasServiceCheck">
 		<action bean="hasServiceCheckAction" />
-		<transition on="authenticatedButNoService" to="viewGenericLoginSuccess" />
-		<transition on="hasService" to="renewRequestCheck" />
+		<transition on="error" to="viewGenericLoginSuccess" />
+		<transition on="success" to="renewRequestCheck" />
 	</action-state>
 	
 	<action-state id="renewRequestCheck">
@@ -64,8 +64,8 @@
 	
 	<action-state id="serviceCheck">
 		<action bean="hasServiceCheckAction" />
-		<transition on="authenticatedButNoService" to="viewGenericLoginSuccess" />
-		<transition on="hasService" to="generateServiceTicket" />
+		<transition on="error" to="viewGenericLoginSuccess" />
+		<transition on="success" to="generateServiceTicket" />
 	</action-state>
 	
 	<action-state id="generateServiceTicket">
@@ -101,5 +101,5 @@
 		The "redirect" end state allows CAS to properly end the workflow while still redirecting
 		the user back to the service required.
 	-->
-	<end-state id="redirect" view="externalRedirect:${externalContext.requestParameterMap['service']}${requestScope.ticket == null ? '' : (externalContext.requestParameterMap['service'].indexOf('?') != -1 ? '&amp;' : '?') + 'ticket=' + requestScope.ticket}" />
+	<end-state id="redirect" view="externalRedirect:${externalContext.requestParameterMap['service']}${requestScope.serviceTicketId == null ? '' : (externalContext.requestParameterMap['service'].indexOf('?') != -1 ? '&amp;' : '?') + 'ticket=' + requestScope.serviceTicketId}" />
 </flow>

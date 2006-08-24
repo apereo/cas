@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.web.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -33,6 +34,7 @@ public class AutomaticCookiePathSetterActionTests extends TestCase {
         this.tgtCookieGenerator = new CookieGenerator();
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
+        this.action.setCasArgumentExtractor(new CasArgumentExtractor(this.tgtCookieGenerator, this.warnCookieGenerator));
         this.action.afterPropertiesSet();
     }
     

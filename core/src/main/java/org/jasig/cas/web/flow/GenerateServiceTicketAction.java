@@ -5,11 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.web.flow.util.ContextUtils;
-import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.WebUtils;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -21,29 +19,40 @@ import org.springframework.webflow.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public final class GenerateServiceTicketAction extends AbstractCasLoginAction {
+public final class GenerateServiceTicketAction extends AbstractLoginAction {
 
-    protected Event doExecuteInternal(final RequestContext context,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
-        final String ticketGrantingTicketFromRequest = (String) ContextUtils
-            .getAttribute(context, REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET);
+    private CentralAuthenticationService centralAuthenticationService;
+
+    protected Event doExecute(final RequestContext context) {
+        final String ticketGrantingTicketFromRequest = getCasArgumentExtractor()
+            .getTicketGrantingTicketFrom(context);
 
         try {
-            final String serviceTicketId = getCentralAuthenticationService()
-                .grantServiceTicket(
-                    ticketGrantingTicketFromRequest != null
-                        ? ticketGrantingTicketFromRequest
-                        : ticketGrantingTicketId, new SimpleService(WebUtils.stripJsessionFromUrl(service)));
-            ContextUtils.addAttribute(context, WebConstants.TICKET,
+            final String serviceTicketId = this.centralAuthenticationService
+                .grantServiceTicket(ticketGrantingTicketFromRequest != null
+                    ? ticketGrantingTicketFromRequest
+                    : getCasArgumentExtractor()
+                        .extractTicketGrantingTicketFromCookie(context),
+                    getCasArgumentExtractor().extractServiceFrom(context));
+            getCasArgumentExtractor().putServiceTicketIn(context,
                 serviceTicketId);
             return success();
         } catch (final TicketException e) {
-            if (gateway) {
-                return gateway();
+            if (getCasArgumentExtractor().isGatewayPresent(context)) {
+                return result("gateway");
             }
         }
 
         return error();
+    }
+
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    protected void initActionInternal() throws Exception {
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null.");
     }
 }

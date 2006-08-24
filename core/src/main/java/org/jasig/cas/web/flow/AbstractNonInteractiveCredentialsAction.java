@@ -5,14 +5,11 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.web.flow.util.ContextUtils;
-import org.jasig.cas.web.support.WebConstants;
-import org.jasig.cas.web.util.WebUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -25,28 +22,31 @@ import org.springframework.webflow.RequestContext;
  * @since 3.0.4
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends
-    AbstractCasLoginAction {
+    AbstractLoginAction {
 
-    protected final Event doExecuteInternal(final RequestContext context,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
+    /** Instance of CentralAuthenticationService. */
+    private CentralAuthenticationService centralAuthenticationService;
 
+    protected final Event doExecute(final RequestContext context) {
         final Credentials credentials = constructCredentialsFromRequest(context);
 
         if (credentials == null) {
             return error();
         }
 
-        if (renew && StringUtils.hasText(ticketGrantingTicketId)
-            && StringUtils.hasText(service)) {
+        if (getCasArgumentExtractor().isRenewPresent(context)
+            && getCasArgumentExtractor().isTicketGrantingTicketCookiePresent(
+                context) && getCasArgumentExtractor().isServicePresent(context)) {
+
+            final String ticketGrantingTicketId = getCasArgumentExtractor()
+                .extractTicketGrantingTicketFromCookie(context);
 
             try {
-                final String serviceTicketId = getCentralAuthenticationService()
-                    .grantServiceTicket(
-                        ticketGrantingTicketId,
-                        new SimpleService(WebUtils
-                            .stripJsessionFromUrl(service)), credentials);
-                ContextUtils.addAttribute(context, WebConstants.TICKET,
+                final String serviceTicketId = this.centralAuthenticationService
+                    .grantServiceTicket(ticketGrantingTicketId,
+                        getCasArgumentExtractor().extractServiceFrom(context),
+                        credentials);
+                getCasArgumentExtractor().putServiceTicketIn(context,
                     serviceTicketId);
                 return result("warn");
             } catch (final TicketException e) {
@@ -56,8 +56,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
                     onError(context, credentials);
                     return error();
                 }
-                getCentralAuthenticationService().destroyTicketGrantingTicket(
-                    ticketGrantingTicketId);
+                this.centralAuthenticationService
+                    .destroyTicketGrantingTicket(ticketGrantingTicketId);
                 if (logger.isDebugEnabled()) {
                     logger
                         .debug(
@@ -68,17 +68,26 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
         }
 
         try {
-            final String newTicketGrantingTicketId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(credentials);
-            ContextUtils.addAttribute(context,
-                AbstractLoginAction.REQUEST_ATTRIBUTE_TICKET_GRANTING_TICKET,
-                newTicketGrantingTicketId);
+            getCasArgumentExtractor().putTicketGrantingTicketIn(
+                context,
+                this.centralAuthenticationService
+                    .createTicketGrantingTicket(credentials));
             onSuccess(context, credentials);
             return success();
         } catch (final TicketException e) {
             onError(context, credentials);
             return error();
         }
+    }
+
+    public final void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    protected void initActionInternal() throws Exception {
+        Assert.notNull(this.centralAuthenticationService,
+            "centralAuthenticationService cannot be null.");
     }
 
     /**

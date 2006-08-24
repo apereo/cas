@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.web.support.WebConstants;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAuthenticationStatement;
 import org.opensaml.SAMLNameIdentifier;
@@ -56,7 +55,7 @@ public class SamlServiceSuccessView implements View {
             // reflects an environmental contract violation.
             InternalError internalError = new InternalError();
 
-            Assertion assertion = (Assertion) model.get(WebConstants.ASSERTION);
+            Assertion assertion = (Assertion) model.get("assertion");
             if (assertion == null)
                 throw internalError;
 

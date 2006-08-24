@@ -22,22 +22,11 @@ public final class RenewRequestCheckAction extends AbstractLoginAction {
     /** Event string denoting that we should generate a service ticket. */
     private static final String EVENT_GENERATE_SERVICE_TICKET = "generateServiceTicket";
 
-    protected Event doExecuteInternal(final RequestContext request,
-        final String ticketGrantingTicketId, final String service,
-        final boolean gateway, final boolean renew, final boolean warn) {
-        if (renew) {
-            return authenticationRequired();
-        }
+    private static final String EVENT_AUTHENTICATION_REQUIRED = "authenticationRequired";
 
-        return generateServiceTicket();
-    }
-
-    /**
-     * Method to create a "generateServiceTicket" event.
-     * 
-     * @return the event to notify of a generateServiceTicket request.
-     */
-    private Event generateServiceTicket() {
-        return result(EVENT_GENERATE_SERVICE_TICKET);
+    protected Event doExecute(final RequestContext context) {
+        return getCasArgumentExtractor().isRenewPresent(context)
+            ? result(EVENT_AUTHENTICATION_REQUIRED)
+            : result(EVENT_GENERATE_SERVICE_TICKET);
     }
 }

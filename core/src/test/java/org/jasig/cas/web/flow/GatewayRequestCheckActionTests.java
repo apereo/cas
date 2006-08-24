@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.web.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -19,8 +20,8 @@ public class GatewayRequestCheckActionTests extends TestCase {
     private GatewayRequestCheckAction action = new GatewayRequestCheckAction();
     
     protected void setUp() throws Exception {
-        this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());
-        this.action.setWarnCookieGenerator(new CookieGenerator());
+        final CasArgumentExtractor casArgumentExtractor = new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator());
+        this.action.setCasArgumentExtractor(casArgumentExtractor);
         this.action.afterPropertiesSet();
     }
     
@@ -31,7 +32,7 @@ public class GatewayRequestCheckActionTests extends TestCase {
         request.addParameter("gateway", "true");
         request.addParameter("service", "test");
         
-        assertEquals("gateway", this.action.execute(context).getId());
+        assertEquals("success", this.action.execute(context).getId());
     }
 
     public void testGatewayIsFalse() throws Exception {
@@ -40,7 +41,7 @@ public class GatewayRequestCheckActionTests extends TestCase {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "test");
         
-        assertEquals("authenticationRequired", this.action.execute(context).getId());
+        assertEquals("error", this.action.execute(context).getId());
     }
     
     public void testGatewayIsTrueNoService() throws Exception {
@@ -48,7 +49,7 @@ public class GatewayRequestCheckActionTests extends TestCase {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         
-        assertEquals("authenticationRequired", this.action.execute(context).getId());
+        assertEquals("error", this.action.execute(context).getId());
     }    
     
 }

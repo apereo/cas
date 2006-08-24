@@ -15,11 +15,11 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
-import org.jasig.cas.web.support.WebConstants;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.CookieGenerator;
 
 /**
  * @author Scott Battaglia
@@ -34,6 +34,8 @@ public class ServiceValidateControllerTests extends
     private static final String CONST_FAILURE_VIEW = "casServiceFailureView";
     
     private ServiceValidateController serviceValidateController;
+    
+    private CasArgumentExtractor casArgumentExtractor;
 
     protected void onSetUp() throws Exception {
         StaticApplicationContext context = new StaticApplicationContext();
@@ -46,6 +48,8 @@ public class ServiceValidateControllerTests extends
         proxyHandler.afterPropertiesSet();
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
+        this.casArgumentExtractor = new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator());
+        this.serviceValidateController.setCasArgumentExtractor(this.casArgumentExtractor);
         this.serviceValidateController.afterPropertiesSet();
     }
 
@@ -59,10 +63,10 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
             .getId());
-        request.addParameter(WebConstants.TICKET, sId2);
-        request.addParameter(WebConstants.RENEW, "true");
+        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId2);
+        request.addParameter(this.casArgumentExtractor.getRenewParameterName(), "true");
 
         return request;
     }
@@ -79,7 +83,7 @@ public class ServiceValidateControllerTests extends
     public void testEmptyParams() throws Exception {
         assertNotNull(this.serviceValidateController.handleRequestInternal(
             new MockHttpServletRequest(), new MockHttpServletResponse())
-            .getModel().get(WebConstants.CODE));
+            .getModel().get("code"));
     }
 
     public void testValidServiceTicket() throws Exception {
@@ -90,9 +94,9 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
             .getId());
-        request.addParameter(WebConstants.TICKET, sId);
+        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
 
         assertEquals(CONST_SUCCESS_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -133,9 +137,9 @@ public class ServiceValidateControllerTests extends
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
             .getId());
-        request.addParameter(WebConstants.TICKET, sId);
+        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
 
         assertEquals(CONST_FAILURE_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -151,11 +155,11 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
             .getId());
-        request.addParameter(WebConstants.TICKET, sId);
+        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
         request
-            .addParameter(WebConstants.PGTURL, "https://www.acs.rutgers.edu");
+            .addParameter(this.casArgumentExtractor.getProxyGrantingTicketCallbackUrlParameterName(), "https://www.acs.rutgers.edu");
 
         assertEquals(CONST_SUCCESS_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -171,16 +175,16 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
             .getId());
-        request.addParameter(WebConstants.TICKET, sId);
-        request.addParameter(WebConstants.PGTURL, "http://www.acs.rutgers.edu");
+        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
+        request.addParameter(this.casArgumentExtractor.getProxyGrantingTicketCallbackUrlParameterName(), "http://www.acs.rutgers.edu");
 
         final ModelAndView modelAndView = this.serviceValidateController
             .handleRequestInternal(request, new MockHttpServletResponse());
         assertEquals(CONST_SUCCESS_VIEW, modelAndView
             .getViewName());
-        assertNull(modelAndView.getModel().get(WebConstants.PGTIOU));
+        assertNull(modelAndView.getModel().get("pgtIou"));
     }
 
     public void testValidServiceTicketWithInvalidPgt() throws Exception {
@@ -192,15 +196,15 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(WebConstants.SERVICE, TestUtils.getService()
+        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
             .getId());
-        request.addParameter(WebConstants.TICKET, sId);
-        request.addParameter(WebConstants.PGTURL, "duh");
+        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
+        request.addParameter(this.casArgumentExtractor.getProxyGrantingTicketCallbackUrlParameterName(), "duh");
 
         final ModelAndView modelAndView = this.serviceValidateController
             .handleRequestInternal(request, new MockHttpServletResponse());
         assertEquals(CONST_SUCCESS_VIEW, modelAndView
             .getViewName());
-        assertNull(modelAndView.getModel().get(WebConstants.PGTIOU));
+        assertNull(modelAndView.getModel().get("pgtIou"));
     }
 }
