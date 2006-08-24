@@ -11,9 +11,9 @@
 			 A service sending a user to CAS for logout can specify this parameter to suggest that we offer
 			 the user a particular link out from the logout UI once logout is completed.  We do that here.
 			--%>
-			<c:if test="${not empty url}">
+			<c:if test="${not empty param['url']}">
 			<p>
-				<spring:message code="screen.logout.redirect" arguments="${url}" />
+				<spring:message code="screen.logout.redirect" arguments="${param['url']}" />
 			</p>
 			</c:if>
 		</div>
