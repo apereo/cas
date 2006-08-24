@@ -13,7 +13,9 @@ package org.jasig.cas.authentication.principal;
  * @author William G. Thompson, Jr.
  * @version $Revision$ $Date$
  * @since 3.0
- * <p>This is a published and supported CAS Server 3 API.</p>
+ * <p>
+ * This is a published and supported CAS Server 3 API.
+ * </p>
  */
 public interface Service extends Principal {
     // marker interface for Services

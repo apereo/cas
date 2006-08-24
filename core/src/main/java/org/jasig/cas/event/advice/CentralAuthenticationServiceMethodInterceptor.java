@@ -16,36 +16,38 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.util.Assert;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.4
- *
  */
-public class CentralAuthenticationServiceMethodInterceptor implements MethodInterceptor, ApplicationEventPublisherAware, InitializingBean {
+public class CentralAuthenticationServiceMethodInterceptor implements
+    MethodInterceptor, ApplicationEventPublisherAware, InitializingBean {
 
     /** The TicketRegistry which holds ticket information. */
     private TicketRegistry ticketRegistry;
 
     /** The publisher to publish events. */
     private ApplicationEventPublisher applicationEventPublisher;
-    
+
     public Object invoke(MethodInvocation method) throws Throwable {
         Ticket ticket = null;
         TicketEvent ticketEvent = null;
-        
+
         if (method.getMethod().getName().equals("validateServiceTicket")) {
-            ticket = this.ticketRegistry.getTicket((String) method.getArguments()[0]);
+            ticket = this.ticketRegistry.getTicket((String) method
+                .getArguments()[0]);
         }
-        
+
         final Object returnValue = method.proceed();
-        
-        if (!method.getMethod().getName().equals("validateServiceTicket") && !method.getMethod().getName().equals("destroyTicketGrantingTicket")) {
+
+        if (!method.getMethod().getName().equals("validateServiceTicket")
+            && !method.getMethod().getName().equals(
+                "destroyTicketGrantingTicket")) {
             ticket = this.ticketRegistry.getTicket((String) returnValue);
         }
-        
+
         final String methodName = method.getMethod().getName();
-        
+
         if (methodName.equals("createTicketGrantingTicket")) {
             ticketEvent = new TicketEvent(ticket,
                 TicketEvent.CREATE_TICKET_GRANTING_TICKET);
@@ -57,19 +59,20 @@ public class CentralAuthenticationServiceMethodInterceptor implements MethodInte
                 TicketEvent.CREATE_SERVICE_TICKET);
         } else if (methodName.equals("destroyTicketGrantingTicket")) {
             ticketEvent = new TicketEvent(
-                TicketEvent.DESTROY_TICKET_GRANTING_TICKET, (String) method.getArguments()[0]);
+                TicketEvent.DESTROY_TICKET_GRANTING_TICKET, (String) method
+                    .getArguments()[0]);
         } else if (methodName.equals("validateServiceTicket")) {
             ticketEvent = new TicketEvent(ticket,
                 TicketEvent.VALIDATE_SERVICE_TICKET);
         }
-        
+
         if (ticketEvent != null) {
             this.applicationEventPublisher.publishEvent(ticketEvent);
         }
 
         return returnValue;
     }
-    
+
     public void setApplicationEventPublisher(
         final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;

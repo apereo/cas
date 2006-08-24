@@ -43,9 +43,9 @@ public class SimplePrincipal implements Principal {
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }
-        
+
         final SimplePrincipal p = (SimplePrincipal) o;
-        
+
         return this.id.equals(p.getId());
     }
 

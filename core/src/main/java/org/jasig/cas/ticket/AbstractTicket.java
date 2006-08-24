@@ -34,10 +34,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     /** The last time this ticket was used. */
     private long lastTimeUsed;
-    
+
     /** The previous last time this ticket was used. */
     private long previousLastTimeUsed;
-    
+
     /** The time the ticket was created. */
     private long creationTime;
 
@@ -74,11 +74,11 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.lastTimeUsed = System.currentTimeMillis();
         this.countOfUses++;
     }
-    
+
     public final int getCountOfUses() {
         return this.countOfUses;
     }
-    
+
     public final long getCreationTime() {
         return this.creationTime;
     }
@@ -86,12 +86,11 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public final TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
-    
+
     public final long getLastTimeUsed() {
         return this.lastTimeUsed;
     }
 
-    
     public final long getPreviousTimeUsed() {
         return this.previousLastTimeUsed;
     }

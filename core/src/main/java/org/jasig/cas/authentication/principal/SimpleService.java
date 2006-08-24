@@ -44,9 +44,9 @@ public class SimpleService implements Service {
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }
-        
+
         final SimpleService p = (SimpleService) o;
-        
+
         return this.id.equals(p.getId());
     }
 

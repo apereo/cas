@@ -37,7 +37,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     /** The PGTIOU ticket prefix. */
     private static final String PGTIOU_PREFIX = "PGTIOU";
-    
+
     /** The default status codes we accept. */
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
         HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
@@ -49,7 +49,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     /** Generate unique ids. */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
-    
+
     /** Instance of Apache Commons HttpClient */
     private HttpClient httpClient;
 
@@ -62,13 +62,13 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
         synchronized (stringBuffer) {
             stringBuffer.append(serviceCredentials.toString());
-    
+
             if (serviceCredentials.getCallbackUrl().getQuery() != null) {
                 stringBuffer.append("&");
             } else {
                 stringBuffer.append("?");
             }
-    
+
             stringBuffer.append("pgtIou=");
             stringBuffer.append(proxyIou);
             stringBuffer.append("&pgtId=");
@@ -82,15 +82,15 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
             for (int i = 0; i < this.acceptableCodes.length; i++) {
                 if (responseCode == this.acceptableCodes[i]) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Sent ProxyIou of " + proxyIou + " for service: "
-                            + serviceCredentials.toString());
+                        log.debug("Sent ProxyIou of " + proxyIou
+                            + " for service: " + serviceCredentials.toString());
                     }
 
                     return proxyIou;
                 }
-             }
+            }
         } catch (final Exception e) {
-            log.error(e,e);
+            log.error(e, e);
             // do nothing
         } finally {
             getMethod.releaseConnection();
@@ -120,7 +120,7 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     public void setAcceptableCodes(final int[] acceptableCodes) {
         this.acceptableCodes = acceptableCodes;
     }
-    
+
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -134,8 +134,8 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
                 + this.getClass().getName() + ".  Using "
                 + this.uniqueTicketIdGenerator.getClass().getName());
         }
-        
-           if (this.acceptableCodes == null) {
+
+        if (this.acceptableCodes == null) {
             this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
         }
     }

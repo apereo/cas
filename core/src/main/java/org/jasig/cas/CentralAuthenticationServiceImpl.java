@@ -119,7 +119,8 @@ public final class CentralAuthenticationServiceImpl implements
         final Service service, final Credentials credentials)
         throws TicketException {
 
-        Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
+        Assert.notNull(ticketGrantingTicketId,
+            "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
         final TicketGrantingTicket ticketGrantingTicket;
@@ -134,7 +135,7 @@ public final class CentralAuthenticationServiceImpl implements
         synchronized (ticketGrantingTicket) {
             if (ticketGrantingTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
-                throw new InvalidTicketException();                
+                throw new InvalidTicketException();
             }
         }
 
@@ -154,11 +155,11 @@ public final class CentralAuthenticationServiceImpl implements
                 throw new TicketCreationException(e);
             }
         }
-        
+
         final ServiceTicket serviceTicket = ticketGrantingTicket
-        .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
-            .getNewTicketId(ServiceTicket.PREFIX), service,
-            this.serviceTicketExpirationPolicy, credentials != null);
+            .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
+                .getNewTicketId(ServiceTicket.PREFIX), service,
+                this.serviceTicketExpirationPolicy, credentials != null);
 
         this.ticketRegistry.addTicket(serviceTicket);
 
@@ -235,7 +236,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
             throw new InvalidTicketException();
         }
-        
+
         try {
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
@@ -245,13 +246,13 @@ public final class CentralAuthenticationServiceImpl implements
                     }
                     throw new InvalidTicketException();
                 }
-    
+
                 if (!serviceTicket.isValidFor(service)) {
                     if (log.isDebugEnabled()) {
                         log.debug("ServiceTicket [" + serviceTicketId
                             + "] does not match supplied service: " + service);
                     }
-        
+
                     throw new TicketValidationException();
                 }
             }

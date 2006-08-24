@@ -15,7 +15,9 @@ import java.io.Serializable;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * <p>This is a published and supported CAS Server 3 API.</p>
+ * <p>
+ * This is a published and supported CAS Server 3 API.
+ * </p>
  * @see org.jasig.cas.ticket.Ticket
  */
 public interface ExpirationPolicy extends Serializable {

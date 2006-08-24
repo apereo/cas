@@ -11,18 +11,18 @@ import org.jasig.cas.ticket.Ticket;
 import org.springframework.util.Assert;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.4
- * <p>This is a published and supported CAS Server 3 API.</p>
- *
+ * <p>
+ * This is a published and supported CAS Server 3 API.
+ * </p>
  */
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     /** The Commons Logging log instance. */
     protected final Log log = LogFactory.getLog(getClass());
-    
+
     /**
      * @throws IllegalArgumentException if class is null.
      * @throws ClassCastException if class does not match requested ticket

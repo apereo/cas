@@ -20,7 +20,9 @@ import java.io.Serializable;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- * <p>This is a published and supported CAS Server 3 API.</p>
+ * <p>
+ * This is a published and supported CAS Server 3 API.
+ * </p>
  */
 public interface Principal extends Serializable {
 
