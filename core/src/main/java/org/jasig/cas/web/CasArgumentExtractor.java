@@ -97,7 +97,7 @@ public class CasArgumentExtractor {
         }
 
         return new SimpleService(request
-            .getParameter(this.targetServiceParameterName));
+            .getParameter(getTargetServiceParameterName()));
     }
     
     /** Note this automatically cleans up jsessions */
@@ -107,7 +107,7 @@ public class CasArgumentExtractor {
         }
 
         return new SimpleService(stripJsessionFromUrl(request
-            .getParameter(this.serviceParameterName)));
+            .getParameter(getServiceParameterName())));
     }
 
     /** Note this automatically cleans up jsessions */
@@ -118,16 +118,16 @@ public class CasArgumentExtractor {
 
         return new SimpleService(stripJsessionFromUrl(context
             .getExternalContext().getRequestParameterMap().get(
-                this.serviceParameterName)));
+                getServiceParameterName())));
     }
     
     public String extractTicketFrom(final HttpServletRequest request) {
-        return request.getParameter(this.ticketParameterName);
+        return request.getParameter(getTicketParameterName());
     }
 
     public String extractTicketFrom(final RequestContext context) {
         return context.getExternalContext().getRequestParameterMap().get(
-            this.ticketParameterName);
+            getTicketParameterName());
     }
     
     public String extractTicketGrantingTicketFromCookie(
@@ -155,11 +155,11 @@ public class CasArgumentExtractor {
 
     public String extractProxyGrantingTicketCallbackUrl(
         final HttpServletRequest request) {
-        return request.getParameter(this.pgtUrlParameterName);
+        return request.getParameter(getProxyGrantingTicketCallbackUrlParameterName());
     }
     
     public String extractProxyGrantingTicket(final HttpServletRequest request) {
-        return request.getParameter(this.proxyGrantingTicketParameterName);
+        return request.getParameter(getProxyGrantingTicketParameterName());
     }
 
     /**
@@ -171,52 +171,52 @@ public class CasArgumentExtractor {
      */
     public boolean isRenewPresent(final HttpServletRequest request) {
         return StringUtils.hasText(request
-            .getParameter(this.renewParameterName));
+            .getParameter(getRenewParameterName()));
     }
 
     public boolean isRenewPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.renewParameterName));
+            .getRequestParameterMap().get(getRenewParameterName()));
     }
 
     public boolean isGatewayPresent(final HttpServletRequest request) {
         return StringUtils.hasText(request
-            .getParameter(this.gatewayParameterName));
+            .getParameter(getRenewParameterName()));
     }
 
     public boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.gatewayParameterName));
+            .getRequestParameterMap().get(getGatewayParameterName()));
     }
 
     public boolean isTicketPresent(final HttpServletRequest request) {
         return StringUtils.hasText(request
-            .getParameter(this.ticketParameterName));
+            .getParameter(getTicketParameterName()));
     }
 
     public boolean isTicketPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.ticketParameterName));
+            .getRequestParameterMap().get(getTicketParameterName()));
     }
 
     public boolean isServicePresent(final HttpServletRequest request) {
         return StringUtils.hasText(request
-            .getParameter(this.serviceParameterName));
+            .getParameter(getServiceParameterName()));
     }
 
     public boolean isServicePresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.serviceParameterName));
+            .getRequestParameterMap().get(getServiceParameterName()));
     }
 
     public boolean isWarnPresent(final HttpServletRequest request) {
         return StringUtils
-            .hasText(request.getParameter(this.warnParameterName));
+            .hasText(request.getParameter(getWarnParameterName()));
     }
 
     public boolean isWarnPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.warnParameterName));
+            .getRequestParameterMap().get(getWarnParameterName()));
     }
 
     public boolean isWarnCookiePresent(final RequestContext context) {
@@ -233,7 +233,7 @@ public class CasArgumentExtractor {
 
     public boolean isTargetServicePresent(final HttpServletRequest request) {
         return StringUtils.hasText(request
-            .getParameter(this.targetServiceParameterName));
+            .getParameter(getTargetServiceParameterName()));
     }
 
     public boolean isTicketGrantingTicketCookiePresent(
@@ -268,15 +268,6 @@ public class CasArgumentExtractor {
         final String value) {
         final HttpServletResponse response = getHttpServletResponse(context);
         this.ticketGrantingTicketCookieGenerator.addCookie(response, value);
-    }
-
-    public void setTicketParameterName(final String ticketParameterName) {
-        Assert.notNull(ticketParameterName);
-        this.ticketParameterName = ticketParameterName;
-    }
-    
-    public void setProxyGrantingTicketCallbackUrlParameterName(final String pgtUrl) {
-        this.pgtUrlParameterName = pgtUrl;
     }
     
     public String getTargetServiceParameterName() {
