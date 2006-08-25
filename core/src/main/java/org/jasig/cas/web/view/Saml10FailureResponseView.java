@@ -31,8 +31,6 @@ public class Saml10FailureResponseView extends AbstractCasView {
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
 
-        final String errorDescription = getDescriptionForError(model);
-
         final SAMLResponse samlResponse = new SAMLResponse();
         samlResponse.setRecipient(this.casArgumentExtractor.extractServiceFrom(
             request).getId());
@@ -40,7 +38,8 @@ public class Saml10FailureResponseView extends AbstractCasView {
         samlResponse.setInResponseTo(this.casArgumentExtractor
             .extractTicketFrom(request));
 
-        final SAMLException samlException = new SAMLException(errorDescription);
+        // XXX must include "Success", and not Description according to spec?
+        final SAMLException samlException = new SAMLException("Success");
 
         samlResponse.setStatus(samlException);
 
