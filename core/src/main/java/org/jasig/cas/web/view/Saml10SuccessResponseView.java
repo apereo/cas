@@ -12,9 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.web.CasArgumentExtractor;
 import org.opensaml.SAMLAssertion;
+import org.opensaml.SAMLAudienceRestrictionCondition;
 import org.opensaml.SAMLAuthenticationStatement;
 import org.opensaml.SAMLNameIdentifier;
 import org.opensaml.SAMLResponse;
@@ -36,9 +38,10 @@ public class Saml10SuccessResponseView extends AbstractCasView {
         final Authentication authentication = assertion.getChainedAuthentications()[0];
         final Date currentDate = new Date();
         final String authenticationMethod = (String) authentication.getAttributes().get("samlAuthenticationStatement::authMethod");
+        final Service service = this.casArgumentExtractor.extractServiceFrom(request);
         
         final SAMLResponse samlResponse = new SAMLResponse();
-        samlResponse.setRecipient(this.casArgumentExtractor.extractServiceFrom(request).getId());
+        samlResponse.setRecipient(service.getId());
         samlResponse.setIssueInstant(currentDate);
         samlResponse.setInResponseTo(this.casArgumentExtractor.extractTicketFrom(request));
         
@@ -47,6 +50,9 @@ public class Saml10SuccessResponseView extends AbstractCasView {
         samlAssertion.setIssuer(this.issuer);
         samlAssertion.setNotBefore(currentDate);
         samlAssertion.setNotOnOrAfter(new Date(currentDate.getTime() + this.issueLength));
+        
+        final SAMLAudienceRestrictionCondition samlAudienceRestrictionCondition = new SAMLAudienceRestrictionCondition();
+        samlAudienceRestrictionCondition.addAudience(service.getId());
         
         final SAMLAuthenticationStatement samlAuthenticationStatement = new SAMLAuthenticationStatement();
         samlAuthenticationStatement.setAuthInstant(authentication.getAuthenticatedDate());
@@ -60,6 +66,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
         samlSubject.setNameIdentifier(samlNameIdentifier);
         samlAuthenticationStatement.setSubject(samlSubject);
         samlAssertion.addStatement(samlAuthenticationStatement);
+        samlAssertion.addCondition(samlAudienceRestrictionCondition);
         samlResponse.addAssertion(samlAssertion);
         
         final String xmlResponse = samlResponse.toString();
