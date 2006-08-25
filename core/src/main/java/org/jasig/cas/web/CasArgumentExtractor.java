@@ -82,66 +82,24 @@ public class CasArgumentExtractor {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.warnCookieGenerator = warnCookieGenerator;
     }
-
-    /**
-     * According to the CAS 2.0 Protocol, the presence of the renew parameter
-     * indicates whether renew is set to true (not its acctual value)
-     * 
-     * @param request the HttpServletRequest
-     * @return true if renew is set, false otherwise.
-     */
-    public boolean isRenewPresent(final HttpServletRequest request) {
-        return StringUtils.hasText(request
-            .getParameter(this.renewParameterName));
+    
+    public String extractTicketGrantingTicketFrom(final RequestContext context) {
+        return context.getRequestScope().getString("ticketGrantingTicketId");
+    }
+    
+    public String extractServiceTicketFrom(final RequestContext context) {
+        return context.getRequestScope().getString("serviceTicketId");
     }
 
-    public boolean isRenewPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.renewParameterName));
-    }
+    public Service extractTargetService(final HttpServletRequest request) {
+        if (!isTargetServicePresent(request)) {
+            return null;
+        }
 
-    public String getRenewParameterName() {
-        return this.renewParameterName;
+        return new SimpleService(request
+            .getParameter(this.targetServiceParameterName));
     }
-
-    public boolean isGatewayPresent(final HttpServletRequest request) {
-        return StringUtils.hasText(request
-            .getParameter(this.gatewayParameterName));
-    }
-
-    public boolean isGatewayPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.gatewayParameterName));
-    }
-
-    public void setTicketParameterName(final String ticketParameterName) {
-        Assert.notNull(ticketParameterName);
-        this.ticketParameterName = ticketParameterName;
-    }
-
-    public String getTicketParameterName() {
-        return this.ticketParameterName;
-    }
-
-    public String extractTicketFrom(final HttpServletRequest request) {
-        return request.getParameter(this.ticketParameterName);
-    }
-
-    public String extractTicketFrom(final RequestContext context) {
-        return context.getExternalContext().getRequestParameterMap().get(
-            this.ticketParameterName);
-    }
-
-    public boolean isTicketPresent(final HttpServletRequest request) {
-        return StringUtils.hasText(request
-            .getParameter(this.ticketParameterName));
-    }
-
-    public boolean isTicketPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get(this.ticketParameterName));
-    }
-
+    
     /** Note this automatically cleans up jsessions */
     public Service extractServiceFrom(final HttpServletRequest request) {
         if (!isServicePresent(request)) {
@@ -162,6 +120,84 @@ public class CasArgumentExtractor {
             .getExternalContext().getRequestParameterMap().get(
                 this.serviceParameterName)));
     }
+    
+    public String extractTicketFrom(final HttpServletRequest request) {
+        return request.getParameter(this.ticketParameterName);
+    }
+
+    public String extractTicketFrom(final RequestContext context) {
+        return context.getExternalContext().getRequestParameterMap().get(
+            this.ticketParameterName);
+    }
+    
+    public String extractTicketGrantingTicketFromCookie(
+        final RequestContext context) {
+        if (!isTicketGrantingTicketCookiePresent(context)) {
+            return null;
+        }
+
+        final HttpServletRequest request = getHttpServletRequest(context);
+        return WebUtils.getCookie(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName())
+            .getValue();
+    }
+
+    public String extractTicketGrantingTicketFromCookie(
+        final HttpServletRequest request) {
+        final Cookie cookie = WebUtils.getCookie(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName());
+        if (cookie == null) {
+            return null;
+        }
+
+        return cookie.getValue();
+    }
+
+    public String extractProxyGrantingTicketCallbackUrl(
+        final HttpServletRequest request) {
+        return request.getParameter(this.pgtUrlParameterName);
+    }
+    
+    public String extractProxyGrantingTicket(final HttpServletRequest request) {
+        return request.getParameter(this.proxyGrantingTicketParameterName);
+    }
+
+    /**
+     * According to the CAS 2.0 Protocol, the presence of the renew parameter
+     * indicates whether renew is set to true (not its acctual value)
+     * 
+     * @param request the HttpServletRequest
+     * @return true if renew is set, false otherwise.
+     */
+    public boolean isRenewPresent(final HttpServletRequest request) {
+        return StringUtils.hasText(request
+            .getParameter(this.renewParameterName));
+    }
+
+    public boolean isRenewPresent(final RequestContext context) {
+        return StringUtils.hasText(context.getExternalContext()
+            .getRequestParameterMap().get(this.renewParameterName));
+    }
+
+    public boolean isGatewayPresent(final HttpServletRequest request) {
+        return StringUtils.hasText(request
+            .getParameter(this.gatewayParameterName));
+    }
+
+    public boolean isGatewayPresent(final RequestContext context) {
+        return StringUtils.hasText(context.getExternalContext()
+            .getRequestParameterMap().get(this.gatewayParameterName));
+    }
+
+    public boolean isTicketPresent(final HttpServletRequest request) {
+        return StringUtils.hasText(request
+            .getParameter(this.ticketParameterName));
+    }
+
+    public boolean isTicketPresent(final RequestContext context) {
+        return StringUtils.hasText(context.getExternalContext()
+            .getRequestParameterMap().get(this.ticketParameterName));
+    }
 
     public boolean isServicePresent(final HttpServletRequest request) {
         return StringUtils.hasText(request
@@ -173,17 +209,9 @@ public class CasArgumentExtractor {
             .getRequestParameterMap().get(this.serviceParameterName));
     }
 
-    public String getServiceParameterName() {
-        return this.serviceParameterName;
-    }
-
     public boolean isWarnPresent(final HttpServletRequest request) {
         return StringUtils
             .hasText(request.getParameter(this.warnParameterName));
-    }
-
-    public String getWarnParameterName() {
-        return this.warnParameterName;
     }
 
     public boolean isWarnPresent(final RequestContext context) {
@@ -203,6 +231,18 @@ public class CasArgumentExtractor {
         return Boolean.valueOf(cookie.getValue()).booleanValue();
     }
 
+    public boolean isTargetServicePresent(final HttpServletRequest request) {
+        return StringUtils.hasText(request
+            .getParameter(this.targetServiceParameterName));
+    }
+
+    public boolean isTicketGrantingTicketCookiePresent(
+        final RequestContext context) {
+        final HttpServletRequest request = getHttpServletRequest(context);
+        return WebUtils.getCookie(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName()) != null;
+    }
+    
     public void putWarnCookieIfRequestParameterPresent(
         final RequestContext context) {
         final HttpServletResponse response = getHttpServletResponse(context);
@@ -219,54 +259,9 @@ public class CasArgumentExtractor {
         context.getRequestScope().put("ticketGrantingTicketId", value);
     }
 
-    public String getTicketGrantingTicketFrom(final RequestContext context) {
-        return context.getRequestScope().getString("ticketGrantingTicketId");
-    }
-
     public void putServiceTicketIn(final RequestContext context,
         final String value) {
         context.getRequestScope().put("serviceTicketId", value);
-    }
-
-    public String getServiceTicketFrom(final RequestContext context) {
-        return context.getRequestScope().getString("serviceTicketId");
-    }
-
-    public Service extractTargetService(final HttpServletRequest request) {
-        if (!isTargetServicePresent(request)) {
-            return null;
-        }
-
-        return new SimpleService(request
-            .getParameter(this.targetServiceParameterName));
-    }
-
-    public boolean isTargetServicePresent(final HttpServletRequest request) {
-        return StringUtils.hasText(request
-            .getParameter(this.targetServiceParameterName));
-    }
-
-    public String getTargetServiceParameterName() {
-        return this.targetServiceParameterName;
-    }
-
-    public boolean isTicketGrantingTicketCookiePresent(
-        final RequestContext context) {
-        final HttpServletRequest request = getHttpServletRequest(context);
-        return WebUtils.getCookie(request,
-            this.ticketGrantingTicketCookieGenerator.getCookieName()) != null;
-    }
-
-    public String extractTicketGrantingTicketFromCookie(
-        final RequestContext context) {
-        if (!isTicketGrantingTicketCookiePresent(context)) {
-            return null;
-        }
-
-        final HttpServletRequest request = getHttpServletRequest(context);
-        return WebUtils.getCookie(request,
-            this.ticketGrantingTicketCookieGenerator.getCookieName())
-            .getValue();
     }
 
     public void putTicketGrantingTicketInCookie(final RequestContext context,
@@ -275,32 +270,45 @@ public class CasArgumentExtractor {
         this.ticketGrantingTicketCookieGenerator.addCookie(response, value);
     }
 
-    public String extractTicketGrantingTicketFromCookie(
-        final HttpServletRequest request) {
-        final Cookie cookie = WebUtils.getCookie(request,
-            this.ticketGrantingTicketCookieGenerator.getCookieName());
-        if (cookie == null) {
-            return null;
-        }
-
-        return cookie.getValue();
+    public void setTicketParameterName(final String ticketParameterName) {
+        Assert.notNull(ticketParameterName);
+        this.ticketParameterName = ticketParameterName;
     }
-
-    public String extractProxyGrantingTicketCallbackUrl(
-        final HttpServletRequest request) {
-        return request.getParameter(this.pgtUrlParameterName);
+    
+    public void setProxyGrantingTicketCallbackUrlParameterName(final String pgtUrl) {
+        this.pgtUrlParameterName = pgtUrl;
     }
-
-    public String getProxyGrantingTicketCallbackUrlParameterName() {
-        return this.pgtUrlParameterName;
-    }
-
-    public String extractProxyGrantingTicket(final HttpServletRequest request) {
-        return request.getParameter(this.proxyGrantingTicketParameterName);
+    
+    public String getTargetServiceParameterName() {
+        return this.targetServiceParameterName;
     }
 
     public String getProxyGrantingTicketParameterName() {
         return this.proxyGrantingTicketParameterName;
+    }
+    
+    public String getServiceParameterName() {
+        return this.serviceParameterName;
+    }
+
+    public String getTicketParameterName() {
+        return this.ticketParameterName;
+    }
+    
+    public String getGatewayParameterName() {
+        return this.gatewayParameterName;
+    }
+
+    public String getRenewParameterName() {
+        return this.renewParameterName;
+    }
+    
+    public String getProxyGrantingTicketCallbackUrlParameterName() {
+        return this.pgtUrlParameterName;
+    }
+    
+    public String getWarnParameterName() {
+        return this.warnParameterName;
     }
 
     public final HttpServletRequest getHttpServletRequest(

@@ -25,7 +25,7 @@ public final class GenerateServiceTicketAction extends AbstractLoginAction {
 
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketFromRequest = getCasArgumentExtractor()
-            .getTicketGrantingTicketFrom(context);
+            .extractTicketGrantingTicketFrom(context);
 
         try {
             final String serviceTicketId = this.centralAuthenticationService

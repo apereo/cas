@@ -61,7 +61,7 @@ public final class GenerateServiceTicketActionTests extends
         
         this.action.execute(context);
         
-        assertNotNull(this.casArgumentExtractor.getServiceTicketFrom(context));
+        assertNotNull(this.casArgumentExtractor.extractServiceTicketFrom(context));
     }
     
     public void testTicketGrantingTicketFromRequest() throws Exception {
@@ -73,7 +73,7 @@ public final class GenerateServiceTicketActionTests extends
         
         this.action.execute(context);
         
-        assertNotNull(this.casArgumentExtractor.getServiceTicketFrom(context));
+        assertNotNull(this.casArgumentExtractor.extractServiceTicketFrom(context));
     }
     
     public void testTicketGrantingTicketNoTgt() throws Exception {

@@ -28,7 +28,7 @@ public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
         final String ticketGrantingTicketId = getCasArgumentExtractor()
             .extractTicketGrantingTicketFromCookie(context);
         final String ticketGrantingTicketFromRequest = getCasArgumentExtractor()
-            .getTicketGrantingTicketFrom(context);
+            .extractTicketGrantingTicketFrom(context);
 
         if (ticketGrantingTicketFromRequest == null) {
             return success();
