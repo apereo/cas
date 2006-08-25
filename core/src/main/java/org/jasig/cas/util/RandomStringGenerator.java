@@ -28,4 +28,6 @@ public interface RandomStringGenerator {
      * @return the new random string
      */
     String getNewString();
+    
+    byte[] getNewStringAsBytes();
 }
