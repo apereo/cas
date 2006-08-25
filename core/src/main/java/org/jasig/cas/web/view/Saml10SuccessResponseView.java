@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
  * the SAML 1.1 specification.
  * <p>
  * If an AttributePrincipal is supplied, then the assertion will include the
- * attributes from it (assuming a String key/value pair). The only
+ * attributes from it (assuming a String key/Object value pair). The only
  * Authentication attribute it will look at is the authMethod (if supplied).
  * <p>
  * Note that this class will currently not handle proxy authentication.
@@ -47,12 +47,16 @@ import org.springframework.util.Assert;
 public class Saml10SuccessResponseView extends AbstractCasView implements
     InitializingBean {
 
+    /** Namespace for custom attributes. */
     private static final String NAMESPACE = "http://www.ja-sig.org/cas/";
 
+    /** The issuer, generally the hostname. */
     private String issuer;
 
+    /** The amount of time in milliseconds this is valid for. */
     private long issueLength = 30000;
 
+    /** Instance of strategy for extracting arguments. */
     private CasArgumentExtractor casArgumentExtractor;
 
     protected void renderMergedOutputModel(final Map model,
@@ -111,10 +115,16 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
                 final SAMLAttribute attribute = new SAMLAttribute();
                 attribute.setName((String) key);
-                final Collection c = new ArrayList();
-                c.add(value);
-                attribute.setValues(c);
                 attribute.setNamespace(NAMESPACE);
+
+                if (value instanceof Collection) {
+                    attribute.setValues((Collection) value);
+                } else {
+                    final Collection c = new ArrayList();
+                    c.add(value);
+                    attribute.setValues(c);                    
+                }
+
 
                 attributeStatement.addAttribute(attribute);
             }
