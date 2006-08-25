@@ -22,16 +22,6 @@
 		</dependency>
 		
 		<!-- for SAML views -->
-		<dependency>
-			<groupId>opensaml</groupId>
-			<artifactId>opensaml</artifactId>
-			<version>1.1</version>
-			<type>jar</type>
-			<url>http://www.opensaml.org</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
 		
 		<!--  JBOSS CACHE DEPENDENCIES -->
 		<dependency>

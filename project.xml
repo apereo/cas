@@ -621,6 +621,17 @@
 			<type>plugin</type>
 		</dependency>
 		
+		<dependency>
+			<groupId>opensaml</groupId>
+			<artifactId>opensaml</artifactId>
+			<version>1.1b</version>
+			<type>jar</type>
+			<url>http://www.opensaml.org</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
