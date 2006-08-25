@@ -48,11 +48,18 @@ public final class DefaultRandomStringGenerator implements
     }
 
     public synchronized String getNewString() {
+        final byte[] random = getNewStringAsBytes();
+
+        return convertBytesToString(random);
+    }
+
+
+    public synchronized byte[] getNewStringAsBytes() {
         final byte[] random = new byte[this.maximumRandomLength];
 
         this.randomizer.nextBytes(random);
-
-        return convertBytesToString(random);
+        
+        return random;
     }
 
     private String convertBytesToString(final byte[] random) {
