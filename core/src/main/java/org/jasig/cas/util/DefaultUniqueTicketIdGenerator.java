@@ -10,7 +10,7 @@ package org.jasig.cas.util;
  * utilizes a DefaultLongNumericGeneraor and a DefaultRandomStringGenerator to
  * construct the ticket id.
  * <p>
- * Tickets are of the forma [PREFIX]-[SEQUENCE NUMBER]-[RANDOM STRING]
+ * Tickets are of the form [PREFIX]-[SEQUENCE NUMBER]-[RANDOM STRING]-[SUFFIX]
  * </p>
  * 
  * @author Scott Battaglia
