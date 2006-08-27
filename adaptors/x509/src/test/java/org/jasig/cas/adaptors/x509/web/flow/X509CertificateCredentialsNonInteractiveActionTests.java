@@ -18,7 +18,8 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.web.CasArgumentExtractor;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -34,7 +35,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
     
     protected void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
-        this.action.setCasArgumentExtractor(new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator()));
+        this.action.setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
 
@@ -56,6 +57,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         centralAuthenticationService.afterPropertiesSet();
         
         this.action.setCentralAuthenticationService(centralAuthenticationService);
+        this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());
         this.action.afterPropertiesSet();
     }
     

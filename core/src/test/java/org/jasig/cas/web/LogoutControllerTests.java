@@ -46,7 +46,6 @@ public class LogoutControllerTests extends
         this.logoutController.setLogoutView("test");
         this.logoutController.setWarnCookieGenerator(this.warnCookieGenerator);
         this.logoutController.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
-        this.logoutController.setCasArgumentExtractor(new CasArgumentExtractor(this.ticketGrantingTicketCookieGenerator, this.warnCookieGenerator));
         this.logoutController.afterPropertiesSet();
     }
 
