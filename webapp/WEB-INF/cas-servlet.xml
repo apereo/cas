@@ -146,7 +146,7 @@
 			name="proxyHandler"
 			ref="proxy20Handler" />
 		<property
-			name="casArgumentExtractor"
+			name="argumentExtractor"
 			ref="casArgumentExtractor" />
 	</bean>
 
@@ -163,7 +163,7 @@
 			name="proxyHandler"
 			ref="proxy20Handler" />
 		<property
-			name="casArgumentExtractor"
+			name="argumentExtractor"
 			ref="casArgumentExtractor" />
 	</bean>
 
@@ -186,7 +186,7 @@
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
 		<property
-			name="casArgumentExtractor"
+			name="argumentExtractor"
 			ref="casArgumentExtractor" />
 	</bean>
 
@@ -196,9 +196,6 @@
 		<property
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
-		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
 	</bean>
 
 	<bean
@@ -213,9 +210,6 @@
 		<property 
 			name="warnCookieGenerator"
 			ref="warnCookieGenerator" />
-		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
 		<property
 			name="ticketGrantingTicketCookieGenerator"
 			ref="ticketGrantingTicketCookieGenerator" />
@@ -271,11 +265,12 @@ uncomment this to allow access to web service
 	<bean
 		id="automaticCookiePathSetterAction"
 		class="org.jasig.cas.web.flow.AutomaticCookiePathSetterAction">
-		<property name="warnCookieGenerator" ref="warnCookieGenerator" />
-		<property name="ticketGrantingTicketCookieGenerator" ref="ticketGrantingTicketCookieGenerator" />
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="warnCookieGenerator"
+			ref="warnCookieGenerator" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 	
 	<bean
@@ -285,16 +280,25 @@ uncomment this to allow access to web service
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="warnCookieGenerator"
+			ref="warnCookieGenerator" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 		
 	<bean
 		id="gatewayRequestCheckAction"
 		class="org.jasig.cas.web.flow.GatewayRequestCheckAction">
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 	
 	<bean
@@ -304,24 +308,33 @@ uncomment this to allow access to web service
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 	
 	<bean
 		id="hasServiceCheckAction"
 		class="org.jasig.cas.web.flow.HasServiceCheckAction">
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 		
 	<bean
 		id="renewRequestCheckAction"
 		class="org.jasig.cas.web.flow.RenewRequestCheckAction">
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 
 	<bean
@@ -331,24 +344,36 @@ uncomment this to allow access to web service
 			name="centralAuthenticationService"
 			ref="centralAuthenticationService" />
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 		
 	<bean
 		id="ticketGrantingTicketExistsAction"
 		class="org.jasig.cas.web.flow.TicketGrantingTicketExistsAction">
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 		
 	<bean
 		id="warnAction"
 		class="org.jasig.cas.web.flow.WarnAction">
 		<property
-			name="casArgumentExtractor"
-			ref="casArgumentExtractor" />
+			name="argumentExtractors"
+			ref="argumentExtractors" />
+		<property
+			name="warnCookieGenerator"
+			ref="warnCookieGenerator" />
+		<property
+			name="ticketGrantingTicketCookieGenerator"
+			ref="ticketGrantingTicketCookieGenerator" />
 	</bean>
 
 <!--
@@ -360,15 +385,20 @@ uncomment this to allow access to web service
  
  	<bean
  		id="casArgumentExtractor"
- 		class="org.jasig.cas.web.CasArgumentExtractor">
- 		<constructor-arg
- 			index="0"
- 			ref="warnCookieGenerator" />
- 		<constructor-arg
- 			index="1"
- 			ref="ticketGrantingTicketCookieGenerator" />
+ 		class="org.jasig.cas.web.support.CasArgumentExtractor" />
+ 	
+ 	<bean
+ 		id="samlArgumentExtractor"
+ 		class="org.jasig.cas.web.support.SamlArgumentExtractor" />
+ 		
+ 	<bean id="argumentExtractors" class="java.util.ArrayList">
+ 		<constructor-arg index="0">
+ 			<list>
+ 				<ref local="casArgumentExtractor" />
+ 				<ref local="samlArgumentExtractor" />
+ 			</list>
+ 		</constructor-arg>
  	</bean>
- 
 	
 	<bean id="warnCookieGenerator" class="org.springframework.web.util.CookieGenerator">
 		<property name="cookieSecure" value="true" />
