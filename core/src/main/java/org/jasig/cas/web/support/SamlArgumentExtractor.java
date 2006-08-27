@@ -50,6 +50,7 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
             buffer.append(serviceTicket);
             buffer.append("&");
             buffer.append(getServiceParameterName());
+            buffer.append("=");
 
             try {
                 buffer.append(URLEncoder.encode(service, "UTF-8"));

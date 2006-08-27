@@ -24,6 +24,7 @@ import org.opensaml.SAMLAttribute;
 import org.opensaml.SAMLAttributeStatement;
 import org.opensaml.SAMLAudienceRestrictionCondition;
 import org.opensaml.SAMLAuthenticationStatement;
+import org.opensaml.SAMLException;
 import org.opensaml.SAMLNameIdentifier;
 import org.opensaml.SAMLResponse;
 import org.opensaml.SAMLSubject;
@@ -72,11 +73,11 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         final Service service = this.samlArgumentExtractor
             .extractService(request);
 
-        final SAMLResponse samlResponse = new SAMLResponse();
-        samlResponse.setRecipient(service.getId());
+        final SAMLResponse samlResponse = new SAMLResponse(
+            this.samlArgumentExtractor.extractTicketArtifact(request), service
+                .getId(), new ArrayList(), new SAMLException("Success"));
+
         samlResponse.setIssueInstant(currentDate);
-        samlResponse.setInResponseTo(this.samlArgumentExtractor
-            .extractTicketArtifact(request));
 
         final SAMLAssertion samlAssertion = new SAMLAssertion();
         samlAssertion.setIssueInstant(currentDate);
@@ -122,9 +123,8 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
                 } else {
                     final Collection c = new ArrayList();
                     c.add(value);
-                    attribute.setValues(c);                    
+                    attribute.setValues(c);
                 }
-
 
                 attributeStatement.addAttribute(attribute);
             }
@@ -141,6 +141,9 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
         final String xmlResponse = samlResponse.toString();
 
+        response.getWriter()
+            .print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        response.setContentType("text/xml");
         response.getWriter().print(xmlResponse);
     }
 
