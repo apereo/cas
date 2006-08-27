@@ -7,8 +7,6 @@ package org.jasig.cas.adaptors.x509.web.flow;
 
 import java.security.cert.X509Certificate;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
@@ -30,9 +28,8 @@ public final class X509CertificateCredentialsNonInteractiveAction extends
 
     protected Credentials constructCredentialsFromRequest(
         final RequestContext context) {
-        final HttpServletRequest request = getCasArgumentExtractor().getHttpServletRequest(context);
-        final X509Certificate[] certificates = (X509Certificate[]) request
-            .getAttribute(CERTIFICATE_REQUEST_ATTRIBUTE);
+        final X509Certificate[] certificates = (X509Certificate[]) context.getExternalContext().getRequestMap()
+            .get(CERTIFICATE_REQUEST_ATTRIBUTE);
 
         if (certificates == null || certificates.length == 0) {
             if (logger.isDebugEnabled()) {
