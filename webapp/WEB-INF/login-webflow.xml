@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
+<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW//EN"
 	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
 
 <flow start-state="automaticCookiePathSetter">
@@ -101,5 +101,5 @@
 		The "redirect" end state allows CAS to properly end the workflow while still redirecting
 		the user back to the service required.
 	-->
-	<end-state id="redirect" view="externalRedirect:${externalContext.requestParameterMap['service']}${requestScope.serviceTicketId == null ? '' : (externalContext.requestParameterMap['service'].indexOf('?') != -1 ? '&amp;' : '?') + 'ticket=' + requestScope.serviceTicketId}" />
+	<end-state id="redirect" view="bean:dynamicRedirectViewSelector" />
 </flow>

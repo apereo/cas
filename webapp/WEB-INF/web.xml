@@ -124,6 +124,11 @@
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/serviceValidate</url-pattern>
 	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
+		<url-pattern>/samlValidate</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>

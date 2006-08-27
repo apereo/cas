@@ -90,6 +90,10 @@
 					key="/proxyValidate">
 					proxyValidateController
 				</prop>
+				<prop
+					key="/samlValidate">
+					samlValidateController
+				</prop>
 				<!--
 				uncomment this to enable remote access to web service 
 				<prop
@@ -165,6 +169,29 @@
 		<property
 			name="argumentExtractor"
 			ref="casArgumentExtractor" />
+	</bean>
+	
+	<bean
+		id="samlValidateController"
+		class="org.jasig.cas.web.ServiceValidateController">
+		<property
+			name="validationSpecificationClass"
+			value="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification" />
+		<property
+			name="centralAuthenticationService"
+			ref="centralAuthenticationService" />
+		<property
+			name="proxyHandler"
+			ref="proxy20Handler" />
+		<property
+			name="argumentExtractor"
+			ref="samlArgumentExtractor" />
+		<property
+			name="successView"
+			value="casSamlServiceSuccessView" />
+		<property
+			name="failureView"
+			value="casSamlServiceFailureView" />
 	</bean>
 
 	<bean
@@ -412,5 +439,11 @@ uncomment this to allow access to web service
 		<property name="cookieMaxAge" value="-1" />
 		<property name="cookieName" value="CASTGC" />
 		<property name="cookiePath" value="/cas" />
+	</bean>
+	
+	<bean id="dynamicRedirectViewSelector"
+		class="org.jasig.cas.web.flow.DynamicRedirectViewSelector">
+		<constructor-arg index="0"
+			ref="argumentExtractors" />
 	</bean>
 </beans>
