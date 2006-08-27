@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
@@ -22,8 +24,9 @@ import org.springframework.webflow.RequestContext;
 public final class GatewayRequestCheckAction extends AbstractLoginAction {
 
     protected Event doExecute(final RequestContext context) {
-        if (getCasArgumentExtractor().isGatewayPresent(context)
-            && getCasArgumentExtractor().isServicePresent(context)) {
+        final Service service = WebUtils.getService(getArgumentExtractors(), WebUtils.getHttpServletRequest(context));
+        if (isGatewayPresent(context)
+            && service != null) {
             return success();
         }
 

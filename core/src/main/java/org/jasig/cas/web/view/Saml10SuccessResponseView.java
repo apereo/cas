@@ -18,7 +18,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.AttributePrincipal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.web.CasArgumentExtractor;
+import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;
 import org.opensaml.SAMLAttributeStatement;
@@ -57,7 +57,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
     private long issueLength = 30000;
 
     /** Instance of strategy for extracting arguments. */
-    private CasArgumentExtractor casArgumentExtractor;
+    private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
 
     protected void renderMergedOutputModel(final Map model,
         final HttpServletRequest request, final HttpServletResponse response)
@@ -69,14 +69,14 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         final Date currentDate = new Date();
         final String authenticationMethod = (String) authentication
             .getAttributes().get("samlAuthenticationStatement::authMethod");
-        final Service service = this.casArgumentExtractor
-            .extractServiceFrom(request);
+        final Service service = this.samlArgumentExtractor
+            .extractService(request);
 
         final SAMLResponse samlResponse = new SAMLResponse();
         samlResponse.setRecipient(service.getId());
         samlResponse.setIssueInstant(currentDate);
-        samlResponse.setInResponseTo(this.casArgumentExtractor
-            .extractTicketFrom(request));
+        samlResponse.setInResponseTo(this.samlArgumentExtractor
+            .extractTicketArtifact(request));
 
         final SAMLAssertion samlAssertion = new SAMLAssertion();
         samlAssertion.setIssueInstant(currentDate);
@@ -144,14 +144,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         response.getWriter().print(xmlResponse);
     }
 
-    public void setCasArgumentExtractor(
-        final CasArgumentExtractor casArgumentExtractor) {
-        this.casArgumentExtractor = casArgumentExtractor;
-    }
-
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.casArgumentExtractor,
-            "casArgumentExtractor cannot be null.");
         Assert.notNull(this.issuer, "issuer cannot be null.");
     }
 

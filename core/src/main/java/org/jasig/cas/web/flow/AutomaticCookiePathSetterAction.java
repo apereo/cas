@@ -7,11 +7,13 @@ package org.jasig.cas.web.flow;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.action.AbstractAction;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.
@@ -23,7 +25,7 @@ import org.springframework.webflow.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.5
  */
-public final class AutomaticCookiePathSetterAction extends AbstractLoginAction
+public final class AutomaticCookiePathSetterAction extends AbstractAction
     implements InitializingBean {
 
     /** CookieGenerator for the Warnings. */
@@ -37,7 +39,7 @@ public final class AutomaticCookiePathSetterAction extends AbstractLoginAction
 
     protected Event doExecute(final RequestContext context) throws Exception {
         if (!this.pathPopulated) {
-            final HttpServletRequest request = getCasArgumentExtractor()
+            final HttpServletRequest request = WebUtils
                 .getHttpServletRequest(context);
 
             logger.info("Setting ContextPath for cookies to: "

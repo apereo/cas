@@ -3,7 +3,7 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.util;
+package org.jasig.cas.web.support;
 
 import java.math.BigInteger;
 import java.util.HashMap;

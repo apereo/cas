@@ -6,6 +6,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
@@ -25,10 +26,9 @@ public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
     private CentralAuthenticationService centralAuthenticationService;
 
     protected Event doExecute(final RequestContext context) {
-        final String ticketGrantingTicketId = getCasArgumentExtractor()
-            .extractTicketGrantingTicketFromCookie(context);
-        final String ticketGrantingTicketFromRequest = getCasArgumentExtractor()
-            .extractTicketGrantingTicketFrom(context);
+        final String ticketGrantingTicketId = 
+            extractTicketGrantingTicketFromCookie(context);
+        final String ticketGrantingTicketFromRequest = WebUtils.getTicketGrantingTicketFromRequestScope(context);
 
         if (ticketGrantingTicketFromRequest == null) {
             return success();
@@ -39,8 +39,8 @@ public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
                 .destroyTicketGrantingTicket(ticketGrantingTicketId);
         }
 
-        getCasArgumentExtractor().putTicketGrantingTicketInCookie(context,
-            ticketGrantingTicketFromRequest);
+        getTicketGrantingTicketCookieGenerator().addCookie(WebUtils
+            .getHttpServletResponse(context), ticketGrantingTicketFromRequest);
 
         return success();
     }

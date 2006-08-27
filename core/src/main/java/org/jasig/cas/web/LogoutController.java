@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,8 +48,6 @@ public final class LogoutController extends AbstractController implements
      */
     private boolean followServiceRedirects;
 
-    private CasArgumentExtractor casArgumentExtractor;
-
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService must be set on "
@@ -59,17 +57,14 @@ public final class LogoutController extends AbstractController implements
         Assert.notNull(this.warnCookieGenerator,
             "warnCookieGenerator cannot be null");
         Assert.hasText(this.logoutView, "logoutView must have text.");
-        Assert.notNull(this.casArgumentExtractor,
-            "casArgumentExtractor cannot be null.");
     }
 
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final String ticketGrantingTicketId = this.casArgumentExtractor
-            .extractTicketGrantingTicketFromCookie(request);
-        final Service service = this.casArgumentExtractor
-            .extractServiceFrom(request);
+        final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName());
+        final String service = request.getParameter("service");
 
         if (ticketGrantingTicketId != null) {
             this.centralAuthenticationService
@@ -80,7 +75,7 @@ public final class LogoutController extends AbstractController implements
         }
 
         if (this.followServiceRedirects && service != null) {
-            return new ModelAndView(new RedirectView(service.getId()));
+            return new ModelAndView(new RedirectView(service));
         }
 
         return new ModelAndView(this.logoutView);
@@ -110,10 +105,5 @@ public final class LogoutController extends AbstractController implements
 
     public void setLogoutView(final String logoutView) {
         this.logoutView = logoutView;
-    }
-
-    public void setCasArgumentExtractor(
-        final CasArgumentExtractor casArgumentExtractor) {
-        this.casArgumentExtractor = casArgumentExtractor;
     }
 }
