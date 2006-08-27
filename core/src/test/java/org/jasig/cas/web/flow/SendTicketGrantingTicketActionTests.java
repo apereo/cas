@@ -8,7 +8,9 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.web.CasArgumentExtractor;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -19,27 +21,21 @@ import org.springframework.webflow.test.MockRequestContext;
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
     
-    private CookieGenerator warnCookieGenerator;
-    
     private CookieGenerator ticketGrantingTicketCookieGenerator;
     
     private MockRequestContext context;
     
-    private CasArgumentExtractor casArgumentExtractor;
-
     protected void onSetUp() throws Exception {
         this.action = new SendTicketGrantingTicketAction();
         
-        this.warnCookieGenerator = new CookieGenerator();
         this.ticketGrantingTicketCookieGenerator = new CookieGenerator();
         
         this.ticketGrantingTicketCookieGenerator.setCookieName("TGT");
-        this.warnCookieGenerator.setCookieName("WARN");
         
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-        this.casArgumentExtractor = new CasArgumentExtractor(this.ticketGrantingTicketCookieGenerator, this.warnCookieGenerator);
         
-        this.action.setCasArgumentExtractor(this.casArgumentExtractor);
+        this.action.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
+        this.action.setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
         
         this.action.afterPropertiesSet();
         
@@ -56,7 +52,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final String TICKET_VALUE = "test";
         
-        this.casArgumentExtractor.putTicketGrantingTicketIn(this.context, TICKET_VALUE);
+        WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), response));
         
         assertEquals("success", this.action.execute(this.context).getId());
@@ -68,7 +64,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final String TICKET_VALUE = "test";
         request.setCookies(new Cookie[] {new Cookie("TGT", "test5")});
-        this.casArgumentExtractor.putTicketGrantingTicketIn(this.context, TICKET_VALUE);
+        WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         
         assertEquals("success", this.action.execute(this.context).getId());

@@ -15,11 +15,11 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.CookieGenerator;
 
 /**
  * @author Scott Battaglia
@@ -35,8 +35,6 @@ public class ServiceValidateControllerTests extends
     
     private ServiceValidateController serviceValidateController;
     
-    private CasArgumentExtractor casArgumentExtractor;
-
     protected void onSetUp() throws Exception {
         StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
@@ -48,8 +46,7 @@ public class ServiceValidateControllerTests extends
         proxyHandler.afterPropertiesSet();
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
-        this.casArgumentExtractor = new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator());
-        this.serviceValidateController.setCasArgumentExtractor(this.casArgumentExtractor);
+        this.serviceValidateController.setArgumentExtractor(new CasArgumentExtractor());
         this.serviceValidateController.afterPropertiesSet();
     }
 
@@ -63,10 +60,10 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
+        request.addParameter("service", TestUtils.getService()
             .getId());
-        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId2);
-        request.addParameter(this.casArgumentExtractor.getRenewParameterName(), "true");
+        request.addParameter("ticket", sId2);
+        request.addParameter("renew", "true");
 
         return request;
     }
@@ -94,9 +91,9 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
+        request.addParameter("service", TestUtils.getService()
             .getId());
-        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
+        request.addParameter("ticket", sId);
 
         assertEquals(CONST_SUCCESS_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -137,9 +134,9 @@ public class ServiceValidateControllerTests extends
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
+        request.addParameter("service", TestUtils.getService()
             .getId());
-        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
+        request.addParameter("ticket", sId);
 
         assertEquals(CONST_FAILURE_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -155,11 +152,11 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
+        request.addParameter("service", TestUtils.getService()
             .getId());
-        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
+        request.addParameter("ticket", sId);
         request
-            .addParameter(this.casArgumentExtractor.getProxyGrantingTicketCallbackUrlParameterName(), "https://www.acs.rutgers.edu");
+            .addParameter("pgtUrl", "https://www.acs.rutgers.edu");
 
         assertEquals(CONST_SUCCESS_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -175,10 +172,10 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
+        request.addParameter("service", TestUtils.getService()
             .getId());
-        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
-        request.addParameter(this.casArgumentExtractor.getProxyGrantingTicketCallbackUrlParameterName(), "http://www.acs.rutgers.edu");
+        request.addParameter("ticket", sId);
+        request.addParameter("pgtUrl", "http://www.acs.rutgers.edu");
 
         final ModelAndView modelAndView = this.serviceValidateController
             .handleRequestInternal(request, new MockHttpServletResponse());
@@ -196,10 +193,10 @@ public class ServiceValidateControllerTests extends
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(this.casArgumentExtractor.getServiceParameterName(), TestUtils.getService()
+        request.addParameter("service", TestUtils.getService()
             .getId());
-        request.addParameter(this.casArgumentExtractor.getTicketParameterName(), sId);
-        request.addParameter(this.casArgumentExtractor.getProxyGrantingTicketCallbackUrlParameterName(), "duh");
+        request.addParameter("ticket", sId);
+        request.addParameter("pgtUrl", "duh");
 
         final ModelAndView modelAndView = this.serviceValidateController
             .handleRequestInternal(request, new MockHttpServletResponse());

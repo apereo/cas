@@ -5,7 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.web.CasArgumentExtractor;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -25,10 +26,13 @@ public class RenewRequestCheckActionTests extends TestCase {
     private RenewRequestCheckAction action = new RenewRequestCheckAction();
 
     protected void setUp() throws Exception {
-        this.action.setCasArgumentExtractor(new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator()));
+        this.action
+            .setTicketGrantingTicketCookieGenerator(new CookieGenerator());
+        this.action
+            .setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
         this.action.afterPropertiesSet();
     }
-    
+
     public void testRenewIsTrue() {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();

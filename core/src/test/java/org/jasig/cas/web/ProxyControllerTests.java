@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.util.CookieGenerator;
 
 /**
  * @author Scott Battaglia
@@ -26,14 +25,10 @@ public class ProxyControllerTests extends
 
     private ProxyController proxyController;
 
-    private CasArgumentExtractor casArgumentExtractor;
-
     protected void onSetUp() throws Exception {
         this.proxyController = new ProxyController();
         this.proxyController
             .setCentralAuthenticationService(getCentralAuthenticationService());
-        this.casArgumentExtractor = new CasArgumentExtractor(new CookieGenerator(), new CookieGenerator());
-        this.proxyController.setCasArgumentExtractor(this.casArgumentExtractor);
         this.proxyController.afterPropertiesSet();
 
         StaticApplicationContext context = new StaticApplicationContext();
@@ -51,9 +46,8 @@ public class ProxyControllerTests extends
 
     public void testNonExistantPGT() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(this.casArgumentExtractor.getProxyGrantingTicketParameterName(), "TestService");
-        request.addParameter(this.casArgumentExtractor
-            .getTargetServiceParameterName(), "service");
+        request.addParameter("pgt", "TestService");
+        request.addParameter("targetService", "service");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(
@@ -67,9 +61,9 @@ public class ProxyControllerTests extends
         getTicketRegistry().addTicket(ticket);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request
-            .addParameter(this.casArgumentExtractor.getProxyGrantingTicketParameterName(), ticket.getId());
-        request.addParameter(this.casArgumentExtractor
-            .getTargetServiceParameterName(), "service");
+            .addParameter("pgt", ticket.getId());
+        request.addParameter(
+            "targetService", "service");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(

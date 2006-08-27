@@ -3,10 +3,11 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.util;
+package org.jasig.cas.web.support;
 
 import java.math.BigInteger;
 
+import org.jasig.cas.web.support.ThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
