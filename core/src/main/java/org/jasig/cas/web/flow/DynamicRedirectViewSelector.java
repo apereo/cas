@@ -6,6 +6,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.web.support.ArgumentExtractor;
+import org.springframework.util.Assert;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.ViewSelection;
 import org.springframework.webflow.ViewSelector;
@@ -23,6 +24,7 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
     private final ArgumentExtractor[] argumentExtractors;
 
     public DynamicRedirectViewSelector(final ArgumentExtractor[] argumentExtractors) {
+        Assert.notNull(argumentExtractors, "argumentExtractors cannot be null.");
         this.argumentExtractors = argumentExtractors;
     }
 
