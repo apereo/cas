@@ -5,8 +5,14 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.web.CasArgumentExtractor;
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
 
 /**
@@ -16,24 +22,52 @@ import org.springframework.webflow.action.AbstractAction;
  */
 public abstract class AbstractLoginAction extends AbstractAction {
 
-    private CasArgumentExtractor casArgumentExtractor;
+    private ArgumentExtractor[] argumentExtractors;
 
-    protected final CasArgumentExtractor getCasArgumentExtractor() {
-        return this.casArgumentExtractor;
-    }
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected void initActionInternal() throws Exception {
         // nothing to do
     }
 
-    public final void setCasArgumentExtractor(
-        final CasArgumentExtractor casArgumentExtractor) {
-        this.casArgumentExtractor = casArgumentExtractor;
+    public final void setArgumentExtractors(
+        final ArgumentExtractor[] argumentExtractors) {
+        this.argumentExtractors = argumentExtractors;
+    }
+    
+    protected final ArgumentExtractor[] getArgumentExtractors() {
+        return this.argumentExtractors;
+    }
+    
+    public final void setTicketGrantingTicketCookieGenerator(final CookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
+    }
+    
+    protected final CookieGenerator getTicketGrantingTicketCookieGenerator() {
+        return this.ticketGrantingTicketCookieGenerator;
     }
 
     protected final void initAction() throws Exception {
-        Assert.notNull(this.casArgumentExtractor,
-            "casArgumentExtractor cannot be null.");
+        Assert.notNull(this.argumentExtractors,
+            "argumentExtractors cannot be null.");
+        Assert.notNull(this.ticketGrantingTicketCookieGenerator, "ticketGrantingTicketCookieGenerator cannot be null.");
         initActionInternal();
+    }
+
+    protected final boolean isGatewayPresent(final RequestContext context) {
+        return StringUtils.hasText(context.getExternalContext()
+            .getRequestParameterMap().get("gateway"));
+    }
+    
+    protected final boolean isRenewPresent(final RequestContext context) {
+        return StringUtils.hasText(context.getRequestParameters().get("renew"));
+    }
+
+    protected final String extractTicketGrantingTicketFromCookie(
+        final RequestContext context) {
+        final HttpServletRequest request = WebUtils
+            .getHttpServletRequest(context);
+        return WebUtils.getCookieValue(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName());
     }
 }

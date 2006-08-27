@@ -8,6 +8,8 @@ package org.jasig.cas.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -46,9 +48,6 @@ public final class ProxyController extends AbstractController implements
     /** CORE to delegate all non-web tier functionality to. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    /** Instance of helper for retrieving parameters. */
-    private CasArgumentExtractor casArgumentExtractor;
-
     public ProxyController() {
         setCacheSeconds(0);
     }
@@ -57,8 +56,6 @@ public final class ProxyController extends AbstractController implements
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService cannot be null on "
                 + this.getClass().getName());
-        Assert.notNull(this.casArgumentExtractor,
-            "casArgumentExtractor cannot be null.");
     }
 
     /**
@@ -68,11 +65,11 @@ public final class ProxyController extends AbstractController implements
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final String ticket = this.casArgumentExtractor
-            .extractProxyGrantingTicket(request);
+        final String ticket = request.getParameter("pgt");
+        final Service targetService = getTargetService(request);
 
         if (!StringUtils.hasText(ticket)
-            || !this.casArgumentExtractor.isTargetServicePresent(request)) {
+            || targetService == null) {
             return generateErrorView("INVALID_REQUEST",
                 "INVALID_REQUEST_PROXY", null);
         }
@@ -80,11 +77,21 @@ public final class ProxyController extends AbstractController implements
         try {
             return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET,
                 this.centralAuthenticationService.grantServiceTicket(ticket,
-                    this.casArgumentExtractor.extractTargetService(request)));
+                    targetService));
         } catch (TicketException e) {
             return generateErrorView(e.getCode(), e.getCode(),
                 new Object[] {ticket});
         }
+    }
+    
+    private Service getTargetService(final HttpServletRequest request) {
+        if 
+         (!StringUtils.hasText(request
+            .getParameter("targetService"))) {
+             return null;
+         }
+         
+         return new SimpleService("targetService");
     }
 
     private ModelAndView generateErrorView(final String code,
@@ -104,10 +111,5 @@ public final class ProxyController extends AbstractController implements
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setCasArgumentExtractor(
-        final CasArgumentExtractor casArgumentExtractor) {
-        this.casArgumentExtractor = casArgumentExtractor;
     }
 }

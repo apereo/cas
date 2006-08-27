@@ -25,7 +25,7 @@ public final class RenewRequestCheckAction extends AbstractLoginAction {
     private static final String EVENT_AUTHENTICATION_REQUIRED = "authenticationRequired";
 
     protected Event doExecute(final RequestContext context) {
-        return getCasArgumentExtractor().isRenewPresent(context)
+        return isRenewPresent(context)
             ? result(EVENT_AUTHENTICATION_REQUIRED)
             : result(EVENT_GENERATE_SERVICE_TICKET);
     }

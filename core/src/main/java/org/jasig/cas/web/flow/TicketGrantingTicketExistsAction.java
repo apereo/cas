@@ -33,8 +33,8 @@ public final class TicketGrantingTicketExistsAction extends AbstractLoginAction 
     private static final String EVENT_NO_TICKET_GRANTING_TICKET_EXISTS = "noTicketGrantingTicketExists";
 
     protected Event doExecute(final RequestContext context) {
-        return getCasArgumentExtractor().isTicketGrantingTicketCookiePresent(
-            context) ? result(EVENT_TICKET_GRANTING_TICKET_EXISTS)
+        return extractTicketGrantingTicketFromCookie(context) != null
+            ? result(EVENT_TICKET_GRANTING_TICKET_EXISTS)
             : result(EVENT_NO_TICKET_GRANTING_TICKET_EXISTS);
     }
 }

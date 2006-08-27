@@ -8,14 +8,16 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
- * credentials such as client certifices, NTLM, etc.
+ * credentials such as client certificates, NTLM, etc.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -29,24 +31,23 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
 
     protected final Event doExecute(final RequestContext context) {
         final Credentials credentials = constructCredentialsFromRequest(context);
+        final String ticketGrantingTicketId = extractTicketGrantingTicketFromCookie(context);
+        final Service service = WebUtils.getService(getArgumentExtractors(), WebUtils.getHttpServletRequest(context));
 
         if (credentials == null) {
             return error();
         }
 
-        if (getCasArgumentExtractor().isRenewPresent(context)
-            && getCasArgumentExtractor().isTicketGrantingTicketCookiePresent(
-                context) && getCasArgumentExtractor().isServicePresent(context)) {
-
-            final String ticketGrantingTicketId = getCasArgumentExtractor()
-                .extractTicketGrantingTicketFromCookie(context);
+        if (isRenewPresent(context)
+            && ticketGrantingTicketId != null
+            && service != null) {
 
             try {
                 final String serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketId,
-                        getCasArgumentExtractor().extractServiceFrom(context),
+                        service,
                         credentials);
-                getCasArgumentExtractor().putServiceTicketIn(context,
+                WebUtils.putServiceTicketInRequestScope(context,
                     serviceTicketId);
                 return result("warn");
             } catch (final TicketException e) {
@@ -68,7 +69,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
         }
 
         try {
-            getCasArgumentExtractor().putTicketGrantingTicketIn(
+            WebUtils.putTicketGrantingTicketInRequestScope(
                 context,
                 this.centralAuthenticationService
                     .createTicketGrantingTicket(credentials));

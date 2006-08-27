@@ -6,18 +6,23 @@
 package org.jasig.cas.web.flow;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
-import org.jasig.cas.web.CasArgumentExtractor;
 import org.jasig.cas.web.bind.CredentialsBinder;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.Event;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.FormAction;
@@ -42,17 +47,18 @@ public class AuthenticationViaFormAction extends FormAction {
     /** Core we delegate to for handling all ticket related tasks. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    /**
-     * CasArgumentExtractor so that actions don't need to know about cookie
-     * generators, etc.
-     */
-    private CasArgumentExtractor casArgumentExtractor;
+    private ArgumentExtractor[] argumentExtractors;
+
+    private CookieGenerator warnCookieGenerator;
+
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected final void doBind(final RequestContext context,
         final DataBinder binder) {
-        final HttpServletRequest request = this.casArgumentExtractor
+        final HttpServletRequest request = WebUtils
             .getHttpServletRequest(context);
         final Credentials credentials = (Credentials) binder.getTarget();
+
         if (this.credentialsBinder != null) {
             this.credentialsBinder.bind(request, credentials);
         }
@@ -62,24 +68,24 @@ public class AuthenticationViaFormAction extends FormAction {
 
     public final Event submit(final RequestContext context) throws Exception {
         final Credentials credentials = (Credentials) getFormObject(context);
+        final HttpServletRequest request = WebUtils
+            .getHttpServletRequest(context);
+        final String ticketGrantingTicketIdFromCookie = WebUtils
+            .getCookieValue(request, this.ticketGrantingTicketCookieGenerator
+                .getCookieName());
+        final Service service = WebUtils.getService(this.argumentExtractors,
+            WebUtils.getHttpServletRequest(context));
 
-        if (this.casArgumentExtractor.isRenewPresent(context)
-            && this.casArgumentExtractor
-                .isTicketGrantingTicketCookiePresent(context)
-            && this.casArgumentExtractor.isServicePresent(context)) {
-
-            final String ticketGrantingTicketIdFromCookie = this.casArgumentExtractor
-                .extractTicketGrantingTicketFromCookie(context);
+        if (StringUtils.hasText(request.getParameter("renew"))
+            && ticketGrantingTicketIdFromCookie != null && service != null) {
 
             try {
                 final String serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketIdFromCookie,
-                        this.casArgumentExtractor.extractServiceFrom(context),
-                        credentials);
-                this.casArgumentExtractor.putServiceTicketIn(context,
+                        service, credentials);
+                WebUtils.putServiceTicketInRequestScope(context,
                     serviceTicketId);
-                this.casArgumentExtractor
-                    .putWarnCookieIfRequestParameterPresent(context);
+                putWarnCookieIfRequestParameterPresent(context);
                 return warn();
             } catch (final TicketException e) {
                 if (e.getCause() != null
@@ -100,11 +106,11 @@ public class AuthenticationViaFormAction extends FormAction {
         }
 
         try {
-            this.casArgumentExtractor.putTicketGrantingTicketIn(context,
+            WebUtils.putTicketGrantingTicketInRequestScope(context,
                 this.centralAuthenticationService
                     .createTicketGrantingTicket(credentials));
-            this.casArgumentExtractor
-                .putWarnCookieIfRequestParameterPresent(context);
+
+            putWarnCookieIfRequestParameterPresent(context);
             return success();
         } catch (final TicketException e) {
             populateErrorsInstance(context, e);
@@ -127,9 +133,22 @@ public class AuthenticationViaFormAction extends FormAction {
         }
     }
 
-    public final void setCasArgumentExtractor(
-        final CasArgumentExtractor casArgumentExtractor) {
-        this.casArgumentExtractor = casArgumentExtractor;
+    private void putWarnCookieIfRequestParameterPresent(
+        final RequestContext context) {
+        final HttpServletResponse response = WebUtils
+            .getHttpServletResponse(context);
+
+        if (StringUtils.hasText(context.getExternalContext()
+            .getRequestParameterMap().get("warn"))) {
+            this.warnCookieGenerator.addCookie(response, "true");
+        } else {
+            this.warnCookieGenerator.removeCookie(response);
+        }
+    }
+
+    public final void setArgumentExtractors(
+        final ArgumentExtractor[] argumentExtractors) {
+        this.argumentExtractors = argumentExtractors;
     }
 
     public final void setCentralAuthenticationService(
@@ -154,12 +173,26 @@ public class AuthenticationViaFormAction extends FormAction {
         final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
+    
+    public final void setTicketGrantingTicketCookieGenerator(
+        final CookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+    }
+
+    
+    public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+        this.warnCookieGenerator = warnCookieGenerator;
+    }
 
     protected void initAction() {
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService cannot be null");
-        Assert.notNull(this.casArgumentExtractor,
-            "casArgumentExtractor canont be null.");
+        Assert.notNull(this.argumentExtractors,
+            "argumentExtractors cannot be null.");
+        Assert.notNull(this.ticketGrantingTicketCookieGenerator,
+            "ticketGrantingTicketCookieGenerator cannot be null.");
+        Assert.notNull(this.warnCookieGenerator,
+            "warnCookieGenerator cannot be null.");
 
         if (this.getFormObjectClass() == null) {
             this.setFormObjectClass(UsernamePasswordCredentials.class);

@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.web.CasArgumentExtractor;
+import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.opensaml.SAMLException;
 import org.opensaml.SAMLResponse;
 
@@ -25,18 +25,18 @@ import org.opensaml.SAMLResponse;
  */
 public class Saml10FailureResponseView extends AbstractCasView {
 
-    private CasArgumentExtractor casArgumentExtractor;
+    private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
 
     protected void renderMergedOutputModel(final Map model,
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
 
         final SAMLResponse samlResponse = new SAMLResponse();
-        samlResponse.setRecipient(this.casArgumentExtractor.extractServiceFrom(
+        samlResponse.setRecipient(this.samlArgumentExtractor.extractService(
             request).getId());
         samlResponse.setIssueInstant(new Date());
-        samlResponse.setInResponseTo(this.casArgumentExtractor
-            .extractTicketFrom(request));
+        samlResponse.setInResponseTo(this.samlArgumentExtractor
+            .extractTicketArtifact(request));
 
         // XXX must include "Success", and not Description according to spec?
         final SAMLException samlException = new SAMLException("Success");
@@ -44,10 +44,5 @@ public class Saml10FailureResponseView extends AbstractCasView {
         samlResponse.setStatus(samlException);
 
         response.getWriter().print(samlResponse.toString());
-    }
-
-    public void setCasArgumentExtractor(
-        final CasArgumentExtractor casArgumentExtractor) {
-        this.casArgumentExtractor = casArgumentExtractor;
     }
 }

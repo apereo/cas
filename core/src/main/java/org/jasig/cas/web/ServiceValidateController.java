@@ -11,11 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -67,7 +69,7 @@ public class ServiceValidateController extends AbstractController implements
     private String failureView;
 
     /** Extracts parameters from Request object. */
-    private CasArgumentExtractor casArgumentExtractor;
+    private ArgumentExtractor argumentExtractor;
 
     protected void afterPropertiesSetInternal() throws Exception {
         // nothing to do
@@ -76,8 +78,8 @@ public class ServiceValidateController extends AbstractController implements
     public final void afterPropertiesSet() throws Exception {
         Assert.notNull(this.centralAuthenticationService,
             "centralAuthenticationService cannot be null");
-        Assert.notNull(this.casArgumentExtractor,
-            "casArgumentExtractor cannot be null.");
+        Assert.notNull(this.argumentExtractor,
+            "argumentExtractors cannot be null.");
 
         Assert
             .notNull(
@@ -116,8 +118,7 @@ public class ServiceValidateController extends AbstractController implements
      */
     protected Credentials getServiceCredentialsFromRequest(
         final HttpServletRequest request) {
-        final String pgtUrl = this.casArgumentExtractor
-            .extractProxyGrantingTicketCallbackUrl(request);
+        final String pgtUrl = request.getParameter("pgtUrl");
         if (StringUtils.hasText(pgtUrl)) {
             try {
                 return new HttpBasedServiceCredentials(new URL(pgtUrl));
@@ -137,14 +138,13 @@ public class ServiceValidateController extends AbstractController implements
     protected final ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
+        final Service service = this.argumentExtractor.extractService(request);
+        final String serviceTicketId = this.argumentExtractor.extractTicketArtifact(request);
 
-        if (!this.casArgumentExtractor.isServicePresent(request)
-            || !this.casArgumentExtractor.isTicketPresent(request)) {
+        if (service == null
+            || serviceTicketId == null) {
             return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
         }
-
-        final String serviceTicketId = this.casArgumentExtractor
-            .extractTicketFrom(request);
 
         try {
             final Credentials serviceCredentials = getServiceCredentialsFromRequest(request);
@@ -164,7 +164,7 @@ public class ServiceValidateController extends AbstractController implements
 
             final Assertion assertion = this.centralAuthenticationService
                 .validateServiceTicket(serviceTicketId,
-                    this.casArgumentExtractor.extractServiceFrom(request));
+                    service);
 
             final ValidationSpecification validationSpecification = this
                 .getCommandClass();
@@ -216,7 +216,7 @@ public class ServiceValidateController extends AbstractController implements
             throw new RuntimeException(e);
         }
     }
-
+    
     /**
      * @param centralAuthenticationService The centralAuthenticationService to
      * set.
@@ -226,9 +226,9 @@ public class ServiceValidateController extends AbstractController implements
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    public void setCasArgumentExtractor(
-        final CasArgumentExtractor casArgumentExtractor) {
-        this.casArgumentExtractor = casArgumentExtractor;
+    public void setArgumentExtractor(
+        final ArgumentExtractor argumentExtractor) {
+        this.argumentExtractor = argumentExtractor;
     }
 
     /**
