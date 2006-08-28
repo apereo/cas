@@ -6,7 +6,7 @@
 	<bookinfo>
 		<title>JA-SIG Central Authentication Service</title>
 		<subtitle>Reference Documentation</subtitle>
-		<releaseinfo>3.0.6</releaseinfo>
+		<releaseinfo>3.1-SNAPSHOT</releaseinfo>
 		<authorgroup>
 			<author>
 				<firstname>Scott</firstname>
