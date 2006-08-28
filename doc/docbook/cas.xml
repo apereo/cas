@@ -11,6 +11,12 @@
 			<author>
 				<firstname>Scott</firstname>
 				<surname>Battaglia</surname>
+				<email>scott.battaglia@gmail.com</email>
+			</author>
+			<author>
+				<firstname>Earl</firstname>
+				<surname>Fogel</surname>
+				<email>earl.fogel@usask.ca</email>
 			</author>
 		</authorgroup>
 	</bookinfo>
@@ -531,6 +537,20 @@
 		<title>Deploying CAS</title>
 		<chapter id="configuration">
 			<title>Basic CAS Configuration</title>
+			<sect1 id="initial-setup">
+				<title>Initial Setup</title>
+				
+				<para>If you don't have Java installed on your machine, the first step is to download Java.  Though CAS works under Java 
+				1.4, we recommend Java 1.5. You can download Java 1.5 from the Sun Web Site 
+				<literal>http://java.sun.com/j2se/1.5.0/download.jsp</literal>.  Next, be sure to obtain a servlet container.  One easy to 
+				use servlet container is Apache Tomcat, downloadable here: <literal>http://tomcat.apache.org/</literal>.  We recommend the 
+				latest 5.5.x release.</para>
+				
+				<para>Next, download and unzip/untar the latest CAS release.  You may want to try everything out by taking the demo CAS war
+				file and placing it within the TOMCAT_HOME/webapps folder.  Once you've done that, start up Tomcat: TOMCAT_HOME/bin/start.sh 
+				or TOMCAT_HOME/start.bat depending on your operating system.  Then try and access CAS (http://localhost:8080/cas/login).  
+				If everything works, then you've set it up correctly.</para>
+			</sect1>
 			
 			<sect1 id="logging">
 				<title>Logging</title>
