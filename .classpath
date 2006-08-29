@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="adaptors/trusted/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/radius/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/trusted/src/test/java"/>
-	<classpathentry kind="src" path="adaptors/x509/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/x509/src/test/java"/>
-	<classpathentry kind="src" path="adaptors/ldap/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/ldap/src/main/resources"/>
-	<classpathentry kind="src" path="adaptors/generic/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/generic/src/test/java"/>
-	<classpathentry kind="src" path="adaptors/generic/src/test/resources"/>
-	<classpathentry kind="src" path="adaptors/jdbc/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/cas/src/main/java"/>
-	<classpathentry kind="src" path="adaptors/cas/src/test/java"/>
-	<classpathentry kind="src" path="core/src/main/java"/>
-	<classpathentry kind="src" path="core/src/test/java"/>
-	<classpathentry kind="src" path="core/src/test/resources"/>
-	<classpathentry kind="src" path="core/src/compatibility/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.1.jar"/>

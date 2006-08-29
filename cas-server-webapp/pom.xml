@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.1-SNAPSHOT</version>
+	</parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-webapp</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>JA-SIG CAS Web Application</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
+			<version>3.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.5.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.1.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+			<type>jar</type>
+		</dependency>
+  </dependencies>
+  <build>
+    <finalName>cas</finalName>
+  </build>
+</project>
