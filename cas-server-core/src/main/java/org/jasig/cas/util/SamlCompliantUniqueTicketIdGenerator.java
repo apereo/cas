@@ -38,7 +38,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements
             this.sourceIdDigest = messageDigest.digest();
         } catch (final Exception e) {
             throw new IllegalStateException(
-                "Exception generating digest which should not happen...EVER", e);
+                "Exception generating digest which should not happen...EVER");
         }
     }
 
