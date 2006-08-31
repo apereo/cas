@@ -8,6 +8,11 @@ package org.jasig.cas.web.support;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.cas.authentication.principal.SamlService;
+import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 
 
@@ -30,6 +35,16 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
 
     protected String getServiceParameterName() {
         return PARAM_SERVICE;
+    }
+    
+    public Service extractService(final HttpServletRequest request) {
+        final String service = request.getParameter(getServiceParameterName());
+        
+        if (!StringUtils.hasText(service)) {
+            return null;
+        }
+        
+        return new SamlService(WebUtils.stripJsessionFromUrl(service));
     }
 
     public String constructUrlForRedirct(final RequestContext context) {

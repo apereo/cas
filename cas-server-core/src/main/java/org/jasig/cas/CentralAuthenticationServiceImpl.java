@@ -5,6 +5,8 @@
  */
 package org.jasig.cas;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
@@ -77,9 +79,11 @@ public final class CentralAuthenticationServiceImpl implements
      */
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /** UniqueTicketIdGenerator to generate ids for ServiceTickets created. */
-    private UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator;
+    /** Map to contain the mappings of service->UniqueTicketIdGenerators */
+    private Map uniqueTicketIdGeneratorsForService;
 
+    /** UniqueTicketIdGenerator to generate ids for ServiceTickets created. */
+    // private UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator;
     /** Expiration policy for ticket granting tickets. */
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
@@ -156,8 +160,11 @@ public final class CentralAuthenticationServiceImpl implements
             }
         }
 
+        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) this.uniqueTicketIdGeneratorsForService
+            .get(service.getClass().getName());
+
         final ServiceTicket serviceTicket = ticketGrantingTicket
-            .grantServiceTicket(this.serviceTicketUniqueTicketIdGenerator
+            .grantServiceTicket(serviceTicketUniqueTicketIdGenerator
                 .getNewTicketId(ServiceTicket.PREFIX), service,
                 this.serviceTicketExpirationPolicy, credentials != null);
 
@@ -356,17 +363,17 @@ public final class CentralAuthenticationServiceImpl implements
         Assert.notNull(this.ticketGrantingTicketUniqueTicketIdGenerator,
             "ticketGrantingTicketUniqueTicketIdGenerator cannot be null on "
                 + name);
-        Assert.notNull(this.serviceTicketUniqueTicketIdGenerator,
-            "serviceTicketUniqueTicketIdGenerator cannot be null on " + name);
+        Assert.notNull(this.uniqueTicketIdGeneratorsForService,
+            "uniqueTicketIdGeneratorsForService cannot be null on " + name);
         Assert.notNull(this.ticketGrantingTicketExpirationPolicy,
             "ticketGrantingTicketExpirationPolicy cannot be null on " + name);
         Assert.notNull(this.serviceTicketExpirationPolicy,
             "serviceTicketExpirationPolicy cannot be null on " + name);
     }
 
-    public void setServiceTicketUniqueTicketIdGenerator(
-        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator) {
-        this.serviceTicketUniqueTicketIdGenerator = serviceTicketUniqueTicketIdGenerator;
+    public void setUniqueTicketIdGeneratorsForService(
+        final Map uniqueTicketIdGeneratorsForService) {
+        this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
 
 }

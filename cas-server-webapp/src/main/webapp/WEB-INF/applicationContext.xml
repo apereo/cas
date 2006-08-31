@@ -39,7 +39,6 @@
 			value="50" />
 	</bean>
 	
-<!-- 
 	<bean
 		id="serviceTicketUniqueIdGenerator"
 		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
@@ -47,10 +46,9 @@
 			index="0"
 			value="20" />
 	</bean>
-	 -->	
 	 
 	<bean
-		id="serviceTicketUniqueIdGenerator"
+		id="samlServiceTicketUniqueIdGenerator"
 		class="org.jasig.cas.util.SamlCompliantUniqueTicketIdGenerator">
 		<constructor-arg index="0" value="https://localhost:8443" />
 	</bean>
@@ -96,8 +94,16 @@
 			name="ticketGrantingTicketUniqueTicketIdGenerator"
 			ref="ticketGrantingTicketUniqueIdGenerator" />
 		<property
-			name="serviceTicketUniqueTicketIdGenerator"
-			ref="serviceTicketUniqueIdGenerator" />
+			name="uniqueTicketIdGeneratorsForService">
+				<map>
+					<entry
+						key="org.jasig.cas.authentication.principal.SimpleService"
+						value-ref="serviceTicketUniqueIdGenerator" />
+					<entry
+						key="org.jasig.cas.authentication.principal.SamlService"
+						value-ref="samlServiceTicketUniqueIdGenerator" />
+				</map>
+			</property>
 		<property
 			name="ticketRegistry"
 			ref="ticketRegistry" />

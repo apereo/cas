@@ -20,9 +20,11 @@
 			name="ticketGrantingTicketUniqueTicketIdGenerator"
 			ref="uniqueTicketIdGenerator" />
 		<property
-			name="serviceTicketUniqueTicketIdGenerator"
-			ref="uniqueTicketIdGenerator" />
-			
+			name="uniqueTicketIdGeneratorsForService">
+			<map>
+				<entry key="org.jasig.cas.authentication.principal.SimpleService" value-ref="uniqueTicketIdGenerator" />
+			</map>
+		</property>
 	</bean>
 	
 	<bean
