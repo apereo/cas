@@ -6,6 +6,8 @@
 package org.jasig.cas.adaptors.trusted.web.flow;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
@@ -13,6 +15,7 @@ import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingC
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -46,6 +49,9 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
+        final Map idGenerators = new HashMap();
+        idGenerators.put(SimpleService.class.getName(), new DefaultUniqueTicketIdGenerator());
+
 
         final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();
    
@@ -54,7 +60,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         authenticationManager.afterPropertiesSet();
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
-        centralAuthenticationService.setServiceTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);
         centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
