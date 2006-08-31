@@ -12,7 +12,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0.6
+ * @since 3.1
  */
 public interface RadiusServer {
 

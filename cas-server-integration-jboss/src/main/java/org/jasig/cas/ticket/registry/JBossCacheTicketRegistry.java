@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0.6
+ * @since 3.1
  *
  */
 public final class JBossCacheTicketRegistry extends AbstractTicketRegistry implements InitializingBean {

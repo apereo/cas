@@ -82,8 +82,6 @@ public final class CentralAuthenticationServiceImpl implements
     /** Map to contain the mappings of service->UniqueTicketIdGenerators */
     private Map uniqueTicketIdGeneratorsForService;
 
-    /** UniqueTicketIdGenerator to generate ids for ServiceTickets created. */
-    // private UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator;
     /** Expiration policy for ticket granting tickets. */
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 

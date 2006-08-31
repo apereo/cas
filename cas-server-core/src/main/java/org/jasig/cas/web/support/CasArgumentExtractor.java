@@ -13,16 +13,19 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.RequestContext;
 
 /**
+ * Implements the traditional CAS2 protocol.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
  *
  */
-public class CasArgumentExtractor extends AbstractArgumentExtractor {
+public final class CasArgumentExtractor extends AbstractArgumentExtractor {
 
+    /** Parameter to retrieve the service. */
     private static final String PARAM_SERVICE = "service";
     
+    /** Parameter to retrivve the ticket. */
     private static final String PARAM_TICKET = "ticket";
 
     protected String getArtifactParameterName() {

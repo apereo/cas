@@ -13,6 +13,13 @@ import org.jasig.cas.authentication.principal.Service;
 import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
+/**
+ * Common utilities for the web tier.
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.1
+ */
 public final class WebUtils {
 
     public static final HttpServletRequest getHttpServletRequest(
@@ -92,7 +99,7 @@ public final class WebUtils {
         final RequestContext context) {
         return context.getRequestScope().getString("ticketGrantingTicketId");
     }
-    
+
     public static final void putServiceTicketInRequestScope(
         final RequestContext context, final String ticketValue) {
         context.getRequestScope().put("serviceTicketId", ticketValue);

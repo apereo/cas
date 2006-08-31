@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  * @author Jan Van der Velpen
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0.6
+ * @since 3.1
  */
 public final class CredentialsToLDAPAttributePrincipalResolver implements
     CredentialsToPrincipalResolver, InitializingBean {

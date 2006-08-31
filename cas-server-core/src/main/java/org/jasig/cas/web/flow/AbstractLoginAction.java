@@ -16,9 +16,12 @@ import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
 
 /**
+ * Abstract class to make available common collaborators such as CookieGenerators and
+ * argumentExtractors.
+ * 
  * @author Scott
  * @version $Revision$ $Date$
- * @since 3.0.6
+ * @since 3.1
  */
 public abstract class AbstractLoginAction extends AbstractAction {
 
