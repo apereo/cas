@@ -367,7 +367,6 @@
 					</licenseLocation>
 					<excludes>
 		            	<exclude>**/CasVersion.java</exclude>
-		            	<exclude>**/*Exception.java</exclude>
 		            </excludes>
 				</configuration>
 			</plugin>
