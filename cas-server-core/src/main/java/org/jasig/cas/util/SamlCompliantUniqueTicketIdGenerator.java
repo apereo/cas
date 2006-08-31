@@ -13,13 +13,13 @@ import org.springframework.util.Assert;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
- * artifacts.
+ * artifacts.  This should also be compliant with the SAML 2 specification.
  * 
  * @author Scott
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class SamlCompliantUniqueTicketIdGenerator implements
+public final class SamlCompliantUniqueTicketIdGenerator implements
     UniqueTicketIdGenerator {
 
     /** SAML defines the source id as the server name. */

@@ -13,18 +13,21 @@ import org.springframework.webflow.ViewSelector;
 import org.springframework.webflow.support.ExternalRedirect;
 
 /**
+ * ViewSelector that grabs the redirect URL from the proper
+ * {@link ArgumentExtractor}.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
- *
  */
 public final class DynamicRedirectViewSelector implements ViewSelector {
-    
+
     private final ArgumentExtractor[] argumentExtractors;
 
-    public DynamicRedirectViewSelector(final ArgumentExtractor[] argumentExtractors) {
-        Assert.notNull(argumentExtractors, "argumentExtractors cannot be null.");
+    public DynamicRedirectViewSelector(
+        final ArgumentExtractor[] argumentExtractors) {
+        Assert
+            .notNull(argumentExtractors, "argumentExtractors cannot be null.");
         this.argumentExtractors = argumentExtractors;
     }
 
@@ -34,13 +37,14 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
 
     public ViewSelection makeSelection(final RequestContext context) {
         for (int i = 0; i < this.argumentExtractors.length; i++) {
-            final String url = this.argumentExtractors[i].constructUrlForRedirct(context);
-            
+            final String url = this.argumentExtractors[i]
+                .constructUrlForRedirct(context);
+
             if (url != null) {
                 return new ExternalRedirect(url);
             }
         }
-        
+
         return null;
     }
 }

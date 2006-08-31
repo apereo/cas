@@ -6,14 +6,15 @@
 package org.jasig.cas.authentication.principal;
 
 /**
- * Marker class to represent that this service wants to use SAML.
+ * Marker class to represent that this service wants to use SAML. We use this in
+ * combination with the CentralAuthenticationServiceImpl to choose the right
+ * UniqueTicketIdGenerator.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
- *
  */
-public class SamlService extends SimpleService {
+public final class SamlService extends SimpleService {
 
     /**
      * Unique Id for serialization.

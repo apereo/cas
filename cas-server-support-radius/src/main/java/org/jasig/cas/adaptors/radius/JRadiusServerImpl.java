@@ -31,7 +31,7 @@ import net.sf.jradius.packet.attribute.AttributeList;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0.6
+ * @since 3.1
  */
 public final class JRadiusServerImpl implements RadiusServer {
 

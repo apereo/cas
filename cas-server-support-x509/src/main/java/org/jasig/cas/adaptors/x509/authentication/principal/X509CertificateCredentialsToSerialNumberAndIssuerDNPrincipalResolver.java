@@ -26,7 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Jan Van der Velpen
  * @version $Revision$ $Date$
- * @since 3.0.6
+ * @since 3.1
  */
 public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver
     extends AbstractX509CertificateCredentialsToPrincipalResolver implements

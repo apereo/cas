@@ -9,6 +9,8 @@ import java.util.Map;
 
 /**
  * Interface representing a principal that can provide additional attributes.
+ * We currently don't define what those attributes should be though we recommend
+ * using a standard such as eduPerson.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
