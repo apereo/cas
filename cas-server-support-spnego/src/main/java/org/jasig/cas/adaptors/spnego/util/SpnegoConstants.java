@@ -7,14 +7,16 @@ package org.jasig.cas.adaptors.spnego.util;
 
 /**
  * Spnego Constants
- * 
- * 
+ *
  * @author Arnaud Lessueur
  * @author Marc-Antoine Garrigue
  * @version $Id$
  * @since 3.1
  */
-public class SpnegoConstants {
+public final class SpnegoConstants {
+    //constants, do not instanciate
+    private SpnegoConstants() {
+    }
 
     public static final String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
@@ -26,6 +28,6 @@ public class SpnegoConstants {
 
     public static final String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
-    public static final byte[] NTLMSSP_SIGNATURE = new byte[] {(byte) 'N', (byte) 'T', (byte) 'L',
+    public static final byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
             (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
 }

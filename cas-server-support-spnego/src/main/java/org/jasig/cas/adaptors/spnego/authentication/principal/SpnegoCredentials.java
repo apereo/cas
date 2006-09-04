@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 
 /**
  * Credentials that are a holder for Spnego init token
- * 
+ *
  * @author Arnaud Lessueur
  * @author Marc-Antoine Garrigue
  * @version $Id$
@@ -20,23 +20,32 @@ import org.springframework.util.Assert;
  */
 public class SpnegoCredentials implements Credentials {
 
-    /** Unique id for serialization. */
+    /**
+     * Unique id for serialization.
+     */
     private static final long serialVersionUID = -4908976823931528L;
 
-    /** The Spnego Init Token. */
+    /**
+     * The Spnego Init Token.
+     */
     private final byte[] initToken;
 
-    /** The Spnego Next Token. */
+    /**
+     * The Spnego Next Token.
+     */
     private byte[] nextToken;
 
-    /** The Principal. */
+    /**
+     * The Principal.
+     */
     private Principal principal;
 
-    /** The authentication type should be Kerberos or NTLM. */
+    /**
+     * The authentication type should be Kerberos or NTLM.
+     */
     private boolean isNtlm;
 
     public SpnegoCredentials(final byte[] initToken) {
-        super();
         Assert.notNull(initToken, "The initTiken cannot be null.");
         this.initToken = initToken;
         this.isNtlm = isTokenNtlm(this.initToken);
@@ -65,7 +74,7 @@ public class SpnegoCredentials implements Credentials {
     public boolean IsNtlm() {
         return isNtlm;
     }
-    
+
     private boolean isTokenNtlm(byte[] token) {
         if (token == null || token.length < 8)
             return false;
