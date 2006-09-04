@@ -13,18 +13,19 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 /**
- * Implementation of a CredentialToPrincipalResolver that 
+ * Implementation of a CredentialToPrincipalResolver that
  * takes a SpnegoCredentials and returns a
  * SimplePrincipal.
- * 
+ *
  * @author Arnaud Lessueur
  * @author Marc-Antoine Garrigue
  * @version $Id$
+ * @noinspection WeakerAccess
  * @since 3.1
  */
 public class SpnegoCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private final Log log = LogFactory.getLog(this.getClass());
 
     public Principal resolvePrincipal(Credentials credentials) {
         final SpnegoCredentials spnegoCredentials = (SpnegoCredentials) credentials;
