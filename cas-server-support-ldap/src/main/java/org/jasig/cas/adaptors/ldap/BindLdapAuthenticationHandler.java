@@ -9,18 +9,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-
-import net.sf.ldaptemplate.SearchExecutor;
-import net.sf.ldaptemplate.SearchResultCallbackHandler;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.NameClassPairCallbackHandler;
+import org.springframework.ldap.SearchExecutor;
 
 /**
  * Handler to do LDAP bind.
@@ -76,10 +75,10 @@ public class BindLdapAuthenticationHandler extends
                         .getUsername()), searchControls);
                 }
             },
-            new SearchResultCallbackHandler(){
+            new NameClassPairCallbackHandler(){
 
-                public void handleSearchResult(final SearchResult searchResult) {
-                    cns.add(searchResult.getName());
+                public void handleNameClassPair(final NameClassPair nameClassPair) {
+                    cns.add(nameClassPair.getName());
                 }
             });
 
