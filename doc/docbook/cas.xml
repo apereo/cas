@@ -18,6 +18,11 @@
 				<surname>Fogel</surname>
 				<email>earl.fogel@usask.ca</email>
 			</author>
+			<author>
+				<firstname>Arnaud</firstname>
+				<surname>Lesueur</surname>
+				<email>arnaud.lesueur@gmail.com</email>
+			</author>
 		</authorgroup>
 	</bookinfo>
 	<toc></toc>
@@ -521,6 +526,279 @@
 				PasswordHandler class name.</para>
 			</sect1>
 		</chapter>
+
+		<chapter id="spnego">
+			<title>Spnego Authentication Handlers</title>
+			
+			<sect1 id="spnego-dependencies">
+				<title>Dependencies</title>
+				<para>The JA-SIG SPNEGO Authentication Handlers depend on a few libraries:</para>
+				<itemizedlist>
+				<listitem><para>The Java CIFS Client Library - <literal>http://jcifs.samba.org/</literal></para></listitem>
+				<listitem><para>The Java CIFS Extension Suite - <literal>http://sourceforge.net/projects/jcifs-ext/</literal></para></listitem>
+				<listitem><para>JA-SIG SPNEGO Authentication Handler JAR  - <literal>${project.home}/target/cas-server-support-spnego-VERSION.jar</literal></para></listitem>
+				</itemizedlist>
+			</sect1>
+
+			<sect1 id="spnego-core-classes">
+				<title>Core Classes</title>
+				
+				<sect2>
+					<title>JCIFSSpnegoAuthenticationHandler</title>
+					<para>This is the implementation of an AuthenticationHandler for SPNEGO supports. This Handler support both NTLM and Kerberos. NTLM is disabled by default. This class supports the following properties:</para>
+					<itemizedlist>
+							<listitem><para><literal>principalWithDomainName</literal> - boolean to enable or disable domain name in the returned netid</para></listitem>
+							<listitem><para><literal>nTLMallowed</literal> - allows to authenticate using SPNEGO/NTLM token</para></listitem>
+					</itemizedlist>
+				</sect2>
+
+				<sect2>
+					<title>JCIFSConfig</title>
+					<para>This class is the configuration helper for JCIFS and the Spring framework. This class supports the following properties:</para>
+					<itemizedlist>
+							<listitem><para><literal>jcifsKerberosEnable</literal> - boolean to enable or disable the SPNEGO Handler</para></listitem>
+							<listitem><para><literal>jcifsServicePrincipal</literal> - set the Service Principal Name</para></listitem>
+							<listitem><para><literal>jcifsServicePassword</literal> - set the password for the principal name</para></listitem>
+							<listitem><para><literal>kerberosDebug</literal> - boolean to enable or disable the debug mode on Kerberos</para></listitem>
+							<listitem><para><literal>kerberosRealm</literal> - set the Realm</para></listitem>
+							<listitem><para><literal>kerberosKdc</literal> - set the KDC address</para></listitem>
+							<listitem><para><literal>loginConf</literal> - path to the login.conf</para></listitem>
+					</itemizedlist>
+				</sect2>
+
+				<sect2>
+					<title>SpnegoNegociateCredentialsAction</title>
+					<para>First action of a SPNEGO flow : negociation. The server checks if the negociation string is in the request header:</para>
+					<itemizedlist>
+							<listitem><para>If found do nothing and return <literal>success()</literal></para></listitem>
+							<listitem><para>else add a WWW-Authenticate response header and a 401 response status, then return <literal>success()</literal></para></listitem>
+					</itemizedlist>
+				</sect2>
+
+				<sect2>
+					<title>SpnegoCredentialsAction</title>
+					<para>Second action of a SPNEGO flow : decode the gssapi-data and build a new <literal>SpnegoCredentials</literal>.</para>
+					<para>Once <literal>AbstractNonInteractiveCredentialsAction</literal> has executed the authentication procedure, this action check wether a principal is present in Credentials and add correspondings response headers.</para>
+				</sect2>
+			</sect1>
+
+			<sect1 id="spnego-configuration">
+				<title>Configuration</title>
+				
+				<sect2>
+					<title>Set up the Active Directory</title>
+					<para>A service account should be created. This account is called a Service Principal Name account (SPN account).</para>
+					
+					<sect3>
+						<title>Create the User</title>
+						<itemizedlist>
+							<listitem><para>First start the <literal>Active Directory User and Computers</literal> from the <literal>Administration Tools</literal> menu.</para></listitem>
+							<listitem><para>Right click on the <literal>Users Repository</literal> and select <literal>New</literal> > <literal>User</literal></para></listitem>
+							<listitem><para>Enter user information (by example <literal>myspnaccount</literal> for user login), press <literal>Next</literal>.</para></listitem>
+							<listitem><para>Enter the <literal>password</literal> and select <literal>Password never expires</literal> and click on <literal>Next</literal> and then on <literal>Finish</literal>.</para></listitem>
+						</itemizedlist>
+					</sect3>
+
+					<sect3>
+						<title>Modify the encryption algorithm</title>
+						<para>We need to modify the user account in order to specify the encryption algorithm while RC4-HMAC is not supported by the Java GSS API. Open the newly created user account, select the <literal>Account</literal> tab. In the account options check <literal>Use DES encryption types for this account</literal> and click on <literal>OK</literal>. After this operation, the password must be reseted. To do so, right click on the user account and select the option <literal>Reset Password</literal>. Enter the <literal>password</literal> and press <literal>OK</literal>.</para>
+						<para>Now that the user account has been created and updated, we need to create a service principal setting for the created user account. This is automatically handled by exporting a keytab file for the created account.</para>
+					</sect3>
+
+					<sect3>
+						<title>Create the Keytab File</title>
+						<para>The Keytab file enables a trust link between the CAS server and the Key Distribution Center (KDC). This file contains a cryptographic key. The ktpass tool, which comes from the Windows Resource Kit, is used to generate this file. In a console, enter the command:</para>
+						<para><literal>ktpass.exe /out myspnaccount.keytab /princ HTTP/your.server.name.here@YOUR.REALM.HERE /pass * /mapuser myspnaccount /ptype krb5_nt_principal /crypto DES-CBC-MD5</literal></para>
+						<para>This command will generate the myspnaccount.keytab file which has to be copied on the CAS server in order to test Kerberos from a bash using the MIT Kerberos V.</para>
+					</sect3>
+
+					<sect3>
+						<title>Test the SPN account</title>
+						<para>First configure MIT Kerberos V on the server. The file is <literal>/etc/krb5.conf</literal>. Here is an example :</para>
+						<para>
+							<programlisting>
+		[logging]
+		 default = FILE:/var/log/krb5libs.log
+		 kdc = FILE:/var/log/krb5kdc.log
+		 admin_server = FILE:/var/log/kadmind.log
+		
+		[libdefaults]
+		 ticket_lifetime = 24000
+		 default_realm = YOUR.REALM.HERE
+		 default_keytab_name = /home/cas/kerberos/myspnaccount.keytab
+		 dns_lookup_realm = false
+		 dns_lookup_kdc = false
+		 default_tkt_enctypes = des-cbc-md5
+		 default_tgs_enctypes = des-cbc-md5
+		
+		[realms]
+		 YOUR.REALM.HERE = {
+		  kdc = your.kdc.your.realm.here:88
+		 }
+		
+		[domain_realm]
+		 .your.realm.here = YOUR.REALM.HERE
+		 your.realm.here = YOUR.REALM.HERE
+							</programlisting>
+						</para>
+						<para>Then verify that your are able to read the keytab file :</para>
+						<para><literal>klist -k</literal></para>
+						<para>Then verify that your are able to read the keytab file :</para>
+						<itemizedlist>
+							<listitem><para><literal>kinit a_user_in_the_realm@YOUR.REALM.HERE</literal></para></listitem>
+							<listitem><para><literal>klist</literal></para></listitem>
+						</itemizedlist>
+					</sect3>
+				</sect2>
+
+				<sect2>
+					<title>Set up Browser</title>
+					
+					<sect3>
+						<title>Internet Explorer (min 5.01)</title>
+						<itemizedlist>
+							<listitem><para>In Internet Explorer, click <literal>Internet Options</literal> on the <literal>Tools</literal> menu.</para></listitem>
+							<listitem><para>Click on the Advanced tab, click to select the <literal>Enable Integrated Windows Authentication (requires restart)</literal> check box in the <literal>Security section</literal>, and then click <literal>OK</literal>.</para></listitem>
+							<listitem><para>Click on the Security tab, click to select <literal>Local Intranet</literal> then click on <literal>Sites</literal>, then click on <literal>Advanced</literal>.</para></listitem>
+							<listitem><para>Enter <literal>https://your.server.name.here</literal> and validate by clicking on <literal>Add</literal> and <literal>OK</literal>.</para></listitem>
+							<listitem><para><literal>Restart</literal> Internet Explorer.</para></listitem>
+						</itemizedlist>
+					</sect3>
+
+					<sect3>
+						<title>Firefox (min 0.9)</title>
+						<itemizedlist>
+							<listitem><para>In Firefox, enter <literal>about:config</literal> as url and click on Go.</para></listitem>
+							<listitem><para>On the line <literal>network.negotiate-auth.trusted-uris</literal>, right click on <literal>Modify</literal> and enter <literal>https://your.server.name.here</literal></para></listitem>
+						</itemizedlist>
+					</sect3>
+				</sect2>
+				
+				<sect2>
+					<title>Set up CAS</title>
+
+					<sect3>
+						<title>Set up the login webflow</title>
+						<para>The CAS 3 Login Webflow needs to be modified. This webflow is located in <literal>/WEB-INF/login-webflow.xml</literal>. There are 2 new action states which are placed before the state <literal>viewLoginForm</literal>.</para>
+						<para>
+							<programlisting>
+		&lt;action-state id="startAuthenticate"&gt;
+		  &lt;action bean="negociateSpnego" /&gt;
+		  &lt;transition on="success" to="spnego" /&gt;
+		&lt;/action-state&gt;
+		
+		&lt;action-state id="spnego"&gt;
+		  &lt;action bean="spnego" /&gt;
+		  &lt;transition on="success" to="sendTicketGrantingTicket" /&gt;
+		  &lt;transition on="error" to="viewLoginForm" /&gt; 
+		&lt;/action-state&gt;
+							</programlisting>
+						</para>
+						<para>And 2 existing transitions need to be update :</para>
+						<itemizedlist>
+							<listitem><para>the transition <literal>authenticationRequired</literal> in the state <literal>gatewayRequestCheck</literal></para></listitem>
+							<listitem><para>the transition <literal>authenticationRequired</literal> in the state <literal>renewRequestCheck</literal></para></listitem>
+						</itemizedlist>
+						<para>These transition were pointing to <literal>viewLoginForm</literal> and they now need to points to <literal>startAuthenticate</literal>. Those 2 states become :</para>
+						<para>
+							<programlisting>
+		&lt;action-state id="gatewayRequestCheck"&gt;
+		  &lt;action bean="gatewayRequestCheckAction" /&gt;
+		  &lt;transition on="gateway" to="redirect" /&gt;
+		  &lt;transition on="authenticationRequired" to="startAuthenticate" /&gt;
+		&lt;/action-state&gt;
+		
+		&lt;action-state id="renewRequestCheck"&gt;
+		  &lt;action bean="renewRequestCheckAction" /&gt;
+		  &lt;transition on="authenticationRequired" to="startAuthenticate" /&gt;
+		  &lt;transition on="generateServiceTicket" to="generateServiceTicket" /&gt;
+		&lt;/action-state&gt;
+							</programlisting>
+						</para>						
+					</sect3>
+
+					<sect3>
+						<title>Set up Spring Beans</title>
+
+						<sect4>
+							<title>/WEB-INF/cas-servlet.xml</title>
+							<para>Two beans are needed for the login flow. Those beans are :</para>
+							<para>
+								<programlisting>
+		&lt;bean id="negociateSpnego" parent="abstractLoginAction" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoNegociateCredentialsAction" /&gt;
+		
+		&lt;bean id="spnego" parent="abstractCasLoginAction" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoCredentialsAction" /&gt;
+								</programlisting>
+							</para>
+						</sect4>
+
+						<sect4>
+							<title>/WEB-INF/deployerConfigContext.xml</title>
+							<para>In the bean <literal>authenticationManager</literal>, add :</para>
+							<itemizedlist>
+								<listitem><para><literal>org.jasig.cas.adaptors.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolver</literal> as <literal>credentialsToPrincipalResolvers</literal></para></listitem>
+								<listitem><para><literal>org.jasig.cas.adaptors.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler</literal> as <literal>authenticationHandlers</literal></para></listitem>
+							</itemizedlist>
+							<para>
+								<programlisting>
+		&lt;bean id="authenticationManager" class="org.jasig.cas.authentication.AuthenticationManagerImpl"&gt;
+		  &lt;property name="credentialsToPrincipalResolvers"&gt;
+		    &lt;list&gt;
+		      &lt;!--  ... the others credentialsToPrincipalResolvers ... --&gt;
+		      &lt;bean class="org.jasig.cas.adaptors.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolver" /&gt;
+		    &lt;/list&gt;
+		  &lt;/property&gt;
+		  &lt;property name="authenticationHandlers"&gt;
+		    &lt;list&gt;
+		      &lt;bean class="org.jasig.cas.adaptors.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler"&gt;
+		        &lt;property name="authentication"&gt;
+			  &lt;bean class="jcifs.spnego.Authentication" /&gt;
+		        &lt;/property&gt;
+			&lt;property name="principalWithDomainName" value="false" /&gt;
+		        &lt;property name="nTLMallowed" value="true"/&gt;
+		      &lt;/bean&gt;
+		      &lt;!--  ... the others authenticationHandlers... --&gt;
+		    &lt;/list&gt;
+		  &lt;/property&gt;
+		&lt;/bean&gt;
+								</programlisting>
+							</para>
+							<para>There is also the <literal>jcifsConfig</literal> bean which needs to be added.</para>
+							<para>
+								<programlisting>
+		&lt;bean name="jcifsConfig" class="org.jasig.cas.adaptors.spnego.util.JCIFSConfig"&gt;
+		  &lt;property name="jcifsKerberosEnable" value="true" /&gt;
+		  &lt;property name="jcifsServicePrincipal" value="HTTP/your.server.name.here/YOUR.REALM.HERE" /&gt;
+		  &lt;property name="jcifsServicePassword" value="the.service.password.here" /&gt;
+		  &lt;property name="kerberosDebug" value="false" /&gt;
+		  &lt;property name="kerberosRealm" value="YOUR.REALM.HERE" /&gt;
+		  &lt;property name="kerberosKdc" value="THE.KDC.IP.HERE" /&gt;
+		  &lt;property name="loginConf" value="/WEB-INF/login.conf" /&gt;
+		&lt;/bean&gt;
+								</programlisting>
+							</para>							
+						</sect4>
+						
+						<sect4>
+							<title>/WEB-INF/login.conf</title>
+							<para>Copy or create the file <literal>/WEB-INF/login.conf</literal></para>
+							<para>
+								<programlisting>
+		jcifs.spnego.initiate {
+		    com.sun.security.auth.module.Krb5LoginModule required storeKey=true;
+		};
+		jcifs.spnego.accept {
+		    com.sun.security.auth.module.Krb5LoginModule required storeKey=true;
+		};
+								</programlisting>
+							</para>
+						</sect4>
+					</sect3>
+				</sect2>
+			</sect1>
+
+		</chapter>
+
 <!-- 
 		<chapter id="x509">
 		</chapter>
