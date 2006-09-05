@@ -28,19 +28,19 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(getPasswordEncoder().encode(password))) {
-            getLog().debug(
+            log.debug(
                 "User [" + username + "] was successfully authenticated.");
             return true;
         }
 
-        getLog().debug("User [" + username + "] failed authentication");
+        log.debug("User [" + username + "] failed authentication");
 
         return false;
     }
 
     protected void afterPropertiesSetInternal() throws Exception {
         super.afterPropertiesSetInternal();
-        getLog()
+        log
             .warn(
                 this.getClass().getName()
                     + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
