@@ -76,14 +76,14 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     public final void afterPropertiesSet() throws Exception {
         if (this.passwordEncoder == null) {
             this.passwordEncoder = new PlainTextPasswordEncoder();
-            getLog().info(
+            log.info(
                 "No PasswordEncoder set.  Using default: "
                     + this.passwordEncoder.getClass().getName());
         }
 
         if (this.classToSupport == null) {
             this.classToSupport = DEFAULT_CLASS;
-            getLog().info(
+            log.info(
                 "No Class to Support set.  Using default: "
                     + this.classToSupport.getName());
         }
@@ -107,16 +107,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
      */
     protected final PasswordEncoder getPasswordEncoder() {
         return this.passwordEncoder;
-    }
-
-    /**
-     * Method to return the log instance in order for subclasses to have access
-     * to the log object.
-     * 
-     * @return the logging instance for this class.
-     */
-    public final Log getLog() {
-        return this.log;
     }
 
     /**
