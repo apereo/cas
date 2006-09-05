@@ -15,7 +15,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
  * @author Marc-Antoine Garrigue
- * @author Arnaud Lessueur
+ * @author Arnaud Lesueur
  * @version $Id$
  * @since 3.1
  * 

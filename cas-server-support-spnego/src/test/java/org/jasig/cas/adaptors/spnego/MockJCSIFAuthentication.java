@@ -13,7 +13,7 @@ import jcifs.spnego.AuthenticationException;
 /**
  * 
  * @author Marc-Antoine Garrigue
- * @author Arnaud Lessueur
+ * @author Arnaud Lesueur
  * @version $Id$
  * @since 3.1
  */

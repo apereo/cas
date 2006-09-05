@@ -17,10 +17,9 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
  * takes a SpnegoCredentials and returns a
  * SimplePrincipal.
  *
- * @author Arnaud Lessueur
+ * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @version $Id$
- * @noinspection WeakerAccess
  * @since 3.1
  */
 public class SpnegoCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {

@@ -8,7 +8,7 @@ package org.jasig.cas.adaptors.spnego.util;
 /**
  * Spnego Constants
  *
- * @author Arnaud Lessueur
+ * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @version $Id$
  * @since 3.1

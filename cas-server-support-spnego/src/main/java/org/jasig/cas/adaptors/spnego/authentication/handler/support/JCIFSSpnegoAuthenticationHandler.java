@@ -21,7 +21,7 @@ import java.security.Principal;
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
  * support both NTLM and Kerberos. NTLM is disabled by default.
  *
- * @author Arnaud Lessueur
+ * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @version $Id: JCIFSSpnegoAuthenticationHandler.java,v 1.1 2006/08/31 17:33:12
  *          magarrigue Exp $
