@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
 /**
  * Credentials that are a holder for Spnego init token
  *
- * @author Arnaud Lessueur
+ * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @version $Id$
  * @since 3.1

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * procedure, this action check wether a principal is present in Credentials and
  * add correspondings response headers.
  *
- * @author Arnaud Lessueur
+ * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @version $Id$
  * @see <a href='http://ietfreport.isoc.org/idref/rfc4559/#page-2'>RFC 4559</a>
