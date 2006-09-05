@@ -290,28 +290,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>net.sf.ldaptemplate</groupId>
-			<artifactId>ldaptemplate</artifactId>
-			<version>1.0.2</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-ldap</artifactId>
+			<version>1.1</version>
 			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-dao</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -339,13 +321,13 @@
 	</repositories>
 
 	<modules>
-		<!-- 		<module>cas-server-compatibility</module> -->
 		<module>cas-server-core</module>
 		<module>cas-server-support-generic</module>
 		<module>cas-server-support-jdbc</module>
 		<module>cas-server-support-ldap</module>
 		<module>cas-server-support-legacy</module>
 		<module>cas-server-support-radius</module>
+		<module>cas-server-support-spnego</module>
 		<module>cas-server-support-trusted</module>
 		<module>cas-server-support-x509</module>
 		<module>cas-server-integration-jboss</module>

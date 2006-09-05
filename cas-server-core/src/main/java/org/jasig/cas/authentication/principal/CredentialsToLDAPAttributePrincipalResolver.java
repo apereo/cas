@@ -12,10 +12,6 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
-import net.sf.ldaptemplate.AttributesMapper;
-import net.sf.ldaptemplate.LdapTemplate;
-import net.sf.ldaptemplate.support.LdapContextSource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -24,6 +20,9 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.LdapUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.ldap.AttributesMapper;
+import org.springframework.ldap.LdapTemplate;
+import org.springframework.ldap.support.LdapContextSource;
 import org.springframework.util.Assert;
 
 /**

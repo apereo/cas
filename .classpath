@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-admin/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-admin/src/test/java"/>
 	<classpathentry kind="src" path="cas-server-integration-jboss/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-generic/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-jdbc/src/main/java"/>
@@ -33,7 +35,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0-rc3/spring-binding-1.0-rc3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius/20060406/jradius-20060406.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius-dictionary/20060406/jradius-dictionary-20060406.jar"/>
-	<classpathentry kind="var" path="M2_REPO/net/sf/ldaptemplate/ldaptemplate/1.0.2/ldaptemplate-1.0.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-ldap/1.1/spring-ldap-1.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-cache/1.4.0.SP1/jboss-cache-1.4.0.SP1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-system/4.0.3/jboss-system-4.0.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-jmx/4.0.3/jboss-jmx-4.0.3.jar"/>

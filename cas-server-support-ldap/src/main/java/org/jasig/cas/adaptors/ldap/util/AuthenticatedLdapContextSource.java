@@ -12,9 +12,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
 import org.springframework.dao.DataAccessResourceFailureException;
-
-import net.sf.ldaptemplate.support.LdapContextSource;
-
+import org.springframework.ldap.support.LdapContextSource;
 
 public class AuthenticatedLdapContextSource extends LdapContextSource {
     
