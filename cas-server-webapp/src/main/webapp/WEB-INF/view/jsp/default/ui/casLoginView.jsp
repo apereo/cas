@@ -45,9 +45,8 @@
 			</div>
 				<p style="text-align: center;">
 					Languages:
-					
-				<c:set var="query" value="<%=request.getQueryString() == null ? "" : java.net.URLEncoder.encode(request.getQueryString().replaceAll("&locale=[A-Za-z][A-Za-z]|^locale=[A-Za-z][A-Za-z]|", "").replaceAll("", ""), "UTF-8")%>" />
-					
+				
+				<c:set var="query" value="<%=request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=[A-Za-z][A-Za-z]|^locale=[A-Za-z][A-Za-z]|", "").replaceAll("", "")%>" />
 					
 				<a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a> |
 				<a href="login?${query}${not empty query ? '&' : ''}locale=es">Español</a> |					
