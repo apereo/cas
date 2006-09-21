@@ -51,7 +51,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
     public void testValidCertificateWithInvalidFirst() throws Exception {
         final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {INVALID_CERTIFICATE, VALID_CERTIFICATE});
         
-        assertTrue(this.authenticationHandler.authenticate(credentials));
+        assertFalse(this.authenticationHandler.authenticate(credentials));
     }
     
     public void testValidCertificateWithNotTrustedIssuer() throws Exception {
