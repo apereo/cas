@@ -142,6 +142,9 @@
 					<includes>
 						<include>**/*Tests.java</include>
 					</includes>
+					<excludes>
+						<exclude>**/Abstract*.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
