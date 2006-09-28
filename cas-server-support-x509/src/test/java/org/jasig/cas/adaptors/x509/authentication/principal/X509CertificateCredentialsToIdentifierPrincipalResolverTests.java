@@ -37,7 +37,16 @@ public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
         assertFalse("The principals should not match", resolver
             .resolvePrincipal(credentials).getId().equals("SE, Altcom Test"));
     }
+
+    public void testSupport() {
+        final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        assertTrue(this.resolver.supports(c));
+    }
     
+    public void testSupportFalse() {
+        assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
+    }
+
     public void testCheckIdentifier() throws Exception {
         X509CertificateCredentialsToIdentifierPrincipalResolver resolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
         resolver.afterPropertiesSet();
