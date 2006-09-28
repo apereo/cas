@@ -33,12 +33,12 @@ public class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolve
         this.resolver.setValueDelimiter(this.VALUEDELIMITER);
         this.resolver.afterPropertiesSet();
 
-        assertEquals("The principals should match", 
+        assertEquals("The principals should match: ", 
             this.resolver.resolvePrincipal(c).getId(),
             this.SERIALNUMBERPREFIX
-                + VALID_CERTIFICATE.getSerialNumber().toString()
+                + c.getCertificate().getSerialNumber().toString()
                 + this.VALUEDELIMITER
-                + VALID_CERTIFICATE.getIssuerDN().toString()
+                + c.getCertificate().getIssuerDN().getName()
             );
     }
         

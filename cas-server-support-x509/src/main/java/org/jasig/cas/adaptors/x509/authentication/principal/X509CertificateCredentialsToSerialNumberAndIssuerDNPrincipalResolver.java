@@ -74,6 +74,6 @@ public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalR
         final X509Certificate certificate) {
         return new SimplePrincipal(this.serialNumberPrefix
             + certificate.getSerialNumber().toString() + this.valueDelimiter
-            + certificate.getIssuerDN().toString());
+            + certificate.getIssuerDN().getName());
     }
 }
