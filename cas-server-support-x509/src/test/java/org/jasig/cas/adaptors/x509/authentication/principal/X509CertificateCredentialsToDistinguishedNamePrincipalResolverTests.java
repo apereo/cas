@@ -11,6 +11,13 @@ import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCrede
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToDistinguishedNamePrincipalResolver;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
+/**
+ * @author Scott Battaglia
+ * @author Jan Van der Velpen
+ * @version $Revision$ $Date$
+ * @since 3.0.6
+ *
+ */
 public class X509CertificateCredentialsToDistinguishedNamePrincipalResolverTests
     extends AbstractX509CertificateTests {
 
