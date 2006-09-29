@@ -10,12 +10,13 @@ package org.jasig.cas.adaptors.spnego.util;
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @version $Id$
+ * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class SpnegoConstants {
-    //constants, do not instanciate
+    
     private SpnegoConstants() {
+        // constants, do not instanciate
     }
 
     public static final String HEADER_AUTHENTICATE = "WWW-Authenticate";
