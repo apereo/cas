@@ -81,33 +81,33 @@ public class JCIFSConfig implements InitializingBean {
         Config.setProperty("jcifs.smb.client.soTimeout", "300000");
         Config.setProperty("jcifs.netbios.cachePolicy", "600");
 
-        log.debug("jcifsServicePrincipal is set to " + jcifsServicePrincipal);
-        Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
+        log.debug("jcifsServicePrincipal is set to " + this.jcifsServicePrincipal);
+        Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, this.jcifsServicePrincipal);
         log.debug("jcifsServicePassword is set to *****");
-        Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
+        Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, this.jcifsServicePassword);
 
-        if (kerberosRealm != null) {
-            log.debug("kerberosRealm is set to :" + kerberosRealm);
-            System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
+        if (this.kerberosRealm != null) {
+            log.debug("kerberosRealm is set to :" + this.kerberosRealm);
+            System.setProperty(SYS_PROP_KERBEROS_REALM, this.kerberosRealm);
         }
-        if (kerberosKdc != null) {
-            log.debug("kerberosKdc is set to : " + kerberosKdc);
-            System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
+        if (this.kerberosKdc != null) {
+            log.debug("kerberosKdc is set to : " + this.kerberosKdc);
+            System.setProperty(SYS_PROP_KERBEROS_KDC, this.kerberosKdc);
         }
-        if (kerberosConf != null) {
-            log.debug("kerberosConf is set to :" + kerberosConf);
-            System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
+        if (this.kerberosConf != null) {
+            log.debug("kerberosConf is set to :" + this.kerberosConf);
+            System.setProperty(SYS_PROP_KERBEROS_CONF, this.kerberosConf);
         }
-        if (kerberosDebug != null) {
-            log.debug("kerberosDebug is set to : " + kerberosDebug);
-            System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
+        if (this.kerberosDebug != null) {
+            log.debug("kerberosDebug is set to : " + this.kerberosDebug);
+            System.setProperty(SYS_PROP_KERBEROS_DEBUG, this.kerberosDebug);
         }
 
-        if ("true".equalsIgnoreCase(jcifsKerberosEnable)) {
+        if ("true".equalsIgnoreCase(this.jcifsKerberosEnable)) {
             log.debug("jcifsKerberosEnable is set to true");
             Config.setProperty(JCIFS_PROP_ENABLE_KERBEROS, "true");
 
-        } else if ("false".equalsIgnoreCase(jcifsKerberosEnable)) {
+        } else if ("false".equalsIgnoreCase(this.jcifsKerberosEnable)) {
             log.debug("jcifsKerberosEnable is set to false");
             Config.setProperty(JCIFS_PROP_ENABLE_KERBEROS, "false");
         }
@@ -116,11 +116,11 @@ public class JCIFSConfig implements InitializingBean {
             log.warn("found login config in system property, may overide : "
                     + System.getProperty(SYS_PROP_LOGIN_CONF));
         }
-        URL url = getClass().getResource((loginConf == null) ? DEFAULT_LOGIN_CONFIG : loginConf);
+        URL url = getClass().getResource((this.loginConf == null) ? DEFAULT_LOGIN_CONFIG : this.loginConf);
         if (url != null)
-            loginConf = url.toExternalForm();
-        if (loginConf != null) {
-            System.setProperty(SYS_PROP_LOGIN_CONF, loginConf);
+            this.loginConf = url.toExternalForm();
+        if (this.loginConf != null) {
+            System.setProperty(SYS_PROP_LOGIN_CONF, this.loginConf);
         } else {
             url = getClass().getResource("/jcifs/http/login.conf");
             if (url != null) {
@@ -130,10 +130,10 @@ public class JCIFSConfig implements InitializingBean {
         log.debug("configured login configuration path : "
                 + System.getProperty(SYS_PROP_LOGIN_CONF));
 
-        if ("true".equalsIgnoreCase(useSubjectCredsOnly)) {
+        if ("true".equalsIgnoreCase(this.useSubjectCredsOnly)) {
             log.debug("useSubjectCredsOnly is set to true");
             System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, "true");
-        } else if ("false".equalsIgnoreCase(useSubjectCredsOnly)) {
+        } else if ("false".equalsIgnoreCase(this.useSubjectCredsOnly)) {
             log.debug("useSubjectCredsOnly is set to false");
             System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, "false");
         }
@@ -141,7 +141,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getJcifsKerberosEnable() {
-        return jcifsKerberosEnable;
+        return this.jcifsKerberosEnable;
     }
 
     public void setJcifsKerberosEnable(String jcifsKerberosEnable) {
@@ -149,7 +149,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getJcifsServicePassword() {
-        return jcifsServicePassword;
+        return this.jcifsServicePassword;
     }
 
     public void setJcifsServicePassword(String jcifsServicePassword) {
@@ -157,7 +157,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getJcifsServicePrincipal() {
-        return jcifsServicePrincipal;
+        return this.jcifsServicePrincipal;
     }
 
     public void setJcifsServicePrincipal(String jcifsServicePrincipal) {
@@ -165,7 +165,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getKerberosConf() {
-        return kerberosConf;
+        return this.kerberosConf;
     }
 
     public void setKerberosConf(String kerberosConf) {
@@ -173,7 +173,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getKerberosKdc() {
-        return kerberosKdc;
+        return this.kerberosKdc;
     }
 
     public void setKerberosKdc(String kerberosKdc) {
@@ -181,7 +181,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getKerberosRealm() {
-        return kerberosRealm;
+        return this.kerberosRealm;
     }
 
     public void setKerberosRealm(String kerberosRealm) {
@@ -189,7 +189,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getLoginConf() {
-        return loginConf;
+        return this.loginConf;
     }
 
     public void setLoginConf(String loginConf) {
@@ -197,7 +197,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getUseSubjectCredsOnly() {
-        return useSubjectCredsOnly;
+        return this.useSubjectCredsOnly;
     }
 
     public void setUseSubjectCredsOnly(String useSubjectCredsOnly) {
@@ -205,7 +205,7 @@ public class JCIFSConfig implements InitializingBean {
     }
 
     public String getKerberosDebug() {
-        return kerberosDebug;
+        return this.kerberosDebug;
     }
 
     public void setKerberosDebug(String kerberosDebug) {

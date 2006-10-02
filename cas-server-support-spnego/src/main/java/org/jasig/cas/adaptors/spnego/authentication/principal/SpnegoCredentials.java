@@ -52,11 +52,11 @@ public class SpnegoCredentials implements Credentials {
     }
 
     public byte[] getInitToken() {
-        return initToken;
+        return this.initToken;
     }
 
     public byte[] getNextToken() {
-        return nextToken;
+        return this.nextToken;
     }
 
     public void setNextToken(byte[] nextToken) {
@@ -64,7 +64,7 @@ public class SpnegoCredentials implements Credentials {
     }
 
     public Principal getPrincipal() {
-        return principal;
+        return this.principal;
     }
 
     public void setPrincipal(Principal principal) {
@@ -72,7 +72,7 @@ public class SpnegoCredentials implements Credentials {
     }
 
     public boolean IsNtlm() {
-        return isNtlm;
+        return this.isNtlm;
     }
 
     private boolean isTokenNtlm(byte[] token) {
