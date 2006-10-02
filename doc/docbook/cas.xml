@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
 
@@ -548,7 +548,7 @@
 					<para>This is the implementation of an AuthenticationHandler for SPNEGO supports. This Handler support both NTLM and Kerberos. NTLM is disabled by default. This class supports the following properties:</para>
 					<itemizedlist>
 							<listitem><para><literal>principalWithDomainName</literal> - boolean to enable or disable domain name in the returned netid</para></listitem>
-							<listitem><para><literal>nTLMallowed</literal> - allows to authenticate using SPNEGO/NTLM token</para></listitem>
+							<listitem><para><literal>NTLMallowed</literal> - allows to authenticate using SPNEGO/NTLM token</para></listitem>
 					</itemizedlist>
 				</sect2>
 
@@ -725,9 +725,16 @@
 							<para>Two beans are needed for the login flow. Those beans are :</para>
 							<para>
 								<programlisting>
-		&lt;bean id="negociateSpnego" parent="abstractLoginAction" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoNegociateCredentialsAction" /&gt;
+		&lt;bean id="negociateSpnego" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoNegociateCredentialsAction"&gt; 
+			&lt;property name="argumentExtractors" ref="argumentExtractors"/&gt;
+			&lt;property name="ticketGrantingTicketCookieGenerator" ref="ticketGrantingTicketCookieGenerator"/&gt;
+		&lt;/bean&gt;
 		
-		&lt;bean id="spnego" parent="abstractCasLoginAction" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoCredentialsAction" /&gt;
+		&lt;bean id="spnego" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoCredentialsAction"&gt; 
+			&lt;property name="centralAuthenticationService" ref="centralAuthenticationService"/&gt;
+			&lt;property name="argumentExtractors" ref="argumentExtractors"/&gt;
+			&lt;property name="ticketGrantingTicketCookieGenerator" ref="ticketGrantingTicketCookieGenerator"/&gt;
+		&lt;/bean&gt;
 								</programlisting>
 							</para>
 						</sect4>
@@ -755,7 +762,7 @@
 			  &lt;bean class="jcifs.spnego.Authentication" /&gt;
 		        &lt;/property&gt;
 			&lt;property name="principalWithDomainName" value="false" /&gt;
-		        &lt;property name="nTLMallowed" value="true"/&gt;
+		        &lt;property name="NTLMallowed" value="true"/&gt;
 		      &lt;/bean&gt;
 		      &lt;!--  ... the others authenticationHandlers... --&gt;
 		    &lt;/list&gt;
@@ -766,9 +773,9 @@
 							<para>There is also the <literal>jcifsConfig</literal> bean which needs to be added.</para>
 							<para>
 								<programlisting>
-		&lt;bean name="jcifsConfig" class="org.jasig.cas.adaptors.spnego.util.JCIFSConfig"&gt;
+		&lt;bean name="jcifsConfig" class="org.jasig.cas.adaptors.spnego.authentication.handler.support.JCIFSConfig"&gt;
 		  &lt;property name="jcifsKerberosEnable" value="true" /&gt;
-		  &lt;property name="jcifsServicePrincipal" value="HTTP/your.server.name.here/YOUR.REALM.HERE" /&gt;
+		  &lt;property name="jcifsServicePrincipal" value="HTTP/your.server.name.here@YOUR.REALM.HERE" /&gt;
 		  &lt;property name="jcifsServicePassword" value="the.service.password.here" /&gt;
 		  &lt;property name="kerberosDebug" value="false" /&gt;
 		  &lt;property name="kerberosRealm" value="YOUR.REALM.HERE" /&gt;
