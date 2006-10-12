@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action for determining whether the warning page needs to be displayed or not.

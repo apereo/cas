@@ -13,8 +13,8 @@ import org.jasig.cas.web.flow.AbstractLoginAction;
 import org.jasig.cas.web.support.WebUtils;
 
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * First action of a SPNEGO flow : negociation.<br/> The server checks if the

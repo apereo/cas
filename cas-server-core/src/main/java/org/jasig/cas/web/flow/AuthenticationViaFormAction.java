@@ -23,9 +23,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.FormAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action to authenticate credentials and retrieve a TicketGrantingTicket for

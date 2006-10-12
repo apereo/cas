@@ -7,8 +7,8 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action to check if there is a gateway set and there is a service to redirect

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Implements the traditional CAS2 protocol.

@@ -8,8 +8,8 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action that handles the TicketGrantingTicket creation and destruction. If the

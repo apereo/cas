@@ -12,7 +12,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

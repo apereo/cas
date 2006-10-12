@@ -8,7 +8,7 @@ package org.jasig.cas.web.support;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Strategy interface for retrieving services and tickets from the request.

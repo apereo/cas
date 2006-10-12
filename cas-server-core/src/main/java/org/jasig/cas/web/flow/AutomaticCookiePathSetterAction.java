@@ -11,9 +11,9 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.

@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Retrieve the ticket and artifact based on the SAML 1.1 profile.
