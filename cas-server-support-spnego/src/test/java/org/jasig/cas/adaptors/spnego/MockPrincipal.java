@@ -24,7 +24,7 @@ public class MockPrincipal implements Principal {
 	}
 
 	public String getName() {
-		return principal;
+		return this.principal;
 	}
 
 }

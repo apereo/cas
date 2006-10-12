@@ -32,12 +32,12 @@ public class MockJCSIFAuthentication extends Authentication {
 
 	public byte[] getNextToken() {
 
-		return valid ? outToken : null;
+		return this.valid ? this.outToken : null;
 	}
 
 	public java.security.Principal getPrincipal() {
 
-		return valid ? principal : null;
+		return this.valid ? this.principal : null;
 	}
 
 	public void process(byte[] arg0) throws AuthenticationException {
