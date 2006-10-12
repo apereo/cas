@@ -45,7 +45,7 @@ public class JCSIFSpnegoAuthenticationHandlerTests extends TestCase {
         assertNotNull(credentials.getNextToken());
     }
 
-    public void testUnsuccessfulAuthentication() throws AuthenticationException {
+    public void testUnsuccessfulAuthentication() {
         final SpnegoCredentials credentials = new SpnegoCredentials(new byte[] {0, 1, 2});
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(false));
         try {

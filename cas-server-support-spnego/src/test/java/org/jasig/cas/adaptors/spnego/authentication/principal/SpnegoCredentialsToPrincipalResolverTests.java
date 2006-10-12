@@ -29,13 +29,13 @@ public class SpnegoCredentialsToPrincipalResolverTests extends TestCase {
 
 	public void testValidCredentials() {
 		this.spnegoCredentials.setPrincipal(new SimplePrincipal("test"));
-		assertEquals("test", this.resolver.resolvePrincipal(spnegoCredentials)
+		assertEquals("test", this.resolver.resolvePrincipal(this.spnegoCredentials)
 				.getId());
 	}
 
 	public void testSupports() {
 		assertFalse(this.resolver.supports(null));
-		assertTrue(this.resolver.supports(spnegoCredentials));
+		assertTrue(this.resolver.supports(this.spnegoCredentials));
 		assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
 	}
 }
