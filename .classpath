@@ -31,8 +31,8 @@
 	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/opensaml/opensaml/1.1b/opensaml-1.1b.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webflow/1.0-rc3/spring-webflow-1.0-rc3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0-rc3/spring-binding-1.0-rc3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webflow/1.0-rc4/spring-webflow-1.0-rc4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0-rc4/spring-binding-1.0-rc4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius/20060406/jradius-20060406.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius-dictionary/20060406/jradius-dictionary-20060406.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-ldap/1.1/spring-ldap-1.1.jar"/>

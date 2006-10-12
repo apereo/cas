@@ -10,7 +10,7 @@ import java.security.cert.X509Certificate;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Concrete implementation of AbstractNonInteractiveCredentialsAction that

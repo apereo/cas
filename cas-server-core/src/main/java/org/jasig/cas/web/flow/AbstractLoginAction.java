@@ -12,8 +12,8 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Abstract class to make available common collaborators such as CookieGenerators and

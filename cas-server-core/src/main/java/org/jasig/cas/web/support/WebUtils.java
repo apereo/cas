@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Common utilities for the web tier.

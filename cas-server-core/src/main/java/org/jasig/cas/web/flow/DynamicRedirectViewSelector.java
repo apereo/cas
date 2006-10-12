@@ -7,10 +7,10 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.util.Assert;
-import org.springframework.webflow.RequestContext;
-import org.springframework.webflow.ViewSelection;
-import org.springframework.webflow.ViewSelector;
-import org.springframework.webflow.support.ExternalRedirect;
+import org.springframework.webflow.engine.ViewSelector;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.support.ExternalRedirect;
 
 /**
  * ViewSelector that grabs the redirect URL from the proper
@@ -32,13 +32,17 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
     }
 
     public ViewSelection makeRefreshSelection(final RequestContext context) {
-        return makeSelection(context);
+        return makeEntrySelection(context);
     }
 
-    public ViewSelection makeSelection(final RequestContext context) {
+    public boolean isEntrySelectionRenderable(final RequestContext request) {
+        return false;
+    }
+
+    public ViewSelection makeEntrySelection(final RequestContext request) {
         for (int i = 0; i < this.argumentExtractors.length; i++) {
             final String url = this.argumentExtractors[i]
-                .constructUrlForRedirct(context);
+                .constructUrlForRedirct(request);
 
             if (url != null) {
                 return new ExternalRedirect(url);
