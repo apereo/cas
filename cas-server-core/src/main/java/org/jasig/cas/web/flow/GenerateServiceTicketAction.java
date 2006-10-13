@@ -26,7 +26,7 @@ public final class GenerateServiceTicketAction extends AbstractLoginAction {
     private CentralAuthenticationService centralAuthenticationService;
 
     protected Event doExecute(final RequestContext context) {
-        final Service service = WebUtils.getService(getArgumentExtractors(), WebUtils.getHttpServletRequest(context));
+        final Service service = WebUtils.getService(context);
         final String ticketGrantingTicketFromRequest = WebUtils.getTicketGrantingTicketFromRequestScope(context);
 
         try {

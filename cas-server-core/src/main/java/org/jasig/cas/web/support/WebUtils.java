@@ -74,6 +74,10 @@ public final class WebUtils {
 
         return null;
     }
+    
+    public static final Service getService(final RequestContext context) {
+        return (Service) context.getFlowScope().get("service");
+    }
 
     public static final String getTicket(
         final ArgumentExtractor[] argumentExtractors,
