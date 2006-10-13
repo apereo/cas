@@ -248,10 +248,9 @@ public class AuthenticationViaFormActionTests extends
 
         assertEquals(
             "test2",
-            ((UsernamePasswordCredentials) ((BindException) context
-                .getRequestScope().get(
-                    "org.springframework.validation.BindException.credentials"))
-                .getTarget()).getUsername());
+            ((UsernamePasswordCredentials) context
+                .getFlowScope().get(
+                    "credentials")).getUsername());
 
     }
 
