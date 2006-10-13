@@ -8,8 +8,6 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.util.CookieGenerator;
 
@@ -39,9 +37,6 @@ public class WarnActionTests extends TestCase {
         this.ticketGrantingTicketCookieGenerator = new CookieGenerator();
         this.ticketGrantingTicketCookieGenerator.setCookieName("test");
         this.warnAction.setWarnCookieGenerator(this.warnCookieGenerator);
-
-        this.warnAction
-            .setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
     }
 
     public void testWarnFromCookie() throws Exception {

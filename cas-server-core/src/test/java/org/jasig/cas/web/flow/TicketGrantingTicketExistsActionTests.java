@@ -7,8 +7,6 @@ package org.jasig.cas.web.flow;
 
 import javax.servlet.http.Cookie;
 
-import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -31,7 +29,6 @@ public class TicketGrantingTicketExistsActionTests extends TestCase {
 
     protected void setUp() throws Exception {
         this.tgtCookieGenerator.setCookieName("tgt");
-        this.action.setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.afterPropertiesSet();
     }

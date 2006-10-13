@@ -8,8 +8,6 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,8 +33,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         
         this.action.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
-        this.action.setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
-        
+       
         this.action.afterPropertiesSet();
         
         this.context = new MockRequestContext();
