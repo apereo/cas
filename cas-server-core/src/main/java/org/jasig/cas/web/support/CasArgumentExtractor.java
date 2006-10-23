@@ -59,9 +59,12 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
         synchronized (buffer) {
             buffer.append(service);
             buffer.append(service.indexOf('?') != -1 ? "&" : "?");
-            buffer.append(getArtifactParameterName());
-            buffer.append("=");
-            buffer.append(serviceTicket);
+            
+            if (StringUtils.hasText(serviceTicket)) {
+                buffer.append(getArtifactParameterName());
+                buffer.append("=");
+                buffer.append(serviceTicket);
+            }
         }
         
         return buffer.toString();
