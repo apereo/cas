@@ -46,7 +46,7 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
         return new SimpleService(WebUtils.stripJsessionFromUrl(service));
     }
 
-    public String constructUrlForRedirct(final RequestContext context) {
+    public String constructUrlForRedirect(final RequestContext context) {
         final String service = context.getRequestParameters().get(getServiceParameterName());
         final String serviceTicket = WebUtils.getServiceTicketFromRequestScope(context);
         

@@ -46,7 +46,7 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
         return new SamlService(WebUtils.stripJsessionFromUrl(service));
     }
 
-    public String constructUrlForRedirct(final RequestContext context) {
+    public String constructUrlForRedirect(final RequestContext context) {
         final String service = context.getRequestParameters().get(
             getServiceParameterName());
         final String serviceTicket = WebUtils

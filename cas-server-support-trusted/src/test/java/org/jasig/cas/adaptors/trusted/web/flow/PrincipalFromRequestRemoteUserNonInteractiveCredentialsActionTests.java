@@ -18,8 +18,6 @@ import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -43,7 +41,6 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests
     
     protected void setUp() throws Exception {
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
-        this.action.setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
         final Map idGenerators = new HashMap();
