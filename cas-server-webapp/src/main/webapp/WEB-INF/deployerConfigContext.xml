@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
 <!--
 	| deployerConfigContext.xml centralizes into one file some of the declarative configuration that
 	| all CAS deployers will need to modify.
@@ -13,7 +13,9 @@
 	| declaration to replace the default SimpleTestUsernamePasswordAuthenticationHandler with
 	| one implementing your approach for authenticating usernames and passwords.
 	+-->
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	<!--
 		| This bean declares our AuthenticationManager.  The CentralAuthenticationService service bean
 		| declared in applicationContext.xml picks up this AuthenticationManager by reference to its id, 
