@@ -39,6 +39,13 @@
 			<version>1.1.2</version>
 			<type>jar</type>
 		</dependency>
+		
+		<dependency>
+			<groupId>ognl</groupId>
+			<artifactId>ognl</artifactId>
+			<version>2.6.9</version>
+			<scope>runtime</scope>
+		</dependency>
   </dependencies>
   <build>
     <finalName>cas</finalName>
