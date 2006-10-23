@@ -42,7 +42,7 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
     public ViewSelection makeEntrySelection(final RequestContext request) {
         for (int i = 0; i < this.argumentExtractors.length; i++) {
             final String url = this.argumentExtractors[i]
-                .constructUrlForRedirct(request);
+                .constructUrlForRedirect(request);
 
             if (url != null) {
                 return new ExternalRedirect(url);

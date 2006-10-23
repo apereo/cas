@@ -46,7 +46,7 @@ public interface ArgumentExtractor {
      * @return The fully qualified URL if one can be constructed. Otherwise,
      * return null.
      */
-    String constructUrlForRedirct(RequestContext context);
+    String constructUrlForRedirect(RequestContext context);
 
     /**
      * Retrieve the ticket from the request.
