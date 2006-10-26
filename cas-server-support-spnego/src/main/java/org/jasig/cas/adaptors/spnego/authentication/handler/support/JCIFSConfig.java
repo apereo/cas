@@ -39,11 +39,6 @@ public class JCIFSConfig implements InitializingBean {
     private static final String SYS_PROP_KERBEROS_KDC = "java.security.krb5.kdc";
 
     /**
-     * -- Set this to true, otherwise only NTLM will be advertised/supported.
-     */
-    private static final String JCIFS_PROP_ENABLE_KERBEROS = "jcifs.http.enableNegotiate";
-
-    /**
      * -- the service principal you just created. Using the previous example, this would be
      * "HTTP/mybox at DOMAIN.COM".
      */
@@ -67,8 +62,6 @@ public class JCIFSConfig implements InitializingBean {
     private String kerberosDebug;
 
     private String kerberosKdc;
-
-    private String jcifsKerberosEnable;
 
     private String jcifsServicePrincipal;
 
@@ -103,15 +96,6 @@ public class JCIFSConfig implements InitializingBean {
             System.setProperty(SYS_PROP_KERBEROS_DEBUG, this.kerberosDebug);
         }
 
-        if ("true".equalsIgnoreCase(this.jcifsKerberosEnable)) {
-            log.debug("jcifsKerberosEnable is set to true");
-            Config.setProperty(JCIFS_PROP_ENABLE_KERBEROS, "true");
-
-        } else if ("false".equalsIgnoreCase(this.jcifsKerberosEnable)) {
-            log.debug("jcifsKerberosEnable is set to false");
-            Config.setProperty(JCIFS_PROP_ENABLE_KERBEROS, "false");
-        }
-
         if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
             log.warn("found login config in system property, may overide : "
                     + System.getProperty(SYS_PROP_LOGIN_CONF));
@@ -140,15 +124,7 @@ public class JCIFSConfig implements InitializingBean {
 
     }
 
-    public String getJcifsKerberosEnable() {
-        return this.jcifsKerberosEnable;
-    }
-
-    public void setJcifsKerberosEnable(String jcifsKerberosEnable) {
-        this.jcifsKerberosEnable = jcifsKerberosEnable;
-    }
-
-    public String getJcifsServicePassword() {
+   public String getJcifsServicePassword() {
         return this.jcifsServicePassword;
     }
 
