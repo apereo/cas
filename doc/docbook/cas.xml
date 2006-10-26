@@ -556,7 +556,6 @@
 					<title>JCIFSConfig</title>
 					<para>This class is the configuration helper for JCIFS and the Spring framework. This class supports the following properties:</para>
 					<itemizedlist>
-							<listitem><para><literal>jcifsKerberosEnable</literal> - boolean to enable or disable the SPNEGO Handler</para></listitem>
 							<listitem><para><literal>jcifsServicePrincipal</literal> - set the Service Principal Name</para></listitem>
 							<listitem><para><literal>jcifsServicePassword</literal> - set the password for the principal name</para></listitem>
 							<listitem><para><literal>kerberosDebug</literal> - boolean to enable or disable the debug mode on Kerberos</para></listitem>
@@ -696,25 +695,9 @@
 						</para>
 						<para>And 2 existing transitions need to be update :</para>
 						<itemizedlist>
-							<listitem><para>the transition <literal>authenticationRequired</literal> in the state <literal>gatewayRequestCheck</literal></para></listitem>
-							<listitem><para>the transition <literal>authenticationRequired</literal> in the state <literal>renewRequestCheck</literal></para></listitem>
+							<listitem><para>In the decision-state <literal>gatewayRequestCheck</literal>, replace reference to <literal>viewLoginForm</literal> by <literal>startAuthenticate</literal></para></listitem>
+							<listitem><para>In the decision-state <literal>renewRequestCheck</literal>, replace reference to <literal>viewLoginForm</literal> by <literal>startAuthenticate</literal></para></listitem>						
 						</itemizedlist>
-						<para>These transition were pointing to <literal>viewLoginForm</literal> and they now need to points to <literal>startAuthenticate</literal>. Those 2 states become :</para>
-						<para>
-							<programlisting>
-		&lt;action-state id="gatewayRequestCheck"&gt;
-		  &lt;action bean="gatewayRequestCheckAction" /&gt;
-		  &lt;transition on="gateway" to="redirect" /&gt;
-		  &lt;transition on="authenticationRequired" to="startAuthenticate" /&gt;
-		&lt;/action-state&gt;
-		
-		&lt;action-state id="renewRequestCheck"&gt;
-		  &lt;action bean="renewRequestCheckAction" /&gt;
-		  &lt;transition on="authenticationRequired" to="startAuthenticate" /&gt;
-		  &lt;transition on="generateServiceTicket" to="generateServiceTicket" /&gt;
-		&lt;/action-state&gt;
-							</programlisting>
-						</para>						
 					</sect3>
 
 					<sect3>
@@ -726,13 +709,11 @@
 							<para>
 								<programlisting>
 		&lt;bean id="negociateSpnego" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoNegociateCredentialsAction"&gt; 
-			&lt;property name="argumentExtractors" ref="argumentExtractors"/&gt;
 			&lt;property name="ticketGrantingTicketCookieGenerator" ref="ticketGrantingTicketCookieGenerator"/&gt;
 		&lt;/bean&gt;
 		
 		&lt;bean id="spnego" class="org.jasig.cas.adaptors.spnego.web.flow.SpnegoCredentialsAction"&gt; 
 			&lt;property name="centralAuthenticationService" ref="centralAuthenticationService"/&gt;
-			&lt;property name="argumentExtractors" ref="argumentExtractors"/&gt;
 			&lt;property name="ticketGrantingTicketCookieGenerator" ref="ticketGrantingTicketCookieGenerator"/&gt;
 		&lt;/bean&gt;
 								</programlisting>
@@ -774,13 +755,12 @@
 							<para>
 								<programlisting>
 		&lt;bean name="jcifsConfig" class="org.jasig.cas.adaptors.spnego.authentication.handler.support.JCIFSConfig"&gt;
-		  &lt;property name="jcifsKerberosEnable" value="true" /&gt;
 		  &lt;property name="jcifsServicePrincipal" value="HTTP/your.server.name.here@YOUR.REALM.HERE" /&gt;
 		  &lt;property name="jcifsServicePassword" value="the.service.password.here" /&gt;
 		  &lt;property name="kerberosDebug" value="false" /&gt;
 		  &lt;property name="kerberosRealm" value="YOUR.REALM.HERE" /&gt;
 		  &lt;property name="kerberosKdc" value="THE.KDC.IP.HERE" /&gt;
-		  &lt;property name="loginConf" value="/WEB-INF/login.conf" /&gt;
+		  &lt;property name="loginConf" value="/path/to/WEB-INF/login.conf" /&gt;
 		&lt;/bean&gt;
 								</programlisting>
 							</para>							
@@ -788,7 +768,7 @@
 						
 						<sect4>
 							<title>/WEB-INF/login.conf</title>
-							<para>Copy or create the file <literal>/WEB-INF/login.conf</literal></para>
+							<para>Copy or create the file <literal>/path/to/WEB-INF/login.conf</literal></para>
 							<para>
 								<programlisting>
 		jcifs.spnego.initiate {
