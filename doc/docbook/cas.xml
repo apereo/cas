@@ -701,7 +701,6 @@
 					</sect3>
 
 					<sect3>
-						<title>Set up Spring Beans</title>
 
 						<sect4>
 							<title>/WEB-INF/cas-servlet.xml</title>
