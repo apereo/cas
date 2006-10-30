@@ -220,14 +220,14 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-binding</artifactId>
-			<version>1.0-rc4</version>
+			<version>1.0</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflow</artifactId>
-			<version>1.0-rc4</version>
+			<version>1.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
