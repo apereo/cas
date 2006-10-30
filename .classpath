@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-admin/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-admin/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-services/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-services/src/test/java"/>
 	<classpathentry kind="src" path="cas-server-integration-jboss/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-generic/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-jdbc/src/main/java"/>
@@ -31,8 +31,7 @@
 	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/opensaml/opensaml/1.1b/opensaml-1.1b.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1/commons-logging-1.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webflow/1.0-rc4/spring-webflow-1.0-rc4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0-rc4/spring-binding-1.0-rc4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webflow/1.0/spring-webflow-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius/20060406/jradius-20060406.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius-dictionary/20060406/jradius-dictionary-20060406.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-ldap/1.1/spring-ldap-1.1.jar"/>
@@ -46,5 +45,7 @@
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.3/commons-codec-1.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jcifs/jcifs-ext/0.9.4/jcifs-ext-0.9.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs/1.2.9/jcifs-1.2.9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.0.ga/hibernate-3.2.0.ga.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0/spring-binding-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
