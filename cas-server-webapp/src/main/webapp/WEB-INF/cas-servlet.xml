@@ -127,11 +127,11 @@ http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.x
 			name="defaultFlowId"
 			value="login-webflow" />
 		<property
-			name="argumentExtractor">
+			name="argumentHandler">
 			<bean
-				class="org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor">
+				class="org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler">
 				<property
-					name="flowExecutionKeyParameterName"
+					name="flowExecutionKeyArgumentName"
 					value="lt" />
 				<property
 					name="defaultFlowId"
