@@ -16,13 +16,12 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * Configuration helper for JCIFS and the Spring framework.
  * 
- * 
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
- * @version $Id$
+ * @version $Revision$ $Date$
  * @since 3.1
  */
-public class JCIFSConfig implements InitializingBean {
+public final class JCIFSConfig implements InitializingBean {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/WEB-INF/login.conf";
 
@@ -39,8 +38,8 @@ public class JCIFSConfig implements InitializingBean {
     private static final String SYS_PROP_KERBEROS_KDC = "java.security.krb5.kdc";
 
     /**
-     * -- the service principal you just created. Using the previous example, this would be
-     * "HTTP/mybox at DOMAIN.COM".
+     * -- the service principal you just created. Using the previous example,
+     * this would be "HTTP/mybox at DOMAIN.COM".
      */
     private static final String JCIFS_PROP_SERVICE_PRINCIPAL = "jcifs.spnego.servicePrincipal";
 
@@ -74,10 +73,13 @@ public class JCIFSConfig implements InitializingBean {
         Config.setProperty("jcifs.smb.client.soTimeout", "300000");
         Config.setProperty("jcifs.netbios.cachePolicy", "600");
 
-        log.debug("jcifsServicePrincipal is set to " + this.jcifsServicePrincipal);
-        Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, this.jcifsServicePrincipal);
+        log.debug("jcifsServicePrincipal is set to "
+            + this.jcifsServicePrincipal);
+        Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL,
+            this.jcifsServicePrincipal);
         log.debug("jcifsServicePassword is set to *****");
-        Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, this.jcifsServicePassword);
+        Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD,
+            this.jcifsServicePassword);
 
         if (this.kerberosRealm != null) {
             log.debug("kerberosRealm is set to :" + this.kerberosRealm);
@@ -98,9 +100,10 @@ public class JCIFSConfig implements InitializingBean {
 
         if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
             log.warn("found login config in system property, may overide : "
-                    + System.getProperty(SYS_PROP_LOGIN_CONF));
+                + System.getProperty(SYS_PROP_LOGIN_CONF));
         }
-        URL url = getClass().getResource((this.loginConf == null) ? DEFAULT_LOGIN_CONFIG : this.loginConf);
+        URL url = getClass().getResource(
+            (this.loginConf == null) ? DEFAULT_LOGIN_CONFIG : this.loginConf);
         if (url != null)
             this.loginConf = url.toExternalForm();
         if (this.loginConf != null) {
@@ -112,7 +115,7 @@ public class JCIFSConfig implements InitializingBean {
             }
         }
         log.debug("configured login configuration path : "
-                + System.getProperty(SYS_PROP_LOGIN_CONF));
+            + System.getProperty(SYS_PROP_LOGIN_CONF));
 
         if ("true".equalsIgnoreCase(this.useSubjectCredsOnly)) {
             log.debug("useSubjectCredsOnly is set to true");
@@ -124,11 +127,11 @@ public class JCIFSConfig implements InitializingBean {
 
     }
 
-   public String getJcifsServicePassword() {
+    public String getJcifsServicePassword() {
         return this.jcifsServicePassword;
     }
 
-    public void setJcifsServicePassword(String jcifsServicePassword) {
+    public void setJcifsServicePassword(final String jcifsServicePassword) {
         this.jcifsServicePassword = jcifsServicePassword;
     }
 
@@ -136,7 +139,7 @@ public class JCIFSConfig implements InitializingBean {
         return this.jcifsServicePrincipal;
     }
 
-    public void setJcifsServicePrincipal(String jcifsServicePrincipal) {
+    public void setJcifsServicePrincipal(final String jcifsServicePrincipal) {
         this.jcifsServicePrincipal = jcifsServicePrincipal;
     }
 
@@ -144,7 +147,7 @@ public class JCIFSConfig implements InitializingBean {
         return this.kerberosConf;
     }
 
-    public void setKerberosConf(String kerberosConf) {
+    public void setKerberosConf(final String kerberosConf) {
         this.kerberosConf = kerberosConf;
     }
 
@@ -152,7 +155,7 @@ public class JCIFSConfig implements InitializingBean {
         return this.kerberosKdc;
     }
 
-    public void setKerberosKdc(String kerberosKdc) {
+    public void setKerberosKdc(final String kerberosKdc) {
         this.kerberosKdc = kerberosKdc;
     }
 
@@ -160,7 +163,7 @@ public class JCIFSConfig implements InitializingBean {
         return this.kerberosRealm;
     }
 
-    public void setKerberosRealm(String kerberosRealm) {
+    public void setKerberosRealm(final String kerberosRealm) {
         this.kerberosRealm = kerberosRealm;
     }
 
@@ -168,7 +171,7 @@ public class JCIFSConfig implements InitializingBean {
         return this.loginConf;
     }
 
-    public void setLoginConf(String loginConf) {
+    public void setLoginConf(final String loginConf) {
         this.loginConf = loginConf;
     }
 
@@ -176,7 +179,7 @@ public class JCIFSConfig implements InitializingBean {
         return this.useSubjectCredsOnly;
     }
 
-    public void setUseSubjectCredsOnly(String useSubjectCredsOnly) {
+    public void setUseSubjectCredsOnly(final String useSubjectCredsOnly) {
         this.useSubjectCredsOnly = useSubjectCredsOnly;
     }
 
@@ -184,8 +187,7 @@ public class JCIFSConfig implements InitializingBean {
         return this.kerberosDebug;
     }
 
-    public void setKerberosDebug(String kerberosDebug) {
+    public void setKerberosDebug(final String kerberosDebug) {
         this.kerberosDebug = kerberosDebug;
     }
-
 }

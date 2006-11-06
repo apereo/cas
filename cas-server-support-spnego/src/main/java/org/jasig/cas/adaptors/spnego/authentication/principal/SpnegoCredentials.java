@@ -11,14 +11,14 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 
 /**
- * Credentials that are a holder for Spnego init token
- *
+ * Credentials that are a holder for Spnego init token.
+ * 
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @version $Id$
+ * @version $Revision$ $Date$
  * @since 3.1
  */
-public class SpnegoCredentials implements Credentials {
+public final class SpnegoCredentials implements Credentials {
 
     /**
      * Unique id for serialization.
@@ -59,7 +59,7 @@ public class SpnegoCredentials implements Credentials {
         return this.nextToken;
     }
 
-    public void setNextToken(byte[] nextToken) {
+    public void setNextToken(final byte[] nextToken) {
         this.nextToken = nextToken;
     }
 
@@ -67,7 +67,7 @@ public class SpnegoCredentials implements Credentials {
         return this.principal;
     }
 
-    public void setPrincipal(Principal principal) {
+    public void setPrincipal(final Principal principal) {
         this.principal = principal;
     }
 
@@ -75,7 +75,7 @@ public class SpnegoCredentials implements Credentials {
         return this.isNtlm;
     }
 
-    private boolean isTokenNtlm(byte[] token) {
+    private boolean isTokenNtlm(final byte[] token) {
         if (token == null || token.length < 8)
             return false;
         for (int i = 0; i < 8; i++) {
