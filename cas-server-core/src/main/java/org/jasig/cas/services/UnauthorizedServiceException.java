@@ -12,7 +12,7 @@ package org.jasig.cas.services;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class UnauthorizedServiceException extends Exception {
+public class UnauthorizedServiceException extends RuntimeException {
 
     /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
