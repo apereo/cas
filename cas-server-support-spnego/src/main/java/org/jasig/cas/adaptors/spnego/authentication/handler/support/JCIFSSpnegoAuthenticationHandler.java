@@ -20,15 +20,14 @@ import java.security.Principal;
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
  * support both NTLM and Kerberos. NTLM is disabled by default.
- *
+ * 
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @version $Id: JCIFSSpnegoAuthenticationHandler.java,v 1.1 2006/08/31 17:33:12
- *          magarrigue Exp $
+ * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class JCIFSSpnegoAuthenticationHandler implements
-        AuthenticationHandler {
+    AuthenticationHandler {
 
     private final Log logger = LogFactory.getLog(this.getClass());
 
@@ -45,7 +44,7 @@ public final class JCIFSSpnegoAuthenticationHandler implements
     private boolean isNTLMallowed = false;
 
     public boolean authenticate(final Credentials credentials)
-            throws AuthenticationException {
+        throws AuthenticationException {
         final SpnegoCredentials spnegoCredentials = (SpnegoCredentials) credentials;
         Principal principal;
         byte[] nextToken;
@@ -72,47 +71,47 @@ public final class JCIFSSpnegoAuthenticationHandler implements
             if (spnegoCredentials.IsNtlm()) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("NTLM Credentials is valid for user ["
-                            + principal.getName() + "]");
+                        + principal.getName() + "]");
                 }
                 spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                        .getName(), true));
+                    .getName(), true));
                 return this.isNTLMallowed;
             }
             // else => kerberos
             if (logger.isDebugEnabled()) {
                 logger.debug("Kerberos Credentials is valid for user ["
-                        + principal.getName() + "]");
+                    + principal.getName() + "]");
             }
             spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                    .getName(), false));
+                .getName(), false));
             return true;
 
         }
         // principal is null
         logger
-                .debug("Principal is null, the processing of the SPNEGO Token failed");
+            .debug("Principal is null, the processing of the SPNEGO Token failed");
         return false;
-
     }
 
     public boolean supports(final Credentials credentials) {
         return credentials != null
-                && SpnegoCredentials.class.equals(credentials.getClass());
+            && SpnegoCredentials.class.equals(credentials.getClass());
     }
 
-    public void setAuthentication(Authentication authentication) {
+    public void setAuthentication(final Authentication authentication) {
         this.authentication = authentication;
     }
 
-    public void setPrincipalWithDomainName(boolean principalWithDomainName) {
+    public void setPrincipalWithDomainName(final boolean principalWithDomainName) {
         this.principalWithDomainName = principalWithDomainName;
     }
 
-    public void setNTLMallowed(boolean isNTLMallowed) {
+    public void setNTLMallowed(final boolean isNTLMallowed) {
         this.isNTLMallowed = isNTLMallowed;
     }
 
-    SimplePrincipal getSimplePrincipal(String name, boolean isNtlm) {
+    protected SimplePrincipal getSimplePrincipal(final String name,
+        final boolean isNtlm) {
         if (this.principalWithDomainName) {
             return new SimplePrincipal(name);
         }
