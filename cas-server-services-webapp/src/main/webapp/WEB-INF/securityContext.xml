@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+   <bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
+       <property name="filterInvocationDefinitionSource">
+           <value>
+               CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+               PATTERN_TYPE_APACHE_ANT
+               /**=httpSessionContextIntegrationFilter,casProcessingFilter,securityContextHolderAwareRequestFilter,exceptionTranslationFilter,filterInvocationInterceptor
+           </value>
+       </property>
+   </bean>
+
+   <bean id="httpSessionContextIntegrationFilter" class="org.acegisecurity.context.HttpSessionContextIntegrationFilter"/>
+
+   <bean id="securityContextHolderAwareRequestFilter" class="org.acegisecurity.wrapper.SecurityContextHolderAwareRequestFilter"/>
+
+   <bean id="httpRequestAccessDecisionManager" class="org.acegisecurity.vote.AffirmativeBased">
+       <property name="allowIfAllAbstainDecisions" value="false"/>
+       <property name="decisionVoters">
+           <list>
+               <bean class="org.acegisecurity.vote.RoleVoter"/>
+           </list>
+       </property>
+   </bean>
+
+   <bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor">
+       <property name="authenticationManager" ref="authenticationManager"/>
+       <property name="accessDecisionManager" ref="httpRequestAccessDecisionManager"/>
+       <property name="objectDefinitionSource">
+           <value>
+               CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+                \A.*.addservice.html.*\Z=ROLE_ADMIN
+                \A.*.updateservice.html.*\Z=ROLE_ADMIN
+                \A.*.deleteservice.html.*\Z=ROLE_ADMIN
+                \A.*.displayallservices.html.*\Z=ROLE_ADMIN
+           </value>
+       </property>
+   </bean>
+
+	<bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties">
+		<property name="service" value="https://localhost:8443/cas-services/j_acegi_cas_security_check"/>
+    </bean>
+
+  
+	<bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter">
+		<property name="authenticationManager" ref="authenticationManager"/>
+	    <property name="authenticationFailureUrl" value="/casfailed.jsp"/>
+	    <property name="defaultTargetUrl" value="/submitRequest.html"/>
+	    <property name="alwaysUseDefaultTargetUrl" value="true"/>
+	    <property name="filterProcessesUrl" value="/j_acegi_cas_security_check"/>
+	</bean>
+
+   <bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter">
+       <property name="authenticationEntryPoint" ref="authenticationEntryPoint"/>
+   </bean>
+
+   <bean id="authenticationEntryPoint" class="org.acegisecurity.ui.cas.CasProcessingFilterEntryPoint">
+       <property name="loginUrl" value="https://localhost:8443/cas/login"/>
+       <property name="serviceProperties" ref="serviceProperties"/>
+   </bean>
+
+   <bean id="authenticationManager" class="org.acegisecurity.providers.ProviderManager">
+       <property name="providers">
+           <list>
+               <ref bean="casAuthenticationProvider"/>
+           </list>
+       </property>
+   </bean>
+
+	<bean id="casAuthenticationProvider" class="org.acegisecurity.providers.cas.CasAuthenticationProvider">
+		<property name="casAuthoritiesPopulator" ref="casAuthoritiesPopulator"/>
+		<property name="casProxyDecider" ref="casProxyDecider"/>
+		<property name="ticketValidator" ref="casProxyTicketValidator"/>
+		<property name="statelessTicketCache" ref="statelessTicketCache"/>
+		<property name="key" value="my_cas_key"/>
+	</bean>
+    
+	<bean id="casProxyTicketValidator" class="org.acegisecurity.providers.cas.ticketvalidator.CasProxyTicketValidator">
+		<property name="casValidate" value="https://localhost:8443/cas/serviceValidate"/>
+		<property name="proxyCallbackUrl">
+				<null/>
+		</property>
+		<property name="serviceProperties" ref="serviceProperties"/>
+	</bean>
+
+   <bean id="statelessTicketCacheCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+       <property name="cacheManager" ref="cacheManager"/>
+       <property name="cacheName" value="ticketCache"/>
+   </bean>
+
+   <bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.EhCacheBasedTicketCache">
+       <property name="cache" ref="statelessTicketCacheCache"/>
+   </bean>
+
+	<bean id="casAuthoritiesPopulator" class="org.acegisecurity.providers.cas.populator.DaoCasAuthoritiesPopulator">
+		<property name="userDetailsService" ref="userDetailsService"/>
+	</bean>
+
+   <bean id="userDetailsService"
+       class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
+       <property name="userMap">
+           <value>
+               battags=PASSWORD_NOT_NEEDED,ROLE_ADMIN
+           </value>
+       </property>
+   </bean>
+   
+<bean id="casProxyDecider" class="org.acegisecurity.providers.cas.proxy.RejectProxyTickets"/>
+
+   <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"/> 
+</beans>
