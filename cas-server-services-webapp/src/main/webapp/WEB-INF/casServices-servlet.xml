@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<!-- View Resolver -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+		<property name="basename" value="default_views" />
+		<property name="order" value="0" />
+	</bean>
+
+	<bean id="addServiceController"
+		class="org.jasig.cas.services.web.AddServiceSimpleFormController">
+		<constructor-arg ref="serviceManager" />
+	</bean>
+
+	<bean id="updateServiceController"
+		class="org.jasig.cas.services.web.UpdateServiceSimpleFormController">
+		<constructor-arg ref="serviceManager" />
+	</bean>
+	
+	<bean
+		id="displayAndDeleteMultiActionController"
+		class="org.jasig.cas.services.web.DisplayAndDeleteMultiActionController">
+		<constructor-arg ref="serviceManager" />
+	</bean>
+	
+	<bean
+		id="urlHandlingA"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property
+			name="mappings">
+			<value>
+				/addService.html=addServiceController
+				/updateService.html=updateServiceController
+				/deleteService.html=displayAndDeleteMultiActionController
+				/displayAllServices.html=displayAndDeleteMultiActionController
+			</value>
+		</property>
+	</bean>
+</beans>

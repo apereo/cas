@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.jasig.cas.services.domain">
+  <class name="MutableRegisteredServiceImpl" table="services">
+  	<id
+  	 column="id" />
+  	 
+  	 <property
+  	 	name="allowedAttributeNamees" />
+  	 
+  	 <property name="allowedToProxy" ></property>
+  	 
+  
+  
+  </class>
+</hibernate-mapping>
