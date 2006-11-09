@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-generic</artifactId>
+	<artifactId>cas-server-support-cas-client</artifactId>
 	<packaging>jar</packaging>
 	<version>3.1-SNAPSHOT</version>
 	<name>JA-SIG CAS CAS Client Support</name>
