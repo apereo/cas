@@ -18,7 +18,7 @@ import org.jasig.cas.client.validation.Assertion;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public class ServiceTicketCredentialsToPrincipalResolver implements
+public final class ServiceTicketCredentialsToPrincipalResolver implements
     CredentialsToPrincipalResolver {
 
     public Principal resolvePrincipal(final Credentials credentials) {
