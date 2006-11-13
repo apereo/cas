@@ -50,6 +50,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.0.ga/hibernate-3.2.0.ga.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0/spring-binding-1.0.jar"/>
 	<classpathentry kind="var" path="ASPECTJRT_LIB"/>
-	<classpathentry kind="var" path="M2_REPO/org/jasig/cas/cas-client-core/3.0-rc1/cas-client-core-3.0-rc1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jasig/cas/cas-client-core/3.0/cas-client-core-3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
