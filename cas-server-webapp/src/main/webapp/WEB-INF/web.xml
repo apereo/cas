@@ -152,11 +152,6 @@
 		<exception-type>org.springframework.context.ApplicationContextException</exception-type>
 		<location>/WEB-INF/view/jsp/brokenContext.jsp</location>
 	</error-page>
-	
-	<error-page>
-		<exception>org.springframework.webflow.engine.ActionExecutionException</exception>
-		<location>/WEB-INF/view/jsp/default/ui/serviceErrorView.jsp</location>
-	</error-page>
 
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>
