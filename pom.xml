@@ -328,6 +328,13 @@
 			<name>JA-SIG Developers Repository</name>
 			<url>http://developer.ja-sig.org/maven</url>
 		</repository>
+		
+			<repository>
+			<id>jasig-maven2</id>
+			<layout>default</layout>
+			<name>JA-SIG Developers Repository</name>
+			<url>http://developer.ja-sig.org/maven2</url>
+		</repository>	
 	</repositories>
 
 	<modules>
