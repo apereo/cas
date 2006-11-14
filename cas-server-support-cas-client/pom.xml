@@ -19,11 +19,26 @@
 			<artifactId>cas-server-core</artifactId>
 			<version>3.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-client-core</artifactId>
 			<version>3.0</version>
+
+			<exclusions>
+				<exclusion>
+					<groupId>cas</groupId>
+					<artifactId>cas-server</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 </project>
