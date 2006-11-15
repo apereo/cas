@@ -6,8 +6,8 @@
 package org.jasig.cas.services.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Mutable implementation of the RegisteredService interface.
@@ -19,9 +19,7 @@ import java.util.List;
 public final class MutableRegisteredServiceImpl implements RegisteredService,
     Serializable {
 
-    /**
-     * Unique id for serialization.
-     */
+    /** Unique id for serialization. */
     private static final long serialVersionUID = -726751356116986525L;
 
     /** The unique simple id for the service. */
@@ -40,7 +38,7 @@ public final class MutableRegisteredServiceImpl implements RegisteredService,
     private boolean ssoParticipant;
 
     /** Mutable internal list to store attributee names. */
-    private List allowedAttributeNames = new ArrayList();
+    private Set allowedAttributeNames = new HashSet();
 
     private String name;
 
@@ -97,11 +95,11 @@ public final class MutableRegisteredServiceImpl implements RegisteredService,
             .toArray(new String[this.allowedAttributeNames.size()]);
     }
 
-    public List getAttributeNames() {
+    public Set getAttributeNames() {
         return this.allowedAttributeNames;
     }
 
-    public void setAttributeNames(final List list) {
-        this.allowedAttributeNames = list;
+    public void setAttributeNames(final Set set) {
+        this.allowedAttributeNames = set;
     }
 }
