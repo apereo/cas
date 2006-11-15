@@ -28,7 +28,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @throws ClassCastException if class does not match requested ticket
      * class.
      */
-    public final synchronized Ticket getTicket(final String ticketId,
+    public final Ticket getTicket(final String ticketId,
         final Class clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
