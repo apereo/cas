@@ -68,8 +68,7 @@ public final class ProxyController extends AbstractController implements
         final String ticket = request.getParameter("pgt");
         final Service targetService = getTargetService(request);
 
-        if (!StringUtils.hasText(ticket)
-            || targetService == null) {
+        if (!StringUtils.hasText(ticket) || targetService == null) {
             return generateErrorView("INVALID_REQUEST",
                 "INVALID_REQUEST_PROXY", null);
         }
@@ -83,15 +82,14 @@ public final class ProxyController extends AbstractController implements
                 new Object[] {ticket});
         }
     }
-    
+
     private Service getTargetService(final HttpServletRequest request) {
-        if 
-         (!StringUtils.hasText(request
-            .getParameter("targetService"))) {
-             return null;
-         }
-         
-         return new SimpleService("targetService");
+        final String targetService = request.getParameter("targetService");
+        if (!StringUtils.hasText(targetService)) {
+            return null;
+        }
+
+        return new SimpleService(targetService);
     }
 
     private ModelAndView generateErrorView(final String code,
