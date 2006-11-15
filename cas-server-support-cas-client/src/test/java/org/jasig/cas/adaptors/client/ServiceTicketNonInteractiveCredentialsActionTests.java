@@ -13,6 +13,13 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import junit.framework.TestCase;
 
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.1
+ *
+ */
 public final class ServiceTicketNonInteractiveCredentialsActionTests extends TestCase  {
     
     private ServiceTicketNonInteractiveCredentialsAction action = new ServiceTicketNonInteractiveCredentialsAction();
