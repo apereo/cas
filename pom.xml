@@ -127,7 +127,7 @@
 		<name>JA-SIG</name>
 		<url>http://www.ja-sig.org</url>
 	</organization>
-	
+
 	<build>
 		<testResources>
 			<testResource>
@@ -166,7 +166,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -216,7 +216,7 @@
 			<version>1.2.13</version>
 			<type>jar</type>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-binding</artifactId>
@@ -328,13 +328,13 @@
 			<name>JA-SIG Developers Repository</name>
 			<url>http://developer.ja-sig.org/maven</url>
 		</repository>
-		
-			<repository>
+
+		<repository>
 			<id>jasig-maven2</id>
 			<layout>default</layout>
 			<name>JA-SIG Developers Repository</name>
 			<url>http://developer.ja-sig.org/maven2</url>
-		</repository>	
+		</repository>
 	</repositories>
 
 	<modules>
@@ -368,8 +368,8 @@
 						${basedir}/src/test/clover/clover.license
 					</licenseLocation>
 					<excludes>
-		            	<exclude>**/CasVersion.java</exclude>
-		            </excludes>
+						<exclude>**/CasVersion.java</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -385,11 +385,11 @@
 				<artifactId>maven-jxr-plugin</artifactId>
 			</plugin>
 			<!-- 
-			<plugin>
+				<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jdepend-maven-plugin</artifactId>
-			</plugin>
-			 -->
+				</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
