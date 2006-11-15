@@ -37,7 +37,7 @@
 		<property name="dataSource" ref="myDataSource" />
 		<property name="mappingResources">
 			<list>
-				<value>registeredService.hbm.xml</value>
+				<value>org/jasig/cas/services/domain/RegisteredService.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
