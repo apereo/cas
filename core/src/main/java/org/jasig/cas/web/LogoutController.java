@@ -78,11 +78,6 @@ public final class LogoutController extends AbstractController implements
             return new ModelAndView(new RedirectView(service));
         }
 
-        if (StringUtils.hasText(request.getParameter(WebConstants.LOGOUT))) {
-            return new ModelAndView(this.logoutView, WebConstants.LOGOUT,
-                request.getParameter(WebConstants.LOGOUT));
-        }
-
         return new ModelAndView(this.logoutView);
     }
 
