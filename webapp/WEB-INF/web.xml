@@ -70,7 +70,7 @@
 		- use org.springframework.web.context.ContextLoaderListener.
 		-
 		- If you'd like these errors to result in all requests for CAS getting a "CAS is Unavailable" response, 
-		- use org.jasig.cas.web.init.SafeContextLoaderListener and also map ContextListenerFailureFilter
+		- use org.jasig.cas.web.init.SafeContextLoaderListener.
 		- for all requests.
 	-->
 	<listener>
@@ -90,8 +90,7 @@
 		- use org.springframework.web.servlet.DispatcherServlet.
 		-
 		- If you'd like these errors to result in all requests for CAS getting a "CAS is Unavailable" response, 
-		- use org.jasig.cas.web.init.SafeDispatcherServlet and also map ContextListenerFailureFilter
-		- for all requests serviced by this servlet..
+		- use org.jasig.cas.web.init.SafeDispatcherServlet for all requests serviced by this servlet.
 	-->
 	<servlet>
 		<servlet-name>cas</servlet-name>
