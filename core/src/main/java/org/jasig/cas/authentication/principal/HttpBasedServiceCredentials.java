@@ -25,6 +25,8 @@ public class HttpBasedServiceCredentials implements Credentials {
 
     /** The callbackURL to check that identifies the application. */
     private final URL callbackUrl;
+    
+    private final String externalForm;
 
     /**
      * Constructor that takes the URL of the HTTP-based service and creates the
@@ -36,6 +38,7 @@ public class HttpBasedServiceCredentials implements Credentials {
     public HttpBasedServiceCredentials(final URL callbackUrl) {
         Assert.notNull(callbackUrl, "callbackUrl cannot be null");
         this.callbackUrl = callbackUrl;
+        this.externalForm = this.callbackUrl.toExternalForm();
     }
 
     /**
@@ -46,7 +49,7 @@ public class HttpBasedServiceCredentials implements Credentials {
     }
 
     public final String toString() {
-        return this.callbackUrl.toExternalForm();
+        return this.externalForm;
     }
     
     public boolean equals(final Object object) {
