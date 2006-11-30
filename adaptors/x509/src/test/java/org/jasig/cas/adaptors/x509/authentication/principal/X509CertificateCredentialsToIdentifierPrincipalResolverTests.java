@@ -1,7 +1,7 @@
 /*
  * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
@@ -12,6 +12,7 @@ import java.security.cert.X509Certificate;
 
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToIdentifierPrincipalResolver;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 
 /**
@@ -24,23 +25,33 @@ import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCrede
 public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
     extends AbstractX509CertificateTests {
 
+    X509CertificateCredentialsToIdentifierPrincipalResolver resolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
+    
     public void testResolvePrincipalInternal() throws Exception {
         final X509CertificateCredentials credentials = new X509CertificateCredentials(
             new X509Certificate[0]);
         credentials.setCertificate(getTestCertificate());
 
-        X509CertificateCredentialsToIdentifierPrincipalResolver resolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
-        resolver.setIdentifier("$C, $CN");
-        resolver.afterPropertiesSet();
-        assertEquals("The principals should match", resolver.resolvePrincipal(
+        this.resolver.setIdentifier("$C, $CN");
+        this.resolver.afterPropertiesSet();
+        assertEquals("The principals should match", this.resolver.resolvePrincipal(
             credentials).getId(), "SE, test testsson");
-        assertFalse("The principals should not match", resolver
+        assertFalse("The principals should not match", this.resolver
             .resolvePrincipal(credentials).getId().equals("SE, Altcom Test"));
     }
+
+    public void testSupport() {
+        final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        assertTrue(this.resolver.supports(c));
+    }
     
+    public void testSupportFalse() {
+        assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
+    }
+
     public void testCheckIdentifier() throws Exception {
-        X509CertificateCredentialsToIdentifierPrincipalResolver resolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
-        resolver.afterPropertiesSet();
+        X509CertificateCredentialsToIdentifierPrincipalResolver newResolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
+        newResolver.afterPropertiesSet();
     }
 
     private X509Certificate getTestCertificate() {

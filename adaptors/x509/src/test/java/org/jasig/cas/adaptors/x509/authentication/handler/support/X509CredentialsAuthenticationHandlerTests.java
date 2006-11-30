@@ -1,7 +1,7 @@
 /*
  * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
@@ -24,7 +24,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
 
     protected void setUp() throws Exception {
         this.authenticationHandler = new X509CredentialsAuthenticationHandler();
-        this.authenticationHandler.setTrustedIssuer("JA-SIG");
+        this.authenticationHandler.setTrustedIssuerDnPattern("JA-SIG");
         this.authenticationHandler.afterPropertiesSet();        
     }
     
@@ -51,11 +51,12 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
     public void testValidCertificateWithInvalidFirst() throws Exception {
         final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {INVALID_CERTIFICATE, VALID_CERTIFICATE});
         
-        assertTrue(this.authenticationHandler.authenticate(credentials));
+        assertFalse(this.authenticationHandler.authenticate(credentials));
     }
     
     public void testValidCertificateWithNotTrustedIssuer() throws Exception {
-        this.authenticationHandler.setTrustedIssuer("test");
+        this.authenticationHandler.setTrustedIssuerDnPattern("test");
+        this.authenticationHandler.afterPropertiesSet();
         final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
         
         assertFalse(this.authenticationHandler.authenticate(credentials));
