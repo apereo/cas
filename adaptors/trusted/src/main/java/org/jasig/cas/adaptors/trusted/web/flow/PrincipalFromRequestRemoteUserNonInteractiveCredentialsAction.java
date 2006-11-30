@@ -13,7 +13,7 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Implementation of the NonInteractiveCredentialsAction that looks for a remote

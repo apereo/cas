@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action to check if the renew flag has been set. If it has, notify that

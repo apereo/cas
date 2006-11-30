@@ -9,8 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.RequestContext;
+
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Common utilities for extracting information from the RequestContext.
@@ -36,8 +37,10 @@ public final class ContextUtils {
      */
     public static HttpServletRequest getHttpServletRequest(
         final RequestContext context) {
-        if (context.getExternalContext().getClass().equals(ServletExternalContext.class)) {
-            return ((ServletExternalContext) context.getExternalContext()).getRequest();
+        if (context.getExternalContext().getClass().equals(
+            ServletExternalContext.class)) {
+            return ((ServletExternalContext) context.getExternalContext())
+                .getRequest();
         }
 
         throw new IllegalStateException(
@@ -56,8 +59,10 @@ public final class ContextUtils {
      */
     public static HttpServletResponse getHttpServletResponse(
         final RequestContext context) {
-        if (context.getExternalContext().getClass().equals(ServletExternalContext.class)) {
-            return ((ServletExternalContext) context.getExternalContext()).getResponse();
+        if (context.getExternalContext().getClass().equals(
+            ServletExternalContext.class)) {
+            return ((ServletExternalContext) context.getExternalContext())
+                .getResponse();
         }
 
         throw new IllegalStateException(
@@ -88,12 +93,16 @@ public final class ContextUtils {
         final String attributeName) {
         return context.getRequestScope().get(attributeName);
     }
-    
-    public static String getParameterAsString(final RequestContext context, final String parameterName) {
-        return context.getExternalContext().getRequestParameterMap().get(parameterName);
+
+    public static String getParameterAsString(final RequestContext context,
+        final String parameterName) {
+        return context.getExternalContext().getRequestParameterMap().get(
+            parameterName);
     }
-    
-    public static boolean getParameterAsBoolean(final RequestContext context, final String parameterName) {
-        return StringUtils.hasText(context.getExternalContext().getRequestParameterMap().get(parameterName));
+
+    public static boolean getParameterAsBoolean(final RequestContext context,
+        final String parameterName) {
+        return StringUtils.hasText(context.getExternalContext()
+            .getRequestParameterMap().get(parameterName));
     }
 }

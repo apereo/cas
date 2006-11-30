@@ -6,8 +6,8 @@
 package org.jasig.cas.web.flow;
 
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Method to check if a service was provide. If it was, a "hasService" event is

@@ -13,8 +13,8 @@ import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.util.WebUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive

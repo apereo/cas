@@ -19,8 +19,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.Event;
+
 import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action to determine if there is a TicketGrantingTicket or not. One of two

@@ -246,17 +246,6 @@
 	</licenses>
 	<dependencies>
 		<dependency>
-			<groupId>aopalliance</groupId>
-			<artifactId>aopalliance</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
-			<url>http://aopalliance.sourceforge.net</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		
-		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient-contrib</artifactId>
 			<version>3.0</version>
@@ -506,7 +495,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
-			<version>2.0-rc2</version>
+			<version>2.0.1</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -517,7 +506,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-mock</artifactId>
-			<version>2.0-rc2</version>
+			<version>2.0.1</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 		</dependency>
@@ -525,7 +514,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflow</artifactId>
-			<version>1.0-rc3</version>
+			<version>1.0</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -536,7 +525,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-binding</artifactId>
-			<version>1.0-rc3</version>
+			<version>1.0</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>

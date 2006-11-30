@@ -5,10 +5,9 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import net.sf.ldaptemplate.LdapTemplate;
-
 import org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.springframework.ldap.LdapTemplate;
 import org.springframework.util.Assert;
 
 /**

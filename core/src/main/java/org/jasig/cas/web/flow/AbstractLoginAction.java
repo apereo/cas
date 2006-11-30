@@ -12,9 +12,9 @@ import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.util.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Abstract class to retrieve common attributes from request and expose them so
