@@ -31,7 +31,7 @@
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-mock-2.0.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-webflow-1.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-binding-1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-codec/jars/commons-codec-1.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-contrib-3.0.jar"/>
