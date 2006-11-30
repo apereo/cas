@@ -13,7 +13,6 @@ import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
