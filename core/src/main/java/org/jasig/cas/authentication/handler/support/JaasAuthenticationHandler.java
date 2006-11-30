@@ -80,7 +80,7 @@ public final class JaasAuthenticationHandler extends
 
 	protected void afterPropertiesSetInternal() throws Exception {
 		if (!StringUtils.hasText(this.realm)) {
-			getLog().info(
+			log.info(
 					"No default realm set.  Using default realm of: "
 							+ DEFAULT_REALM);
 			this.realm = DEFAULT_REALM;
