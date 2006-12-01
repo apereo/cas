@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:flow="http://www.springframework.org/schema/webflow-config"       
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/webflow-config
+		http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd">
 	<!-- Theme Resolver -->
 	<bean
 		id="themeResolver"
@@ -113,18 +117,16 @@
 	<bean
 		id="loginController"
 		class="org.springframework.webflow.executor.mvc.FlowController">
-		<property
-			name="flowLocator"
-			ref="flowRegistry" />
+		<property name="flowExecutor" ref="flowExecutor"/>
 		<property
 			name="defaultFlowId"
 			value="login-webflow" />
 		<property
-			name="argumentExtractor">
+			name="argumentHandler">
 			<bean
-				class="org.springframework.webflow.executor.support.FlowExecutorArgumentExtractor">
+				class="org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler">
 				<property
-					name="flowExecutionKeyParameterName"
+					name="flowExecutionKeyArgumentName"
 					value="lt" />
 				<property
 					name="defaultFlowId"
@@ -133,9 +135,16 @@
 		</property>
 	</bean>
 	
-	<bean id="flowRegistry" class="org.springframework.webflow.registry.XmlFlowRegistryFactoryBean">
-	        <property name="flowLocations" value="/WEB-INF/login-webflow.xml"/>
-	</bean>
+
+	<flow:executor id="flowExecutor" registry-ref="flowRegistry">
+		<flow:execution-attributes>
+			<flow:alwaysRedirectOnPause value="false"/>
+		</flow:execution-attributes>
+	</flow:executor>
+
+	<flow:registry id="flowRegistry">
+		<flow:location path="/WEB-INF/login-webflow.xml"/>
+	</flow:registry>
 
 	<bean id="proxyValidateController"
 		class="org.jasig.cas.web.ServiceValidateController">
