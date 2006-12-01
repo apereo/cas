@@ -69,12 +69,6 @@ public class LogoutControllerTests extends
         assertTrue(!(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
-    
-    public void testLogoutWithUrl() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("url", "test");
-        assertEquals("test", (String) this.logoutController.handleRequestInternal(request, new MockHttpServletResponse()).getModel().get("url"));
-    }
 
     public void testLogoutCookie() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
