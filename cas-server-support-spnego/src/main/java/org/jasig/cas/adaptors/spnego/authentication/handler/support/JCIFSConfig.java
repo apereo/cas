@@ -23,7 +23,7 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public final class JCIFSConfig implements InitializingBean {
 
-    private static final String DEFAULT_LOGIN_CONFIG = "/WEB-INF/login.conf";
+    private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
 
     private static final String SYS_PROP_USE_SUBJECT_CRED_ONLY = "javax.security.auth.useSubjectCredsOnly";
 
@@ -44,7 +44,8 @@ public final class JCIFSConfig implements InitializingBean {
     private static final String JCIFS_PROP_SERVICE_PRINCIPAL = "jcifs.spnego.servicePrincipal";
 
     /**
-     * The password for the service principal account (same password as before).
+     * The password for the service principal account, required only if you decide not to use
+     * keytab.
      */
     private static final String JCIFS_PROP_SERVICE_PASSWORD = "jcifs.spnego.servicePassword";
 
@@ -77,10 +78,13 @@ public final class JCIFSConfig implements InitializingBean {
             + this.jcifsServicePrincipal);
         Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL,
             this.jcifsServicePrincipal);
+        if(jcifsServicePassword!=null){
         log.debug("jcifsServicePassword is set to *****");
         Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD,
             this.jcifsServicePassword);
-
+        }else{
+        	log.debug("jcifsServicePassword is null, skipping");
+        }
         if (this.kerberosRealm != null) {
             log.debug("kerberosRealm is set to :" + this.kerberosRealm);
             System.setProperty(SYS_PROP_KERBEROS_REALM, this.kerberosRealm);
