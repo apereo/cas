@@ -59,7 +59,7 @@ public final class JCIFSSpnegoAuthenticationHandler implements
         } catch (jcifs.spnego.AuthenticationException e) {
             throw new BadCredentialsAuthenticationException();
         }
-        // evaluate jcsif response
+        // evaluate jcifs response
         if (nextToken != null) {
             logger.debug("Setting nextToken in credentials");
             spnegoCredentials.setNextToken(nextToken);
