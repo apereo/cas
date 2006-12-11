@@ -46,7 +46,7 @@ public final class SpnegoCredentials implements Credentials {
     private boolean isNtlm;
 
     public SpnegoCredentials(final byte[] initToken) {
-        Assert.notNull(initToken, "The initTiken cannot be null.");
+        Assert.notNull(initToken, "The initToken cannot be null.");
         this.initToken = initToken;
         this.isNtlm = isTokenNtlm(this.initToken);
     }
@@ -84,4 +84,25 @@ public final class SpnegoCredentials implements Credentials {
         }
         return true;
     }
+    
+    public String toString() {
+        return this.principal!=null?principal.getId():this.toString()+" : principal is null";
+    }
+
+    public boolean equals(final Object obj) {
+        if (obj == null || !obj.getClass().equals(this.getClass())) {
+            return false;
+        }
+
+        final SpnegoCredentials c = (SpnegoCredentials) obj;
+
+        return this.initToken.equals(c.getInitToken())
+            && this.principal.equals(c.getPrincipal())
+            && this.nextToken.equals(c.getNextToken());
+    }
+
+    public int hashCode() {
+        return this.initToken.hashCode() ^ this.nextToken.hashCode() ^ this.principal.hashCode();
+    }
+    
 }
