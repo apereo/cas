@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0.6-rc1</currentVersion>
+	<currentVersion>3.0.6</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -31,6 +31,12 @@
 		<url>http://developer.ja-sig.org/source/</url>
 	</repository>
 	<versions>
+		<version>
+			<id>3.0.6</id>
+			<name>3.0.6</name>
+			<tag>cas-3-0-6-final</tag>
+		</version>
+	
 		<version>
 			<id>3.0.6-rc1</id>
 			<name>3.0.6-rc1</name>
