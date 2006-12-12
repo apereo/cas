@@ -339,9 +339,6 @@
 
 	<modules>
 		<module>cas-server-core</module>
-		<module>cas-server-admin</module>
-		<module>cas-server-services</module>
-		<module>cas-server-services-webapp</module>
 		<module>cas-server-support-cas-client</module>
 		<module>cas-server-support-generic</module>
 		<module>cas-server-support-jdbc</module>

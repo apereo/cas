@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-admin/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-admin/src/test/java"/>
 	<classpathentry kind="src" path="cas-server-support-cas-client/src/test/java"/>
 	<classpathentry kind="src" path="cas-server-support-cas-client/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-services/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-services/src/test/java"/>
 	<classpathentry kind="src" path="cas-server-integration-jboss/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-generic/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-jdbc/src/main/java"/>
@@ -51,7 +47,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs/1.2.9/jcifs-1.2.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.0.ga/hibernate-3.2.0.ga.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0/spring-binding-1.0.jar"/>
-	<classpathentry kind="var" path="ASPECTJRT_LIB"/>
 	<classpathentry kind="var" path="M2_REPO/org/jasig/cas/cas-client-core/3.0/cas-client-core-3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
