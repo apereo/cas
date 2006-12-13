@@ -84,10 +84,6 @@
 		<transition on="redirect" to="redirect" />
 		<transition on="warn" to="showWarningView" />
 	</action-state>
-	
-	<global-transitions>
-		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.domain.AccessDeniedException" />
-	</global-transitions>
 
 	<!-- 
 		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
@@ -106,4 +102,11 @@
 		the user back to the service required.
 	-->
 	<end-state id="redirect" view="bean:dynamicRedirectViewSelector" />
+
+<!-- 
+	<global-transitions>
+		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.domain.AccessDeniedException" />
+	</global-transitions>
+	
+ -->
 </flow>
