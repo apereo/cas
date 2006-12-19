@@ -78,7 +78,7 @@ public final class JCIFSConfig implements InitializingBean {
             + this.jcifsServicePrincipal);
         Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL,
             this.jcifsServicePrincipal);
-        if(jcifsServicePassword!=null){
+        if(this.jcifsServicePassword!=null){
         log.debug("jcifsServicePassword is set to *****");
         Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD,
             this.jcifsServicePassword);
