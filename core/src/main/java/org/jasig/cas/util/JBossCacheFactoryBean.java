@@ -1,7 +1,7 @@
 /*
  * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.util;
 
@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0.5
+ * @since 3.0.6
  *
  */
 public final class JBossCacheFactoryBean implements FactoryBean, DisposableBean,

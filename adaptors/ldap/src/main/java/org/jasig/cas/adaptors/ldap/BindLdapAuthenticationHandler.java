@@ -9,18 +9,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-
-import net.sf.ldaptemplate.SearchExecutor;
-import net.sf.ldaptemplate.SearchResultCallbackHandler;
 
 import org.jasig.cas.adaptors.ldap.util.LdapUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.ldap.NameClassPairCallbackHandler;
+import org.springframework.ldap.SearchExecutor;
 
 /**
  * Handler to do LDAP bind.
@@ -63,25 +62,24 @@ public class BindLdapAuthenticationHandler extends
         throws AuthenticationException {
 
         final List cns = new ArrayList();
-        
+
         final SearchControls searchControls = getSearchControls();
-        
+
         final String base = this.searchBase;
-        
-        this.getLdapTemplate().search(
-            new SearchExecutor() {
 
-                public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
-                    return context.search(base, LdapUtils.getFilterWithValues(getFilter(), credentials
-                        .getUsername()), searchControls);
-                }
-            },
-            new SearchResultCallbackHandler(){
+        this.getLdapTemplate().search(new SearchExecutor(){
 
-                public void handleSearchResult(final SearchResult searchResult) {
-                    cns.add(searchResult.getName());
-                }
-            });
+            public NamingEnumeration executeSearch(final DirContext context)
+                throws NamingException {
+                return context.search(base, LdapUtils.getFilterWithValues(
+                    getFilter(), credentials.getUsername()), searchControls);
+            }
+        }, new NameClassPairCallbackHandler(){
+
+            public void handleNameClassPair(final NameClassPair nameClassPair) {
+                cns.add(nameClassPair.getName());
+            }
+        });
 
         if (cns == null || cns.isEmpty()
             || (cns.size() > 1 && !this.allowMultipleAccounts)) {
@@ -137,6 +135,7 @@ public class BindLdapAuthenticationHandler extends
 
     /**
      * Method to return whether multiple accounts are allowed.
+     * 
      * @return true if multiple accounts are allowed, false otherwise.
      */
     protected boolean isAllowMultipleAccounts() {
@@ -145,6 +144,7 @@ public class BindLdapAuthenticationHandler extends
 
     /**
      * Method to return the max number of results allowed.
+     * 
      * @return the maximum number of results.
      */
     protected int getMaxNumberResults() {
@@ -153,6 +153,7 @@ public class BindLdapAuthenticationHandler extends
 
     /**
      * Method to return the scope.
+     * 
      * @return the scope
      */
     protected int getScope() {
@@ -161,6 +162,7 @@ public class BindLdapAuthenticationHandler extends
 
     /**
      * Method to return the search base.
+     * 
      * @return the search base.
      */
     protected String getSearchBase() {
@@ -168,7 +170,8 @@ public class BindLdapAuthenticationHandler extends
     }
 
     /**
-     * Method to return the timeout. 
+     * Method to return the timeout.
+     * 
      * @return the timeout.
      */
     protected int getTimeout() {

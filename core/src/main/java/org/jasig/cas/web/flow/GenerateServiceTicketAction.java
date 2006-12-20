@@ -10,8 +10,8 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.util.WebUtils;
-import org.springframework.webflow.Event;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and

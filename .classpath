@@ -17,8 +17,6 @@
 	<classpathentry kind="src" path="core/src/test/java"/>
 	<classpathentry kind="src" path="core/src/test/resources"/>
 	<classpathentry kind="src" path="core/src/compatibility/java"/>
-	<classpathentry kind="src" path="sandbox/src/main/java"/>
-	<classpathentry kind="src" path="sandbox/src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.1.jar"/>
@@ -27,11 +25,11 @@
 	<classpathentry kind="var" path="MAVEN_REPO/jwebunit/jars/jwebunit-1.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/httpunit/jars/httpunit-1.6.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/nekohtml/jars/nekohtml-0.9.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-2.0-rc2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-mock-2.0-rc2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-webflow-1.0-rc3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-binding-1.0-rc3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-2.0.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-mock-2.0.1.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-webflow-1.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-binding-1.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-lang/jars/commons-lang-2.2.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-codec/jars/commons-codec-1.3.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-contrib-3.0.jar"/>
@@ -51,6 +49,6 @@
 	<classpathentry kind="var" path="MAVEN_REPO/jboss/jars/jboss-serialization-1.0.0RC1.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jdbm/jars/jdbm-1.0.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/jgroups/jars/jgroups-2.2.9.2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/net.sf.ldaptemplate/jars/ldaptemplate-1.0.2.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org.springframework/jars/spring-ldap-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

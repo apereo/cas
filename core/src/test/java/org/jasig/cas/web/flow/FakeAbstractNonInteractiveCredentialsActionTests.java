@@ -11,7 +11,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.flow.util.ContextUtils;
 import org.jasig.cas.web.support.WebConstants;
-import org.springframework.webflow.RequestContext;
+import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**

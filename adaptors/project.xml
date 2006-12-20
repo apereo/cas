@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>cas</groupId>
 			<artifactId>cas-server</artifactId>
-			<version>3.0.5-rc3</version>
+			<version>3.0.6</version>
 			<type>jar</type>
 			<properties>
 				<war.bundle>true</war.bundle>

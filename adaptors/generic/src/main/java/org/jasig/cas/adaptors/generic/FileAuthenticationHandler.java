@@ -66,14 +66,14 @@ public final class FileAuthenticationHandler extends
                 line = bufferedReader.readLine();
             }
         } catch (final Exception e) {
-            getLog().error(e, e);
+            log.error(e, e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                getLog().error(e);
+                log.error(e);
             }
         }
 

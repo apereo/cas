@@ -13,11 +13,11 @@
   
 	<dependencies>
   		<dependency>
-			<groupId>net.sf.ldaptemplate</groupId>
-			<artifactId>ldaptemplate</artifactId>
-			<version>1.0.2</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-ldap</artifactId>
+			<version>1.1.1</version>
 			<type>jar</type>
-			<url>http://ldaptemplate.sourceforge.net/</url>
+			<url>http://www.springframework.org/ldap</url>
 			<properties>
 				<war.bundle>true</war.bundle>
 			</properties>

@@ -32,7 +32,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
     /**
      * @throws IllegalArgumentException if the Ticket is null.
      */
-    public synchronized void addTicket(final Ticket ticket) {
+    public void addTicket(final Ticket ticket) {
         Assert.notNull(ticket, "ticket cannot be null");
 
         if (log.isDebugEnabled()) {
@@ -41,7 +41,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
         this.cache.put(ticket.getId(), ticket);
     }
 
-    public synchronized Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId) {
         if (log.isDebugEnabled()) {
             log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         }
@@ -54,7 +54,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
         return ticket;
     }
 
-    public synchronized boolean deleteTicket(final String ticketId) {
+    public boolean deleteTicket(final String ticketId) {
         if (log.isDebugEnabled()) {
             log.debug("Removing ticket [" + ticketId + "] from registry");
         }
@@ -62,7 +62,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
         return (this.cache.remove(ticketId) != null);
     }
 
-    public synchronized Collection getTickets() {
+    public Collection getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
     }
 }

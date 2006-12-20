@@ -1,7 +1,7 @@
 /*
  * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
@@ -58,7 +58,7 @@ public class AbstractX509CertificateTests extends TestCase {
         }
 
         public int getBasicConstraints() {
-            return 0;
+            return -1;
         }
 
         public Principal getIssuerDN() {

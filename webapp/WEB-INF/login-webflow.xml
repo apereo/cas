@@ -1,80 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE flow PUBLIC "-//SPRING//DTD WEBFLOW 1.0//EN"
-	"http://www.springframework.org/dtd/spring-webflow-1.0.dtd">
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+              http://www.springframework.org/schema/webflow
+              http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
-<flow start-state="automaticCookiePathSetter">
+	<start-state idref="automaticCookiePathSetter" />
 
 	<action-state id="automaticCookiePathSetter">
 		<action bean="automaticCookiePathSetterAction" />
-		<transition on="success" to="ticketGrantingTicketExistsCheckAction" />
+		<transition on="success"
+			to="ticketGrantingTicketExistsCheckAction" />
 	</action-state>
 
 	<action-state id="ticketGrantingTicketExistsCheckAction">
 		<action bean="ticketGrantingTicketExistsAction" />
-		<transition on="ticketGrantingTicketExists" to="hasServiceCheck" />
-		<transition on="noTicketGrantingTicketExists" to="gatewayRequestCheck" />
+		<transition on="ticketGrantingTicketExists"
+			to="hasServiceCheck" />
+		<transition on="noTicketGrantingTicketExists"
+			to="gatewayRequestCheck" />
 	</action-state>
-	
+
 	<action-state id="gatewayRequestCheck">
 		<action bean="gatewayRequestCheckAction" />
 		<transition on="gateway" to="redirect" />
 		<transition on="authenticationRequired" to="viewLoginForm" />
 	</action-state>
-	
+
 	<action-state id="hasServiceCheck">
 		<action bean="hasServiceCheckAction" />
-		<transition on="authenticatedButNoService" to="viewGenericLoginSuccess" />
+		<transition on="authenticatedButNoService"
+			to="viewGenericLoginSuccess" />
 		<transition on="hasService" to="renewRequestCheck" />
 	</action-state>
-	
+
 	<action-state id="renewRequestCheck">
 		<action bean="renewRequestCheckAction" />
 		<transition on="authenticationRequired" to="viewLoginForm" />
-		<transition on="generateServiceTicket" to="generateServiceTicket" />
+		<transition on="generateServiceTicket"
+			to="generateServiceTicket" />
 	</action-state>
-	
+
 	<!-- 
-	<action-state id="startAuthenticate">
+		<action-state id="startAuthenticate">
 		<action bean="x509Check" />
 		<transition on="success" to="sendTicketGrantingTicket" />
 		<transition on="error" to="viewLoginForm" />
-	</action-state>
-	 -->
+		</action-state>
+	-->
 	<view-state id="viewLoginForm" view="casLoginView">
 		<transition on="submit" to="bindAndValidate" />
 	</view-state>
-	
+
 	<action-state id="bindAndValidate">
 		<action bean="authenticationViaFormAction" />
 		<transition on="success" to="submit" />
 		<transition on="error" to="viewLoginForm" />
 	</action-state>
-	
+
 	<action-state id="submit">
 		<action bean="authenticationViaFormAction" method="submit" />
 		<transition on="warn" to="warn" />
 		<transition on="success" to="sendTicketGrantingTicket" />
 		<transition on="error" to="viewLoginForm" />
 	</action-state>
-	
+
 	<action-state id="sendTicketGrantingTicket">
 		<action bean="sendTicketGrantingTicketAction" />
 		<transition on="success" to="serviceCheck" />
 	</action-state>
-	
+
 	<action-state id="serviceCheck">
 		<action bean="hasServiceCheckAction" />
-		<transition on="authenticatedButNoService" to="viewGenericLoginSuccess" />
+		<transition on="authenticatedButNoService"
+			to="viewGenericLoginSuccess" />
 		<transition on="hasService" to="generateServiceTicket" />
 	</action-state>
-	
+
 	<action-state id="generateServiceTicket">
 		<action bean="generateServiceTicketAction" />
-		<transition on="success" to ="warn" />
+		<transition on="success" to="warn" />
 		<transition on="error" to="viewLoginForm" />
 		<transition on="gateway" to="redirect" />
 	</action-state>
-	
+
 	<!-- 
 		The "warn" action makes the determination of whether to redirect directly to the requested
 		service or display the "confirmation" page to go back to the server.
@@ -89,7 +98,9 @@
 		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
 		They have only initialized their single-sign on session.
 	-->
-	<end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView" />
+	<end-state id="viewGenericLoginSuccess"
+		view="casLoginGenericSuccessView" />
+
 
 	<!-- 
 		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a 
@@ -101,5 +112,11 @@
 		The "redirect" end state allows CAS to properly end the workflow while still redirecting
 		the user back to the service required.
 	-->
-	<end-state id="redirect" view="externalRedirect:${externalContext.requestParameterMap['service']}${externalContext.requestParameterMap['service'].indexOf('?') != -1 ? '&amp;' : '?'}ticket=${requestScope.ticket}" />
+	<end-state id="redirect"
+		view="externalRedirect:${externalContext.requestParameterMap['service']}${requestScope.ticket == null ? '' : (externalContext.requestParameterMap['service'].indexOf('?') != -1 ? '&amp;' : '?') + 'ticket=' + requestScope.ticket}" />
+		
+	<global-transitions>
+		<transition to="viewServiceErrorView"
+			on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
+	</global-transitions>
 </flow>

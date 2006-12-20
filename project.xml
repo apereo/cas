@@ -3,7 +3,7 @@
 	<id>cas-server</id>
 	<name>JA-SIG Central Authentication Service</name>
 	<groupId>cas</groupId>
-	<currentVersion>3.0.5</currentVersion>
+	<currentVersion>3.0.6</currentVersion>
 	<organization>
 		<name>Java Architectures Special Interest Group</name>
 		<url>http://www.ja-sig.org</url>
@@ -31,6 +31,18 @@
 		<url>http://developer.ja-sig.org/source/</url>
 	</repository>
 	<versions>
+		<version>
+			<id>3.0.6</id>
+			<name>3.0.6</name>
+			<tag>cas-3-0-6-final</tag>
+		</version>
+	
+		<version>
+			<id>3.0.6-rc1</id>
+			<name>3.0.6-rc1</name>
+			<tag>cas-3-0-6-rc1</tag>
+		</version>
+		
 		<version>
 			<id>3.0.5</id>
 			<name>3.0.5</name>
@@ -246,17 +258,6 @@
 	</licenses>
 	<dependencies>
 		<dependency>
-			<groupId>aopalliance</groupId>
-			<artifactId>aopalliance</artifactId>
-			<version>1.0</version>
-			<type>jar</type>
-			<url>http://aopalliance.sourceforge.net</url>
-			<properties>
-				<war.bundle>true</war.bundle>
-			</properties>
-		</dependency>
-		
-		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient-contrib</artifactId>
 			<version>3.0</version>
@@ -407,7 +408,7 @@
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.1</version>
+			<version>2.2</version>
 			<type>jar</type>
 			<url>http://jakarta.apache.org/commons/lang/</url>
 			<properties>
@@ -506,7 +507,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
-			<version>2.0-rc2</version>
+			<version>2.0.1</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -517,7 +518,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-mock</artifactId>
-			<version>2.0-rc2</version>
+			<version>2.0.1</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 		</dependency>
@@ -525,7 +526,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflow</artifactId>
-			<version>1.0-rc3</version>
+			<version>1.0</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -536,7 +537,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-binding</artifactId>
-			<version>1.0-rc3</version>
+			<version>1.0</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -598,6 +599,86 @@
 			<artifactId>commons-attributes-plugin</artifactId>
 			<version>2.1</version>
 			<type>plugin</type>
+		</dependency>
+		
+		
+				<!--  JBOSS CACHE DEPENDENCIES -->
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+			<version>1.3.4</version>
+			<type>jar</type>
+			<url>http://gee.cs.oswego.edu/dl/classes/EDU/oswego/cs/dl/util/concurrent/intro.html</url>
+		</dependency>
+		
+		<dependency>
+			<groupId>trove</groupId>
+			<artifactId>trove</artifactId>
+			<version>1.0.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-common</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-j2ee</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-jmx</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-serialization</artifactId>
+			<version>1.0.0RC1</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-cache</artifactId>
+			<version>1.4.0.CR2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-minimal</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-system</artifactId>
+			<version>4.0.3</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jgroups</groupId>
+			<artifactId>jgroups</artifactId>
+			<version>2.2.9.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>jdbm</groupId>
+			<artifactId>jdbm</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
 		</dependency>
 		
 	</dependencies>

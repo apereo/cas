@@ -45,15 +45,9 @@
 			</div>
 				<p style="text-align: center;">
 					Languages:
-					<c:set var="query" value="" />
-					<c:forEach var="item" items="${pageContext.request.parameterNames}" varStatus="status">
-						<c:if test="${item != 'locale' and item != 'password' and item != 'username' and item != 'lt' and item != '_currentStateId' and item != '_eventId'}">
-							<c:set var="query" value="${query}${item}=${param[item]}" />
-							<c:if test="${not status.last}">
-								<c:set var="query" value="${query}&amp;" />
-							</c:if>
-						</c:if>
-					</c:forEach>
+				
+				<c:set var="query" value="<%=request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=[A-Za-z][A-Za-z]|^locale=[A-Za-z][A-Za-z]", "")%>" />
+					
 				<a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a> |
 				<a href="login?${query}${not empty query ? '&' : ''}locale=es">Español</a> |					
 				<a href="login?${query}${not empty query ? '&' : ''}locale=fr">Français</a> |

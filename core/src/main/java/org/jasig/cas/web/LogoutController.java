@@ -13,7 +13,6 @@ import org.jasig.cas.web.support.WebConstants;
 import org.jasig.cas.web.util.WebUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -76,11 +75,6 @@ public final class LogoutController extends AbstractController implements
 
         if (this.followServiceRedirects && service != null) {
             return new ModelAndView(new RedirectView(service));
-        }
-
-        if (StringUtils.hasText(request.getParameter(WebConstants.LOGOUT))) {
-            return new ModelAndView(this.logoutView, WebConstants.LOGOUT,
-                request.getParameter(WebConstants.LOGOUT));
         }
 
         return new ModelAndView(this.logoutView);
