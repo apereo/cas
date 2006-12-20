@@ -97,7 +97,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
 
         final SAMLSubject samlSubject = new SAMLSubject();
-        samlSubject.addConfirmationMethod(SAMLSubject.CONF_SENDER_VOUCHES);
+        samlSubject.addConfirmationMethod(SAMLSubject.CONF_ARTIFACT);
 
         if (authentication.getPrincipal() instanceof AttributePrincipal) {
             final AttributePrincipal attributePrincipal = (AttributePrincipal) authentication
@@ -158,5 +158,4 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
     public void setIssuer(final String issuer) {
         this.issuer = issuer;
     }
-
 }
