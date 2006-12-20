@@ -36,6 +36,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
     
     protected void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
+        this.action.setWarnCookieGenerator(new CookieGenerator());
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
         final Map idGenerators = new HashMap();
