@@ -65,7 +65,7 @@ public final class LdapUtils {
             final String key = (String) iter.next();
             final String value = properties.getProperty(key, "");
 
-            newFilter = newFilter.replaceFirst(key, value);
+            newFilter = newFilter.replaceAll(key, value);
         }
 
         return newFilter;
