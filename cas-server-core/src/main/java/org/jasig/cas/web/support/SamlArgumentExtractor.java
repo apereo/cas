@@ -63,7 +63,11 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
             buffer.append(service.indexOf('?') != -1 ? "&" : "?");
             buffer.append(getArtifactParameterName());
             buffer.append("=");
-            buffer.append(serviceTicket);
+            try {
+                buffer.append(URLEncoder.encode(serviceTicket, "UTF-8"));
+            } catch (final UnsupportedEncodingException e) {
+                buffer.append(serviceTicket);
+            }
             buffer.append("&");
             buffer.append(getServiceParameterName());
             buffer.append("=");

@@ -24,6 +24,7 @@ import org.opensaml.SAMLAttribute;
 import org.opensaml.SAMLAttributeStatement;
 import org.opensaml.SAMLAudienceRestrictionCondition;
 import org.opensaml.SAMLAuthenticationStatement;
+import org.opensaml.SAMLException;
 import org.opensaml.SAMLNameIdentifier;
 import org.opensaml.SAMLResponse;
 import org.opensaml.SAMLSubject;
@@ -73,7 +74,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             .extractService(request);
 
         final SAMLResponse samlResponse = new SAMLResponse(
-            this.samlArgumentExtractor.extractTicketArtifact(request), service
+            null, service
                 .getId(), new ArrayList(), null);
 
         samlResponse.setIssueInstant(currentDate);
@@ -95,15 +96,14 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             ? authenticationMethod
             : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
 
-        final SAMLSubject samlSubject = new SAMLSubject();
-        samlSubject.addConfirmationMethod(SAMLSubject.CONF_ARTIFACT);
+        samlAuthenticationStatement.setSubject(getSamlSubject(authentication));
 
         if (authentication.getPrincipal() instanceof AttributePrincipal) {
             final AttributePrincipal attributePrincipal = (AttributePrincipal) authentication
                 .getPrincipal();
             final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
 
-            attributeStatement.setSubject(samlSubject);
+            attributeStatement.setSubject(getSamlSubject(authentication));
             samlAssertion.addStatement(attributeStatement);
 
             for (final Iterator iter = attributePrincipal.getAttributes()
@@ -129,11 +129,6 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             }
         }
 
-        final SAMLNameIdentifier samlNameIdentifier = new SAMLNameIdentifier();
-        samlNameIdentifier.setName(authentication.getPrincipal().getId());
-
-        samlSubject.setNameIdentifier(samlNameIdentifier);
-        samlAuthenticationStatement.setSubject(samlSubject);
         samlAssertion.addStatement(samlAuthenticationStatement);
         samlAssertion.addCondition(samlAudienceRestrictionCondition);
         samlResponse.addAssertion(samlAssertion);
@@ -145,6 +140,18 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         response.setContentType("text/xml");
         response.getWriter().print(xmlResponse);
         response.flushBuffer();
+    }
+
+    protected SAMLSubject getSamlSubject(final Authentication authentication)
+        throws SAMLException {
+        final SAMLSubject samlSubject = new SAMLSubject();
+        samlSubject.addConfirmationMethod(SAMLSubject.CONF_ARTIFACT);
+        final SAMLNameIdentifier samlNameIdentifier = new SAMLNameIdentifier();
+        samlNameIdentifier.setName(authentication.getPrincipal().getId());
+
+        samlSubject.setNameIdentifier(samlNameIdentifier);
+
+        return samlSubject;
     }
 
     public void afterPropertiesSet() throws Exception {
