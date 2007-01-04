@@ -5,10 +5,9 @@
  */
 package org.jasig.cas.util;
 
-import java.security.MessageDigest;
-
 import org.opensaml.artifact.SAMLArtifact;
-import org.opensaml.artifact.SAMLArtifactType0001;
+import org.opensaml.artifact.SAMLArtifactType0002;
+import org.opensaml.artifact.URI;
 import org.springframework.util.Assert;
 
 /**
@@ -23,7 +22,9 @@ public final class SamlCompliantUniqueTicketIdGenerator implements
     UniqueTicketIdGenerator {
 
     /** SAML defines the source id as the server name. */
-    private final byte[] sourceIdDigest;
+  /**  private final byte[] sourceIdDigest; **/
+    
+    private final String sourceLocation;
 
     /** Random generator to construct the AssertionHandle. */
     private final RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
@@ -31,25 +32,16 @@ public final class SamlCompliantUniqueTicketIdGenerator implements
 
     public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
         Assert.notNull(sourceId, "sourceId cannot be null.");
-        try {
-            final MessageDigest messageDigest = MessageDigest
-                .getInstance("SHA");
-            messageDigest.update(sourceId.getBytes("8859_1"));
-            this.sourceIdDigest = messageDigest.digest();
-        } catch (final Exception e) {
-            throw new IllegalStateException(
-                "Exception generating digest which should not happen...EVER");
-        }
+        this.sourceLocation = sourceId;
     }
 
     /**
      * We ignore prefixes for SAML compliance.
      */
     public String getNewTicketId(String prefix) {
-        final SAMLArtifact samlArtifactType = new SAMLArtifactType0001(
-            this.sourceIdDigest, this.randomStringGenerator
-                .getNewStringAsBytes());
+        final SAMLArtifact samlArtifact = new SAMLArtifactType0002(this.randomStringGenerator
+            .getNewStringAsBytes(), new URI(this.sourceLocation));
 
-        return samlArtifactType.encode();
+        return samlArtifact.encode();
     }
 }
