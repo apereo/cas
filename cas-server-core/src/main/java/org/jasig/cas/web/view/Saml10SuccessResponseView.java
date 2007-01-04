@@ -24,7 +24,6 @@ import org.opensaml.SAMLAttribute;
 import org.opensaml.SAMLAttributeStatement;
 import org.opensaml.SAMLAudienceRestrictionCondition;
 import org.opensaml.SAMLAuthenticationStatement;
-import org.opensaml.SAMLException;
 import org.opensaml.SAMLNameIdentifier;
 import org.opensaml.SAMLResponse;
 import org.opensaml.SAMLSubject;
@@ -75,7 +74,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
         final SAMLResponse samlResponse = new SAMLResponse(
             this.samlArgumentExtractor.extractTicketArtifact(request), service
-                .getId(), new ArrayList(), new SAMLException("Success"));
+                .getId(), new ArrayList(), null);
 
         samlResponse.setIssueInstant(currentDate);
 
@@ -145,6 +144,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             .print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         response.setContentType("text/xml");
         response.getWriter().print(xmlResponse);
+        response.flushBuffer();
     }
 
     public void afterPropertiesSet() throws Exception {
