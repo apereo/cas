@@ -45,7 +45,6 @@
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.3/commons-codec-1.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jcifs/jcifs-ext/0.9.4/jcifs-ext-0.9.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs/1.2.9/jcifs-1.2.9.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.0.ga/hibernate-3.2.0.ga.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0/spring-binding-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jasig/cas/cas-client-core/3.0/cas-client-core-3.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>

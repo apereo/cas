@@ -284,19 +284,6 @@ uncomment this to allow access to web service
 		</property>
 	</bean>
 -->
-	<bean
-		id="simpleMappingHandlerExceptionResolver"
-		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-		<property
-			name="exceptionMappings">
-			<props>
-				<prop
-					key="UndeclaredThrowableException">
-					serviceErrorView
-				</prop>
-			</props>
-		</property>
-	</bean>
 	
 	<bean
 		id="extractServiceAction"
