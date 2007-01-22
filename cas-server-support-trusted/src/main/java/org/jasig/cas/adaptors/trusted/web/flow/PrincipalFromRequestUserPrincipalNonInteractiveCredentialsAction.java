@@ -32,7 +32,8 @@ public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAct
 
     protected Credentials constructCredentialsFromRequest(
         final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils
+            .getHttpServletRequest(context);
         final Principal principal = request.getUserPrincipal();
 
         if (principal != null) {

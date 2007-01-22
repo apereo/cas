@@ -10,17 +10,15 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 
 /**
- * Credentials that bear the fully resolved and authenticated Principal,
- * or an indication that there is no such Principal.
- * 
- * These Credentials are a mechanism to pass into CAS information about an
- * authentication and Principal resolution that has already happened in layers
- * in front of CAS, e.g. by means of a Java Servlet Filter or by means of
- * container authentication in the servlet container or Apache layers.
- * 
- * DO NOT accept these Credentials from arbitrary web-servicey calls to CAS.
- * Rather, the code constructing these Credentials must be trusted to perform
- * appropriate authentication before issuing these credentials.
+ * Credentials that bear the fully resolved and authenticated Principal, or an
+ * indication that there is no such Principal. These Credentials are a mechanism
+ * to pass into CAS information about an authentication and Principal resolution
+ * that has already happened in layers in front of CAS, e.g. by means of a Java
+ * Servlet Filter or by means of container authentication in the servlet
+ * container or Apache layers. DO NOT accept these Credentials from arbitrary
+ * web-servicey calls to CAS. Rather, the code constructing these Credentials
+ * must be trusted to perform appropriate authentication before issuing these
+ * credentials.
  * 
  * @author Andrew Petro
  * @version $Revision$ $Date$
@@ -41,6 +39,7 @@ public final class PrincipalBearingCredentials implements Credentials {
 
     /**
      * Get the previously authenticated Principal.
+     * 
      * @return authenticated Principal
      */
     public Principal getPrincipal() {

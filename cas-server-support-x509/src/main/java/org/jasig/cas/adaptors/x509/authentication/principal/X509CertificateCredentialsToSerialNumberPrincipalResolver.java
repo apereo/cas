@@ -11,16 +11,17 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 /**
+ * Returns a new principal based on the Sereial Number of the certificate.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.4
- *
  */
-public final class X509CertificateCredentialsToSerialNumberPrincipalResolver extends
-    AbstractX509CertificateCredentialsToPrincipalResolver {
+public final class X509CertificateCredentialsToSerialNumberPrincipalResolver
+    extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
-    protected Principal resolvePrincipalInternal(final X509Certificate certificate) {
+    protected Principal resolvePrincipalInternal(
+        final X509Certificate certificate) {
         return new SimplePrincipal(certificate.getSerialNumber().toString());
     }
 }
