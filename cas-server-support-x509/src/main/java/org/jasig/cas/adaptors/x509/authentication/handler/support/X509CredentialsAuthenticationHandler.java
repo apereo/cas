@@ -64,7 +64,7 @@ public final class X509CredentialsAuthenticationHandler implements
     private Pattern regExTrustedIssuerDnPattern;
 
     /**
-     * Deployer supplied setting for maximum pathLenght in a SUPPLIED
+     * Deployer supplied setting for maximum pathLength in a SUPPLIED
      * certificate.
      */
     private int maxPathLength = DEFAULT_MAXPATHLENGTH;

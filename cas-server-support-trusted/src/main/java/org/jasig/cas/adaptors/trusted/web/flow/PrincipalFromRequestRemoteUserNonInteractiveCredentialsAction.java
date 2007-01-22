@@ -26,22 +26,24 @@ import org.springframework.webflow.execution.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.5
  */
-public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction extends
-    AbstractNonInteractiveCredentialsAction {
+public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
+    extends AbstractNonInteractiveCredentialsAction {
 
     protected Credentials constructCredentialsFromRequest(
         final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils
+            .getHttpServletRequest(context);
         final String remoteUser = request.getRemoteUser();
 
         if (StringUtils.hasText(remoteUser)) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Remote  User [" + remoteUser + "] found in HttpServletRequest");
+                logger.debug("Remote  User [" + remoteUser
+                    + "] found in HttpServletRequest");
             }
             return new PrincipalBearingCredentials(new SimplePrincipal(
                 remoteUser));
         }
-        
+
         if (logger.isDebugEnabled()) {
             logger.debug("Remote User not found in HttpServletRequest.");
         }

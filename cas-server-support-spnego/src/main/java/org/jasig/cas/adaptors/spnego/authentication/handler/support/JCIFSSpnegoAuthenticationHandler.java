@@ -87,7 +87,7 @@ public final class JCIFSSpnegoAuthenticationHandler implements
             return true;
 
         }
-        // principal is null
+
         logger
             .debug("Principal is null, the processing of the SPNEGO Token failed");
         return false;

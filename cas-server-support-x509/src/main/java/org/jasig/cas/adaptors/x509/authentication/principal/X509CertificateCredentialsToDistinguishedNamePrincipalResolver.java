@@ -11,17 +11,17 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 /**
+ * Returns a principal based on the Subject DNs name.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
- *
+ * @since 3.0.4
  */
 public final class X509CertificateCredentialsToDistinguishedNamePrincipalResolver
     extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
     protected Principal resolvePrincipalInternal(
         final X509Certificate certificate) {
-        return  new SimplePrincipal(certificate.getSubjectDN().getName());
+        return new SimplePrincipal(certificate.getSubjectDN().getName());
     }
 }
