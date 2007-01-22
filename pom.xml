@@ -164,6 +164,16 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+ 				<version>2.2-SNAPSHOT</version>
+				<configuration>
+					<descriptors>
+						<descriptor>${basedir}/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -335,11 +345,18 @@
 			<name>JA-SIG Developers Repository</name>
 			<url>http://developer.ja-sig.org/maven2</url>
 		</repository>
+		
+		<repository>
+			<id>maven2-apache-snapshot-repo</id>
+			<layout>default</layout>
+			<name>Apache Maven2 Snapshot Repository</name>
+			<url>http://people.apache.org/repo/m2-snapshot-repository</url>
+		</repository>
 	</repositories>
 
 	<modules>
 		<module>cas-server-core</module>
-		<module>cas-server-support-cas-client</module>
+<!-- 		<module>cas-server-support-cas-client</module> -->
 		<module>cas-server-support-generic</module>
 		<module>cas-server-support-jdbc</module>
 		<module>cas-server-support-ldap</module>

@@ -48,6 +48,14 @@
 		</dependency>
   </dependencies>
   <build>
-    <finalName>cas</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>cas</warName>
+				</configuration>
+			</plugin>
+		</plugins>
   </build>
 </project>
