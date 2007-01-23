@@ -3,20 +3,20 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.1-SNAPSHOT</version>
+		<version>3.1-m1</version>
 	</parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-webapp</artifactId>
   <packaging>war</packaging>
-  <version>3.1-SNAPSHOT</version>
+  <version>3.1-m1</version>
   <name>JA-SIG CAS Web Application</name>
   <url>http://maven.apache.org</url>
   <dependencies>
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
-			<version>3.1-SNAPSHOT</version>
+			<version>3.1-m1</version>
 		</dependency>
 		
 		<dependency>

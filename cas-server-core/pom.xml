@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.1-SNAPSHOT</version>
+		<version>3.1-m1</version>
 	</parent>
 	<description>CAS core</description>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-core</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1-SNAPSHOT</version>
+	<version>3.1-m1</version>
 	<name>JA-SIG CAS Core</name>
 
 	<dependencies>
