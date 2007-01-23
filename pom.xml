@@ -6,7 +6,7 @@
 	<artifactId>cas-server</artifactId>
 	<packaging>pom</packaging>
 	<name>JA-SIG Central Authentication Service</name>
-	<version>3.1-SNAPSHOT</version>
+	<version>3.1-m1</version>
 	<description>
 		JA-SIG Central Authentication Service (CAS) is an open-source,
 		enterprise single sign on solution for the web. It supports the
