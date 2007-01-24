@@ -10,7 +10,7 @@ http://www.ja-sig.org/products/cas/
 
 and you can subscribe to the CAS mailing list by visiting:
 
-http://tp.its.yale.edu/mailman/listinfo/cas
+http://www.ja-sig.org/products/cas/community/lists/
 
 Quick Demo
 ----------
