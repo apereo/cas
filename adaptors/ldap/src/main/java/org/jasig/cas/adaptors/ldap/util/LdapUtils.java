@@ -43,7 +43,7 @@ public final class LdapUtils {
         final String[] userDomain;
         String newFilter = filter;
 
-        properties.setProperty("%u", userName);
+        properties.setProperty("%u", userName.replace( "\\", "\\\\" ));
 
         userDomain = userName.split("@");
 
