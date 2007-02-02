@@ -24,6 +24,17 @@
 		</dependency>	
 		
   		<dependency>
+			<groupId>com.sun.jndi.ldap</groupId>
+			<artifactId>ldapbp</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
+			<url>http://www.sun.com</url>
+			<properties>
+				<war.bundle>true</war.bundle>
+			</properties>
+		</dependency>	
+		
+  		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.1</version>
