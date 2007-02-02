@@ -37,66 +37,67 @@
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-common</artifactId>
-			<version>4.0.3</version>
+			<version>4.0.4</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-j2ee</artifactId>
-			<version>4.0.3</version>
+			<version>4.0.2</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-jmx</artifactId>
-			<version>4.0.3</version>
+			<version>4.0.4</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-serialization</artifactId>
-			<version>1.0.0RC1</version>
+			<version>1.0.3.GA</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-cache</artifactId>
-			<version>1.4.0.SP1</version>
+			<version>1.4.1.GA</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-minimal</artifactId>
-			<version>4.0.3</version>
+			<version>4.0.2</version>
 			<type>jar</type>
 		</dependency>
 
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-system</artifactId>
-			<version>4.0.3</version>
+			<version>4.0.2</version>
 			<type>jar</type>
 		</dependency>
-
+ 
 		<dependency>
 			<groupId>jgroups</groupId>
 			<artifactId>jgroups</artifactId>
-			<version>2.2.9.2</version>
+			<version>2.4.1</version>
 			<type>jar</type>
 		</dependency>
 
+<!-- 
 		<dependency>
 			<groupId>jdbm</groupId>
 			<artifactId>jdbm</artifactId>
 			<version>1.0</version>
 			<type>jar</type>
 		</dependency>
-		
+ -->
 		<dependency>
 			<groupId>javax.transaction</groupId>
 			<artifactId>jta</artifactId>
