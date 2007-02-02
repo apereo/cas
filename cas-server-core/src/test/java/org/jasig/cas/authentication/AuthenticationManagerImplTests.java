@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.authentication;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
@@ -56,6 +57,7 @@ public class AuthenticationManagerImplTests extends
     public void testNoResolverFound() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
+        authenticationHandler.setHttpClient(new HttpClient());
         authenticationHandler.afterPropertiesSet();
         manager
             .setAuthenticationHandlers(new AuthenticationHandler[] {authenticationHandler});

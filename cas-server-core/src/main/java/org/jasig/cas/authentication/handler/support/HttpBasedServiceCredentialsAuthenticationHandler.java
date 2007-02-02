@@ -8,16 +8,14 @@ package org.jasig.cas.authentication.handler.support;
 import java.net.HttpURLConnection;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.contrib.ssl.StrictSSLProtocolSocketFactory;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.protocol.Protocol;
-import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Class to validate the credentials presented by communicating with the web
@@ -134,13 +132,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
         if (this.acceptableCodes == null) {
             this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
         }
-
-        if (this.httpClient == null) {
-            this.httpClient = new HttpClient();
-            Protocol myhttps = new Protocol("https",
-                (ProtocolSocketFactory) new StrictSSLProtocolSocketFactory(),
-                443);
-            Protocol.registerProtocol("https", myhttps);
-        }
+        
+        Assert.notNull(this.httpClient, "Note, this behavior has changed from the CAS 3.0.6 behavior.  You now MUST specify an instane of HttpClient.  Before it would create an instance for you.");
     }
 }
