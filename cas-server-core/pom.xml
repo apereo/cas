@@ -37,7 +37,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>opensaml</groupId>
+			<groupId>org.opensaml</groupId>
 			<artifactId>opensaml</artifactId>
 			<version>1.1b</version>
 			<type>jar</type>

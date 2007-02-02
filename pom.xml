@@ -315,6 +315,13 @@
 			<version>1.1.2</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.sun.jndi.ldap</groupId>
+			<artifactId>ldapbp</artifactId>
+			<version>1.0</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -326,24 +333,17 @@
 		</repository>
 
 		<repository>
-			<id>dotsrc</id>
-			<layout>default</layout>
-			<name>DotSRC Repository</name>
-			<url>http://mirrors.dotsrc.org/maven2</url>
-		</repository>
-
-		<repository>
-			<id>jasig</id>
-			<layout>legacy</layout>
-			<name>JA-SIG Developers Repository</name>
-			<url>http://developer.ja-sig.org/maven</url>
-		</repository>
-
-		<repository>
 			<id>jasig-maven2</id>
 			<layout>default</layout>
 			<name>JA-SIG Developers Repository</name>
 			<url>http://developer.ja-sig.org/maven2</url>
+		</repository>
+		
+		<repository>
+			<id>jboss-maven2</id>
+			<layout>default</layout>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.com/maven2</url>
 		</repository>
 <!-- 
 		<repository>
