@@ -27,7 +27,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jcifs</groupId>
+			<groupId>org.samba.jcifs</groupId>
 			<artifactId>jcifs-ext</artifactId>
 			<version>0.9.4</version>
 		</dependency>
