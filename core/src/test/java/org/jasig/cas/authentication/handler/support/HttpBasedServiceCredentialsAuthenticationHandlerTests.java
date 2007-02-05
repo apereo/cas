@@ -7,6 +7,8 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.util.HttpClient3FactoryBean;
+
 import junit.framework.TestCase;
 
 /**
@@ -21,7 +23,10 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
 
     protected void setUp() throws Exception {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
-        this.authenticationHandler.setHttpClient(new HttpClient());
+        HttpClient3FactoryBean factory = new HttpClient3FactoryBean();
+        factory.setUseStrictHostNameChecking(true);
+        factory.afterPropertiesSet();
+        this.authenticationHandler.setHttpClient((HttpClient) factory.getObject());
         this.authenticationHandler.afterPropertiesSet();
     }
 
