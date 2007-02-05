@@ -21,6 +21,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
 
     protected void setUp() throws Exception {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
+        this.authenticationHandler.setHttpClient(new HttpClient());
         this.authenticationHandler.afterPropertiesSet();
     }
 

@@ -78,7 +78,12 @@
 		
 	<bean
 		id="httpBasedServiceCredentialsAuthenticationHandler"
-		class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+		class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
+		<property name="httpClient">
+			<bean class="org.jasig.cas.util.HttpClient3FactoryBean" />
+		</property>
+	</bean>
+		
 	
 	<bean
 		id="simpleTestUsernamePasswordAuthenticationHandler"
