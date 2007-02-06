@@ -1,64 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:flow="http://www.springframework.org/schema/webflow-config"       
+	   xmlns:flow="http://www.springframework.org/schema/webflow-config"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"       
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/webflow-config
-http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd">
+       http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
        
 	<!-- Theme Resolver -->
-	<bean
-		id="themeResolver"
-		class="org.jasig.cas.services.web.ServiceThemeResolver">
-		<property
-			name="defaultThemeName"
-			value="default" />
-	</bean>
+	<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
+		p:defaultThemeName="default" />
 
 	<!-- View Resolver -->
-	<bean
-		id="viewResolver"
-		class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
-		<property
-			name="basename"
-			value="default_views" />
-		<property
-			name="order"
-			value="0" />
-	</bean>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
+		p:basename="default_views"
+		p:order="0" />
 	
 	<!-- Locale Resolver -->
-	<bean
-		id="localeResolver"
-		class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
 		
-	<bean
-		id="localeChangeInterceptor"
-		class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
+	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
 	
-	<bean
-		id="urlBasedViewResolver"
-		class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-		<property
-			name="viewClass"
-			value="org.springframework.web.servlet.view.AbstractUrlBasedView" />
-	</bean>
+	<bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+		p:viewClass="org.springframework.web.servlet.view.AbstractUrlBasedView" />
 	
-	<bean
-		id="errorHandlerResolver" 
-		class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
+	<bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
 	<!-- Handler Mapping -->
-	<bean
-		id="handlerMappingA"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<bean id="handlerMappingA" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property
 			name="mappings">
 			<props>
 				<prop
-					key="/login">
-					loginController
-				</prop>
+					key="/login">loginController</prop>
 			</props>
 		</property>
 		<property
@@ -121,22 +96,14 @@ http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.x
 
 	<bean
 		id="loginController"
-		class="org.springframework.webflow.executor.mvc.FlowController">
-		<property name="flowExecutor" ref="flowExecutor"/>
-		<property
-			name="defaultFlowId"
-			value="login-webflow" />
+		class="org.springframework.webflow.executor.mvc.FlowController"
+		p:flowExecutor-ref="flowExecutor"
+		p:defaultFlowId="login-webflow">
 		<property
 			name="argumentHandler">
-			<bean
-				class="org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler">
-				<property
-					name="flowExecutionKeyArgumentName"
-					value="lt" />
-				<property
-					name="defaultFlowId"
-					value="login-webflow" />
-			</bean>
+			<bean class="org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler"
+				p:flowExecutionKeyArgumentName="lt"
+				p:defaultFlowId="login-webflow" />
 		</property>
 	</bean>
 
@@ -150,106 +117,42 @@ http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.x
 		<flow:location path="/WEB-INF/login-webflow.xml"/>
 	</flow:registry>
 
-	<bean id="proxyValidateController"
-		class="org.jasig.cas.web.ServiceValidateController">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="proxyHandler"
-			ref="proxy20Handler" />
-		<property
-			name="argumentExtractor"
-			ref="casArgumentExtractor" />
-	</bean>
+	<bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:proxyHandler-ref="proxy20Handler"
+		p:argumentExtractor-ref="casArgumentExtractor" />
 
-	<bean
-		id="serviceValidateController"
-		class="org.jasig.cas.web.ServiceValidateController">
-		<property
-			name="validationSpecificationClass"
-			value="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification" />
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="proxyHandler"
-			ref="proxy20Handler" />
-		<property
-			name="argumentExtractor"
-			ref="casArgumentExtractor" />
-	</bean>
+	<bean id="serviceValidateController" class="org.jasig.cas.web.ServiceValidateController"
+		p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:proxyHandler-ref="proxy20Handler"
+		p:argumentExtractor-ref="casArgumentExtractor" />
 	
-	<bean
-		id="samlValidateController"
-		class="org.jasig.cas.web.ServiceValidateController">
-		<property
-			name="validationSpecificationClass"
-			value="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification" />
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="proxyHandler"
-			ref="proxy20Handler" />
-		<property
-			name="argumentExtractor"
-			ref="samlArgumentExtractor" />
-		<property
-			name="successView"
-			value="casSamlServiceSuccessView" />
-		<property
-			name="failureView"
-			value="casSamlServiceFailureView" />
-	</bean>
+	<bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
+		p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:proxyHandler-ref="proxy20Handler"
+		p:argumentExtractor-ref="samlArgumentExtractor"
+		p:successView="casSamlServiceSuccessView"
+		p:failureView="casSamlServiceFailureView" />
 
-	<bean
-		id="legacyValidateController"
-		class="org.jasig.cas.web.ServiceValidateController">
-		<property
-			name="proxyHandler"
-			ref="proxy10Handler" />
-		<property
-			name="successView"
-			value="cas1ServiceSuccessView" />
-		<property
-			name="failureView"
-			value="cas1ServiceFailureView" />
-		<property
-			name="validationSpecificationClass"
-			value="org.jasig.cas.validation.Cas10ProtocolValidationSpecification" />
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="argumentExtractor"
-			ref="casArgumentExtractor" />
-	</bean>
+	<bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController"
+		p:proxyHandler-ref="proxy10Handler"
+		p:successView="cas1ServiceSuccessView"
+		p:failureView="cas1ServiceFailureView"
+		p:validationSpecificationClass="org.jasig.cas.validation.Cas10ProtocolValidationSpecification"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:argumentExtractor-ref="casArgumentExtractor" />
 
-	<bean
-		id="proxyController"
-		class="org.jasig.cas.web.ProxyController">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-	</bean>
+	<bean id="proxyController" class="org.jasig.cas.web.ProxyController"
+		p:centralAuthenticationService-ref="centralAuthenticationService" />
 
-	<bean
-		id="logoutController"
-		class="org.jasig.cas.web.LogoutController">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="logoutView"
-			value="casLogoutView" />
-		<property 
-			name="warnCookieGenerator"
-			ref="warnCookieGenerator" />
-		<property
-			name="ticketGrantingTicketCookieGenerator"
-			ref="ticketGrantingTicketCookieGenerator" />
-	</bean>
+	<bean id="logoutController" class="org.jasig.cas.web.LogoutController"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:logoutView="casLogoutView"
+		p:warnCookieGenerator-ref="warnCookieGenerator"
+		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
+
 <!--
 uncomment this to allow access to web service
 	<bean
@@ -285,82 +188,33 @@ uncomment this to allow access to web service
 	</bean>
 -->
 	
-	<bean
-		id="extractServiceAction"
-		class="org.jasig.cas.web.flow.ExtractServiceAction">
-		<property
-			name="argumentExtractors"
-			ref="argumentExtractors" />
-	</bean>
+	<bean id="extractServiceAction" class="org.jasig.cas.web.flow.ExtractServiceAction"
+		p:argumentExtractors-ref="argumentExtractors" />
 	
-	<bean
-		id="automaticCookiePathSetterAction"
-		class="org.jasig.cas.web.flow.AutomaticCookiePathSetterAction">
-		<property
-			name="warnCookieGenerator"
-			ref="warnCookieGenerator" />
-		<property
-			name="ticketGrantingTicketCookieGenerator"
-			ref="ticketGrantingTicketCookieGenerator" />
-	</bean>
+	<bean id="automaticCookiePathSetterAction" class="org.jasig.cas.web.flow.AutomaticCookiePathSetterAction"
+		p:warnCookieGenerator-ref="warnCookieGenerator"
+		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 	
-	<bean
-		id="authenticationViaFormAction"
-		class="org.jasig.cas.web.flow.AuthenticationViaFormAction">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="argumentExtractors"
-			ref="argumentExtractors" />
-		<property
-			name="warnCookieGenerator"
-			ref="warnCookieGenerator" />
-		<property
-			name="ticketGrantingTicketCookieGenerator"
-			ref="ticketGrantingTicketCookieGenerator" />
-	</bean>
+	<bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:argumentExtractors-ref="argumentExtractors"
+		p:warnCookieGenerator-ref="warnCookieGenerator"
+		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 	
-	<bean
-		id="generateServiceTicketAction"
-		class="org.jasig.cas.web.flow.GenerateServiceTicketAction">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="ticketGrantingTicketCookieGenerator"
-			ref="ticketGrantingTicketCookieGenerator" />
-	</bean>
+	<bean id="generateServiceTicketAction" class="org.jasig.cas.web.flow.GenerateServiceTicketAction"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 		
-	<bean
-		id="sendTicketGrantingTicketAction"
-		class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction">
-		<property
-			name="centralAuthenticationService"
-			ref="centralAuthenticationService" />
-		<property
-			name="ticketGrantingTicketCookieGenerator"
-			ref="ticketGrantingTicketCookieGenerator" />
-	</bean>
+	<bean id="sendTicketGrantingTicketAction" class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction"
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 		
-	<bean
-		id="ticketGrantingTicketExistsAction"
-		class="org.jasig.cas.web.flow.TicketGrantingTicketExistsAction">
-		<property
-			name="ticketGrantingTicketCookieGenerator"
-			ref="ticketGrantingTicketCookieGenerator" />
-	</bean>
+	<bean id="ticketGrantingTicketExistsAction" class="org.jasig.cas.web.flow.TicketGrantingTicketExistsAction"
+		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 		
-	<bean
-		id="warnAction"
-		class="org.jasig.cas.web.flow.WarnAction">
-		<property
-			name="warnCookieGenerator"
-			ref="warnCookieGenerator" />
-		<property
-			name="ticketGrantingTicketCookieGenerator"
-			ref="ticketGrantingTicketCookieGenerator" />
-	</bean>
+	<bean id="warnAction" class="org.jasig.cas.web.flow.WarnAction"
+		p:warnCookieGenerator-ref="warnCookieGenerator"
+		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 
 <!--
 	<bean
@@ -373,35 +227,26 @@ uncomment this to allow access to web service
  		id="casArgumentExtractor"
  		class="org.jasig.cas.web.support.CasArgumentExtractor" />
  	
- 	<bean
- 		id="samlArgumentExtractor"
- 		class="org.jasig.cas.web.support.SamlArgumentExtractor" />
- 		
- 	<bean id="argumentExtractors" class="java.util.ArrayList">
- 		<constructor-arg index="0">
- 			<list>
- 				<ref local="casArgumentExtractor" />
- 				<ref local="samlArgumentExtractor" />
- 			</list>
- 		</constructor-arg>
- 	</bean>
+ 	<util:list id="argumentExtractors">
+		<ref bean="casArgumentExtractor" />
+ 		<ref bean="samlArgumentExtractor" />
+ 	</util:list>
+ 	
+ 	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor" />
 	
-	<bean id="warnCookieGenerator" class="org.springframework.web.util.CookieGenerator">
-		<property name="cookieSecure" value="true" />
-		<property name="cookieMaxAge" value="-1" />
-		<property name="cookieName" value="CASPRIVACY" />
-		<property name="cookiePath" value="/cas" />
-	</bean>
+	<bean id="warnCookieGenerator" class="org.springframework.web.util.CookieGenerator"
+		p:cookieSecure="true"
+		p:cookieMaxAge="-1"
+		p:cookieName="CASPRIVACY"
+		p:cookiePath="/cas" />
 	
-	<bean id="ticketGrantingTicketCookieGenerator" class="org.springframework.web.util.CookieGenerator">
-		<property name="cookieSecure" value="true" />
-		<property name="cookieMaxAge" value="-1" />
-		<property name="cookieName" value="CASTGC" />
-		<property name="cookiePath" value="/cas" />
-	</bean>
+	<bean id="ticketGrantingTicketCookieGenerator" class="org.springframework.web.util.CookieGenerator"
+		p:cookieSecure="true"
+		p:cookieMaxAge="-1"
+		p:cookieName="CASTGC"
+		p:cookiePath="/cas" />
 	
-	<bean id="dynamicRedirectViewSelector"
-		class="org.jasig.cas.web.flow.DynamicRedirectViewSelector">
+	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector">
 		<constructor-arg index="0"
 			ref="argumentExtractors" />
 	</bean>
