@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 	| deployerConfigContext.xml centralizes into one file some of the declarative configuration that
 	| all CAS deployers will need to modify.
@@ -15,6 +14,7 @@
 	+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 	<!--
 		| This bean declares our AuthenticationManager.  The CentralAuthenticationService service bean
@@ -78,9 +78,8 @@
 					| This is the authentication handler that authenticates services by means of callback via SSL, thereby validating
 					| a server side SSL certificate.
 					+-->
-				<bean
-					class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
-
+				<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
+					p:httpClient-ref="httpClient" />
 				<!--
 					| This is the authentication handler declaration that every CAS deployer will need to change before deploying CAS 
 					| into production.  The default SimpleTestUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredentials

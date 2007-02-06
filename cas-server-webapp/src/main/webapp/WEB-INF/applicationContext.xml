@@ -1,64 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
 	<!-- Message source for this context, loaded from localized "messages_xx" files -->
-	<bean
-		id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property
-			name="basename"
-			value="messages" />
-	</bean>
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basename="messages" />
 	
 	<!-- ID Generators -->
-	<bean
-		id="ticketGrantingTicketUniqueIdGenerator"
-		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+	<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg
 			index="0"
 			value="50" />
 	</bean>
 	
-	<bean
-		id="httpClient"
-		class="org.jasig.cas.util.HttpClient3FactoryBean">
-		<property
-			name="soTimeout"
-			value="5000" />
-		<property
-			name="connectionManagerTimeout"
-			value="5000" />
-		<property
-			name="connectionTimeout"
-			value="5000" />
-		<property
-			name="defaultMaxConnectionsPerHost"
-			value="50" />
-		<property
-			name="maxTotalConnections"
-			value="50" />
-	</bean>
+	<bean id="httpClient" class="org.jasig.cas.util.HttpClient3FactoryBean"
+		p:soTimeout="5000"
+		p:connectionManagerTimeout="5000"
+		p:connectionTimeout="5000"
+		p:defaultMaxConnectionsPerHost="50"
+		p:maxTotalConnections="50" />
 	
-	<bean
-		id="serviceTicketUniqueIdGenerator"
-		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg
 			index="0"
 			value="20" />
 	</bean>
 	 
-	<bean
-		id="samlServiceTicketUniqueIdGenerator"
-		class="org.jasig.cas.util.SamlCompliantUniqueTicketIdGenerator">
+	<bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.util.SamlCompliantUniqueTicketIdGenerator">
 		<constructor-arg index="0" value="https://localhost:8443" />
 	</bean>
 	
 	<!-- Expiration policies -->
-	<bean
-		id="serviceTicketExpirationPolicy"
-		class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy">
+	<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy">
 		<!-- This argument is the number of times that a ticket can be used before its considered expired. -->
 		<constructor-arg
 			index="0"
@@ -70,9 +45,7 @@
 			value="300000" />
 	</bean>
 	
-	<bean
-		id="grantingTicketExpirationPolicy"
-		class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy">
+	<bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy">
 		<!-- This argument is the time a ticket can exist before its considered expired.  -->
 		<constructor-arg
 			index="0"
@@ -80,21 +53,12 @@
 	</bean>
 
 	<!-- CentralAuthenticationService -->
-	<bean
-		id="centralAuthenticationService"
-		class="org.jasig.cas.CentralAuthenticationServiceImpl">
-		<property
-			name="ticketGrantingTicketExpirationPolicy"
-			ref="grantingTicketExpirationPolicy" />
-		<property
-			name="serviceTicketExpirationPolicy"
-			ref="serviceTicketExpirationPolicy" />
-		<property
-			name="authenticationManager"
-			ref="authenticationManager" />
-		<property
-			name="ticketGrantingTicketUniqueTicketIdGenerator"
-			ref="ticketGrantingTicketUniqueIdGenerator" />
+	<bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
+		p:ticketGrantingTicketExpirationPolicy-ref="grantingTicketExpirationPolicy"
+		p:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
+		p:authenticationManager-ref="authenticationManager"
+		p:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
+		p:ticketRegistry-ref="ticketRegistry">
 		<property
 			name="uniqueTicketIdGeneratorsForService">
 				<map>
@@ -106,63 +70,29 @@
 						value-ref="samlServiceTicketUniqueIdGenerator" />
 				</map>
 			</property>
-		<property
-			name="ticketRegistry"
-			ref="ticketRegistry" />
 	</bean>
 	
-	<bean
-		id="proxy10Handler"
-		class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler" />
+	<bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler" />
 		
-	<bean
-		id="proxy20Handler"
-		class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler">
-		<property
-			name="httpClient"
-			ref="httpClient" />
-	</bean>
+	<bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler"
+		p:httpClient-ref="httpClient" />
 	
 	<!-- Ticket Registry -->
-	<bean
-		id="ticketRegistry"
-		class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 	
 	<!--Quartz -->
 	<!-- TICKET REGISTRY CLEANER -->
-	<bean
-		id="ticketRegistryCleaner"
-		class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner">
-		<property
-			name="ticketRegistry"
-			ref="ticketRegistry" />
-	</bean>
+	<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+		p:ticketRegistry-ref="ticketRegistry" />
 	
-	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property
-			name="targetObject"
-			ref="ticketRegistryCleaner" />
-		<property
-			name="targetMethod"
-			value="clean" />
-	</bean>
+	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+		p:targetObject-ref="ticketRegistryCleaner"
+		p:targetMethod="clean" />
 	
-	<bean
-		id="triggerJobDetailTicketRegistryCleaner"
-		class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property
-			name="jobDetail"
-			ref="jobDetailTicketRegistryCleaner" />
-		<!--  How long after the application is started before we start attempting to clean out the registry. -->
-		<property
-			name="startDelay"
-			value="20000" />
-			
-		<!-- How often the cleaner should be run to clean out the ticket registry. -->
-		<property
-			name="repeatInterval"
-			value="5000000" />
-	</bean>
+	<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+		p:jobDetail-ref="jobDetailTicketRegistryCleaner"
+		p:startDelay="20000"
+		p:repeatInterval="5000000" />
 
 	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
@@ -174,7 +104,5 @@
 	</bean>
 	
 	<!-- ADVISORS -->	
-	<bean
-		id="advisorAutoProxyCreator"
-		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 </beans>
