@@ -31,7 +31,7 @@ public final class ExtractServiceAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final Service service = WebUtils.getService(this.argumentExtractors, request);
         
-        if (logger.isDebugEnabled()) {
+        if (service != null && logger.isDebugEnabled()) {
             logger.debug("Placing service in FlowScope: " + service.getId());
         }
         
