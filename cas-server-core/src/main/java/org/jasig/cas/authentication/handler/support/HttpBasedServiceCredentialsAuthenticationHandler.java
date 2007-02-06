@@ -133,6 +133,6 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
             this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
         }
         
-        Assert.notNull(this.httpClient, "Note, this behavior has changed from the CAS 3.0.6 behavior.  You now MUST specify an instane of HttpClient.  Before it would create an instance for you.");
+        Assert.notNull(this.httpClient, "Note, this behavior has changed from the CAS 3.0.6 behavior.  You now MUST specify an instance of HttpClient.  Before it would create an instance for you.");
     }
 }
