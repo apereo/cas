@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.StringUtils;
@@ -23,16 +25,18 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.1
  */
 public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
+    
+    private static final Log LOG = LogFactory.getLog(SamlArgumentExtractor.class);
 
     private static final String PARAM_SERVICE = "TARGET";
 
     private static final String PARAM_TICKET = "SAMLart";
 
-    protected String getArtifactParameterName() {
+    public String getArtifactParameterName() {
         return PARAM_TICKET;
     }
 
-    protected String getServiceParameterName() {
+    public String getServiceParameterName() {
         return PARAM_SERVICE;
     }
 
@@ -66,6 +70,7 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
             try {
                 buffer.append(URLEncoder.encode(serviceTicket, "UTF-8"));
             } catch (final UnsupportedEncodingException e) {
+                LOG.error(e,e);
                 buffer.append(serviceTicket);
             }
             buffer.append("&");
@@ -75,11 +80,11 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
             try {
                 buffer.append(URLEncoder.encode(service, "UTF-8"));
             } catch (final UnsupportedEncodingException e) {
+                LOG.error(e,e);
                 buffer.append(service);
             }
         }
 
         return buffer.toString();
     }
-
 }

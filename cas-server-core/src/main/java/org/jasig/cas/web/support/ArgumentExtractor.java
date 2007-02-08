@@ -63,5 +63,18 @@ public interface ArgumentExtractor {
      * @return the fully formed Service or null if it could not be found.
      */
     Service extractService(HttpServletRequest request);
+    
+    /**
+     * Retrieve the parameter used to represent the service.
+     * 
+     * @return the parameter representing the service.
+     */
+    String getServiceParameterName();
 
+    /**
+     * Retrieve the parameter used to represent the artifact.
+     * 
+     * @return the parameter representing the artifact.
+     */
+     String getArtifactParameterName();
 }
