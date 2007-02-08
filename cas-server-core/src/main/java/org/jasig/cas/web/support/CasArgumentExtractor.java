@@ -28,11 +28,11 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
     /** Parameter to retrivve the ticket. */
     private static final String PARAM_TICKET = "ticket";
 
-    protected String getArtifactParameterName() {
+    public String getArtifactParameterName() {
         return PARAM_TICKET;
     }
 
-    protected String getServiceParameterName() {
+    public String getServiceParameterName() {
         return PARAM_SERVICE;
     }
     

@@ -30,18 +30,4 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     public final String extractTicketArtifact(final HttpServletRequest request) {
         return request.getParameter(getArtifactParameterName());
     }
-
-    /**
-     * Retrieve the parameter used to represent the service.
-     * 
-     * @return the parameter representing the service.
-     */
-    protected abstract String getServiceParameterName();
-
-    /**
-     * Retrieve the parameter used to represent the artifact.
-     * 
-     * @return the parameter representing the artifact.
-     */
-    protected abstract String getArtifactParameterName();
 }
