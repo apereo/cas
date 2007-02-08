@@ -49,16 +49,13 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
     InitializingBean {
 
     /** Namespace for custom attributes. */
-    private static final String NAMESPACE = "http://www.ja-sig.org/cas/";
+    private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
 
     /** The issuer, generally the hostname. */
     private String issuer;
 
     /** The amount of time in milliseconds this is valid for. */
     private long issueLength = 30000;
-
-    /** Instance of strategy for extracting arguments. */
-    private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
 
     protected void renderMergedOutputModel(final Map model,
         final HttpServletRequest request, final HttpServletResponse response)
@@ -70,8 +67,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         final Date currentDate = new Date();
         final String authenticationMethod = (String) authentication
             .getAttributes().get("samlAuthenticationStatement::authMethod");
-        final Service service = this.samlArgumentExtractor
-            .extractService(request);
+        final Service service = assertion.getService();
 
         final SAMLResponse samlResponse = new SAMLResponse(
             null, service
