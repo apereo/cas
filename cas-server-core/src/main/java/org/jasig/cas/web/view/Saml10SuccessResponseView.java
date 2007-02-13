@@ -18,7 +18,6 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.AttributePrincipal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;
 import org.opensaml.SAMLAttributeStatement;
@@ -47,7 +46,7 @@ import org.springframework.util.Assert;
  */
 public class Saml10SuccessResponseView extends AbstractCasView implements
     InitializingBean {
-
+    
     /** Namespace for custom attributes. */
     private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
 
@@ -61,81 +60,86 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
 
-        final Assertion assertion = getAssertionFrom(model);
-        final Authentication authentication = assertion
-            .getChainedAuthentications()[0];
-        final Date currentDate = new Date();
-        final String authenticationMethod = (String) authentication
-            .getAttributes().get("samlAuthenticationStatement::authMethod");
-        final Service service = assertion.getService();
-
-        final SAMLResponse samlResponse = new SAMLResponse(
-            null, service
-                .getId(), new ArrayList(), null);
-
-        samlResponse.setIssueInstant(currentDate);
-
-        final SAMLAssertion samlAssertion = new SAMLAssertion();
-        samlAssertion.setIssueInstant(currentDate);
-        samlAssertion.setIssuer(this.issuer);
-        samlAssertion.setNotBefore(currentDate);
-        samlAssertion.setNotOnOrAfter(new Date(currentDate.getTime()
-            + this.issueLength));
-
-        final SAMLAudienceRestrictionCondition samlAudienceRestrictionCondition = new SAMLAudienceRestrictionCondition();
-        samlAudienceRestrictionCondition.addAudience(service.getId());
-
-        final SAMLAuthenticationStatement samlAuthenticationStatement = new SAMLAuthenticationStatement();
-        samlAuthenticationStatement.setAuthInstant(authentication
-            .getAuthenticatedDate());
-        samlAuthenticationStatement.setAuthMethod(authenticationMethod != null
-            ? authenticationMethod
-            : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
-
-        samlAuthenticationStatement.setSubject(getSamlSubject(authentication));
-
-        if (authentication.getPrincipal() instanceof AttributePrincipal) {
-            final AttributePrincipal attributePrincipal = (AttributePrincipal) authentication
-                .getPrincipal();
-            final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
-
-            attributeStatement.setSubject(getSamlSubject(authentication));
-            samlAssertion.addStatement(attributeStatement);
-
-            for (final Iterator iter = attributePrincipal.getAttributes()
-                .keySet().iterator(); iter.hasNext();) {
-
-                final Object key = iter.next();
-                final Object value = attributePrincipal.getAttributes()
-                    .get(key);
-
-                final SAMLAttribute attribute = new SAMLAttribute();
-                attribute.setName((String) key);
-                attribute.setNamespace(NAMESPACE);
-
-                if (value instanceof Collection) {
-                    attribute.setValues((Collection) value);
-                } else {
-                    final Collection c = new ArrayList();
-                    c.add(value);
-                    attribute.setValues(c);
+        try {
+            final Assertion assertion = getAssertionFrom(model);
+            final Authentication authentication = assertion
+                .getChainedAuthentications()[0];
+            final Date currentDate = new Date();
+            final String authenticationMethod = (String) authentication
+                .getAttributes().get("samlAuthenticationStatement::authMethod");
+            final Service service = assertion.getService();
+    
+            final SAMLResponse samlResponse = new SAMLResponse(
+                null, service
+                    .getId(), new ArrayList(), null);
+    
+            samlResponse.setIssueInstant(currentDate);
+    
+            final SAMLAssertion samlAssertion = new SAMLAssertion();
+            samlAssertion.setIssueInstant(currentDate);
+            samlAssertion.setIssuer(this.issuer);
+            samlAssertion.setNotBefore(currentDate);
+            samlAssertion.setNotOnOrAfter(new Date(currentDate.getTime()
+                + this.issueLength));
+    
+            final SAMLAudienceRestrictionCondition samlAudienceRestrictionCondition = new SAMLAudienceRestrictionCondition();
+            samlAudienceRestrictionCondition.addAudience(service.getId());
+    
+            final SAMLAuthenticationStatement samlAuthenticationStatement = new SAMLAuthenticationStatement();
+            samlAuthenticationStatement.setAuthInstant(authentication
+                .getAuthenticatedDate());
+            samlAuthenticationStatement.setAuthMethod(authenticationMethod != null
+                ? authenticationMethod
+                : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
+    
+            samlAuthenticationStatement.setSubject(getSamlSubject(authentication));
+    
+            if (authentication.getPrincipal() instanceof AttributePrincipal) {
+                final AttributePrincipal attributePrincipal = (AttributePrincipal) authentication
+                    .getPrincipal();
+                final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
+    
+                attributeStatement.setSubject(getSamlSubject(authentication));
+                samlAssertion.addStatement(attributeStatement);
+    
+                for (final Iterator iter = attributePrincipal.getAttributes()
+                    .keySet().iterator(); iter.hasNext();) {
+    
+                    final Object key = iter.next();
+                    final Object value = attributePrincipal.getAttributes()
+                        .get(key);
+    
+                    final SAMLAttribute attribute = new SAMLAttribute();
+                    attribute.setName((String) key);
+                    attribute.setNamespace(NAMESPACE);
+    
+                    if (value instanceof Collection) {
+                        attribute.setValues((Collection) value);
+                    } else {
+                        final Collection c = new ArrayList();
+                        c.add(value);
+                        attribute.setValues(c);
+                    }
+    
+                    attributeStatement.addAttribute(attribute);
                 }
-
-                attributeStatement.addAttribute(attribute);
             }
+    
+            samlAssertion.addStatement(samlAuthenticationStatement);
+            samlAssertion.addCondition(samlAudienceRestrictionCondition);
+            samlResponse.addAssertion(samlAssertion);
+    
+            final String xmlResponse = samlResponse.toString();
+    
+            response.getWriter()
+                .print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            response.setContentType("text/xml");
+            response.getWriter().print(xmlResponse);
+            response.flushBuffer();
+        } catch (final Exception e) {
+            log.error(e, e);
+            throw e;
         }
-
-        samlAssertion.addStatement(samlAuthenticationStatement);
-        samlAssertion.addCondition(samlAudienceRestrictionCondition);
-        samlResponse.addAssertion(samlAssertion);
-
-        final String xmlResponse = samlResponse.toString();
-
-        response.getWriter()
-            .print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        response.setContentType("text/xml");
-        response.getWriter().print(xmlResponse);
-        response.flushBuffer();
     }
 
     protected SAMLSubject getSamlSubject(final Authentication authentication)
