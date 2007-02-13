@@ -7,6 +7,8 @@ package org.jasig.cas.web.view;
 
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.web.servlet.view.AbstractView;
 
@@ -18,6 +20,8 @@ import org.springframework.web.servlet.view.AbstractView;
  * @since 3.1
  */
 public abstract class AbstractCasView extends AbstractView {
+    
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     protected final Assertion getAssertionFrom(final Map model) {
         return (Assertion) model.get("assertion");
