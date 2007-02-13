@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 
 /**
@@ -36,7 +37,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
             return getDefaultThemeName();
         }
 
-        final String serviceId = request.getParameter(SERVICE_THEME_KEY);
+        final String serviceId = WebUtils.stripJsessionFromUrl(request.getParameter(SERVICE_THEME_KEY));
         final RegisteredService service = this.serviceRegistry
             .getService(serviceId);
 

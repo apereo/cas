@@ -52,6 +52,10 @@ public final class WebUtils {
      * @return the url without the jsession
      */
     public static String stripJsessionFromUrl(final String url) {
+        if (url == null) {
+            return null;
+        }
+
         final int jsessionPosition = url.indexOf(";jsession");
 
         if (jsessionPosition == -1) {

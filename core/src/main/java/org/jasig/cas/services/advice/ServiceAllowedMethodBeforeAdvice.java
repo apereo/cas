@@ -11,6 +11,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.web.util.WebUtils;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -52,7 +53,7 @@ public class ServiceAllowedMethodBeforeAdvice implements MethodBeforeAdvice,
         final Object target) throws UnauthorizedServiceException {
         final Service service = (Service) args[1];
         final RegisteredService authenticatedService = this.serviceRegistry
-            .getService(service.getId());
+            .getService(WebUtils.stripJsessionFromUrl(service.getId()));
 
         if (authenticatedService == null) {
             throw new UnauthorizedServiceException("Service: ["
