@@ -133,7 +133,6 @@ public final class CentralAuthenticationServiceImpl implements
             throw new InvalidTicketException();
         }
 
-        // XXX is synchronization needed here?
         synchronized (ticketGrantingTicket) {
             if (ticketGrantingTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
