@@ -83,21 +83,19 @@ public final class DefaultUniqueTicketIdGenerator implements
     }
 
     public String getNewTicketId(final String prefix) {
-        final StringBuffer buffer = new StringBuffer();
-        
-        synchronized (buffer) {
-            buffer.append(prefix);
-            buffer.append("-");
-            buffer.append(this.numericGenerator.getNextNumberAsString());
-            buffer.append("-");
-            buffer.append(this.randomStringGenerator.getNewString());
-    
-            if (this.suffix != null) {
-                buffer.append("-");
-                buffer.append(this.suffix);
-            }
+        final StringBuilder buffer = new StringBuilder();
 
-            return buffer.toString();
+        buffer.append(prefix);
+        buffer.append("-");
+        buffer.append(this.numericGenerator.getNextNumberAsString());
+        buffer.append("-");
+        buffer.append(this.randomStringGenerator.getNewString());
+
+        if (this.suffix != null) {
+            buffer.append("-");
+            buffer.append(this.suffix);
         }
+
+        return buffer.toString();
     }
 }

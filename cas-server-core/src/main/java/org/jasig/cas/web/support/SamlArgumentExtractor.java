@@ -25,8 +25,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.1
  */
 public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
-    
-    private static final Log LOG = LogFactory.getLog(SamlArgumentExtractor.class);
+
+    private static final Log LOG = LogFactory
+        .getLog(SamlArgumentExtractor.class);
 
     private static final String PARAM_SERVICE = "TARGET";
 
@@ -60,29 +61,27 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
             return null;
         }
 
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
 
-        synchronized (buffer) {
+        buffer.append(service);
+        buffer.append(service.indexOf('?') != -1 ? "&" : "?");
+        buffer.append(getArtifactParameterName());
+        buffer.append("=");
+        try {
+            buffer.append(URLEncoder.encode(serviceTicket, "UTF-8"));
+        } catch (final UnsupportedEncodingException e) {
+            LOG.error(e, e);
+            buffer.append(serviceTicket);
+        }
+        buffer.append("&");
+        buffer.append(getServiceParameterName());
+        buffer.append("=");
+
+        try {
+            buffer.append(URLEncoder.encode(service, "UTF-8"));
+        } catch (final UnsupportedEncodingException e) {
+            LOG.error(e, e);
             buffer.append(service);
-            buffer.append(service.indexOf('?') != -1 ? "&" : "?");
-            buffer.append(getArtifactParameterName());
-            buffer.append("=");
-            try {
-                buffer.append(URLEncoder.encode(serviceTicket, "UTF-8"));
-            } catch (final UnsupportedEncodingException e) {
-                LOG.error(e,e);
-                buffer.append(serviceTicket);
-            }
-            buffer.append("&");
-            buffer.append(getServiceParameterName());
-            buffer.append("=");
-
-            try {
-                buffer.append(URLEncoder.encode(service, "UTF-8"));
-            } catch (final UnsupportedEncodingException e) {
-                LOG.error(e,e);
-                buffer.append(service);
-            }
         }
 
         return buffer.toString();

@@ -46,13 +46,11 @@ public final class Sha1PasswordEncoder implements PasswordEncoder {
     }
 
     private String bytesToHex(final byte[] b) {
-        final StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
 
-        synchronized (buf) {
-            for (int j = 0; j < b.length; j++) {
-                buf.append(HEX_DIGITS[(b[j] >> 4) & 0x0f]);
-                buf.append(HEX_DIGITS[b[j] & 0x0f]);
-            }
+        for (int j = 0; j < b.length; j++) {
+            buf.append(HEX_DIGITS[(b[j] >> 4) & 0x0f]);
+            buf.append(HEX_DIGITS[b[j] & 0x0f]);
         }
         return buf.toString();
     }
