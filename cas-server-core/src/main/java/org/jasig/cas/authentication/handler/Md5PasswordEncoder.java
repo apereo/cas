@@ -37,20 +37,16 @@ public final class Md5PasswordEncoder implements PasswordEncoder {
             messageDigest.update(password.getBytes());
 
             final byte[] digest = messageDigest.digest();
-            StringBuffer hexString = new StringBuffer();
+            final StringBuilder hexString = new StringBuilder();
 
-            synchronized (hexString) {
-                for (int i = 0; i < digest.length; i++) {
-                    final String plainText = Integer
-                        .toHexString(0xFF & digest[i]);
+            for (int i = 0; i < digest.length; i++) {
+                final String plainText = Integer.toHexString(0xFF & digest[i]);
 
-                    if (plainText.length() < 2) {
-                        hexString.append("0");
-                    }
-
-                    hexString.append(plainText);
+                if (plainText.length() < 2) {
+                    hexString.append("0");
                 }
 
+                hexString.append(plainText);
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {

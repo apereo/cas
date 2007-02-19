@@ -18,13 +18,12 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
- *
  */
 public final class CasArgumentExtractor extends AbstractArgumentExtractor {
 
     /** Parameter to retrieve the service. */
     private static final String PARAM_SERVICE = "service";
-    
+
     /** Parameter to retrivve the ticket. */
     private static final String PARAM_TICKET = "ticket";
 
@@ -35,38 +34,38 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
     public String getServiceParameterName() {
         return PARAM_SERVICE;
     }
-    
+
     public final Service extractService(final HttpServletRequest request) {
         final String service = request.getParameter(getServiceParameterName());
-        
+
         if (!StringUtils.hasText(service)) {
             return null;
         }
-        
+
         return new SimpleService(WebUtils.stripJsessionFromUrl(service));
     }
 
     public String constructUrlForRedirect(final RequestContext context) {
-        final String service = context.getRequestParameters().get(getServiceParameterName());
-        final String serviceTicket = WebUtils.getServiceTicketFromRequestScope(context);
-        
+        final String service = context.getRequestParameters().get(
+            getServiceParameterName());
+        final String serviceTicket = WebUtils
+            .getServiceTicketFromRequestScope(context);
+
         if (service == null) {
             return null;
         }
-        
-        final StringBuffer buffer = new StringBuffer();
-        
-        synchronized (buffer) {
-            buffer.append(service);
-            buffer.append(service.indexOf('?') != -1 ? "&" : "?");
-            
-            if (StringUtils.hasText(serviceTicket)) {
-                buffer.append(getArtifactParameterName());
-                buffer.append("=");
-                buffer.append(serviceTicket);
-            }
+
+        final StringBuilder buffer = new StringBuilder();
+
+        buffer.append(service);
+        buffer.append(service.indexOf('?') != -1 ? "&" : "?");
+
+        if (StringUtils.hasText(serviceTicket)) {
+            buffer.append(getArtifactParameterName());
+            buffer.append("=");
+            buffer.append(serviceTicket);
         }
-        
+
         return buffer.toString();
-    }    
+    }
 }
