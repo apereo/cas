@@ -40,5 +40,5 @@ public interface ServiceRegistry {
      * 
      * @return A list of services
      */
-    Collection getServices();
+    Collection<RegisteredService> getServices();
 }

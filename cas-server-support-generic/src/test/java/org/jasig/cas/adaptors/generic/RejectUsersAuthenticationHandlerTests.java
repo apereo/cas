@@ -8,7 +8,7 @@ package org.jasig.cas.adaptors.generic;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
@@ -22,12 +22,12 @@ import junit.framework.TestCase;
  */
 public class RejectUsersAuthenticationHandlerTests extends TestCase {
 
-    final private Collection users;
+    final private List<String> users;
 
     final private RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new ArrayList();
+        this.users = new ArrayList<String>();
 
         this.users.add("scott");
         this.users.add("dima");

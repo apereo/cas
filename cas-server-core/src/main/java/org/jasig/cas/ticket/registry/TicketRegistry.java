@@ -43,7 +43,7 @@ public interface TicketRegistry {
      * @throws InvalidTicketClassException if the ticket does not match the
      * class provided.
      */
-    Ticket getTicket(String ticketId, Class clazz);
+    Ticket getTicket(String ticketId, Class<?> clazz);
 
     /**
      * Retrieve a ticket from the registry.
@@ -68,5 +68,5 @@ public interface TicketRegistry {
      * @return collection of tickets currently stored in the registry. Tickets
      * might or might not be valid i.e. expired.
      */
-    Collection getTickets();
+    Collection<Ticket> getTickets();
 }

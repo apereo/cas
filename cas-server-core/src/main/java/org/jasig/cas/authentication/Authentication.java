@@ -57,5 +57,5 @@ public interface Authentication extends Serializable {
      * 
      * @return the map of attributes.
      */
-    Map getAttributes();
+    Map<String, Object> getAttributes();
 }

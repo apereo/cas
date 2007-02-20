@@ -24,10 +24,10 @@ public abstract class AbstractAuthentication implements Authentication {
     private final Principal principal;
 
     /** Associated authentication attributes. */
-    private final Map attributes;
+    private final Map<String, Object> attributes;
 
     public AbstractAuthentication(final Principal principal,
-        final Map attributes) {
+        final Map<String, Object> attributes) {
         Assert.notNull(principal, "principal cannot be null");
         Assert.notNull(attributes, "attributes cannot be null");
 
@@ -35,7 +35,7 @@ public abstract class AbstractAuthentication implements Authentication {
         this.attributes = attributes;
     }
 
-    public final Map getAttributes() {
+    public final Map<String, Object> getAttributes() {
         return this.attributes;
     }
 

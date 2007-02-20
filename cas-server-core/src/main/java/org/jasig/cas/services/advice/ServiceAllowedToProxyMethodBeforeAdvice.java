@@ -6,7 +6,6 @@
 package org.jasig.cas.services.advice;
 
 import java.lang.reflect.Method;
-import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,9 +66,7 @@ public final class ServiceAllowedToProxyMethodBeforeAdvice implements
             .getTicket(serviceTicketId);
         RegisteredService authenticatedService = null;
 
-        for (Iterator iter = this.serviceRegistry.getServices().iterator(); iter
-            .hasNext();) {
-            final RegisteredService service = (RegisteredService) iter.next();
+        for (final RegisteredService service : this.serviceRegistry.getServices()) {
             if (service.getProxyUrl() != null
                 && (service.getProxyUrl().toExternalForm().equals(serviceTicket
                     .getService().getId()))

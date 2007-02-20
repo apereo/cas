@@ -57,7 +57,7 @@ public class ServiceValidateController extends AbstractController implements
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The validation protocol we want to use. */
-    private Class validationSpecificationClass;
+    private Class<?> validationSpecificationClass;
 
     /** The proxy handler we want to use with the controller. */
     private ProxyHandler proxyHandler;
@@ -236,7 +236,7 @@ public class ServiceValidateController extends AbstractController implements
      * to set.
      */
     public void setValidationSpecificationClass(
-        final Class validationSpecificationClass) {
+        final Class<?> validationSpecificationClass) {
         this.validationSpecificationClass = validationSpecificationClass;
     }
 

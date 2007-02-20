@@ -7,9 +7,7 @@ package org.jasig.cas.web.support;
 
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +46,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
      * The array of maps of restricted IPs mapped to failures. (simulating
      * buckets)
      */
-    private Map[] restrictedIpAddressMaps;
+    private Map<String, BigInteger>[] restrictedIpAddressMaps;
 
     /** The threshhold before we stop someone from authenticating. */
     private BigInteger failureThreshhold = DEFAULT_FAILURE_THRESHHOLD;
@@ -68,10 +66,10 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         final String lastQuad = remoteAddr.substring(remoteAddr
             .lastIndexOf(".") + 1);
         final int intVersionOfLastQuad = Integer.parseInt(lastQuad);
-        final Map quadMap = this.restrictedIpAddressMaps[intVersionOfLastQuad - 1];
+        final Map<String, BigInteger> quadMap = this.restrictedIpAddressMaps[intVersionOfLastQuad - 1];
 
         synchronized (quadMap) {
-            final BigInteger original = (BigInteger) quadMap.get(lastQuad);
+            final BigInteger original = quadMap.get(lastQuad);
             BigInteger integer = ONE;
 
             if (original != null) {
@@ -103,7 +101,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         this.restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
 
         for (int i = 0; i < MAX_SIZE_OF_MAP_ARRAY; i++) {
-            this.restrictedIpAddressMaps[i] = new HashMap();
+            this.restrictedIpAddressMaps[i] = new HashMap<String, BigInteger>();
         }
 
         final Thread thread = new ExpirationThread(
@@ -115,12 +113,13 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     protected final class ExpirationThread extends Thread {
 
         /** Reference to the map of restricted IP addresses. */
-        private Map[] restrictedIpAddressMaps;
+        private Map<String, BigInteger>[] restrictedIpAddressMaps;
 
         /** The timeout failure. */
         private int failureTimeout;
 
-        public ExpirationThread(final Map[] restrictedIpAddressMaps,
+        public ExpirationThread(
+            final Map<String, BigInteger>[] restrictedIpAddressMaps,
             final int failureTimeout) {
             this.restrictedIpAddressMaps = restrictedIpAddressMaps;
             this.failureTimeout = failureTimeout;
@@ -140,13 +139,11 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         private void cleanUpFailures() {
             final int length = this.restrictedIpAddressMaps.length;
             for (int i = 0; i < length; i++) {
-                final Map map = this.restrictedIpAddressMaps[i];
+                final Map<String, BigInteger> map = this.restrictedIpAddressMaps[i];
 
                 synchronized (map) {
-                    final Set keys = map.keySet();
-                    for (final Iterator iter = keys.iterator(); iter.hasNext();) {
-                        final Object key = iter.next();
-                        final BigInteger integer = (BigInteger) map.get(key);
+                    for (final String key : map.keySet()) {
+                        final BigInteger integer = map.get(key);
                         final BigInteger newValue = integer.subtract(ONE);
 
                         if (newValue.equals(BigInteger.ZERO)) {

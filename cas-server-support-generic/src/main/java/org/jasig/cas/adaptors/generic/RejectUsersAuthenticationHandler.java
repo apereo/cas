@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException;
@@ -31,7 +31,7 @@ public final class RejectUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The collection of users to reject. */
-    private Collection users;
+    private List<String> users;
 
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
@@ -53,7 +53,7 @@ public final class RejectUsersAuthenticationHandler extends
      * 
      * @param users The Collection of usernames we should not authenticate.
      */
-    public void setUsers(final Collection users) {
+    public void setUsers(final List<String> users) {
         this.users = users;
     }
 }

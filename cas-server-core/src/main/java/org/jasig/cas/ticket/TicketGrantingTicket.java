@@ -61,5 +61,5 @@ public interface TicketGrantingTicket extends Ticket {
      * 
      * @return the list of principals
      */
-    List getChainedAuthentications();
+    List<Authentication> getChainedAuthentications();
 }

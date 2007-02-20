@@ -7,6 +7,7 @@ package org.jasig.cas.authentication;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
@@ -27,6 +28,8 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
 
     /** UID for serializing. */
     private static final long serialVersionUID = 3906647483978365235L;
+    
+    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
 
     /** The date/time this authentication object became valid. */
     final Date authenticatedDate;
@@ -39,9 +42,9 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
      * @throws IllegalArgumentException if the principal is null.
      */
     public ImmutableAuthentication(final Principal principal,
-        final Map attributes) {
+        final Map<String, Object> attributes) {
         super(principal, attributes == null || attributes.isEmpty()
-            ? Collections.EMPTY_MAP : Collections.unmodifiableMap(attributes));
+            ? EMPTY_MAP : Collections.unmodifiableMap(attributes));
 
         this.authenticatedDate = new Date();
     }

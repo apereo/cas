@@ -80,7 +80,7 @@ public final class CentralAuthenticationServiceImpl implements
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Map to contain the mappings of service->UniqueTicketIdGenerators */
-    private Map uniqueTicketIdGeneratorsForService;
+    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Expiration policy for ticket granting tickets. */
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
@@ -157,7 +157,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
         }
 
-        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) this.uniqueTicketIdGeneratorsForService
+        final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService
             .get(service.getClass().getName());
 
         final ServiceTicket serviceTicket = ticketGrantingTicket
@@ -369,7 +369,7 @@ public final class CentralAuthenticationServiceImpl implements
     }
 
     public void setUniqueTicketIdGeneratorsForService(
-        final Map uniqueTicketIdGeneratorsForService) {
+        final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService) {
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
 

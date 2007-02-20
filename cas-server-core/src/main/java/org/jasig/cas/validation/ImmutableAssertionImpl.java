@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.validation;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -28,7 +29,7 @@ public final class ImmutableAssertionImpl implements Assertion {
     private static final long serialVersionUID = -1921502350732798866L;
 
     /** The list of principals. */
-    private final List principals;
+    private final List<Authentication> principals;
 
     /** Was this the result of a new login. */
     private final boolean fromNewLogin;
@@ -44,7 +45,7 @@ public final class ImmutableAssertionImpl implements Assertion {
      * @param fromNewLogin was the service ticket from a new login.
      * @throws IllegalArgumentException if there are no principals.
      */
-    public ImmutableAssertionImpl(final List principals, final Service service,
+    public ImmutableAssertionImpl(final List<Authentication> principals, final Service service,
         final boolean fromNewLogin) {
         Assert.notNull(principals, "principals cannot be null");
         Assert.notNull(service, "service cannot be null");
@@ -55,9 +56,8 @@ public final class ImmutableAssertionImpl implements Assertion {
         this.fromNewLogin = fromNewLogin;
     }
 
-    public Authentication[] getChainedAuthentications() {
-        return (Authentication[]) this.principals
-            .toArray(new Authentication[0]);
+    public List<Authentication> getChainedAuthentications() {
+        return Collections.unmodifiableList(this.principals);
     }
 
     public boolean isFromNewLogin() {

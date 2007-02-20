@@ -85,7 +85,7 @@ public final class HttpClient3FactoryBean implements FactoryBean,
         return this.httpClient;
     }
 
-    public Class getObjectType() {
+    public Class<HttpClient> getObjectType() {
         return HttpClient.class;
     }
 

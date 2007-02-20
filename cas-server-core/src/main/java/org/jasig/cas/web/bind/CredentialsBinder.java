@@ -43,5 +43,5 @@ public interface CredentialsBinder {
      * @return true if this class is supported by the CredentialsBinder, false
      * otherwise.
      */
-    boolean supports(Class clazz);
+    boolean supports(Class<?> clazz);
 }

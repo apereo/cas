@@ -128,7 +128,7 @@ public class AbstractX509CertificateTests extends TestCase {
             return 0;
         }
 
-        public Set getCriticalExtensionOIDs() {
+        public Set<String> getCriticalExtensionOIDs() {
             return null;
         }
 
@@ -136,7 +136,7 @@ public class AbstractX509CertificateTests extends TestCase {
             return null;
         }
 
-        public Set getNonCriticalExtensionOIDs() {
+        public Set<String> getNonCriticalExtensionOIDs() {
             return null;
         }
 

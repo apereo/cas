@@ -18,7 +18,7 @@ public class AuthenticatedLdapContextSource extends LdapContextSource {
     
     public DirContext getDirContext(final String principal,
         final String password) {
-    final Hashtable environment = (Hashtable) getAnonymousEnv().clone();
+    final Hashtable<String, String> environment = (Hashtable) getAnonymousEnv().clone();
 
     environment.put(Context.SECURITY_PRINCIPAL, principal);
     environment.put(Context.SECURITY_CREDENTIALS, password);

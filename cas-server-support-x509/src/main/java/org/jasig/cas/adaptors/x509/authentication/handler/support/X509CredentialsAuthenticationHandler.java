@@ -301,7 +301,7 @@ public final class X509CredentialsAuthenticationHandler implements
 
     private boolean isExtensionMarkedCritical(
         final X509Certificate certificate, final String oid) {
-        final Set criticalOids = certificate.getCriticalExtensionOIDs();
+        final Set<String> criticalOids = certificate.getCriticalExtensionOIDs();
 
         if (criticalOids == null || criticalOids.isEmpty()) {
             return false;

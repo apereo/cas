@@ -28,7 +28,7 @@ public class AuthenticationEvent extends AbstractEvent {
     private boolean successfulAuthentication;
 
     /** The AuthenticationHandler class used to generate this event. */
-    private Class authenticationHandlerClass;
+    private Class<?> authenticationHandlerClass;
 
     /**
      * Constructs the AuthenticationEvent using the credentials as the source
@@ -40,7 +40,7 @@ public class AuthenticationEvent extends AbstractEvent {
      */
     public AuthenticationEvent(final Credentials credentials,
         final boolean successfulAuthentication,
-        final Class authenticationHandlerClass) {
+        final Class<?> authenticationHandlerClass) {
         super(credentials);
 
         this.successfulAuthentication = successfulAuthentication;
@@ -71,7 +71,7 @@ public class AuthenticationEvent extends AbstractEvent {
      * 
      * @return the Class of the AuthenticationHandler.
      */
-    public final Class getAuthenticationHandlerClass() {
+    public final Class<?> getAuthenticationHandlerClass() {
         return this.authenticationHandlerClass;
     }
 }

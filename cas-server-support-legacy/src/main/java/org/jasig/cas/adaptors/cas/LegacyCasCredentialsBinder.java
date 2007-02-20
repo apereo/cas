@@ -30,7 +30,7 @@ public final class LegacyCasCredentialsBinder implements CredentialsBinder {
         }
     }
 
-    public boolean supports(final Class clazz) {
+    public boolean supports(final Class<?> clazz) {
         return !(clazz == null)
             && (clazz.equals(LegacyCasCredentials.class) || clazz
                 .equals(LegacyCasTrustedCredentials.class));

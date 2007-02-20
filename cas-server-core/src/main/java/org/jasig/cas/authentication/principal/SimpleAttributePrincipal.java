@@ -6,6 +6,7 @@
 package org.jasig.cas.authentication.principal;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,6 +19,8 @@ import java.util.Map;
  */
 public class SimpleAttributePrincipal extends SimplePrincipal implements
     AttributePrincipal {
+    
+    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
 
     /**
      * Unique Id for Serialization.
@@ -25,19 +28,20 @@ public class SimpleAttributePrincipal extends SimplePrincipal implements
     private static final long serialVersionUID = -5265620187476296219L;
 
     /** Map of attributes for the Principal. */
-    private Map attributes;
+    // XXX object?
+    private Map<String, Object> attributes;
 
-    public SimpleAttributePrincipal(final String id, final Map attributes) {
+    public SimpleAttributePrincipal(final String id, final Map<String, Object> attributes) {
         super(id);
 
         this.attributes = attributes == null || attributes.isEmpty()
-            ? Collections.EMPTY_MAP : Collections.unmodifiableMap(attributes);
+            ? EMPTY_MAP : Collections.unmodifiableMap(attributes);
     }
 
     /**
      * Returns an immutable map.
      */
-    public Map getAttributes() {
+    public Map<String, Object> getAttributes() {
         return this.attributes;
     }
 }

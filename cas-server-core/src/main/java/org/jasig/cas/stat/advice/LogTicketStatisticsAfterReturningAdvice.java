@@ -88,8 +88,8 @@ public final class LogTicketStatisticsAfterReturningAdvice implements
         }
 
         Method statsStateMutatorMethod = this.ticketStatsManager.getClass()
-            .getMethod(statsStateMutatorMethodName, null);
-        statsStateMutatorMethod.invoke(this.ticketStatsManager, null);
+            .getMethod(statsStateMutatorMethodName, (Class[]) null);
+        statsStateMutatorMethod.invoke(this.ticketStatsManager, (Object[]) null);
     }
 
     public void afterPropertiesSet() throws Exception {

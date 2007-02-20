@@ -8,7 +8,6 @@ package org.jasig.cas.ticket.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -86,24 +85,24 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
         }
     }
 
-    public Collection getTickets() {
+    public Collection<Ticket> getTickets() {
         try {
             final Node node = this.cache.get(FQN_TICKET);
 
             if (node == null) {
-                return Collections.EMPTY_LIST;
+                return Collections.emptyList();
             }
             
-            final Set keys = node.getDataKeys();
-            final List list = new ArrayList();
+            final Set<Object> keys = node.getDataKeys();
+            final List<Ticket> list = new ArrayList<Ticket>();
             synchronized (this.cache) {
-                for (final Iterator iter = keys.iterator(); iter.hasNext();) {
-                    list.add(node.get(iter.next()));
+                for (final Object key : keys) {
+                    list.add((Ticket) node.get(key));
                 }
             }
             return list;
         } catch (final CacheException e) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 

@@ -89,10 +89,10 @@ public final class SpringApplicationContextServiceRegistryReloader implements
                 }
                 this.serviceRegistryManager.clear();
 
-                for (final Iterator iter = this.applicationContext
+                for (final Iterator<RegisteredService> iter = this.applicationContext
                     .getBeansOfType(RegisteredService.class).values()
                     .iterator(); iter.hasNext();) {
-                    final RegisteredService authenticatedService = (RegisteredService) iter
+                    final RegisteredService authenticatedService = iter
                         .next();
                     if (log.isDebugEnabled()) {
                         log.debug("Adding [" + authenticatedService.getId()

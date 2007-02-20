@@ -29,7 +29,7 @@ public final class MutableAuthentication extends AbstractAuthentication {
     private final Date authenticatedDate = new Date();
 
     public MutableAuthentication(final Principal principal) {
-        super(principal, new HashMap());
+        super(principal, new HashMap<String, Object>());
     }
 
     public Date getAuthenticatedDate() {

@@ -143,7 +143,7 @@ public abstract class AbstractDistributedTicketRegistry extends
             return this.ticket.getAuthentication();
         }
 
-        public List getChainedAuthentications() {
+        public List<Authentication> getChainedAuthentications() {
             return this.ticket.getChainedAuthentications();
         }
 

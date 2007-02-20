@@ -8,7 +8,6 @@ package org.jasig.cas.ticket.registry.support;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -51,8 +50,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
     private TicketRegistry ticketRegistry;
 
     public void clean() {
-        final List ticketsToRemove = new ArrayList();
-        final Collection ticketsInCache;
+        final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
+        final Collection<Ticket> ticketsInCache;
 
         log
             .info("Starting cleaning of expired tickets from ticket registry at ["
@@ -62,9 +61,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
             ticketsInCache = this.ticketRegistry.getTickets();
         }
 
-        for (final Iterator iter = ticketsInCache.iterator(); iter.hasNext();) {
-            final Ticket ticket = (Ticket) iter.next();
-
+        for (final Ticket ticket : ticketsInCache) {
             if (ticket.isExpired()) {
                 ticketsToRemove.add(ticket);
             }
@@ -74,9 +71,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
             log.info(ticketsToRemove.size()
                 + " found to be removed.  Removing now.");
 
-            for (final Iterator iter = ticketsToRemove.iterator(); iter
-                .hasNext();) {
-                final Ticket ticket = (Ticket) iter.next();
+            for (final Ticket ticket : ticketsToRemove) {
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
         }
