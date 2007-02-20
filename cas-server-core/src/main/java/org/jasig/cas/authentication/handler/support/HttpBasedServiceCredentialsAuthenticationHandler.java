@@ -5,17 +5,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.net.HttpURLConnection;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.HttpClient;
 
 /**
  * Class to validate the credentials presented by communicating with the web
@@ -31,19 +26,10 @@ import org.springframework.util.Assert;
  * @since 3.0
  */
 public final class HttpBasedServiceCredentialsAuthenticationHandler implements
-    AuthenticationHandler, InitializingBean {
+    AuthenticationHandler {
 
     /** The string representing the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
-
-    /** The default status codes we accept. */
-    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
-        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
-        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-        HttpURLConnection.HTTP_ACCEPTED};
-
-    /** List of HTTP status codes considered valid by this AuthenticationHandler. */
-    private int[] acceptableCodes;
 
     /** Boolean variable denoting whether secure connection is required or not. */
     private boolean requireSecure = true;
@@ -68,30 +54,8 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
             .debug("Attempting to resolve credentials for "
                 + serviceCredentials);
 
-        final GetMethod getMethod = new GetMethod(serviceCredentials.toString());
-        int responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
-        try {
-            this.httpClient.executeMethod(getMethod);
-            responseCode = getMethod.getStatusCode();
-            for (int i = 0; i < this.acceptableCodes.length; i++) {
-                if (responseCode == this.acceptableCodes[i]) {
-                    return true;
-                }
-            }
-        } catch (final Exception e) {
-            log.error(e, e);
-            // do nothing
-        } finally {
-            getMethod.releaseConnection();
-        }
-
-        if (log.isDebugEnabled()) {
-            log
-                .debug("Authentication failed because returned status code was ["
-                    + responseCode + "]");
-        }
-
-        return false;
+        return this.httpClient.isValidEndPoint(serviceCredentials
+            .getCallbackUrl());
     }
 
     /**
@@ -102,16 +66,6 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
         return credentials != null
             && HttpBasedServiceCredentials.class.isAssignableFrom(credentials
                 .getClass());
-    }
-
-    /**
-     * Set the acceptable HTTP status codes that we will use to determine if the
-     * response from the URL was correct.
-     * 
-     * @param acceptableCodes an array of status code integers.
-     */
-    public void setAcceptableCodes(final int[] acceptableCodes) {
-        this.acceptableCodes = acceptableCodes;
     }
 
     /** Sets the HttpClient which will do all of the connection stuff. */
@@ -126,13 +80,5 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
      */
     public void setRequireSecure(final boolean requireSecure) {
         this.requireSecure = requireSecure;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        if (this.acceptableCodes == null) {
-            this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
-        }
-        
-        Assert.notNull(this.httpClient, "Note, this behavior has changed from the CAS 3.0.6 behavior.  You now MUST specify an instance of HttpClient.  Before it would create an instance for you.");
     }
 }

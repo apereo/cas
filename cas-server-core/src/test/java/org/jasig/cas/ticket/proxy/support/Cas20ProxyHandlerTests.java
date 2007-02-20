@@ -5,12 +5,11 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.HttpClient;
 
 import junit.framework.TestCase;
 
@@ -53,9 +52,9 @@ public class Cas20ProxyHandlerTests extends TestCase {
     }
 
     public void testNonValidProxyTicket() throws Exception {
-        this.handler
-            .setAcceptableCodes(new int[] {HttpURLConnection.HTTP_BAD_GATEWAY});
-        this.handler.setHttpClient(new HttpClient());
+        final HttpClient httpClient = new HttpClient();
+        httpClient.setAcceptableCodes(new int[] {900});
+        this.handler.setHttpClient(httpClient);
         this.handler.afterPropertiesSet();
         assertNull(this.handler.handle(new HttpBasedServiceCredentials(new URL(
             "http://www.rutgers.edu")), "proxyGrantingTicketId"));

@@ -5,8 +5,9 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.util.HttpClient;
+
 import junit.framework.TestCase;
 
 /**
@@ -22,7 +23,6 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
     protected void setUp() throws Exception {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
         this.authenticationHandler.setHttpClient(new HttpClient());
-        this.authenticationHandler.afterPropertiesSet();
     }
 
     public void testSupportsProperUserCredentials() {
@@ -58,15 +58,14 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
     }
 
     public void testNoAcceptableStatusCode() throws Exception {
-        this.authenticationHandler.setAcceptableCodes(new int[0]);
-        this.authenticationHandler.afterPropertiesSet();
         assertFalse(this.authenticationHandler.authenticate(TestUtils
             .getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
     }
     
     public void testNoAcceptableStatusCodeButOneSet() throws Exception {
-        this.authenticationHandler.setAcceptableCodes(new int[] {567});
-        this.authenticationHandler.afterPropertiesSet();
+        final HttpClient httpClient = new HttpClient();
+        httpClient.setAcceptableCodes(new int[] {900});
+        this.authenticationHandler.setHttpClient(httpClient);
         assertFalse(this.authenticationHandler.authenticate(TestUtils
             .getHttpBasedServiceCredentials("https://www.ja-sig.org")));
     }

@@ -82,7 +82,7 @@
 		id="httpBasedServiceCredentialsAuthenticationHandler"
 		class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
 		<property name="httpClient">
-			<bean class="org.jasig.cas.util.HttpClient3FactoryBean" />
+			<bean class="org.jasig.cas.util.HttpClient" />
 		</property>
 	</bean>
 	

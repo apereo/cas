@@ -35,10 +35,7 @@
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-system/4.0.2/jboss-system-4.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-jmx/4.0.4/jboss-jmx-4.0.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jgroups/jgroups/2.4.1/jgroups-2.4.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/3.0.1/commons-httpclient-3.0.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient-contrib/3.0/commons-httpclient-contrib-3.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.2/commons-lang-2.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.3/commons-codec-1.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs-ext/0.9.4/jcifs-ext-0.9.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs/1.2.9/jcifs-1.2.9.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0.1/spring-binding-1.0.1.jar"/>
