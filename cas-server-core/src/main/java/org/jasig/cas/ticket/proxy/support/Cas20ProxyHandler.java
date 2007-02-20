@@ -5,16 +5,13 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import java.net.HttpURLConnection;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -37,15 +34,6 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     /** The PGTIOU ticket prefix. */
     private static final String PGTIOU_PREFIX = "PGTIOU";
-
-    /** The default status codes we accept. */
-    private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
-        HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
-        HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
-        HttpURLConnection.HTTP_ACCEPTED};
-
-    /** List of HTTP status codes considered valid by this AuthenticationHandler. */
-    private int[] acceptableCodes;
 
     /** Generate unique ids. */
     private UniqueTicketIdGenerator uniqueTicketIdGenerator;
@@ -73,25 +61,12 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         stringBuffer.append("&pgtId=");
         stringBuffer.append(proxyGrantingTicketId);
 
-        final GetMethod getMethod = new GetMethod(stringBuffer.toString());
-        try {
-            this.httpClient.executeMethod(getMethod);
-            final int responseCode = getMethod.getStatusCode();
-            for (int i = 0; i < this.acceptableCodes.length; i++) {
-                if (responseCode == this.acceptableCodes[i]) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Sent ProxyIou of " + proxyIou
-                            + " for service: " + serviceCredentials.toString());
-                    }
-
-                    return proxyIou;
-                }
+        if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
+            if (log.isDebugEnabled()) {
+                log.debug("Sent ProxyIou of " + proxyIou + " for service: "
+                    + serviceCredentials.toString());
             }
-        } catch (final Exception e) {
-            log.error(e, e);
-            // do nothing
-        } finally {
-            getMethod.releaseConnection();
+            return proxyIou;
         }
 
         if (log.isDebugEnabled()) {
@@ -109,16 +84,6 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
     }
 
-    /**
-     * Set the acceptable HTTP status codes that we will use to determine if the
-     * response from the URL was correct.
-     * 
-     * @param acceptableCodes an array of status code integers.
-     */
-    public void setAcceptableCodes(final int[] acceptableCodes) {
-        this.acceptableCodes = acceptableCodes;
-    }
-
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -131,10 +96,6 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
             log.info("No UniqueTicketIdGenerator specified for "
                 + this.getClass().getName() + ".  Using "
                 + this.uniqueTicketIdGenerator.getClass().getName());
-        }
-
-        if (this.acceptableCodes == null) {
-            this.acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
         }
     }
 }

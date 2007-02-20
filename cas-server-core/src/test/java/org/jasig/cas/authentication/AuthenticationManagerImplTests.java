@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
@@ -15,6 +14,7 @@ import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsA
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
+import org.jasig.cas.util.HttpClient;
 
 /**
  * @author Scott Battaglia
@@ -58,7 +58,6 @@ public class AuthenticationManagerImplTests extends
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
         authenticationHandler.setHttpClient(new HttpClient());
-        authenticationHandler.afterPropertiesSet();
         manager
             .setAuthenticationHandlers(new AuthenticationHandler[] {authenticationHandler});
         manager

@@ -16,20 +16,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.0.1</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient-contrib</artifactId>
-			<version>3.0</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>xml-security</groupId>
 			<artifactId>xmlsec</artifactId>
 			<version>1.3.0</version>
