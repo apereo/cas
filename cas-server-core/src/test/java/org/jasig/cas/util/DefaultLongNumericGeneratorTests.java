@@ -16,28 +16,24 @@ import junit.framework.TestCase;
  */
 public class DefaultLongNumericGeneratorTests extends TestCase {
 
-    public void testNoWrap() {
-        try {
-            new DefaultLongNumericGenerator(Long.MAX_VALUE, false)
-                .getNextLong();
-            fail("Expected IllegalStateException");
-        } catch (IllegalStateException e) {
-            return;
-        }
-    }
-
     public void testWrap() {
-        assertEquals(1, new DefaultLongNumericGenerator(Long.MAX_VALUE, true)
+        assertEquals(Long.MAX_VALUE, new DefaultLongNumericGenerator(Long.MAX_VALUE)
             .getNextLong());
     }
 
     public void testInitialValue() {
-        assertEquals(10L + 1, new DefaultLongNumericGenerator(10L, true)
+        assertEquals(10L, new DefaultLongNumericGenerator(10L)
             .getNextLong());
     }
 
     public void testIncrementWithNoWrap() {
-        assertEquals(1, new DefaultLongNumericGenerator().getNextLong());
+        assertEquals(0, new DefaultLongNumericGenerator().getNextLong());
+    }
+    
+    public void testIncrementWithNoWrap2() {
+        final DefaultLongNumericGenerator g = new DefaultLongNumericGenerator();
+        g.getNextLong();
+        assertEquals(1, g.getNextLong());
     }
 
     public void testMinimumSize() {
@@ -46,6 +42,6 @@ public class DefaultLongNumericGeneratorTests extends TestCase {
 
     public void testMaximumLength() {
         assertEquals(Long.toString(Long.MAX_VALUE).length(),
-            new DefaultLongNumericGenerator(false).maxLength());
+            new DefaultLongNumericGenerator().maxLength());
     }
 }
