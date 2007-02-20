@@ -95,11 +95,11 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             
             final Set<Object> keys = node.getDataKeys();
             final List<Ticket> list = new ArrayList<Ticket>();
-            synchronized (this.cache) {
-                for (final Object key : keys) {
-                    list.add((Ticket) node.get(key));
-                }
+
+            for (final Object key : keys) {
+                list.add((Ticket) node.get(key));
             }
+
             return list;
         } catch (final CacheException e) {
             return Collections.emptyList();
