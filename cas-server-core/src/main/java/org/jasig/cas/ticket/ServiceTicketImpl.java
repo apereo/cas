@@ -110,4 +110,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 serviceTicket.isFromNewLogin(), this.isFromNewLogin())
             .isEquals();
     }
+    
+    public Authentication getAuthentication() {
+        return null;
+    }
 }
