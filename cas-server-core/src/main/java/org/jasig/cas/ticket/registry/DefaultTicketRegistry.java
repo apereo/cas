@@ -7,18 +7,14 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.jasig.cas.ticket.Ticket;
 import org.springframework.util.Assert;
 
 /**
- * Implementation of the TicketRegistry that is backed by a HashMap.
- * <p>
- * The underlying HashMap is not threadsafe. Each method is synchronized but
- * care should be taken that if multiple methods will be called, the code should
- * be placed in a synchronize block.
- * </p>
+ * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -27,7 +23,8 @@ import org.springframework.util.Assert;
 public final class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     /** A HashMap to contain the tickets. */
-    private final Map<String, Ticket> cache = new HashMap<String, Ticket>();
+    // TODO optimize this
+    private final Map<String, Ticket> cache = new ConcurrentHashMap<String, Ticket>();
 
     /**
      * @throws IllegalArgumentException if the Ticket is null.

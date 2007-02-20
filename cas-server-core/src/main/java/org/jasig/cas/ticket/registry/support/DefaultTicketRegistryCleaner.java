@@ -57,9 +57,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
             .info("Starting cleaning of expired tickets from ticket registry at ["
                 + new Date() + "]");
 
-        synchronized (this.ticketRegistry) {
-            ticketsInCache = this.ticketRegistry.getTickets();
-        }
+        ticketsInCache = this.ticketRegistry.getTickets();
 
         for (final Ticket ticket : ticketsInCache) {
             if (ticket.isExpired()) {
@@ -67,14 +65,13 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
             }
         }
 
-        synchronized (this.ticketRegistry) {
-            log.info(ticketsToRemove.size()
-                + " found to be removed.  Removing now.");
+        log.info(ticketsToRemove.size()
+            + " found to be removed.  Removing now.");
 
-            for (final Ticket ticket : ticketsToRemove) {
-                this.ticketRegistry.deleteTicket(ticket.getId());
-            }
+        for (final Ticket ticket : ticketsToRemove) {
+            this.ticketRegistry.deleteTicket(ticket.getId());
         }
+
         log
             .info("Finished cleaning of expired tickets from ticket registry at ["
                 + new Date() + "]");
