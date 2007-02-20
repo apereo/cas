@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.util;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * The default numeric generator for generating long values. Implementation
  * allows for wrapping (to restart count) if the maximum is reached.
@@ -22,34 +24,15 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
     /** The minimum length the String can be. */
     private static final int MIN_STRING_LENGTH = 1;
 
-    /** The default wrap value of true. */
-    private static final boolean DEFAULT_WRAP = true;
-
-    /** The default initial value of 0. */
-    private static final long DEFAULT_INTITIAL_VALUE = 0;
-
-    /** Whether to wrap or not when we reach the maximum value. */
-    private boolean wrap;
-
-    /** The current number we are at. */
-    private long count = 0;
+    private final AtomicLong count;
 
     public DefaultLongNumericGenerator() {
-        this.wrap = DEFAULT_WRAP;
-    }
-
-    public DefaultLongNumericGenerator(final boolean wrap) {
-        this(DEFAULT_INTITIAL_VALUE, wrap);
-    }
-
-    public DefaultLongNumericGenerator(final long initialValue,
-        final boolean wrap) {
-        this.wrap = wrap;
-        this.count = initialValue;
+        this(0);
+        // nothing to do
     }
 
     public DefaultLongNumericGenerator(final long initialValue) {
-        this(initialValue, DEFAULT_WRAP);
+        this.count = new AtomicLong(initialValue);
     }
 
     public long getNextLong() {
@@ -68,20 +51,10 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
         return DefaultLongNumericGenerator.MIN_STRING_LENGTH;
     }
 
-    /**
-     * @throws IllegalStateException if the maximum value is reached and
-     * wrapping is not allowed.
-     */
-    protected synchronized long getNextValue() {
-        if (!this.wrap && this.count == Long.MAX_VALUE) {
-            throw new IllegalStateException(
-                "Maximum value reached for this number generator.");
+    protected long getNextValue() {
+        if (this.count.compareAndSet(Long.MAX_VALUE, 0)) {
+            return Long.MAX_VALUE;
         }
-
-        if (this.count == Long.MAX_VALUE) {
-            this.count = 0;
-        }
-
-        return ++this.count;
+        return this.count.getAndIncrement();
     }
 }
