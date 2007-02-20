@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.authentication.Authentication;
+
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -19,4 +21,6 @@ public interface TicketState {
     long getPreviousTimeUsed();
 
     long getCreationTime();
+    
+    Authentication getAuthentication();
 }
