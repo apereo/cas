@@ -6,6 +6,7 @@
 package org.jasig.cas.validation;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -37,7 +38,7 @@ public interface Assertion extends Serializable {
      * 
      * @return a List of Authentication
      */
-    Authentication[] getChainedAuthentications();
+    List<Authentication> getChainedAuthentications();
 
     /**
      * True if the validated ticket was granted in the same transaction as that

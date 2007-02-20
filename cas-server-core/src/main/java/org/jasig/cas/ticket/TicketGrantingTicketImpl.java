@@ -99,8 +99,8 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
                 .isExpired());
     }
 
-    public List getChainedAuthentications() {
-        final List list = new ArrayList();
+    public List<Authentication> getChainedAuthentications() {
+        final List<Authentication> list = new ArrayList<Authentication>();
 
         if (this.getGrantingTicket() == null) {
             list.add(this.getAuthentication());

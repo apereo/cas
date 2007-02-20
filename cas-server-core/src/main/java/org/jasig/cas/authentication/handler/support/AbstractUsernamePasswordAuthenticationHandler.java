@@ -30,10 +30,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     AuthenticationHandler, InitializingBean {
 
     /** Default class to support if one is not supplied. */
-    private static final Class DEFAULT_CLASS = UsernamePasswordCredentials.class;
+    private static final Class<UsernamePasswordCredentials> DEFAULT_CLASS = UsernamePasswordCredentials.class;
 
     /** Class that this instance will support. */
-    private Class classToSupport;
+    private Class<?> classToSupport;
 
     /**
      * Boolean to determine whether to support subclasses of the class to
@@ -115,7 +115,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
      * @param classToSupport the class we want this handler to support
      * explicitly.
      */
-    public final void setClassToSupport(final Class classToSupport) {
+    public final void setClassToSupport(final Class<?> classToSupport) {
         this.classToSupport = classToSupport;
     }
 

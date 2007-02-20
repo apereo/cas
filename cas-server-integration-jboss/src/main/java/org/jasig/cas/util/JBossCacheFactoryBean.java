@@ -35,7 +35,7 @@ public final class JBossCacheFactoryBean implements FactoryBean, DisposableBean,
         return this.cache;
     }
 
-    public Class getObjectType() {
+    public Class<TreeCache> getObjectType() {
         return TreeCache.class;
     }
 

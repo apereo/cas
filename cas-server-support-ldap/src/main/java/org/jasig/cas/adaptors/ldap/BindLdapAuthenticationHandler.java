@@ -6,7 +6,6 @@
 package org.jasig.cas.adaptors.ldap;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.naming.NameClassPair;
@@ -61,7 +60,7 @@ public class BindLdapAuthenticationHandler extends
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
 
-        final List cns = new ArrayList();
+        final List<String> cns = new ArrayList<String>();
         
         final SearchControls searchControls = getSearchControls();
         
@@ -87,9 +86,7 @@ public class BindLdapAuthenticationHandler extends
             return false;
         }
 
-        for (final Iterator iter = cns.iterator(); iter.hasNext();) {
-            final String dn = (String) iter.next();
-
+        for (final String dn : cns) {
             DirContext test = null;
             try {
                 test = this.getContextSource().getDirContext(

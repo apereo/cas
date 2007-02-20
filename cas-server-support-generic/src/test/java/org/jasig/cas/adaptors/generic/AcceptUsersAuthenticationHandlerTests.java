@@ -22,12 +22,12 @@ import junit.framework.TestCase;
  */
 public class AcceptUsersAuthenticationHandlerTests extends TestCase {
 
-    final private Map users;
+    final private Map<String, String> users;
 
     final private AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new HashMap();
+        this.users = new HashMap<String, String>();
 
         this.users.put("scott", "rutgers");
         this.users.put("dima", "javarules");

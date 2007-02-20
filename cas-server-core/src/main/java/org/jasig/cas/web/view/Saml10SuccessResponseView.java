@@ -8,7 +8,6 @@ package org.jasig.cas.web.view;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +62,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         try {
             final Assertion assertion = getAssertionFrom(model);
             final Authentication authentication = assertion
-                .getChainedAuthentications()[0];
+                .getChainedAuthentications().get(0);
             final Date currentDate = new Date();
             final String authenticationMethod = (String) authentication
                 .getAttributes().get("samlAuthenticationStatement::authMethod");
@@ -71,7 +70,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
     
             final SAMLResponse samlResponse = new SAMLResponse(
                 null, service
-                    .getId(), new ArrayList(), null);
+                    .getId(), new ArrayList<Object>(), null);
     
             samlResponse.setIssueInstant(currentDate);
     
@@ -102,21 +101,18 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
                 attributeStatement.setSubject(getSamlSubject(authentication));
                 samlAssertion.addStatement(attributeStatement);
     
-                for (final Iterator iter = attributePrincipal.getAttributes()
-                    .keySet().iterator(); iter.hasNext();) {
-    
-                    final Object key = iter.next();
+                for (final String key : attributePrincipal.getAttributes().keySet()) {
                     final Object value = attributePrincipal.getAttributes()
                         .get(key);
     
                     final SAMLAttribute attribute = new SAMLAttribute();
-                    attribute.setName((String) key);
+                    attribute.setName(key);
                     attribute.setNamespace(NAMESPACE);
     
                     if (value instanceof Collection) {
                         attribute.setValues((Collection) value);
                     } else {
-                        final Collection c = new ArrayList();
+                        final Collection<Object> c = new ArrayList<Object>();
                         c.add(value);
                         attribute.setValues(c);
                     }

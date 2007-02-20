@@ -87,7 +87,7 @@ public class DefaultServiceRegistryTests extends TestCase {
         this.serviceRegistry.addService(authenticatedService2);
         this.serviceRegistry.addService(this.authenticatedService);
 
-        final Collection c = this.serviceRegistry.getServices();
+        final Collection<RegisteredService> c = this.serviceRegistry.getServices();
 
         assertTrue(c.contains(authenticatedService2));
         assertTrue(c.contains(this.authenticatedService));

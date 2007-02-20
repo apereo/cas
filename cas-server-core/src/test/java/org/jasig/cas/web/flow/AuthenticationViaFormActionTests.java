@@ -238,7 +238,7 @@ public class AuthenticationViaFormActionTests extends
                     .setPassword("test2");
             }
 
-            public boolean supports(Class clazz) {
+            public boolean supports(Class<?> clazz) {
                 return true;
             }
 
@@ -262,7 +262,7 @@ public class AuthenticationViaFormActionTests extends
                 // nothing to do here
             }
 
-            public boolean supports(final Class clazz) {
+            public boolean supports(final Class<?> clazz) {
                 return false;
             }
         };
@@ -287,7 +287,7 @@ public class AuthenticationViaFormActionTests extends
                 // nothing to do here
             }
 
-            public boolean supports(final Class clazz) {
+            public boolean supports(final Class<?> clazz) {
                 return true;
             }
         };

@@ -31,13 +31,13 @@ public final class DefaultServiceRegistry implements ServiceRegistry,
     private final Log log = LogFactory.getLog(this.getClass());
 
     /** The map containing the services. */
-    private final Map services = new HashMap();
+    private final Map<String, RegisteredService> services = new HashMap<String, RegisteredService>();
 
     public boolean serviceExists(final String serviceId) {
         return this.services.containsKey(serviceId);
     }
 
-    public Collection getServices() {
+    public Collection<RegisteredService> getServices() {
         return this.services.values();
     }
 
@@ -58,7 +58,7 @@ public final class DefaultServiceRegistry implements ServiceRegistry,
     }
 
     public RegisteredService getService(final String serviceId) {
-        RegisteredService authenticatedService = (RegisteredService) this.services
+        final RegisteredService authenticatedService = this.services
             .get(serviceId);
         if (log.isDebugEnabled()) {
             log.debug("Attempting to retrieve service [" + serviceId

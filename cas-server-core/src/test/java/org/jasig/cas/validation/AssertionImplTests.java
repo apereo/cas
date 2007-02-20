@@ -11,7 +11,6 @@ import java.util.List;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 
@@ -25,7 +24,7 @@ import junit.framework.TestCase;
 public class AssertionImplTests extends TestCase {
 
     public void testGettersForChainedPrincipals() {
-        final List list = new ArrayList();
+        final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication("test"));
         list.add(TestUtils.getAuthentication("test1"));
@@ -35,11 +34,11 @@ public class AssertionImplTests extends TestCase {
             list, new SimpleService("test"), true);
 
         assertEquals(list.toArray(new Authentication[0]).length, assertion
-            .getChainedAuthentications().length);
+            .getChainedAuthentications().size());
     }
 
     public void testGetterFalseForNewLogin() {
-        final List list = new ArrayList();
+        final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication());
 
@@ -50,7 +49,7 @@ public class AssertionImplTests extends TestCase {
     }
 
     public void testGetterTrueForNewLogin() {
-        final List list = new ArrayList();
+        final List<Authentication> list = new ArrayList<Authentication>();
 
         list.add(TestUtils.getAuthentication());
 
@@ -61,7 +60,7 @@ public class AssertionImplTests extends TestCase {
     }
 
     public void testEqualsWithNull() {
-        final List list = new ArrayList();
+        final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
@@ -71,7 +70,7 @@ public class AssertionImplTests extends TestCase {
     }
 
     public void testEqualsWithInvalidObject() {
-        final List list = new ArrayList();
+        final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
@@ -81,8 +80,8 @@ public class AssertionImplTests extends TestCase {
     }
 
     public void testEqualsWithValidObject() {
-        final List list = new ArrayList();
-        final List list1 = new ArrayList();
+        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list1 = new ArrayList<Authentication>();
 
         final Authentication auth = TestUtils.getAuthentication();
         list.add(auth);
@@ -99,8 +98,8 @@ public class AssertionImplTests extends TestCase {
     public void testGetService() {
         final Service service = new SimpleService("test");
 
-        final List list = new ArrayList();
-        list.add(new SimplePrincipal("test"));
+        final List<Authentication> list = new ArrayList<Authentication>();
+        list.add(TestUtils.getAuthentication());
 
         final Assertion assertion = new ImmutableAssertionImpl(list, service,
             false);

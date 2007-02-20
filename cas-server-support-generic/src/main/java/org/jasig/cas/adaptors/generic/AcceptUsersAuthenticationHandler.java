@@ -6,7 +6,6 @@
 package org.jasig.cas.adaptors.generic;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -34,12 +33,12 @@ public final class AcceptUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The list of users we will accept. */
-    private Map users;
+    private Map<String, String> users;
 
     public boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
 
-        final String cachedPassword = (String) this.users.get(credentials
+        final String cachedPassword = this.users.get(credentials
             .getUsername());
 
         if (cachedPassword == null) {
@@ -58,9 +57,7 @@ public final class AcceptUsersAuthenticationHandler extends
     protected void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.users, "the users map cannot be null.");
 
-        for (final Iterator iter = this.users.keySet().iterator(); iter
-            .hasNext();) {
-            final Object key = iter.next();
+        for (final String key : this.users.keySet()) {
             final Object value = this.users.get(key);
 
             Assert.notNull(value, "Cannot have null password for user [" + key
@@ -73,7 +70,7 @@ public final class AcceptUsersAuthenticationHandler extends
     /**
      * @param users The users to set.
      */
-    public void setUsers(final Map users) {
+    public void setUsers(final Map<String, String> users) {
         this.users = Collections.unmodifiableMap(users);
     }
 }

@@ -7,7 +7,6 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -192,7 +191,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
     }
 
     public void testGetTicketsFromRegistryEqualToTicketsAdded() {
-        final Collection tickets = new ArrayList();
+        final Collection<Ticket> tickets = new ArrayList<Ticket>();
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
@@ -208,14 +207,12 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
 
         try {
-            Collection ticketRegistryTickets = this.ticketRegistry.getTickets();
+            Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
                 "The size of the registry is not the same as the collection.",
                 ticketRegistryTickets.size(), tickets.size());
 
-            for (Iterator iter = tickets.iterator(); iter.hasNext();) {
-                final Ticket ticket = (Ticket) iter.next();
-
+            for (final Ticket ticket : tickets) {
                 if (!ticketRegistryTickets.contains(ticket)) {
                     fail("Ticket was added to registry but was not found in retrieval of collection of all tickets.");
                 }

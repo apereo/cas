@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.util;
 
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -39,32 +39,29 @@ public final class LdapUtils {
      */
     public static String getFilterWithValues(final String filter,
         final String userName) {
-        final Properties properties = new Properties();
+        final Map<String, String> properties = new HashMap<String, String>();
         final String[] userDomain;
         String newFilter = filter;
 
-        properties.setProperty("%u", userName.replace("\\", "\\\\"));
+        properties.put("%u", userName.replace("\\", "\\\\"));
 
         userDomain = userName.split("@");
 
-        properties.setProperty("%U", userDomain[0]);
+        properties.put("%U", userDomain[0]);
 
         if (userDomain.length > 1) {
-            properties.setProperty("%d", userDomain[1]);
+            properties.put("%d", userDomain[1]);
 
             final String[] dcArray = userDomain[1].split("\\.");
 
             for (int i = 0; i < dcArray.length; i++) {
-                properties.setProperty("%" + (i + 1), dcArray[dcArray.length
+                properties.put("%" + (i + 1), dcArray[dcArray.length
                     - 1 - i]);
             }
         }
 
-        for (final Iterator iter = properties.keySet().iterator(); iter
-            .hasNext();) {
-            final String key = (String) iter.next();
-            final String value = properties.getProperty(key, "");
-
+        for (final String key : properties.keySet()) {
+            final String value = properties.get(key);
             newFilter = newFilter.replaceAll(key, value);
         }
 

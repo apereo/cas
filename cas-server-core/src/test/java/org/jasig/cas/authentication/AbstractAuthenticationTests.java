@@ -21,7 +21,7 @@ public abstract class AbstractAuthenticationTests extends TestCase {
 
     protected Authentication authentication;
 
-    protected Map attributes = new HashMap();
+    protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     public final void testGetters() {
         assertEquals("Principals are not equal", TestUtils.getPrincipal(),

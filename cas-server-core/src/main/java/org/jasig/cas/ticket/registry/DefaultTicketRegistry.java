@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
 public final class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     /** A HashMap to contain the tickets. */
-    private final Map cache = new HashMap();
+    private final Map<String, Ticket> cache = new HashMap<String, Ticket>();
 
     /**
      * @throws IllegalArgumentException if the Ticket is null.
@@ -45,7 +45,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
         if (log.isDebugEnabled()) {
             log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         }
-        final Ticket ticket = (Ticket) this.cache.get(ticketId);
+        final Ticket ticket = this.cache.get(ticketId);
 
         if (ticket != null) {
             log.debug("Ticket [" + ticketId + "] found in registry.");
@@ -62,7 +62,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
         return (this.cache.remove(ticketId) != null);
     }
 
-    public Collection getTickets() {
+    public Collection<Ticket> getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
     }
 }

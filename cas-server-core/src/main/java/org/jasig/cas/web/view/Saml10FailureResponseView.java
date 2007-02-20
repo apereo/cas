@@ -36,7 +36,7 @@ public class Saml10FailureResponseView extends AbstractCasView {
             request);
 
         final SAMLResponse samlResponse = new SAMLResponse(
-            this.samlArgumentExtractor.extractTicketArtifact(request), service != null ? service.getId() : null, new ArrayList(), new SAMLException("Success"));
+            this.samlArgumentExtractor.extractTicketArtifact(request), service != null ? service.getId() : null, new ArrayList<Object>(), new SAMLException("Success"));
         samlResponse.setIssueInstant(new Date());
 
         response.getWriter().print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
