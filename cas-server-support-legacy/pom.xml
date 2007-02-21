@@ -19,5 +19,11 @@
 			<artifactId>cas-server-core</artifactId>
 			<version>3.1-m1</version>
 		</dependency>
+        
+        <dependency>
+            <groupId>cas</groupId>
+            <artifactId>cas</artifactId>
+            <version>2.0.12</version>
+        </dependency>
 	</dependencies>
 </project>
