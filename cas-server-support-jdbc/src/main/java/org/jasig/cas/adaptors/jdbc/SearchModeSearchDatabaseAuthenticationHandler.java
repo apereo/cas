@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
  * @since 3.0
  */
 
-public final class SearchModeSearchDatabaseAuthenticationHandler extends
+public class SearchModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
@@ -34,7 +34,7 @@ public final class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         UsernamePasswordCredentials credentials) throws AuthenticationException {
         final String encyptedPassword = getPasswordEncoder().encode(
             credentials.getPassword());
@@ -45,7 +45,7 @@ public final class SearchModeSearchDatabaseAuthenticationHandler extends
         return count > 0;
     }
 
-    protected void initDao() throws Exception {
+    protected final void initDao() throws Exception {
         Assert.notNull(this.fieldPassword, "fieldPassword cannot be null");
         Assert.notNull(this.fieldUser, "fieldUser cannot be null");
         Assert.notNull(this.tableUsers, "tableUsers cannot be null");
@@ -57,21 +57,21 @@ public final class SearchModeSearchDatabaseAuthenticationHandler extends
     /**
      * @param fieldPassword The fieldPassword to set.
      */
-    public void setFieldPassword(final String fieldPassword) {
+    public final void setFieldPassword(final String fieldPassword) {
         this.fieldPassword = fieldPassword;
     }
 
     /**
      * @param fieldUser The fieldUser to set.
      */
-    public void setFieldUser(final String fieldUser) {
+    public final void setFieldUser(final String fieldUser) {
         this.fieldUser = fieldUser;
     }
 
     /**
      * @param tableUsers The tableUsers to set.
      */
-    public void setTableUsers(final String tableUsers) {
+    public final void setTableUsers(final String tableUsers) {
         this.tableUsers = tableUsers;
     }
 }

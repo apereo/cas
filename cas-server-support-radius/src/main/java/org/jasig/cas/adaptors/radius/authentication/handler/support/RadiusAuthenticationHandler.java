@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
  * @since 3.0
  *
  */
-public final class RadiusAuthenticationHandler extends
+public class RadiusAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
     
     /** Array of RADIUS servers to authenticate against. */
@@ -32,7 +32,7 @@ public final class RadiusAuthenticationHandler extends
     /** Determines whether to fail over to the next configured RadiusServer if there was an authentication failure. */
     private boolean failoverOnAuthenticationFailure;
 
-    protected boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) throws AuthenticationException {
         
         for (int i = 0; i < this.servers.length; i++) {
@@ -79,7 +79,7 @@ public final class RadiusAuthenticationHandler extends
         this.servers = servers;
     }
 
-    protected void afterPropertiesSetInternal() throws Exception {
+    protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notEmpty(this.servers, "servers cannot be empty.");
     }    
 }

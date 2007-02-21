@@ -8,7 +8,6 @@ package org.jasig.cas.authentication.handler.support;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -26,14 +25,15 @@ import org.springframework.beans.factory.InitializingBean;
  * This is a published and supported CAS Server 3 API.
  * </p>
  */
-public abstract class AbstractUsernamePasswordAuthenticationHandler implements
-    AuthenticationHandler, InitializingBean {
+public abstract class AbstractUsernamePasswordAuthenticationHandler extends
+    AbstractPreAndPostProcessingAuthenticationHandler implements
+    InitializingBean {
 
     /** Default class to support if one is not supplied. */
     private static final Class<UsernamePasswordCredentials> DEFAULT_CLASS = UsernamePasswordCredentials.class;
 
     /** Class that this instance will support. */
-    private Class<?> classToSupport;
+    private Class< ? > classToSupport;
 
     /**
      * Boolean to determine whether to support subclasses of the class to
@@ -55,7 +55,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
      * and delegates to abstract authenticateUsernamePasswordInternal so
      * subclasses do not need to cast.
      */
-    public final boolean authenticate(final Credentials credentials)
+    protected final boolean doAuthentication(final Credentials credentials)
         throws AuthenticationException {
         return authenticateUsernamePasswordInternal((UsernamePasswordCredentials) credentials);
     }
@@ -76,16 +76,14 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
     public final void afterPropertiesSet() throws Exception {
         if (this.passwordEncoder == null) {
             this.passwordEncoder = new PlainTextPasswordEncoder();
-            log.info(
-                "No PasswordEncoder set.  Using default: "
-                    + this.passwordEncoder.getClass().getName());
+            log.info("No PasswordEncoder set.  Using default: "
+                + this.passwordEncoder.getClass().getName());
         }
 
         if (this.classToSupport == null) {
             this.classToSupport = DEFAULT_CLASS;
-            log.info(
-                "No Class to Support set.  Using default: "
-                    + this.classToSupport.getName());
+            log.info("No Class to Support set.  Using default: "
+                + this.classToSupport.getName());
         }
         afterPropertiesSetInternal();
     }
@@ -115,7 +113,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler implements
      * @param classToSupport the class we want this handler to support
      * explicitly.
      */
-    public final void setClassToSupport(final Class<?> classToSupport) {
+    public final void setClassToSupport(final Class< ? > classToSupport) {
         this.classToSupport = classToSupport;
     }
 

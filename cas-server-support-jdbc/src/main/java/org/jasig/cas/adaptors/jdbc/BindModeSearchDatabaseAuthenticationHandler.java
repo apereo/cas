@@ -23,10 +23,10 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class BindModeSearchDatabaseAuthenticationHandler extends
+public class BindModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    protected boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
         final String username = credentials.getUsername();
