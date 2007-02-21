@@ -6,7 +6,7 @@
 	<artifactId>cas-server</artifactId>
 	<packaging>pom</packaging>
 	<name>JA-SIG Central Authentication Service</name>
-	<version>3.1-m1</version>
+	<version>3.1-m2</version>
 	<description>
 		JA-SIG Central Authentication Service (CAS) is an open-source,
 		enterprise single sign on solution for the web. It supports the
@@ -164,10 +164,19 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+          </plugin>
 			<plugin>
         		<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
- 				<version>2.2-SNAPSHOT</version>
+                <!--                <version>2.2-SNAPSHOT</version> -->
+ 				<version>2.1</version>
 				<configuration>
 					<descriptors>
 						<descriptor>${basedir}/assembly.xml</descriptor>
