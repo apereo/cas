@@ -43,7 +43,7 @@ import org.springframework.util.StringUtils;
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
  */
-public final class JaasAuthenticationHandler extends
+public class JaasAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** If no realm is specified, we default to CAS. */
@@ -52,7 +52,7 @@ public final class JaasAuthenticationHandler extends
     /** The realm that contains the login module information. */
     private String realm;
 
-    protected boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
 
@@ -83,7 +83,7 @@ public final class JaasAuthenticationHandler extends
         return true;
     }
 
-    protected void afterPropertiesSetInternal() throws Exception {
+    protected final void afterPropertiesSetInternal() throws Exception {
         if (!StringUtils.hasText(this.realm)) {
             log.info(
                 "No default realm set.  Using default realm of: "

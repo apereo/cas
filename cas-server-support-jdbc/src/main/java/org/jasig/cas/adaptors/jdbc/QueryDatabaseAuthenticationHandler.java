@@ -21,12 +21,12 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class QueryDatabaseAuthenticationHandler extends
+public class QueryDatabaseAuthenticationHandler extends
     AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private String sql;
 
-    protected boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
         final String username = credentials.getUsername();
@@ -44,14 +44,14 @@ public final class QueryDatabaseAuthenticationHandler extends
         }
     }
 
-    protected void initDao() throws Exception {
+    protected final void initDao() throws Exception {
         Assert.notNull(this.sql, "the SQL statement cannot be null");
     }
 
     /**
      * @param sql The sql to set.
      */
-    public void setSql(final String sql) {
+    public final void setSql(final String sql) {
         this.sql = sql;
     }
 }

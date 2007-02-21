@@ -29,13 +29,13 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class AcceptUsersAuthenticationHandler extends
+public class AcceptUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The list of users we will accept. */
     private Map<String, String> users;
 
-    public boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
 
         final String cachedPassword = this.users.get(credentials
@@ -54,7 +54,7 @@ public final class AcceptUsersAuthenticationHandler extends
         return (cachedPassword.equals(encodedPassword));
     }
 
-    protected void afterPropertiesSetInternal() throws Exception {
+    protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.users, "the users map cannot be null.");
 
         for (final String key : this.users.keySet()) {
@@ -70,7 +70,7 @@ public final class AcceptUsersAuthenticationHandler extends
     /**
      * @param users The users to set.
      */
-    public void setUsers(final Map<String, String> users) {
+    public final void setUsers(final Map<String, String> users) {
         this.users = Collections.unmodifiableMap(users);
     }
 }

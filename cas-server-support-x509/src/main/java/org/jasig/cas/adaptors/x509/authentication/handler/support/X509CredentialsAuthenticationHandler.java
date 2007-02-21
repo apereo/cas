@@ -16,7 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -39,8 +39,8 @@ import org.springframework.util.StringUtils;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public final class X509CredentialsAuthenticationHandler implements
-    AuthenticationHandler, InitializingBean {
+public  class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
+    implements InitializingBean {
 
     /** Default setting to limit the number of intermediate certificates. */
     private static final int DEFAULT_MAXPATHLENGTH = 1;
@@ -84,7 +84,7 @@ public final class X509CredentialsAuthenticationHandler implements
     /** The compiled pattern supplied by the deployer. */
     private Pattern regExSubjectDnPattern;
 
-    public boolean authenticate(final Credentials credentials)
+    protected final boolean doAuthentication(final Credentials credentials)
         throws AuthenticationException {
 
         final X509CertificateCredentials x509Credentials = (X509CertificateCredentials) credentials;

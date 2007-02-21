@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class FileAuthenticationHandler extends
+public class FileAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
@@ -38,7 +38,7 @@ public final class FileAuthenticationHandler extends
     /** The filename to read the list of usernames from. */
     private String fileName;
 
-    public boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
         BufferedReader bufferedReader = null;
 
@@ -80,7 +80,7 @@ public final class FileAuthenticationHandler extends
         return false;
     }
 
-    protected void afterPropertiesSetInternal() throws Exception {
+    protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.fileName, "the fileName cannot be null");
         Assert.notNull(this.separator, "the separator cannot be null");
     }
@@ -88,14 +88,14 @@ public final class FileAuthenticationHandler extends
     /**
      * @param fileName The fileName to set.
      */
-    public void setFileName(final String fileName) {
+    public final void setFileName(final String fileName) {
         this.fileName = fileName;
     }
 
     /**
      * @param separator The separator to set.
      */
-    public void setSeparator(final String separator) {
+    public final void setSeparator(final String separator) {
         this.separator = separator;
     }
 }

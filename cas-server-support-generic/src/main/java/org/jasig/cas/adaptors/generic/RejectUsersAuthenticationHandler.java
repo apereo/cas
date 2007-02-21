@@ -27,13 +27,13 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class RejectUsersAuthenticationHandler extends
+public class RejectUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The collection of users to reject. */
     private List<String> users;
 
-    public boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
 
@@ -44,7 +44,7 @@ public final class RejectUsersAuthenticationHandler extends
         return true;
     }
 
-    public void afterPropertiesSetInternal() throws Exception {
+    protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.users, "the users collection cannot be null");
     }
 
@@ -53,7 +53,7 @@ public final class RejectUsersAuthenticationHandler extends
      * 
      * @param users The Collection of usernames we should not authenticate.
      */
-    public void setUsers(final List<String> users) {
+    public final void setUsers(final List<String> users) {
         this.users = users;
     }
 }
