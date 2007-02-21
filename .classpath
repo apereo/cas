@@ -47,5 +47,6 @@
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-minimal/4.0.2/jboss-minimal-4.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/trove/trove/1.0.2/trove-1.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
+	<classpathentry kind="var" path="M2_REPO/cas/cas/2.0.12/cas-2.0.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
