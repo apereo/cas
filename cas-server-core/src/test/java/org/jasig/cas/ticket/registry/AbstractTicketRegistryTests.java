@@ -159,6 +159,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
             assertFalse("Ticket was deleted.", this.ticketRegistry
                 .deleteTicket(null));
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }

@@ -39,6 +39,10 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
     }
 
     public Ticket getTicket(final String ticketId) {
+        if (ticketId == null) {
+            return null;
+        }
+
         if (log.isDebugEnabled()) {
             log.debug("Attempting to retrieve ticket [" + ticketId + "]");
         }
@@ -52,6 +56,9 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
     }
 
     public boolean deleteTicket(final String ticketId) {
+        if (ticketId == null) {
+            return false;
+        }
         if (log.isDebugEnabled()) {
             log.debug("Removing ticket [" + ticketId + "] from registry");
         }
