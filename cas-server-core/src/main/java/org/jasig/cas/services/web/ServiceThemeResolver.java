@@ -8,6 +8,7 @@ package org.jasig.cas.services.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
@@ -38,7 +39,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
         final String serviceId = request.getParameter(SERVICE_THEME_KEY);
         final RegisteredService service = this.serviceRegistry
-            .getService(serviceId);
+            .findServiceById(new SimpleService(serviceId));
 
         return service != null && service.getTheme() != null ? service
             .getTheme() : getDefaultThemeName();
