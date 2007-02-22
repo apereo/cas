@@ -39,7 +39,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
         final String serviceId = request.getParameter(SERVICE_THEME_KEY);
         final RegisteredService service = this.serviceRegistry
-            .findServiceById(new SimpleService(serviceId));
+            .findServiceBy(new SimpleService(serviceId));
 
         return service != null && service.getTheme() != null ? service
             .getTheme() : getDefaultThemeName();
