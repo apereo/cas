@@ -131,10 +131,10 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
         if (ldapPrincipal == null) {
             log.info("Initial principal \"" + principal.getId()
                 + "\" was not found in LDAP, returning null");
+        } else {
+            log.debug("Initial principal \"" + principal.getId()
+                + "\" was resolved from LDAP as \"" + ldapPrincipal.getId() + "\"");
         }
-
-        log.debug("Initial principal \"" + principal.getId()
-            + "\" was resolved from LDAP as \"" + ldapPrincipal.getId() + "\"");
 
         return ldapPrincipal;
     }
