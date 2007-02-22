@@ -19,7 +19,7 @@ import org.jasig.cas.authentication.principal.Service;
  */
 public class RegisteredServiceImpl implements RegisteredService {
 
-    private List allowedAttributes;
+    private List<String> allowedAttributes;
 
     private String description;
 
@@ -29,19 +29,19 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     private String theme;
 
-    private boolean allowedToProxy;
+    private boolean allowedToProxy = true;
 
     private boolean allowedToSeeAllAttributes;
 
-    private boolean enabled;
+    private boolean enabled = true;
 
-    private boolean ssoEnabled;
+    private boolean ssoEnabled = true;
     
     private Pattern idPattern;
     
     private boolean matchExactly;
 
-    public List getAllowedAttributes() {
+    public List<String> getAllowedAttributes() {
         return this.allowedAttributes;
     }
 
@@ -106,7 +106,7 @@ public class RegisteredServiceImpl implements RegisteredService {
         return false;
     }
 
-    public void setAllowedAttributes(final List allowedAttributes) {
+    public void setAllowedAttributes(final List<String> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
     }
 
