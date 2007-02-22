@@ -46,7 +46,7 @@
 				<p style="text-align: center;">
 					Languages:
 				
-				<c:set var="query" value="<%=request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=[A-Za-z][A-Za-z]|^locale=[A-Za-z][A-Za-z]", "")%>" />
+				<c:set var="query" value="<%=request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "")%>" />
 					
 				<a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a> |
 				<a href="login?${query}${not empty query ? '&' : ''}locale=es">Español</a> |					
