@@ -27,13 +27,17 @@ public final class ServiceRegistryImpl extends JdbcDaoSupport implements
 
     private boolean enabled = true;
 
+    /**
+     * Will only return a RegisteredService if the RegisteredService is enabled.
+     * @see org.jasig.cas.services.ServiceRegistry#findServiceBy(org.jasig.cas.authentication.principal.Service)
+     */
     public RegisteredService findServiceBy(final Service service) {
         if (!this.enabled) {
             return EMPTY_REGISTERED_SERVICE;
         }
         
         for (final RegisteredService registeredService : this.services) {
-            if (registeredService.matches(service)) {
+            if (registeredService.matches(service) && registeredService.isEnabled()) {
                 return registeredService;
             }
         }

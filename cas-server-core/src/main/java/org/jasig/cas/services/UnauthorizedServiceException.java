@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.services;
 
+import org.jasig.cas.ticket.TicketException;
+
 /**
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
  * 
@@ -12,19 +14,19 @@ package org.jasig.cas.services;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class UnauthorizedServiceException extends RuntimeException {
+public class UnauthorizedServiceException extends TicketException {
 
     /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
+    
+    /** The code description. */
+    private static final String CODE = "service.not.authorized";
 
-    /**
-     * Default constructor to use without providing a message or exception
-     * chaining.
-     */
     public UnauthorizedServiceException() {
-        super();
+        this(CODE);
     }
-
+    
+    
     /**
      * Constructs an UnauthorizedServiceException with a custom message and the
      * root cause of this exception.
@@ -44,14 +46,5 @@ public class UnauthorizedServiceException extends RuntimeException {
      */
     public UnauthorizedServiceException(final String message) {
         super(message);
-    }
-
-    /**
-     * Constructs an exception with no custom message and a chained exception.
-     * 
-     * @param cause the root cause of the exception.
-     */
-    public UnauthorizedServiceException(final Throwable cause) {
-        super(cause);
     }
 }

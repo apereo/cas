@@ -15,6 +15,9 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
@@ -87,6 +90,9 @@ public final class CentralAuthenticationServiceImpl implements
 
     /** ExpirationPolicy for Service Tickets. */
     private ExpirationPolicy serviceTicketExpirationPolicy;
+    
+    /** Implementation of Service Registry */
+    private ServiceRegistry serviceRegistry;
 
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
@@ -138,6 +144,19 @@ public final class CentralAuthenticationServiceImpl implements
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
                 throw new InvalidTicketException();
             }
+        }
+        
+        final RegisteredService registeredService = this.serviceRegistry.findServiceBy(service);
+        
+        if (registeredService == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Service [" + service.getId() + "] not found in ServiceRegistry.");
+            }
+            throw new UnauthorizedServiceException();
+        }
+        
+        if (!registeredService.isSsoEnabled() && credentials == null) {
+            // TODO throw exception because we need credentials (i.e. renew=true)
         }
 
         if (credentials != null) {
@@ -205,6 +224,12 @@ public final class CentralAuthenticationServiceImpl implements
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
                 throw new InvalidTicketException();
+            }
+            
+            final RegisteredService registeredService = this.serviceRegistry.findServiceBy(serviceTicket.getService());
+            
+            if (registeredService == null || !registeredService.isAllowedToProxy()) {
+                // TODO throw exception
             }
 
             TicketGrantingTicket ticketGrantingTicket = serviceTicket
@@ -366,11 +391,16 @@ public final class CentralAuthenticationServiceImpl implements
             "ticketGrantingTicketExpirationPolicy cannot be null on " + name);
         Assert.notNull(this.serviceTicketExpirationPolicy,
             "serviceTicketExpirationPolicy cannot be null on " + name);
+        Assert.notNull(this.serviceRegistry, "serviceRegistry cannot be null.");
     }
 
     public void setUniqueTicketIdGeneratorsForService(
         final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService) {
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
+    }
+    
+    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
     }
 
 }

@@ -33,7 +33,7 @@ public interface RegisteredService {
      * 
      * @return the list of attributes
      */
-    List getAllowedAttributes();
+    List<String> getAllowedAttributes();
 
     /**
      * Is this application allowed to see all current and future attributes?
