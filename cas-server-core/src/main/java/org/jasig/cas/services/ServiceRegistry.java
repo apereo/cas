@@ -5,7 +5,9 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Collection;
+import java.util.List;
+
+import org.jasig.cas.authentication.principal.Service;
 
 /**
  * Interface for a registry that holds services. ServiceRegistry is only
@@ -15,30 +17,31 @@ import java.util.Collection;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
+ * @since 3.1
  */
 public interface ServiceRegistry {
 
     /**
-     * Method to determine if the service exists in the registry.
+     * Retrieve a RegisteredService, if it exists. This should guarantee only
+     * one service per id exists.
      * 
-     * @param serviceId the service to check
-     * @return true if the service exists. False otherwise.
+     * @param serviceId the service to look for.
+     * @return the service if it exists, false otherwise.
      */
-    boolean serviceExists(String serviceId);
+    RegisteredService findServiceById(Service service);
 
     /**
-     * Retrieve a service from the registry matched to the provided serviceId.
+     * Returns all the complete list of services.
      * 
-     * @param serviceId the id of the service to retrieve.
-     * @return the service if found, null otherwise.
+     * @return the complete list of services.
      */
-    RegisteredService getService(String serviceId);
+    List<RegisteredService> getAllServices();
 
     /**
-     * Method to return the list of services in the registry.
+     * Helper to determine if a service matches a service in the registry.
      * 
-     * @return A list of services
+     * @param service the service to check
+     * @return true if it does, false otherwise.
      */
-    Collection<RegisteredService> getServices();
+    boolean matchesExistingService(Service service);
 }

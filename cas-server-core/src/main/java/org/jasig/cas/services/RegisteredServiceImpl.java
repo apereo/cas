@@ -78,11 +78,19 @@ public class RegisteredServiceImpl implements RegisteredService {
     }
 
     public boolean matches(final Service service) {
+        if (service == null && this.id == null) {
+            return true;
+        }
+        
+        if (service == null) {
+            return false;
+        }
+
         if (this.idPattern != null) {
             return this.idPattern.matcher(service.getId()).matches();
         }
 
-        return service != null && service.getId().equals(this.id);
+        return service.getId().equals(this.id);
     }
 
     public boolean equals(final Object obj) {
