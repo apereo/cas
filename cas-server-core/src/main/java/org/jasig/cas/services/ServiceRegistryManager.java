@@ -32,10 +32,7 @@ public interface ServiceRegistryManager {
      * @param serviceId The service to delete.
      * @return true if method invocation resulted in a change, false otherwise.
      */
-    boolean deleteService(String serviceId);
-
-    /**
-     * Method to clear the registry of all entries.
-     */
-    void clear();
+    boolean deleteService(RegisteredService serviceId);
+    
+    void updateService(RegisteredService service);
 }

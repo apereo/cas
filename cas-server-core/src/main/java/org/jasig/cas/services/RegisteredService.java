@@ -1,98 +1,96 @@
 /*
  * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ * http://www.uportal.org/license.html
  */
 package org.jasig.cas.services;
 
-import java.net.URL;
+import java.util.List;
 
-import org.springframework.util.Assert;
+import org.jasig.cas.authentication.principal.Service;
 
 /**
- * Class representing a service we have registered with the system.
- * RegisteredServices are assumed to be "approved" services and thus have
- * special options, such as allowing proxying, forcing renew=true, and the
- * ability to skin the login.
+ * Interface for a service that can be registered by the Services Management
+ * interface.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
+ * @since 3.1
  */
-public class RegisteredService {
-
-    /** The unique String to identify this service. */
-    private final String id;
-
-    /** Is this service allowed to do proxying? */
-    private final boolean allowedToProxy;
-
-    /** Does this service always enforce renew = true. */
-    private final boolean forceAuthentication;
-
-    /** The theme name for this service. */
-    private final String theme;
-
-    /** The proxyUrl of the service if it needs one. */
-    private final URL proxyUrl;
+public interface RegisteredService {
 
     /**
-     * Constructs a new RegisteredService with the required property of id and
-     * the optional theme and proxyUrl.
+     * Is this application currently allowed to use CAS?
      * 
-     * @param id The identifier for the service.
-     * @param allowedToProxy Is this service allowed to proxy
-     * @param forceAuthentication does it opt out of single sign on
-     * @param theme the theme associated with the service
-     * @param proxyUrl the proxyUrl of the service if applicable.
-     * @throws IllegalArgumentException if the ID is null.
+     * @return true if it can use CAS, false otherwise.
      */
-    public RegisteredService(final String id, final boolean allowedToProxy,
-        final boolean forceAuthentication, final String theme,
-        final URL proxyUrl) {
-        Assert.notNull(id, "id cannot be null");
-
-        this.id = id;
-        this.allowedToProxy = allowedToProxy;
-        this.forceAuthentication = forceAuthentication;
-        this.theme = theme;
-        this.proxyUrl = proxyUrl;
-    }
+    boolean isEnabled();
 
     /**
-     * @return Returns the allowedToProxy.
-     */
-    public final boolean isAllowedToProxy() {
-        return this.allowedToProxy;
-    }
-
-    /**
-     * @return Returns the forceAuthentication.
-     */
-    public final boolean isForceAuthentication() {
-        return this.forceAuthentication;
-    }
-
-    /**
-     * @return Returns the id.
-     */
-    public final String getId() {
-        return this.id;
-    }
-
-    /**
-     * @return Returns the theme.
-     */
-    public final String getTheme() {
-        return this.theme;
-    }
-
-    /**
-     * Method to retrieve the Proxy URL.
+     * Returns the list of allowed attributes. Users should always check
+     * {@link RegisteredService#isAllowedToSeeAllAttributes()} to determine
+     * global access.
      * 
-     * @return the Proxy URL or null if there is none.
+     * @return the list of attributes
      */
-    public final URL getProxyUrl() {
-        return this.proxyUrl;
-    }
+    List getAllowedAttributes();
+
+    /**
+     * Is this application allowed to see all current and future attributes?
+     * 
+     * @return true if it can, false otherwise.
+     */
+    boolean isAllowedToSeeAllAttributes();
+
+    /**
+     * Is this application allowed to take part in the proxying capabilities of
+     * CAS?
+     * 
+     * @return true if it can, false otherwise.
+     */
+    boolean isAllowedToProxy();
+
+    /**
+     * The unique identifier for this service.
+     * 
+     * @return the unique identifier for this service.
+     */
+    String getId();
+
+    /**
+     * Returns the name of the service.
+     * 
+     * @return the name of the service.
+     */
+    String getName();
+
+    /**
+     * Returns a short theme name. Services do not need to have unique theme
+     * names.
+     * 
+     * @return the theme name associated with this service.
+     */
+    String getTheme();
+
+    /**
+     * Does this application participate in the SSO session?
+     * 
+     * @return true if it does, false otherwise.
+     */
+    boolean isSsoEnabled();
+
+    /**
+     * Returns the description of the service.
+     * 
+     * @return the description of the service.
+     */
+    String getDescription();
+
+    /**
+     * Returns whether the service matches the registered service.
+     * 
+     * @param service the service to match.
+     * @return true if they match, false otherwise.
+     */
+    boolean matches(final Service service);
 }
