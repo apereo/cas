@@ -28,7 +28,7 @@ public interface ServiceRegistry {
      * @param serviceId the service to look for.
      * @return the service if it exists, false otherwise.
      */
-    RegisteredService findServiceById(Service service);
+    RegisteredService findServiceBy(Service service);
 
     /**
      * Returns all the complete list of services.

@@ -27,7 +27,7 @@ public final class ServiceRegistryImpl extends JdbcDaoSupport implements
 
     private boolean enabled = true;
 
-    public RegisteredService findServiceById(final Service service) {
+    public RegisteredService findServiceBy(final Service service) {
         if (!this.enabled) {
             return EMPTY_REGISTERED_SERVICE;
         }
@@ -46,7 +46,7 @@ public final class ServiceRegistryImpl extends JdbcDaoSupport implements
     }
 
     public boolean matchesExistingService(final Service service) {
-        return !this.enabled || findServiceById(service) != null;
+        return !this.enabled || findServiceBy(service) != null;
     }
 
     protected void initDao() throws Exception {
