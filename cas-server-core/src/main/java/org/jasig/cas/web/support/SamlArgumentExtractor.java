@@ -64,7 +64,7 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
         final StringBuilder buffer = new StringBuilder();
 
         buffer.append(service);
-        buffer.append(service.indexOf('?') != -1 ? "&" : "?");
+        buffer.append(service.contains("?") ? "&" : "?");
         buffer.append(getArtifactParameterName());
         buffer.append("=");
         try {

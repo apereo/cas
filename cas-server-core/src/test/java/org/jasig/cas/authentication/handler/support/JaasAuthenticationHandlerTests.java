@@ -14,15 +14,17 @@ import junit.framework.TestCase;
 public class JaasAuthenticationHandlerTests extends TestCase {
 
     private final Log log = LogFactory.getLog(this.getClass());
-    
+
     private JaasAuthenticationHandler handler;
 
     protected void setUp() throws Exception {
         String pathPrefix = System.getProperty("user.dir");
-        pathPrefix = pathPrefix.indexOf("cas-server-core") == -1 ? pathPrefix + "/cas-server-core" : pathPrefix; 
+        pathPrefix = !pathPrefix.contains("cas-server-core") ? pathPrefix
+            + "/cas-server-core" : pathPrefix;
         log.info("PATH PREFIX: " + pathPrefix);
-        
-        final String pathToConfig = pathPrefix + "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
+
+        final String pathToConfig = pathPrefix
+            + "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
         System.setProperty("java.security.auth.login.config", pathToConfig);
         this.handler = new JaasAuthenticationHandler();
         this.handler.afterPropertiesSet();
@@ -34,7 +36,7 @@ public class JaasAuthenticationHandlerTests extends TestCase {
         assertFalse(this.handler.authenticate(TestUtils
             .getCredentialsWithDifferentUsernameAndPassword("test", "test1")));
     }
-    
+
     public void testWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
         assertTrue(this.handler.authenticate(TestUtils

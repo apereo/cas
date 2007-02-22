@@ -58,7 +58,7 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
         final StringBuilder buffer = new StringBuilder();
 
         buffer.append(service);
-        buffer.append(service.indexOf('?') != -1 ? "&" : "?");
+        buffer.append(service.contains("?") ? "&" : "?");
 
         if (StringUtils.hasText(serviceTicket)) {
             buffer.append(getArtifactParameterName());

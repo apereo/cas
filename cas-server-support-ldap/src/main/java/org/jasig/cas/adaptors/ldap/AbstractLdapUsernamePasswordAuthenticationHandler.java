@@ -66,7 +66,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
         Assert.hasText(this.filter, "filter cannot be null");
-        Assert.isTrue(this.filter.indexOf("%u") != -1, "filter must contain %u");
+        Assert.isTrue(this.filter.contains("%u"), "filter must contain %u");
         this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
         initDao();
     }
