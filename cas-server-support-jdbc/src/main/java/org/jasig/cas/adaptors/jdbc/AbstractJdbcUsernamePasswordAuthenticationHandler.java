@@ -8,7 +8,7 @@ package org.jasig.cas.adaptors.jdbc;
 import javax.sql.DataSource;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.util.Assert;
 
 /**
@@ -21,7 +21,9 @@ import org.springframework.util.Assert;
 public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
-    private JdbcTemplate jdbcTemplate;
+    private SimpleJdbcTemplate jdbcTemplate;
+    
+    private DataSource dataSource;
 
     /**
      * Method to set the datasource and generate a JdbcTemplate.
@@ -29,7 +31,7 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
      * @param dataSource the datasource to use.
      */
     public final void setDataSource(final DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }
 
     /**
@@ -37,8 +39,12 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
      * 
      * @return a fully created JdbcTemplate.
      */
-    protected final JdbcTemplate getJdbcTemplate() {
+    protected final SimpleJdbcTemplate getJdbcTemplate() {
         return this.jdbcTemplate;
+    }
+    
+    protected final DataSource getDataSource() {
+        return this.dataSource;
     }
 
     protected final void afterPropertiesSetInternal() throws Exception {

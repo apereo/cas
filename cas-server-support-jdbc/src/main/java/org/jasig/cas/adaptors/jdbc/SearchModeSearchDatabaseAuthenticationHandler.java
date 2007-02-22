@@ -40,7 +40,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
             credentials.getPassword());
 
         final int count = getJdbcTemplate().queryForInt(this.sql,
-            new Object[] {credentials.getUsername(), encyptedPassword});
+            credentials.getUsername(), encyptedPassword);
 
         return count > 0;
     }
