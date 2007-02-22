@@ -81,7 +81,7 @@ public class BindLdapAuthenticationHandler extends
                 }
             });
 
-        if (cns == null || cns.isEmpty()
+        if (cns.isEmpty()
             || (cns.size() > 1 && !this.allowMultipleAccounts)) {
             return false;
         }
