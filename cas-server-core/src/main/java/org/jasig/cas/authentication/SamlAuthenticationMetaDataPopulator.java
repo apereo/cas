@@ -50,7 +50,7 @@ public class SamlAuthenticationMetaDataPopulator implements
     }
 
     public final Authentication populateAttributes(
-        Authentication authentication, Credentials credentials) {
+        final Authentication authentication, final Credentials credentials) {
 
         final String credentialsClass = credentials.getClass().getName();
         final String authenticationMetehod = this.authenticationMethods
