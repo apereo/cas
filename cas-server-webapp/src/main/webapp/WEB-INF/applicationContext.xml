@@ -15,12 +15,9 @@
 			value="50" />
 	</bean>
 	
-	<bean id="httpClient" class="org.jasig.cas.util.HttpClient3FactoryBean"
-		p:soTimeout="5000"
-		p:connectionManagerTimeout="5000"
-		p:connectionTimeout="5000"
-		p:defaultMaxConnectionsPerHost="50"
-		p:maxTotalConnections="50" />
+	<bean id="httpClient" class="org.jasig.cas.util.HttpClient"
+		p:readTimeout="5000"
+		p:connectionTimeout="5000" />
 	
 	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg
