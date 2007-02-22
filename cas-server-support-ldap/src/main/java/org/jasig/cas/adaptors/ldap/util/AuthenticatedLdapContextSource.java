@@ -17,11 +17,11 @@ import org.springframework.ldap.support.LdapContextSource;
 public class AuthenticatedLdapContextSource extends LdapContextSource {
     
     public DirContext getDirContext(final String principal,
-        final String password) {
+        final String credentials) {
     final Hashtable<String, String> environment = (Hashtable) getAnonymousEnv().clone();
 
     environment.put(Context.SECURITY_PRINCIPAL, principal);
-    environment.put(Context.SECURITY_CREDENTIALS, password);
+    environment.put(Context.SECURITY_CREDENTIALS, credentials);
     
     environment.remove("com.sun.jndi.ldap.connect.pool"); // remove this since we're modifying principal
 
