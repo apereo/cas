@@ -30,7 +30,7 @@ public final class DefaultUniqueTicketIdGenerator implements
      * Optional suffix to ensure uniqueness across JVMs by specifying unique
      * values.
      */
-    private String suffix;
+    private final String suffix;
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
@@ -38,8 +38,7 @@ public final class DefaultUniqueTicketIdGenerator implements
      * 1.
      */
     public DefaultUniqueTicketIdGenerator() {
-        this.numericGenerator = new DefaultLongNumericGenerator(1);
-        this.randomStringGenerator = new DefaultRandomStringGenerator();
+        this(null);
     }
 
     /**
@@ -50,8 +49,7 @@ public final class DefaultUniqueTicketIdGenerator implements
      * the id.
      */
     public DefaultUniqueTicketIdGenerator(final int maxLength) {
-        this.numericGenerator = new DefaultLongNumericGenerator(1);
-        this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
+        this(maxLength, null);
     }
 
     /**
@@ -63,8 +61,9 @@ public final class DefaultUniqueTicketIdGenerator implements
      * uniqueness across JVMs.
      */
     public DefaultUniqueTicketIdGenerator(final String suffix) {
-        this();
-        this.suffix = suffix;
+        this.numericGenerator = new DefaultLongNumericGenerator(1);
+        this.randomStringGenerator = new DefaultRandomStringGenerator();
+        this.suffix = "-" + suffix;
     }
 
     /**
@@ -78,8 +77,9 @@ public final class DefaultUniqueTicketIdGenerator implements
      */
     public DefaultUniqueTicketIdGenerator(final int maxLength,
         final String suffix) {
-        this(maxLength);
-        this.suffix = suffix;
+        this.numericGenerator = new DefaultLongNumericGenerator(1);
+        this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
+        this.suffix = "-" + suffix;
     }
 
     public String getNewTicketId(final String prefix) {
@@ -92,7 +92,6 @@ public final class DefaultUniqueTicketIdGenerator implements
         buffer.append(this.randomStringGenerator.getNewString());
 
         if (this.suffix != null) {
-            buffer.append("-");
             buffer.append(this.suffix);
         }
 
