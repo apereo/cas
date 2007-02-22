@@ -35,8 +35,8 @@ public class QueryDatabaseAuthenticationHandler extends
             password);
         
         try {
-            final String dbPassword = (String) getJdbcTemplate().queryForObject(
-                this.sql, new Object[] {username}, String.class);
+            final String dbPassword = getJdbcTemplate().queryForObject(
+                this.sql, String.class, username);
             return dbPassword.equals(encryptedPassword);
         } catch (final IncorrectResultSizeDataAccessException e) {
             // this means the username was not found.
