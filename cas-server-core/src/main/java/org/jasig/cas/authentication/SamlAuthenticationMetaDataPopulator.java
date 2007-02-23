@@ -27,7 +27,6 @@ public class SamlAuthenticationMetaDataPopulator implements
 
     private static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatement::authMethod";
 
-    // TODO <String, String> <Class, String> ?
     private Map<String, String> authenticationMethods = new HashMap<String, String>();
 
     public SamlAuthenticationMetaDataPopulator() {
