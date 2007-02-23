@@ -28,7 +28,6 @@ public class SimpleAttributePrincipal extends SimplePrincipal implements
     private static final long serialVersionUID = -5265620187476296219L;
 
     /** Map of attributes for the Principal. */
-    // XXX object?
     private Map<String, Object> attributes;
 
     public SimpleAttributePrincipal(final String id, final Map<String, Object> attributes) {
