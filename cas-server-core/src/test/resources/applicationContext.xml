@@ -25,7 +25,15 @@
 				<entry key="org.jasig.cas.authentication.principal.SimpleService" value-ref="uniqueTicketIdGenerator" />
 			</map>
 		</property>
+        <property name="serviceRegistry"
+        ref="serviceRegistry" />
 	</bean>
+    
+    <bean
+        id="serviceRegistry"
+        class="org.jasig.cas.services.ServiceRegistryImpl">
+        <property name="enabled" value="false" />
+    </bean>
 	
 	<bean
 		id="authenticationManager"

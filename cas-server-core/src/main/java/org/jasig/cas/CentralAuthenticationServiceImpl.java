@@ -17,7 +17,9 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
@@ -156,7 +158,7 @@ public final class CentralAuthenticationServiceImpl implements
         }
         
         if (!registeredService.isSsoEnabled() && credentials == null) {
-            // TODO throw exception because we need credentials (i.e. renew=true)
+            throw new UnauthorizedSsoServiceException();
         }
 
         if (credentials != null) {
@@ -229,7 +231,7 @@ public final class CentralAuthenticationServiceImpl implements
             final RegisteredService registeredService = this.serviceRegistry.findServiceBy(serviceTicket.getService());
             
             if (registeredService == null || !registeredService.isAllowedToProxy()) {
-                // TODO throw exception
+                throw new UnauthorizedProxyingException();
             }
 
             TicketGrantingTicket ticketGrantingTicket = serviceTicket
