@@ -31,7 +31,7 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     private boolean allowedToProxy = true;
 
-    private boolean allowedToSeeAllAttributes;
+    private boolean allowedToSeeAllAttributes = true;
 
     private boolean enabled = true;
 

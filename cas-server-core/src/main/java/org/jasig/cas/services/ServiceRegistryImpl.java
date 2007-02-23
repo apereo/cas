@@ -11,14 +11,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 /**
+ * Implementation of the ServiceRegistry and ServiceRegistryManager interfaces.
+ * TODO: javadoc
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class ServiceRegistryImpl extends JdbcDaoSupport implements
+// JdbcDaoSupport
+public final class ServiceRegistryImpl implements
     ServiceRegistry, ServiceRegistryManager, InitializingBean {
 
     private List<RegisteredService> services = new CopyOnWriteArrayList<RegisteredService>();
@@ -53,7 +55,7 @@ public final class ServiceRegistryImpl extends JdbcDaoSupport implements
         return !this.enabled || findServiceBy(service) != null;
     }
 
-    protected void initDao() throws Exception {
+    public void afterPropertiesSet() throws Exception {
         if (!this.enabled) {
             return;
         }

@@ -14,6 +14,11 @@
 			index="0"
 			value="50" />
 	</bean>
+    
+    <bean
+        id="serviceRegistry"
+        class="org.jasig.cas.services.ServiceRegistryImpl"
+        p:enabled="false" />
 	
 	<bean id="httpClient" class="org.jasig.cas.util.HttpClient"
 		p:readTimeout="5000"
@@ -55,7 +60,8 @@
 		p:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
 		p:authenticationManager-ref="authenticationManager"
 		p:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
-		p:ticketRegistry-ref="ticketRegistry">
+		p:ticketRegistry-ref="ticketRegistry"
+        p:serviceRegistry-ref="serviceRegistry">
 		<property
 			name="uniqueTicketIdGeneratorsForService">
 				<map>
