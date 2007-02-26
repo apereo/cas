@@ -103,9 +103,12 @@
 	-->
 	<end-state id="redirect" view="bean:dynamicRedirectViewSelector" />
 	
-	<view-state id="viewServiceErrorView" view="viewServiceErrorView" />
+	<end-state id="viewServiceErrorView" view="viewServiceErrorView" />
+    
+    <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
 
 	<global-transitions>
+        <transition to="viewServiceSsoErrorView" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException" />
 		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
 	</global-transitions>
 </flow>
