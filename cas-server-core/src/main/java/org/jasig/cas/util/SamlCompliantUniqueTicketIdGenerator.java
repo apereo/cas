@@ -38,7 +38,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements
     /**
      * We ignore prefixes for SAML compliance.
      */
-    public String getNewTicketId(String prefix) {
+    public String getNewTicketId(final String prefix) {
         final SAMLArtifact samlArtifact = new SAMLArtifactType0002(this.randomStringGenerator
             .getNewStringAsBytes(), new URI(this.sourceLocation));
 

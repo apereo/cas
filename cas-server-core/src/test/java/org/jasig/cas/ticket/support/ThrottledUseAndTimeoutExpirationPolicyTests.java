@@ -6,7 +6,6 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 
@@ -51,7 +50,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
     
     public void testTicketUsedButWithTimeout() {
         try {
-            this.ticket.grantServiceTicket("test", new SimpleService("test"), this.expirationPolicy, false);
+            this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
             Thread.sleep(TIMEOUT -100); // XXX this failed when it was only +1...not accurate??
             assertFalse(this.ticket.isExpired());
         } catch (InterruptedException e) {
@@ -60,7 +59,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
     }
     
     public void testNotWaitingEnoughTime() {
-        this.ticket.grantServiceTicket("test", new SimpleService("test"), this.expirationPolicy, false);
+        this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
         assertTrue(this.ticket.isExpired());
     }
 }

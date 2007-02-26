@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.TicketException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -85,11 +85,7 @@ public final class ProxyController extends AbstractController implements
 
     private Service getTargetService(final HttpServletRequest request) {
         final String targetService = request.getParameter("targetService");
-        if (!StringUtils.hasText(targetService)) {
-            return null;
-        }
-
-        return new SimpleService(targetService);
+        return WebApplicationService.createServiceFrom(targetService);
     }
 
     private ModelAndView generateErrorView(final String code,
