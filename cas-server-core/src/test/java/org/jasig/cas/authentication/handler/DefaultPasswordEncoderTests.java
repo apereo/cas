@@ -12,9 +12,11 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class Md5PasswordEncoderTests extends TestCase {
+public final class DefaultPasswordEncoderTests extends TestCase {
 
-    private final PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
+    // XXX test SHA1
+    
+    private final PasswordEncoder passwordEncoder = new DefaultPasswordEncoder("MD5");
 
     public void testNullPassword() {
         assertEquals(null, this.passwordEncoder.encode(null));
