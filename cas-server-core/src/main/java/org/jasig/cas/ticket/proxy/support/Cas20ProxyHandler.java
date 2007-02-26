@@ -46,9 +46,12 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
         final String proxyIou = this.uniqueTicketIdGenerator
             .getNewTicketId(PGTIOU_PREFIX);
-        final StringBuilder stringBuffer = new StringBuilder();
+        final String serviceCredentialsAsString = serviceCredentials.toString();
+        final StringBuilder stringBuffer = new StringBuilder(
+            serviceCredentialsAsString.length() + proxyIou.length()
+                + proxyGrantingTicketId.length() + 15);
 
-        stringBuffer.append(serviceCredentials.toString());
+        stringBuffer.append(serviceCredentialsAsString);
 
         if (serviceCredentials.getCallbackUrl().getQuery() != null) {
             stringBuffer.append("&");

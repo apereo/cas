@@ -44,18 +44,20 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
             getServiceParameterName());
         final String serviceTicket = WebUtils
             .getServiceTicketFromRequestScope(context);
+        final String artifactParameterName = getArtifactParameterName();
 
         if (service == null) {
             return null;
         }
 
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(service.length()
+            + serviceTicket.length() + artifactParameterName.length() + 2);
 
         buffer.append(service);
         buffer.append(service.contains("?") ? "&" : "?");
 
         if (StringUtils.hasText(serviceTicket)) {
-            buffer.append(getArtifactParameterName());
+            buffer.append(artifactParameterName);
             buffer.append("=");
             buffer.append(serviceTicket);
         }

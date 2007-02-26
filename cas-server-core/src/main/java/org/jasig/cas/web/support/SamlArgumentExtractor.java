@@ -49,16 +49,20 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
             getServiceParameterName());
         final String serviceTicket = WebUtils
             .getServiceTicketFromRequestScope(context);
+        final String artifactParameterName = getArtifactParameterName();
+        final String serviceParameterName = getServiceParameterName();
 
         if (service == null) {
             return null;
         }
 
-        final StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder(service.length()
+            + serviceTicket.length() + artifactParameterName.length()
+            + serviceParameterName + 4);
 
         buffer.append(service);
         buffer.append(service.contains("?") ? "&" : "?");
-        buffer.append(getArtifactParameterName());
+        buffer.append(artifactParameterName);
         buffer.append("=");
         try {
             buffer.append(URLEncoder.encode(serviceTicket, "UTF-8"));
@@ -67,7 +71,7 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
             buffer.append(serviceTicket);
         }
         buffer.append("&");
-        buffer.append(getServiceParameterName());
+        buffer.append(serviceParameterName);
         buffer.append("=");
 
         try {
