@@ -102,11 +102,10 @@
 		the user back to the service required.
 	-->
 	<end-state id="redirect" view="bean:dynamicRedirectViewSelector" />
-
-<!-- 
-	<global-transitions>
-		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.domain.AccessDeniedException" />
-	</global-transitions>
 	
- -->
+	<view-state id="viewServiceErrorView" view="viewServiceErrorView" />
+
+	<global-transitions>
+		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
+	</global-transitions>
 </flow>
