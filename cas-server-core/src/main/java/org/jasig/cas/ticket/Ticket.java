@@ -44,4 +44,10 @@ public interface Ticket extends Serializable {
      * @return the time the ticket was created.
      */
     long getCreationTime();
+    
+    /**
+     * Returns the number of times this ticket was used.
+     * @return
+     */
+    int getCountOfUses();
 }

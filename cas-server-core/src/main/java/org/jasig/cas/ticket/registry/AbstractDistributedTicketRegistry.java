@@ -99,6 +99,10 @@ public abstract class AbstractDistributedTicketRegistry extends
         public String toString() {
             return this.serviceTicket.toString();
         }
+
+        public int getCountOfUses() {
+            return this.serviceTicket.getCountOfUses();
+        }
     }
 
     private final class ProxiedTicketGrantingTicket implements
@@ -167,6 +171,9 @@ public abstract class AbstractDistributedTicketRegistry extends
         public String toString() {
             return this.ticket.toString();
         }
-    }
 
+        public int getCountOfUses() {
+            return this.ticket.getCountOfUses();
+        }
+    }
 }

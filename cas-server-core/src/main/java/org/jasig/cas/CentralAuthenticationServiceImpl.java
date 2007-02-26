@@ -92,7 +92,7 @@ public final class CentralAuthenticationServiceImpl implements
 
     /** ExpirationPolicy for Service Tickets. */
     private ExpirationPolicy serviceTicketExpirationPolicy;
-    
+
     /** Implementation of Service Registry */
     private ServiceRegistry serviceRegistry;
 
@@ -147,17 +147,20 @@ public final class CentralAuthenticationServiceImpl implements
                 throw new InvalidTicketException();
             }
         }
-        
-        final RegisteredService registeredService = this.serviceRegistry.findServiceBy(service);
-        
+
+        final RegisteredService registeredService = this.serviceRegistry
+            .findServiceBy(service);
+
         if (registeredService == null) {
             if (log.isDebugEnabled()) {
-                log.debug("Service [" + service.getId() + "] not found in ServiceRegistry.");
+                log.debug("Service [" + service.getId()
+                    + "] not found in ServiceRegistry.");
             }
             throw new UnauthorizedServiceException();
         }
-        
-        if (!registeredService.isSsoEnabled() && credentials == null) {
+
+        if (!registeredService.isSsoEnabled() && credentials == null
+            && ticketGrantingTicket.getCountOfUses() > 0) {
             throw new UnauthorizedSsoServiceException();
         }
 
@@ -227,10 +230,12 @@ public final class CentralAuthenticationServiceImpl implements
             if (serviceTicket == null || serviceTicket.isExpired()) {
                 throw new InvalidTicketException();
             }
-            
-            final RegisteredService registeredService = this.serviceRegistry.findServiceBy(serviceTicket.getService());
-            
-            if (registeredService == null || !registeredService.isAllowedToProxy()) {
+
+            final RegisteredService registeredService = this.serviceRegistry
+                .findServiceBy(serviceTicket.getService());
+
+            if (registeredService == null
+                || !registeredService.isAllowedToProxy()) {
                 throw new UnauthorizedProxyingException();
             }
 
@@ -400,7 +405,7 @@ public final class CentralAuthenticationServiceImpl implements
         final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService) {
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
-    
+
     public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
