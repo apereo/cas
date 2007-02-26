@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.ticket.TicketException;
-
 /**
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
  * 
@@ -14,7 +12,7 @@ import org.jasig.cas.ticket.TicketException;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class UnauthorizedServiceException extends TicketException {
+public class UnauthorizedServiceException extends RuntimeException {
 
     /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
