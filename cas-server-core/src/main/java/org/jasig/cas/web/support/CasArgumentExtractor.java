@@ -8,7 +8,7 @@ package org.jasig.cas.web.support;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -36,13 +36,7 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
     }
 
     public final Service extractService(final HttpServletRequest request) {
-        final String service = request.getParameter(getServiceParameterName());
-
-        if (!StringUtils.hasText(service)) {
-            return null;
-        }
-
-        return new SimpleService(WebUtils.stripJsessionFromUrl(service));
+        return WebApplicationService.createServiceFrom(request);
     }
 
     public String constructUrlForRedirect(final RequestContext context) {

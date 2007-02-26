@@ -14,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -42,13 +41,7 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
     }
 
     public Service extractService(final HttpServletRequest request) {
-        final String service = request.getParameter(getServiceParameterName());
-
-        if (!StringUtils.hasText(service)) {
-            return null;
-        }
-
-        return new SamlService(WebUtils.stripJsessionFromUrl(service));
+        return SamlService.createServiceFrom(request);
     }
 
     public String constructUrlForRedirect(final RequestContext context) {

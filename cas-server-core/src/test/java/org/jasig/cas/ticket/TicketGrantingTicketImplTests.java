@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -104,7 +103,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
-            .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
+            .getNewTicketId(ServiceTicket.PREFIX), TestUtils.getService(),
             new NeverExpiresExpirationPolicy(), false);
 
         assertTrue(s.isFromNewLogin());
@@ -114,10 +113,10 @@ public class TicketGrantingTicketImplTests extends TestCase {
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
-            .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
+            .getNewTicketId(ServiceTicket.PREFIX), TestUtils.getService(),
             new NeverExpiresExpirationPolicy(), false);
         s = t.grantServiceTicket(this.uniqueTicketIdGenerator
-            .getNewTicketId(ServiceTicket.PREFIX), new SimpleService("test"),
+            .getNewTicketId(ServiceTicket.PREFIX), TestUtils.getService(),
             new NeverExpiresExpirationPolicy(), false);
 
         assertFalse(s.isFromNewLogin());

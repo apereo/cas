@@ -5,7 +5,6 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketState;
@@ -238,7 +237,7 @@ public class CentralAuthenticationServiceImplTests extends
 
         try {
             getCentralAuthenticationService().validateServiceTicket(
-                serviceTicket, new SimpleService("test2"));
+                serviceTicket, TestUtils.getService("test2"));
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
         } catch (TicketException e) {
             // nothing to do here, exception is expected.

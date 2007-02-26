@@ -6,7 +6,6 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -57,7 +56,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
 
     public void testTicketIsExpiredByCount() {
         for (int i = 0; i < NUMBER_OF_USES; i++)
-            this.ticket.grantServiceTicket("test", new SimpleService("test"), new NeverExpiresExpirationPolicy(), false);
+            this.ticket.grantServiceTicket("test", TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
 
         assertTrue(this.ticket.isExpired());
     }

@@ -11,7 +11,6 @@ import java.util.List;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 
 import junit.framework.TestCase;
@@ -31,7 +30,7 @@ public class AssertionImplTests extends TestCase {
         list.add(TestUtils.getAuthentication("test2"));
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, new SimpleService("test"), true);
+            list, TestUtils.getService(), true);
 
         assertEquals(list.toArray(new Authentication[0]).length, assertion
             .getChainedAuthentications().size());
@@ -43,7 +42,7 @@ public class AssertionImplTests extends TestCase {
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, new SimpleService("test"), false);
+            list, TestUtils.getService(), false);
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -54,7 +53,7 @@ public class AssertionImplTests extends TestCase {
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, new SimpleService("test"), true);
+            list, TestUtils.getService(), true);
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -64,7 +63,7 @@ public class AssertionImplTests extends TestCase {
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, new SimpleService("test"), true);
+            list, TestUtils.getService(), true);
 
         assertFalse(assertion.equals(null));
     }
@@ -74,7 +73,7 @@ public class AssertionImplTests extends TestCase {
         list.add(TestUtils.getAuthentication());
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, new SimpleService("test"), true);
+            list, TestUtils.getService(), true);
 
         assertFalse(assertion.equals("test"));
     }
@@ -88,15 +87,15 @@ public class AssertionImplTests extends TestCase {
         list1.add(auth);
 
         final ImmutableAssertionImpl assertion = new ImmutableAssertionImpl(
-            list, new SimpleService("test"), true);
+            list, TestUtils.getService(), true);
         final ImmutableAssertionImpl assertion1 = new ImmutableAssertionImpl(
-            list1, new SimpleService("test"), true);
+            list1, TestUtils.getService(), true);
 
         assertTrue(assertion.equals(assertion1));
     }
 
     public void testGetService() {
-        final Service service = new SimpleService("test");
+        final Service service = TestUtils.getService();
 
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());

@@ -7,7 +7,6 @@ package org.jasig.cas.remoting.server;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.springframework.validation.Validator;
@@ -86,7 +85,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         this.remoteCentralAuthenticationService.grantServiceTicket(ticketId,
-            new SimpleService("test"));
+            TestUtils.getService());
     }
 
     public void testGrantServiceTicketWithValidCredentials()
@@ -95,7 +94,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         this.remoteCentralAuthenticationService.grantServiceTicket(
-            ticketGrantingTicketId, new SimpleService("Test"), TestUtils
+            ticketGrantingTicketId, TestUtils.getService(), TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -105,7 +104,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         this.remoteCentralAuthenticationService.grantServiceTicket(
-            ticketGrantingTicketId, new SimpleService("Test"), null);
+            ticketGrantingTicketId, TestUtils.getService(), null);
     }
 
     public void testGrantServiceTicketWithEmptyCredentials()
@@ -115,7 +114,7 @@ public class RemoteCentralAuthenticationServiceTests extends
                 .getCredentialsWithSameUsernameAndPassword());
         try {
             this.remoteCentralAuthenticationService.grantServiceTicket(
-                ticketGrantingTicketId, new SimpleService("Test"), TestUtils
+                ticketGrantingTicketId, TestUtils.getService(), TestUtils
                     .getCredentialsWithDifferentUsernameAndPassword("", ""));
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
@@ -129,10 +128,10 @@ public class RemoteCentralAuthenticationServiceTests extends
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         final String serviceTicket = this.remoteCentralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
+            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
 
         this.remoteCentralAuthenticationService.validateServiceTicket(
-            serviceTicket, new SimpleService("test"));
+            serviceTicket, TestUtils.getService());
     }
 
     public void testDelegateTicketGrantingTicketWithValidCredentials()
@@ -141,7 +140,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         final String serviceTicket = this.remoteCentralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
+            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
         this.remoteCentralAuthenticationService.delegateTicketGrantingTicket(
             serviceTicket, TestUtils.getHttpBasedServiceCredentials());
     }
@@ -152,7 +151,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             .createTicketGrantingTicket(TestUtils
                 .getCredentialsWithSameUsernameAndPassword());
         final String serviceTicket = this.remoteCentralAuthenticationService
-            .grantServiceTicket(ticketGrantingTicket, new SimpleService("test"));
+            .grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
         try {
             this.remoteCentralAuthenticationService
                 .delegateTicketGrantingTicket(serviceTicket, TestUtils

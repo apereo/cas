@@ -9,7 +9,6 @@ import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -50,7 +49,7 @@ public final class GenerateServiceTicketActionTests extends
 
     public void testServiceTicketFromCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", new SimpleService("test"));
+        context.getFlowScope().put("service", TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
@@ -65,7 +64,7 @@ public final class GenerateServiceTicketActionTests extends
 
     public void testTicketGrantingTicketFromRequest() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", new SimpleService("test"));
+        context.getFlowScope().put("service", TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
@@ -80,7 +79,7 @@ public final class GenerateServiceTicketActionTests extends
 
     public void testTicketGrantingTicketNoTgt() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", new SimpleService("test"));
+        context.getFlowScope().put("service", TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
@@ -92,7 +91,7 @@ public final class GenerateServiceTicketActionTests extends
 
     public void testTicketGrantingTicketNotTgtButGateway() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", new SimpleService("test"));
+        context.getFlowScope().put("service", TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));

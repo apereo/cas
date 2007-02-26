@@ -113,21 +113,4 @@ public final class WebUtils {
         final RequestContext context) {
         return context.getRequestScope().getString("serviceTicketId");
     }
-
-    public static final String stripJsessionFromUrl(final String url) {
-        final int jsessionPosition = url.indexOf(";jsession");
-
-        if (jsessionPosition == -1) {
-            return url;
-        }
-
-        final int questionMarkPosition = url.indexOf("?");
-
-        if (questionMarkPosition < jsessionPosition) {
-            return url.substring(0, url.indexOf(";jsession"));
-        }
-
-        return url.substring(0, jsessionPosition)
-            + url.substring(questionMarkPosition);
-    }
 }

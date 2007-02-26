@@ -23,6 +23,10 @@
 			name="uniqueTicketIdGeneratorsForService">
 			<map>
 				<entry key="org.jasig.cas.authentication.principal.SimpleService" value-ref="uniqueTicketIdGenerator" />
+                <entry
+                        key="org.jasig.cas.authentication.principal.WebApplicationService"
+                        value-ref="uniqueTicketIdGenerator" />
+                
 			</map>
 		</property>
         <property name="serviceRegistry"

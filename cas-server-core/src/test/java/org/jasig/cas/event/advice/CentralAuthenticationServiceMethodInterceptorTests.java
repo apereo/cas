@@ -15,7 +15,6 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.event.TicketEvent;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.context.ApplicationEvent;
@@ -86,7 +85,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, new SimpleService("test"));
+            .grantServiceTicket(ticketId, TestUtils.getService());
         String ticketGrantingTicketId = getCentralAuthenticationService()
             .delegateTicketGrantingTicket(serviceTicketId,
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -106,10 +105,10 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, new SimpleService("test"));
+            .grantServiceTicket(ticketId, TestUtils.getService());
 
         this.advice.invoke(new MockMethodInvocation(new Object[] {
-            ticketId, new SimpleService("test")}, method, serviceTicketId));
+            ticketId, TestUtils.getService()}, method, serviceTicketId));
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.CREATE_SERVICE_TICKET, this.event
@@ -123,12 +122,12 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         String serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId, new SimpleService("test"));
+            .grantServiceTicket(ticketId, TestUtils.getService());
         Assertion assertion = getCentralAuthenticationService()
-            .validateServiceTicket(serviceTicketId, new SimpleService("test"));
+            .validateServiceTicket(serviceTicketId, TestUtils.getService());
 
         this.advice.invoke(new MockMethodInvocation(new Object[] {
-            serviceTicketId, new SimpleService("test")}, method, assertion));
+            serviceTicketId, TestUtils.getService()}, method, assertion));
 
         assertNotNull(this.event);
         assertEquals(TicketEvent.VALIDATE_SERVICE_TICKET, this.event

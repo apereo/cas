@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.SimpleService;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -41,7 +41,7 @@ public class Cas10ResponseViewTests extends TestCase {
         List<Authentication> list = new ArrayList<Authentication>();
         list.add(new ImmutableAuthentication(new SimplePrincipal("test")));
         this.model.put("assertion", new ImmutableAssertionImpl(list,
-            new SimpleService("TestService"), true));
+            TestUtils.getService("TestService"), true));
     }
 
     public void testSuccessView() throws Exception {

@@ -8,16 +8,18 @@ package org.jasig.cas.services.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.authentication.principal.SimpleService;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 
 /**
  * ThemeResolver to determine the theme for CAS based on the service provided.
  * The theme resolver will extract the service parameter from the Request object
  * and attempt to match the URL provided to a Service Id. If the service is
- * found, the theme associated with it will be used. If no these is associated
+ * found, the theme associated with it will be used. If not, these is associated
  * with the service or the service was not found, a default theme will be used.
  * 
  * @author Scott Battaglia
@@ -32,16 +34,20 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     /** The ServiceRegistry to look up the service. */
     private ServiceRegistry serviceRegistry;
 
+    private ArgumentExtractor[] argumentExtractors;
+
     public String resolveThemeName(final HttpServletRequest request) {
         if (this.serviceRegistry == null) {
             return getDefaultThemeName();
         }
 
-        final String serviceId = request.getParameter(SERVICE_THEME_KEY);
-        final RegisteredService service = this.serviceRegistry
-            .findServiceBy(new SimpleService(serviceId));
+        final Service service = WebUtils.getService(this.argumentExtractors,
+            request);
 
-        return service != null && service.getTheme() != null ? service
+        final RegisteredService rService = this.serviceRegistry
+            .findServiceBy(service);
+
+        return service != null && rService.getTheme() != null ? rService
             .getTheme() : getDefaultThemeName();
     }
 
@@ -52,5 +58,10 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
+    }
+
+    public void setArgumentExtractors(
+        final ArgumentExtractor[] argumentExtractors) {
+        this.argumentExtractors = argumentExtractors;
     }
 }
