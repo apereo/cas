@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 /**
  * Implementation of the password handler that returns the MD5 hash of any
  * plaintext password passed into the encoder. Returns the equivalent Md5 Hash
@@ -17,40 +14,24 @@ import java.security.NoSuchAlgorithmException;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class Md5PasswordEncoder implements PasswordEncoder {
+public final class Md5PasswordEncoder extends AbstractPasswordEncoder {
 
-    /** The name of the algorithm to use. */
-    private static final String ALGORITHM_NAME = "MD5";
+    protected String getEncodingAlgorithm() {
+        return "MD5";
+    }
 
-    /**
-     * @throws SecurityException if the Algorithm can't be found.
-     */
-    public String encode(final String password) {
+    protected String getFormattedText(byte[] digest) {
+        final StringBuilder hexString = new StringBuilder(digest.length * 2);
 
-        if (password == null) {
-            return null;
-        }
+        for (int i = 0; i < digest.length; i++) {
+            final String plainText = Integer.toHexString(0xFF & digest[i]);
 
-        try {
-            MessageDigest messageDigest = MessageDigest
-                .getInstance(ALGORITHM_NAME);
-            messageDigest.update(password.getBytes());
-
-            final byte[] digest = messageDigest.digest();
-            final StringBuilder hexString = new StringBuilder();
-
-            for (int i = 0; i < digest.length; i++) {
-                final String plainText = Integer.toHexString(0xFF & digest[i]);
-
-                if (plainText.length() < 2) {
-                    hexString.append("0");
-                }
-
-                hexString.append(plainText);
+            if (plainText.length() < 2) {
+                hexString.append("0");
             }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new SecurityException(e.getMessage());
+            hexString.append(plainText);
         }
+
+        return hexString.toString();
     }
 }
