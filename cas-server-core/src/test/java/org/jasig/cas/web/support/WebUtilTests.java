@@ -10,6 +10,10 @@ import junit.framework.TestCase;
 
 public class WebUtilTests extends TestCase {
 // XXX: FIX 
+    
+    public void testCase() {
+        return;
+    }
     /*
     public void testStripJsessionWithoutQueryStringParameters() {
         assertEquals("test", WebUtils.stripJsessionFromUrl("test"));
