@@ -10,7 +10,8 @@
        
 	<!-- Theme Resolver -->
 	<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
-		p:defaultThemeName="default" />
+		p:defaultThemeName="default"
+        p:argumentExtractors-ref="argumentExtractors" />
 
 	<!-- View Resolver -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
