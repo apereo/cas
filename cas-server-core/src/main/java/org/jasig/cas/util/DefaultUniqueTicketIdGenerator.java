@@ -63,7 +63,12 @@ public final class DefaultUniqueTicketIdGenerator implements
     public DefaultUniqueTicketIdGenerator(final String suffix) {
         this.numericGenerator = new DefaultLongNumericGenerator(1);
         this.randomStringGenerator = new DefaultRandomStringGenerator();
-        this.suffix = "-" + suffix;
+
+        if (suffix != null) {
+            this.suffix = "-" + suffix;
+        } else {
+            this.suffix = null;
+        }
     }
 
     /**
@@ -79,15 +84,23 @@ public final class DefaultUniqueTicketIdGenerator implements
         final String suffix) {
         this.numericGenerator = new DefaultLongNumericGenerator(1);
         this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
-        this.suffix = "-" + suffix;
+
+        if (suffix != null) {
+            this.suffix = "-" + suffix;
+        } else {
+            this.suffix = null;
+        }
     }
 
     public String getNewTicketId(final String prefix) {
-        final StringBuilder buffer = new StringBuilder();
+        final String number = this.numericGenerator.getNextNumberAsString();
+        final StringBuilder buffer = new StringBuilder(prefix.length() + 2
+            + this.suffix.length() + this.randomStringGenerator.getMaxLength()
+            + number.length());
 
         buffer.append(prefix);
         buffer.append("-");
-        buffer.append(this.numericGenerator.getNextNumberAsString());
+        buffer.append(number);
         buffer.append("-");
         buffer.append(this.randomStringGenerator.getNewString());
 
