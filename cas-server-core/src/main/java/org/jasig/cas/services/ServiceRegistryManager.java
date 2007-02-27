@@ -33,6 +33,11 @@ public interface ServiceRegistryManager {
      * @return true if method invocation resulted in a change, false otherwise.
      */
     boolean deleteService(RegisteredService serviceId);
-    
+
+    /**
+     * Method to update a service from the list.
+     * 
+     * @param service the service to update.
+     */
     void updateService(RegisteredService service);
 }
