@@ -18,7 +18,7 @@ import org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInterac
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.ServiceRegistryImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -42,7 +42,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
-        idGenerators.put(WebApplicationService.class.getName(), new DefaultUniqueTicketIdGenerator());
+        idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 
         final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();

@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -111,7 +111,7 @@ public final class TestUtils {
     }
 
     public static Service getService(final String name) {
-        return WebApplicationService.createServiceFrom(name);
+        return SimpleWebApplicationServiceImpl.createServiceFrom(name);
     }
 
     public static Authentication getAuthentication() {

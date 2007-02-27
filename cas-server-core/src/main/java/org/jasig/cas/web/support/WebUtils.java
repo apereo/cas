@@ -11,7 +11,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -62,11 +62,11 @@ public final class WebUtils {
         return cookie.getValue();
     }
 
-    public static final Service getService(
+    public static final WebApplicationService getService(
         final List<ArgumentExtractor> argumentExtractors,
         final HttpServletRequest request) {
         for (final ArgumentExtractor argumentExtractor : argumentExtractors) {
-            final Service service = argumentExtractor.extractService(request);
+            final WebApplicationService service = argumentExtractor.extractService(request);
 
             if (service != null) {
                 return service;
@@ -76,8 +76,8 @@ public final class WebUtils {
         return null;
     }
 
-    public static final Service getService(final RequestContext context) {
-        return (Service) context.getFlowScope().get("service");
+    public static final WebApplicationService getService(final RequestContext context) {
+        return (WebApplicationService) context.getFlowScope().get("service");
     }
 
     public static final String getTicket(

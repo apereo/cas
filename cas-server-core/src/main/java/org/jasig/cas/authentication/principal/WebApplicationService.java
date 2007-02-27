@@ -5,78 +5,20 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.util.StringUtils;
-
 /**
+ * Represents a service using CAS that comes from the web.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
- *
  */
-public class WebApplicationService implements Service {
+public interface WebApplicationService extends Service {
 
     /**
-     * Unique Id for Serialization
+     * Constructs the url to redirect the service back to.
+     * 
+     * @param ticketId the service ticket to provide to the service.
+     * @return the redirect url.
      */
-    private static final long serialVersionUID = 8334068957483758042L;
-    
-    private final String id;
-    
-    protected WebApplicationService(final String id) {
-        this.id = id;
-    }
-
-    public final String getId() {
-        return this.id;
-    }
-    
-    public static Service createServiceFrom(final HttpServletRequest request) {
-        final String service = request.getParameter("service");
-        
-        return createServiceFrom(service);
-    }
-    
-    public static Service createServiceFrom(final String service) {
-        if (!StringUtils.hasText(service)) {
-            return null;
-        }
-        
-        final String id = cleanupUrl(service);
-            
-        return new WebApplicationService(id);
-    }
-    
-    protected static final String cleanupUrl(final String url) {
-        final int jsessionPosition = url.indexOf(";jsession");
-
-        if (jsessionPosition == -1) {
-            return url;
-        }
-
-        final int questionMarkPosition = url.indexOf("?");
-
-        if (questionMarkPosition < jsessionPosition) {
-            return url.substring(0, url.indexOf(";jsession"));
-        }
-
-        return url.substring(0, jsessionPosition)
-            + url.substring(questionMarkPosition);
-    }
-    
-    public final boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-        
-        if (object instanceof Service) {
-            final Service service = (Service) object;
-            
-            return this.id.equals(service.getId());
-        }
-        
-        return false;
-    }
+    String getRedirectUrl(String ticketId);
 }

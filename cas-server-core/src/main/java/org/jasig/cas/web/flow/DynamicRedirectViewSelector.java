@@ -5,10 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.List;
-
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.web.support.ArgumentExtractor;
-import org.springframework.util.Assert;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
@@ -24,15 +23,6 @@ import org.springframework.webflow.execution.support.ExternalRedirect;
  */
 public final class DynamicRedirectViewSelector implements ViewSelector {
 
-    private final List<ArgumentExtractor> argumentExtractors;
-
-    public DynamicRedirectViewSelector(
-        final List<ArgumentExtractor> argumentExtractors) {
-        Assert
-            .notNull(argumentExtractors, "argumentExtractors cannot be null.");
-        this.argumentExtractors = argumentExtractors;
-    }
-
     public ViewSelection makeRefreshSelection(final RequestContext context) {
         return makeEntrySelection(context);
     }
@@ -42,14 +32,12 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
     }
 
     public ViewSelection makeEntrySelection(final RequestContext request) {
-        for (final ArgumentExtractor argumentExtractor : this.argumentExtractors) {
-            final String url = argumentExtractor
-                .constructUrlForRedirect(request);
-
-            if (url != null) {
-                return new ExternalRedirect(url);
-            }
+        final WebApplicationService service = WebUtils.getService(request);
+        final String ticket = WebUtils.getServiceTicketFromRequestScope(request);
+        if (service != null) {
+            return new ExternalRedirect(service.getRedirectUrl(ticket));
         }
+        
         return null;
     }
 }

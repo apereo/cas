@@ -7,7 +7,9 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -19,15 +21,20 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
+    protected final Log log = LogFactory
+    .getLog(getClass());
+    
     public final String extractTicketArtifact(final RequestContext context) {
         return context.getRequestParameters().get(getArtifactParameterName());
     }
 
-    public final Service extractService(RequestContext context) {
+    public final WebApplicationService extractService(RequestContext context) {
         return extractService(WebUtils.getHttpServletRequest(context));
     }
 
     public final String extractTicketArtifact(final HttpServletRequest request) {
         return request.getParameter(getArtifactParameterName());
     }
+    
+    protected abstract String getArtifactParameterName();
 }
