@@ -23,16 +23,15 @@ import org.springframework.beans.factory.InitializingBean;
 public final class ServiceRegistryImpl implements
     ServiceRegistry, ServiceRegistryManager, InitializingBean {
 
+    /** The list of Registered Services.  Utilizes a CopyOnWriteArrayList so that Iterators are threadsafe. */
     private List<RegisteredService> services = new CopyOnWriteArrayList<RegisteredService>();
     
+    /** The default empty registered service to return if the registry is disabled. */
     private static final RegisteredService EMPTY_REGISTERED_SERVICE = new RegisteredServiceImpl();
 
+    /** Whether the registry is enabled or not. */
     private boolean enabled = true;
 
-    /**
-     * Will only return a RegisteredService if the RegisteredService is enabled.
-     * @see org.jasig.cas.services.ServiceRegistry#findServiceBy(org.jasig.cas.authentication.principal.Service)
-     */
     public RegisteredService findServiceBy(final Service service) {
         if (!this.enabled) {
             return EMPTY_REGISTERED_SERVICE;
@@ -90,7 +89,14 @@ public final class ServiceRegistryImpl implements
     }
 
     public void setBootstrapService(final String serviceId) {
+        final RegisteredServiceImpl registeredService = new RegisteredServiceImpl();
+        registeredService.setId(serviceId);
+        registeredService.setDescription("Default bootstrap service so we can log into the management application.");
+        registeredService.setEnabled(true);
+        registeredService.setMatchExactly(true);
+        registeredService.setName("Bookstrap Services Management Application");
+        registeredService.setSsoEnabled(true);
         
-        // TODO
+        this.services.add(registeredService);
     }
 }
