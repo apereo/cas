@@ -5,7 +5,8 @@
  */
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
-import org.jasig.cas.adaptors.radius.JRadiusServerImpl;
+import java.util.List;
+
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -18,38 +19,47 @@ import org.springframework.util.Assert;
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
- *
  */
 public class RadiusAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
-    
+
     /** Array of RADIUS servers to authenticate against. */
-    private RadiusServer[] servers;
-    
-    /** Determines whether to fail over to the next configured RadiusServer if there was an exception. */
+    private List<RadiusServer> servers;
+
+    /**
+     * Determines whether to fail over to the next configured RadiusServer if
+     * there was an exception.
+     */
     private boolean failoverOnException;
-    
-    /** Determines whether to fail over to the next configured RadiusServer if there was an authentication failure. */
+
+    /**
+     * Determines whether to fail over to the next configured RadiusServer if
+     * there was an authentication failure.
+     */
     private boolean failoverOnAuthenticationFailure;
 
     protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials) throws AuthenticationException {
-        
-        for (int i = 0; i < this.servers.length; i++) {
+        final UsernamePasswordCredentials credentials)
+        throws AuthenticationException {
+
+        for (final RadiusServer radiusServer : this.servers) {
             try {
-                final boolean response = this.servers[i].authenticate(credentials);
-                
-                if (response || (!response && !this.failoverOnAuthenticationFailure)) {
+                final boolean response = radiusServer.authenticate(credentials);
+
+                if (response
+                    || (!response && !this.failoverOnAuthenticationFailure)) {
                     return response;
                 }
-                
-                log.debug("Failing over to next handler because failoverOnAuthenticationFailure is set to true.");
+
+                log
+                    .debug("Failing over to next handler because failoverOnAuthenticationFailure is set to true.");
             } catch (Exception e) {
-              if (!this.failoverOnException) {
-                  log.warn("Failover disabled.  Returning false for authentication request.");
-              } else {
-                  log.warn("Failover enabled.  Trying next RadiusServer.");
-              }
+                if (!this.failoverOnException) {
+                    log
+                        .warn("Failover disabled.  Returning false for authentication request.");
+                } else {
+                    log.warn("Failover enabled.  Trying next RadiusServer.");
+                }
             }
         }
 
@@ -57,9 +67,11 @@ public class RadiusAuthenticationHandler extends
     }
 
     /**
-     * Determines whether to fail over to the next configured RadiusServer if there was an authentication failure.
+     * Determines whether to fail over to the next configured RadiusServer if
+     * there was an authentication failure.
      * 
-     * @param failoverOnAuthenticationFailure boolean on whether to failover or not.
+     * @param failoverOnAuthenticationFailure boolean on whether to failover or
+     * not.
      */
     public void setFailoverOnAuthenticationFailure(
         final boolean failoverOnAuthenticationFailure) {
@@ -67,7 +79,8 @@ public class RadiusAuthenticationHandler extends
     }
 
     /**
-     * Determines whether to fail over to the next configured RadiusServer if there was an exception.
+     * Determines whether to fail over to the next configured RadiusServer if
+     * there was an exception.
      * 
      * @param failoverOnException boolean on whether to failover or not.
      */
@@ -75,11 +88,11 @@ public class RadiusAuthenticationHandler extends
         this.failoverOnException = failoverOnException;
     }
 
-    public void setServers(final JRadiusServerImpl[] servers) {
+    public void setServers(final List<RadiusServer> servers) {
         this.servers = servers;
     }
 
     protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notEmpty(this.servers, "servers cannot be empty.");
-    }    
+    }
 }

@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationException;
@@ -60,28 +63,27 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
     private final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
 
     /** An array of authentication handlers. */
-    private AuthenticationHandler[] authenticationHandlers;
+    private List<AuthenticationHandler> authenticationHandlers;
 
     /** An array of CredentialsToPrincipalResolvers. */
-    private CredentialsToPrincipalResolver[] credentialsToPrincipalResolvers;
+    private List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers;
 
     /** An array of AuthenticationAttributesPopulators. */
-    private AuthenticationMetaDataPopulator[] authenticationMetaDataPopulators;
+    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators;
 
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
         boolean foundSupported = false;
         boolean authenticated = false;
 
-        for (int i = 0; i < this.authenticationHandlers.length; i++) {
-            if (this.authenticationHandlers[i].supports(credentials)) {
+        for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
+            if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
-                if (!this.authenticationHandlers[i].authenticate(credentials)) {
+                if (!authenticationHandler.authenticate(credentials)) {
                     if (log.isInfoEnabled()) {
                         log
                             .info("AuthenticationHandler: "
-                                + this.authenticationHandlers[i].getClass()
-                                    .getName()
+                                + authenticationHandler.getClass().getName()
                                 + " failed to authenticate the user which provided the following credentials: "
                                 + credentials.toString());
                     }
@@ -89,8 +91,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
                     if (log.isInfoEnabled()) {
                         log
                             .info("AuthenticationHandler: "
-                                + this.authenticationHandlers[i].getClass()
-                                    .getName()
+                                + authenticationHandler.getClass().getName()
                                 + " successfully authenticated the user which provided the following credentials: "
                                 + credentials.toString());
                     }
@@ -111,9 +112,9 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
         Authentication authentication = null;
         foundSupported = false;
 
-        for (int i = 0; i < this.credentialsToPrincipalResolvers.length; i++) {
-            if (this.credentialsToPrincipalResolvers[i].supports(credentials)) {
-                final Principal principal = this.credentialsToPrincipalResolvers[i]
+        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver : this.credentialsToPrincipalResolvers) {
+            if (credentialsToPrincipalResolver.supports(credentials)) {
+                final Principal principal = credentialsToPrincipalResolver
                     .resolvePrincipal(credentials);
                 foundSupported = true;
                 if (principal != null) {
@@ -138,8 +139,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
             throw UnsupportedCredentialsException.ERROR;
         }
 
-        for (int i = 0; i < this.authenticationMetaDataPopulators.length; i++) {
-            authentication = this.authenticationMetaDataPopulators[i]
+        for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator : this.authenticationMetaDataPopulators) {
+            authentication = authenticationMetaDataPopulator
                 .populateAttributes(authentication, credentials);
         }
 
@@ -154,7 +155,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
             "credentialsToPrincipalResolvers is a required property.");
 
         if (this.authenticationMetaDataPopulators == null) {
-            this.authenticationMetaDataPopulators = new AuthenticationMetaDataPopulator[0];
+            this.authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
         }
     }
 
@@ -162,7 +163,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
      * @param authenticationHandlers The authenticationHandlers to set.
      */
     public void setAuthenticationHandlers(
-        final AuthenticationHandler[] authenticationHandlers) {
+        final List<AuthenticationHandler> authenticationHandlers) {
         this.authenticationHandlers = authenticationHandlers;
     }
 
@@ -171,7 +172,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
      * credentialsToPrincipalResolvers to set.
      */
     public void setCredentialsToPrincipalResolvers(
-        final CredentialsToPrincipalResolver[] credentialsToPrincipalResolvers) {
+        final List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers) {
         this.credentialsToPrincipalResolvers = credentialsToPrincipalResolvers;
     }
 
@@ -180,7 +181,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
      * authenticationMetaDataPopulators to set.
      */
     public void setAuthenticationMetaDataPopulators(
-        final AuthenticationMetaDataPopulator[] authenticationMetaDataPopulators) {
+        final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators) {
         this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
     }
 }

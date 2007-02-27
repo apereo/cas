@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -47,7 +49,7 @@ public class AuthenticationViaFormAction extends FormAction {
     /** Core we delegate to for handling all ticket related tasks. */
     private CentralAuthenticationService centralAuthenticationService;
 
-    private ArgumentExtractor[] argumentExtractors;
+    private List<ArgumentExtractor> argumentExtractors;
 
     private CookieGenerator warnCookieGenerator;
 
@@ -147,7 +149,7 @@ public class AuthenticationViaFormAction extends FormAction {
     }
 
     public final void setArgumentExtractors(
-        final ArgumentExtractor[] argumentExtractors) {
+        final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
 

@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.event;
 
+import java.util.List;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -31,16 +33,14 @@ public final class EventListener implements ApplicationListener,
     InitializingBean {
 
     /** The array of event handlers. */
-    private EventHandler[] eventHandlers;
+    private List<EventHandler> eventHandlers;
 
     public void onApplicationEvent(final ApplicationEvent applicationEvent) {
         if (!AbstractEvent.class.isAssignableFrom(applicationEvent.getClass())) {
             return;
         }
 
-        for (int i = 0; i < this.eventHandlers.length; i++) {
-            final EventHandler eventHandler = this.eventHandlers[i];
-
+        for (final EventHandler eventHandler : this.eventHandlers) {
             if (eventHandler.supports(applicationEvent)) {
                 eventHandler.handleEvent(applicationEvent);
             }
@@ -57,7 +57,7 @@ public final class EventListener implements ApplicationListener,
      * 
      * @param eventHandlers the handlers.
      */
-    public void setEventHandlers(final EventHandler[] eventHandlers) {
+    public void setEventHandlers(final List<EventHandler> eventHandlers) {
         this.eventHandlers = eventHandlers;
     }
 }

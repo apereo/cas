@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.List;
+
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.util.Assert;
 import org.springframework.webflow.engine.ViewSelector;
@@ -22,10 +24,10 @@ import org.springframework.webflow.execution.support.ExternalRedirect;
  */
 public final class DynamicRedirectViewSelector implements ViewSelector {
 
-    private final ArgumentExtractor[] argumentExtractors;
+    private final List<ArgumentExtractor> argumentExtractors;
 
     public DynamicRedirectViewSelector(
-        final ArgumentExtractor[] argumentExtractors) {
+        final List<ArgumentExtractor> argumentExtractors) {
         Assert
             .notNull(argumentExtractors, "argumentExtractors cannot be null.");
         this.argumentExtractors = argumentExtractors;
@@ -40,15 +42,14 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
     }
 
     public ViewSelection makeEntrySelection(final RequestContext request) {
-        for (int i = 0; i < this.argumentExtractors.length; i++) {
-            final String url = this.argumentExtractors[i]
+        for (final ArgumentExtractor argumentExtractor : this.argumentExtractors) {
+            final String url = argumentExtractor
                 .constructUrlForRedirect(request);
 
             if (url != null) {
                 return new ExternalRedirect(url);
             }
         }
-
         return null;
     }
 }
