@@ -24,7 +24,7 @@ public final class HttpBasedServiceCredentialsToPrincipalResolver implements
     public Principal resolvePrincipal(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
 
-        return WebApplicationService.createServiceFrom(serviceCredentials.toString());
+        return SimpleWebApplicationServiceImpl.createServiceFrom(serviceCredentials.toString());
     }
 
     /**

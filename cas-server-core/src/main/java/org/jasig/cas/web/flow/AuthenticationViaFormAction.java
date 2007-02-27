@@ -75,8 +75,7 @@ public class AuthenticationViaFormAction extends FormAction {
         final String ticketGrantingTicketIdFromCookie = WebUtils
             .getCookieValue(request, this.ticketGrantingTicketCookieGenerator
                 .getCookieName());
-        final Service service = WebUtils.getService(this.argumentExtractors,
-            WebUtils.getHttpServletRequest(context));
+        final Service service = WebUtils.getService(context);
 
         if (StringUtils.hasText(request.getParameter("renew"))
             && ticketGrantingTicketIdFromCookie != null && service != null) {

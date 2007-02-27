@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -198,7 +198,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
                 "TEST" + i, getAuthentication(),
                 new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket(
-                "tests" + i, WebApplicationService.createServiceFrom("test"),
+                "tests" + i, SimpleWebApplicationServiceImpl.createServiceFrom("test"),
                 new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);

@@ -7,7 +7,7 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -28,7 +28,7 @@ public interface ArgumentExtractor {
      * @param context the request context.
      * @return the fully formed Service or null if it could not be found.
      */
-    Service extractService(RequestContext context);
+    WebApplicationService extractService(RequestContext context);
 
     /**
      * Retrieve the ticket from the request context.
@@ -37,16 +37,6 @@ public interface ArgumentExtractor {
      * @return the ticket or null if it could not be found.
      */
     String extractTicketArtifact(RequestContext context);
-
-    /**
-     * Constructs the URL to redirect to after the generation of the service
-     * ticket.
-     * 
-     * @param context the request context
-     * @return The fully qualified URL if one can be constructed. Otherwise,
-     * return null.
-     */
-    String constructUrlForRedirect(RequestContext context);
 
     /**
      * Retrieve the ticket from the request.
@@ -62,19 +52,5 @@ public interface ArgumentExtractor {
      * @param request the request context.
      * @return the fully formed Service or null if it could not be found.
      */
-    Service extractService(HttpServletRequest request);
-    
-    /**
-     * Retrieve the parameter used to represent the service.
-     * 
-     * @return the parameter representing the service.
-     */
-    String getServiceParameterName();
-
-    /**
-     * Retrieve the parameter used to represent the artifact.
-     * 
-     * @return the parameter representing the artifact.
-     */
-     String getArtifactParameterName();
+    WebApplicationService extractService(HttpServletRequest request);
 }
