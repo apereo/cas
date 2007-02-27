@@ -139,7 +139,7 @@ public class ServiceValidateController extends AbstractController implements
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
-        final String serviceTicketId = service.getArtifactId();
+        final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null
             || serviceTicketId == null) {
