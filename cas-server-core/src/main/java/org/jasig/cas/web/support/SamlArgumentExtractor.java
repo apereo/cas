@@ -22,8 +22,4 @@ public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
     public WebApplicationService extractService(final HttpServletRequest request) {
         return SamlService.createServiceFrom(request);
     }
-
-    protected String getArtifactParameterName() {
-        return SamlService.getArtifactParameterName();
-    }
 }

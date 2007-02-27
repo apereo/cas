@@ -31,22 +31,6 @@ public interface ArgumentExtractor {
     WebApplicationService extractService(RequestContext context);
 
     /**
-     * Retrieve the ticket from the request context.
-     * 
-     * @param context the request context.
-     * @return the ticket or null if it could not be found.
-     */
-    String extractTicketArtifact(RequestContext context);
-
-    /**
-     * Retrieve the ticket from the request.
-     * 
-     * @param request the request.
-     * @return the ticket or null if it could not be found.
-     */
-    String extractTicketArtifact(HttpServletRequest request);
-
-    /**
      * Retrieve the service from the request.
      * 
      * @param request the request context.

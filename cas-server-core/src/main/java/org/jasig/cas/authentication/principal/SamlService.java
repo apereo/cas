@@ -28,35 +28,33 @@ public final class SamlService extends AbstractWebApplicationService {
 
     /** Constant representing artifact. */
     private static final String CONST_PARAM_TICKET = "SAMLart";
-    
+
     /**
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
-    
-    protected SamlService(final String id, final String originalUrl) {
-        super(id, originalUrl);
+    public SamlService(final String id) {
+        super(id, id, null);
     }
-    
-    public static WebApplicationService createServiceFrom(final HttpServletRequest request) {
+
+    protected SamlService(final String id, final String originalUrl,
+        final String artifactId) {
+        super(id, originalUrl, artifactId);
+    }
+
+    public static WebApplicationService createServiceFrom(
+        final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
 
         if (!StringUtils.hasText(service)) {
             return null;
         }
-        
+
         final String id = cleanupUrl(service);
-        
-        return new SamlService(id, service);
-    }
-    
-    public static final String getArtifactParameterName() {
-        return CONST_PARAM_TICKET;
-    }
-    
-    public static final String getServiceParameterName() {
-        return CONST_PARAM_SERVICE;
+        final String artifactId = request.getParameter(CONST_PARAM_TICKET);
+
+        return new SamlService(id, service, artifactId);
     }
 
     public String getRedirectUrl(final String ticketId) {

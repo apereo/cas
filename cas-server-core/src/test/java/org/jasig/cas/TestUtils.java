@@ -111,7 +111,7 @@ public final class TestUtils {
     }
 
     public static Service getService(final String name) {
-        return SimpleWebApplicationServiceImpl.createServiceFrom(name);
+        return new SimpleWebApplicationServiceImpl(name);
     }
 
     public static Authentication getAuthentication() {

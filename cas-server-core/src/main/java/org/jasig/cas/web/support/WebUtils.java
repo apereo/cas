@@ -80,21 +80,6 @@ public final class WebUtils {
         return (WebApplicationService) context.getFlowScope().get("service");
     }
 
-    public static final String getTicket(
-        final List<ArgumentExtractor> argumentExtractors,
-        final HttpServletRequest request) {
-        for (final ArgumentExtractor argumentExtractor : argumentExtractors) {
-            final String ticket = argumentExtractor
-                .extractTicketArtifact(request);
-
-            if (ticket != null) {
-                return ticket;
-            }
-        }
-
-        return null;
-    }
-
     public static final void putTicketGrantingTicketInRequestScope(
         final RequestContext context, final String ticketValue) {
         context.getRequestScope().put("ticketGrantingTicketId", ticketValue);

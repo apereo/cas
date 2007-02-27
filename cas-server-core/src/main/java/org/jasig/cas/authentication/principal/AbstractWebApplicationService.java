@@ -21,14 +21,20 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     /** The original url provided, used to reconstruct the redirect url. */
     private final String originalUrl;
 
+    private final String artifactId;
     
-    protected AbstractWebApplicationService(final String id, final String originalUrl) {
+    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;
         this.originalUrl = originalUrl;
+        this.artifactId = artifactId;
     }
     
-    public String getId() {
+    public final String getId() {
         return this.id;
+    }
+    
+    public final String getArtifactId() {
+        return this.artifactId;
     }
     
     protected static final String cleanupUrl(final String url) {
@@ -48,7 +54,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             + url.substring(questionMarkPosition);
     }
     
-    protected String getOriginalUrl() {
+    protected final String getOriginalUrl() {
         return this.originalUrl;
     }
 

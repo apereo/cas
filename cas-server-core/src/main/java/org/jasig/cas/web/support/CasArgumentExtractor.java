@@ -22,8 +22,4 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
     public final WebApplicationService extractService(final HttpServletRequest request) {
         return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
-
-    protected String getArtifactParameterName() {
-        return SimpleWebApplicationServiceImpl.getArtifactParameterName();
-    }
 }

@@ -28,34 +28,27 @@ public final class SimpleWebApplicationServiceImpl extends
      */
     private static final long serialVersionUID = 8334068957483758042L;
 
+    public SimpleWebApplicationServiceImpl(final String id) {
+        super(id, id, null);
+    }
+    
     private SimpleWebApplicationServiceImpl(final String id,
-        final String originalUrl) {
-        super(id, originalUrl);
+        final String originalUrl, final String artifactId) {
+        super(id, originalUrl, artifactId);
     }
 
     public static WebApplicationService createServiceFrom(
         final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
 
-        return createServiceFrom(service);
-    }
-
-    public static final String getArtifactParameterName() {
-        return CONST_PARAM_TICKET;
-    }
-
-    public static final String getServiceParameterName() {
-        return CONST_PARAM_SERVICE;
-    }
-
-    public static WebApplicationService createServiceFrom(final String service) {
         if (!StringUtils.hasText(service)) {
             return null;
         }
 
         final String id = cleanupUrl(service);
+        final String artifactId = request.getParameter(CONST_PARAM_TICKET);
 
-        return new SimpleWebApplicationServiceImpl(id, service);
+        return new SimpleWebApplicationServiceImpl(id, service, artifactId);
     }
 
     public String getRedirectUrl(final String ticketId) {
