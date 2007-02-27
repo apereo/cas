@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.adaptors.trusted.web.flow;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,8 +51,8 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests
 
         final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();
    
-        authenticationManager.setAuthenticationHandlers(new AuthenticationHandler[] {new PrincipalBearingCredentialsAuthenticationHandler()});
-        authenticationManager.setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new PrincipalBearingCredentialsToPrincipalResolver()});
+        authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {new PrincipalBearingCredentialsAuthenticationHandler()}));
+        authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new PrincipalBearingCredentialsToPrincipalResolver()}));
         authenticationManager.afterPropertiesSet();
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());

@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.web.support;
 
+import java.util.List;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,11 +63,10 @@ public final class WebUtils {
     }
 
     public static final Service getService(
-        final ArgumentExtractor[] argumentExtractors,
+        final List<ArgumentExtractor> argumentExtractors,
         final HttpServletRequest request) {
-        for (int i = 0; i < argumentExtractors.length; i++) {
-            final Service service = argumentExtractors[i]
-                .extractService(request);
+        for (final ArgumentExtractor argumentExtractor : argumentExtractors) {
+            final Service service = argumentExtractor.extractService(request);
 
             if (service != null) {
                 return service;
@@ -74,16 +75,16 @@ public final class WebUtils {
 
         return null;
     }
-    
+
     public static final Service getService(final RequestContext context) {
         return (Service) context.getFlowScope().get("service");
     }
 
     public static final String getTicket(
-        final ArgumentExtractor[] argumentExtractors,
+        final List<ArgumentExtractor> argumentExtractors,
         final HttpServletRequest request) {
-        for (int i = 0; i < argumentExtractors.length; i++) {
-            final String ticket = argumentExtractors[i]
+        for (final ArgumentExtractor argumentExtractor : argumentExtractors) {
+            final String ticket = argumentExtractor
                 .extractTicketArtifact(request);
 
             if (ticket != null) {

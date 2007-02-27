@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.services.web;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,7 +36,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     /** The ServiceRegistry to look up the service. */
     private ServiceRegistry serviceRegistry;
 
-    private ArgumentExtractor[] argumentExtractors;
+    private List<ArgumentExtractor> argumentExtractors;
 
     public String resolveThemeName(final HttpServletRequest request) {
         if (this.serviceRegistry == null) {
@@ -61,7 +63,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     }
 
     public void setArgumentExtractors(
-        final ArgumentExtractor[] argumentExtractors) {
+        final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
 }

@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.Arrays;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -60,7 +62,7 @@ public class AuthenticationViaFormActionTests extends
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
 
         this.action
-            .setArgumentExtractors(new ArgumentExtractor[] {new CasArgumentExtractor()});
+            .setArgumentExtractors(Arrays.asList(new ArgumentExtractor[] {new CasArgumentExtractor()}));
         this.action.afterPropertiesSet();
     }
 

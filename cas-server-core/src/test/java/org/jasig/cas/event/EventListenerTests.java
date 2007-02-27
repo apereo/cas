@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.event;
 
+import java.util.Arrays;
+
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.event.handlers.TestEventHandler;
@@ -27,7 +29,7 @@ public class EventListenerTests extends TestCase {
         this.eventListener = new EventListener();
 
         this.eventListener
-            .setEventHandlers(new EventHandler[] {new TestEventHandler()});
+            .setEventHandlers(Arrays.asList(new EventHandler[] {new TestEventHandler()}));
 
         this.eventListener.afterPropertiesSet();
     }
@@ -52,7 +54,7 @@ public class EventListenerTests extends TestCase {
             AuthenticationHandler.class);
 
         this.eventListener
-            .setEventHandlers(new EventHandler[] {new MockEventHandler()});
+            .setEventHandlers(Arrays.asList(new EventHandler[] {new MockEventHandler()}));
 
         this.eventListener.onApplicationEvent(e);
     }

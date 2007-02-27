@@ -162,7 +162,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
                                     + CredentialsToLDAPAttributePrincipalResolver.this.principalAttributeName
                                     + "\" from result.");
                         }
-                        Attribute attribute = attrs
+                        final Attribute attribute = attrs
                             .get(CredentialsToLDAPAttributePrincipalResolver.this.principalAttributeName);
 
                         if (attribute == null) {

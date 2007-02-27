@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -25,7 +27,7 @@ import org.springframework.webflow.execution.RequestContext;
 public final class ExtractServiceAction extends AbstractAction {
 
     /** Extractors for finding the service. */
-    private ArgumentExtractor[] argumentExtractors;
+    private List<ArgumentExtractor> argumentExtractors;
     
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -40,7 +42,7 @@ public final class ExtractServiceAction extends AbstractAction {
         return success();   
     }
 
-    public void setArgumentExtractors(final ArgumentExtractor[] argumentExtractors) {
+    public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     } 
 }

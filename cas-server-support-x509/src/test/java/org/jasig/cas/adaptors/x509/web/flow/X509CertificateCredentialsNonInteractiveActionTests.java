@@ -6,6 +6,7 @@
 package org.jasig.cas.adaptors.x509.web.flow;
 
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,8 +51,8 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         a.setTrustedIssuerDnPattern("JA-SIG");
         a.afterPropertiesSet();
         
-        authenticationManager.setAuthenticationHandlers(new AuthenticationHandler[] {a});
-        authenticationManager.setCredentialsToPrincipalResolvers(new CredentialsToPrincipalResolver[] {new X509CertificateCredentialsToSerialNumberPrincipalResolver()});
+        authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {a}));
+        authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new X509CertificateCredentialsToSerialNumberPrincipalResolver()}));
         authenticationManager.afterPropertiesSet();
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
