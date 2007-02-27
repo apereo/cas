@@ -13,10 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -157,9 +159,10 @@ public class AuthenticationViaFormActionTests extends
         request.addParameter("service", "test");
         request.addParameter("username", "test");
         request.addParameter("password", "test");
-
+        
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
+        context.getFlowScope().put("service", new SimpleWebApplicationServiceImpl("test"));
         this.action.bind(context);
         assertEquals("warn", this.action.submit(context).getId());
     }
