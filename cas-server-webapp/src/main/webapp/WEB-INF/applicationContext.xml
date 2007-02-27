@@ -66,10 +66,7 @@
 			name="uniqueTicketIdGeneratorsForService">
 				<map>
 					<entry
-						key="org.jasig.cas.authentication.principal.WebApplicationService"
-						value-ref="serviceTicketUniqueIdGenerator" />
-					<entry
-						key="org.jasig.cas.authentication.principal.SimpleService"
+						key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
 						value-ref="serviceTicketUniqueIdGenerator" />
 					<entry
 						key="org.jasig.cas.authentication.principal.SamlService"

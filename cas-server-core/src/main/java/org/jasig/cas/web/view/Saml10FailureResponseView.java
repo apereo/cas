@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.opensaml.SAMLException;
 import org.opensaml.SAMLResponse;
@@ -32,11 +32,11 @@ public class Saml10FailureResponseView extends AbstractCasView {
     protected void renderMergedOutputModel(final Map model,
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final Service service = this.samlArgumentExtractor.extractService(
+        final WebApplicationService service = this.samlArgumentExtractor.extractService(
             request);
 
         final SAMLResponse samlResponse = new SAMLResponse(
-            this.samlArgumentExtractor.extractTicketArtifact(request), service != null ? service.getId() : null, new ArrayList<Object>(), new SAMLException("Success"));
+            service.getArtifactId(), service.getId(), new ArrayList<Object>(), new SAMLException("Success"));
         samlResponse.setIssueInstant(new Date());
 
         response.getWriter().print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

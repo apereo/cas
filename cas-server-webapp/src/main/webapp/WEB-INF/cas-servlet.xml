@@ -247,8 +247,5 @@ uncomment this to allow access to web service
 		p:cookieName="CASTGC"
 		p:cookiePath="/cas" />
 	
-	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector">
-		<constructor-arg index="0"
-			ref="argumentExtractors" />
-	</bean>
+	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector" />
 </beans>

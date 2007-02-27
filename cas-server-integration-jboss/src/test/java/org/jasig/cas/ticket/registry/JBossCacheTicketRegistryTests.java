@@ -198,7 +198,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
                 "TEST" + i, getAuthentication(),
                 new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket(
-                "tests" + i, SimpleWebApplicationServiceImpl.createServiceFrom("test"),
+                "tests" + i, new SimpleWebApplicationServiceImpl("test"),
                 new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);

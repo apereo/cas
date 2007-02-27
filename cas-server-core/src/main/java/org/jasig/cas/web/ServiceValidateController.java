@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
@@ -138,8 +138,8 @@ public class ServiceValidateController extends AbstractController implements
     protected final ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final Service service = this.argumentExtractor.extractService(request);
-        final String serviceTicketId = this.argumentExtractor.extractTicketArtifact(request);
+        final WebApplicationService service = this.argumentExtractor.extractService(request);
+        final String serviceTicketId = service.getArtifactId();
 
         if (service == null
             || serviceTicketId == null) {

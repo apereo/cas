@@ -21,4 +21,11 @@ public interface WebApplicationService extends Service {
      * @return the redirect url.
      */
     String getRedirectUrl(String ticketId);
+
+    /**
+     * Retrieves the artifact supplied with the service. May be null.
+     * 
+     * @return the artifact if it exists, null otherwise.
+     */
+    String getArtifactId();
 }

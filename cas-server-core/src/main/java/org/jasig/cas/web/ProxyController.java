@@ -85,7 +85,7 @@ public final class ProxyController extends AbstractController implements
 
     private Service getTargetService(final HttpServletRequest request) {
         final String targetService = request.getParameter("targetService");
-        return SimpleWebApplicationServiceImpl.createServiceFrom(targetService);
+        return new SimpleWebApplicationServiceImpl(targetService);
     }
 
     private ModelAndView generateErrorView(final String code,
