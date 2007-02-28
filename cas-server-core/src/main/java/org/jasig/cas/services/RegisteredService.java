@@ -36,13 +36,6 @@ public interface RegisteredService {
     List<String> getAllowedAttributes();
 
     /**
-     * Is this application allowed to see all current and future attributes?
-     * 
-     * @return true if it can, false otherwise.
-     */
-    boolean isAllowedToSeeAllAttributes();
-
-    /**
      * Is this application allowed to take part in the proxying capabilities of
      * CAS?
      * 

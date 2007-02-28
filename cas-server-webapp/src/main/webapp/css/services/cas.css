@@ -1,0 +1,230 @@
+body {
+	font:normal 62.5%/1.5 Arial,Helvetica,Verdana,sans-serif;
+	margin:0;
+	padding:0;
+	border:0;
+	}
+
+* {font-size:1em;}
+
+form {
+	float:left;
+	margin:0 1%;
+	padding:0;
+	width:77%;
+	}
+
+button {font-size:1em;}
+
+.primaryAction {
+	padding:.5em;
+	color:green;
+	font-weight:900;
+	}
+
+table {
+	border:0;
+	border-collapse:collapse;
+	empty-cells:show;
+	background-color:#fff;
+	font-size:1.1em;
+	}
+
+.large {width:100%;}
+
+th	{
+	background:#eee;
+	color:#666;
+	padding:3px 5px;
+	text-align:left;
+	font-weight:normal;
+	}
+
+td	{
+	padding:3px 5px;
+	border-bottom:1px solid #eee;
+	}
+
+td a {
+	padding-left:35px;
+	text-decoration: none;
+	display:block;
+	line-height:32px;
+	color:#c1c1c0;
+	font-weight:900;
+	}
+td a.edit {background:#fff url(../../images/services/edit_service.gif) no-repeat left center;}
+td a.del {background:#fff url(../../images/services/delete_service.gif) no-repeat left center;}
+td a:hover {
+	color:#b00;
+	}
+
+#navcontainer {
+	float:left;
+	margin:0 1%;
+	padding:0;
+	width:18%;
+	}
+
+#navlist {
+	padding:1px 0;
+	margin:0;
+	font:400 1.1em Verdana, sans-serif;
+	background:#fff;
+	}
+
+#navlist li {
+	list-style:none;
+	margin:0;
+	border-top:1px solid #eee;
+	text-align:left;
+	}
+
+#navlist li a {
+	display:block;
+	padding:0.5em 0.5em 0.5em .5em;
+	text-decoration:none;
+	background:#fff;
+	}
+
+#navlist li a:link {color:#555;}
+#navlist li a:visited {color:#c67;}
+
+#navlist li a:hover {
+	color:#b00;
+	background:#fff url(../../images/services/arrow-right.gif) no-repeat right center;
+	}
+
+#navlist li a.active,
+#navlist li span {
+	color:#000;
+	margin:0;
+	border:1px solid #000;
+	border-bottom:0;
+	padding:0.5em;
+	background:#eee url(../../images/services/arrow-right.gif) no-repeat right center;
+	}
+
+#navlist li span {display:block;}
+
+#navlist ul {background:#eee; margin:0; padding:0; border:1px solid #000; border-top:0;}
+#navlist ul li {padding-left:1.5em; background:url(../../images/services/arrow-down.gif) no-repeat .5em center;}
+
+#navlist ul li,
+#navlist ul li span {border:0;}
+
+#navlist ul li a {background:#eee; border:0;}
+
+
+/*--------------------------------------------------------------------*/
+	p.instructions {
+		margin:1em 0;
+		padding:5px 0 5px 2em;
+		font-size:1.2em;
+		background:transparent url(../../images/services/info.gif) no-repeat left center;
+		}
+
+	fieldset {
+		padding:15px 10px;
+		background-color:#fafafa;
+		margin:20px 0;
+		position:relative;
+		border:1px solid #ddd;
+		}
+
+	fieldset fieldset  {
+		border: 1px solid #ccc;
+		background-color:#fff;
+		}
+
+	legend {
+		padding:2px 5px;
+		color:#b00;
+		font-size:1.3em;
+		font-weight:900;
+		background:#fff;
+		}
+
+	fieldset fieldset legend {
+		color:#444;
+		font-size:1.1em;
+		background:#fafafa;
+		}
+
+	label.preField, .label {
+		display:block;
+		width:8em;
+		float:left;
+		font-size:1.1em;
+		}
+
+	label.top {
+		float:none;
+		width:auto;
+		margin-left:.5em;
+		}
+
+	label.postField {
+		margin-right:1em;
+		font-size:1.1em;
+		vertical-align:bottom;
+		}
+
+	.noBorder,
+	.check,
+	.radio {border:0;}
+
+	input,
+	textarea,
+	select {
+		border:1px solid #ccc;
+		border-color:#999 #eee #eee #999;
+		padding:2px;
+		}
+
+	input {
+		margin-left:.5em;
+		font-size:1.1em;
+		vertical-align:top;
+		}
+
+	span.oneField {
+		display:block;
+		margin:.5em 0;
+		padding:0;
+		}
+
+		span a {
+			display:-moz-inline-box;
+			text-decoration: none;
+			padding-left:10px;
+			color:#c1c1c0;
+			font-weight:900;
+			font-size:1.2em;
+			vertical-align:middle;
+			margin-left:.5em;
+			}
+
+		span a:hover {color:#b00;}
+
+		div a.edit {background:#fff url(../../images/services/edit.gif) no-repeat left center;}
+
+		span a.del {
+			padding:5px 0 5px 25px;
+			background:#fff url(../../images/services/delete.gif) no-repeat left center;
+			}
+
+		span a.undo {
+			padding:5px 20px 5px 5px;
+			background:#fff url(../../images/services/undo.gif) no-repeat 100% 0;
+			}
+
+		span a.undo:hover {
+			background-position:100% -32px;
+			color:#0c0;
+			}
+
+		input.deleted {
+			color:#ccc;
+			background:#f2f2f2;"
+			}

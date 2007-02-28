@@ -31,8 +31,6 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     private boolean allowedToProxy = true;
 
-    private boolean allowedToSeeAllAttributes = true;
-
     private boolean enabled = true;
 
     private boolean ssoEnabled = true;
@@ -65,10 +63,6 @@ public class RegisteredServiceImpl implements RegisteredService {
         return this.allowedToProxy;
     }
 
-    public boolean isAllowedToSeeAllAttributes() {
-        return this.allowedToSeeAllAttributes;
-    }
-
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -93,6 +87,7 @@ public class RegisteredServiceImpl implements RegisteredService {
         return service.getId().equals(this.id);
     }
 
+    // XXX use matches?
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -112,11 +107,6 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     public void setAllowedToProxy(final boolean allowedToProxy) {
         this.allowedToProxy = allowedToProxy;
-    }
-
-    public void setAllowedToSeeAllAttributes(
-        final boolean allowedToSeeAllAttributes) {
-        this.allowedToSeeAllAttributes = allowedToSeeAllAttributes;
     }
 
     public void setDescription(final String description) {
