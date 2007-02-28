@@ -75,6 +75,11 @@
 					key="/samlValidate">
 					samlValidateController
 				</prop>
+				<prop
+					key="/services/add.html">
+					addRegisteredServiceSimpleFormController
+				</prop>
+					
 				<!--
 				uncomment this to enable remote access to web service 
 				<prop
@@ -248,4 +253,12 @@ uncomment this to allow access to web service
 		p:cookiePath="/cas" />
 	
 	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector" />
+	
+	<bean id="addRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.AddRegisteredServiceSimpleFormController"
+		p:formView="addServiceView"
+		p:successView="addServiceView"
+		p:commandClass="org.jasig.cas.services.RegisteredServiceImpl"
+		p:commandName="registeredService">
+		<constructor-arg index="0" ref="serviceRegistry" />
+	</bean>
 </beans>
