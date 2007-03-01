@@ -1,4 +1,5 @@
 <%@ page language="java"  session="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -26,6 +27,18 @@
 		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Link1</a></li
 	></ul>
 </div>
+
+SUCCESS MESSAGE:	${successMessage}<br />
+
+		<spring:hasBindErrors name="registeredService">
+			<div id="errors">
+				<ul>
+		  <c:forEach var="error" items="${errors.allErrors}">
+		      <li><spring:message code="${error.code}" text="${error.defaultMessage}" /></li>
+		  </c:forEach>
+		  </ul>
+		  </div>
+		</spring:hasBindErrors>
 
 <form:form action="add.html" cssClass="v" cssStyle="width:75%;" commandName="registeredService">
 	<fieldset class="repeat"><legend>Add New Service</legend>
@@ -87,6 +100,5 @@
 		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes">Save Changes</button> or <a href="" style="color:#b00;">Cancel</a>
 	</div>
 </form:form>
-
 </body>
 </html>
