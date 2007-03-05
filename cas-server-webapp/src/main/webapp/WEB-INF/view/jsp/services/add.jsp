@@ -1,46 +1,16 @@
-<%@ page language="java"  session="false" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<title>CAS Admin Edit Form</title>
-	<link href="../css/services/cas.css" type="text/css" rel="stylesheet" media="all" />
-	<!--[if lte IE 6]><link href="../css/services/ieFix.css" type="text/css" rel="stylesheet" media="all" /><![endif]-->
-</head>
-<body>
-<h3><span>Edit Registered Service</span></h3>
+<%@include file="includes/top.jsp"%>
 
-<div id="navcontainer">
-	<p>sidebar</p>
-	<ul id="navlist"
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Link1</a></li
-		><li><span>Registered Services</span
-			><ul
-				><li><a href="">Edit</a></li
-				><li><span>Something</span></li
-			></ul
-		></li
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Edit Services</a></li
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Link1</a></li
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Link1</a></li
-	></ul>
-</div>
+<form:form action="add.html" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
 
-SUCCESS MESSAGE:	${successMessage}<br />
+		<c:if test="${not empty successMessage}">
+			<div id="msg" class="info">${successMessage}</div>
+		</c:if>
 
-		<spring:hasBindErrors name="registeredService">
-			<div id="errors">
-				<ul>
-		  <c:forEach var="error" items="${errors.allErrors}">
-		      <li><spring:message code="${error.code}" text="${error.defaultMessage}" /></li>
-		  </c:forEach>
-		  </ul>
-		  </div>
+		<spring:hasBindErrors name="${commandName}">
+			<div id="status" class="errors">
+			Please correct the errors below:
+		</div>
 		</spring:hasBindErrors>
-
-<form:form action="add.html" cssClass="v" cssStyle="width:75%;" commandName="registeredService">
 	<fieldset class="repeat"><legend>Add New Service</legend>
 		<p class="instructions">Please make sure to commit your changes by clicking on the Save Changes button at the bottom of the page</p>
 		<span class="oneField" style="display:block; margin:5px 0;">
@@ -90,15 +60,12 @@ SUCCESS MESSAGE:	${successMessage}<br />
 			<br/>
 		</span>
 			
-			<span class="oneField"><label class="preField ieFix" style="float:left;">Attributes</label>
-		<fieldset style="background:#ffc; margin-left:.5em;">
+		<span class="oneField"><label class="preField ieFix" style="float:left;">Attributes</label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
-		</fieldset>
 		</span>
 	</fieldset>
 	<div class="actions">
 		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes">Save Changes</button> or <a href="" style="color:#b00;">Cancel</a>
 	</div>
 </form:form>
-</body>
-</html>
+<%@include file="includes/bottom.jsp" %>

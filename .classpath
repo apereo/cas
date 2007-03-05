@@ -48,5 +48,7 @@
 	<classpathentry kind="var" path="M2_REPO/trove/trove/1.0.2/trove-1.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar"/>
 	<classpathentry kind="var" path="M2_REPO/cas/cas/2.0.12/cas-2.0.12.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/taglibs/standard/1.1.2/standard-1.1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
