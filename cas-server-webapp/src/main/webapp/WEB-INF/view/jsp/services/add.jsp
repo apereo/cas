@@ -21,9 +21,9 @@
 		</span>
 		
 		<span class="oneField">
-			<label for="id" class="preField">Id</label>
-			<form:input path="id" size="55" cssClass="required" cssErrorClass="error" />
-			<form:errors path="id" />
+			<label for="serviceId" class="preField">Id</label>
+			<form:input path="serviceId" size="55" cssClass="required" cssErrorClass="error" />
+			<form:errors path="serviceId" />
 			<br />
 		</span>
 		

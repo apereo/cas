@@ -61,7 +61,7 @@ public class AddRegisteredServiceSimpleFormController extends
 
     protected void initBinder(final HttpServletRequest request,
         final ServletRequestDataBinder binder) throws Exception {
-        binder.setRequiredFields(new String[] {"description", "id", "name", "allowedToProxy", "enabled", "ssoEnabled"});
+        binder.setRequiredFields(new String[] {"description", "serviceId", "name", "allowedToProxy", "enabled", "ssoEnabled"});
     }
 
     protected Map referenceData(final HttpServletRequest request) throws Exception {
