@@ -228,3 +228,18 @@ td a:hover {
 			color:#ccc;
 			background:#f2f2f2;"
 			}
+			
+/* Added by Scott */
+.highlightTop {
+border-left: 2px solid red;
+border-right: 2px solid red;
+border-top: 2px solid red;
+background-color: grey;
+}
+
+.highlightBottom {
+border-left: 2px solid red;
+border-right: 2px solid red;
+border-bottom: 2px solid red;
+background-color: grey;
+}

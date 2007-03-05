@@ -79,6 +79,11 @@
 					key="/services/add.html">
 					addRegisteredServiceSimpleFormController
 				</prop>
+				
+				<prop
+					key="/services/manage.html">
+					manageServicesController
+				</prop>
 					
 				<!--
 				uncomment this to enable remote access to web service 
@@ -259,6 +264,10 @@ uncomment this to allow access to web service
 		p:successView="addServiceView"
 		p:commandClass="org.jasig.cas.services.RegisteredServiceImpl"
 		p:commandName="registeredService">
+		<constructor-arg index="0" ref="serviceRegistry" />
+	</bean>
+	
+	<bean id="manageServicesController" class="org.jasig.cas.services.web.ManageServicesController">
 		<constructor-arg index="0" ref="serviceRegistry" />
 	</bean>
 </beans>

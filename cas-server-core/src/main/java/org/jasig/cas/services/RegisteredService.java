@@ -48,7 +48,9 @@ public interface RegisteredService {
      * 
      * @return the unique identifier for this service.
      */
-    String getId();
+    String getServiceId();
+    
+    long getId();
 
     /**
      * Returns the name of the service.

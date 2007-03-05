@@ -11,6 +11,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 /**
  * Implementation of the ServiceRegistry and ServiceRegistryManager interfaces.
@@ -31,6 +33,8 @@ public final class ServiceRegistryImpl implements
 
     /** Whether the registry is enabled or not. */
     private boolean enabled = true;
+    
+    private DataFieldMaxValueIncrementer dataFieldMaxValueIncrementer = new TestDataFieldMaxValueIncrementer();
 
     public RegisteredService findServiceBy(final Service service) {
         if (!this.enabled) {
@@ -66,6 +70,7 @@ public final class ServiceRegistryImpl implements
             this.services.remove(service);
         }
 
+        ((RegisteredServiceImpl) service).setId(this.dataFieldMaxValueIncrementer.nextLongValue());
         this.services.add(service);
 
         // TODO database persistance
@@ -90,7 +95,7 @@ public final class ServiceRegistryImpl implements
 
     public void setBootstrapService(final String serviceId) {
         final RegisteredServiceImpl registeredService = new RegisteredServiceImpl();
-        registeredService.setId(serviceId);
+        registeredService.setServiceId(serviceId);
         registeredService.setDescription("Default bootstrap service so we can log into the management application.");
         registeredService.setEnabled(true);
         registeredService.setMatchExactly(true);
@@ -98,5 +103,23 @@ public final class ServiceRegistryImpl implements
         registeredService.setSsoEnabled(true);
         
         this.services.add(registeredService);
+    }
+    
+    protected class TestDataFieldMaxValueIncrementer implements DataFieldMaxValueIncrementer {
+        
+        private int id = 0;
+
+        public int nextIntValue() throws DataAccessException {
+            return this.id++;
+        }
+
+        public long nextLongValue() throws DataAccessException {
+            return this.id++;
+        }
+
+        public String nextStringValue() throws DataAccessException {
+            return Integer.toString(this.id++);
+        }
+        
     }
 }

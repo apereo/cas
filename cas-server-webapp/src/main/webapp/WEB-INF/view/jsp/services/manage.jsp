@@ -1,4 +1,4 @@
-<%@include page="includes/top.jsp" %>
+<%@include file="includes/top.jsp"%>
 	<form id="" method="post" action="#">
 		<table cellspacing="0" class="large">
 			<thead>
@@ -6,7 +6,6 @@
 <!--			<th>Select</th> -->
 				<th>Service Name</th>
 				<th>ID</th>
-				<th>URL</th>
 				<th>Enabled</th>
 				<th>Allowed to Proxy</th>
 				<th>SSL Participant</th>
@@ -15,201 +14,33 @@
 			</tr>
 			</thead>
 			<tbody>
-			<tr>
-<!--			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
+			<c:forEach items="${services}" var="service">
+			<tr id="${service.id}"${param.action eq 'delete' and param.id eq service.id ? ' class="highlightTop"' : ''}>
+				<td>${service.name}</td>
+				<td>${service.id}</td>
+				<td>${service.enabled ? 'Yes' : 'No'}</td>
+				<td>${service.allowedToProxy ? 'Yes' : 'No'}</td>
+				<td>${service.ssoEnabled ? 'Yes' : 'No'}</td>
 				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
+					<select name="attributes">
+					<c:forEach items="${service.allowedAttributes}" var="attribute">
+					<option value="${attribute}">${attribute}</option>
+					</c:forEach>
 				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
+				<td><a href="manage.html?id=${service.id}" class="edit">edit</a></td>
+				<td><a href="manage.html?id=${service.id}&amp;action=delete#${service.id}" class="del">delete</a></td>
 			</tr>
-			<tr>
-<!-- 			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
-				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
-				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
-			</tr>
-			<tr>
-<!--			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
-				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
-				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
-			</tr>
-			<tr>
-<!--			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
-				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
-				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
-			</tr>
-			<tr>
-<!--			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
-				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
-				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
-			</tr>
-			<tr>
-<!--			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
-				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
-				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
-			</tr>
-			<tr>
-<!--			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
-				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
-				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
-			</tr>
-			<tr>
-<!--			<td><input type="checkbox" id="del1" name="del" value="123456789" /></td> -->
-				<td>Service 1</td>
-				<td>123456789</td>
-				<td>http://www.cas.com</td>
-				<td>Yes</td>
-				<td>Yes</td>
-				<td>No</td>
-				<td>
-					<select id="attr" name="attr" size="1">
-						<option value="a1">Attribute 1</option>
-						<option value="a2">Attribute 2</option>
-						<option value="a3">Attribute 3</option>
-						<option value="a4">Attribute 4</option>
-						<option value="a5">Attribute 5</option>
-						<option value="a6">Attribute 6</option>
-						<option value="a7">Attribute 7</option>
-						<option value="a8">Attribute 8</option>
-						<option value="a9">Attribute 9</option>
-					</select>
-				</td>
-				<td><a href="/modify.html?id=123456789" class="edit">edit</a></td>
-				<td><a href="/modify.html?id=123456789" class="del">delete</a></td>
-			</tr>
+			<c:if test="${param.action eq 'delete' and param.id eq service.id}">
+			<tr class="highlightBottom">
+				<td colspan="8">
+			   <form action="#" method="post">
+			   Are you sure you want to delete this service? <input type="submit" name="confirm" value="Yes" /> <input type="submit" name="confirm" value="No" />
+			   </form>
+			    </td>
+			    </tr>
+			</c:if>
+			</c:forEach>
 			</tbody>
 		</table>
-		
-<!--	<div><button type="submit">Delete</button></div> -->
 	</form>
-<%@include page="includes/bottom.jsp" %>
+<%@include file="includes/bottom.jsp" %>

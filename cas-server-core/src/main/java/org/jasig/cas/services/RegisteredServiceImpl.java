@@ -23,11 +23,13 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     private String description;
 
-    private String id;
+    private String serviceId;
 
     private String name;
 
     private String theme;
+    
+    private long id;
 
     private boolean allowedToProxy = true;
 
@@ -42,13 +44,17 @@ public class RegisteredServiceImpl implements RegisteredService {
     public List<String> getAllowedAttributes() {
         return this.allowedAttributes;
     }
+    
+    public long getId() {
+        return this.id;
+    }
 
     public String getDescription() {
         return this.description;
     }
 
-    public String getId() {
-        return this.id;
+    public String getServiceId() {
+        return this.serviceId;
     }
 
     public String getName() {
@@ -72,7 +78,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     }
 
     public boolean matches(final Service service) {
-        if (service == null && this.id == null) {
+        if (service == null && this.serviceId == null) {
             return true;
         }
         
@@ -84,7 +90,7 @@ public class RegisteredServiceImpl implements RegisteredService {
             return this.idPattern.matcher(service.getId()).matches();
         }
 
-        return service.getId().equals(this.id);
+        return service.getId().equals(this.serviceId);
     }
 
     // XXX use matches?
@@ -95,7 +101,7 @@ public class RegisteredServiceImpl implements RegisteredService {
 
         if (obj instanceof RegisteredService) {
             final RegisteredService r = (RegisteredService) obj;
-            return this.getId().equals(r.getId());
+            return this.getServiceId().equals(r.getServiceId());
         }
 
         return false;
@@ -117,9 +123,13 @@ public class RegisteredServiceImpl implements RegisteredService {
         this.enabled = enabled;
     }
 
-    public void setId(final String id) {
-        this.id = id;
+    public void setServiceId(final String id) {
+        this.serviceId = id;
         compilePattern();
+    }
+    
+    public void setId(final long id) {
+        this.id = id;
     }
 
     public void setName(final String name) {
@@ -140,8 +150,8 @@ public class RegisteredServiceImpl implements RegisteredService {
     }
     
     private void compilePattern() {
-        if (this.matchExactly && this.id != null) {
-            this.idPattern = Pattern.compile(this.id);
+        if (this.matchExactly && this.serviceId != null) {
+            this.idPattern = Pattern.compile(this.serviceId);
         } else {
             this.idPattern = null;
         }
