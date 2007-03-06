@@ -3,14 +3,12 @@
 		<table cellspacing="0" class="large">
 			<thead>
 			<tr>
-<!--			<th>Select</th> -->
 				<th>Service Name</th>
 				<th>ID</th>
-				<th>Enabled</th>
-				<th>Allowed to Proxy</th>
-				<th>SSL Participant</th>
-				<th>Attributes</th>
-				<th colspan="2">Actions</th>
+				<th class="center">Enabled</th>
+				<th class="center">Allowed to Proxy</th>
+				<th class="center">SSO Participant</th>
+				<th colspan="3">Attributes</th>
 			</tr>
 			</thead>
 			<tbody>
@@ -18,9 +16,9 @@
 			<tr id="${service.id}"${param.action eq 'delete' and param.id eq service.id ? ' class="highlightTop"' : ''}>
 				<td>${service.name}</td>
 				<td>${service.id}</td>
-				<td>${service.enabled ? 'Yes' : 'No'}</td>
-				<td>${service.allowedToProxy ? 'Yes' : 'No'}</td>
-				<td>${service.ssoEnabled ? 'Yes' : 'No'}</td>
+				<td class="center"><img src="../images/services/${service.enabled}.gif" /></td>
+				<td class="center"><img src="../images/services/${service.allowedToProxy}.gif" /></td>
+				<td class="center"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
 				<td>
 					<select name="attributes">
 					<c:forEach items="${service.allowedAttributes}" var="attribute">
@@ -33,9 +31,9 @@
 			<c:if test="${param.action eq 'delete' and param.id eq service.id}">
 			<tr class="highlightBottom">
 				<td colspan="8">
-			   <form action="#" method="post">
-			   Are you sure you want to delete this service? <input type="submit" name="confirm" value="Yes" /> <input type="submit" name="confirm" value="No" />
-			   </form>
+			   	Are you sure you want to delete this service?
+			   	<a href="?action=delete&id=${service.id}&confirm=true">Yes</a>
+			   	<a href="?action=delete&id=${service.id}&confirm=false">No</a>
 			    </td>
 			    </tr>
 			</c:if>

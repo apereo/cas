@@ -76,8 +76,16 @@ public final class ServiceRegistryImpl implements
         // TODO database persistance
     }
 
-    public boolean deleteService(final RegisteredService service) {
-        return this.services.remove(service);
+    public boolean deleteService(final long id) {
+        RegisteredService delete = null;
+        for (final RegisteredService r : this.services) {
+            if (r.getId() == id) {
+                delete = r;
+                break;
+            }
+        }
+        
+        return this.services.remove(delete);
 
         // TODO database persistance
 

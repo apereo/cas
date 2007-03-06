@@ -243,3 +243,7 @@ border-right: 2px solid red;
 border-bottom: 2px solid red;
 background-color: grey;
 }
+
+.center {
+text-align: center;
+}
