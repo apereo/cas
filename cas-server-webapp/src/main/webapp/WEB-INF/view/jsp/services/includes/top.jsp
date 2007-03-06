@@ -3,29 +3,35 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title><spring:message code="${pageTitle}" /></title>
-	<link href="../css/services/cas.css" type="text/css" rel="stylesheet" media="all" />
-	<link href="../css/common.css" type="text/css" rel="stylesheet" media="all" />
-	<script type="text/javascript" src="../js/common_rosters.js"></script>
-	<!--[if lte IE 6]><link href="../css/services/ieFix.css" type="text/css" rel="stylesheet" media="all" /><![endif]-->
+  <title><spring:message code="${pageTitle}" /></title>
+  <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
+  <link rel="stylesheet" href="../css/services/cas.css" type="text/css" media="screen" />
+  <!--[if lt IE 7]>
+    <link rel="stylesheet" href="../css/services/ie.css" type="text/css" media="screen" />
+  <![endif]-->
+  <link rel="stylesheet" href="css/regis-print.css" type="text/css" media="print" />
+  <script type="text/javascript" src="js/common.js"></script>
 </head>
-<body>
-<h3><span>Edit Registered Service</span></h3>
 
-<div id="navcontainer">
-	<p>sidebar</p>
-	<ul id="navlist"
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Link1</a></li
-		><li><span>Registered Services</span
-			><ul
-				><li><a href="">Edit</a></li
-				><li><span>Something</span></li
-			></ul
-		></li
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Edit Services</a></li
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Link1</a></li
-		><li><a href="http://www.acs.rutgers.edu" title="link 1 title">Link1</a></li
-	></ul>
+<body id="${pageTitle}">
+<div id="header">
+  <div id="nav-system">
+    <ul
+      ><li><a href="help.pdf">Help</a></li
+      ><li><a href="logout.html" title="logout of current session">Log Out</a></li
+    ></ul>
+  </div>
+  <p id="tagline">JA-SIG Central Authentication Service</p>
+  <h1 id="app-name">Services Management</h1>
 </div>
+<div id="nav-main">
+  <ul
+    ><li><a id="link1" href="add.html"><span>Add Service</span></a></li
+    ><li><a id="link2" href="manage.html"><span>Manage Services</span></a></li
+  ></ul>
+</div>
+<!-- CONTENT -->
+<div id="content">
+  <h1><spring:message code="${pageTitle}" /></h1>

@@ -5,9 +5,9 @@
 			<tr>
 				<th>Service Name</th>
 				<th>ID</th>
-				<th class="center">Enabled</th>
-				<th class="center">Allowed to Proxy</th>
-				<th class="center">SSO Participant</th>
+				<th class="ac">Enabled</th>
+				<th class="ac">Allowed to Proxy</th>
+				<th class="ac">SSO Participant</th>
 				<th colspan="3">Attributes</th>
 			</tr>
 			</thead>
@@ -16,9 +16,9 @@
 			<tr id="${service.id}"${param.action eq 'delete' and param.id eq service.id ? ' class="highlightTop"' : ''}>
 				<td>${service.name}</td>
 				<td>${service.id}</td>
-				<td class="center"><img src="../images/services/${service.enabled}.gif" /></td>
-				<td class="center"><img src="../images/services/${service.allowedToProxy}.gif" /></td>
-				<td class="center"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
+				<td class="ac"><img src="../images/services/${service.enabled}.gif" /></td>
+				<td class="ac"><img src="../images/services/${service.allowedToProxy}.gif" /></td>
+				<td class="ac"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
 				<td>
 					<select name="attributes">
 					<c:forEach items="${service.allowedAttributes}" var="attribute">
