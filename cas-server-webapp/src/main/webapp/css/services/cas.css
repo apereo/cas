@@ -1,26 +1,466 @@
+/* $Id$ */
+/* GLOBAL/UTILITIES
+ --------------------------------- */
+/* reset margins and padding for all elements since defaults are not crossbrowser */
+* {
+    margin:0;
+    padding:0;
+}
+/* browser default font-size is 16px which is too big so we make it 16px x 62.5% = 10px */
 body {
-	font:normal 62.5%/1.5 Arial,Helvetica,Verdana,sans-serif;
+	font:normal 62.5%/1 Verdana,Arial,Helvetica,sans-serif;
+	min-width:770px;
+}
+/* general positioning styles */
+.al {text-align:left !important;}
+.ac {text-align:center !important;}
+.ar {text-align:right !important;}
+.aj {text-align:justify !important;}
+.cl {clear:left !important;}
+.cr {clear:right !important;}
+.cb {clear:both !important;}
+.cn {clear:none !important;}
+.fn {float:none !important;}
+.fl {float:left !important;}
+.fr {float:right !important;}
+.vt {vertical-align:top !important;}
+.vm {vertical-align:middle !important;}
+.vb {vertical-align:bottom !important;}
+.vbl {vertical-align:baseline !important;}
+/*
+  - used for containing floats within a non-floated container
+  - this ruleset is used by UAs that handle :after - not IE
+*/
+div.row:after, .clearfix:after {
+    content:".";
+    display:block;
+    height:0;
+    clear:both;
+    visibility:hidden;
+}
+/* HEADER
+ --------------------------------- */
+#header #nav-system {
+    float:right;
+    padding:0;
+    background:#b00;
+    color:#ebf4d9;
+}
+#header #nav-system ul {
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+#header #nav-system li {
+    float:left;
+    margin:0;
+    padding:0;
+}
+#header #nav-system li a {
+    float:left;
+    margin:0 0 0 1px;
+    padding:2px 10px;
+    font:normal 1.1em/1.5 Verdana,Arial,Helvetica,sans-serif;
+    text-decoration:none;
+    background-color:#c33;
+    color:#ebf4d9;
+    white-space:nowrap;
+}
+#header #nav-system li a:hover,
+#header #nav-system li a:focus,
+#header #nav-system li a:active {
+    background-color:#d24a4a;
+    color:#fff;
+}
+#header #nav-system li a.active {background: #d24a4a; color:#fff;}
+#header p#tagline {
+    padding:0 0 2px 3px;
+    background:#b00;
+    color:#fff;
+    font-size:1.2em;
+    line-height:1.6;
+}
+#header h1#app-name {
+    clear:both;
+    padding:0 0 0 15px;
+    background:#b00 url(../images/bg_header.gif);
+    color:#fff;
+    font:2.4em/2em Arial,Helvetica,sans-serif;
+}
+/* MAIN MENU
+ --------------------------------- */
+#nav-main {
+    float: left;
+    width: 100%;
+    background: #999;
+    font-size: 1.1em;
+    line-height: normal;
+    padding: 0;
+    margin:0 0 1.5em 0;
+    color:#eee;
+}
+#nav-main ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 1.4em;
+}
+#nav-main li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+#nav-main a {
+    float: left;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+}
+#nav-main a span {
+    float:left;
+    display:block;
+    padding:5px 10px;
+    background:transparent;
+    color:#eee;
+}
+/* Hide from IE5Mac only \*/
+#nav-main a span {float:none;}
+/* End hack */
+#nav-main a:hover {background:#eee;}
+#nav-main a:hover span {
+    background:#eee;
+    color:#333;
+}
+/* Highlight the current section
+    #bodyId #nav-main a.className span{...}
+    ex. #roster-view #nav-main a.view span {...}
+*/
+#roster-alpha-view #nav-main a.view span {
+    background:#fff;
+    color:#000;
+}
+/* CONTENT
+ --------------------------------- */
+#content {
+    clear:both;
+    width:auto;
+    padding:1px 0;
+    margin:0 2% 2em;
+}
+#content h1 {
+    margin:15px 0;
+    font:normal 2.2em "Times New Roman",serif;
+    color:#333;
+    background:transparent;
+    text-transform:capitalize;
+}
+#content p {margin:1em 0;}
+/* FOOTER
+---------------------------------------------------------- */
+#footer {
+    color:#999;
+    background:transparent;
+    clear:both;
+    margin:0 2% 2em;
+    padding:0 0 1px 0;
+    border-top:1px solid #ccc;
+    position:relative;
+}
+#footer img#logo {
+    position:absolute;
+    right:0;
+    top:0;
+    margin-top:10px;
+}
+#footer div {
+    margin:1em 5px .5em;
+    clear:left;
+    overflow:hidden;
+}
+#footer h4 {
+    font:normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;
+    clear:left;
+    margin:0;
+    padding:0;
+    float:left;
+}
+#footer #nav-campus-sites,
+#footer #nav-help-desks {
+    list-style:none;
+    float:left;
+    margin:0 0 0 5px;
+    padding:0;
+}
+#footer #nav-campus-sites li,
+#footer #nav-help-desks li {
+    display:inline;
+    padding:0;
+    margin:0;
+    font:normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;
+}
+#footer #nav-campus-sites li:before,
+#footer #nav-help-desks li:before {content: " ";} /* content: " | " */
+#footer #nav-campus-sites li:first-child:before,
+#footer #nav-help-desks li:first-child:before {content: "";}
+/* All IE browsers */
+* html #footer {height:1px;}
+* html #footer #nav-campus-sites,
+* html #footer #nav-help-desks {
+    padding:0 0.4em 0 0;
+    margin:0;
+}
+/* Win IE browsers - hide from Mac IE\*/
+* html #footer #nav-campus-sites,
+* html #footer #nav-help-desks {height:1px; }
+* html #footer #nav-campus-sites li,
+#footer #nav-help-desks li {
+    display:block;
+    float:left;
+}
+/* End hide from Mac IE 5 */
+* html #footer #nav-campus-sites li:first-child,
+#footer #nav-help-desks li:first-child {border-left:0;}
+/*
+_______________________________
+---    CONTENT  FRAGMENTS    ---
+_______________________________
+*/
+/* MESSAGES
+ --------------------------------- */
+.info, .errors, .success {
+	clear:both;
+	padding:20px 20px 20px 100px;
+	margin:0 0 1em;
+   font-weight:bold;
+	font-size:1.3em;
+	line-height:1.5;
+}
+.info ul li, .errors ul li, .success ul li {list-style:none;}
+.success {
+	border:1px dotted #390;
+	color:#390;
+	background:#dfa url(../images/confirm.gif) no-repeat 2em 50%;
+}
+.info {
+	border:1px dotted navy;
+	color:navy;
+	background:#eff url(../images/info.gif) no-repeat 2em 50%;
+}
+.errors {
+	border:1px dotted #b00;
+	color:#b00;
+	background:#fed url(../images/error.gif) no-repeat 2em 50%;
+}
+/* style for static info boxes
+#content p.info {
+	font-weight:normal;
+	font-size:1.3em;
+	background-color:#fff;
+	color:#000;
+	background:url(../images/info.gif) no-repeat 2em 50%;
+	border-color:#fff;
+}
+*/
+#content p.info, #content p.help {
+	font-weight:normal;
+	font-size:1.1em;
+	background-color:#fff;
+	color:#000;
+	background:url(../images/info-s.gif) no-repeat 0 0;
+	border-color:#fff;
+	padding:0 0 0 2em;
+	line-height:1.5;
+}
+#content p.help {background:url(../images/help.gif) no-repeat 0 0;}
+/* FORMS
+ --------------------------------- */
+fieldset {
+    margin:2em 0;
+    padding:10px;
+    border:1px solid #ddd;
+    border-width:1px 0 0;
+}
+fieldset fieldset {
+	margin:1.5em 0;
+	padding:1em;
+	border-width:1px;
+	background:#fafafa;
+}
+fieldset fieldset legend {
+	color:#000;
+	font-size:1em;
 	margin:0;
 	padding:0;
-	border:0;
-	}
+	text-transform:capitalize;
+}
+legend {
+    margin:1em 5px;
+    color:#b00;
+    font-size:1.1em;
+    font-weight:bold;
+    text-transform:uppercase;
+}
+label {
+    cursor:pointer;
+    font-size:1em;
+    color:#666;
+}
+input, select, textarea, option {font:normal 1.1em sans-serif;}
+input, textarea {padding:0px 2px;}
+select option {margin:auto .5em 0 0;}
+/* vertically aligned form*/
+.fm-v div.row {padding:.5em 0; margin:0; width:100%; float:left;}
+.fm-v div.row label {float:left; line-height:1.5;}
+.fm-v div.row input {float:left; clear:left;}
+.fm-v div.row input.check {float:left; clear:left; margin:0 .5em 0 0;}
+.fm-v div.row label.check {float:left;}
+.fm-v div.row input.radio {float:left; clear:left; margin:0 .5em 0 0;}
+.fm-v div.row label.radio {float:left;}
+.fm-v div.row select,
+.fm-v div.row textarea {float:left; clear:both;}
+.fm-v div.row span.msg-error {color:#b00; display:block; float:left; margin-left:1em; padding-left:2em; font-size:1.1em; line-height:1.55; background:url(../images/error-s.gif) left top no-repeat;}
+.fm-v div.row input.btn-submit {display:block; margin:0;} /* float:left; clear:left; margin-bottom:0; or display:block */
+/* horizontally aligned form */
+.fm-h div.row {padding:.5em 0; margin:0; width:100%; float:left; font-size:10px;}
+.fm-h div.row label {float:left; width:15em; text-align:right; clear:left; margin-right:.5em; line-height:1.5;} /* display:block; line-height:1.5; */
+.fm-h div.row input {float:left; clear:right;} /* margin-bottom:1em; */
+.fm-h div.row input.btn-submit {clear:both; display:block; margin:0 0 0 14.1em;} /* float:left; clear:left; margin-bottom:0; or display block */
+/* highlight errors */
+input.error, select.error, textarea.error {background:#FFEFEF; color:#b00; border:1px solid #b00;}
+.required {background:#ff9;}
+/* LISTS
+ --------------------------------- */
+dl{margin:1em 0 1em 0;}
+dt{margin:0; padding:0;}
+dd{margin:.5em 0 .5em 2em;line-height:1.5;}
+/* TAB NAVIGATION
+ --------------------------------- */
+#nav-tab {
+    float:left;
+    width:100%;
+    font-size:1.1em;
+    line-height:normal;
+    padding:1px 0 0 0;
+    margin:1.5em 0 0 0;
+    background: #fff url(../images/bg_tabs_transparent.gif) repeat-x bottom;
+}
+#nav-tab ul {
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+#nav-tab li {
+    display:inline;
+    margin:0;
+    padding:0;
+}
+#nav-tab a {
+    float:left;
+    background:url(../images/tab.gif) no-repeat 0 -450px;
+    margin:0;
+    padding:0 0 0 9px;
+    text-decoration:none;
+}
+#nav-tab a span {
+    float:left;
+    display:block;
+    background:url(../images/tab.gif) no-repeat 100% -150px;
+    padding:4px 15px 3px 6px;
+    color:#fff;
+}
+/* Hide from IE5Mac only \*/
+#nav-tab a span {float:none;}
+/* End hack */
+#nav-tab a:hover {background-position:0 -300px;}
+#nav-tab a:hover span {
+    background-position:100% 0;
+    color:#333;
+}
+#nav-tab #active-tab a {background-position:0 -300px;}
+#nav-tab #active-tab a span {
+    background-position:100% 0;
+    padding-bottom:4px;
+    color:#b00;
+    font-weight:bold;
+}
+/* TAB PANEL
+ --------------------------------- */
+#tab-panel {
+    clear:both;
+    margin:0 0 2em 0;
+    padding:9px;
+    display:block;
+    background-color:#ececec;
+    border:1px solid #ccc;
+    border-top:0;
+}
+/* MIN-HEIGHT WORKAROUND http://www.mezzoblue.com/archives/2004/09/16/minheight_fi/ */
+/* for Mozilla, Safari, Opera, IE5/Mac */
+*>#tab-panel {
+    padding-top:209px; /* stretch the containing box to at least 209px tall; 9px of padding-top */
+    min-height:1px;
+    /* needed to keep containing box open;
+        lack of an explicit height value collapses container (padding included);
+        keep container open by setting min-height to any value; for Opera */
+}
+/* cancel out the containing box's padding non-IE browsers */
+*>#tab-panel div#tab-content {
+    min-height:200px;
+    margin-top: -200px;
+}
+#tab-panel div#tab-content {
+    background:#fff;
+    padding:1px 0;
+}
+/* TABLES
+ --------------------------------- */
+ /*
+table {
+    border:0;
+    border-collapse:collapse;
+    empty-cells:show;
+    font:normal 1em Verdana, Arial, Helvetica, sans-serif;
+    background:#fff;
+}*/
+caption {
+	padding:5px 7px;
+	font:bold 1.2em/1.5 Verdana, Arial, Helvetica, sans-serif;
+}
+/*
+th, td {
+    padding:5px 7px;
+    text-align:left;
+    font-weight:normal;
+}
+th {white-space:nowrap;}*/
+/* table row highlighting (does not work in IE - JavaScript workaround) */
+table.highlight tr:hover td, table.highlight tr.over td {background:#ffc !important;}
+/* data tables - search results, status, etc. */
+table.data {
+	margin-bottom:2em;
+	margin-left:1px; /* :BUG: Firefox expands the width of table with border by an extra 1px and moves it that distance to the left */
+	border:1px solid #ccc;
+	border-width:1px 0 0 1px;
+}
+table.data caption {
+	text-align:left;
+	border:1px solid #999;
+	background:#999;
+	color:#fff;
+}
+table.data th {
+	background:#ddd;
+	color:#666;
+}
+table.data th,
+table.data td {
+	border:1px solid #ccc;
+	border-width:0 1px 1px 0;
+}
+table.data tr.alt td {background:#fafafa;}
 
-* {font-size:1em;}
 
-form {
-	float:left;
-	margin:0 1%;
-	padding:0;
-	width:77%;
-	}
 
-button {font-size:1em;}
-
-.primaryAction {
-	padding:.5em;
-	color:green;
-	font-weight:900;
-	}
 
 table {
 	border:0;
@@ -59,191 +499,33 @@ td a:hover {
 	color:#b00;
 	}
 
-#navcontainer {
-	float:left;
-	margin:0 1%;
-	padding:0;
-	width:18%;
-	}
-
-#navlist {
-	padding:1px 0;
-	margin:0;
-	font:400 1.1em Verdana, sans-serif;
-	background:#fff;
-	}
-
-#navlist li {
-	list-style:none;
-	margin:0;
-	border-top:1px solid #eee;
-	text-align:left;
-	}
-
-#navlist li a {
-	display:block;
-	padding:0.5em 0.5em 0.5em .5em;
-	text-decoration:none;
-	background:#fff;
-	}
-
-#navlist li a:link {color:#555;}
-#navlist li a:visited {color:#c67;}
-
-#navlist li a:hover {
-	color:#b00;
-	background:#fff url(../../images/services/arrow-right.gif) no-repeat right center;
-	}
-
-#navlist li a.active,
-#navlist li span {
-	color:#000;
-	margin:0;
-	border:1px solid #000;
-	border-bottom:0;
-	padding:0.5em;
-	background:#eee url(../../images/services/arrow-right.gif) no-repeat right center;
-	}
-
-#navlist li span {display:block;}
-
-#navlist ul {background:#eee; margin:0; padding:0; border:1px solid #000; border-top:0;}
-#navlist ul li {padding-left:1.5em; background:url(../../images/services/arrow-down.gif) no-repeat .5em center;}
-
-#navlist ul li,
-#navlist ul li span {border:0;}
-
-#navlist ul li a {background:#eee; border:0;}
 
 
-/*--------------------------------------------------------------------*/
-	p.instructions {
-		margin:1em 0;
-		padding:5px 0 5px 2em;
-		font-size:1.2em;
-		background:transparent url(../../images/services/info.gif) no-repeat left center;
-		}
 
-	fieldset {
-		padding:15px 10px;
-		background-color:#fafafa;
-		margin:20px 0;
-		position:relative;
-		border:1px solid #ddd;
-		}
 
-	fieldset fieldset  {
-		border: 1px solid #ccc;
-		background-color:#fff;
-		}
 
-	legend {
-		padding:2px 5px;
-		color:#b00;
-		font-size:1.3em;
-		font-weight:900;
-		background:#fff;
-		}
-
-	fieldset fieldset legend {
-		color:#444;
-		font-size:1.1em;
-		background:#fafafa;
-		}
-
-	label.preField, .label {
-		display:block;
-		width:8em;
-		float:left;
-		font-size:1.1em;
-		}
-
-	label.top {
-		float:none;
-		width:auto;
-		margin-left:.5em;
-		}
-
-	label.postField {
-		margin-right:1em;
-		font-size:1.1em;
-		vertical-align:bottom;
-		}
-
-	.noBorder,
-	.check,
-	.radio {border:0;}
-
-	input,
-	textarea,
-	select {
-		border:1px solid #ccc;
-		border-color:#999 #eee #eee #999;
-		padding:2px;
-		}
-
-	input {
-		margin-left:.5em;
-		font-size:1.1em;
-		vertical-align:top;
-		}
-
-	span.oneField {
-		display:block;
-		margin:.5em 0;
-		padding:0;
-		}
-
-		span a {
-			display:-moz-inline-box;
-			text-decoration: none;
-			padding-left:10px;
-			color:#c1c1c0;
-			font-weight:900;
-			font-size:1.2em;
-			vertical-align:middle;
-			margin-left:.5em;
-			}
-
-		span a:hover {color:#b00;}
-
-		div a.edit {background:#fff url(../../images/services/edit.gif) no-repeat left center;}
-
-		span a.del {
-			padding:5px 0 5px 25px;
-			background:#fff url(../../images/services/delete.gif) no-repeat left center;
-			}
-
-		span a.undo {
-			padding:5px 20px 5px 5px;
-			background:#fff url(../../images/services/undo.gif) no-repeat 100% 0;
-			}
-
-		span a.undo:hover {
-			background-position:100% -32px;
-			color:#0c0;
-			}
-
-		input.deleted {
-			color:#ccc;
-			background:#f2f2f2;"
-			}
-			
-/* Added by Scott */
-.highlightTop {
-border-left: 2px solid red;
-border-right: 2px solid red;
-border-top: 2px solid red;
-background-color: grey;
+/* form layout table */
+/* MISCELLANEOUS
+ --------------------------------- */
+/* links at the bottom of long pages for going back to the top */
+a.top {
+    float:right;
+    margin:2em 10px 0 0;
+    text-decoration:none;
+    width:3em;
+    text-align:center;
+    display:inline;
 }
-
-.highlightBottom {
-border-left: 2px solid red;
-border-right: 2px solid red;
-border-bottom: 2px solid red;
-background-color: grey;
+a.top span {
+    display:block;
+    position:relative;
+    top:0;
+    font-weight:bold;
+    font-size:1.6em;
 }
-
-.center {
-text-align: center;
-}
+/* for cells whose abbreviated headings have a title attribute with expanded heading */
+.more {cursor:help;}
+/* PAGE SPECIFIC
+ --------------------------------- */
+/* somePage.jsp */
+/* #pageId selector {} */
