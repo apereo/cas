@@ -269,5 +269,6 @@ uncomment this to allow access to web service
 	
 	<bean id="manageServicesController" class="org.jasig.cas.services.web.ManageServicesController">
 		<constructor-arg index="0" ref="serviceRegistry" />
+		<constructor-arg index="1" ref="serviceRegistry" />
 	</bean>
 </beans>
