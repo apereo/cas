@@ -1,0 +1,65 @@
+﻿
+	<part id="deploying">
+		<title>Deploying CAS</title>
+		<chapter id="configuration">
+			<title>Basic CAS Configuration</title>
+			<sect1 id="initial-setup">
+				<title>Initial Setup</title>
+				
+				<para>If you don't have Java installed on your machine, the first step is to download Java.  Though CAS works under Java 
+				1.4, we recommend Java 1.5. You can download Java 1.5 from the Sun Web Site 
+				<literal>http://java.sun.com/j2se/1.5.0/download.jsp</literal>.  Next, be sure to obtain a servlet container.  One easy to 
+				use servlet container is Apache Tomcat, downloadable here: <literal>http://tomcat.apache.org/</literal>.  We recommend the 
+				latest 5.5.x release.</para>
+				
+				<para>Next, download and unzip/untar the latest CAS release.  You may want to try everything out by taking the demo CAS war
+				file and placing it within the TOMCAT_HOME/webapps folder.  Once you've done that, start up Tomcat: TOMCAT_HOME/bin/start.sh 
+				or TOMCAT_HOME/start.bat depending on your operating system.  Then try and access CAS (http://localhost:8080/cas/login).  
+				If everything works, then you've set it up correctly.</para>
+			</sect1>
+			
+			<sect1 id="logging">
+				<title>Logging</title>
+				<para>By default CAS includes log4j.  However, you can remove that and use whatever you want (as long as Commons Logging 
+				supports it).  This section assumes you're still using log4j.</para>
+				<para>The log4j configuration file is located in <literal>${project.home}/webapp/WEB-NF/classes/log4j.properties</literal>.  
+				By default logging is set to INFO for ja-sig code and WARN for Spring code.  While debugging you may want to set those to 
+				DEBUG.  When in production though, you probably want to run them both as WARN.  Depending on your needs, it may make sense 
+				to keep the defaults (INFO and WARN).</para>
+			</sect1>
+			
+			<sect1 id="spring-config">
+				<title>Spring Configuration Files</title>
+				<para>CAS utilizes Spring as its IOC container, thus there are some Spring XML configuration files.  For the most part, you 
+				do no need to modify these except in the case where you are adding authentication handlers (see the Authentication Handler 
+				section).</para>
+				<para>By default, CAS includes internationalized message resource bundles, located in the 
+				<literal>${project.home}/webapp/WEB-INF/classes</literal> directory.  In many cases you do not need to touch these.  
+				However, if your organization has specific requirements, you may need to edit the text contained within the ones for you 
+				appropriate language(s).</para>
+				<para>Finally, in <literal>${project.home}/webapp/WEB-INF/classes</literal> directory, there is also a 
+				default_views.properties file.  You probably don't want to edit that, so make a copy of it.  In that file, you'll reference 
+				your custom JSP pages (see below) for each type (i.e. th login page).  In the cas-servlet.xml, you'll want to edit the 
+				viewResolver bean's "baseName" property to point to your file.</para>
+			</sect1>				
+		</chapter>
+		
+		<chapter id="view-customization">
+			<title>Customizing the Views</title>
+			<para> TODO</para>
+		</chapter>
+		
+		<chapter id="building">
+			<title>Building the WAR</title>
+			<para>Building the war file is very easy.  All you'll need is Apache's Ant.  With Ant installed, navigate to 
+			<literal>${project.home}/localPlugins</literal> and execute "ant war".  This should generate a war file in the 
+			<literal>target</literal> directory that you can then deploy.</para>
+		</chapter>
+		
+		<chapter id="deploying-war">
+			<title>Deploying</title>
+			<para>In most cases, you can take the war file that you generated in the previous step, drop it in the webapps folder, and start 
+			up your container.  Please note the requirements for the container (one that satisfies the Servlet 2.4 spec).</para>
+		</chapter>	
+	</part>
+</book>
