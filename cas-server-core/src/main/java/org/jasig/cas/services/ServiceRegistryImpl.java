@@ -104,6 +104,7 @@ public final class ServiceRegistryImpl implements
     public void setBootstrapService(final String serviceId) {
         final RegisteredServiceImpl registeredService = new RegisteredServiceImpl();
         registeredService.setServiceId(serviceId);
+        registeredService.setId(-1);
         registeredService.setDescription("Default bootstrap service so we can log into the management application.");
         registeredService.setEnabled(true);
         registeredService.setMatchExactly(true);

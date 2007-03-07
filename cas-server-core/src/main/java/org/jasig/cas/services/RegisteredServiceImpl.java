@@ -93,7 +93,6 @@ public class RegisteredServiceImpl implements RegisteredService {
         return service.getId().equals(this.serviceId);
     }
 
-    // XXX use matches?
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -144,13 +143,17 @@ public class RegisteredServiceImpl implements RegisteredService {
         this.theme = theme;
     }
     
+    public boolean isMatchExactly() {
+        return this.matchExactly;
+    }
+    
     public void setMatchExactly(final boolean matchExactly) {
         this.matchExactly = matchExactly;
         compilePattern();
     }
     
     private void compilePattern() {
-        if (this.matchExactly && this.serviceId != null) {
+        if (!this.matchExactly && this.serviceId != null) {
             this.idPattern = Pattern.compile(this.serviceId);
         } else {
             this.idPattern = null;

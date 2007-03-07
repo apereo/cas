@@ -20,6 +20,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * 
@@ -56,7 +57,11 @@ public class AddRegisteredServiceSimpleFormController extends
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put("successMessage", "The service has been successfully saved in the database.");
         
-        return showForm(request, response, errors, model);
+        final ModelAndView modelAndView = new ModelAndView(new RedirectView("/services/manage.html#" + service.getId(), true));
+        modelAndView.addObject("action", "add");
+        modelAndView.addObject("id", new Long(service.getId()));
+        
+        return modelAndView;
     }
 
     protected void initBinder(final HttpServletRequest request,

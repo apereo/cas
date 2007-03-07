@@ -263,9 +263,13 @@ uncomment this to allow access to web service
 		p:formView="addServiceView"
 		p:successView="addServiceView"
 		p:commandClass="org.jasig.cas.services.RegisteredServiceImpl"
-		p:commandName="registeredService">
+		p:commandName="registeredService"
+		p:validator-ref="registeredServiceValidator">
 		<constructor-arg index="0" ref="serviceRegistry" />
 	</bean>
+	
+	<bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
+		p:serviceRegistry-ref="serviceRegistry" />
 	
 	<bean id="manageServicesController" class="org.jasig.cas.services.web.ManageServicesController">
 		<constructor-arg index="0" ref="serviceRegistry" />
