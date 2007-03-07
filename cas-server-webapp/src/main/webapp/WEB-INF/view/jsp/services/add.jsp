@@ -21,10 +21,15 @@
 		</span>
 		
 		<span class="oneField">
-			<label for="serviceId" class="preField">Id</label>
+			<label for="serviceId" class="preField">Service Url</label>
 			<form:input path="serviceId" size="55" cssClass="required" cssErrorClass="error" />
 			<form:errors path="serviceId" />
 			<br />
+		</span>
+		
+		<span class="oneField">
+		<label for="matchExactly" class="preField">&nbsp;</label>
+			<form:checkbox path="matchExactly" value="true" cssClass="check" /> Service Url Must Match Exactly
 		</span>
 		
 		<span class="oneField">
@@ -65,7 +70,7 @@
 		</span>
 	</fieldset>
 	<div class="actions">
-		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes">Save Changes</button> or <a href="" style="color:#b00;">Cancel</a>
+		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes">Save Changes</button> or <a href="manage.html" style="color:#b00;">Cancel</a>
 	</div>
 </form:form>
 <%@include file="includes/bottom.jsp" %>

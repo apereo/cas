@@ -5,12 +5,22 @@
 * {
     margin:0;
     padding:0;
+    font-size:1em;
 }
 /* browser default font-size is 16px which is too big so we make it 16px x 62.5% = 10px */
 body {
 	font:normal 62.5%/1 Verdana,Arial,Helvetica,sans-serif;
 	min-width:770px;
 }
+
+form {
+	float:left;
+	margin:0 1%;
+	padding:0;
+	width:77%;
+	}
+
+
 /* general positioning styles */
 .al {text-align:left !important;}
 .ac {text-align:center !important;}
@@ -478,7 +488,12 @@ th	{
 	padding:3px 5px;
 	text-align:left;
 	font-weight:normal;
+	line-height: 24px;
 	}
+	
+tr.added {
+	background-color: yellow;
+}
 
 td	{
 	padding:3px 5px;
@@ -497,6 +512,104 @@ td a.edit {background:#fff url(../../images/services/edit_service.gif) no-repeat
 td a.del {background:#fff url(../../images/services/delete_service.gif) no-repeat left center;}
 td a:hover {
 	color:#b00;
+	}
+
+
+	p.instructions {
+		margin:1em 0;
+		font-size:1.2em;
+		background:url('../../images/services/info.gif') no-repeat left center;; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
+		}
+
+	fieldset {
+		padding:15px 10px;
+		background-color:#fafafa;
+		margin:20px 0;
+		position:relative;
+		border:1px solid #ddd;
+		}
+
+	fieldset fieldset  {
+		border: 1px solid #ccc;
+		background-color:#fff;
+		}
+
+	legend {
+		padding:2px 5px;
+		color:#b00;
+		font-size:1.3em;
+		font-weight:900;
+		background:#fff;
+		}
+
+	fieldset fieldset legend {
+		color:#444;
+		font-size:1.1em;
+		background:#fafafa;
+		}
+
+	label.preField, .label {
+		display:block;
+		width:8em;
+		float:left;
+		font-size:1.1em;
+		}
+
+	label.top {
+		float:none;
+		width:auto;
+		margin-left:.5em;
+		}
+
+	label.postField {
+		margin-right:1em;
+		font-size:1.1em;
+		vertical-align:bottom;
+		}
+
+	.noBorder,
+	.check,
+	.radio {border:0px none;}
+
+	input,
+	textarea,
+	select {
+		border:1px solid #ccc;
+		border-color:#999 #eee #eee #999;
+		padding:2px;
+		}
+
+	input {
+		margin-left:.5em;
+		font-size:1.1em;
+		vertical-align:top;
+		}
+
+	span.oneField {
+		display:block;
+		margin:.5em 0;
+		padding:0;
+		}
+
+		span a {
+			display:-moz-inline-box;
+			text-decoration: none;
+			padding-left:10px;
+			color:#c1c1c0;
+			font-weight:900;
+			font-size:1.2em;
+			vertical-align:middle;
+			margin-left:.5em;
+			}
+
+		span a:hover {color:#b00;}
+
+button {font-size:1em;}
+
+.primaryAction {
+	padding:.5em;
+	color:green;
+	font-weight:900;
 	}
 
 
