@@ -67,7 +67,7 @@ public final class ServiceRegistryImpl implements
 
     public synchronized void addService(final RegisteredService service) {
         if (this.services.contains(service)) {
-            this.services.remove(service);
+            throw new IllegalArgumentException("service [" + service.getServiceId() + "] already exists in Registry.");
         }
 
         ((RegisteredServiceImpl) service).setId(this.dataFieldMaxValueIncrementer.nextLongValue());
@@ -76,29 +76,34 @@ public final class ServiceRegistryImpl implements
         // TODO database persistance
     }
 
-    public boolean deleteService(final long id) {
-        RegisteredService delete = null;
+    public synchronized boolean deleteService(final long id) {
+        if (id == -1) {
+            return false;
+        }
+
         for (final RegisteredService r : this.services) {
             if (r.getId() == id) {
-                delete = r;
-                break;
+                final String SQL_DELETE = "Delete From services Where id = ?";
+                // TODO database persistance                
+                return this.services.remove(r);
             }
         }
         
-        return this.services.remove(delete);
-
-        // TODO database persistance
-
+        return false;
     }
 
     public synchronized void updateService(final RegisteredService service) {
-        addService(service);
-
         // TODO database persistance
     }
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+        
+        // TODO database persistance
+    }
+    
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     public void setBootstrapService(final String serviceId) {

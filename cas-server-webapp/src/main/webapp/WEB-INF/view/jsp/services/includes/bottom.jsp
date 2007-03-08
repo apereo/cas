@@ -13,7 +13,7 @@
     ></ul>
   </div>
   <div>
-    <h4>Copyright &copy; 2007 JA-SIG. All rights reserved.</h4>
+    <h4>Copyright &copy; 2007 <a href="http://www.ja-sig.org/">JA-SIG</a>. All rights reserved.</h4>
   </div>
 </div>
 <!-- END FOOTER -->

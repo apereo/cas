@@ -44,4 +44,8 @@ public interface ServiceRegistry {
      * @return true if it does, false otherwise.
      */
     boolean matchesExistingService(Service service);
+    
+    void setEnabled(boolean enabled);
+    
+    boolean isEnabled();
 }
