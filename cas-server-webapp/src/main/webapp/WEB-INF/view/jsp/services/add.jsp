@@ -16,14 +16,14 @@
 		<span class="oneField" style="display:block; margin:5px 0;">
 			<label for="name" class="preField">Name </label>
 			<form:input path="name" size="55" cssClass="required" cssErrorClass="error" />
-			<form:errors path="name" />
+			<form:errors path="name" cssClass="formError" />
 			<br />
 		</span>
 		
 		<span class="oneField">
 			<label for="serviceId" class="preField">Service Url</label>
 			<form:input path="serviceId" size="55" cssClass="required" cssErrorClass="error" />
-			<form:errors path="serviceId" />
+			<form:errors path="serviceId" cssClass="formError" />
 			<br />
 		</span>
 		
@@ -35,14 +35,14 @@
 		<span class="oneField">
 			<label for="description" class="preField">Description</label>
 			<form:input path="description" size="55" cssClass="required" cssErrorClass="error" />
-			<form:errors path="description" />
+			<form:errors path="description" cssClass="formError" />
 			<br />
 		</span>
 		
 		<span class="oneField">
 			<label for="theme" class="preField">Theme Name</label>
 			<form:input path="theme" size="55" cssClass="required" cssErrorClass="error" />
-			<form:errors path="theme" />
+			<form:errors path="theme" cssClass="formError" />
 			<br />
 		</span>
 

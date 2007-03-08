@@ -249,17 +249,17 @@ _______________________________
 .success {
 	border:1px dotted #390;
 	color:#390;
-	background:#dfa url(../images/confirm.gif) no-repeat 2em 50%;
+	background:#dfa url(../../images/services/success.gif) no-repeat 2em 50%;
 }
 .info {
 	border:1px dotted navy;
 	color:navy;
-	background:#eff url(../images/info.gif) no-repeat 2em 50%;
+	background:#eff url(../images/services/info.gif) no-repeat 2em 50%;
 }
 .errors {
 	border:1px dotted #b00;
 	color:#b00;
-	background:#fed url(../images/error.gif) no-repeat 2em 50%;
+	background:#fed url(../../images/error.gif) no-repeat 2em 50%;
 }
 /* style for static info boxes
 #content p.info {
@@ -338,6 +338,17 @@ select option {margin:auto .5em 0 0;}
 /* highlight errors */
 input.error, select.error, textarea.error {background:#FFEFEF; color:#b00; border:1px solid #b00;}
 .required {background:#ff9;}
+
+.formError {
+background: #fafafa url(../../images/services/alert2.gif) no-repeat left center;
+line-height: 24px;
+padding-left: 18px;
+color: red;
+height: 24px;
+}
+
+
+
 /* LISTS
  --------------------------------- */
 dl{margin:1em 0 1em 0;}
@@ -492,7 +503,7 @@ th	{
 	}
 	
 tr.added {
-	background-color: yellow;
+	background-color: #ff3;
 }
 
 td	{
@@ -508,6 +519,8 @@ td a {
 	color:#c1c1c0;
 	font-weight:900;
 	}
+	
+td a.add {background:#fff url(../../images/services/add_service.gif) no-repeat left center;}
 td a.edit {background:#fff url(../../images/services/edit_service.gif) no-repeat left center;}
 td a.del {background:#fff url(../../images/services/delete_service.gif) no-repeat left center;}
 td a:hover {
@@ -611,11 +624,6 @@ button {font-size:1em;}
 	color:green;
 	font-weight:900;
 	}
-
-
-
-
-
 
 /* form layout table */
 /* MISCELLANEOUS

@@ -98,29 +98,6 @@ function getRef(el)
 	}
 	else return null;
 }
-/* DEPRECATED - replaced with getElementsByAttribute()
-// Return an array of elements with a particular class attribute
-function getElementsByClassName(parentNode, tagname, classname)
-{
-	// printfire("************* start getElementsByClassName()");
-	var aEls = getRef(parentNode).getElementsByTagName(tagname);
-    var a = [];
-    var re = new RegExp('(^| )'+classname+'( |$)');
-  //  var els = (getRef(parentNode)) ?  getRef(parentNode).getElementsByTagName(tagname) : (parentNode.getElementsByTagName(tagname)) ? parentNode.getElementsByTagName(tagname) : document.getElementById(parentNode.id).getElementsByTagName(tagname);
-    
-    for(var i=0; i < aEls.length; i++)
-    {
-		// printfire("************* for to test for className");
-    	if(re.test(aEls[i].className))
-    	{
-    		// printfire("##### add element to array of class elements");
-    		a.push(aEls[i]);
-    	}
-    }
-    
-    return a;
-}
-*/
 
 /* see if following can be used in row highlighting
 document.onclick = function(e)
@@ -219,36 +196,10 @@ function fadeIn(){
 	// printfire("- START fadeIn()");
 	if(getRef('msg')) fade('msg', 51,204,0, 221,255,170, 30,1,20);
 	if(getRef('status')) fade('status', 187,0,0, 255,238,221, 30,1,20);
+	if(getRef('added')) fade('added', 255,255,51, 255,255,255, 30, 1, 70)
 	// printfire("- END fadeIn()");
 }
 addLoadEvent(fadeIn);
-
-// Handle confirmation of grade submission
-function confirmSectionSubmission()
-{
-	if(!W3C_DOM) return;
-	// printfire("- START confirmSectionSubmission()");
-	if(!document.getElementById("roster-view")) return;
-
-	// printfire("--- roster-view exists");
-
-	var rosterForms = document.getElementsByTagName("form");
-	
-	// printfire("--- loop through "+ rosterForms.length +" FORMS to assign onsubmit event handler");
-	
-	for(var i=0; i < rosterForms.length; i++)
-	{	
-		// printfire("--- loop : "+ (i+1));
-		rosterForms[i].onsubmit = function()
-		{
-			if(confirm("Are you sure you want to submit this section?\n Click \"OK\" to submit section.\n Click \"Cancel\" to continue working.")) return true;
-			return false;
-		}
-	}
-	// printfire("- END confirmSectionSubmission()");
-}
-addLoadEvent(confirmSectionSubmission);
-
 
 // 0,8,9,16,17,18,37,38,39,40,46 8 - BACKSPACE; 9 - TAB; 13 - ENTER; 16 - SHIFT; 46 - DELETE;
 function autoTab(e) 
@@ -325,87 +276,6 @@ function initAutoTab(){
 	// printfire("- END initAutoTab()");
 }
 addLoadEvent(initAutoTab);
-
-// Form submission onchange of select - classRostersDrillDown.jsp
-function doSubmitForm(sourceElement, newAction){
-	var oForm = sourceElement.form;
-	oForm.action = newAction;
-	oForm.submit();
-}
-
-function initOnChangeSubmit(){
-	// printfire("- START initOnChangeSubmit()");
-	
-	if(!document.getElementById("roster-view"))
-	{
-		var aEls = getElementsByAttribute("select","class","submit");
-	
-		for (var i = 0; i < aEls.length; i++) 
-		{
-			aEls[i].onchange = function ()
-			{
-				doSubmitForm(this,"drillDown.htm?activeTab=t2");
-			}
-		}
-	}
-	
-	// printfire("- END initOnchange()");
-}
-addLoadEvent(initOnChangeSubmit);
-
-
-
-function showPhoto(eA)
-{	
-	// create and attach a new image to clicked link
-	if(eA.childNodes.length < 2) // prevent subsequent clicks from creating more images
-	{
-	    var eIMG = createPhoto(eA);
-	    eA.style.position = "relative"; // set clicked link position to establish new positioning context for child nodes
-		eA.style.textDecoration = "none";
-		eA.style.color = "purple";
-	
-		// append new image to the clicked link in document
-		eA.appendChild(eIMG);
-	}
-	else if (eA.childNodes.length == 2)
-	{
-		eA.parentNode.parentNode.className = eA.parentNode.parentNode.className.replace(new RegExp(/over/g), "");
-		eA.removeChild(eA.lastChild);
-		eA.blur();
-	}
-
-	// remove the image when active link is defocused
-	eA.onblur = function()
-	{
-		eA.style.position = "static"; // IE needs this to keep links below new images
-
-		// check if the link has more than 1 child (link text) and remove extras (images)
-		while(eA.childNodes.length > 1)
-		{
-			eA.removeChild(eA.lastChild);
-		}
-	}
-
-	return false;
-}
-
-function createPhoto(eA)
-{
-	// create new image element in memory
-	var eIMG = document.createElement("img");
-
-	// set image attributes and styles
-	eIMG.src = eA.href;
-	eIMG.style.position = "absolute";
-	eIMG.style.left = 0;
-	eIMG.style.top = "1.5em";
-	eIMG.style.display = "block";
-	eIMG.style.width = "200px";
-	eIMG.style.height = "200px";
-	eIMG.style.zIndex = 100;
-	return eIMG;
-}
 
 function getElementsByAttribute(elementType, attribute, attributeValue)
 {

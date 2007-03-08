@@ -25,7 +25,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public class ManageServicesController extends AbstractController {
+public final class ManageServicesController extends AbstractController {
 
     private static final String VIEW_NAME = "manageServiceView";
 
@@ -48,22 +48,20 @@ public class ManageServicesController extends AbstractController {
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final ModelAndView modelAndView = new ModelAndView(VIEW_NAME);
         final String action = request.getParameter("action");
         final String c = request.getParameter("confirm");
         final boolean confirm = Boolean.parseBoolean(c);
         final long id = Long.parseLong(request.getParameter("id") != null
             ? request.getParameter("id") : "-1");
-
-        if (confirm) {
-            this.serviceRegistryManager.deleteService(id);
-        }
-
-        if (action != null && c != null) {
-            return new ModelAndView(new RedirectView("/services/manage.html",
-                true));
-        }
-
+      
+        final ModelAndView enabled = checkEnableAndProcess(action, confirm);
+        final ModelAndView deleted = checkDeleteAndProcess(action, confirm, c, id);
+        
+        return enabled != null ? enabled : deleted != null ? deleted : getDefaultModelAndView();
+    }
+    
+    private ModelAndView getDefaultModelAndView() {
+        final ModelAndView modelAndView = new ModelAndView(VIEW_NAME);
         final List<RegisteredService> services = new ArrayList<RegisteredService>(
             this.serviceRegistry.getAllServices());
         PropertyComparator.sort(services, this.propertyComparator
@@ -71,7 +69,43 @@ public class ManageServicesController extends AbstractController {
 
         modelAndView.addObject("services", services);
         modelAndView.addObject("pageTitle", VIEW_NAME);
-
+        modelAndView.addObject("currentRegistryStatus", this.serviceRegistry.isEnabled() ? Boolean.TRUE :Boolean.FALSE);
+        
         return modelAndView;
+    }
+    
+    private ModelAndView checkDeleteAndProcess(final String action, final boolean confirm, final String c, final long id) {
+        if (!"delete".equals(action) || c == null) {
+            return null;
+        }
+        
+        if (!confirm) {
+            return new ModelAndView(new RedirectView("/services/manage.html",
+                true));
+        }
+        
+        if (!this.serviceRegistryManager.deleteService(id)) {
+            return new ModelAndView(new RedirectView("/services/manage.html?status=notdeleted",
+                true));
+        }
+        
+        return new ModelAndView(new RedirectView("/services/manage.html?status=deleted",
+            true));
+    }
+    
+    private ModelAndView checkEnableAndProcess(final String action, final boolean confirm) {
+        if (!"enable".equals(action)) {
+            return null;
+        }
+        
+        this.serviceRegistry.setEnabled(confirm);
+        
+        if (confirm) {
+            return new ModelAndView(new RedirectView("/services/manage.html?status=enabled",
+                true));
+        }
+        
+        return new ModelAndView(new RedirectView("/services/manage.html?status=disabled",
+            true));
     }
 }
