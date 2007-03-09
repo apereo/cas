@@ -152,6 +152,11 @@
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/services/manage.html</url-pattern>
 	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
+		<url-pattern>/services/edit.html</url-pattern>
+	</servlet-mapping>
 
 	<session-config>
 		<!-- Default to 5 minute session timeouts -->

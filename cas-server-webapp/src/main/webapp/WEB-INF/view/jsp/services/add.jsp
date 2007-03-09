@@ -1,6 +1,6 @@
 <%@include file="includes/top.jsp"%>
 
-<form:form action="add.html" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
+<form:form action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${param.id}" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
 
 		<c:if test="${not empty successMessage}">
 			<div id="msg" class="info">${successMessage}</div>
@@ -25,12 +25,9 @@
 			<form:input path="serviceId" size="55" cssClass="required" cssErrorClass="error" />
 			<form:errors path="serviceId" cssClass="formError" />
 			<br />
+			You can use Ant-style Pattern Matching
 		</span>
-		
-		<span class="oneField">
-		<label for="matchExactly" class="preField">&nbsp;</label>
-			<form:checkbox path="matchExactly" value="true" cssClass="check" /> Service Url Must Match Exactly
-		</span>
+
 		
 		<span class="oneField">
 			<label for="description" class="preField">Description</label>

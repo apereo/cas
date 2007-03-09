@@ -6,9 +6,10 @@
 package org.jasig.cas.services;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 
 /**
  * Mutable implementation of a RegisteredService.
@@ -18,6 +19,8 @@ import org.jasig.cas.authentication.principal.Service;
  * @since 3.1
  */
 public class RegisteredServiceImpl implements RegisteredService {
+    
+    private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
     private List<String> allowedAttributes;
 
@@ -29,7 +32,7 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     private String theme;
     
-    private long id;
+    private long id = -1;
 
     private boolean allowedToProxy = true;
 
@@ -37,10 +40,6 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     private boolean ssoEnabled = true;
     
-    private Pattern idPattern;
-    
-    private boolean matchExactly;
-
     public List<String> getAllowedAttributes() {
         return this.allowedAttributes;
     }
@@ -78,19 +77,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     }
 
     public boolean matches(final Service service) {
-        if (service == null && this.serviceId == null) {
-            return true;
-        }
-        
-        if (service == null) {
-            return false;
-        }
-
-        if (this.idPattern != null) {
-            return this.idPattern.matcher(service.getId()).matches();
-        }
-
-        return service.getId().equals(this.serviceId);
+        return PATH_MATCHER.match(this.serviceId, service.getId());
     }
 
     public boolean equals(final Object obj) {
@@ -124,7 +111,6 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     public void setServiceId(final String id) {
         this.serviceId = id;
-        compilePattern();
     }
     
     public void setId(final long id) {
@@ -141,22 +127,5 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     public void setTheme(final String theme) {
         this.theme = theme;
-    }
-    
-    public boolean isMatchExactly() {
-        return this.matchExactly;
-    }
-    
-    public void setMatchExactly(final boolean matchExactly) {
-        this.matchExactly = matchExactly;
-        compilePattern();
-    }
-    
-    private void compilePattern() {
-        if (!this.matchExactly && this.serviceId != null) {
-            this.idPattern = Pattern.compile(this.serviceId);
-        } else {
-            this.idPattern = null;
-        }
     }
 }

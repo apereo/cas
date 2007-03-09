@@ -13,9 +13,17 @@ import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-
+/**
+ * RegisteredServiceValidator ensures that a new RegisteredService does not have
+ * a conflicting Service Id with another service already in the registry.
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.1
+ */
 public class RegisteredServiceValidator implements Validator, InitializingBean {
-    
+
+    /** ServiceRegistry to look up services. */
     private ServiceRegistry serviceRegistry;
 
     public boolean supports(final Class clazz) {
@@ -24,21 +32,20 @@ public class RegisteredServiceValidator implements Validator, InitializingBean {
 
     public void validate(final Object o, final Errors errors) {
         final RegisteredService r = (RegisteredService) o;
-        
+
         if (r.getServiceId() != null) {
-            for (final RegisteredService service : this.serviceRegistry.getAllServices()) {
-                if (r.getServiceId().equals(service.getServiceId())) {
-                    errors.rejectValue("serviceId", "registeredService.serviceId.exists", null);
+            for (final RegisteredService service : this.serviceRegistry
+                .getAllServices()) {
+                if (r.getServiceId().equals(service.getServiceId())
+                    && r.getId() != service.getId()) {
+                    errors.rejectValue("serviceId",
+                        "registeredService.serviceId.exists", null);
                     break;
                 }
             }
         }
-        
-        
-        // TODO Auto-generated method stub
-
     }
-    
+
     public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }

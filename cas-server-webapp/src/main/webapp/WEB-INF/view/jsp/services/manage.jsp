@@ -25,8 +25,18 @@
 			<td class="ac"><img src="../images/services/${service.enabled}.gif" /></td>
 			<td class="ac"><img src="../images/services/${service.allowedToProxy}.gif" /></td>
 			<td class="ac"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
-			<td><a href="manage.html?id=${service.id}" class="edit">edit</a></td>
+
+			<c:if test="${service.id != -1}">
+			<td><a href="edit.html?id=${service.id}" class="edit">edit</a></td>
 			<td><a href="manage.html?id=${service.id}&amp;action=delete#${service.id}" class="del">delete</a></td>
+			</c:if>
+			
+			<c:if test="${service.id == -1}">
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+			</c:if>
+			
+			
 		</tr>
 		<c:if test="${param.action eq 'delete' and param.id eq service.id}">
 		<tr class="highlightBottom">
