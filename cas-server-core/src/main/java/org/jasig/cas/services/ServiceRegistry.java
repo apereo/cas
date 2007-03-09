@@ -29,7 +29,7 @@ public interface ServiceRegistry {
      * @return the service if it exists, false otherwise.
      */
     RegisteredService findServiceBy(Service service);
-
+    
     /**
      * Returns all the complete list of services.
      * 

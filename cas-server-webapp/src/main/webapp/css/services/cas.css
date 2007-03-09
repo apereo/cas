@@ -53,8 +53,6 @@ div.row:after, .clearfix:after {
 #header #nav-system {
     float:right;
     padding:0;
-    background:#b00;
-    color:#ebf4d9;
 }
 #header #nav-system ul {
     list-style:none;
@@ -72,20 +70,20 @@ div.row:after, .clearfix:after {
     padding:2px 10px;
     font:normal 1.1em/1.5 Verdana,Arial,Helvetica,sans-serif;
     text-decoration:none;
-    background-color:#c33;
-    color:#ebf4d9;
+    background-color:#323265;
+    color:#fff;
     white-space:nowrap;
 }
 #header #nav-system li a:hover,
 #header #nav-system li a:focus,
 #header #nav-system li a:active {
-    background-color:#d24a4a;
-    color:#fff;
+    background-color:#fff;
+    color:#323265;
 }
 #header #nav-system li a.active {background: #d24a4a; color:#fff;}
 #header p#tagline {
     padding:0 0 2px 3px;
-    background:#b00;
+    background: #323265;
     color:#fff;
     font-size:1.2em;
     line-height:1.6;
@@ -93,7 +91,7 @@ div.row:after, .clearfix:after {
 #header h1#app-name {
     clear:both;
     padding:0 0 0 15px;
-    background:#b00 url(../images/bg_header.gif);
+    background:#323265;
     color:#fff;
     font:2.4em/2em Arial,Helvetica,sans-serif;
 }
@@ -106,7 +104,7 @@ div.row:after, .clearfix:after {
     font-size: 1.1em;
     line-height: normal;
     padding: 0;
-    margin:0 0 1.5em 0;
+    xmargin:0 0 1.5em 0;
     color:#eee;
 }
 #nav-main ul {
@@ -149,6 +147,9 @@ div.row:after, .clearfix:after {
     background:#fff;
     color:#000;
 }
+
+.highlightTop td {border-top:1px solid #b00; border-bottom:1px solid #b00; background:#FFEFF3;}
+
 /* CONTENT
  --------------------------------- */
 #content {
@@ -509,6 +510,7 @@ tr.added {
 td	{
 	padding:3px 5px;
 	border-bottom:1px solid #eee;
+	height:38px;
 	}
 
 td a {
@@ -527,7 +529,7 @@ td a:hover {
 	color:#b00;
 	}
 
-
+.highlightBottom td a {display:inline; padding:0; line-height:38px;}
 	p.instructions {
 		margin:1em 0;
 		font-size:1.2em;

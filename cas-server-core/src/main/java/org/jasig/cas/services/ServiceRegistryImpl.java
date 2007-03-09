@@ -49,6 +49,16 @@ public final class ServiceRegistryImpl implements
 
         return null;
     }
+    
+    public RegisteredService findServiceBy(final long id) {   
+        for (final RegisteredService registeredService : this.services) {
+            if (registeredService.getId() == id) {
+                return registeredService;
+            }
+        }
+
+        return null;
+    }
 
     public List<RegisteredService> getAllServices() {
         return Collections.unmodifiableList(this.services);
@@ -112,7 +122,6 @@ public final class ServiceRegistryImpl implements
         registeredService.setId(-1);
         registeredService.setDescription("Default bootstrap service so we can log into the management application.");
         registeredService.setEnabled(true);
-        registeredService.setMatchExactly(true);
         registeredService.setName("Bookstrap Services Management Application");
         registeredService.setSsoEnabled(true);
         

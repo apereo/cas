@@ -22,6 +22,8 @@ public interface ServiceRegistryManager {
      * @param service The service to add.
      */
     void addService(RegisteredService service);
+    
+    RegisteredService findServiceBy(long id);
 
     /**
      * Method to delete a service from the list. Return value indicates whether

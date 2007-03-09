@@ -84,6 +84,11 @@
 					key="/services/manage.html">
 					manageServicesController
 				</prop>
+				
+				<prop
+					key="/services/edit.html">
+					editRegisteredServiceSimpleFormController
+				</prop>
 					
 				<!--
 				uncomment this to enable remote access to web service 
@@ -264,7 +269,18 @@ uncomment this to allow access to web service
 		p:successView="addServiceView"
 		p:commandClass="org.jasig.cas.services.RegisteredServiceImpl"
 		p:commandName="registeredService"
-		p:validator-ref="registeredServiceValidator">
+		p:validator-ref="registeredServiceValidator"
+		p:sessionForm="true">
+		<constructor-arg index="0" ref="serviceRegistry" />
+	</bean>
+	
+	<bean id="editRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.EditRegisteredServiceSimpleFormController"
+		p:formView="editServiceView"
+		p:successView="editServiceView"
+		p:commandClass="org.jasig.cas.services.RegisteredServiceImpl"
+		p:commandName="registeredService"
+		p:validator-ref="registeredServiceValidator"
+		p:sessionForm="false">
 		<constructor-arg index="0" ref="serviceRegistry" />
 	</bean>
 	
