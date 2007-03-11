@@ -148,7 +148,16 @@ div.row:after, .clearfix:after {
     color:#000;
 }
 
-.highlightTop td {border-top:1px solid #b00; border-bottom:1px solid #b00; background:#FFEFF3;}
+x.highlightTop td {border-top:2px solid #b00; border-bottom:0; background:#FFEFF3;}
+.highlightBottom td {border-bottom:2px solid #b00; border-top:2px solid #b00; background:#FFEFF3; color:#666; font-weight:400;}
+.highlightBottom a {display:inline; background:#fff; padding:5px 10px; margin-left:10px; color:#000;}
+.highlightBottom a:hover {background:#b00; color:#fff;}
+
+td.confirm {color:#000; font-weight:900; display: none;}
+
+x#yes {background:url(true.gif) no-repeat;}
+x#no  {background:url(false.gif) no-repeat;}
+ 
 
 /* CONTENT
  --------------------------------- */
@@ -522,14 +531,14 @@ td a {
 	font-weight:900;
 	}
 	
-td a.add {background:#fff url(../../images/services/add_service.gif) no-repeat left center;}
-td a.edit {background:#fff url(../../images/services/edit_service.gif) no-repeat left center;}
-td a.del {background:#fff url(../../images/services/delete_service.gif) no-repeat left center;}
+td a.add {background: url(../../images/services/add_service.gif) no-repeat left center;}
+td a.edit {background: url(../../images/services/edit_service.gif) no-repeat left center;}
+td a.del {background: url(../../images/services/delete_service.gif) no-repeat left center;}
 td a:hover {
 	color:#b00;
 	}
 
-.highlightBottom td a {display:inline; padding:0; line-height:38px;}
+
 	p.instructions {
 		margin:1em 0;
 		font-size:1.2em;

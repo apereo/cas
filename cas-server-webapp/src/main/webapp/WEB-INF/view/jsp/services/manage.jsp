@@ -4,7 +4,7 @@
 		<div id="msg" class="success"><spring:message code="services.manage.status.${param.status}" /></div>
 	</c:if>
 
-	<p><strong>Registry Status</strong>: ${currentRegistryStatus ? "Enabled" : "Disabled"} [${currentRegistryStatus ? '<a href="manage.html?action=enable&confirm=false">Disable</a>' : '<a href="manage.html?action=enable&confirm=true">Enable</a>'}]</p>
+	<p><strong>Registry Status</strong>: ${currentRegistryStatus ? "Enabled" : "Disabled"} [${currentRegistryStatus ? '<a href="disableRegistryService.html">Disable</a>' : '<a href="enableRegistryService.html">Enable</a>'}]</p>
 	
 	<table cellspacing="0" class="large">
 		<thead>
@@ -18,8 +18,8 @@
 		</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${services}" var="service">
-		<tr${param.action eq 'delete' and param.id eq service.id ? ' class="highlightTop"' : ''}${param.action eq 'add' and param.id eq service.id ? ' class="added" id="added"' : ''}>
+		<c:forEach items="${services}" var="service" varStatus="status">
+		<tr id="row${status.index}"${param.action eq 'add' and param.id eq service.id ? ' class="added" id="added"' : ''}>
 			<td id="${service.id}">${service.name}</td>
 			<td>${service.serviceId}</td>
 			<td class="ac"><img src="../images/services/${service.enabled}.gif" /></td>
@@ -27,35 +27,22 @@
 			<td class="ac"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
 
 			<c:if test="${service.id != -1}">
-			<td><a href="edit.html?id=${service.id}" class="edit">edit</a></td>
-			<td><a href="manage.html?id=${service.id}&amp;action=delete#${service.id}" class="del">delete</a></td>
+			<td id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit">edit</a></td>
+			<td id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}');">delete</a></td>
+			<td colspan="2" class="confirm" id="confirm${status.index}">Are you sure? <a id="yes" href="deleteRegisteredService.html?id=${service.id}">Yes</a> <a id="no" href="#" onclick="swapConfirmForButtons('${status.index}');">No</a></td>
 			</c:if>
 			
 			<c:if test="${service.id == -1}">
 			<td>&nbsp;</td>
 			<td>&nbsp;</td>
 			</c:if>
-			
-			
 		</tr>
-		<c:if test="${param.action eq 'delete' and param.id eq service.id}">
-		<tr class="highlightBottom">
-			<td colspan="7">
-		   	Are you sure you want to delete this service?
-		   	<a href="?action=delete&id=${service.id}&confirm=true">Yes</a>
-		   	<a href="?action=delete&id=${service.id}&confirm=false">No</a>
-		    </td>
-		    </tr>
-		</c:if>
-		
-		<c:if test="${param.action eq 'add' and param.id eq service.id}">
+		</c:forEach>
 		<tr>
 			<td colspan="7">
 			<a href="add.html" class="add">Add another?</a>
 			</td>
 		</tr>
-		</c:if>
-		</c:forEach>
 		</tbody>
 	</table>
 <%@include file="includes/bottom.jsp" %>

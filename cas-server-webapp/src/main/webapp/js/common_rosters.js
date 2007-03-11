@@ -277,6 +277,32 @@ function initAutoTab(){
 }
 addLoadEvent(initAutoTab);
 
+function swapButtonsForConfirm(rowId) {
+	swapConfirmAndButtons(rowId,"none","block","highlightBottom");
+}
+
+function swapConfirmForButtons(rowId) {
+	swapConfirmAndButtons(rowId,"","none","");
+}
+
+function swapConfirmAndButtons(rowId, editAndDelete, confirm, rowClass) {
+	var editCell = document.getElementById("edit"+rowId);
+	var deleteCell = document.getElementById("delete"+rowId);
+	var confirmCell = document.getElementById("confirm"+rowId);
+	var row = document.getElementById("row"+rowId);
+	
+	editCell.style.display=editAndDelete;
+	deleteCell.style.display=editAndDelete;
+	confirmCell.style.display=confirm;
+	
+	row.setAttribute("class", rowClass);
+	row.setAttribute("className", rowClass);
+}
+
+
+
+
+
 function getElementsByAttribute(elementType, attribute, attributeValue)
 {
 	// printfire("----- START getElementsByAttribute()");
