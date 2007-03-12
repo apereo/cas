@@ -512,7 +512,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.3</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 			<properties>
@@ -523,7 +523,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-mock</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.3</version>
 			<type>jar</type>
 			<url>http://www.springframework.org</url>
 		</dependency>
