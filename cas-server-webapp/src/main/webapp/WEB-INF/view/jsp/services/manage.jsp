@@ -6,7 +6,7 @@
 
 	<p><strong>Registry Status</strong>: ${currentRegistryStatus ? "Enabled" : "Disabled"} [${currentRegistryStatus ? '<a href="disableRegistryService.html">Disable</a>' : '<a href="enableRegistryService.html">Enable</a>'}]</p>
 	
-	<table cellspacing="0" class="large">
+	<table cellspacing="0" class="large highlight">
 		<thead>
 		<tr>
 			<th>Service Name</th>
@@ -19,7 +19,7 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${services}" var="service" varStatus="status">
-		<tr id="row${status.index}"${param.action eq 'add' and param.id eq service.id ? ' class="added" id="added"' : ''}>
+		<tr id="row${status.index}"${param.action eq 'add' and param.id eq service.id ? ' class="added"' : ''}>
 			<td id="${service.id}">${service.name}</td>
 			<td>${service.serviceId}</td>
 			<td class="ac"><img src="../images/services/${service.enabled}.gif" /></td>
