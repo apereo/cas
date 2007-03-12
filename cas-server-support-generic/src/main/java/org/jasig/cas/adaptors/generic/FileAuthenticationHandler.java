@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 /**
@@ -36,7 +37,7 @@ public class FileAuthenticationHandler extends
     private String separator = DEFAULT_SEPARATOR;
 
     /** The filename to read the list of usernames from. */
-    private String fileName;
+    private Resource fileName;
 
     protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
@@ -48,8 +49,7 @@ public class FileAuthenticationHandler extends
         }
 
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(this
-                .getClass().getResourceAsStream(this.fileName)));
+            bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream()));
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);
@@ -73,7 +73,7 @@ public class FileAuthenticationHandler extends
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                log.error(e);
+                log.error(e,e);
             }
         }
 
@@ -88,7 +88,7 @@ public class FileAuthenticationHandler extends
     /**
      * @param fileName The fileName to set.
      */
-    public final void setFileName(final String fileName) {
+    public final void setFileName(final Resource fileName) {
         this.fileName = fileName;
     }
 
