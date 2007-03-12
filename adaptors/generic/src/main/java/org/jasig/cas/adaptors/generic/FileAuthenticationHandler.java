@@ -1,7 +1,7 @@
 /*
  * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.adaptors.generic;
 
@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
 /**
@@ -26,7 +27,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class FileAuthenticationHandler extends
+public class FileAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
@@ -36,9 +37,9 @@ public final class FileAuthenticationHandler extends
     private String separator = DEFAULT_SEPARATOR;
 
     /** The filename to read the list of usernames from. */
-    private String fileName;
+    private Resource fileName;
 
-    public boolean authenticateUsernamePasswordInternal(
+    protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
         BufferedReader bufferedReader = null;
 
@@ -48,8 +49,7 @@ public final class FileAuthenticationHandler extends
         }
 
         try {
-            bufferedReader = new BufferedReader(new InputStreamReader(this
-                .getClass().getResourceAsStream(this.fileName)));
+            bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream()));
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);
@@ -73,14 +73,14 @@ public final class FileAuthenticationHandler extends
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                log.error(e);
+                log.error(e,e);
             }
         }
 
         return false;
     }
 
-    protected void afterPropertiesSetInternal() throws Exception {
+    protected final void afterPropertiesSetInternal() throws Exception {
         Assert.notNull(this.fileName, "the fileName cannot be null");
         Assert.notNull(this.separator, "the separator cannot be null");
     }
@@ -88,14 +88,14 @@ public final class FileAuthenticationHandler extends
     /**
      * @param fileName The fileName to set.
      */
-    public void setFileName(final String fileName) {
+    public final void setFileName(final Resource fileName) {
         this.fileName = fileName;
     }
 
     /**
      * @param separator The separator to set.
      */
-    public void setSeparator(final String separator) {
+    public final void setSeparator(final String separator) {
         this.separator = separator;
     }
 }

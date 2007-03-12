@@ -1,7 +1,7 @@
 /*
  * Copyright 2004 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.adaptors.generic;
 
@@ -14,6 +14,7 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Scott Battaglia
@@ -30,7 +31,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         this.authenticationHandler = new FileAuthenticationHandler();
-        this.authenticationHandler.setFileName("authentication.txt");
+        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication.txt"));
         this.authenticationHandler.afterPropertiesSet();
 
     }
@@ -127,7 +128,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testAuthenticatesUserInFileWithCommaSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName("authentication2.txt");
+        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("scott");
@@ -143,7 +144,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testFailsUserNotInFileWithCommaSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName("authentication2.txt");
+        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("fds");
@@ -159,7 +160,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     public void testFailsGoodUsernameBadPassword() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName("authentication2.txt");
+        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("scott");
@@ -206,7 +207,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
     public void testAuthenticateNoFileName() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
-        this.authenticationHandler.setFileName("fff");
+        this.authenticationHandler.setFileName(new ClassPathResource("fff"));
 
         c.setUsername("scott");
         c.setPassword("rutgers");
