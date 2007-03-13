@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -22,7 +23,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
-    private List<String> allowedAttributes;
+    private List<String> allowedAttributes = new ArrayList<String>();
 
     private String description;
 
