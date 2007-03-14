@@ -10,6 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -25,6 +27,8 @@ public final class HttpClient implements InitializingBean {
         HttpURLConnection.HTTP_OK, HttpURLConnection.HTTP_NOT_MODIFIED,
         HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
         HttpURLConnection.HTTP_ACCEPTED};
+
+    private Log log = LogFactory.getLog(this.getClass());
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
@@ -55,8 +59,18 @@ public final class HttpClient implements InitializingBean {
 
             for (int i = 0; i < this.acceptableCodes.length; i++) {
                 if (responseCode == this.acceptableCodes[i]) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Response code from server matched "
+                            + responseCode + ".");
+                    }
                     return true;
                 }
+            }
+
+            if (log.isDebugEnabled()) {
+                log
+                    .debug("Response Code did not match any of the acceptable response codes.  Code returned was "
+                        + responseCode);
             }
         } catch (final IOException e) {
             // nothing to do
