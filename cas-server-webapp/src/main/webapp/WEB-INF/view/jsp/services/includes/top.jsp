@@ -8,20 +8,46 @@
   <title><spring:message code="${pageTitle}" /></title>
   <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
   <link rel="stylesheet" href="../css/services/cas.css" type="text/css" media="screen" />
-  <!--[if lt IE 7]>
-    <link rel="stylesheet" href="../css/services/ie.css" type="text/css" media="screen" />
-  <![endif]-->
-  <link rel="stylesheet" href="css/regis-print.css" type="text/css" media="print" />
-<!--  <script type="text/javascript" src="js/common.js"></script>-->
   <script type="text/javascript" src="../js/common_rosters.js"></script>
   
   <style type="text/css">
-  
   #nav-main #${pageTitle} span {
       background:#fff;
       color: #000;
   }
   </style>
+  
+    <style type="text/css">
+
+@media screen {
+    div#container {width:100%; min-width:952px; margin:0; padding:0;}
+    
+        table#headerTable {width:100%; background:#999; margin:0; padding:0; border:0; border-collapse:collapse;}
+    
+    div.tableWrapper {width:100%; min-width:952px; height:250px; overflow:auto; overflow-x:hidden; overflow-y:scroll;}
+       
+        table#scrollTable {width:100%; min-width:935px;}
+
+            table#scrollTable thead {display:none;}
+                table#headerTable th, table#scrollTable td {padding:0 5px; border:0;}
+                table#scrollTable td {text-align:left; border-bottom:1px solid #eee;}
+                table#headerTable th {height:38px; border:0 !important;}
+
+                th.th1, td.td1 {width:200px; overflow:hidden;}
+                th.th2, td.td2 {overflow:hidden;}
+                th.th3, td.td3 {width:50px}
+                th.th4, td.td4 {width:70px}
+                th.th5, td.td5 {width:50px}
+                th.th6, td.td6 {width:70px; text-align:right !important;}
+                th.th7, td.td7 {width:102px; text-align:right !important;}
+                td.td7 {width:85px;}
+}
+</style>
+<!--[if IE]>
+<style type="text/css">
+ td.td7 {width:85px; padding-right:22px !important;}
+ </style>
+<![endif]--> 
 </head>
 
 <body id="${pageTitle}">

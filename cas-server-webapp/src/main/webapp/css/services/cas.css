@@ -139,25 +139,10 @@ div.row:after, .clearfix:after {
     background:#eee;
     color:#333;
 }
-/* Highlight the current section
-    #bodyId #nav-main a.className span{...}
-    ex. #roster-view #nav-main a.view span {...}
-*/
-#roster-alpha-view #nav-main a.view span {
-    background:#fff;
-    color:#000;
-}
 
-x.highlightTop td {border-top:2px solid #b00; border-bottom:0; background:#FFEFF3;}
 .highlightBottom td {border-bottom:2px solid #b00; border-top:2px solid #b00; background:#FFEFF3; color:#666; font-weight:400;}
-.highlightBottom a {display:inline; background:#fff; padding:5px 10px; margin-left:10px; color:#000;}
+.highlightBottom td a {display:inline; background:#fff; padding:5px 10px; color:#666; font-weight: normal;}
 .highlightBottom a:hover {background:#b00; color:#fff;}
-
-td.confirm {color:#000; font-weight:900; display: none;}
-
-x#yes {background:url(true.gif) no-repeat;}
-x#no  {background:url(false.gif) no-repeat;}
- 
 
 /* CONTENT
  --------------------------------- */
@@ -466,6 +451,7 @@ th, td {
 th {white-space:nowrap;}*/
 /* table row highlighting (does not work in IE - JavaScript workaround) */
 table.highlight tr:hover td, table.highlight tr.over td {background:#ffc !important;}
+table.highlight tr.highlightBottom:hover td {background: #ffeff3 !important;}
 /* data tables - search results, status, etc. */
 table.data {
 	margin-bottom:2em;
@@ -523,15 +509,38 @@ td	{
 	}
 
 td a {
-	padding-left:35px;
+	padding:10px 0pt 10px 35px;
 	text-decoration: none;
-	display:block;
+	display: inline;
 	line-height:32px;
 	color:#c1c1c0;
 	font-weight:900;
-	}
+} 
+
+.add {
+	line-height:32px;
+	height:32px;
+	border-top: 5px solid #eee;
+	color:#000;
+	width:100%;
+	text-indent:5px;
+	padding-top: 5px;
+	font-size:1.1em;
+}
 	
-td a.add {background: url(../../images/services/add_service.gif) no-repeat left center;}
+.add a {background: url(../../images/services/add_service.gif) no-repeat left center;
+	padding:10px 0 10px 35px;
+	text-decoration: none;
+	display: inline;
+	line-height:32px;
+	color:#c1c1c0;
+	font-weight:900;
+}
+
+
+.add a:hover {
+	color:#b00;
+	}
 td a.edit {background: url(../../images/services/edit_service.gif) no-repeat left center;}
 td a.del {background: url(../../images/services/delete_service.gif) no-repeat left center;}
 td a:hover {

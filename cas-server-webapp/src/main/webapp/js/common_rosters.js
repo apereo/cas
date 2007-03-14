@@ -2,17 +2,9 @@
 
 var W3C_DOM = ((typeof document.getElementById != 'undefined') && (typeof document.createElement != 'undefined')) ? true : false;
 
-// FireBug (Firefox extension) function to print javascript debug messages to console
-function printfire()
-{
-    if (document.createEvent)
-    {
-        printfire.args = arguments;
-        var ev = document.createEvent("Events");
-        ev.initEvent("printfire", false, true);
-        dispatchEvent(ev);
-    }
-}
+var editInnerHTML = "";
+var deleteInnerHTML = "";
+var currentRow = null;
 
 // Add events to onload event handler
 // typeof can be "string", "number", "boolean", "object", "array", "function", or "undefined"
@@ -99,58 +91,6 @@ function getRef(el)
 	else return null;
 }
 
-// Find all tables with highlight class and on highlight table mouseover trigger highlightRows function
-function initHighlightTables()
-{
-	if(!W3C_DOM)return;
-	
-	// printfire("- START initHighlightTables()");
-
-	var tables = getElementsByAttribute("table","class","highlight");
-
-	for (var i=0; i < tables.length; i++)
-	{
-		// printfire("--- assign onmousover highlightRows event handler to table");
-		tables[i].onmouseover = highlightRows;
-	}
-	// printfire("- END initHighlightTables()");
-}
-
-function highlightRows()
-{
-	// printfire("- START highlightRows()");
-	var tableRows = this.getElementsByTagName('tr');
-
-	for(var i = 0; i < tableRows.length; i++)
-	{
-		// printfire("--- row onmouseover and onmouseout highlight");
-		tableRows[i].onmouseover = function(e)
-		{	
-			addClass(this," over");
-
-			// cancel event bubbling to prevent onmouseover of row to trigger unnecessary firing of table onmouseover
-			if (typeof e == "undefined")
-			{
-				e = window.event; // IE
-				e.cancelBubble = true;
-			}
-			else if(e)
-			{
-				if(e.stopPropagation) e.stopPropagation();
-			}
-			else e = null;
-		}
-		
-		tableRows[i].onmouseout = function()
-		{
-			removeClass(this,"over");
-			// this.className = this.className.replace(new RegExp(/over/g), "");
-		}
-	}
-	// printfire("- END highlightRows()");
-}
-addLoadEvent(initHighlightTables);
-
 // transition effect to fade background of element from darker to lighter color
 // could use var redBackground = new initArray(12);redBackground[0]="#33CC00"; format
 function setbgColor(elId, r, g, b){
@@ -180,31 +120,40 @@ function fadeIn(){
 }
 addLoadEvent(fadeIn);
 
-function swapButtonsForConfirm(rowId) {
-	swapConfirmAndButtons(rowId,"none","block","highlightBottom");
-}
+function swapButtonsForConfirm(rowId, serviceId) {
 
-function swapConfirmForButtons(rowId) {
-	swapConfirmAndButtons(rowId,"","none","");
-}
-
-function swapConfirmAndButtons(rowId, editAndDelete, confirm, rowClass) {
+    resetOldValue();
+    var row = document.getElementById("row"+rowId);
 	var editCell = document.getElementById("edit"+rowId);
 	var deleteCell = document.getElementById("delete"+rowId);
-	var confirmCell = document.getElementById("confirm"+rowId);
-	var row = document.getElementById("row"+rowId);
 	
-	editCell.style.display=editAndDelete;
-	deleteCell.style.display=editAndDelete;
-	confirmCell.style.display=confirm;
+	removeClass(row, "over");
+	addClass(row, "highlightBottom");
 	
-	row.setAttribute("class", rowClass);
-	row.setAttribute("className", rowClass);
+	editInnerHTML = editCell.innerHTML;
+	deleteInnerHTML = deleteCell.innerHTML;
+	currentRow = rowId;
+	
+	editCell.innerHTML = "Really?";
+	deleteCell.innerHTML = "<a id=\"yes\" href=\"deleteRegisteredService.html?id=" + serviceId + "\">Yes</a> <a id=\"no\" href=\"#\" onclick=\"resetOldValue();\">No</a>"
 }
 
-
-
-
+function resetOldValue() {
+	if (currentRow != null) {
+		removeClass(document.getElementById("row"+currentRow), "over");
+		removeClass(document.getElementById("row"+currentRow), "highlightBottom");
+		var editCell = document.getElementById("edit"+currentRow);
+		var deleteCell = document.getElementById("delete"+currentRow);
+		var row = document.getElementById("row"+currentRow);
+		
+		editCell.innerHTML = editInnerHTML;
+		deleteCell.innerHTML = deleteInnerHTML;
+		
+		editInnerHTML = null;
+		deleteInnerHTML = null;
+		currentRow = null;
+	}
+}
 
 function getElementsByAttribute(elementType, attribute, attributeValue)
 {
