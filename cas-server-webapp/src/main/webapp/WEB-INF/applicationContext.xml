@@ -38,11 +38,16 @@
     	p:incrementerName="cas_id_generator"
     	p:columnName="value" />
     	
+    <bean
+    	id="database"
+    	class="org.jasig.cas.util.HsqlDbDatabaseLocatorFactoryBean"
+    	p:configLocation="classpath:db/cas.script" />
+    	
 	<bean
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		p:driverClass="org.hsqldb.jdbcDriver"
-		p:jdbcUrl="jdbc:hsqldb:res:/db/cas;shutdown=true"
+		p:jdbcUrl-ref="database"
 		p:password=""
 		p:user="sa" />
 	

@@ -6,43 +6,48 @@
 
 	<p><strong>Registry Status</strong>: ${currentRegistryStatus ? "Enabled" : "Disabled"} [${currentRegistryStatus ? '<a href="disableRegistryService.html">Disable</a>' : '<a href="enableRegistryService.html">Enable</a>'}]</p>
 	
-	<table cellspacing="0" class="large highlight">
-		<thead>
-		<tr>
-			<th>Service Name</th>
-			<th>Service Url</th>
-			<th class="ac">Enabled</th>
-			<th class="ac">Allowed to Proxy</th>
-			<th class="ac">SSO Participant</th>
-			<th colspan="2">&nbsp;</th>
-		</tr>
-		</thead>
-		<tbody>
+      <table cellspacing="0" id="headerTable" class="headerTable">
+			<tr>
+				<th class="th1">Service Name</th>
+				<th class="th2">Service Url</th>
+				<th class="th3 ac">Enabled</th>
+				<th class="th4 ac">Can Proxy</th>
+				<th class="th5 ac">SSO</th>
+				<th class="th6">&nbsp;</th>
+				<th class="th7">&nbsp;</th>
+			</tr>
+		</table>
+	
+	
+	<div id="tableWrapper" class="tableWrapper">
+		<table cellspacing="0" id="scrollTable" class="scrollTable highlight large">
+         <thead>
+			<tr>
+				<th>Service Name</th>
+				<th>Service Url</th>
+				<th>Enabled</th>
+				<th>Can Proxy</th>
+				<th>SSO</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
+			</thead>
+			
+			<tbody>
 		<c:forEach items="${services}" var="service" varStatus="status">
 		<tr id="row${status.index}"${param.action eq 'add' and param.id eq service.id ? ' class="added"' : ''}>
-			<td id="${service.id}">${service.name}</td>
-			<td>${service.serviceId}</td>
-			<td class="ac"><img src="../images/services/${service.enabled}.gif" /></td>
-			<td class="ac"><img src="../images/services/${service.allowedToProxy}.gif" /></td>
-			<td class="ac"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
+			<td id="${service.id}" class="td1">${service.name}</td>
+			<td class="td2">${service.serviceId}</td>
+			<td class="ac td3"><img src="../images/services/${service.enabled}.gif" /></td>
+			<td class="ac td4"><img src="../images/services/${service.allowedToProxy}.gif" /></td>
+			<td class="ac td5"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
 
-			<c:if test="${service.id != -1}">
-			<td id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit">edit</a></td>
-			<td id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}');">delete</a></td>
-			<td colspan="2" class="confirm" id="confirm${status.index}">Are you sure? <a id="yes" href="deleteRegisteredService.html?id=${service.id}">Yes</a> <a id="no" href="#" onclick="swapConfirmForButtons('${status.index}');">No</a></td>
-			</c:if>
-			
-			<c:if test="${service.id == -1}">
-			<td>&nbsp;</td>
-			<td>&nbsp;</td>
-			</c:if>
+			<td class="td6" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit">edit</a></td>
+			<td class="td7" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}');">delete</a></td>
 		</tr>
 		</c:forEach>
-		<tr>
-			<td colspan="7">
-			<a href="add.html" class="add">Add another?</a>
-			</td>
-		</tr>
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	</div>
+<div class="add"><a href="add.html">add a service</a></div>	  
 <%@include file="includes/bottom.jsp" %>
