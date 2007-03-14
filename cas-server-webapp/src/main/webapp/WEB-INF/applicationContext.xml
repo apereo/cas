@@ -42,7 +42,7 @@
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		p:driverClass="org.hsqldb.jdbcDriver"
-		p:jdbcUrl="jdbc:hsqldb:res:/db/cas"
+		p:jdbcUrl="jdbc:hsqldb:res:/db/cas;shutdown=true"
 		p:password=""
 		p:user="sa" />
 	
