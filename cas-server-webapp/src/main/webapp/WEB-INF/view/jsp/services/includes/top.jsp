@@ -3,29 +3,25 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml"" xml:lang="en" lang="en">
 <head>
   <title><spring:message code="${pageTitle}" /></title>
   <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
   <link rel="stylesheet" href="../css/services/cas.css" type="text/css" media="screen" />
   <script type="text/javascript" src="../js/common_rosters.js"></script>
-  
+
   <style type="text/css">
   #nav-main #${pageTitle} span {
       background:#fff;
       color: #000;
   }
   </style>
-  
-    <style type="text/css">
-
+  <style type="text/css">
 @media screen {
     div#container {width:100%; min-width:952px; margin:0; padding:0;}
-    
-        table#headerTable {width:100%; background:#999; margin:0; padding:0; border:0; border-collapse:collapse;}
-    
-    div.tableWrapper {width:100%; min-width:952px; height:250px; overflow:auto; overflow-x:hidden; overflow-y:scroll;}
-       
+    table#headerTable {width:100%; min-width:952px; background:#999; margin:0; padding:0; border:0; border-collapse:collapse;}
+    div.tableWrapper {width:100%; min-width:952px; max-height:250px; overflow:auto; overflow-x:hidden;}
+
         table#scrollTable {width:100%; min-width:935px;}
 
             table#scrollTable thead {display:none;}
@@ -46,8 +42,12 @@
 <!--[if IE]>
 <style type="text/css">
  td.td7 {width:85px; padding-right:22px !important;}
- </style>
-<![endif]--> 
+ div.tableWrapper {xoverflow-y:scroll;}
+ * html td.td7 {width:102px; padding-right:5px !important; text-align:left !important;}
+ * html table#scrollTable {margin-right:-17px;}
+ * html div.tableWrapper {width:auto; height:250px;}
+</style>
+<![endif]-->
 </head>
 
 <body id="${pageTitle}">

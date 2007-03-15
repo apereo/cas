@@ -19,8 +19,8 @@ import org.springframework.util.PathMatcher;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public class RegisteredServiceImpl implements RegisteredService {
-    
+public class RegisteredServiceImpl implements RegisteredService, Cloneable {
+
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
     private List<String> allowedAttributes = new ArrayList<String>();
@@ -32,7 +32,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     private String name;
 
     private String theme;
-    
+
     private long id = -1;
 
     private boolean allowedToProxy = true;
@@ -40,11 +40,12 @@ public class RegisteredServiceImpl implements RegisteredService {
     private boolean enabled = true;
 
     private boolean ssoEnabled = true;
-    
+
     public List<String> getAllowedAttributes() {
-        return this.allowedAttributes;
+        return this.allowedAttributes != null ? this.allowedAttributes
+            : new ArrayList<String>();
     }
-    
+
     public long getId() {
         return this.id;
     }
@@ -113,7 +114,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     public void setServiceId(final String id) {
         this.serviceId = id;
     }
-    
+
     public void setId(final long id) {
         this.id = id;
     }
@@ -128,5 +129,21 @@ public class RegisteredServiceImpl implements RegisteredService {
 
     public void setTheme(final String theme) {
         this.theme = theme;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
+
+        registeredServiceImpl.setAllowedAttributes(this.allowedAttributes);
+        registeredServiceImpl.setAllowedToProxy(this.allowedToProxy);
+        registeredServiceImpl.setDescription(this.description);
+        registeredServiceImpl.setEnabled(this.enabled);
+        registeredServiceImpl.setId(this.id);
+        registeredServiceImpl.setName(this.name);
+        registeredServiceImpl.setServiceId(this.serviceId);
+        registeredServiceImpl.setSsoEnabled(this.ssoEnabled);
+        registeredServiceImpl.setTheme(this.theme);
+
+        return registeredServiceImpl;
     }
 }

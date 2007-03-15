@@ -35,7 +35,7 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
 
     private static final String SQL_INSERT = "Insert into cas_service(id, allowedToProxy, description, enabled, name, serviceUrl, ssoEnabled, theme) Values(?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String SQL_UPDATE = "Update cas_service set allowToProxy = ?, description = ?, enabled = ?, name = ?, serviceUrl = ?, ssoEnabled = ?, theme = ? where id = ?";
+    private static final String SQL_UPDATE = "Update cas_service set allowedToProxy = ?, description = ?, enabled = ?, name = ?, serviceUrl = ?, ssoEnabled = ?, theme = ? where id = ?";
 
     private static final String SQL_INSERT_ATTRIBUTE = "Insert into cas_service_attributes (cas_service_id, attribute_id) values (?, (Select id from attributes where name = ?));";
 
@@ -82,7 +82,11 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
     public RegisteredService findServiceBy(final long id) {
         for (final RegisteredService registeredService : this.services) {
             if (registeredService.getId() == id) {
-                return registeredService;
+                try {
+                    return (RegisteredService) ((RegisteredServiceImpl) registeredService).clone();
+                } catch (final CloneNotSupportedException e) {
+                    return registeredService;
+                }
             }
         }
 
@@ -132,11 +136,9 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
             service.getName(), service.getServiceId(),
             Boolean.toString(service.isSsoEnabled()), service.getTheme());
 
-        if (service.getAllowedAttributes() != null) {
-            for (final String id : service.getAllowedAttributes()) {
-                getSimpleJdbcTemplate().update(SQL_INSERT_ATTRIBUTE,
-                    new Long(service.getId()), id);
-            }
+        for (final String id : service.getAllowedAttributes()) {
+            getSimpleJdbcTemplate().update(SQL_INSERT_ATTRIBUTE,
+                new Long(service.getId()), id);
         }
         
         this.services.add(service);
@@ -175,7 +177,9 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
             getSimpleJdbcTemplate().update(SQL_INSERT_ATTRIBUTE,
                 new Long(service.getId()), id);
         }
-
+        
+        this.services.remove(service);
+        this.services.add(service);
     }
 
     /**

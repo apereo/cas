@@ -9,16 +9,16 @@
 }
 /* browser default font-size is 16px which is too big so we make it 16px x 62.5% = 10px */
 body {
-	font:normal 62.5%/1 Verdana,Arial,Helvetica,sans-serif;
-	min-width:770px;
+    font:normal 62.5%/1 Verdana,Arial,Helvetica,sans-serif;
+    min-width:992px;
 }
 
 form {
-	float:left;
-	margin:0 1%;
-	padding:0;
-	width:77%;
-	}
+    float:left;
+    margin:0 1%;
+    padding:0;
+    width:77%;
+    }
 
 
 /* general positioning styles */
@@ -140,9 +140,10 @@ div.row:after, .clearfix:after {
     color:#333;
 }
 
-.highlightBottom td {border-bottom:2px solid #b00; border-top:2px solid #b00; background:#FFEFF3; color:#666; font-weight:400;}
+.highlightBottom td {background:#FFEFF3; color:#666; font-weight:400;}
 .highlightBottom td a {display:inline; background:#fff; padding:5px 10px; color:#666; font-weight: normal;}
 .highlightBottom a:hover {background:#b00; color:#fff;}
+
 
 /* CONTENT
  --------------------------------- */
@@ -233,48 +234,48 @@ _______________________________
 /* MESSAGES
  --------------------------------- */
 .info, .errors, .success {
-	clear:both;
-	padding:20px 20px 20px 100px;
-	margin:0 0 1em;
+    clear:both;
+    padding:20px 20px 20px 100px;
+    margin:0 0 1em;
    font-weight:bold;
-	font-size:1.3em;
-	line-height:1.5;
+    font-size:1.3em;
+    line-height:1.5;
 }
 .info ul li, .errors ul li, .success ul li {list-style:none;}
 .success {
-	border:1px dotted #390;
-	color:#390;
-	background:#dfa url(../../images/services/success.gif) no-repeat 2em 50%;
+    border:1px dotted #390;
+    color:#390;
+    background:#dfa url(../../images/services/success.gif) no-repeat 2em 50%;
 }
 .info {
-	border:1px dotted navy;
-	color:navy;
-	background:#eff url(../images/services/info.gif) no-repeat 2em 50%;
+    border:1px dotted navy;
+    color:navy;
+    background:#eff url(../images/services/info.gif) no-repeat 2em 50%;
 }
 .errors {
-	border:1px dotted #b00;
-	color:#b00;
-	background:#fed url(../../images/error.gif) no-repeat 2em 50%;
+    border:1px dotted #b00;
+    color:#b00;
+    background:#fed url(../../images/error.gif) no-repeat 2em 50%;
 }
 /* style for static info boxes
 #content p.info {
-	font-weight:normal;
-	font-size:1.3em;
-	background-color:#fff;
-	color:#000;
-	background:url(../images/info.gif) no-repeat 2em 50%;
-	border-color:#fff;
+    font-weight:normal;
+    font-size:1.3em;
+    background-color:#fff;
+    color:#000;
+    background:url(../images/info.gif) no-repeat 2em 50%;
+    border-color:#fff;
 }
 */
 #content p.info, #content p.help {
-	font-weight:normal;
-	font-size:1.1em;
-	background-color:#fff;
-	color:#000;
-	background:url(../images/info-s.gif) no-repeat 0 0;
-	border-color:#fff;
-	padding:0 0 0 2em;
-	line-height:1.5;
+    font-weight:normal;
+    font-size:1.1em;
+    background-color:#fff;
+    color:#000;
+    background:url(../images/info-s.gif) no-repeat 0 0;
+    border-color:#fff;
+    padding:0 0 0 2em;
+    line-height:1.5;
 }
 #content p.help {background:url(../images/help.gif) no-repeat 0 0;}
 /* FORMS
@@ -286,17 +287,17 @@ fieldset {
     border-width:1px 0 0;
 }
 fieldset fieldset {
-	margin:1.5em 0;
-	padding:1em;
-	border-width:1px;
-	background:#fafafa;
+    margin:1.5em 0;
+    padding:1em;
+    border-width:1px;
+    background:#fafafa;
 }
 fieldset fieldset legend {
-	color:#000;
-	font-size:1em;
-	margin:0;
-	padding:0;
-	text-transform:capitalize;
+    color:#000;
+    font-size:1em;
+    margin:0;
+    padding:0;
+    text-transform:capitalize;
 }
 legend {
     margin:1em 5px;
@@ -439,8 +440,8 @@ table {
     background:#fff;
 }*/
 caption {
-	padding:5px 7px;
-	font:bold 1.2em/1.5 Verdana, Arial, Helvetica, sans-serif;
+    padding:5px 7px;
+    font:bold 1.2em/1.5 Verdana, Arial, Helvetica, sans-serif;
 }
 /*
 th, td {
@@ -454,25 +455,25 @@ table.highlight tr:hover td, table.highlight tr.over td {background:#ffc !import
 table.highlight tr.highlightBottom:hover td {background: #ffeff3 !important;}
 /* data tables - search results, status, etc. */
 table.data {
-	margin-bottom:2em;
-	margin-left:1px; /* :BUG: Firefox expands the width of table with border by an extra 1px and moves it that distance to the left */
-	border:1px solid #ccc;
-	border-width:1px 0 0 1px;
+    margin-bottom:2em;
+    margin-left:1px; /* :BUG: Firefox expands the width of table with border by an extra 1px and moves it that distance to the left */
+    border:1px solid #ccc;
+    border-width:1px 0 0 1px;
 }
 table.data caption {
-	text-align:left;
-	border:1px solid #999;
-	background:#999;
-	color:#fff;
+    text-align:left;
+    border:1px solid #999;
+    background:#999;
+    color:#fff;
 }
 table.data th {
-	background:#ddd;
-	color:#666;
+    background:#ddd;
+    color:#666;
 }
 table.data th,
 table.data td {
-	border:1px solid #ccc;
-	border-width:0 1px 1px 0;
+    border:1px solid #ccc;
+    border-width:0 1px 1px 0;
 }
 table.data tr.alt td {background:#fafafa;}
 
@@ -480,170 +481,167 @@ table.data tr.alt td {background:#fafafa;}
 
 
 table {
-	border:0;
-	border-collapse:collapse;
-	empty-cells:show;
-	background-color:#fff;
-	font-size:1.1em;
-	}
+    border:0;
+    border-collapse:collapse;
+    empty-cells:show;
+    background-color:#fff;
+    font-size:1.1em;
+    }
 
 .large {width:100%;}
 
-th	{
-	background:#eee;
-	color:#666;
-	padding:3px 5px;
-	text-align:left;
-	font-weight:normal;
-	line-height: 24px;
-	}
-	
+th    {
+    background:#eee;
+    color:#666;
+    padding:3px 5px;
+    text-align:left;
+    font-weight:normal;
+    line-height: 24px;
+    }
+    
 tr.added {
-	background-color: #ff3;
+    background-color: #ff3;
 }
 
-td	{
-	padding:3px 5px;
-	border-bottom:1px solid #eee;
-	height:38px;
-	}
+td    {
+    padding:3px 5px;
+    border-bottom:1px solid #eee;
+    height:38px;
+    }
 
 td a {
-	padding:10px 0pt 10px 35px;
-	text-decoration: none;
-	display: inline;
-	line-height:32px;
-	color:#c1c1c0;
-	font-weight:900;
-} 
+    padding:10px 0pt 10px 35px;
+    text-decoration: none;
+    display:inline;
+    line-height:32px;
+    color:#c1c1c0;
+    font-weight:400;
+}
 
 .add {
-	line-height:32px;
-	height:32px;
-	border-top: 5px solid #eee;
-	color:#000;
-	width:100%;
-	text-indent:5px;
-	padding-top: 5px;
-	font-size:1.1em;
+    min-width:952px;
+    line-height:32px;
+    height:32px;
+    border-top: 5px solid #eee;
+    color:#000;
+    width:100%;
+    text-indent:5px;
+    padding-top: 5px;
+    font-size:1.1em;
 }
-	
+    
 .add a {background: url(../../images/services/add_service.gif) no-repeat left center;
-	padding:10px 0 10px 35px;
-	text-decoration: none;
-	display: inline;
-	line-height:32px;
-	color:#c1c1c0;
-	font-weight:900;
+    padding:10px 0 10px 35px;
+    text-decoration: none;
+    display: inline;
+    line-height:32px;
+    color:#c1c1c0;
+    font-weight:900;
 }
 
 
-.add a:hover {
-	color:#b00;
-	}
+.add a:hover {color:#b00;}
 td a.edit {background: url(../../images/services/edit_service.gif) no-repeat left center;}
 td a.del {background: url(../../images/services/delete_service.gif) no-repeat left center;}
-td a:hover {
-	color:#b00;
-	}
+td a:hover {color:#b00;}
 
 
-	p.instructions {
-		margin:1em 0;
-		font-size:1.2em;
-		background:url('../../images/services/info.gif') no-repeat left center;; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
-		}
+    p.instructions {
+        margin:1em 0;
+        font-size:1.2em;
+        background:url('../../images/services/info.gif') no-repeat left center;; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
+        }
 
-	fieldset {
-		padding:15px 10px;
-		background-color:#fafafa;
-		margin:20px 0;
-		position:relative;
-		border:1px solid #ddd;
-		}
+    fieldset {
+        padding:15px 10px;
+        background-color:#fafafa;
+        margin:20px 0;
+        position:relative;
+        border:1px solid #ddd;
+        }
 
-	fieldset fieldset  {
-		border: 1px solid #ccc;
-		background-color:#fff;
-		}
+    fieldset fieldset  {
+        border: 1px solid #ccc;
+        background-color:#fff;
+        }
 
-	legend {
-		padding:2px 5px;
-		color:#b00;
-		font-size:1.3em;
-		font-weight:900;
-		background:#fff;
-		}
+    legend {
+        padding:2px 5px;
+        color:#b00;
+        font-size:1.3em;
+        font-weight:900;
+        background:#fff;
+        }
 
-	fieldset fieldset legend {
-		color:#444;
-		font-size:1.1em;
-		background:#fafafa;
-		}
+    fieldset fieldset legend {
+        color:#444;
+        font-size:1.1em;
+        background:#fafafa;
+        }
 
-	label.preField, .label {
-		display:block;
-		width:8em;
-		float:left;
-		font-size:1.1em;
-		}
+    label.preField, .label {
+        display:block;
+        width:8em;
+        float:left;
+        font-size:1.1em;
+        }
 
-	label.top {
-		float:none;
-		width:auto;
-		margin-left:.5em;
-		}
+    label.top {
+        float:none;
+        width:auto;
+        margin-left:.5em;
+        }
 
-	label.postField {
-		margin-right:1em;
-		font-size:1.1em;
-		vertical-align:bottom;
-		}
+    label.postField {
+        margin-right:1em;
+        font-size:1.1em;
+        vertical-align:bottom;
+        }
 
-	.noBorder,
-	.check,
-	.radio {border:0px none;}
+    .noBorder,
+    .check,
+    .radio {border:0px none;}
 
-	input,
-	textarea,
-	select {
-		border:1px solid #ccc;
-		border-color:#999 #eee #eee #999;
-		padding:2px;
-		}
+    input,
+    textarea,
+    select {
+        border:1px solid #ccc;
+        border-color:#999 #eee #eee #999;
+        padding:2px;
+        }
 
-	input {
-		margin-left:.5em;
-		font-size:1.1em;
-		vertical-align:top;
-		}
+    input {
+        margin-left:.5em;
+        font-size:1.1em;
+        vertical-align:top;
+        }
 
-	span.oneField {
-		display:block;
-		margin:.5em 0;
-		padding:0;
-		}
+    span.oneField {
+        display:block;
+        margin:.5em 0;
+        padding:0;
+        }
 
-		span a {
-			display:-moz-inline-box;
-			text-decoration: none;
-			padding-left:10px;
-			color:#c1c1c0;
-			font-weight:900;
-			font-size:1.2em;
-			vertical-align:middle;
-			margin-left:.5em;
-			}
+        span a {
+            display:-moz-inline-box;
+            text-decoration: none;
+            padding-left:10px;
+            color:#c1c1c0;
+            font-weight:900;
+            font-size:1.2em;
+            vertical-align:middle;
+            margin-left:.5em;
+            }
 
-		span a:hover {color:#b00;}
+        span a:hover {color:#b00;}
 
 button {font-size:1em;}
 
 .primaryAction {
-	padding:.5em;
-	color:green;
-	font-weight:900;
-	}
+    padding:.5em;
+    color:green;
+    font-weight:900;
+    }
 
 /* form layout table */
 /* MISCELLANEOUS
@@ -666,7 +664,3 @@ a.top span {
 }
 /* for cells whose abbreviated headings have a title attribute with expanded heading */
 .more {cursor:help;}
-/* PAGE SPECIFIC
- --------------------------------- */
-/* somePage.jsp */
-/* #pageId selector {} */

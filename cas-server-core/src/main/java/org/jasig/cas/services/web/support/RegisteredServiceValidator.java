@@ -23,8 +23,12 @@ import org.springframework.validation.Validator;
  */
 public class RegisteredServiceValidator implements Validator, InitializingBean {
 
+    private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 300;
+
     /** ServiceRegistry to look up services. */
     private ServiceRegistry serviceRegistry;
+
+    private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
     public boolean supports(final Class clazz) {
         return RegisteredServiceImpl.class.equals(clazz);
@@ -44,13 +48,24 @@ public class RegisteredServiceValidator implements Validator, InitializingBean {
                 }
             }
         }
+
+        if (r.getDescription() != null
+            && r.getDescription().length() > this.maxDescriptionLength) {
+            errors.rejectValue("description",
+                "registeredService.description.length", null);
+        }
     }
 
     public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
         this.serviceRegistry = serviceRegistry;
     }
 
+    public void setMaxDescriptionLength(final int maxLength) {
+        this.maxDescriptionLength = maxLength;
+    }
+
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.serviceRegistry, "serviceRegistry cannot be null.");
+        Assert.isTrue(this.maxDescriptionLength > 0, "maxDescriptionLength must be greater than 0.");
     }
 }
