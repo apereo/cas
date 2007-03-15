@@ -35,7 +35,7 @@
 			
 			<tbody>
 		<c:forEach items="${services}" var="service" varStatus="status">
-		<tr id="row${status.index}"${param.action eq 'add' and param.id eq service.id ? ' class="added"' : ''}>
+		<tr id="row${status.index}"${param.id eq service.id ? ' class="added"' : ''}>
 			<td id="${service.id}" class="td1">${service.name}</td>
 			<td class="td2">${service.serviceId}</td>
 			<td class="ac td3"><img src="../images/services/${service.enabled}.gif" /></td>
@@ -43,7 +43,7 @@
 			<td class="ac td5"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
 
 			<td class="td6" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit">edit</a></td>
-			<td class="td7" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}');">delete</a></td>
+			<td class="td7" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}'); return false;">delete</a></td>
 		</tr>
 		</c:forEach>
 			</tbody>
