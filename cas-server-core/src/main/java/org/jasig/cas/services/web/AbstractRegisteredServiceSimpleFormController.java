@@ -43,7 +43,7 @@ public abstract class AbstractRegisteredServiceSimpleFormController extends
     
     protected final void initBinder(final HttpServletRequest request,
         final ServletRequestDataBinder binder) throws Exception {
-        binder.setRequiredFields(new String[] {"description", "serviceId", "name", "allowedToProxy", "enabled", "ssoEnabled"});
+        binder.setRequiredFields(new String[] {"description", "serviceId", "name", "allowedToProxy", "enabled", "ssoEnabled", "anonymousAccess"});
         binder.setDisallowedFields(new String[] {"id"});
     }
     

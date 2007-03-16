@@ -26,6 +26,13 @@ public interface RegisteredService {
      */
     boolean isEnabled();
 
+    /** 
+     * Determines whether the service is allowed anonymous or priveleged access
+     * to user information. Anonymous access should not return any identifying
+     * information such as user id.
+     */
+    boolean isAnonymousAccess();
+
     /**
      * Returns the list of allowed attributes. Users should always check
      * {@link RegisteredService#isAllowedToSeeAllAttributes()} to determine
@@ -49,7 +56,7 @@ public interface RegisteredService {
      * @return the unique identifier for this service.
      */
     String getServiceId();
-    
+
     long getId();
 
     /**

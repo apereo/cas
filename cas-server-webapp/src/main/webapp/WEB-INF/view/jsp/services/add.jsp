@@ -48,15 +48,20 @@
 			<span class="required">
 				<span class="oneChoice">
 					<form:checkbox path="enabled" value="true" cssClass="check" />
-					<label for="enabled" id="enabled-l" class="postField">Enabled</label>
+					<label for="enabled1" id="enabled-l" class="postField">Enabled</label>
 				</span>
 				<span class="oneChoice">
 					<form:checkbox path="allowedToProxy" value="true" cssClass="check" />
-					<label for="allowedToProxy" id="proxy-l" class="postField">Allowed to proxy</label>
+					<label for="allowedToProxy1" id="proxy-l" class="postField">Allowed to proxy</label>
 				</span>
 				<span class="oneChoice">
 					<form:checkbox path="ssoEnabled" value="true" cssClass="check" />
-					<label for="ssoEnabled" id="ssl-l" class="postField">SSO Participant</label>
+					<label for="ssoEnabled1" id="ssl-l" class="postField">SSO Participant</label>
+				</span>
+				
+				<span class="oneChoice">
+					<form:checkbox path="anonymousAccess" value="true" cssClass="check" />
+					<label for="anonymousAccess1" id="anonymousAccess-l" class="postField">Anonymous Access</label>
 				</span>
 			</span>
 			<br/>

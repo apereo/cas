@@ -3,7 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title><spring:message code="${pageTitle}" /></title>
   <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
@@ -50,7 +50,7 @@
 <![endif]-->
 </head>
 
-<body id="${pageTitle}">
+<body id="${pageTitle}-body">
 <div id="header">
   <div id="nav-system">
     <ul
