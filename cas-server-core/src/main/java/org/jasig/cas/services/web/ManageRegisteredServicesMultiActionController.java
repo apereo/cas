@@ -47,10 +47,15 @@ public class ManageRegisteredServicesMultiActionController extends
     
     public ModelAndView deleteRegisteredService(final HttpServletRequest request, final HttpServletResponse response) {
         final String id = request.getParameter("id");
+        final long idAsLong = Long.parseLong(id);
+        final RegisteredService registeredService = this.serviceRegistryManager.findServiceBy(idAsLong);
+
+        final ModelAndView modelAndView = new ModelAndView(new RedirectView("/services/manage.html", true), "status", "deleted");
+        modelAndView.addObject("serviceName", registeredService != null ? registeredService.getName() : "");
         
-        this.serviceRegistryManager.deleteService(Long.parseLong(id));
+        this.serviceRegistryManager.deleteService(idAsLong);
         
-        return new ModelAndView(new RedirectView("/services/manage.html", true), "status", "deleted");
+        return modelAndView;
     }
     
     public ModelAndView enableRegistryService(final HttpServletRequest request, final HttpServletResponse response) {
