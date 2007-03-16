@@ -40,6 +40,17 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
     private boolean enabled = true;
 
     private boolean ssoEnabled = true;
+    
+    private boolean anonymousAccess = false;
+ 
+    public boolean isAnonymousAccess() {
+        return this.anonymousAccess;
+    }
+
+    
+    public void setAnonymousAccess(final boolean anonymousAccess) {
+        this.anonymousAccess = anonymousAccess;
+    }
 
     public List<String> getAllowedAttributes() {
         return this.allowedAttributes != null ? this.allowedAttributes
@@ -143,6 +154,7 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
         registeredServiceImpl.setServiceId(this.serviceId);
         registeredServiceImpl.setSsoEnabled(this.ssoEnabled);
         registeredServiceImpl.setTheme(this.theme);
+        registeredServiceImpl.setAnonymousAccess(this.anonymousAccess);
 
         return registeredServiceImpl;
     }

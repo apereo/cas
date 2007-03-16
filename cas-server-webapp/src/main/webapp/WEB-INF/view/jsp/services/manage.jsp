@@ -38,9 +38,9 @@
 		<tr id="row${status.index}"${param.id eq service.id ? ' class="added"' : ''}>
 			<td id="${service.id}" class="td1">${service.name}</td>
 			<td class="td2">${service.serviceId}</td>
-			<td class="ac td3"><img src="../images/services/${service.enabled}.gif" /></td>
-			<td class="ac td4"><img src="../images/services/${service.allowedToProxy}.gif" /></td>
-			<td class="ac td5"><img src="../images/services/${service.ssoEnabled}.gif" /></td>
+			<td class="ac td3"><img src="../images/services/${service.enabled}.gif" alt="${service.enabled ? 'Enabled' : 'Disabled'}" /></td>
+			<td class="ac td4"><img src="../images/services/${service.allowedToProxy}.gif" alt="${service.allowedToProxy ? 'Allowed to Proxy' : 'Not Allowed to Proxy'}" /></td>
+			<td class="ac td5"><img src="../images/services/${service.ssoEnabled}.gif" alt="${service.ssoEnabled ? 'SSO Enabled' : 'SSO Disabled'}" /></td>
 
 			<td class="td6" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit">edit</a></td>
 			<td class="td7" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}'); return false;">delete</a></td>

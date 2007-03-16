@@ -33,9 +33,9 @@ import org.springframework.util.Assert;
 public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
     ServiceRegistry, ServiceRegistryManager, InitializingBean {
 
-    private static final String SQL_INSERT = "Insert into cas_service(id, allowedToProxy, description, enabled, name, serviceUrl, ssoEnabled, theme) Values(?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_INSERT = "Insert into cas_service(id, allowedToProxy, description, enabled, name, serviceUrl, ssoEnabled, theme, anonymousAccess) Values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private static final String SQL_UPDATE = "Update cas_service set allowedToProxy = ?, description = ?, enabled = ?, name = ?, serviceUrl = ?, ssoEnabled = ?, theme = ? where id = ?";
+    private static final String SQL_UPDATE = "Update cas_service set allowedToProxy = ?, description = ?, enabled = ?, name = ?, serviceUrl = ?, ssoEnabled = ?, theme = ?, anonymousAccess = ? where id = ?";
 
     private static final String SQL_INSERT_ATTRIBUTE = "Insert into cas_service_attributes (cas_service_id, attribute_id) values (?, (Select id from attributes where name = ?));";
 
@@ -43,7 +43,7 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
 
     private static final String SQL_DELETE = "Delete From cas_service Where id = ?";
 
-    private static final String SQL_SELECT = "Select id, allowedToProxy, description, enabled, name, serviceUrl, ssoEnabled, theme from cas_service";
+    private static final String SQL_SELECT = "Select id, allowedToProxy, description, enabled, name, serviceUrl, ssoEnabled, theme, anonymousAccess from cas_service";
 
     private static final String SQL_SELECT_ENABLED = "Select pref_value from cas_preferences where pref_key = \"cas.serviceregistry.enabled\"";
 
@@ -134,7 +134,7 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
             Boolean.toString(service.isAllowedToProxy()),
             service.getDescription(), Boolean.toString(service.isEnabled()),
             service.getName(), service.getServiceId(),
-            Boolean.toString(service.isSsoEnabled()), service.getTheme());
+            Boolean.toString(service.isSsoEnabled()), service.getTheme(), Boolean.toString(service.isAnonymousAccess()));
 
         for (final String id : service.getAllowedAttributes()) {
             getSimpleJdbcTemplate().update(SQL_INSERT_ATTRIBUTE,
@@ -167,7 +167,7 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
             Boolean.toString(service.isAllowedToProxy()),
             service.getDescription(), Boolean.toString(service.isEnabled()),
             service.getName(), service.getServiceId(),
-            Boolean.toString(service.isSsoEnabled()), service.getTheme(),
+            Boolean.toString(service.isSsoEnabled()), service.getTheme(), Boolean.toString(service.isAnonymousAccess()),
             new Long(service.getId()));
 
         getSimpleJdbcTemplate().update(SQL_DELETE_ATTRIBUTES,
@@ -243,6 +243,7 @@ public final class ServiceRegistryImpl extends SimpleJdbcDaoSupport implements
             registeredService.setSsoEnabled(Boolean.parseBoolean(rs
                 .getString("ssoEnabled")));
             registeredService.setTheme(rs.getString("theme"));
+            registeredService.setAnonymousAccess(Boolean.parseBoolean(rs.getString("anonymousAccess")));
             registeredService.setAllowedAttributes(attributes);
 
             return registeredService;
