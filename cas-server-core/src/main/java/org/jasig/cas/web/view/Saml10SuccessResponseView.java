@@ -16,6 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.AttributePrincipal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.util.DefaultRandomStringGenerator;
+import org.jasig.cas.util.RandomStringGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;
@@ -38,6 +42,10 @@ import org.springframework.util.Assert;
  * Authentication attribute it will look at is the authMethod (if supplied).
  * <p>
  * Note that this class will currently not handle proxy authentication.
+ * <p>
+ * Note: This class currently expects a bean called "ServiceRegistry" to exist.
+ * 
+ * XXX: hack!!!
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -45,12 +53,19 @@ import org.springframework.util.Assert;
  */
 public class Saml10SuccessResponseView extends AbstractCasView implements
     InitializingBean {
-    
+
     /** Namespace for custom attributes. */
     private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
 
     /** The issuer, generally the hostname. */
     private String issuer;
+
+    /** Instance of the ServiceRegistry. */
+    private ServiceRegistry serviceRegistry;
+
+    /** Generates Ids of Length 8. */
+    private RandomStringGenerator idGenerator = new DefaultRandomStringGenerator(
+        8);
 
     /** The amount of time in milliseconds this is valid for. */
     private long issueLength = 30000;
@@ -67,48 +82,56 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             final String authenticationMethod = (String) authentication
                 .getAttributes().get("samlAuthenticationStatement::authMethod");
             final Service service = assertion.getService();
-    
-            final SAMLResponse samlResponse = new SAMLResponse(
-                null, service
-                    .getId(), new ArrayList<Object>(), null);
-    
+            final String randomId = this.idGenerator.getNewString();
+
+            final RegisteredService r = this.serviceRegistry
+                .findServiceBy(service);
+            final boolean useRandom = r != null && r.isAnonymousAccess();
+
+            final SAMLResponse samlResponse = new SAMLResponse(null, service
+                .getId(), new ArrayList<Object>(), null);
+
             samlResponse.setIssueInstant(currentDate);
-    
+
             final SAMLAssertion samlAssertion = new SAMLAssertion();
             samlAssertion.setIssueInstant(currentDate);
             samlAssertion.setIssuer(this.issuer);
             samlAssertion.setNotBefore(currentDate);
             samlAssertion.setNotOnOrAfter(new Date(currentDate.getTime()
                 + this.issueLength));
-    
+
             final SAMLAudienceRestrictionCondition samlAudienceRestrictionCondition = new SAMLAudienceRestrictionCondition();
             samlAudienceRestrictionCondition.addAudience(service.getId());
-    
+
             final SAMLAuthenticationStatement samlAuthenticationStatement = new SAMLAuthenticationStatement();
             samlAuthenticationStatement.setAuthInstant(authentication
                 .getAuthenticatedDate());
-            samlAuthenticationStatement.setAuthMethod(authenticationMethod != null
-                ? authenticationMethod
-                : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
-    
-            samlAuthenticationStatement.setSubject(getSamlSubject(authentication));
-    
+            samlAuthenticationStatement
+                .setAuthMethod(authenticationMethod != null
+                    ? authenticationMethod
+                    : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
+
+            samlAuthenticationStatement.setSubject(getSamlSubject(
+                authentication, randomId, useRandom));
+
             if (authentication.getPrincipal() instanceof AttributePrincipal) {
                 final AttributePrincipal attributePrincipal = (AttributePrincipal) authentication
                     .getPrincipal();
                 final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
-    
-                attributeStatement.setSubject(getSamlSubject(authentication));
+
+                attributeStatement.setSubject(getSamlSubject(authentication,
+                    randomId, useRandom));
                 samlAssertion.addStatement(attributeStatement);
-    
-                for (final String key : attributePrincipal.getAttributes().keySet()) {
+
+                for (final String key : attributePrincipal.getAttributes()
+                    .keySet()) {
                     final Object value = attributePrincipal.getAttributes()
                         .get(key);
-    
+
                     final SAMLAttribute attribute = new SAMLAttribute();
                     attribute.setName(key);
                     attribute.setNamespace(NAMESPACE);
-    
+
                     if (value instanceof Collection) {
                         attribute.setValues((Collection) value);
                     } else {
@@ -116,19 +139,19 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
                         c.add(value);
                         attribute.setValues(c);
                     }
-    
+
                     attributeStatement.addAttribute(attribute);
                 }
             }
-    
+
             samlAssertion.addStatement(samlAuthenticationStatement);
             samlAssertion.addCondition(samlAudienceRestrictionCondition);
             samlResponse.addAssertion(samlAssertion);
-    
+
             final String xmlResponse = samlResponse.toString();
-    
-            response.getWriter()
-                .print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+
+            response.getWriter().print(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             response.setContentType("text/xml");
             response.getWriter().print(xmlResponse);
             response.flushBuffer();
@@ -138,12 +161,13 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         }
     }
 
-    protected SAMLSubject getSamlSubject(final Authentication authentication)
-        throws SAMLException {
+    protected SAMLSubject getSamlSubject(final Authentication authentication,
+        final String randomId, final boolean useRandom) throws SAMLException {
         final SAMLSubject samlSubject = new SAMLSubject();
         samlSubject.addConfirmationMethod(SAMLSubject.CONF_ARTIFACT);
         final SAMLNameIdentifier samlNameIdentifier = new SAMLNameIdentifier();
-        samlNameIdentifier.setName(authentication.getPrincipal().getId());
+        samlNameIdentifier.setName(useRandom ? randomId : authentication
+            .getPrincipal().getId());
 
         samlSubject.setNameIdentifier(samlNameIdentifier);
 
@@ -152,6 +176,8 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.issuer, "issuer cannot be null.");
+        setServiceRegistry((ServiceRegistry) getApplicationContext().getBean(
+            "serviceRegistry", ServiceRegistry.class));
     }
 
     public void setIssueLength(final long issueLength) {
@@ -160,5 +186,9 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
     public void setIssuer(final String issuer) {
         this.issuer = issuer;
+    }
+
+    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
     }
 }
