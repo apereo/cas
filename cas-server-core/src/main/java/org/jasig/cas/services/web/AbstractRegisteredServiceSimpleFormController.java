@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServiceRegistryManager;
+import org.jasig.cas.services.ServicesManager;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -34,11 +34,11 @@ public abstract class AbstractRegisteredServiceSimpleFormController extends
     SimpleFormController {
     
     /** Instance of ServiceRegistryManager */
-    private final ServiceRegistryManager serviceRegistryManager;
+    private final ServicesManager servicesManager;
     
-    protected AbstractRegisteredServiceSimpleFormController(final ServiceRegistryManager serviceRegistryManager) {
-        Assert.notNull(serviceRegistryManager);
-        this.serviceRegistryManager = serviceRegistryManager;
+    protected AbstractRegisteredServiceSimpleFormController(final ServicesManager servicesManager) {
+        Assert.notNull(servicesManager);
+        this.servicesManager = servicesManager;
     }
     
     protected final void initBinder(final HttpServletRequest request,
@@ -47,8 +47,8 @@ public abstract class AbstractRegisteredServiceSimpleFormController extends
         binder.setDisallowedFields(new String[] {"id"});
     }
     
-    protected final ServiceRegistryManager getServiceRegistryManager() {
-        return this.serviceRegistryManager;
+    protected final ServicesManager getServicesManager() {
+        return this.servicesManager;
     }
     
     /**

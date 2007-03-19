@@ -6,7 +6,7 @@
 package org.jasig.cas.services.web;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServiceRegistryManager;
+import org.jasig.cas.services.ServicesManager;
 
 /**
  * 
@@ -21,13 +21,13 @@ public class AddRegisteredServiceSimpleFormController extends
     /**
      * Public constructor that takes a {@link ServiceRegistryManager}
      * 
-     * @param serviceRegistryManager the ServiceRegistryManager
+     * @param servicesManager the ServiceRegistryManager
      */
-    public AddRegisteredServiceSimpleFormController(final ServiceRegistryManager serviceRegistryManager) {
-        super(serviceRegistryManager);
+    public AddRegisteredServiceSimpleFormController(final ServicesManager servicesManager) {
+        super(servicesManager);
     }
 
     protected void onSubmitInternal(final RegisteredService registeredService) {
-        getServiceRegistryManager().addService(registeredService);
+        getServicesManager().save(registeredService);
     }
 }
