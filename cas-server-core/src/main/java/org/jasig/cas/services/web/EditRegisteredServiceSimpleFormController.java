@@ -8,7 +8,7 @@ package org.jasig.cas.services.web;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServiceRegistryManager;
+import org.jasig.cas.services.ServicesManager;
 import org.springframework.util.StringUtils;
 
 /**
@@ -22,15 +22,15 @@ public class EditRegisteredServiceSimpleFormController extends
     /**
      * Public constructor that takes a {@link ServiceRegistryManager}
      * 
-     * @param serviceRegistryManager the ServiceRegistryManager
+     * @param servicesManager the ServiceRegistryManager
      */
     public EditRegisteredServiceSimpleFormController(
-        final ServiceRegistryManager serviceRegistryManager) {
-        super(serviceRegistryManager);
+        final ServicesManager servicesManager) {
+        super(servicesManager);
     }
 
     protected void onSubmitInternal(final RegisteredService registeredService) {
-        getServiceRegistryManager().updateService(registeredService);
+        getServicesManager().save(registeredService);
     }
 
     protected Object formBackingObject(final HttpServletRequest request)
@@ -43,7 +43,7 @@ public class EditRegisteredServiceSimpleFormController extends
 
         final long serviceId = Long.parseLong(id);
 
-        final RegisteredService service = getServiceRegistryManager()
+        final RegisteredService service = getServicesManager()
             .findServiceBy(serviceId);
 
         if (service == null) {

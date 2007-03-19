@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
@@ -34,19 +34,19 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     public static final String SERVICE_THEME_KEY = "service";
 
     /** The ServiceRegistry to look up the service. */
-    private ServiceRegistry serviceRegistry;
+    private ServicesManager servicesManager;
 
     private List<ArgumentExtractor> argumentExtractors;
 
     public String resolveThemeName(final HttpServletRequest request) {
-        if (this.serviceRegistry == null) {
+        if (this.servicesManager == null) {
             return getDefaultThemeName();
         }
 
         final Service service = WebUtils.getService(this.argumentExtractors,
             request);
 
-        final RegisteredService rService = this.serviceRegistry
+        final RegisteredService rService = this.servicesManager
             .findServiceBy(service);
 
         return service != null && rService.getTheme() != null ? rService
@@ -58,8 +58,8 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         // nothing to do here
     }
 
-    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
-        this.serviceRegistry = serviceRegistry;
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
     public void setArgumentExtractors(

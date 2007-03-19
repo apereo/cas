@@ -7,7 +7,7 @@ package org.jasig.cas.services.web.support;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.services.ServicesManager;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.validation.Errors;
@@ -26,7 +26,7 @@ public class RegisteredServiceValidator implements Validator, InitializingBean {
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 300;
 
     /** ServiceRegistry to look up services. */
-    private ServiceRegistry serviceRegistry;
+    private ServicesManager servicesManager;
 
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
@@ -38,7 +38,7 @@ public class RegisteredServiceValidator implements Validator, InitializingBean {
         final RegisteredService r = (RegisteredService) o;
 
         if (r.getServiceId() != null) {
-            for (final RegisteredService service : this.serviceRegistry
+            for (final RegisteredService service : this.servicesManager
                 .getAllServices()) {
                 if (r.getServiceId().equals(service.getServiceId())
                     && r.getId() != service.getId()) {
@@ -56,8 +56,8 @@ public class RegisteredServiceValidator implements Validator, InitializingBean {
         }
     }
 
-    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
-        this.serviceRegistry = serviceRegistry;
+    public void setServicesManager(final ServicesManager serviceRegistry) {
+        this.servicesManager = serviceRegistry;
     }
 
     public void setMaxDescriptionLength(final int maxLength) {
@@ -65,7 +65,7 @@ public class RegisteredServiceValidator implements Validator, InitializingBean {
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.serviceRegistry, "serviceRegistry cannot be null.");
+        Assert.notNull(this.servicesManager, "servicesManager cannot be null.");
         Assert.isTrue(this.maxDescriptionLength > 0, "maxDescriptionLength must be greater than 0.");
     }
 }

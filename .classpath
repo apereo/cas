@@ -51,5 +51,6 @@
 	<classpathentry kind="var" path="M2_REPO/com/sun/jndi/ldap/ldapbp/1.0/ldapbp-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/taglibs/standard/1.1.2/standard-1.1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
