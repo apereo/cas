@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.AttributePrincipal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.DefaultRandomStringGenerator;
 import org.jasig.cas.util.RandomStringGenerator;
 import org.jasig.cas.validation.Assertion;
@@ -61,7 +61,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
     private String issuer;
 
     /** Instance of the ServiceRegistry. */
-    private ServiceRegistry serviceRegistry;
+    private ServicesManager servicesManager;
 
     /** Generates Ids of Length 8. */
     private RandomStringGenerator idGenerator = new DefaultRandomStringGenerator(
@@ -84,7 +84,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             final Service service = assertion.getService();
             final String randomId = this.idGenerator.getNewString();
 
-            final RegisteredService r = this.serviceRegistry
+            final RegisteredService r = this.servicesManager
                 .findServiceBy(service);
             final boolean useRandom = r != null && r.isAnonymousAccess();
 
@@ -176,8 +176,8 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.issuer, "issuer cannot be null.");
-        setServiceRegistry((ServiceRegistry) getApplicationContext().getBean(
-            "serviceRegistry", ServiceRegistry.class));
+        setServicesManager((ServicesManager) getApplicationContext().getBean(
+            "serviceRegistry", ServicesManager.class));
     }
 
     public void setIssueLength(final long issueLength) {
@@ -188,7 +188,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         this.issuer = issuer;
     }
 
-    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
-        this.serviceRegistry = serviceRegistry;
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 }
