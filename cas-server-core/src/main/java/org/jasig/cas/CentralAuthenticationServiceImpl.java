@@ -406,7 +406,7 @@ public final class CentralAuthenticationServiceImpl implements
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
 
-    public void setServiceManager(final ServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 

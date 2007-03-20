@@ -8,6 +8,13 @@ package org.jasig.cas.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+
+import javax.persistence.GenerationType;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
@@ -19,6 +26,7 @@ import org.springframework.util.PathMatcher;
  * @version $Revision$ $Date$
  * @since 3.1
  */
+@Entity
 public class RegisteredServiceImpl implements RegisteredService, Cloneable {
 
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
@@ -33,6 +41,9 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
 
     private String theme;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "SERVICE_ID")
+    @SequenceGenerator(name = "SERVICE_ID", initialValue = 1)
     private long id = -1;
 
     private boolean allowedToProxy = true;
@@ -40,14 +51,13 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
     private boolean enabled = true;
 
     private boolean ssoEnabled = true;
-    
+
     private boolean anonymousAccess = false;
- 
+
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
     }
 
-    
     public void setAnonymousAccess(final boolean anonymousAccess) {
         this.anonymousAccess = anonymousAccess;
     }

@@ -16,28 +16,43 @@
 			index="0"
 			value="50" />
 	</bean>
-    
-    <bean
-        id="serviceRegistry"
-        class="org.jasig.cas.services.ServiceRegistryImpl"
-        p:dataSource-ref="dataSource"
-        p:dataFieldMaxValueIncrementer-ref="dataFieldMaxValueIncrementer" />
-        
-	<tx:annotation-driven transaction-manager="txManager"/>
-
+	
 	<bean
-  		id="txManager"
-  		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-  		p:dataSource-ref="dataSource" />
-  
-        
-    <bean
-    	id="dataFieldMaxValueIncrementer"
-    	class="org.springframework.jdbc.support.incrementer.HsqlMaxValueIncrementer"
-    	p:dataSource-ref="dataSource"
-    	p:incrementerName="cas_id_generator"
-    	p:columnName="value" />
-    	
+		id="servicesManager"
+		class="org.jasig.cas.services.DefaultServicesManagerImpl">
+		<constructor-arg index="0" ref="serviceRegistryDao" />
+	</bean>
+	
+	<bean
+		id="serviceRegistryDao"
+		class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"
+		p:entityManagerFactory-ref="entityManagerFactory" />
+		
+
+ 	<!-- This is the EntityManagerFactory configuration for TopLink Essentials (Glassfish JPA) -->
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="loadTimeWeaver">
+			<!--<bean class="org.springframework.instrument.classloading.SimpleLoadTimeWeaver"/>-->
+			<bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+		</property>
+
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.TopLinkJpaVendorAdapter">
+				<!--<property name="databasePlatform" value="oracle.toplink.essentials.platform.database.HSQLPlatform"/>-->
+				<property name="databasePlatform" value="oracle.toplink.essentials.platform.database.oracle.OraclePlatform"/>
+				<property name="generateDdl" value="true"/>
+				<property name="showSql" value="true" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+    
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
     <bean
     	id="database"
     	class="org.jasig.cas.util.HsqlDbDatabaseLocatorFactoryBean"
@@ -46,11 +61,20 @@
 	<bean
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		p:driverClass="oracle.jdbc.driver.OracleDriver"
+		p:jdbcUrl="jdbc:oracle:thin:@hasbro.acs.rutgers.edu:1521:acs3"
+		p:password="Wwtw86"
+		p:user="battags" />
+    	
+<!--
+	<bean
+		id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		p:driverClass="org.hsqldb.jdbcDriver"
 		p:jdbcUrl-ref="database"
 		p:password=""
 		p:user="sa" />
-	
+-->
 	<bean id="httpClient" class="org.jasig.cas.util.HttpClient"
 		p:readTimeout="5000"
 		p:connectionTimeout="5000" />
@@ -92,7 +116,7 @@
 		p:authenticationManager-ref="authenticationManager"
 		p:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
 		p:ticketRegistry-ref="ticketRegistry"
-        p:serviceRegistry-ref="serviceRegistry">
+        p:servicesManager-ref="servicesManager">
 		<property
 			name="uniqueTicketIdGeneratorsForService">
 				<map>

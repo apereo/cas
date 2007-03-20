@@ -272,7 +272,7 @@ uncomment this to allow access to web service
 		p:commandName="registeredService"
 		p:validator-ref="registeredServiceValidator"
 		p:sessionForm="true">
-		<constructor-arg index="0" ref="serviceRegistry" />
+		<constructor-arg index="0" ref="servicesManager" />
 	</bean>
 	
 	<bean id="editRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.EditRegisteredServiceSimpleFormController"
@@ -282,14 +282,13 @@ uncomment this to allow access to web service
 		p:commandName="registeredService"
 		p:validator-ref="registeredServiceValidator"
 		p:sessionForm="false">
-		<constructor-arg index="0" ref="serviceRegistry" />
+		<constructor-arg index="0" ref="servicesManager" />
 	</bean>
 	
 	<bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
-		p:serviceRegistry-ref="serviceRegistry" />
+		p:servicesManager-ref="servicesManager" />
 	
 	<bean id="manageRegisteredServicesMultiActionController" class="org.jasig.cas.services.web.ManageRegisteredServicesMultiActionController">
-		<constructor-arg index="0" ref="serviceRegistry" />
-		<constructor-arg index="1" ref="serviceRegistry" />
+		<constructor-arg index="0" ref="servicesManager" />
 	</bean>
 </beans>
