@@ -16,7 +16,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServiceRegistry;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
@@ -94,7 +94,7 @@ public final class CentralAuthenticationServiceImpl implements
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /** Implementation of Service Registry */
-    private ServiceRegistry serviceRegistry;
+    private ServicesManager servicesManager;
 
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
@@ -148,7 +148,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
         }
 
-        final RegisteredService registeredService = this.serviceRegistry
+        final RegisteredService registeredService = this.servicesManager
             .findServiceBy(service);
 
         if (registeredService == null) {
@@ -231,7 +231,7 @@ public final class CentralAuthenticationServiceImpl implements
                 throw new InvalidTicketException();
             }
 
-            final RegisteredService registeredService = this.serviceRegistry
+            final RegisteredService registeredService = this.servicesManager
                 .findServiceBy(serviceTicket.getService());
 
             if (registeredService == null
@@ -398,7 +398,7 @@ public final class CentralAuthenticationServiceImpl implements
             "ticketGrantingTicketExpirationPolicy cannot be null on " + name);
         Assert.notNull(this.serviceTicketExpirationPolicy,
             "serviceTicketExpirationPolicy cannot be null on " + name);
-        Assert.notNull(this.serviceRegistry, "serviceRegistry cannot be null.");
+        Assert.notNull(this.servicesManager, "serviceRegistry cannot be null.");
     }
 
     public void setUniqueTicketIdGeneratorsForService(
@@ -406,8 +406,8 @@ public final class CentralAuthenticationServiceImpl implements
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
     }
 
-    public void setServiceRegistry(final ServiceRegistry serviceRegistry) {
-        this.serviceRegistry = serviceRegistry;
+    public void setServiceManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
 }
