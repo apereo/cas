@@ -10,27 +10,35 @@ import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 /**
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.1
- * 
- * TODO enabled/disabled
- *
+ * @since 3.1 TODO enabled/disabled
  */
-public class DefaultServicesManagerImpl implements ServicesManager,
-    InitializingBean {
+public class DefaultServicesManagerImpl implements ServicesManager {
 
     private ServiceRegistryDao serviceRegistryDao;
 
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
+    
+    private RegisteredService disabledRegisteredService;
 
-    @Transactional(readOnly=false)
+    public DefaultServicesManagerImpl(
+        final ServiceRegistryDao serviceRegistryDao) {
+        Assert.notNull(serviceRegistryDao,
+            "serviceRegistryDao cannot be null.");
+
+        this.serviceRegistryDao = serviceRegistryDao;
+
+        for (final RegisteredService r : this.serviceRegistryDao.load()) {
+            this.services.put(new Long(r.getId()), r);
+        }
+    }
+
+    @Transactional(readOnly = false)
     public boolean delete(final RegisteredService registeredService) {
         final Long id = new Long(registeredService.getId());
         this.serviceRegistryDao.delete(registeredService);
@@ -39,13 +47,13 @@ public class DefaultServicesManagerImpl implements ServicesManager,
 
     public RegisteredService findServiceBy(final Service service) {
         final Collection<RegisteredService> c = this.services.values();
-        
+
         for (final RegisteredService r : c) {
             if (r.matches(service)) {
                 return r;
             }
         }
-        
+
         return null;
     }
 
@@ -61,19 +69,10 @@ public class DefaultServicesManagerImpl implements ServicesManager,
         return findServiceBy(service) != null;
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly = false)
     public void save(final RegisteredService registeredService) {
         this.serviceRegistryDao.save(registeredService);
         this.services.putIfAbsent(new Long(registeredService.getId()),
             registeredService);
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.serviceRegistryDao,
-            "serviceRegistryDao cannot be null.");
-
-        for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            this.services.put(new Long(r.getId()), r);
-        }
     }
 }

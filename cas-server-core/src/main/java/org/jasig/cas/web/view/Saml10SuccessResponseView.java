@@ -177,7 +177,7 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.issuer, "issuer cannot be null.");
         setServicesManager((ServicesManager) getApplicationContext().getBean(
-            "serviceRegistry", ServicesManager.class));
+            "servicesManager", ServicesManager.class));
     }
 
     public void setIssueLength(final long issueLength) {

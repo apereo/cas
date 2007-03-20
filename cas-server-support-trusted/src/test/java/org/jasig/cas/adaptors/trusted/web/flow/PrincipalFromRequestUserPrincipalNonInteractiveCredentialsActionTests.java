@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.AuthenticationManagerImpl;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.services.ServiceRegistryImpl;
+import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -63,7 +63,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
-        centralAuthenticationService.setServiceRegistry(new ServiceRegistryImpl());
+// XXX:        centralAuthenticationService.setServicesManager(new DefaultServicesManagerImpl());
         centralAuthenticationService.afterPropertiesSet();
         
         this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());
