@@ -21,58 +21,75 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
 
-
 /**
+ * MultiActionController to handle the deletion of RegisteredServices as well as
+ * displaying them on the Manage Services page.
  * 
- * // TODO javadoc
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.1 
- *
+ * @since 3.1
  */
-public class ManageRegisteredServicesMultiActionController extends
+public final class ManageRegisteredServicesMultiActionController extends
     MultiActionController {
-    
+
+    /** View name for the Manage Services View. */
     private static final String VIEW_NAME = "manageServiceView";
-    
-    private ServicesManager servicesManager;
-    
+
+    /** Instancec of ServicesManager. */
+    private final ServicesManager servicesManager;
+
+    /** Used to ensure services are sorted by name. */
     private final PropertyComparator propertyComparator = new PropertyComparator(
         "name", false, true);
-    
-    public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager) {
+
+    /**
+     * Constructor that takes the required {@link ServicesManager}.
+     * 
+     * @param servicesManager the Servies Manager that manages the
+     * RegisteredServices.
+     */
+    public ManageRegisteredServicesMultiActionController(
+        final ServicesManager servicesManager) {
         Assert.notNull(servicesManager, "servicesManager cannot be null");
         this.servicesManager = servicesManager;
     }
 
-    
-    public ModelAndView deleteRegisteredService(final HttpServletRequest request, final HttpServletResponse response) {
+    /**
+     * Method to delete the RegisteredService by its ID.
+     * 
+     * @param request the HttpServletRequest
+     * @param response the HttpServletResponse
+     * @return the Model and View to go to after the service is deleted.
+     */
+    public ModelAndView deleteRegisteredService(
+        final HttpServletRequest request, final HttpServletResponse response) {
         final String id = request.getParameter("id");
         final long idAsLong = Long.parseLong(id);
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(idAsLong);
+        final RegisteredService registeredService = this.servicesManager
+            .findServiceBy(idAsLong);
 
-        final ModelAndView modelAndView = new ModelAndView(new RedirectView("/services/manage.html", true), "status", "deleted");
-        modelAndView.addObject("serviceName", registeredService != null ? registeredService.getName() : "");
-        
-        this.servicesManager.delete(this.servicesManager.findServiceBy(idAsLong));
-        
+        final ModelAndView modelAndView = new ModelAndView(new RedirectView(
+            "/services/manage.html", true), "status", "deleted");
+        modelAndView.addObject("serviceName", registeredService != null
+            ? registeredService.getName() : "");
+
+        this.servicesManager.delete(this.servicesManager
+            .findServiceBy(idAsLong));
+
         return modelAndView;
     }
-    
-    public ModelAndView enableRegistryService(final HttpServletRequest request, final HttpServletResponse response) {
-// XXX fix!
-        // this.serviceRegistry.setEnabled(true);
-        return new ModelAndView(new RedirectView("/services/manage.html", true), "status", "enabled");
-    }
-    
-    public ModelAndView disableRegistryService(final HttpServletRequest request, final HttpServletResponse response) {
-// XXX fix!        this.serviceRegistry.setEnabled(false);
-        return new ModelAndView(new RedirectView("/services/manage.html", true), "status", "disabled");
-    }
- 
-    public ModelAndView manage(final HttpServletRequest request, final HttpServletResponse response) {
+
+    /**
+     * Method to show the RegisteredServices.
+     * 
+     * @param request the HttpServletRequest
+     * @param response the HttpServletResponse
+     * @return the Model and View to go to after the services are loaded.
+     */
+    public ModelAndView manage(final HttpServletRequest request,
+        final HttpServletResponse response) {
         final Map<String, Object> model = new HashMap<String, Object>();
-        
+
         final List<RegisteredService> services = new ArrayList<RegisteredService>(
             this.servicesManager.getAllServices());
         PropertyComparator.sort(services, this.propertyComparator
@@ -80,8 +97,6 @@ public class ManageRegisteredServicesMultiActionController extends
 
         model.put("services", services);
         model.put("pageTitle", VIEW_NAME);
-        /* this.serviceRegistry.isEnabled() */
-        model.put("currentRegistryStatus",  true ? Boolean.TRUE : Boolean.FALSE);
 
         return new ModelAndView(VIEW_NAME, model);
     }

@@ -33,8 +33,8 @@
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="loadTimeWeaver">
-			<!--<bean class="org.springframework.instrument.classloading.SimpleLoadTimeWeaver"/>-->
-			<bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+			<bean class="org.springframework.instrument.classloading.SimpleLoadTimeWeaver"/>
+			<!-- <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" /> -->
 		</property>
 
 		<property name="jpaVendorAdapter">

@@ -21,15 +21,23 @@ import org.springframework.validation.Validator;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public class RegisteredServiceValidator implements Validator, InitializingBean {
+public final class RegisteredServiceValidator implements Validator,
+    InitializingBean {
 
+    /** Default length, which matches what is in the view. */
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 300;
 
     /** ServiceRegistry to look up services. */
     private ServicesManager servicesManager;
 
+    /** The maximum length of the description we will accept. */
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
+    /**
+     * Supports the RegisteredServiceImpl.
+     * 
+     * @see org.springframework.validation.Validator#supports(java.lang.Class)
+     */
     public boolean supports(final Class clazz) {
         return RegisteredServiceImpl.class.equals(clazz);
     }
@@ -66,6 +74,7 @@ public class RegisteredServiceValidator implements Validator, InitializingBean {
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.servicesManager, "servicesManager cannot be null.");
-        Assert.isTrue(this.maxDescriptionLength > 0, "maxDescriptionLength must be greater than 0.");
+        Assert.isTrue(this.maxDescriptionLength > 0,
+            "maxDescriptionLength must be greater than 0.");
     }
 }
