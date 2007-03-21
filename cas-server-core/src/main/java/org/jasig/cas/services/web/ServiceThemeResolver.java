@@ -30,9 +30,6 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
  */
 public final class ServiceThemeResolver extends AbstractThemeResolver {
 
-    /** Constant to define where we look for the service id in the request. */
-    public static final String SERVICE_THEME_KEY = "service";
-
     /** The ServiceRegistry to look up the service. */
     private ServicesManager servicesManager;
 

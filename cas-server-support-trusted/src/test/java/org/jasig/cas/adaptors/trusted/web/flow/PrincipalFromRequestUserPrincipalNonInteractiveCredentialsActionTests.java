@@ -17,7 +17,6 @@ import org.jasig.cas.authentication.AuthenticationManagerImpl;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
