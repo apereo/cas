@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,8 +18,7 @@ import java.util.List;
 public final class X500AttributeRegistry implements AttributeRegistry {
 
     public List<String> getAttributes() {
+        return new ArrayList<String>();
         // TODO Auto-generated method stub
-        return null;
     }
-
 }

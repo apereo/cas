@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -27,9 +26,7 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
     }
 
     public List<RegisteredService> load() {
-        // XXX return getJpaTemplate().find("select r from RegisteredServiceImpl
-        // r");
-        return new ArrayList<RegisteredService>();
+        return getJpaTemplate().find("select r from RegisteredServiceImpl r");
     }
 
     public void save(final RegisteredService registeredService) {
