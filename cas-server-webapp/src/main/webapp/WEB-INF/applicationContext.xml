@@ -34,13 +34,12 @@
 		<property name="dataSource" ref="dataSource"/>
 		<property name="loadTimeWeaver">
 			<bean class="org.springframework.instrument.classloading.SimpleLoadTimeWeaver"/>
-			<!-- <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" /> -->
 		</property>
 
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.TopLinkJpaVendorAdapter">
-				<!--<property name="databasePlatform" value="oracle.toplink.essentials.platform.database.HSQLPlatform"/>-->
-				<property name="databasePlatform" value="oracle.toplink.essentials.platform.database.oracle.OraclePlatform"/>
+				<property name="databasePlatform" value="oracle.toplink.essentials.platform.database.HSQLPlatform"/>
+				<!--<property name="databasePlatform" value="oracle.toplink.essentials.platform.database.oracle.OraclePlatform"/>-->
 				<property name="generateDdl" value="true"/>
 				<property name="showSql" value="true" />
 			</bean>
@@ -57,16 +56,17 @@
     	id="database"
     	class="org.jasig.cas.util.HsqlDbDatabaseLocatorFactoryBean"
     	p:configLocation="classpath:db/cas.script" />
-    	
+
+<!--    	
 	<bean
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		p:driverClass="oracle.jdbc.driver.OracleDriver"
 		p:jdbcUrl="jdbc:oracle:thin:@hasbro.acs.rutgers.edu:1521:acs3"
-		p:password="Wwtw86"
+		p:password=""
 		p:user="battags" />
-    	
-<!--
+-->    	
+
 	<bean
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
@@ -74,7 +74,7 @@
 		p:jdbcUrl-ref="database"
 		p:password=""
 		p:user="sa" />
--->
+
 	<bean id="httpClient" class="org.jasig.cas.util.HttpClient"
 		p:readTimeout="5000"
 		p:connectionTimeout="5000" />
