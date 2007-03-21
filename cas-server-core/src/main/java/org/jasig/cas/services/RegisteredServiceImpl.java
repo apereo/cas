@@ -31,7 +31,7 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
 
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
-    private List<String> allowedAttributes = new ArrayList<String>();
+//    private List<String> allowedAttributes = new ArrayList<String>();
 
     private String description;
 
@@ -63,8 +63,9 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
     }
 
     public List<String> getAllowedAttributes() {
-        return this.allowedAttributes != null ? this.allowedAttributes
-            : new ArrayList<String>();
+     //   return this.allowedAttributes != null ? this.allowedAttributes
+     //       : new ArrayList<String>();
+        return new ArrayList<String>();
     }
 
     public long getId() {
@@ -116,9 +117,9 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
         return false;
     }
 
-    public void setAllowedAttributes(final List<String> allowedAttributes) {
+/*    public void setAllowedAttributes(final List<String> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
-    }
+    }*/
 
     public void setAllowedToProxy(final boolean allowedToProxy) {
         this.allowedToProxy = allowedToProxy;
@@ -155,7 +156,7 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
     public Object clone() throws CloneNotSupportedException {
         final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
 
-        registeredServiceImpl.setAllowedAttributes(this.allowedAttributes);
+//        registeredServiceImpl.setAllowedAttributes(this.allowedAttributes);
         registeredServiceImpl.setAllowedToProxy(this.allowedToProxy);
         registeredServiceImpl.setDescription(this.description);
         registeredServiceImpl.setEnabled(this.enabled);

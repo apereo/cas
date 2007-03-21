@@ -24,6 +24,10 @@
 	</bean>
 	
 	<bean
+		id="attributeRegistry"
+		class="org.jasig.cas.services.X500AttributeRegistry" />
+	
+	<bean
 		id="serviceRegistryDao"
 		class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"
 		p:entityManagerFactory-ref="entityManagerFactory" />
