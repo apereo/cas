@@ -25,7 +25,7 @@
 	
 	<bean
 		id="attributeRegistry"
-		class="org.jasig.cas.services.X500AttributeRegistry" />
+		class="org.jasig.cas.services.X500AttributeRepository" />
 	
 	<bean
 		id="serviceRegistryDao"
@@ -37,7 +37,8 @@
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="loadTimeWeaver">
-			<bean class="org.springframework.instrument.classloading.SimpleLoadTimeWeaver"/>
+			<!--<bean class="org.springframework.instrument.classloading.SimpleLoadTimeWeaver"/>-->
+			<bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
 		</property>
 
 		<property name="jpaVendorAdapter">
