@@ -11,7 +11,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import javax.persistence.GenerationType;
 
@@ -35,7 +35,7 @@ public class RegisteredServiceImpl implements RegisteredService, Cloneable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = -1;
     
-    @ManyToMany
+    @OneToMany
     private List<Attribute> allowedAttributes = new ArrayList<Attribute>();
 
     private String description;
