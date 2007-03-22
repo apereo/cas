@@ -26,7 +26,7 @@ public interface RegisteredService {
      */
     boolean isEnabled();
 
-    /** 
+    /**
      * Determines whether the service is allowed anonymous or priveleged access
      * to user information. Anonymous access should not return any identifying
      * information such as user id.
@@ -34,13 +34,11 @@ public interface RegisteredService {
     boolean isAnonymousAccess();
 
     /**
-     * Returns the list of allowed attributes. Users should always check
-     * {@link RegisteredService#isAllowedToSeeAllAttributes()} to determine
-     * global access.
+     * Returns the list of allowed attributes.
      * 
      * @return the list of attributes
      */
-    List<String> getAllowedAttributes();
+    List<Attribute> getAllowedAttributes();
 
     /**
      * Is this application allowed to take part in the proxying capabilities of

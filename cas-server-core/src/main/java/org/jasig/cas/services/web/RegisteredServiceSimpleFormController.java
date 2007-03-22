@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.services.AttributeRegistry;
+import org.jasig.cas.services.AttributeRepository;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -37,16 +37,15 @@ public final class RegisteredServiceSimpleFormController extends
     private final ServicesManager servicesManager;
 
     /** Instance of AttributeRegistry. */
-    private final AttributeRegistry attributeRegistry;
+    private final AttributeRepository attributeRepository;
 
     public RegisteredServiceSimpleFormController(
         final ServicesManager servicesManager,
-        final AttributeRegistry attributeRegistry) {
+        final AttributeRepository attributeRepository) {
         Assert.notNull(servicesManager);
-        Assert.notNull(attributeRegistry);
+        Assert.notNull(attributeRepository);
         this.servicesManager = servicesManager;
-        this.attributeRegistry = attributeRegistry;
-
+        this.attributeRepository = attributeRepository;
     }
 
     /**
@@ -114,7 +113,7 @@ public final class RegisteredServiceSimpleFormController extends
         throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
         model
-            .put("availableAttributes", this.attributeRegistry.getAttributes());
+            .put("availableAttributes", this.attributeRepository.getAttributes());
         model.put("pageTitle", getFormView());
         model.put("commandName", getCommandName());
         return model;

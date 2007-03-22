@@ -15,12 +15,12 @@ import java.util.List;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public interface AttributeRegistry {
+public interface AttributeRepository {
 
     /**
      * Retrieves the list of attributes.
      * 
      * @return the list of Attributes.
      */
-    List<String> getAttributes();
+    List<Attribute> getAttributes();
 }
