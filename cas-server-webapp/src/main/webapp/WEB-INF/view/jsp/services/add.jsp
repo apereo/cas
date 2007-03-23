@@ -68,7 +68,7 @@
 		</span>
 			
 		<span class="oneField"><label class="preField ieFix" style="float:left;">Attributes</label>
-			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
+			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" itemValue="id" itemLabel="name" />
 		</span>
 	</fieldset>
 	<div class="actions">

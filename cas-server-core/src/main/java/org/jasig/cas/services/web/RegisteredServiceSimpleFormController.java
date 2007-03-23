@@ -11,10 +11,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.cas.services.Attribute;
 import org.jasig.cas.services.AttributeRepository;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.support.AttributePropertyEditor;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
@@ -61,6 +63,7 @@ public final class RegisteredServiceSimpleFormController extends
             "name", "allowedToProxy", "enabled", "ssoEnabled",
             "anonymousAccess"});
         binder.setDisallowedFields(new String[] {"id"});
+        binder.registerCustomEditor(Attribute.class, new AttributePropertyEditor(this.attributeRepository));
     }
 
     /**

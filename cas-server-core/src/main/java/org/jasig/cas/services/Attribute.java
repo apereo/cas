@@ -7,6 +7,7 @@ package org.jasig.cas.services;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * @author Scott Battaglia

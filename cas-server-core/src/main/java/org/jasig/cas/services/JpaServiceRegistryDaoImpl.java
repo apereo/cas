@@ -30,6 +30,20 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
     }
 
     public void save(final RegisteredService registeredService) {
-        getJpaTemplate().persist(registeredService);
+        for (final Attribute a : registeredService.getAllowedAttributes()) {
+            if (getJpaTemplate().find(Attribute.class, new Long(a.getId())) == null) {
+                getJpaTemplate().persist(a);
+            }
+        }
+        
+        if (registeredService.getId() > 0) {
+            getJpaTemplate().merge(registeredService);
+        } else {
+            getJpaTemplate().persist(registeredService);
+        }
+    }
+
+    public RegisteredService findServiceById(final long id) {
+        return getJpaTemplate().find(RegisteredServiceImpl.class, new Long(id));
     }
 }
