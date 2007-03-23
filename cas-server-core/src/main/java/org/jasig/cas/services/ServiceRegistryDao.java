@@ -37,4 +37,6 @@ public interface ServiceRegistryDao {
      * @return the collection of services.
      */
     List<RegisteredService> load();
+    
+    RegisteredService findServiceById(long id);
 }

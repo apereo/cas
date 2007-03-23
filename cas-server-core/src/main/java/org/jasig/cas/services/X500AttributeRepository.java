@@ -18,7 +18,7 @@ import java.util.List;
 public final class X500AttributeRepository implements AttributeRepository {
 
     private final List<Attribute> attributes = new ArrayList<Attribute>();
-    
+
     public X500AttributeRepository() {
         this.attributes.add(new Attribute(0, "cn"));
         this.attributes.add(new Attribute(1, "sn"));
@@ -39,10 +39,20 @@ public final class X500AttributeRepository implements AttributeRepository {
         this.attributes.add(new Attribute(17, "telexNumber"));
         this.attributes.add(new Attribute(18, "teletexTerminalIdentifier"));
         this.attributes.add(new Attribute(19, "facsimileTelephoneNumber"));
-        this.attributes.add(new Attribute(20, "title"));        
+        this.attributes.add(new Attribute(20, "title"));
     }
-    
+
     public List<Attribute> getAttributes() {
         return this.attributes;
+    }
+
+    // XXX: optimize this with a map
+    public Attribute getAttribute(final long id) {
+        for (final Attribute a : this.attributes) {
+            if (a.getId() == id) {
+                return a;
+            }
+        }
+        return null;
     }
 }

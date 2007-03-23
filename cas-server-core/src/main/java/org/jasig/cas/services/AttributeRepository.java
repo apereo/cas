@@ -23,4 +23,11 @@ public interface AttributeRepository {
      * @return the list of Attributes.
      */
     List<Attribute> getAttributes();
+    
+    /**
+     * Retrieve an attribute based on its id.
+     * @param id
+     * @return
+     */
+    Attribute getAttribute(long id);
 }

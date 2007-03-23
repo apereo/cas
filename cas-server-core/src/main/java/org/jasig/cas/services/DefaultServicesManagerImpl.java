@@ -79,7 +79,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     }
 
     public RegisteredService findServiceBy(final long id) {
-        return this.services.get(new Long(id));
+        return this.serviceRegistryDao.findServiceById(id);
     }
 
     public Collection<RegisteredService> getAllServices() {
@@ -93,7 +93,7 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     @Transactional(readOnly = false)
     public void save(final RegisteredService registeredService) {
         this.serviceRegistryDao.save(registeredService);
-        this.services.putIfAbsent(new Long(registeredService.getId()),
+        this.services.put(new Long(registeredService.getId()),
             registeredService);
     }
 }
