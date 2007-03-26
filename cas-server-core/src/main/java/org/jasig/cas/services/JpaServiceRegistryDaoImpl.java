@@ -36,11 +36,19 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
             }
         }
         
+        final RegisteredService r = findServiceById(registeredService.getId());
+        if (r != null) {
+            getJpaTemplate().remove(r);
+        }
+
+        getJpaTemplate().persist(registeredService);
+        
+        /*
         if (registeredService.getId() > 0) {
             getJpaTemplate().merge(registeredService);
         } else {
             getJpaTemplate().persist(registeredService);
-        }
+        }*/
     }
 
     public RegisteredService findServiceById(final long id) {
