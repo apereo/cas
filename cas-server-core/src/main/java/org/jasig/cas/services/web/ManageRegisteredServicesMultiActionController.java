@@ -65,16 +65,15 @@ public final class ManageRegisteredServicesMultiActionController extends
         final HttpServletRequest request, final HttpServletResponse response) {
         final String id = request.getParameter("id");
         final long idAsLong = Long.parseLong(id);
-        final RegisteredService registeredService = this.servicesManager
-            .findServiceBy(idAsLong);
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
             "/services/manage.html", true), "status", "deleted");
-        modelAndView.addObject("serviceName", registeredService != null
-            ? registeredService.getName() : "");
 
-        this.servicesManager.delete(this.servicesManager
-            .findServiceBy(idAsLong));
+
+        final RegisteredService r = this.servicesManager.delete(idAsLong);
+
+        modelAndView.addObject("serviceName", r != null
+            ? r.getName() : "");
 
         return modelAndView;
     }

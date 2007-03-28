@@ -39,7 +39,6 @@ public final class X500AttributeRepository implements AttributeRepository {
         this.attributes.add(new Attribute(17, "telexNumber"));
         this.attributes.add(new Attribute(18, "teletexTerminalIdentifier"));
         this.attributes.add(new Attribute(19, "facsimileTelephoneNumber"));
-        this.attributes.add(new Attribute(20, "title"));
     }
 
     public List<Attribute> getAttributes() {
