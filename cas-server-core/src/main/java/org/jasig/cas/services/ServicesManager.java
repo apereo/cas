@@ -29,10 +29,10 @@ public interface ServicesManager {
     /**
      * Delete the entry for this RegisteredService.
      * 
-     * @param registeredService the registeredService to delete.
-     * @return true if it was deleted, false otherwise.
+     * @param id the id of the registeredService to delete.
+     * @return the registered service that was deleted, null if there was none.
      */
-    boolean delete(RegisteredService registeredService);
+    RegisteredService delete(long id);
 
     /**
      * Find a RegisteredService by matching with the supplied service.
@@ -41,12 +41,12 @@ public interface ServicesManager {
      * @return the RegisteredService that matches the supplied service.
      */
     RegisteredService findServiceBy(Service service);
-
+    
     /**
-     * Retrieve a Service based on its identifier.
+     * Find a RegisteredService by matching with the supplied id.
      * 
-     * @param id the id of the service.
-     * @return the RegisteredService that matches the id.
+     * @param id the id to match with.
+     * @return the RegisteredService that matches the supplied service.
      */
     RegisteredService findServiceBy(long id);
 

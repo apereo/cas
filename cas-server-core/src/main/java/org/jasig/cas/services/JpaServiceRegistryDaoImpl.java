@@ -21,7 +21,9 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
     ServiceRegistryDao, InitializingBean {
 
     public boolean delete(final RegisteredService registeredService) {
-        getJpaTemplate().remove(registeredService);
+        getJpaTemplate().remove(
+            getJpaTemplate().contains(registeredService) ? registeredService
+                : getJpaTemplate().merge(registeredService));
         return true;
     }
 
@@ -30,25 +32,13 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
     }
 
     public void save(final RegisteredService registeredService) {
-        for (final Attribute a : registeredService.getAllowedAttributes()) {
-            if (getJpaTemplate().find(Attribute.class, new Long(a.getId())) == null) {
-                getJpaTemplate().persist(a);
-            }
-        }
-        
-        final RegisteredService r = findServiceById(registeredService.getId());
-        if (r != null) {
-            getJpaTemplate().remove(r);
-        }
+        final boolean isNew = registeredService.getId() == 0;
 
-        getJpaTemplate().persist(registeredService);
+        final RegisteredService r = getJpaTemplate().merge(registeredService);
         
-        /*
-        if (registeredService.getId() > 0) {
-            getJpaTemplate().merge(registeredService);
-        } else {
-            getJpaTemplate().persist(registeredService);
-        }*/
+        if (!isNew) {
+            getJpaTemplate().persist(r);
+        }
     }
 
     public RegisteredService findServiceById(final long id) {

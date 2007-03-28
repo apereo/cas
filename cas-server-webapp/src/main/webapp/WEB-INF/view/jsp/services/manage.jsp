@@ -4,8 +4,6 @@
 		<div id="msg" class="success"><spring:message code="services.manage.status.${param.status}" arguments="${param.serviceName}" /></div>
 	</c:if>
 
-	<p><strong>Registry Status</strong>: ${currentRegistryStatus ? "Enabled" : "Disabled"} [${currentRegistryStatus ? '<a href="disableRegistryService.html">Disable</a>' : '<a href="enableRegistryService.html">Enable</a>'}]</p>
-	
       <table cellspacing="0" id="headerTable" class="headerTable">
 			<tr>
 				<th class="th1">Service Name</th>

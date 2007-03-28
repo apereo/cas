@@ -5,8 +5,10 @@
  */
 package org.jasig.cas.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -34,6 +36,8 @@ public class DefaultServicesManagerImpl implements ServicesManager {
 
     /** Default service to return if none have been registered. */
     private RegisteredService disabledRegisteredService;
+    
+//    private AttributeRepository attributeRepository;
 
     public DefaultServicesManagerImpl(
         final ServiceRegistryDao serviceRegistryDao) {
@@ -43,6 +47,12 @@ public class DefaultServicesManagerImpl implements ServicesManager {
         this.serviceRegistryDao = serviceRegistryDao;
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
+            final List<Attribute> attributes = new ArrayList<Attribute>();
+/*            for (final Attribute a : r.getAllowedAttributes()) {
+                attributes.add(this.attributeRepository.getAttribute(a.getId()));    
+            }
+            ((RegisteredServiceImpl) r).setAllowedAttributes(attributes); */
+            
             this.services.put(new Long(r.getId()), r);
         }
 
@@ -56,10 +66,16 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     }
 
     @Transactional(readOnly = false)
-    public boolean delete(final RegisteredService registeredService) {
-        final Long id = new Long(registeredService.getId());
-        this.serviceRegistryDao.delete(registeredService);
-        return this.services.remove(id) != null;
+    public RegisteredService delete(final long id) {
+        final RegisteredService r = findServiceBy(id);
+        if (r == null) {
+            return null;
+        }
+        
+        this.serviceRegistryDao.delete(r);
+        this.services.remove(new Long(r.getId()));
+        
+        return r;
     }
 
     public RegisteredService findServiceBy(final Service service) {
@@ -79,7 +95,19 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     }
 
     public RegisteredService findServiceBy(final long id) {
-        return this.serviceRegistryDao.findServiceById(id);
+        final Collection<RegisteredService> c = this.services.values();
+        
+        if (c.isEmpty()) {
+            return this.disabledRegisteredService;
+        }
+
+        for (final RegisteredService r : c) {
+            if (r.getId() == id) {
+                return r;
+            }
+        }
+
+        return null;
     }
 
     public Collection<RegisteredService> getAllServices() {
