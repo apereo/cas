@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.principal.Service;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public interface RegisteredService {
+public interface RegisteredService extends Cloneable {
 
     /**
      * Is this application currently allowed to use CAS?
@@ -93,4 +93,6 @@ public interface RegisteredService {
      * @return true if they match, false otherwise.
      */
     boolean matches(final Service service);
+    
+    Object clone() throws CloneNotSupportedException;
 }

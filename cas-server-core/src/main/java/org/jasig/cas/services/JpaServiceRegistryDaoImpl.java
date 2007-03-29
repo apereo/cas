@@ -31,14 +31,16 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
         return getJpaTemplate().find("select r from RegisteredServiceImpl r");
     }
 
-    public void save(final RegisteredService registeredService) {
-        final boolean isNew = registeredService.getId() == 0;
+    public RegisteredService save(final RegisteredService registeredService) {
+        final boolean isNew = registeredService.getId() == -1;
 
         final RegisteredService r = getJpaTemplate().merge(registeredService);
         
         if (!isNew) {
             getJpaTemplate().persist(r);
         }
+        
+        return r;
     }
 
     public RegisteredService findServiceById(final long id) {

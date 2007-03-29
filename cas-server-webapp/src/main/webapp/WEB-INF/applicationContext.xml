@@ -55,7 +55,7 @@
     	class="org.jasig.cas.util.HsqlDbDatabaseLocatorFactoryBean"
     	p:configLocation="classpath:db/cas.script" />
 
-   	
+<!--    	
 	<bean
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
@@ -63,8 +63,8 @@
 		p:jdbcUrl="jdbc:oracle:thin:@hasbro.acs.rutgers.edu:1521:acs3"
 		p:password=""
 		p:user="" />
-   	
-<!-- 
+-->    	
+
 	<bean
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
@@ -72,7 +72,7 @@
 		p:jdbcUrl-ref="database"
 		p:password=""
 		p:user="sa" />
---> 
+
 	<bean id="httpClient" class="org.jasig.cas.util.HttpClient"
 		p:readTimeout="5000"
 		p:connectionTimeout="5000" />

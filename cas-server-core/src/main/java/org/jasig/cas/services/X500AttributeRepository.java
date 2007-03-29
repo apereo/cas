@@ -6,7 +6,9 @@
 package org.jasig.cas.services;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Maintains a list of attributes based on the X.500 Specification (RFC 2256).
@@ -18,6 +20,8 @@ import java.util.List;
 public final class X500AttributeRepository implements AttributeRepository {
 
     private final List<Attribute> attributes = new ArrayList<Attribute>();
+    
+    private final Map<Long, Attribute> attributesMap = new HashMap<Long, Attribute>();
 
     public X500AttributeRepository() {
         this.attributes.add(new Attribute(0, "cn"));
@@ -39,19 +43,17 @@ public final class X500AttributeRepository implements AttributeRepository {
         this.attributes.add(new Attribute(17, "telexNumber"));
         this.attributes.add(new Attribute(18, "teletexTerminalIdentifier"));
         this.attributes.add(new Attribute(19, "facsimileTelephoneNumber"));
+        
+        for (final Attribute a : this.attributes) {
+            this.attributesMap.put(new Long(a.getId()), a);
+        }
     }
 
     public List<Attribute> getAttributes() {
         return this.attributes;
     }
 
-    // XXX: optimize this with a map
     public Attribute getAttribute(final long id) {
-        for (final Attribute a : this.attributes) {
-            if (a.getId() == id) {
-                return a;
-            }
-        }
-        return null;
+        return this.attributesMap.get(new Long(id));
     }
 }

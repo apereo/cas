@@ -98,12 +98,10 @@ public final class RegisteredServiceSimpleFormController extends
 
         final long serviceId = Long.parseLong(id);
 
-        // XXX: will this modify the saved one
         final RegisteredService service = this.servicesManager
             .findServiceBy(serviceId);
 
         Assert.notNull(service, "Service could not be found for provided id.");
-
         return service;
     }
 

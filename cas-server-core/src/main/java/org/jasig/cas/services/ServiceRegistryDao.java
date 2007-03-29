@@ -20,8 +20,9 @@ public interface ServiceRegistryDao {
      * Persist the service in the data store.
      * 
      * @param registeredService the service to persist.
+     * @return the updated RegisteredService.
      */
-    void save(RegisteredService registeredService);
+    RegisteredService save(RegisteredService registeredService);
 
     /**
      * Remove the service from the data store.

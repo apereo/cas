@@ -5,10 +5,8 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -20,13 +18,11 @@ import org.springframework.util.Assert;
  * no services registered with the server, it considers the ServicecsManager
  * disabled and will not prevent any service from using CAS.
  * 
- * TODO registered service is enabled
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public class DefaultServicesManagerImpl implements ServicesManager {
+public final class DefaultServicesManagerImpl implements ServicesManager {
 
     /** Instance of ServiceRegistryDao. */
     private ServiceRegistryDao serviceRegistryDao;
@@ -37,36 +33,19 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     /** Default service to return if none have been registered. */
     private RegisteredService disabledRegisteredService;
     
-//    private AttributeRepository attributeRepository;
-
     public DefaultServicesManagerImpl(
         final ServiceRegistryDao serviceRegistryDao) {
         Assert
             .notNull(serviceRegistryDao, "serviceRegistryDao cannot be null.");
 
         this.serviceRegistryDao = serviceRegistryDao;
-
-        for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            final List<Attribute> attributes = new ArrayList<Attribute>();
-/*            for (final Attribute a : r.getAllowedAttributes()) {
-                attributes.add(this.attributeRepository.getAttribute(a.getId()));    
-            }
-            ((RegisteredServiceImpl) r).setAllowedAttributes(attributes); */
-            
-            this.services.put(new Long(r.getId()), r);
-        }
-
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setAllowedToProxy(true);
-        r.setAnonymousAccess(false);
-        r.setEnabled(true);
-        r.setSsoEnabled(true);
-
-        this.disabledRegisteredService = r;
+        this.disabledRegisteredService = constructDefaultRegisteredService();
+        
+        loadMap();
     }
 
     @Transactional(readOnly = false)
-    public RegisteredService delete(final long id) {
+    public synchronized RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
         if (r == null) {
             return null;
@@ -103,7 +82,11 @@ public class DefaultServicesManagerImpl implements ServicesManager {
 
         for (final RegisteredService r : c) {
             if (r.getId() == id) {
-                return r;
+                try {
+                    return (RegisteredService) r.clone();
+                } catch (final CloneNotSupportedException e) {
+                    return r;
+                }
             }
         }
 
@@ -119,9 +102,24 @@ public class DefaultServicesManagerImpl implements ServicesManager {
     }
 
     @Transactional(readOnly = false)
-    public void save(final RegisteredService registeredService) {
-        this.serviceRegistryDao.save(registeredService);
-        this.services.put(new Long(registeredService.getId()),
-            registeredService);
+    public synchronized void save(final RegisteredService registeredService) {
+        final RegisteredService r = this.serviceRegistryDao.save(registeredService);
+        this.services.put(new Long(r.getId()), r);
+    }
+    
+    private void loadMap() {
+        for (final RegisteredService r : this.serviceRegistryDao.load()) {
+            this.services.put(new Long(r.getId()), r);
+        }
+    }
+    
+    private RegisteredService constructDefaultRegisteredService() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setAllowedToProxy(true);
+        r.setAnonymousAccess(false);
+        r.setEnabled(true);
+        r.setSsoEnabled(true);
+        
+        return r;
     }
 }
