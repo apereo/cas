@@ -20,7 +20,7 @@ public class Attribute {
 
     /** The unique identifier for this id. */
     @Id
-    private long id;
+    private String id;
 
     /** The name of the attribute. */
     private String name;
@@ -37,12 +37,12 @@ public class Attribute {
      * @param id the unique identifier for this attribute.
      * @param name the name of the attribute.
      */
-    public Attribute(final long id, final String name) {
+    public Attribute(final String id, final String name) {
         this.id = id;
         this.name = name;
     }
 
-    public void setId(final long id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -54,7 +54,7 @@ public class Attribute {
         return this.name;
     }
 
-    public long getId() {
+    public String getId() {
         return this.id;
     }
 
