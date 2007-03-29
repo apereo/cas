@@ -30,7 +30,7 @@ import org.springframework.util.PathMatcher;
  * @since 3.1
  */
 @Entity
-public class RegisteredServiceImpl implements RegisteredService, Cloneable {
+public class RegisteredServiceImpl implements RegisteredService {
 
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
