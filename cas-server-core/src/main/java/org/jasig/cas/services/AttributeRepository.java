@@ -29,5 +29,5 @@ public interface AttributeRepository {
      * @param id
      * @return
      */
-    Attribute getAttribute(long id);
+    Attribute getAttribute(String id);
 }

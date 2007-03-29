@@ -28,8 +28,6 @@ public class AttributePropertyEditor extends PropertyEditorSupport {
     }
 
     public void setAsText(final String text) throws IllegalArgumentException {
-        final long id = Long.parseLong(text);
-        
-        setValue(this.attributeRepository.getAttribute(id));
+        setValue(this.attributeRepository.getAttribute(text));
     }
 }
