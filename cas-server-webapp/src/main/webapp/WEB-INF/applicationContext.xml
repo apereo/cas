@@ -25,7 +25,10 @@
 	
 	<bean
 		id="attributeRegistry"
-		class="org.jasig.cas.services.X500AttributeRepository" />
+		class="org.jasig.cas.services.LdapAttributeRepository">
+		<constructor-arg index="0" value="uid=battags,ou=people" />
+		<constructor-arg index="1" value="ldap://ldap.rutgers.edu:389/dc=rutgers,dc=edu" />
+	</bean>
 	
 	<bean
 		id="serviceRegistryDao"
