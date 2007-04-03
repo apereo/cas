@@ -12,6 +12,7 @@
 		</div>
 		</spring:hasBindErrors>
 	<fieldset class="repeat"><legend>Add New Service</legend>
+	<div class="fieldset-inner">
 		<p class="instructions">Please make sure to commit your changes by clicking on the Save Changes button at the bottom of the page</p>
 		<span class="oneField" style="display:block; margin:5px 0;">
 			<label for="name" class="preField">Name </label>
@@ -25,7 +26,7 @@
 			<form:input path="serviceId" size="51" maxlength="255" cssClass="required" cssErrorClass="error" />
 			<form:errors path="serviceId" cssClass="formError" />
 			<br />
-			You can use Ant-style Pattern Matching
+			<div class="hint">You can use Ant-style Pattern Matching</div>
 		</span>
 
 		
@@ -45,7 +46,7 @@
 
 		<span class="oneField">
 			<span class="label preField">Status</span>
-			<span class="required">
+			<span>
 				<span class="oneChoice">
 					<form:checkbox path="enabled" value="true" cssClass="check" />
 					<label for="enabled1" id="enabled-l" class="postField">Enabled</label>
@@ -70,6 +71,7 @@
 		<span class="oneField"><label class="preField ieFix" style="float:left;">Attributes</label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" itemValue="id" itemLabel="name" />
 		</span>
+		</div>
 	</fieldset>
 	<div class="actions">
 		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes">Save Changes</button> or <a href="manage.html" style="color:#b00;">Cancel</a>

@@ -235,7 +235,7 @@ _______________________________
  --------------------------------- */
 .info, .errors, .success {
     clear:both;
-    padding:20px 20px 20px 100px;
+    padding:20px 20px 20px 85px; /* bg */
     margin:0 0 1em;
    font-weight:bold;
     font-size:1.3em;
@@ -254,7 +254,7 @@ _______________________________
 }
 .errors {
     border:1px dotted #b00;
-    color:#b00;
+    color:#e71708; /* bg */
     background:#fed url(../../images/error.gif) no-repeat 2em 50%;
 }
 /* style for static info boxes
@@ -318,8 +318,8 @@ select option {margin:auto .5em 0 0;}
 .fm-v div.row {padding:.5em 0; margin:0; width:100%; float:left;}
 .fm-v div.row label {float:left; line-height:1.5;}
 .fm-v div.row input {float:left; clear:left;}
-.fm-v div.row input.check {float:left; clear:left; margin:0 .5em 0 0;}
-.fm-v div.row label.check {float:left;}
+input.check {xfloat:left; xclear:left; margin:0 0 0 .5em; width:13px; height:13px; vertical-align:middle;} /* bg */
+label.check {xfloat:left;} /* bg */
 .fm-v div.row input.radio {float:left; clear:left; margin:0 .5em 0 0;}
 .fm-v div.row label.radio {float:left;}
 .fm-v div.row select,
@@ -336,11 +336,12 @@ input.error, select.error, textarea.error {background:#FFEFEF; color:#b00; borde
 .required {background:#ff9;}
 
 .formError {
-background: #fafafa url(../../images/services/alert2.gif) no-repeat left center;
-line-height: 24px;
-padding-left: 18px;
-color: red;
-height: 24px;
+background: #fafafa url(../../images/services/alert2.gif) no-repeat 0 50%;
+padding:0 0 0 24px; /* bg */
+color:#b00; /* bg */
+margin-left:.5em; /* bg */
+font-size:1.4em;
+line-height:20px; /* +bg */
 }
 
 
@@ -584,6 +585,8 @@ td a:hover {color:#b00;}
         width:8em;
         float:left;
         font-size:1.1em;
+		color:#666; /* + bg */
+		line-height:20px; /* + bg */
         }
 
     label.top {
@@ -595,7 +598,8 @@ td a:hover {color:#b00;}
     label.postField {
         margin-right:1em;
         font-size:1.1em;
-        vertical-align:bottom;
+        vertical-align:middle;  /*- bg */
+		line-height:20px; /* + bg */
         }
 
     .noBorder,
@@ -608,17 +612,18 @@ td a:hover {color:#b00;}
         border:1px solid #ccc;
         border-color:#999 #eee #eee #999;
         padding:2px;
-        }
+		margin-left:.5em; /* + bg */
+		}
 
     input {
-        margin-left:.5em;
+        /* margin-left:.5em;  - bg */
         font-size:1.1em;
         vertical-align:top;
         }
 
     span.oneField {
         display:block;
-        margin:.5em 0;
+        margin:1em 0; /* bg */
         padding:0;
         }
 
