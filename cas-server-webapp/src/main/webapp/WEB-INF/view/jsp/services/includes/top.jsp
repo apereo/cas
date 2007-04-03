@@ -38,10 +38,21 @@
                 th.th6, td.td6 {width:70px; text-align:right !important;}
                 th.th7, td.td7 {width:102px; text-align:right !important;}
                 td.td7 {width:85px;}
+
+				.hint {margin-left:9.5em; margin-bottom:1em; line-height:1.5;}
+				.actions {margin:1.5em 0;}
+				#allowedAttributes {height:150px;}
+				
+				}
 }
 </style>
 <!--[if IE]>
 <style type="text/css">
+* html button {padding:0; width:0; overflow:visible;}
+* html .fieldset-inner {padding:1em;}
+* html fieldset {position:relative; padding:0; margin:4em 0 0;}
+
+* html legend {margin:0; padding:0; position:relative; top:-0.5em; margin-bottom:-0.5em;}
  td.td7 {width:85px; padding-right:22px !important;}
  div.tableWrapper {xoverflow-y:scroll;}
  * html td.td7 {width:102px; padding-right:5px !important; text-align:left !important;}
