@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-integration-berkleydb/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-integration-berkleydb/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-integration-jboss/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-generic/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-jdbc/src/main/java"/>
@@ -55,5 +55,6 @@
 	<classpathentry kind="var" path="M2_REPO/taglibs/standard/1.1.2/standard-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/oracle/berkeleydb/je/3.2.21/je-3.2.21.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junitperf/junitperf/1.8/junitperf-1.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
