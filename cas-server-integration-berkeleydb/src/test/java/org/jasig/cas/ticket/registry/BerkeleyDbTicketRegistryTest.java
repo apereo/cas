@@ -1,3 +1,10 @@
+/**
+ * 
+ * @author Andres March
+ * @version $Revision$ $Date$
+ * @since 3.1
+ *
+ */
 package org.jasig.cas.ticket.registry;
 
 import java.io.File;
@@ -15,7 +22,10 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 
 /**
- * @author amarch
+ * 
+ * @author Andres March
+ * @version $Revision$ $Date$
+ * @since 3.1
  *
  */
 public class BerkeleyDbTicketRegistryTest extends TestCase {
