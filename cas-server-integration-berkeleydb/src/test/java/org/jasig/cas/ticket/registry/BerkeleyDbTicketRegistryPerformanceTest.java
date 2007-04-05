@@ -1,3 +1,10 @@
+/**
+ * 
+ * @author Andres March
+ * @version $Revision$ $Date$
+ * @since 3.1
+ *
+ */
 package org.jasig.cas.ticket.registry;
 
 import java.io.File;
@@ -16,6 +23,13 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 
 import com.clarkware.junitperf.LoadTest;
 
+/**
+ * 
+ * @author Andres March
+ * @version $Revision$ $Date$
+ * @since 3.1
+ *
+ */
 public class BerkeleyDbTicketRegistryPerformanceTest extends TestCase {
 
 	static BerkeleyDbTicketRegistry registry;

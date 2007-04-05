@@ -1,3 +1,8 @@
+/*
+ * Copyright 2005 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.ticket.registry;
 
 import java.io.File;
@@ -17,6 +22,13 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 
 import com.clarkware.junitperf.LoadTest;
 
+/**
+ * 
+ * @author Andres March
+ * @version $Revision$ $Date$
+ * @since 3.1
+ *
+ */
 public class BerkeleyDbTicketRegistryConcurrencyTest extends TestCase {
 
     static BerkeleyDbTicketRegistry registry;
