@@ -55,15 +55,12 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
    
         authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {new PrincipalBearingCredentialsAuthenticationHandler()}));
         authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new PrincipalBearingCredentialsToPrincipalResolver()}));
-        authenticationManager.afterPropertiesSet();
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);
         centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
-// XXX:        centralAuthenticationService.setServicesManager(new DefaultServicesManagerImpl());
-        centralAuthenticationService.afterPropertiesSet();
         
         this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());
         this.action.setCentralAuthenticationService(centralAuthenticationService);

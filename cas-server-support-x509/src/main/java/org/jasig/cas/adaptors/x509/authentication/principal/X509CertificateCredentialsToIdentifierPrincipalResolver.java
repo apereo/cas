@@ -9,8 +9,7 @@ import java.security.cert.X509Certificate;
 
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.StringUtils;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * @author Anders Svensson
@@ -19,8 +18,7 @@ import org.springframework.util.StringUtils;
  * @since 3.0.4
  */
 public final class X509CertificateCredentialsToIdentifierPrincipalResolver extends
-    AbstractX509CertificateCredentialsToPrincipalResolver implements
-    InitializingBean {
+    AbstractX509CertificateCredentialsToPrincipalResolver {
 
     private static final String DEFAULT_IDENTIFIER = "$OU $CN";
 
@@ -29,7 +27,8 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
     private static final String NAME_VALUE_PAIR_DELIMITER = "=";
 
     /** The identifier meta data */
-    private String identifier;
+    @NotNull
+    private String identifier = DEFAULT_IDENTIFIER;
 
     protected Principal resolvePrincipalInternal(
         final X509Certificate certificate) {
@@ -64,14 +63,5 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
     
     public void setIdentifier(final String identifier) {
         this.identifier = identifier;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        if (!StringUtils.hasText(this.identifier)) {
-            log
-                .info("No identifier set.  Using default: "
-                    + DEFAULT_IDENTIFIER);
-            this.identifier = DEFAULT_IDENTIFIER;
-        }
     }
 }

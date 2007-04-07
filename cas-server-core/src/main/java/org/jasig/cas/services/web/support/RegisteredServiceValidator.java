@@ -8,8 +8,8 @@ package org.jasig.cas.services.web.support;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.GreaterThan;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -21,16 +21,17 @@ import org.springframework.validation.Validator;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class RegisteredServiceValidator implements Validator,
-    InitializingBean {
+public final class RegisteredServiceValidator implements Validator {
 
     /** Default length, which matches what is in the view. */
     private static final int DEFAULT_MAX_DESCRIPTION_LENGTH = 300;
 
     /** ServiceRegistry to look up services. */
+    @NotNull
     private ServicesManager servicesManager;
 
     /** The maximum length of the description we will accept. */
+    @GreaterThan(0)
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
     /**
@@ -70,11 +71,5 @@ public final class RegisteredServiceValidator implements Validator,
 
     public void setMaxDescriptionLength(final int maxLength) {
         this.maxDescriptionLength = maxLength;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.servicesManager, "servicesManager cannot be null.");
-        Assert.isTrue(this.maxDescriptionLength > 0,
-            "maxDescriptionLength must be greater than 0.");
     }
 }

@@ -31,18 +31,6 @@ public class RemoteCentralAuthenticationServiceTests extends
         validators[0] = new UsernamePasswordCredentialsValidator();
 
         this.remoteCentralAuthenticationService.setValidators(validators);
-        this.remoteCentralAuthenticationService.afterPropertiesSet();
-    }
-
-    public void testAfterPropertiesSet() {
-        RemoteCentralAuthenticationService c = new RemoteCentralAuthenticationService();
-
-        try {
-            c.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            return;
-        }
     }
 
     public void testInvalidCredentials() throws TicketException {

@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.Arrays;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,8 +14,6 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
-import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -61,9 +57,6 @@ public class AuthenticationViaFormActionTests extends
         this.action
             .setTicketGrantingTicketCookieGenerator(this.cookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-
-        this.action
-            .setArgumentExtractors(Arrays.asList(new ArgumentExtractor[] {new CasArgumentExtractor()}));
         this.action.afterPropertiesSet();
     }
 

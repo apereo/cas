@@ -10,8 +10,8 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -27,6 +27,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     AbstractLoginAction {
 
     /** Instance of CentralAuthenticationService. */
+    @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
     protected final Event doExecute(final RequestContext context) {
@@ -84,11 +85,6 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    protected void initActionInternal() throws Exception {
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService cannot be null.");
     }
 
     /**

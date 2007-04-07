@@ -27,7 +27,6 @@ public class JaasAuthenticationHandlerTests extends TestCase {
             + "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
         System.setProperty("java.security.auth.login.config", pathToConfig);
         this.handler = new JaasAuthenticationHandler();
-        this.handler.afterPropertiesSet();
     }
 
     public void testWithAlternativeRealm() throws Exception {

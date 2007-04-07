@@ -27,7 +27,6 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
         super.setUp();
         this.legacyTrustAdaptor = new LegacyTrustHandlerAdaptorAuthenticationHandler();
         this.legacyTrustAdaptor.setTrustHandler(new MockTrustHandler());
-        this.legacyTrustAdaptor.afterPropertiesSet();
     }
 
     protected void tearDown() throws Exception {
@@ -51,28 +50,6 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
 
         assertFalse(this.legacyTrustAdaptor.supports(badCred));
 
-    }
-
-    /**
-     * Test demonstrating that throws NPE when no TrustHandler injected. We
-     * could guarantee that our TrustHandler dependency is never null by making
-     * using constructor dependency injection instead of setter dependency
-     * injection. Issue is mitigated by use of afterPropertiesSet() to assert
-     * dependecy was set.
-     * 
-     * @throws AuthenticationException
-     */
-    public void testNoTrustHandler() {
-        LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
-        this.legacyTrustAdaptor.setTrustHandler(null);
-
-        try {
-            this.legacyTrustAdaptor.authenticate(trustedCredentials);
-        } catch (NullPointerException npe) {
-            return;
-        }
-
-        fail();
     }
 
     /**

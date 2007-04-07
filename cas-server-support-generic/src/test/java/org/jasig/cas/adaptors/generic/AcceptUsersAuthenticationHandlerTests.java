@@ -36,7 +36,6 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler = new AcceptUsersAuthenticationHandler();
 
         this.authenticationHandler.setUsers(this.users);
-        this.authenticationHandler.afterPropertiesSet();
     }
 
     public void testSupportsProperUserCredentials() throws Exception {
@@ -119,25 +118,6 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
             assertFalse(this.authenticationHandler.authenticate(c));
         } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
-        }
-    }
-
-    public void testAfterPropertiesSetWithNullUsers() {
-        try {
-            this.authenticationHandler.setUsers(null);
-            this.authenticationHandler.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            return;
-        }
-    }
-
-    public void testAfterPropertiesSetWithNonNullUsers() {
-        try {
-            this.authenticationHandler.afterPropertiesSet();
-
-        } catch (Exception e) {
-            fail("Exception not expected.");
         }
     }
 }

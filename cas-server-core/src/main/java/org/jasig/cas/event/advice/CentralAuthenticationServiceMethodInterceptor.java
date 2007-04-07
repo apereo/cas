@@ -10,10 +10,9 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.jasig.cas.event.TicketEvent;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.springframework.beans.factory.InitializingBean;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
@@ -21,9 +20,10 @@ import org.springframework.util.Assert;
  * @since 3.0.4
  */
 public class CentralAuthenticationServiceMethodInterceptor implements
-    MethodInterceptor, ApplicationEventPublisherAware, InitializingBean {
+    MethodInterceptor, ApplicationEventPublisherAware {
 
     /** The TicketRegistry which holds ticket information. */
+    @NotNull
     private TicketRegistry ticketRegistry;
 
     /** The publisher to publish events. */
@@ -76,11 +76,6 @@ public class CentralAuthenticationServiceMethodInterceptor implements
     public void setApplicationEventPublisher(
         final ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.ticketRegistry,
-            "ticketRegistry is a required property.");
     }
 
     /**

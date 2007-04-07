@@ -6,9 +6,7 @@
 package org.jasig.cas.util;
 
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 
 /**
  * @author Dmitriy Kopylenko
@@ -16,8 +14,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class HsqlDbDatabaseLocatorFactoryBean implements FactoryBean,
-    InitializingBean {
+public final class HsqlDbDatabaseLocatorFactoryBean implements FactoryBean {
 
     private Resource configLocation;
 
@@ -27,13 +24,16 @@ public final class HsqlDbDatabaseLocatorFactoryBean implements FactoryBean,
         this.configLocation = configLocation;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.configLocation, "configLocation cannot be null.");
-
-        this.urlRepresentation = this.configLocation.getURL().toExternalForm();
-    }
-
     public Object getObject() {
+        if (this.urlRepresentation == null) {
+            try {
+                this.urlRepresentation = this.configLocation.getURL()
+                    .toExternalForm();
+            } catch (final Exception e) {
+                return null;
+            }
+        }
+
         return "jdbc:hsqldb:"
             + this.urlRepresentation.substring(0, this.urlRepresentation
                 .length() - 7) + ";shutdown=true";

@@ -12,7 +12,7 @@ import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.beans.factory.InitializingBean;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -26,14 +26,14 @@ import org.springframework.beans.factory.InitializingBean;
  * </p>
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends
-    AbstractPreAndPostProcessingAuthenticationHandler implements
-    InitializingBean {
+    AbstractPreAndPostProcessingAuthenticationHandler {
 
     /** Default class to support if one is not supplied. */
     private static final Class<UsernamePasswordCredentials> DEFAULT_CLASS = UsernamePasswordCredentials.class;
 
     /** Class that this instance will support. */
-    private Class< ? > classToSupport;
+    @NotNull
+    private Class< ? > classToSupport = DEFAULT_CLASS;
 
     /**
      * Boolean to determine whether to support subclasses of the class to
@@ -45,7 +45,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * PasswordEncoder to be used by subclasses to encode passwords for
      * comparing against a resource.
      */
-    private PasswordEncoder passwordEncoder;
+    @NotNull
+    private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     /** Instance of logging for subclasses. */
     protected Log log = LogFactory.getLog(this.getClass());
@@ -72,31 +73,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     protected abstract boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException;
-
-    public final void afterPropertiesSet() throws Exception {
-        if (this.passwordEncoder == null) {
-            this.passwordEncoder = new PlainTextPasswordEncoder();
-            log.info("No PasswordEncoder set.  Using default: "
-                + this.passwordEncoder.getClass().getName());
-        }
-
-        if (this.classToSupport == null) {
-            this.classToSupport = DEFAULT_CLASS;
-            log.info("No Class to Support set.  Using default: "
-                + this.classToSupport.getName());
-        }
-        afterPropertiesSetInternal();
-    }
-
-    /**
-     * Method designed to be overwritten subclasses that need to do additional
-     * properties checking.
-     * 
-     * @throws Exception if there is an error checking the properties.
-     */
-    protected void afterPropertiesSetInternal() throws Exception {
-        // this is designed to be overwritten
-    }
 
     /**
      * Method to return the PasswordEncoder to be used to encode passwords.

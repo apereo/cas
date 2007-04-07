@@ -46,13 +46,20 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
      * The array of maps of restricted IPs mapped to failures. (simulating
      * buckets)
      */
-    private Map<String, BigInteger>[] restrictedIpAddressMaps;
+    private Map<String,BigInteger>[] restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
 
     /** The threshhold before we stop someone from authenticating. */
     private BigInteger failureThreshhold = DEFAULT_FAILURE_THRESHHOLD;
 
     /** The failure timeout before we clean up one failure attempt. */
     int failureTimeout = DEFAULT_FAILURE_TIMEOUT;
+    
+    public ThrottledSubmissionByIpAddressHandlerInterceptorAdapter() {
+        for (int i = 0; i < MAX_SIZE_OF_MAP_ARRAY; i++) {
+            this.restrictedIpAddressMaps[i] = new HashMap<String, BigInteger>();
+        }
+
+    }
 
     public void postHandle(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
@@ -98,11 +105,6 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     }
 
     public void afterPropertiesSet() throws Exception {
-        this.restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
-
-        for (int i = 0; i < MAX_SIZE_OF_MAP_ARRAY; i++) {
-            this.restrictedIpAddressMaps[i] = new HashMap<String, BigInteger>();
-        }
 
         final Thread thread = new ExpirationThread(
             this.restrictedIpAddressMaps, this.failureTimeout);

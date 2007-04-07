@@ -7,7 +7,8 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -22,14 +23,17 @@ import org.springframework.util.Assert;
  */
 
 public class SearchModeSearchDatabaseAuthenticationHandler extends
-    AbstractJdbcUsernamePasswordAuthenticationHandler {
+    AbstractJdbcUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
 
+    @NotNull
     private String fieldUser;
 
+    @NotNull
     private String fieldPassword;
 
+    @NotNull
     private String tableUsers;
 
     private String sql;
@@ -45,13 +49,9 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
         return count > 0;
     }
 
-    protected final void initDao() throws Exception {
-        Assert.notNull(this.fieldPassword, "fieldPassword cannot be null");
-        Assert.notNull(this.fieldUser, "fieldUser cannot be null");
-        Assert.notNull(this.tableUsers, "tableUsers cannot be null");
-
+    public void afterPropertiesSet() throws Exception {
         this.sql = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser
-            + " = ? And " + this.fieldPassword + " = ?";
+        + " = ? And " + this.fieldPassword + " = ?"; 
     }
 
     /**

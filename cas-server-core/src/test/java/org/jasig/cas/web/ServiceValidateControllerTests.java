@@ -43,11 +43,9 @@ public class ServiceValidateControllerTests extends
             .setCentralAuthenticationService(getCentralAuthenticationService());
         final Cas20ProxyHandler proxyHandler = new Cas20ProxyHandler();
         proxyHandler.setHttpClient(new HttpClient());
-        proxyHandler.afterPropertiesSet();
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
         this.serviceValidateController.setArgumentExtractor(new CasArgumentExtractor());
-        this.serviceValidateController.afterPropertiesSet();
     }
 
     private HttpServletRequest getHttpServletRequest() throws TicketException {
@@ -74,7 +72,6 @@ public class ServiceValidateControllerTests extends
         this.serviceValidateController.setSuccessView(CONST_SUCCESS_VIEW);
         this.serviceValidateController.setFailureView(CONST_FAILURE_VIEW);
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
-        this.serviceValidateController.afterPropertiesSet();
     }
 
     public void testEmptyParams() throws Exception {

@@ -64,7 +64,6 @@ public class AuthenticationManagerImplTests extends
             .setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {authenticationHandler}));
         manager
             .setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()}));
-        manager.afterPropertiesSet();
         try {
             manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
             fail("Authentication should have failed.");

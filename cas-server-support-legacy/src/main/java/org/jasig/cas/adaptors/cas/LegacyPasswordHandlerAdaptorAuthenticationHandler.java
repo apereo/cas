@@ -7,8 +7,7 @@ package org.jasig.cas.adaptors.cas;
 
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 
 import edu.yale.its.tp.cas.auth.PasswordHandler;
 
@@ -28,8 +27,9 @@ import edu.yale.its.tp.cas.auth.PasswordHandler;
  * @since 3.0
  */
 public final class LegacyPasswordHandlerAdaptorAuthenticationHandler implements
-    AuthenticationHandler, InitializingBean {
+    AuthenticationHandler {
 
+    @NotNull
     private PasswordHandler passwordHandler;
 
     public boolean authenticate(final Credentials credentials) {
@@ -52,9 +52,5 @@ public final class LegacyPasswordHandlerAdaptorAuthenticationHandler implements
      */
     public void setPasswordHandler(final PasswordHandler passwordHandler) {
         this.passwordHandler = passwordHandler;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.passwordHandler, "the passwordHandler cannot be null");
     }
 }

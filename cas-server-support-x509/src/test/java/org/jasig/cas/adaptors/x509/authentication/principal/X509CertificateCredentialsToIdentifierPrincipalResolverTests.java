@@ -33,7 +33,6 @@ public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
         credentials.setCertificate(getTestCertificate());
 
         this.resolver.setIdentifier("$C, $CN");
-        this.resolver.afterPropertiesSet();
         assertEquals("The principals should match", this.resolver.resolvePrincipal(
             credentials).getId(), "SE, test testsson");
         assertFalse("The principals should not match", this.resolver
@@ -47,11 +46,6 @@ public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
     
     public void testSupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
-    }
-
-    public void testCheckIdentifier() throws Exception {
-        X509CertificateCredentialsToIdentifierPrincipalResolver newResolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
-        newResolver.afterPropertiesSet();
     }
 
     private X509Certificate getTestCertificate() {

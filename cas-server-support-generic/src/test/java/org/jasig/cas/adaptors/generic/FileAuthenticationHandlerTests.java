@@ -32,7 +32,6 @@ public class FileAuthenticationHandlerTests extends TestCase {
         super.setUp();
         this.authenticationHandler = new FileAuthenticationHandler();
         this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication.txt"));
-        this.authenticationHandler.afterPropertiesSet();
 
     }
 
@@ -170,38 +169,6 @@ public class FileAuthenticationHandlerTests extends TestCase {
             assertFalse(this.authenticationHandler.authenticate(c));
         } catch (AuthenticationException e) {
             // this is okay because it means the test failed.
-        }
-    }
-
-    public void testAfterProperties() {
-
-        try {
-            this.authenticationHandler.afterPropertiesSet();
-
-        } catch (Exception e) {
-            fail("No Exception expected.");
-        }
-    }
-
-    public void testAfterPropertiesSetNoFileName() {
-        this.authenticationHandler.setFileName(null);
-
-        try {
-            this.authenticationHandler.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            // this is good
-        }
-    }
-
-    public void testAfterPropertiesSetNoSeperator() {
-        this.authenticationHandler.setSeparator(null);
-
-        try {
-            this.authenticationHandler.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            // this is good
         }
     }
 

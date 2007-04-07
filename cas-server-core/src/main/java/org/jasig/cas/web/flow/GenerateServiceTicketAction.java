@@ -8,8 +8,8 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,6 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class GenerateServiceTicketAction extends AbstractLoginAction {
 
+    @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
     protected Event doExecute(final RequestContext context) {
@@ -50,10 +51,5 @@ public final class GenerateServiceTicketAction extends AbstractLoginAction {
     public void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    protected void initActionInternal() throws Exception {
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService cannot be null.");
     }
 }

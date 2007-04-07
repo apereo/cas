@@ -30,8 +30,6 @@ public class EventListenerTests extends TestCase {
 
         this.eventListener
             .setEventHandlers(Arrays.asList(new EventHandler[] {new TestEventHandler()}));
-
-        this.eventListener.afterPropertiesSet();
     }
 
     public void testHandlEvent() {
@@ -58,16 +56,4 @@ public class EventListenerTests extends TestCase {
 
         this.eventListener.onApplicationEvent(e);
     }
-
-    public void testAfterPropertiesSet() {
-        this.eventListener.setEventHandlers(null);
-
-        try {
-            this.eventListener.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            return;
-        }
-    }
-
 }

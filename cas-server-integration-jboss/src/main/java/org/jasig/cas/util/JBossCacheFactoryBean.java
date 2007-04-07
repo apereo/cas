@@ -11,9 +11,8 @@ import org.jboss.cache.PropertyConfigurator;
 import org.jboss.cache.TreeCache;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 
 /**
  * 
@@ -22,14 +21,15 @@ import org.springframework.util.Assert;
  * @since 3.0.5
  *
  */
-public final class JBossCacheFactoryBean implements FactoryBean, DisposableBean,
-    InitializingBean {
+public final class JBossCacheFactoryBean implements FactoryBean, DisposableBean {
     
     private Log log = LogFactory.getLog(this.getClass());
     
-    private TreeCache cache;
+    private TreeCache cache = new TreeCache();
     
-    private Resource configLocation;
+    public JBossCacheFactoryBean() throws Exception {
+        // nothing to do
+    }
 
     public Object getObject() throws Exception {
         return this.cache;
@@ -43,21 +43,19 @@ public final class JBossCacheFactoryBean implements FactoryBean, DisposableBean,
         return true;
     }
 
+    @Required
     public void setConfigLocation(final Resource configLocation) {
-        this.configLocation = configLocation;
+        try {
+            new PropertyConfigurator().configure(this.cache, configLocation.getInputStream());
+            log.info("Starting TreeCache service.");
+            this.cache.startService();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void destroy() throws Exception {
         log.info("Shutting down TreeCache service.");
         this.cache.stopService();
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.configLocation, "configLocation cannot be null.");
-        this.cache = new TreeCache();
-        final PropertyConfigurator propertyConfigurator = new PropertyConfigurator();
-        propertyConfigurator.configure(this.cache, this.configLocation.getInputStream());
-        log.info("Starting TreeCache service.");
-        this.cache.startService();
     }
 }

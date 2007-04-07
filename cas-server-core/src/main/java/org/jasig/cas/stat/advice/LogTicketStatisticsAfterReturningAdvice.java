@@ -12,9 +12,9 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.stat.TicketStatisticsManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.util.annotation.NotEmpty;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.aop.AfterReturningAdvice;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 /**
  * After returning AOP advice which updates <code>TicketStatistics</code>
@@ -44,18 +44,21 @@ import org.springframework.util.Assert;
  * @see org.jasig.cas.ticket.registry.TicketRegistry
  */
 public final class LogTicketStatisticsAfterReturningAdvice implements
-    AfterReturningAdvice, InitializingBean {
+    AfterReturningAdvice {
 
     /** The method to monitor for proxy tickets. */
     private static final String PROXY_TICKET_METHOD = "grantServiceTicket";
 
     /** The mapping of CAS methods to TicketStatistics methods. */
+    @NotEmpty
     private Properties statsStateMutators = new Properties();
 
     /** The TicketStatisticsManager to update the statistics. */
+    @NotNull
     private TicketStatisticsManager ticketStatsManager;
 
     /** The registry to monitor. */
+    @NotNull
     private TicketRegistry ticketRegistry;
 
     public void afterReturning(final Object returnValue, final Method method,
@@ -90,17 +93,6 @@ public final class LogTicketStatisticsAfterReturningAdvice implements
         Method statsStateMutatorMethod = this.ticketStatsManager.getClass()
             .getMethod(statsStateMutatorMethodName, (Class[]) null);
         statsStateMutatorMethod.invoke(this.ticketStatsManager, (Object[]) null);
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.statsStateMutators,
-            "statsStateMutators is a required property.");
-        Assert.notEmpty(this.statsStateMutators,
-            "statsStateMutators is a required property.");
-        Assert.notNull(this.ticketStatsManager,
-            "ticketStatsManager is a required property.");
-        Assert.notNull(this.ticketRegistry,
-            "ticketRegistry is a required property.");
     }
 
     /**

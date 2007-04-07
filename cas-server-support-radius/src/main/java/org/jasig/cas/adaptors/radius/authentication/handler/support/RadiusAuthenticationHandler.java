@@ -11,7 +11,7 @@ import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotEmpty;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
@@ -24,6 +24,7 @@ public class RadiusAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
+    @NotEmpty
     private List<RadiusServer> servers;
 
     /**
@@ -90,9 +91,5 @@ public class RadiusAuthenticationHandler extends
 
     public void setServers(final List<RadiusServer> servers) {
         this.servers = servers;
-    }
-
-    protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notEmpty(this.servers, "servers cannot be empty.");
     }
 }

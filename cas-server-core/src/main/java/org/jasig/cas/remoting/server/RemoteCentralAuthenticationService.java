@@ -9,8 +9,8 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
@@ -35,9 +35,10 @@ import org.springframework.validation.Validator;
  * @since 3.0
  */
 public final class RemoteCentralAuthenticationService implements
-    CentralAuthenticationService, InitializingBean {
+    CentralAuthenticationService {
 
     /** The CORE to delegate to. */
+    @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The validators to check the Credentials. */
@@ -149,10 +150,5 @@ public final class RemoteCentralAuthenticationService implements
      */
     public void setValidators(final Validator[] validators) {
         this.validators = validators;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService is a required property.");
     }
 }

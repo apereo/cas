@@ -36,7 +36,6 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler = new RejectUsersAuthenticationHandler();
 
         this.authenticationHandler.setUsers(this.users);
-        this.authenticationHandler.afterPropertiesSet();
     }
 
     public void testSupportsProperUserCredentials() {
@@ -111,25 +110,6 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
             assertTrue(this.authenticationHandler.authenticate(c));
         } catch (AuthenticationException e) {
             fail("Exception expected as null should never be in map.");
-        }
-    }
-
-    public void testAfterPropertiesSetWithNullUsers() {
-        try {
-            this.authenticationHandler.setUsers(null);
-            this.authenticationHandler.afterPropertiesSet();
-            fail("Exception expected.");
-        } catch (Exception e) {
-            return;
-        }
-    }
-
-    public void testAfterPropertiesSetWithNonNullUsers() {
-        try {
-            this.authenticationHandler.afterPropertiesSet();
-
-        } catch (Exception e) {
-            fail("Exception not expected.");
         }
     }
 }

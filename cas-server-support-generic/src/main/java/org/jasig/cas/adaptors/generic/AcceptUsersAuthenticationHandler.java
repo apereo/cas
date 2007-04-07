@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -33,17 +33,18 @@ public class AcceptUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The list of users we will accept. */
+    @NotNull
     private Map<String, String> users;
 
     protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials) {
 
-        final String cachedPassword = this.users.get(credentials
-            .getUsername());
+        final String cachedPassword = this.users.get(credentials.getUsername());
 
         if (cachedPassword == null) {
             if (log.isDebugEnabled()) {
-                log.debug("The user [" + credentials.getUsername() + "] was not found in the map.");
+                log.debug("The user [" + credentials.getUsername()
+                    + "] was not found in the map.");
             }
             return false;
         }
@@ -52,19 +53,6 @@ public class AcceptUsersAuthenticationHandler extends
             credentials.getPassword());
 
         return (cachedPassword.equals(encodedPassword));
-    }
-
-    protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.users, "the users map cannot be null.");
-
-        for (final String key : this.users.keySet()) {
-            final Object value = this.users.get(key);
-
-            Assert.notNull(value, "Cannot have null password for user [" + key
-                + "]");
-            Assert.isTrue(value.getClass().equals(String.class),
-                "the password must be a String for " + key);
-        }
     }
 
     /**

@@ -19,15 +19,20 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
+ * Retrieves all of the LDAP attributes (MUST and MAY) from a specified entry in
+ * the LDAP server.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
- *
- * TODO javadoc
  */
 public final class LdapAttributeRepository implements AttributeRepository {
+    
+    private Log log = LogFactory.getLog(getClass());
 
     private final List<Attribute> attributes = new ArrayList<Attribute>();
 
@@ -59,7 +64,8 @@ public final class LdapAttributeRepository implements AttributeRepository {
                 populateListWithAttributes(attributes.get("MAY"));
             }
         } catch (final Exception e) {
-            // TODO something
+            log.error(e,e);
+            throw new RuntimeException(e);
         } finally {
             if (ctx != null) {
                 try {

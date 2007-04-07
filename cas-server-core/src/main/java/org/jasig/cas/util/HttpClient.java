@@ -12,15 +12,15 @@ import java.net.URL;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.GreaterThan;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class HttpClient implements InitializingBean {
+public final class HttpClient {
 
     /** The default status codes we accept. */
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
@@ -31,10 +31,13 @@ public final class HttpClient implements InitializingBean {
     private Log log = LogFactory.getLog(this.getClass());
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
+    @NotNull
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
 
+    @GreaterThan(0)
     private int connectionTimeout = 5000;
 
+    @GreaterThan(0)
     private int readTimeout = 5000;
 
     public boolean isValidEndPoint(final String url) {
@@ -98,13 +101,5 @@ public final class HttpClient implements InitializingBean {
 
     public void setReadTimeout(final int readTimeout) {
         this.readTimeout = readTimeout;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.isTrue(this.readTimeout > 0,
-            "readTimeout must be greater than 0");
-        Assert.isTrue(this.connectionTimeout > 0,
-            "connectionTimeout must be greater than 0");
-        Assert.notNull(this.acceptableCodes, "acceptableCodes cannot be null.");
     }
 }

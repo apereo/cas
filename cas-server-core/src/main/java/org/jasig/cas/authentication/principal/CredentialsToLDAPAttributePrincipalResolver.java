@@ -19,11 +19,11 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.LdapUtils;
-import org.springframework.beans.factory.InitializingBean;
+import org.jasig.cas.util.annotation.IsIn;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.ldap.AttributesMapper;
 import org.springframework.ldap.LdapTemplate;
 import org.springframework.ldap.support.LdapContextSource;
-import org.springframework.util.Assert;
 
 /**
  * @author Jan Van der Velpen
@@ -32,18 +32,13 @@ import org.springframework.util.Assert;
  * @since 3.1
  */
 public final class CredentialsToLDAPAttributePrincipalResolver implements
-    CredentialsToPrincipalResolver, InitializingBean {
+    CredentialsToPrincipalResolver {
 
     /** The default maximum number of results to return. */
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
 
     /** The default timeout. */
     private static final int DEFAULT_TIMEOUT = 1000;
-
-    /** The list of valid scope values. */
-    private static final int[] VALID_SCOPE_VALUES = new int[] {
-        SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
-        SearchControls.SUBTREE_SCOPE};
 
     /** Log instance. */
     private final Log log = LogFactory.getLog(this.getClass());
@@ -52,21 +47,28 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
      * The CredentialsToPrincipalResolver that resolves the principal from the
      * request
      */
+    @NotNull
     private CredentialsToPrincipalResolver credentialsToPrincipalResolver;
 
     /** LdapTemplate to execute ldap queries. */
+    @NotNull
     private LdapTemplate ldapTemplate;
 
     /** The filter path to the lookup value of the user. */
+    @NotNull
     private String filter;
 
     /** The attribute that contains the value that should become the principal */
+    @NotNull
     protected String principalAttributeName;
 
     /** The search base to find the user under. */
+    @NotNull
     private String searchBase;
 
     /** The scope. */
+    @IsIn({SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
+        SearchControls.SUBTREE_SCOPE})
     private int scope = SearchControls.SUBTREE_SCOPE;
 
     /** The maximum number of results to return. */
@@ -89,22 +91,6 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
         constraints.setTimeLimit(this.timeout);
         constraints.setCountLimit(this.maxNumberResults);
         return constraints;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
-        Assert.notNull(this.credentialsToPrincipalResolver,
-            "credentialsToPrincipalResolver cannot be null");
-        Assert.notNull(this.filter, "filter cannot be null");
-        Assert.notNull(this.principalAttributeName,
-            "principalAttributeName cannot be null");
-
-        for (int i = 0; i < VALID_SCOPE_VALUES.length; i++) {
-            if (this.scope == VALID_SCOPE_VALUES[i]) {
-                return;
-            }
-        }
-        throw new IllegalStateException("You must set a valid scope.");
     }
 
     public Principal resolvePrincipal(final Credentials credentials) {

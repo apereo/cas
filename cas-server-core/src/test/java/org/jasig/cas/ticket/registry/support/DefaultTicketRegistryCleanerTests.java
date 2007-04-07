@@ -22,11 +22,6 @@ public class DefaultTicketRegistryCleanerTests extends
         final TicketRegistry ticketRegistry) {
         DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();
         cleaner.setTicketRegistry(ticketRegistry);
-        try {
-            cleaner.afterPropertiesSet();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         return cleaner;
     }
