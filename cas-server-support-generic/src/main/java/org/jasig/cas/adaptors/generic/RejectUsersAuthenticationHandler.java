@@ -11,7 +11,7 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one
@@ -31,6 +31,7 @@ public class RejectUsersAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** The collection of users to reject. */
+    @NotNull
     private List<String> users;
 
     protected final boolean authenticateUsernamePasswordInternal(
@@ -42,10 +43,6 @@ public class RejectUsersAuthenticationHandler extends
         }
 
         return true;
-    }
-
-    protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.users, "the users collection cannot be null");
     }
 
     /**

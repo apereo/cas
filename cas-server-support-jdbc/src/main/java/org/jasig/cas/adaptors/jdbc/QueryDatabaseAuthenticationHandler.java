@@ -7,8 +7,8 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.util.Assert;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -21,9 +21,10 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class QueryDatabaseAuthenticationHandler extends
+public final class QueryDatabaseAuthenticationHandler extends
     AbstractJdbcUsernamePasswordAuthenticationHandler {
 
+    @NotNull
     private String sql;
 
     protected final boolean authenticateUsernamePasswordInternal(
@@ -44,14 +45,10 @@ public class QueryDatabaseAuthenticationHandler extends
         }
     }
 
-    protected final void initDao() throws Exception {
-        Assert.notNull(this.sql, "the SQL statement cannot be null");
-    }
-
     /**
      * @param sql The sql to set.
      */
-    public final void setSql(final String sql) {
+    public void setSql(final String sql) {
         this.sql = sql;
     }
 }

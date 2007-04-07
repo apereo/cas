@@ -17,6 +17,7 @@ import javax.naming.directory.SearchControls;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
+import org.jasig.cas.util.annotation.IsIn;
 import org.springframework.ldap.NameClassPairCallbackHandler;
 import org.springframework.ldap.SearchExecutor;
 
@@ -36,15 +37,12 @@ public class BindLdapAuthenticationHandler extends
     /** The default timeout. */
     private static final int DEFAULT_TIMEOUT = 1000;
 
-    /** The list of valid scope values. */
-    private static final int[] VALID_SCOPE_VALUES = new int[] {
-        SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
-        SearchControls.SUBTREE_SCOPE};
-
     /** The search base to find the user under. */
     private String searchBase;
 
     /** The scope. */
+    @IsIn({SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
+        SearchControls.SUBTREE_SCOPE})
     private int scope = SearchControls.SUBTREE_SCOPE;
 
     /** The maximum number of results to return. */
@@ -119,16 +117,6 @@ public class BindLdapAuthenticationHandler extends
         constraints.setCountLimit(this.maxNumberResults);
 
         return constraints;
-    }
-
-    protected final void initDao() throws Exception {
-        for (int i = 0; i < VALID_SCOPE_VALUES.length; i++) {
-            if (this.scope == VALID_SCOPE_VALUES[i]) {
-                return;
-            }
-        }
-
-        throw new IllegalStateException("You must set a scope.");
     }
 
     /**

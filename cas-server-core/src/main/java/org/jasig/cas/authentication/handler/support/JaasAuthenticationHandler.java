@@ -16,8 +16,8 @@ import javax.security.auth.login.LoginException;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -50,7 +50,15 @@ public class JaasAuthenticationHandler extends
     private static final String DEFAULT_REALM = "CAS";
 
     /** The realm that contains the login module information. */
-    private String realm;
+    @NotNull
+    private String realm = DEFAULT_REALM;
+    
+    public JaasAuthenticationHandler() {
+        Assert
+        .notNull(
+            Configuration.getConfiguration(),
+            "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+    }
 
     protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
@@ -81,20 +89,6 @@ public class JaasAuthenticationHandler extends
                 + credentials.getUsername());
         }
         return true;
-    }
-
-    protected final void afterPropertiesSetInternal() throws Exception {
-        if (!StringUtils.hasText(this.realm)) {
-            log.info(
-                "No default realm set.  Using default realm of: "
-                    + DEFAULT_REALM);
-            this.realm = DEFAULT_REALM;
-        }
-
-        Assert
-            .notNull(
-                Configuration.getConfiguration(),
-                "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     public void setRealm(final String realm) {

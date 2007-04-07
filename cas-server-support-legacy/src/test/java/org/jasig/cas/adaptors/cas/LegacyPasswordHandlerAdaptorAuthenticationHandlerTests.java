@@ -27,7 +27,6 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         super.setUp();
         this.lphaah = new LegacyPasswordHandlerAdaptorAuthenticationHandler();
         this.lphaah.setPasswordHandler(new MockPasswordHandler());
-        this.lphaah.afterPropertiesSet();
     }
 
     protected void tearDown() throws Exception {
@@ -38,25 +37,6 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         assertFalse(this.lphaah.supports(null));
         assertTrue(this.lphaah.supports(new LegacyCasCredentials()));
         assertFalse(this.lphaah.supports(new LegacyCasTrustedCredentials()));
-    }
-
-    /**
-     * Document LPHAAH's NPE behavior where its dependency has not been set.
-     * Mitigated by use of afterPropertiesSet() to sanity check. Consider using
-     * constructor dependency injection to guarantee that dependecy has been set
-     * to non-null value.
-     * 
-     * @throws AuthenticationException as a failure modality
-     */
-    public void testAuthenticateMissingHandler() {
-        this.lphaah.setPasswordHandler(null);
-        try {
-            this.lphaah.authenticate(new LegacyCasCredentials());
-        } catch (NullPointerException npe) {
-            // throws NPE when dependency is not satisified.
-            return;
-        }
-        fail("Behavior we were trying to document was an NPE that wasn't thrown?");
     }
 
     /**

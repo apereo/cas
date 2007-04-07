@@ -14,12 +14,11 @@ import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,8 +37,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ServiceValidateController extends AbstractController implements
-    InitializingBean {
+public class ServiceValidateController extends AbstractController {
 
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "casServiceFailureView";
@@ -54,59 +52,28 @@ public class ServiceValidateController extends AbstractController implements
     private static final String MODEL_ASSERTION = "assertion";
 
     /** The CORE which we will delegate all requests to. */
+    @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The validation protocol we want to use. */
-    private Class<?> validationSpecificationClass;
+    @NotNull
+    private Class<?> validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
 
     /** The proxy handler we want to use with the controller. */
+    @NotNull
     private ProxyHandler proxyHandler;
 
     /** The view to redirect to on a successful validation. */
-    private String successView;
+    @NotNull
+    private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
 
     /** The view to redirect to on a validation failure. */
-    private String failureView;
+    @NotNull
+    private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
 
     /** Extracts parameters from Request object. */
+    @NotNull
     private ArgumentExtractor argumentExtractor;
-
-    protected void afterPropertiesSetInternal() throws Exception {
-        // nothing to do
-    }
-
-    public final void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService cannot be null");
-        Assert.notNull(this.argumentExtractor,
-            "argumentExtractors cannot be null.");
-
-        Assert
-            .notNull(
-                this.proxyHandler,
-                "proxyHandler cannot be null.  You may be seeing this because previous versions of CAS automatically set this.  Due to the use of HttpClient, this is no longer possible.");
-
-        if (this.validationSpecificationClass == null) {
-            this.validationSpecificationClass = Cas20ProtocolValidationSpecification.class;
-            logger
-                .info("No authentication specification class set.  Defaulting to "
-                    + this.validationSpecificationClass.getName());
-        }
-
-        if (this.successView == null) {
-            this.successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
-            logger.info("No successView specified.  Using default of "
-                + this.successView);
-        }
-
-        if (this.failureView == null) {
-            this.failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
-            logger.info("No failureView specified.  Using default of "
-                + this.failureView);
-        }
-
-        afterPropertiesSetInternal();
-    }
 
     /**
      * Overrideable method to determine which credentials to use to grant a

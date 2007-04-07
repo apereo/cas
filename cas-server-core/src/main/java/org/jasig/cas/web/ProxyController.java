@@ -11,8 +11,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.TicketException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -33,8 +32,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class ProxyController extends AbstractController implements
-    InitializingBean {
+public final class ProxyController extends AbstractController {
 
     /** View for if the creation of a "Proxy" Ticket Fails. */
     private static final String CONST_PROXY_FAILURE = "casProxyFailureView";
@@ -46,16 +44,11 @@ public final class ProxyController extends AbstractController implements
     private static final String MODEL_SERVICE_TICKET = "ticket";
 
     /** CORE to delegate all non-web tier functionality to. */
+    @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
     public ProxyController() {
         setCacheSeconds(0);
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService cannot be null on "
-                + this.getClass().getName());
     }
 
     /**

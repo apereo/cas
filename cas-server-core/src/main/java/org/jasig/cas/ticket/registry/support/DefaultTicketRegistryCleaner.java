@@ -15,8 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Class that will iterate through the registry and check for tickets that are
@@ -40,13 +39,13 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
-    InitializingBean {
+public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     /** The Commons Logging instance. */
     private final Log log = LogFactory.getLog(getClass());
 
     /** The instance of the TicketRegistry to clean. */
+    @NotNull
     private TicketRegistry ticketRegistry;
 
     public void clean() {
@@ -82,9 +81,5 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner,
      */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.ticketRegistry, "ticketRegistry cannot be null.");
     }
 }

@@ -43,10 +43,6 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
         this.advice.setTicketRegistry(getTicketRegistry());
     }
 
-    public void testAfterPropertiesSet() throws Exception {
-        this.advice.afterPropertiesSet();
-    }
-
     public void testCreateTicketGrantingTicket() throws Throwable {
         final Method method = CentralAuthenticationService.class.getMethod(
             "createTicketGrantingTicket", new Class[] {Credentials.class});

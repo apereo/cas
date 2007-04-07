@@ -9,9 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -27,19 +26,22 @@ import org.springframework.web.util.CookieGenerator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class LogoutController extends AbstractController implements
-    InitializingBean {
+public final class LogoutController extends AbstractController {
 
     /** The CORE to which we delegate for all CAS functionality. */
+    @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
     /** CookieGenerator for TGT Cookie */
+    @NotNull
     private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** CookieGenerator for Warn Cookie */
+    @NotNull
     private CookieGenerator warnCookieGenerator;
 
     /** Logout view name. */
+    @NotNull
     private String logoutView;
 
     /**
@@ -47,17 +49,6 @@ public final class LogoutController extends AbstractController implements
      * service request parameter.
      */
     private boolean followServiceRedirects;
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService must be set on "
-                + this.getClass().getName());
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator,
-            "ticketGrantingTicketCookieGenerator cannot be null");
-        Assert.notNull(this.warnCookieGenerator,
-            "warnCookieGenerator cannot be null");
-        Assert.hasText(this.logoutView, "logoutView must have text.");
-    }
 
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)

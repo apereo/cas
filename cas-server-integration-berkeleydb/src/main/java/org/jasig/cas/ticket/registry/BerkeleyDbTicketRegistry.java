@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.FileSystemResource;
@@ -52,6 +53,7 @@ public final class BerkeleyDbTicketRegistry extends
 
     private Environment environment;
 
+    @NotNull
     private Resource dbHome = new FileSystemResource(".");
 
     public BerkeleyDbTicketRegistry() {

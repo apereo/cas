@@ -7,7 +7,6 @@ package org.jasig.cas.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 
 /**
@@ -18,7 +17,7 @@ import org.springframework.orm.jpa.support.JpaDaoSupport;
  * @since 3.1
  */
 public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
-    ServiceRegistryDao, InitializingBean {
+    ServiceRegistryDao {
 
     public boolean delete(final RegisteredService registeredService) {
         getJpaTemplate().remove(

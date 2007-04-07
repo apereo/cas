@@ -8,8 +8,8 @@ package org.jasig.cas.adaptors.jdbc;
 import javax.sql.DataSource;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.util.Assert;
 
 /**
  * Abstract class for database authentication handlers.
@@ -21,8 +21,10 @@ import org.springframework.util.Assert;
 public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
+    @NotNull
     private SimpleJdbcTemplate jdbcTemplate;
     
+    @NotNull
     private DataSource dataSource;
 
     /**
@@ -46,19 +48,4 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
     protected final DataSource getDataSource() {
         return this.dataSource;
     }
-
-    protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.jdbcTemplate, "jdbcTemplate cannot be null (DataSource is required)");
-        initDao();
-    }
-
-    /**
-     * Template method to do additional set up in the dao implementations.
-     * 
-     * @throws Exception if there is a problem during set up.
-     */
-    protected void initDao() throws Exception {
-        // nothing to do here...stub
-    }
-
 }

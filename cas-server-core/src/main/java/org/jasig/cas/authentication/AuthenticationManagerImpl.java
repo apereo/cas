@@ -17,8 +17,8 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotEmpty;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * <p>
@@ -56,20 +56,22 @@ import org.springframework.util.Assert;
  * @see org.jasig.cas.authentication.AuthenticationMetaDataPopulator
  */
 
-public final class AuthenticationManagerImpl implements AuthenticationManager,
-    InitializingBean {
+public final class AuthenticationManagerImpl implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnigs, etc. */
     private final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
 
     /** An array of authentication handlers. */
+    @NotEmpty
     private List<AuthenticationHandler> authenticationHandlers;
 
     /** An array of CredentialsToPrincipalResolvers. */
+    @NotEmpty
     private List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers;
 
     /** An array of AuthenticationAttributesPopulators. */
-    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators;
+    @NotNull
+    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
 
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
@@ -146,17 +148,6 @@ public final class AuthenticationManagerImpl implements AuthenticationManager,
 
         return new ImmutableAuthentication(authentication.getPrincipal(),
             authentication.getAttributes());
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notEmpty(this.authenticationHandlers,
-            "authenticationHandlers is a required property.");
-        Assert.notEmpty(this.credentialsToPrincipalResolvers,
-            "credentialsToPrincipalResolvers is a required property.");
-
-        if (this.authenticationMetaDataPopulators == null) {
-            this.authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
-        }
     }
 
     /**

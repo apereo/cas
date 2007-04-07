@@ -12,11 +12,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.Node;
 import org.jboss.cache.TreeCache;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 /**
  * Implementation of TicketRegistry that is backed by a JBoss TreeCache.
@@ -26,12 +25,13 @@ import org.springframework.util.Assert;
  * @since 3.1
  *
  */
-public final class JBossCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
+public final class JBossCacheTicketRegistry extends AbstractDistributedTicketRegistry {
     
     /** Indicator of what tree branch to put tickets in. */
     private static final String FQN_TICKET = "ticket";
 
     /** Instance of JBoss TreeCache. */
+    @NotNull
     private TreeCache cache;
     
     
@@ -104,10 +104,6 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
         } catch (final CacheException e) {
             return Collections.emptyList();
         }
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.cache, "cache cannot be null.");
     }
 
     public void setCache(final TreeCache cache) {

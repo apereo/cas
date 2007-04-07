@@ -30,9 +30,9 @@ import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
@@ -64,36 +64,44 @@ import org.springframework.util.Assert;
  * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl implements
-    CentralAuthenticationService, InitializingBean {
+    CentralAuthenticationService {
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Log log = LogFactory.getLog(this.getClass());
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
+    @NotNull
     private TicketRegistry ticketRegistry;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
      * obtaining tickets.
      */
+    @NotNull
     private AuthenticationManager authenticationManager;
 
     /**
      * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
      * created.
      */
+    
+    @NotNull
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Map to contain the mappings of service->UniqueTicketIdGenerators */
+    @NotNull
     private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Expiration policy for ticket granting tickets. */
+    @NotNull
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /** ExpirationPolicy for Service Tickets. */
+    @NotNull
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /** Implementation of Service Registry */
+    @NotNull
     private ServicesManager servicesManager;
 
     /**
@@ -381,24 +389,6 @@ public final class CentralAuthenticationServiceImpl implements
     public void setServiceTicketExpirationPolicy(
         final ExpirationPolicy serviceTicketExpirationPolicy) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        final String name = this.getClass().getName();
-        Assert.notNull(this.ticketRegistry, "ticketRegistry cannot be null on "
-            + name);
-        Assert.notNull(this.authenticationManager,
-            "authenticationManager cannot be null on " + name);
-        Assert.notNull(this.ticketGrantingTicketUniqueTicketIdGenerator,
-            "ticketGrantingTicketUniqueTicketIdGenerator cannot be null on "
-                + name);
-        Assert.notNull(this.uniqueTicketIdGeneratorsForService,
-            "uniqueTicketIdGeneratorsForService cannot be null on " + name);
-        Assert.notNull(this.ticketGrantingTicketExpirationPolicy,
-            "ticketGrantingTicketExpirationPolicy cannot be null on " + name);
-        Assert.notNull(this.serviceTicketExpirationPolicy,
-            "serviceTicketExpirationPolicy cannot be null on " + name);
-        Assert.notNull(this.servicesManager, "serviceRegistry cannot be null.");
     }
 
     public void setUniqueTicketIdGeneratorsForService(

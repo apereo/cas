@@ -7,8 +7,7 @@ package org.jasig.cas.adaptors.cas;
 
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.util.StringUtils;
 
 import edu.yale.its.tp.cas.auth.TrustHandler;
@@ -22,8 +21,9 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
  * @since 3.0
  */
 public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements
-    AuthenticationHandler, InitializingBean {
+    AuthenticationHandler {
 
+    @NotNull
     private TrustHandler trustHandler;
 
     public boolean authenticate(final Credentials credentials) {
@@ -43,9 +43,5 @@ public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements
      */
     public void setTrustHandler(final TrustHandler trustHandler) {
         this.trustHandler = trustHandler;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.trustHandler, "the trustHandler cannot be null");
     }
 }

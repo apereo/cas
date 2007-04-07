@@ -7,6 +7,8 @@ package org.jasig.cas.adaptors.ldap;
 
 import org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.util.annotation.NotNull;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.LdapTemplate;
 import org.springframework.util.Assert;
 
@@ -18,15 +20,18 @@ import org.springframework.util.Assert;
  * @since 3.0.3
  */
 public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     /** LdapTemplate to execute ldap queries. */
+    @NotNull
     private LdapTemplate ldapTemplate;
     
     /** Instance of ContextSource */
+    @NotNull
     private AuthenticatedLdapContextSource contextSource;
 
     /** The filter path to the uid of the user. */
+    @NotNull
     private String filter;
     
     /** Whether the LdapTemplate should ignore partial results. */
@@ -47,9 +52,9 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     }
 
     /**
-     * Method to return the jdbcTemplate
+     * Method to return the LdapTemplate
      * 
-     * @return a fully created JdbcTemplate.
+     * @return a fully created LdapTemplate.
      */
     protected final LdapTemplate getLdapTemplate() {
         return this.ldapTemplate;
@@ -63,27 +68,15 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
         return this.filter;
     }
 
-    protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
-        Assert.hasText(this.filter, "filter cannot be null");
+    public final void afterPropertiesSet() throws Exception {
         Assert.isTrue(this.filter.contains("%u"), "filter must contain %u");
         this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
-        initDao();
     }
 
     /**
      * @param filter The filter to set.
      */
-    public void setFilter(final String filter) {
+    public final void setFilter(final String filter) {
         this.filter = filter;
-    }
-
-    /**
-     * Template method to do additional set up in the dao implementations.
-     * 
-     * @throws Exception if there is a problem during set up.
-     */
-    protected void initDao() throws Exception {
-        // nothing to do here...stub
     }
 }

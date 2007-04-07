@@ -18,9 +18,7 @@ import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCrede
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Authentication Handler that accepts X509 Certificiates, determines their
@@ -39,8 +37,7 @@ import org.springframework.util.StringUtils;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public  class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
-    implements InitializingBean {
+public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /** Default setting to limit the number of intermediate certificates. */
     private static final int DEFAULT_MAXPATHLENGTH = 1;
@@ -52,15 +49,13 @@ public  class X509CredentialsAuthenticationHandler extends AbstractPreAndPostPro
     private static final boolean DEFAULT_REQUIRE_KEYUSAGE = false;
 
     /** Default subject pattern match. */
-    private static final String DEFAULT_SUBJECT_DN_PATTERN = ".*";
+    private static final Pattern DEFAULT_SUBJECT_DN_PATTERN = Pattern.compile(".*");
 
     /** Instance of Logging. */
     private final Log log = LogFactory.getLog(getClass());
 
-    /** Deployer supplied pattern to match issuer DNs against. */
-    private String trustedIssuerDnPattern;
-
     /** The compiled pattern supplied by the deployer. */
+    @NotNull
     private Pattern regExTrustedIssuerDnPattern;
 
     /**
@@ -78,11 +73,9 @@ public  class X509CredentialsAuthenticationHandler extends AbstractPreAndPostPro
      */
     private boolean requireKeyUsage = DEFAULT_REQUIRE_KEYUSAGE;
 
-    /** Deployer supplied pattern to match subject DNs against. */
-    private String subjectDnPattern;
-
     /** The compiled pattern supplied by the deployer. */
-    private Pattern regExSubjectDnPattern;
+    @NotNull
+    private Pattern regExSubjectDnPattern = DEFAULT_SUBJECT_DN_PATTERN;
 
     protected final boolean doAuthentication(final Credentials credentials)
         throws AuthenticationException {
@@ -198,7 +191,7 @@ public  class X509CredentialsAuthenticationHandler extends AbstractPreAndPostPro
         if (log.isInfoEnabled()) {
             if (!hasTrustedIssuerInChain) {
                 log.info("client cert did not have trusted issuer pattern \""
-                    + this.trustedIssuerDnPattern
+                    + this.regExTrustedIssuerDnPattern.pattern()
                     + "\" in chain; authentication failed");
             } else {
                 log
@@ -209,7 +202,8 @@ public  class X509CredentialsAuthenticationHandler extends AbstractPreAndPostPro
     }
 
     public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {
-        this.trustedIssuerDnPattern = trustedIssuerDnPattern;
+        this.regExTrustedIssuerDnPattern = Pattern
+        .compile(trustedIssuerDnPattern);
     }
 
     /**
@@ -234,21 +228,7 @@ public  class X509CredentialsAuthenticationHandler extends AbstractPreAndPostPro
     }
 
     public void setSubjectDnPattern(final String subjectDnPattern) {
-        this.subjectDnPattern = subjectDnPattern;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.trustedIssuerDnPattern,
-            "trustedIssuerDnPattern cannot be null");
-        this.regExTrustedIssuerDnPattern = Pattern
-            .compile(this.trustedIssuerDnPattern);
-
-        if (!StringUtils.hasText(this.subjectDnPattern)) {
-            log.info("Using default Subject DN Pattern: "
-                + DEFAULT_SUBJECT_DN_PATTERN);
-            this.subjectDnPattern = DEFAULT_SUBJECT_DN_PATTERN;
-        }
-        this.regExSubjectDnPattern = Pattern.compile(this.subjectDnPattern);
+        this.regExSubjectDnPattern = Pattern.compile(subjectDnPattern);
     }
 
     private boolean doesCertificateKeyUsageMatch(

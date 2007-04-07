@@ -11,8 +11,8 @@ import java.io.InputStreamReader;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -34,9 +34,11 @@ public class FileAuthenticationHandler extends
     private static final String DEFAULT_SEPARATOR = "::";
 
     /** The separator to use. */
+    @NotNull
     private String separator = DEFAULT_SEPARATOR;
 
     /** The filename to read the list of usernames from. */
+    @NotNull
     private Resource fileName;
 
     protected final boolean authenticateUsernamePasswordInternal(
@@ -78,11 +80,6 @@ public class FileAuthenticationHandler extends
         }
 
         return false;
-    }
-
-    protected final void afterPropertiesSetInternal() throws Exception {
-        Assert.notNull(this.fileName, "the fileName cannot be null");
-        Assert.notNull(this.separator, "the separator cannot be null");
     }
 
     /**

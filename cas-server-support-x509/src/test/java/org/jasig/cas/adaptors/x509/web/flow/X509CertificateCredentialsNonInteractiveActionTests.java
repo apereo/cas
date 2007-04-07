@@ -48,19 +48,15 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
 
         final X509CredentialsAuthenticationHandler a = new X509CredentialsAuthenticationHandler();
         a.setTrustedIssuerDnPattern("JA-SIG");
-        a.afterPropertiesSet();
         
         authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {a}));
         authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new X509CertificateCredentialsToSerialNumberPrincipalResolver()}));
-        authenticationManager.afterPropertiesSet();
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);
         centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
-// XXX:        centralAuthenticationService.setServicesManager(new DefaultServicesManagerImpl());
-        centralAuthenticationService.afterPropertiesSet();
         
         this.action.setCentralAuthenticationService(centralAuthenticationService);
         this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());

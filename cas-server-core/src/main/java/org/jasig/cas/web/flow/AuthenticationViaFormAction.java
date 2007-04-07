@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,9 +14,9 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.jasig.cas.web.bind.CredentialsBinder;
-import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -47,12 +45,13 @@ public class AuthenticationViaFormAction extends FormAction {
     private CredentialsBinder credentialsBinder;
 
     /** Core we delegate to for handling all ticket related tasks. */
+    @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
-    private List<ArgumentExtractor> argumentExtractors;
-
+    @NotNull
     private CookieGenerator warnCookieGenerator;
 
+    @NotNull
     private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected final void doBind(final RequestContext context,
@@ -147,11 +146,6 @@ public class AuthenticationViaFormAction extends FormAction {
         }
     }
 
-    public final void setArgumentExtractors(
-        final List<ArgumentExtractor> argumentExtractors) {
-        this.argumentExtractors = argumentExtractors;
-    }
-
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
@@ -186,15 +180,6 @@ public class AuthenticationViaFormAction extends FormAction {
     }
 
     protected void initAction() {
-        Assert.notNull(this.centralAuthenticationService,
-            "centralAuthenticationService cannot be null");
-        Assert.notNull(this.argumentExtractors,
-            "argumentExtractors cannot be null.");
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator,
-            "ticketGrantingTicketCookieGenerator cannot be null.");
-        Assert.notNull(this.warnCookieGenerator,
-            "warnCookieGenerator cannot be null.");
-
         if (this.getFormObjectClass() == null) {
             this.setFormObjectClass(UsernamePasswordCredentials.class);
             this.setFormObjectName("credentials");

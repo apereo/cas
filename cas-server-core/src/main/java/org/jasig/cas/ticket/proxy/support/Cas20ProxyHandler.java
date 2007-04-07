@@ -13,8 +13,7 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.
@@ -27,7 +26,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
+public final class Cas20ProxyHandler implements ProxyHandler {
 
     /** The Commons Logging instance. */
     private final Log log = LogFactory.getLog(getClass());
@@ -36,9 +35,11 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
     private static final String PGTIOU_PREFIX = "PGTIOU";
 
     /** Generate unique ids. */
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator;
+    @NotNull
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
     /** Instance of Apache Commons HttpClient */
+    @NotNull
     private HttpClient httpClient;
 
     public String handle(final Credentials credentials,
@@ -89,16 +90,5 @@ public final class Cas20ProxyHandler implements ProxyHandler, InitializingBean {
 
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.httpClient, "httpClient cannot be null.");
-
-        if (this.uniqueTicketIdGenerator == null) {
-            this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
-            log.info("No UniqueTicketIdGenerator specified for "
-                + this.getClass().getName() + ".  Using "
-                + this.uniqueTicketIdGenerator.getClass().getName());
-        }
     }
 }

@@ -7,10 +7,9 @@ package org.jasig.cas.event;
 
 import java.util.List;
 
-import org.springframework.beans.factory.InitializingBean;
+import org.jasig.cas.util.annotation.NotEmpty;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.util.Assert;
 
 /**
  * Implementation of an ApplicationListener that listens specifically for events
@@ -29,10 +28,10 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class EventListener implements ApplicationListener,
-    InitializingBean {
+public final class EventListener implements ApplicationListener {
 
     /** The array of event handlers. */
+    @NotEmpty
     private List<EventHandler> eventHandlers;
 
     public void onApplicationEvent(final ApplicationEvent applicationEvent) {
@@ -45,11 +44,6 @@ public final class EventListener implements ApplicationListener,
                 eventHandler.handleEvent(applicationEvent);
             }
         }
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notEmpty(this.eventHandlers,
-            "eventHandlers is a required property.");
     }
 
     /**

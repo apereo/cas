@@ -29,7 +29,6 @@ public class ProxyControllerTests extends
         this.proxyController = new ProxyController();
         this.proxyController
             .setCentralAuthenticationService(getCentralAuthenticationService());
-        this.proxyController.afterPropertiesSet();
 
         StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();

@@ -28,7 +28,6 @@ public final class SimpleTestUsernamePasswordHandlerTests extends TestCase {
         this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
         this.authenticationHandler
             .setPasswordEncoder(new PlainTextPasswordEncoder());
-        this.authenticationHandler.afterPropertiesSet();
     }
 
     public void testSupportsProperUserCredentials() {
@@ -62,10 +61,6 @@ public final class SimpleTestUsernamePasswordHandlerTests extends TestCase {
         } catch (AuthenticationException ae) {
             // this is okay
         }
-    }
-
-    public void testAfterPropertiesSet() throws Exception {
-        this.authenticationHandler.afterPropertiesSet();
     }
     
     public void testAlternateClass() {

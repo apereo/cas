@@ -29,68 +29,6 @@ import junit.framework.TestCase;
  */
 public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
 
-    public void testAfterPropertiesSetNoMap() {
-        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
-        try {
-            advice.afterPropertiesSet();
-            fail("IllegalStateException expected.");
-        } catch (Exception e) {
-            // this is okay
-        }
-    }
-
-    public void testAfterPropertiesSetEmptyMap() {
-        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
-        try {
-            advice.setStatsStateMutators(new Properties());
-            advice.afterPropertiesSet();
-            fail("IllegalStateException expected.");
-        } catch (Exception e) {
-            // this is okay
-        }
-    }
-
-    public void testAfterPropertiesSetNoTicketStatsManager() {
-        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
-        Properties properties = new Properties();
-        properties.put("test", "test");
-        try {
-            advice.setStatsStateMutators(properties);
-            advice.afterPropertiesSet();
-            fail("IllegalStateException expected.");
-        } catch (Exception e) {
-            // this is okay
-        }
-    }
-
-    public void testAfterPropertiesSetNoTicketRegistry() {
-        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
-        Properties properties = new Properties();
-        properties.put("test", "test");
-        try {
-            advice.setStatsStateMutators(properties);
-            advice.setTicketStatsManager(new TicketStatisticsImpl());
-            advice.afterPropertiesSet();
-            fail("IllegalStateException expected.");
-        } catch (Exception e) {
-            // this is okay
-        }
-    }
-
-    public void testAfterPropertiesWorksOkay() {
-        LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
-        Properties properties = new Properties();
-        properties.put("test", "test");
-        try {
-            advice.setStatsStateMutators(properties);
-            advice.setTicketStatsManager(new TicketStatisticsImpl());
-            advice.setTicketRegistry(new DefaultTicketRegistry());
-            advice.afterPropertiesSet();
-        } catch (Exception e) {
-            fail("Exception unexpected.");
-        }
-    }
-
     public void testNullReturnsOkay() {
         LogTicketStatisticsAfterReturningAdvice advice = new LogTicketStatisticsAfterReturningAdvice();
         try {

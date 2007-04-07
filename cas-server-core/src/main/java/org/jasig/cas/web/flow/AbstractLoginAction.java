@@ -7,8 +7,8 @@ package org.jasig.cas.web.flow;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
@@ -24,11 +24,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public abstract class AbstractLoginAction extends AbstractAction {
 
+    @NotNull
     private CookieGenerator ticketGrantingTicketCookieGenerator;
-
-    protected void initActionInternal() throws Exception {
-        // nothing to do
-    }
     
     public final void setTicketGrantingTicketCookieGenerator(final CookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
@@ -36,11 +33,6 @@ public abstract class AbstractLoginAction extends AbstractAction {
     
     protected final CookieGenerator getTicketGrantingTicketCookieGenerator() {
         return this.ticketGrantingTicketCookieGenerator;
-    }
-
-    protected final void initAction() throws Exception {
-        Assert.notNull(this.ticketGrantingTicketCookieGenerator, "ticketGrantingTicketCookieGenerator cannot be null.");
-        initActionInternal();
     }
 
     protected final boolean isGatewayPresent(final RequestContext context) {
