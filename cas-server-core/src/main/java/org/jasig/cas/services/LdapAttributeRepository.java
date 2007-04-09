@@ -54,14 +54,14 @@ public final class LdapAttributeRepository implements AttributeRepository {
             final DirContext tedClasses = ctx
                 .getSchemaClassDefinition(schemaLookupDn);
 
-            final NamingEnumeration<SearchResult> ne = (NamingEnumeration<SearchResult>) tedClasses
+            final NamingEnumeration<SearchResult> ne = tedClasses
                 .search("", null);
             while (ne.hasMore()) {
                 final SearchResult result = ne.next();
-                Attributes attributes = result.getAttributes();
+                final Attributes attrs = result.getAttributes();
 
-                populateListWithAttributes(attributes.get("MUST"));
-                populateListWithAttributes(attributes.get("MAY"));
+                populateListWithAttributes(attrs.get("MUST"));
+                populateListWithAttributes(attrs.get("MAY"));
             }
         } catch (final Exception e) {
             log.error(e,e);
