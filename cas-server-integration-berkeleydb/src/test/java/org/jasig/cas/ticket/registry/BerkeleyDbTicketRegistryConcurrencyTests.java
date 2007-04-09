@@ -29,16 +29,16 @@ import com.clarkware.junitperf.LoadTest;
  * @since 3.1
  *
  */
-public class BerkeleyDbTicketRegistryConcurrencyTest extends TestCase {
+public class BerkeleyDbTicketRegistryConcurrencyTests extends TestCase {
 
     static BerkeleyDbTicketRegistry registry;
 
-    public BerkeleyDbTicketRegistryConcurrencyTest(String name) {
+    public BerkeleyDbTicketRegistryConcurrencyTests(String name) {
         super(name);
     }
 
     public static Test suite() {
-        BerkeleyDbTicketRegistryConcurrencyTest testCase = new BerkeleyDbTicketRegistryConcurrencyTest(
+        BerkeleyDbTicketRegistryConcurrencyTests testCase = new BerkeleyDbTicketRegistryConcurrencyTests(
             "testBasicFunctionality");
 
         return new BerkleyDbTicketRegistryTestSetup(new LoadTest(testCase, 100));

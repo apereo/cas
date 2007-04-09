@@ -28,7 +28,7 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
  * @since 3.1
  *
  */
-public class BerkeleyDbTicketRegistryTest extends TestCase {
+public class BerkeleyDbTicketRegistryTests extends TestCase {
 
 
 	BerkeleyDbTicketRegistry reg;
@@ -111,22 +111,22 @@ public class BerkeleyDbTicketRegistryTest extends TestCase {
 
 	public class BerkeleyDbTicketRegistryRunner implements Runnable {
 
-		BerkeleyDbTicketRegistryTest test;
+		BerkeleyDbTicketRegistryTests test;
 		long createTime = System.nanoTime();
 
 		public BerkeleyDbTicketRegistryRunner() {
 		    // nothing to do
 		}
 
-		public BerkeleyDbTicketRegistryRunner(BerkeleyDbTicketRegistryTest test) {
+		public BerkeleyDbTicketRegistryRunner(BerkeleyDbTicketRegistryTests test) {
 			this.test = test;
 		}
 
-		public BerkeleyDbTicketRegistryTest getTest() {
+		public BerkeleyDbTicketRegistryTests getTest() {
 			return this.test;
 		}
 
-		public void setTest(BerkeleyDbTicketRegistryTest test) {
+		public void setTest(BerkeleyDbTicketRegistryTests test) {
 			this.test = test;
 		}
 
@@ -136,7 +136,7 @@ public class BerkeleyDbTicketRegistryTest extends TestCase {
                 TicketGrantingTicket ticket = this.test.getTicket(this.toString() + this.createTime);
 			this.test.getReg().addTicket(ticket);
             TicketGrantingTicket oldticket = this.test.getTicket(this.toString() + this.createTime);
-			BerkeleyDbTicketRegistryTest.this.reg.addTicket(oldticket);
+			BerkeleyDbTicketRegistryTests.this.reg.addTicket(oldticket);
 			TicketGrantingTicket newticket = (TicketGrantingTicket) this.test.getReg().getTicket(this.toString() + this.createTime);
 			assertEquals(newticket,oldticket);
 			boolean delete = (rand.nextInt() % 3) == 0;

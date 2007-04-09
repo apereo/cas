@@ -30,16 +30,16 @@ import com.clarkware.junitperf.LoadTest;
  * @since 3.1
  *
  */
-public class BerkeleyDbTicketRegistryPerformanceTest extends TestCase {
+public class BerkeleyDbTicketRegistryPerformanceTesta extends TestCase {
 
 	static BerkeleyDbTicketRegistry registry;
 
-	public BerkeleyDbTicketRegistryPerformanceTest(String name) {
+	public BerkeleyDbTicketRegistryPerformanceTesta(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		BerkeleyDbTicketRegistryPerformanceTest testCase = new BerkeleyDbTicketRegistryPerformanceTest(
+		BerkeleyDbTicketRegistryPerformanceTesta testCase = new BerkeleyDbTicketRegistryPerformanceTesta(
 				"testAddGetRemove");
 
 
