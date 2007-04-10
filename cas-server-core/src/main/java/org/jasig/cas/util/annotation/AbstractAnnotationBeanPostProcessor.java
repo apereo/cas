@@ -27,7 +27,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    public final boolean postProcessAfterInstantiation(final Object bean,
+    public final Object postProcessBeforeInitialization(final Object bean,
         final String beanName) throws BeansException {
 
         final List<Field> fields = new ArrayList<Field>();
@@ -49,7 +49,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
             throw new RuntimeException(e);
         }
 
-        return true;
+        return bean;
     }
 
     private final void addDeclaredFields(final Class clazz,

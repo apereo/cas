@@ -164,4 +164,8 @@
 	
 	<!-- ADVISORS -->	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+	
+	<bean id="notNullAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.NotNullAnnotationBeanPostProcessor" />
+	
+	<bean id="greaterThanAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.GreaterThanAnnotationBeanPostProcessor" />
 </beans>
