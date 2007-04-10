@@ -45,8 +45,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
                 processField(field, bean, beanName);
             }
         } catch (final IllegalAccessException e) {
-            log.error(e, e);
-            throw new RuntimeException(e);
+            log.warn("Could not access field: " + e.getMessage(), e);
         }
 
         return bean;

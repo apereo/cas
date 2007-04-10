@@ -58,16 +58,6 @@
     	class="org.jasig.cas.util.HsqlDbDatabaseLocatorFactoryBean"
     	p:configLocation="classpath:db/cas.script" />
 
-<!--    	
-	<bean
-		id="dataSource"
-		class="com.mchange.v2.c3p0.ComboPooledDataSource"
-		p:driverClass="oracle.jdbc.driver.OracleDriver"
-		p:jdbcUrl="jdbc:oracle:thin:@hasbro.acs.rutgers.edu:1521:acs3"
-		p:password=""
-		p:user="" />
--->    	
-
 	<bean
 		id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
@@ -170,4 +160,6 @@
 	<bean id="greaterThanAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.GreaterThanAnnotationBeanPostProcessor" />
 	
 	<bean id="notEmptyAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.NotEmptyAnnotationBeanPostProcessor" />
+	
+	<bean id="isInAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.IsInAnnotationBeanPostProcessor" />
 </beans>
