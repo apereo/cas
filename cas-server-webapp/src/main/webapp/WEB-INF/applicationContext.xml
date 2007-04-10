@@ -168,4 +168,6 @@
 	<bean id="notNullAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.NotNullAnnotationBeanPostProcessor" />
 	
 	<bean id="greaterThanAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.GreaterThanAnnotationBeanPostProcessor" />
+	
+	<bean id="notEmptyAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.NotEmptyAnnotationBeanPostProcessor" />
 </beans>

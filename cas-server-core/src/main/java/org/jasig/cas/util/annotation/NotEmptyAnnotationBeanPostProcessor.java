@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.util.annotation;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
@@ -32,15 +33,19 @@ public final class NotEmptyAnnotationBeanPostProcessor extends
             }
             
             if (obj instanceof Collection) {
-                final Collection c = (Collection) obj;
+                final Collection<?> c = (Collection<?>) obj;
                 
                 if (c.isEmpty()) {
                     throw new FatalBeanException(constructMessage(field, beanName));
                 }
             }
+            
+            if (obj instanceof Array) {
+                if (Array.getLength(obj) == 0) {
+                    throw new FatalBeanException(constructMessage(field, beanName));
+                }
+            }
         }
-        // TODO Auto-generated method stub
-
     }
     
     protected String constructMessage(final Field field, final String beanName) {

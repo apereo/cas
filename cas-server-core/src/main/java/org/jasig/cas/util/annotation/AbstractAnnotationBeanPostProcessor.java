@@ -31,8 +31,8 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
         final String beanName) throws BeansException {
 
         final List<Field> fields = new ArrayList<Field>();
-        final Class clazz = bean.getClass();
-        final Class[] classes = clazz.getClasses();
+        final Class<?> clazz = bean.getClass();
+        final Class<?>[] classes = clazz.getClasses();
 
         addDeclaredFields(clazz, fields);
 
@@ -52,7 +52,7 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
         return bean;
     }
 
-    private final void addDeclaredFields(final Class clazz,
+    private final void addDeclaredFields(final Class<?> clazz,
         final List<Field> fields) {
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
     }
