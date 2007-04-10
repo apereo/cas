@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.util.annotation;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
@@ -15,7 +17,8 @@ import java.lang.annotation.ElementType;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-@Target( {ElementType.FIELD})
+@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface NotNull {
     // marker annotation
 }

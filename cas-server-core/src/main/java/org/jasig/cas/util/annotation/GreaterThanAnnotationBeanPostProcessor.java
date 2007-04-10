@@ -19,10 +19,9 @@ import org.springframework.beans.FatalBeanException;
  * 
  * <p>TODO: make more robust to support things other than int.</p>
  */
-public class GreaterThanAnnotationBeanPostProcessor extends
+public final class GreaterThanAnnotationBeanPostProcessor extends
     AbstractAnnotationBeanPostProcessor {
 
-    @Override
     protected void processField(final Field field, final Object bean,
         final String beanName) throws IllegalAccessException {
         final GreaterThan greaterThan = field.getAnnotation(GreaterThan.class);
