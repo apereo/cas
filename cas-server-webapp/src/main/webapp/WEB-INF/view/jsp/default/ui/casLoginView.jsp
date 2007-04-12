@@ -57,6 +57,7 @@
 				<a href="login?${query}${not empty query ? '&' : ''}locale=it">Italiano</a> |
 				<a href="login?${query}${not empty query ? '&' : ''}locale=ur">Urdu</a> |
 				<a href="login?${query}${not empty query ? '&' : ''}locale=zh_CN">Simplified Chinese</a>
+				<a href="login?${query}${not empty query ? '&' : ''}locale=de">Deutsch</a>
 			</p>
 		</div>
 	</form>
