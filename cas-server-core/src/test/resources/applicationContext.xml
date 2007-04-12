@@ -27,15 +27,19 @@
                         value-ref="uniqueTicketIdGenerator" />
 			</map>
 		</property>
-        <property name="serviceRegistry"
-        ref="serviceRegistry" />
+        <property name="servicesManager"
+        ref="servicesManager" />
 	</bean>
     
     <bean
-        id="serviceRegistry"
-        class="org.jasig.cas.services.ServiceRegistryImpl">
-        <property name="enabled" value="false" />
+    	id="servicesManager"
+    	class="org.jasig.cas.services.DefaultServicesManagerImpl">
+    	<constructor-arg index="0" ref="serviceRegistryDao" />
     </bean>
+    
+    <bean
+    	id="serviceRegistryDao"
+    	class="org.jasig.cas.services.MockServiceRegistryDao" />
 	
 	<bean
 		id="authenticationManager"
