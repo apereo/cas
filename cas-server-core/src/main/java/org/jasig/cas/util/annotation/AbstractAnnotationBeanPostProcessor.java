@@ -42,7 +42,10 @@ public abstract class AbstractAnnotationBeanPostProcessor extends
 
         try {
             for (final Field field : fields) {
+                final boolean originalValue = field.isAccessible();
+                field.setAccessible(true);
                 processField(field, bean, beanName);
+                field.setAccessible(originalValue);
             }
         } catch (final IllegalAccessException e) {
             log.warn("Could not access field: " + e.getMessage(), e);
