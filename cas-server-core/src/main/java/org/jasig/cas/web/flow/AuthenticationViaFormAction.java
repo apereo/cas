@@ -55,7 +55,7 @@ public class AuthenticationViaFormAction extends FormAction {
     private CookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected final void doBind(final RequestContext context,
-        final DataBinder binder) {
+        final DataBinder binder) throws Exception {
         final HttpServletRequest request = WebUtils
             .getHttpServletRequest(context);
         final Credentials credentials = (Credentials) binder.getTarget();
