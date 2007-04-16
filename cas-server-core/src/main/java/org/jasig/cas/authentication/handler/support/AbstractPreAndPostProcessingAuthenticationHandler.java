@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -20,6 +22,9 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     implements AuthenticationHandler {
+    
+    /** Instance of logging for subclasses. */
+    protected Log log = LogFactory.getLog(this.getClass());
 
     /**
      * Method to execute before authentication occurs.
