@@ -48,9 +48,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     @NotNull
     private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
-    /** Instance of logging for subclasses. */
-    protected Log log = LogFactory.getLog(this.getClass());
-
     /**
      * Method automatically handles conversion to UsernamePasswordCredentials
      * and delegates to abstract authenticateUsernamePasswordInternal so
