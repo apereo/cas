@@ -64,7 +64,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     public void setNtlm(final boolean ntlm) {
         this.ntlm = ntlm;
-        constructMessagePrefix();
+        this.messageBeginPrefix = constructMessagePrefix();
     }
     
     protected String constructMessagePrefix() {

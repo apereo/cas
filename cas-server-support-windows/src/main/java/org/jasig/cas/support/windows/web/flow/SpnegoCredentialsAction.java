@@ -33,7 +33,12 @@ import javax.servlet.http.HttpServletResponse;
 public final class SpnegoCredentialsAction extends
     AbstractNonInteractiveCredentialsAction {
 
-    protected Credentials constructCredentialsFromRequest(RequestContext context) {
+    private boolean ntlm = false;
+
+    private String messageBeginPrefix = constructMessagePrefix();
+
+    protected Credentials constructCredentialsFromRequest(
+        final RequestContext context) {
         final HttpServletRequest request = WebUtils
             .getHttpServletRequest(context);
 
@@ -41,14 +46,15 @@ public final class SpnegoCredentialsAction extends
             .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
 
         if (StringUtils.hasText(authorizationHeader)
-            && authorizationHeader.startsWith(SpnegoConstants.NEGOTIATE + " ")
-            && authorizationHeader.length() > 10) {
+            && authorizationHeader.startsWith(this.messageBeginPrefix)
+            && authorizationHeader.length() > this.messageBeginPrefix.length()) {
             if (logger.isDebugEnabled()) {
                 logger.debug("SPNEGO Authorization header found with "
-                    + (authorizationHeader.length() - 10) + " bytes");
+                    + (authorizationHeader.length() - this.messageBeginPrefix
+                        .length()) + " bytes");
             }
             final byte[] token = Base64.decode(authorizationHeader
-                .substring(10));
+                .substring(this.messageBeginPrefix.length()));
             if (logger.isDebugEnabled()) {
                 logger.debug("Obtained token: " + new String(token));
             }
@@ -56,6 +62,11 @@ public final class SpnegoCredentialsAction extends
         }
 
         return null;
+    }
+
+    protected String constructMessagePrefix() {
+        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
+            + " ";
     }
 
     protected void onError(final RequestContext context,
@@ -70,31 +81,33 @@ public final class SpnegoCredentialsAction extends
 
     private void setResponseHeader(final RequestContext context,
         final Credentials credentials) {
-        if (credentials != null) {
-            final HttpServletResponse response = WebUtils
-                .getHttpServletResponse(context);
-            final SpnegoCredentials spnegoCredentials = (SpnegoCredentials) credentials;
-            final byte[] nextToken = spnegoCredentials.getNextToken();
-            if (nextToken != null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Obtained output token: "
-                        + new String(nextToken));
-                }
-                response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE,
-                    SpnegoConstants.NEGOTIATE + " " + Base64.encode(nextToken));
-            } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Unable to obtain the output token required.");
-                }
-            }
-            if (spnegoCredentials.getPrincipal() == null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Setting HTTP Status to 401");
-                }
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }
-        } else {
-            logger.debug("Credentials are null");
+        if (credentials == null) {
+            return;
         }
+
+        final HttpServletResponse response = WebUtils
+            .getHttpServletResponse(context);
+        final SpnegoCredentials spnegoCredentials = (SpnegoCredentials) credentials;
+        final byte[] nextToken = spnegoCredentials.getNextToken();
+        if (nextToken != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Obtained output token: " + new String(nextToken));
+            }
+            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
+                ? SpnegoConstants.NTLM : SpnegoConstants.NTLM)
+                + " " + Base64.encode(nextToken));
+        } else {
+            logger.debug("Unable to obtain the output token required.");
+        }
+
+        if (spnegoCredentials.getPrincipal() == null) {
+            logger.debug("Setting HTTP Status to 401");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+    }
+
+    public void setNtlm(final boolean ntlm) {
+        this.ntlm = ntlm;
+        this.messageBeginPrefix = constructMessagePrefix();
     }
 }
