@@ -9,7 +9,7 @@
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-trusted</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>3.1-m2</version>
   <name>JA-SIG CAS Trusted User Support</name>
   
   <dependencies>
