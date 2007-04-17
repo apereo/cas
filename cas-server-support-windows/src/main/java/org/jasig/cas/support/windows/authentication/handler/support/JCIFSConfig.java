@@ -18,6 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
+ * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
  */
@@ -37,6 +38,16 @@ public final class JCIFSConfig implements InitializingBean {
 
     private static final String SYS_PROP_KERBEROS_KDC = "java.security.krb5.kdc";
 
+    private static final String JCIFS_PROP_DOMAIN_CONTROLLER = "jcifs.http.domainController";
+
+    private static final String JCIFS_PROP_NETBIOS_WINS = "jcifs.netbios.wins";
+
+    private static final String JCIFS_PROP_CLIENT_DOMAIN = "jcifs.smb.client.domain";
+
+    private static final String JCIFS_PROP_CLIENT_USERNAME = "jcifs.smb.client.username";
+
+    private static final String JCIFS_PROP_CLIENT_PASSWORD = "jcifs.smb.client.password";
+
     /**
      * -- the service principal you just created. Using the previous example,
      * this would be "HTTP/mybox at DOMAIN.COM".
@@ -44,68 +55,27 @@ public final class JCIFSConfig implements InitializingBean {
     private static final String JCIFS_PROP_SERVICE_PRINCIPAL = "jcifs.spnego.servicePrincipal";
 
     /**
-     * The password for the service principal account, required only if you decide not to use
-     * keytab.
+     * The password for the service principal account, required only if you
+     * decide not to use keytab.
      */
     private static final String JCIFS_PROP_SERVICE_PASSWORD = "jcifs.spnego.servicePassword";
 
     private Log log = LogFactory.getLog(this.getClass());
 
-    private String useSubjectCredsOnly;
-
     private String loginConf;
 
-    private String kerberosConf;
 
-    private String kerberosRealm;
-
-    private String kerberosDebug;
-
-    private String kerberosKdc;
-
-    private String jcifsServicePrincipal;
-
-    private String jcifsServicePassword;
-
-    public void afterPropertiesSet() throws Exception {
-        // login config
-        log.debug("initializing JCIFS config");
-
+    public JCIFSConfig() {
         Config.setProperty("jcifs.smb.client.soTimeout", "300000");
         Config.setProperty("jcifs.netbios.cachePolicy", "600");
+    }
 
-        log.debug("jcifsServicePrincipal is set to "
-            + this.jcifsServicePrincipal);
-        Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL,
-            this.jcifsServicePrincipal);
-        if(this.jcifsServicePassword!=null){
-        log.debug("jcifsServicePassword is set to *****");
-        Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD,
-            this.jcifsServicePassword);
-        }else{
-        	log.debug("jcifsServicePassword is null, skipping");
-        }
-        if (this.kerberosRealm != null) {
-            log.debug("kerberosRealm is set to :" + this.kerberosRealm);
-            System.setProperty(SYS_PROP_KERBEROS_REALM, this.kerberosRealm);
-        }
-        if (this.kerberosKdc != null) {
-            log.debug("kerberosKdc is set to : " + this.kerberosKdc);
-            System.setProperty(SYS_PROP_KERBEROS_KDC, this.kerberosKdc);
-        }
-        if (this.kerberosConf != null) {
-            log.debug("kerberosConf is set to :" + this.kerberosConf);
-            System.setProperty(SYS_PROP_KERBEROS_CONF, this.kerberosConf);
-        }
-        if (this.kerberosDebug != null) {
-            log.debug("kerberosDebug is set to : " + this.kerberosDebug);
-            System.setProperty(SYS_PROP_KERBEROS_DEBUG, this.kerberosDebug);
-        }
-
+    public void afterPropertiesSet() throws Exception {
         if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
             log.warn("found login config in system property, may overide : "
                 + System.getProperty(SYS_PROP_LOGIN_CONF));
         }
+
         URL url = getClass().getResource(
             (this.loginConf == null) ? DEFAULT_LOGIN_CONFIG : this.loginConf);
         if (url != null)
@@ -120,78 +90,84 @@ public final class JCIFSConfig implements InitializingBean {
         }
         log.debug("configured login configuration path : "
             + System.getProperty(SYS_PROP_LOGIN_CONF));
-
-        if ("true".equalsIgnoreCase(this.useSubjectCredsOnly)) {
-            log.debug("useSubjectCredsOnly is set to true");
-            System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, "true");
-        } else if ("false".equalsIgnoreCase(this.useSubjectCredsOnly)) {
-            log.debug("useSubjectCredsOnly is set to false");
-            System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, "false");
-        }
-
-    }
-
-    public String getJcifsServicePassword() {
-        return this.jcifsServicePassword;
     }
 
     public void setJcifsServicePassword(final String jcifsServicePassword) {
-        this.jcifsServicePassword = jcifsServicePassword;
-    }
-
-    public String getJcifsServicePrincipal() {
-        return this.jcifsServicePrincipal;
+        log.debug("jcifsServicePassword is set to *****");
+        Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
     }
 
     public void setJcifsServicePrincipal(final String jcifsServicePrincipal) {
-        this.jcifsServicePrincipal = jcifsServicePrincipal;
-    }
-
-    public String getKerberosConf() {
-        return this.kerberosConf;
+        log.debug("jcifsServicePrincipal is set to " + jcifsServicePrincipal);
+        Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
     }
 
     public void setKerberosConf(final String kerberosConf) {
-        this.kerberosConf = kerberosConf;
-    }
-
-    public String getKerberosKdc() {
-        return this.kerberosKdc;
+        log.debug("kerberosConf is set to :" + kerberosConf);
+        System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
     }
 
     public void setKerberosKdc(final String kerberosKdc) {
-        this.kerberosKdc = kerberosKdc;
-    }
-
-    public String getKerberosRealm() {
-        return this.kerberosRealm;
+        log.debug("kerberosKdc is set to : " + kerberosKdc);
+        System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
     }
 
     public void setKerberosRealm(final String kerberosRealm) {
-        this.kerberosRealm = kerberosRealm;
-    }
-
-    public String getLoginConf() {
-        return this.loginConf;
+        log.debug("kerberosRealm is set to :" + kerberosRealm);
+        System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
     }
 
     public void setLoginConf(final String loginConf) {
         this.loginConf = loginConf;
     }
 
-    public String getUseSubjectCredsOnly() {
-        return this.useSubjectCredsOnly;
-    }
-
-    public void setUseSubjectCredsOnly(final String useSubjectCredsOnly) {
-        this.useSubjectCredsOnly = useSubjectCredsOnly;
-    }
-
-    public String getKerberosDebug() {
-        return this.kerberosDebug;
+    public void setUseSubjectCredsOnly(final boolean useSubjectCredsOnly) {
+        log.debug("useSubjectCredsOnly is set to " + useSubjectCredsOnly);
+        System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, Boolean.toString(useSubjectCredsOnly));
     }
 
     public void setKerberosDebug(final String kerberosDebug) {
-        this.kerberosDebug = kerberosDebug;
+        log.debug("kerberosDebug is set to : " + kerberosDebug);
+        System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
+    }
+
+    /**
+     * @param jcifsDomain the jcifsDomain to set
+     */
+    public void setJcifsDomain(final String jcifsDomain) {
+        log.debug("jcifsDomain is set to " + jcifsDomain);
+        Config.setProperty(JCIFS_PROP_CLIENT_DOMAIN, jcifsDomain);
+    }
+
+    /**
+     * @param jcifsDomainController the jcifsDomainController to set
+     */
+    public void setJcifsDomainController(final String jcifsDomainController) {
+        log.debug("jcifsDomainController is set to " + jcifsDomainController);
+        Config.setProperty(JCIFS_PROP_DOMAIN_CONTROLLER, jcifsDomainController);
+    }
+
+    /**
+     * @param jcifsPassword the jcifsPassword to set
+     */
+    public void setJcifsPassword(final String jcifsPassword) {
+        Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
+        log.debug("jcifsPassword is set to *****");
+    }
+
+    /**
+     * @param jcifsUsername the jcifsUsername to set
+     */
+    public void setJcifsUsername(final String jcifsUsername) {
+        log.debug("jcifsUsername is set to " + jcifsUsername);
+        Config.setProperty(JCIFS_PROP_CLIENT_USERNAME, jcifsUsername);
+    }
+
+    /**
+     * @param jcifsNetbiosWins the jcifsNetbiosWins to set
+     */
+    public void setJcifsNetbiosWins(final String jcifsNetbiosWins) {
+        log.debug("jcifsNetbiosWins is set to " + jcifsNetbiosWins);
+        Config.setProperty(JCIFS_PROP_NETBIOS_WINS, jcifsNetbiosWins);
     }
 }
