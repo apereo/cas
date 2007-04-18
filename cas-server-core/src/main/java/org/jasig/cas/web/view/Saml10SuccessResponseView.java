@@ -16,10 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.AttributePrincipal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.DefaultRandomStringGenerator;
-import org.jasig.cas.util.RandomStringGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;
@@ -60,13 +56,6 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
     /** The issuer, generally the hostname. */
     private String issuer;
 
-    /** Instance of the ServiceRegistry. */
-    private ServicesManager servicesManager;
-
-    /** Generates Ids of Length 8. */
-    private RandomStringGenerator idGenerator = new DefaultRandomStringGenerator(
-        8);
-
     /** The amount of time in milliseconds this is valid for. */
     private long issueLength = 30000;
 
@@ -82,12 +71,6 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
             final String authenticationMethod = (String) authentication
                 .getAttributes().get("samlAuthenticationStatement::authMethod");
             final Service service = assertion.getService();
-            final String randomId = this.idGenerator.getNewString();
-
-            final RegisteredService r = this.servicesManager
-                .findServiceBy(service);
-            final boolean useRandom = r != null && r.isAnonymousAccess();
-
             final SAMLResponse samlResponse = new SAMLResponse(null, service
                 .getId(), new ArrayList<Object>(), null);
 
@@ -112,15 +95,14 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
                     : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
 
             samlAuthenticationStatement.setSubject(getSamlSubject(
-                authentication, randomId, useRandom));
+                authentication));
 
             if (authentication.getPrincipal() instanceof AttributePrincipal) {
                 final AttributePrincipal attributePrincipal = (AttributePrincipal) authentication
                     .getPrincipal();
                 final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
 
-                attributeStatement.setSubject(getSamlSubject(authentication,
-                    randomId, useRandom));
+                attributeStatement.setSubject(getSamlSubject(authentication));
                 samlAssertion.addStatement(attributeStatement);
 
                 for (final String key : attributePrincipal.getAttributes()
@@ -161,12 +143,11 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         }
     }
 
-    protected SAMLSubject getSamlSubject(final Authentication authentication,
-        final String randomId, final boolean useRandom) throws SAMLException {
+    protected SAMLSubject getSamlSubject(final Authentication authentication) throws SAMLException {
         final SAMLSubject samlSubject = new SAMLSubject();
         samlSubject.addConfirmationMethod(SAMLSubject.CONF_ARTIFACT);
         final SAMLNameIdentifier samlNameIdentifier = new SAMLNameIdentifier();
-        samlNameIdentifier.setName(useRandom ? randomId : authentication
+        samlNameIdentifier.setName(authentication
             .getPrincipal().getId());
 
         samlSubject.setNameIdentifier(samlNameIdentifier);
@@ -176,8 +157,6 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.issuer, "issuer cannot be null.");
-        setServicesManager((ServicesManager) getApplicationContext().getBean(
-            "servicesManager", ServicesManager.class));
     }
 
     public void setIssueLength(final long issueLength) {
@@ -186,9 +165,5 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
 
     public void setIssuer(final String issuer) {
         this.issuer = issuer;
-    }
-
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
     }
 }
