@@ -84,7 +84,7 @@ public final class CentralAuthenticationServiceImpl implements
      * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
      * created.
      */
-    
+
     @NotNull
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
@@ -273,6 +273,9 @@ public final class CentralAuthenticationServiceImpl implements
         final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
             .getTicket(serviceTicketId, ServiceTicket.class);
 
+        final RegisteredService registeredService = this.servicesManager
+            .findServiceBy(service);
+
         if (serviceTicket == null) {
             if (log.isDebugEnabled()) {
                 log.debug("ServiceTicket [" + serviceTicketId
@@ -301,6 +304,9 @@ public final class CentralAuthenticationServiceImpl implements
                 }
             }
 
+            // TODO do service restrictions here
+            // TODO pseudoanonymous
+            
             return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
                 .getChainedAuthentications(), serviceTicket.getService(),
                 serviceTicket.isFromNewLogin());
