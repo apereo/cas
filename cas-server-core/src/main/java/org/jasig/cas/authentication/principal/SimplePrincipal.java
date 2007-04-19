@@ -5,34 +5,61 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.util.Assert;
 
 /**
- * Simplest implementation of a Principal. Provides no additional attributes
- * beyond those in the Principal interface. This is the closest representation
- * of a principal in the CAS 2 world.
+ * Simple implementation of a AttributePrincipal that exposes an unmodifiable
+ * map of attributes.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.0
+ * @since 3.1
  */
 public class SimplePrincipal implements Principal {
 
-    /** Unique ID for serialization. */
-    private static final long serialVersionUID = 3977857358779396149L;
+    private static final Map<String, Object> EMPTY_MAP = Collections
+        .unmodifiableMap(new HashMap<String, Object>());
+
+    /**
+     * Unique Id for Serialization.
+     */
+    private static final long serialVersionUID = -5265620187476296219L;
 
     /** The unique identifier for the principal. */
     private final String id;
 
-    /**
-     * Constructs the SimplePrincipal using the provided unique id.
-     * 
-     * @param id the identifier for the Principal
-     * @throws IllegalArgumentException if the id is null
-     */
+    /** Map of attributes for the Principal. */
+    private Map<String, Object> attributes;
+
     public SimplePrincipal(final String id) {
+        this(id, null);
+    }
+
+    public SimplePrincipal(final String id, final Map<String, Object> attributes) {
         Assert.notNull(id, "id cannot be null");
         this.id = id;
+
+        this.attributes = attributes == null || attributes.isEmpty()
+            ? EMPTY_MAP : Collections.unmodifiableMap(attributes);
+    }
+
+    /**
+     * Returns an immutable map.
+     */
+    public Map<String, Object> getAttributes() {
+        return this.attributes;
+    }
+
+    public String toString() {
+        return this.id;
+    }
+
+    public int hashCode() {
+        return super.hashCode() ^ this.id.hashCode();
     }
 
     public final String getId() {
@@ -47,13 +74,5 @@ public class SimplePrincipal implements Principal {
         final SimplePrincipal p = (SimplePrincipal) o;
 
         return this.id.equals(p.getId());
-    }
-
-    public String toString() {
-        return this.id;
-    }
-
-    public int hashCode() {
-        return super.hashCode() ^ this.id.hashCode();
     }
 }
