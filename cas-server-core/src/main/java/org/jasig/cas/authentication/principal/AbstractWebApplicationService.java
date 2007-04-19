@@ -5,6 +5,10 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Abstract implementation of a WebApplicationService.
  * 
@@ -15,6 +19,8 @@ package org.jasig.cas.authentication.principal;
  */
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
+    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
+    
     /** The id of the service. */
     private final String id;
     
@@ -37,6 +43,12 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         return this.artifactId;
     }
     
+    
+    
+    public final Map<String, Object> getAttributes() {
+        return EMPTY_MAP;
+    }
+
     protected static final String cleanupUrl(final String url) {
         final int jsessionPosition = url.indexOf(";jsession");
 

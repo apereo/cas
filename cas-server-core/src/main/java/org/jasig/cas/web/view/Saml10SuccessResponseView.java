@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.AttributePrincipal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;
@@ -26,8 +26,6 @@ import org.opensaml.SAMLException;
 import org.opensaml.SAMLNameIdentifier;
 import org.opensaml.SAMLResponse;
 import org.opensaml.SAMLSubject;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 /**
  * Implementation of a view to return a SAML response and assertion, based on
@@ -41,19 +39,17 @@ import org.springframework.util.Assert;
  * <p>
  * Note: This class currently expects a bean called "ServiceRegistry" to exist.
  * 
- * XXX: hack!!!
- * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public class Saml10SuccessResponseView extends AbstractCasView implements
-    InitializingBean {
+public class Saml10SuccessResponseView extends AbstractCasView {
 
     /** Namespace for custom attributes. */
     private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
 
     /** The issuer, generally the hostname. */
+    @NotNull
     private String issuer;
 
     /** The amount of time in milliseconds this is valid for. */
@@ -94,36 +90,32 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
                     ? authenticationMethod
                     : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
 
-            samlAuthenticationStatement.setSubject(getSamlSubject(
-                authentication));
+            samlAuthenticationStatement
+                .setSubject(getSamlSubject(authentication));
 
-            if (authentication.getPrincipal() instanceof AttributePrincipal) {
-                final AttributePrincipal attributePrincipal = (AttributePrincipal) authentication
-                    .getPrincipal();
-                final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
+            final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
 
-                attributeStatement.setSubject(getSamlSubject(authentication));
-                samlAssertion.addStatement(attributeStatement);
+            attributeStatement.setSubject(getSamlSubject(authentication));
+            samlAssertion.addStatement(attributeStatement);
 
-                for (final String key : attributePrincipal.getAttributes()
-                    .keySet()) {
-                    final Object value = attributePrincipal.getAttributes()
-                        .get(key);
+            for (final String key : authentication.getPrincipal()
+                .getAttributes().keySet()) {
+                final Object value = authentication.getPrincipal()
+                    .getAttributes().get(key);
 
-                    final SAMLAttribute attribute = new SAMLAttribute();
-                    attribute.setName(key);
-                    attribute.setNamespace(NAMESPACE);
+                final SAMLAttribute attribute = new SAMLAttribute();
+                attribute.setName(key);
+                attribute.setNamespace(NAMESPACE);
 
-                    if (value instanceof Collection) {
-                        attribute.setValues((Collection) value);
-                    } else {
-                        final Collection<Object> c = new ArrayList<Object>();
-                        c.add(value);
-                        attribute.setValues(c);
-                    }
-
-                    attributeStatement.addAttribute(attribute);
+                if (value instanceof Collection) {
+                    attribute.setValues((Collection) value);
+                } else {
+                    final Collection<Object> c = new ArrayList<Object>();
+                    c.add(value);
+                    attribute.setValues(c);
                 }
+
+                attributeStatement.addAttribute(attribute);
             }
 
             samlAssertion.addStatement(samlAuthenticationStatement);
@@ -143,20 +135,16 @@ public class Saml10SuccessResponseView extends AbstractCasView implements
         }
     }
 
-    protected SAMLSubject getSamlSubject(final Authentication authentication) throws SAMLException {
+    protected SAMLSubject getSamlSubject(final Authentication authentication)
+        throws SAMLException {
         final SAMLSubject samlSubject = new SAMLSubject();
         samlSubject.addConfirmationMethod(SAMLSubject.CONF_ARTIFACT);
         final SAMLNameIdentifier samlNameIdentifier = new SAMLNameIdentifier();
-        samlNameIdentifier.setName(authentication
-            .getPrincipal().getId());
+        samlNameIdentifier.setName(authentication.getPrincipal().getId());
 
         samlSubject.setNameIdentifier(samlNameIdentifier);
 
         return samlSubject;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.issuer, "issuer cannot be null.");
     }
 
     public void setIssueLength(final long issueLength) {

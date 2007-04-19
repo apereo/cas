@@ -6,6 +6,7 @@
 package org.jasig.cas.authentication.principal;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Generic concept of an authenticated thing. Examples include a person or a
@@ -26,5 +27,15 @@ import java.io.Serializable;
  */
 public interface Principal extends Serializable {
 
+    /**
+     * Returns the unique id for the Principal
+     * @return the unique id for the Principal.
+     */
     String getId();
+    
+    /**
+     * 
+     * @return
+     */
+    Map<String, Object> getAttributes();
 }
