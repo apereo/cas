@@ -99,6 +99,9 @@
 			index="0"
 			value="7200000" />
 	</bean>
+	
+	<bean id="persistentIdGenerator" class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+		p:salt="casrocks" />
 
 	<!-- CentralAuthenticationService -->
 	<bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
@@ -107,7 +110,8 @@
 		p:authenticationManager-ref="authenticationManager"
 		p:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
 		p:ticketRegistry-ref="ticketRegistry"
-        p:servicesManager-ref="servicesManager">
+        p:servicesManager-ref="servicesManager"
+        p:persistentIdGenerator-ref="persistentIdGenerator">
 		<property
 			name="uniqueTicketIdGeneratorsForService">
 				<map>
