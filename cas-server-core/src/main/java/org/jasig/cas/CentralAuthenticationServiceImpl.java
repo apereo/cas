@@ -14,9 +14,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -109,6 +112,10 @@ public final class CentralAuthenticationServiceImpl implements
     /** Implementation of Service Registry */
     @NotNull
     private ServicesManager servicesManager;
+
+    /** Encoder to generate PseudoIds. */
+    @NotNull
+    private PersistentIdGenerator persistentIdGenerator;
 
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
@@ -310,34 +317,47 @@ public final class CentralAuthenticationServiceImpl implements
                     throw new TicketValidationException();
                 }
             }
-            
-            final Authentication authentication = serviceTicket.getGrantingTicket().getChainedAuthentications().get(serviceTicket.getGrantingTicket().getChainedAuthentications().size()-1);
+
+            final int authenticationChainSize = serviceTicket
+                .getGrantingTicket().getChainedAuthentications().size();
+            final Authentication authentication = serviceTicket
+                .getGrantingTicket().getChainedAuthentications().get(
+                    authenticationChainSize - 1);
             final Principal principal = authentication.getPrincipal();
-            final String principalId = registeredService.isAnonymousAccess() ? "" : authentication.getPrincipal().getId();
-            final Map<String, Object> attributes = new HashMap<String,Object>();
-            
-            for (final Attribute attribute : registeredService.getAllowedAttributes()) {
-                final Object value = principal.getAttributes().get(attribute.getName());
-                
+            final String principalId = registeredService.isAnonymousAccess()
+                ? this.persistentIdGenerator.generate(principal, serviceTicket
+                    .getService()) : principal.getId();
+            final Map<String, Object> attributes = new HashMap<String, Object>();
+
+            for (final Attribute attribute : registeredService
+                .getAllowedAttributes()) {
+                final Object value = principal.getAttributes().get(
+                    attribute.getName());
+
                 if (value != null) {
                     attributes.put(attribute.getName(), value);
                 }
             }
-            
-            final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributes);
-            final MutableAuthentication mutableAuthentication = new MutableAuthentication(modifiedPrincipal);
-            mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
-            mutableAuthentication.getAuthenticatedDate().setTime(authentication.getAuthenticatedDate().getTime());
-            
-            
 
-            
-            // TODO do service restrictions here
-            // TODO pseudoanonymous
-            
-            return new ImmutableAssertionImpl(serviceTicket.getGrantingTicket()
-                .getChainedAuthentications(), serviceTicket.getService(),
-                serviceTicket.isFromNewLogin());
+            final Principal modifiedPrincipal = new SimplePrincipal(
+                principalId, attributes);
+            final MutableAuthentication mutableAuthentication = new MutableAuthentication(
+                modifiedPrincipal);
+            mutableAuthentication.getAttributes().putAll(
+                authentication.getAttributes());
+            mutableAuthentication.getAuthenticatedDate().setTime(
+                authentication.getAuthenticatedDate().getTime());
+
+            final List<Authentication> authentications = new ArrayList<Authentication>();
+
+            for (int i = 0; i < authenticationChainSize - 1; i++) {
+                authentications.add(serviceTicket.getGrantingTicket()
+                    .getChainedAuthentications().get(i));
+            }
+            authentications.add(mutableAuthentication);
+
+            return new ImmutableAssertionImpl(authentications, serviceTicket
+                .getService(), serviceTicket.isFromNewLogin());
         } finally {
             if (serviceTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(serviceTicketId);
@@ -434,4 +454,8 @@ public final class CentralAuthenticationServiceImpl implements
         this.servicesManager = servicesManager;
     }
 
+    public void setPersistentIdGenerator(
+        final PersistentIdGenerator persistentIdGenerator) {
+        this.persistentIdGenerator = persistentIdGenerator;
+    }
 }
