@@ -5,16 +5,22 @@
  */
 package org.jasig.cas;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.services.Attribute;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
@@ -273,6 +279,7 @@ public final class CentralAuthenticationServiceImpl implements
         final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
             .getTicket(serviceTicketId, ServiceTicket.class);
 
+        // TODO check for null
         final RegisteredService registeredService = this.servicesManager
             .findServiceBy(service);
 
@@ -303,7 +310,28 @@ public final class CentralAuthenticationServiceImpl implements
                     throw new TicketValidationException();
                 }
             }
+            
+            final Authentication authentication = serviceTicket.getGrantingTicket().getChainedAuthentications().get(serviceTicket.getGrantingTicket().getChainedAuthentications().size()-1);
+            final Principal principal = authentication.getPrincipal();
+            final String principalId = registeredService.isAnonymousAccess() ? "" : authentication.getPrincipal().getId();
+            final Map<String, Object> attributes = new HashMap<String,Object>();
+            
+            for (final Attribute attribute : registeredService.getAllowedAttributes()) {
+                final Object value = principal.getAttributes().get(attribute.getName());
+                
+                if (value != null) {
+                    attributes.put(attribute.getName(), value);
+                }
+            }
+            
+            final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributes);
+            final MutableAuthentication mutableAuthentication = new MutableAuthentication(modifiedPrincipal);
+            mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
+            mutableAuthentication.getAuthenticatedDate().setTime(authentication.getAuthenticatedDate().getTime());
+            
+            
 
+            
             // TODO do service restrictions here
             // TODO pseudoanonymous
             
