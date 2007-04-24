@@ -8,6 +8,7 @@ package org.jasig.cas.util.annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.beans.FatalBeanException;
 
@@ -42,6 +43,14 @@ public final class NotEmptyAnnotationBeanPostProcessor extends
             
             if (obj instanceof Array) {
                 if (Array.getLength(obj) == 0) {
+                    throw new FatalBeanException(constructMessage(field, beanName));
+                }
+            }
+            
+            if (obj instanceof Map) {
+                final Map<?, ?> m = (Map<?, ?>) obj;
+                
+                if (m.isEmpty()) {
                     throw new FatalBeanException(constructMessage(field, beanName));
                 }
             }
