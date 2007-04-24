@@ -8,7 +8,6 @@ package org.jasig.cas.services.web.support;
 import java.beans.PropertyEditorSupport;
 
 import org.jasig.cas.services.AttributeRepository;
-import org.springframework.util.Assert;
 
 /**
  * Convert a String to an Attribute
@@ -23,7 +22,6 @@ public class AttributePropertyEditor extends PropertyEditorSupport {
     private final AttributeRepository attributeRepository;
     
     public AttributePropertyEditor(final AttributeRepository attributeRepository) {
-        Assert.notNull(attributeRepository);
         this.attributeRepository = attributeRepository;
     }
 
