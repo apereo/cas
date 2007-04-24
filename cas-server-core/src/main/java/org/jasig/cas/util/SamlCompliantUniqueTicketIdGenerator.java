@@ -5,14 +5,14 @@
  */
 package org.jasig.cas.util;
 
+import org.jasig.cas.util.annotation.NotNull;
 import org.opensaml.artifact.SAMLArtifact;
 import org.opensaml.artifact.SAMLArtifactType0002;
 import org.opensaml.artifact.URI;
-import org.springframework.util.Assert;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
- * artifacts.  This should also be compliant with the SAML 2 specification.
+ * artifacts. This should also be compliant with the SAML 2 specification.
  * 
  * @author Scott
  * @version $Revision$ $Date$
@@ -22,8 +22,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements
     UniqueTicketIdGenerator {
 
     /** SAML defines the source id as the server name. */
-  /**  private final byte[] sourceIdDigest; **/
-    
+    @NotNull
     private final String sourceLocation;
 
     /** Random generator to construct the AssertionHandle. */
@@ -31,7 +30,6 @@ public final class SamlCompliantUniqueTicketIdGenerator implements
         20);
 
     public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
-        Assert.notNull(sourceId, "sourceId cannot be null.");
         this.sourceLocation = sourceId;
     }
 
@@ -39,8 +37,9 @@ public final class SamlCompliantUniqueTicketIdGenerator implements
      * We ignore prefixes for SAML compliance.
      */
     public String getNewTicketId(final String prefix) {
-        final SAMLArtifact samlArtifact = new SAMLArtifactType0002(this.randomStringGenerator
-            .getNewStringAsBytes(), new URI(this.sourceLocation));
+        final SAMLArtifact samlArtifact = new SAMLArtifactType0002(
+            this.randomStringGenerator.getNewStringAsBytes(), new URI(
+                this.sourceLocation));
 
         return samlArtifact.encode();
     }

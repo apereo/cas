@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.beans.support.PropertyComparator;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -35,7 +35,8 @@ public final class ManageRegisteredServicesMultiActionController extends
     /** View name for the Manage Services View. */
     private static final String VIEW_NAME = "manageServiceView";
 
-    /** Instancec of ServicesManager. */
+    /** Instance of ServicesManager. */
+    @NotNull
     private final ServicesManager servicesManager;
 
     /** Used to ensure services are sorted by name. */
@@ -50,7 +51,6 @@ public final class ManageRegisteredServicesMultiActionController extends
      */
     public ManageRegisteredServicesMultiActionController(
         final ServicesManager servicesManager) {
-        Assert.notNull(servicesManager, "servicesManager cannot be null");
         this.servicesManager = servicesManager;
     }
 

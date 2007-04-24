@@ -17,7 +17,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.support.AttributePropertyEditor;
-import org.springframework.util.Assert;
+import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -36,16 +36,16 @@ public final class RegisteredServiceSimpleFormController extends
     SimpleFormController {
 
     /** Instance of ServiceRegistryManager */
+    @NotNull
     private final ServicesManager servicesManager;
 
     /** Instance of AttributeRegistry. */
+    @NotNull
     private final AttributeRepository attributeRepository;
 
     public RegisteredServiceSimpleFormController(
         final ServicesManager servicesManager,
         final AttributeRepository attributeRepository) {
-        Assert.notNull(servicesManager);
-        Assert.notNull(attributeRepository);
         this.servicesManager = servicesManager;
         this.attributeRepository = attributeRepository;
     }
@@ -98,11 +98,8 @@ public final class RegisteredServiceSimpleFormController extends
 
         final long serviceId = Long.parseLong(id);
 
-        final RegisteredService service = this.servicesManager
+        return this.servicesManager
             .findServiceBy(serviceId);
-
-        Assert.notNull(service, "Service could not be found for provided id.");
-        return service;
     }
 
     /**
