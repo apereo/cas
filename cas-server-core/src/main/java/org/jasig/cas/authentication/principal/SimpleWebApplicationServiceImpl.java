@@ -60,7 +60,7 @@ public final class SimpleWebApplicationServiceImpl extends
         buffer.append(originalUrl.contains("?") ? "&" : "?");
 
         if (StringUtils.hasText(ticketId)) {
-            buffer.append(CONST_PARAM_SERVICE);
+            buffer.append(CONST_PARAM_TICKET);
             buffer.append("=");
             buffer.append(ticketId);
         }
