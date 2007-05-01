@@ -144,9 +144,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clover-plugin</artifactId>
                 <configuration>
-                    <licenseLocation>
-                        ${basedir}/src/test/clover/clover.license
-                    </licenseLocation>
+                    <licenseLocation>${basedir}/src/test/clover/clover.license</licenseLocation>
                     <jdk>1.5</jdk>
                     <generateXml>true</generateXml>
                     <generateHtml>false</generateHtml>
