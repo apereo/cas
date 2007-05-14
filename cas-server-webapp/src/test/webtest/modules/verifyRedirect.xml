@@ -1,0 +1,4 @@
+<storeResponseCode description="store status of response" property="status" />
+<verifyProperty description="should be a 302 redirect to the service" name="status" text="302" />
+<storeHeader description="store header of response" name="Location" property="location" />
+<verifyProperty description="Verify the redirect location and service ticket" name="location" text="http://foo.bar/\?ticket=ST-\d+-\w+" regex="true" />

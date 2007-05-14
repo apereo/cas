@@ -1,0 +1,9 @@
+&getLoginFormWithService;
+&verifyLoginForm;
+<setInputField description="set user name : '${username}'" name="username" value="${username}" />
+<setInputField description="set password : '${username}'" name="password" value="${username}" />
+<!-- there was no name in the default view for the submit button -->
+<clickButton description="Click the submit button" name="submit" />
+&verifyCookie;
+&verifyRedirect;
+&extractServiceTicket;

@@ -40,8 +40,8 @@
 				<input type="hidden" name="lt" value="${flowExecutionKey}" />
 				<input type="hidden" name="_eventId" value="submit" />
 
-				<p style="text-align: center;"><input type="submit" class="button" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" />
-				   <input type="reset" class="button" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" /></p>
+				<p style="text-align: center;"><input type="submit" class="button" accesskey="l" id="submit" name="submit" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" />
+				   <input type="reset" class="button" accesskey="c" id="reset" name="reset" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" /></p>
 			</div>
 				<p style="text-align: center;">
 					Languages:

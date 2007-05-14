@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="CAS WebTests" basedir="." default="all">
+
+	<property file="properties/local.properties" />
+
+	<taskdef file="${webtest.home}/webtestTaskdefs.properties">
+		<classpath>
+			<fileset dir="${webtest.home}" includes="**/lib/*.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="all">
+		<ant antfile="logintests.xml" dir="." />
+		<ant antfile="validationtests.xml" dir="." />
+	</target>
+
+</project>
