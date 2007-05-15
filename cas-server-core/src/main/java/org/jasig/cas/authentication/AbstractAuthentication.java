@@ -7,15 +7,13 @@ package org.jasig.cas.authentication;
 
 import java.util.Map;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @version $Revision$ $Date: 2007-02-20 09:41:49 -0500 (Tue, 20 Feb
+ * 2007) $
  * @since 3.0.3
  */
 public abstract class AbstractAuthentication implements Authentication {
@@ -44,14 +42,23 @@ public abstract class AbstractAuthentication implements Authentication {
     }
 
     public final boolean equals(final Object o) {
-        return EqualsBuilder.reflectionEquals(this, o);
+        if (o == null || !this.getClass().isAssignableFrom(o.getClass())) {
+            return false;
+        }
+
+        Authentication a = (Authentication) o;
+
+        return this.principal.equals(a.getPrincipal())
+            && this.getAuthenticatedDate().equals(a.getAuthenticatedDate());
     }
 
     public final int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return 49 * this.principal.hashCode()
+            ^ this.getAuthenticatedDate().hashCode();
     }
 
     public final String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return "[Principal=" + this.principal.getId() + ", attributes="
+            + this.attributes.toString() + "]";
     }
 }

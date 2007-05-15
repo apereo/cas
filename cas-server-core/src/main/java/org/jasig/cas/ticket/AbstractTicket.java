@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.ticket;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -102,10 +100,21 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     protected abstract boolean isExpiredInternal();
 
     public final int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return 34 ^ this.getId().hashCode();
+    }
+    
+    public final boolean equals(final Object object) {
+        if (object == null
+            || !this.getClass().isAssignableFrom(object.getClass())) {
+            return false;
+        }
+
+        final Ticket serviceTicket = (Ticket) object;
+        
+        return serviceTicket.getId().equals(this.getId());
     }
 
     public final String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return this.id;
     }
 }

@@ -8,9 +8,6 @@ package org.jasig.cas.validation;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -69,18 +66,21 @@ public final class ImmutableAssertionImpl implements Assertion {
     }
 
     public boolean equals(final Object o) {
-        if (o == null || !this.getClass().equals(o.getClass())) {
+        if (o == null
+            || !this.getClass().isAssignableFrom(o.getClass())) {
             return false;
         }
-
-        return EqualsBuilder.reflectionEquals(this, o);
+        
+        final Assertion a = (Assertion) o;
+        
+        return this.service.equals(a.getService()) && this.fromNewLogin == a.isFromNewLogin() && this.principals.equals(a.getChainedAuthentications());
     }
 
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        return 15 * this.service.hashCode() ^ this.principals.hashCode();
     }
 
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return "[principals={" + this.principals.toString() + "} for service=" + this.service.toString() + "]";
     }
 }
