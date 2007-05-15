@@ -12,13 +12,14 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.BerkeleyDbTicketRegistry;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
+import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 import com.clarkware.junitperf.LoadTest;
 
@@ -32,6 +33,8 @@ import com.clarkware.junitperf.LoadTest;
 public class BerkeleyDbTicketRegistryConcurrencyTests extends TestCase {
 
     static BerkeleyDbTicketRegistry registry;
+    
+    private final UniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator();
 
     public BerkeleyDbTicketRegistryConcurrencyTests(String name) {
         super(name);
@@ -64,7 +67,7 @@ public class BerkeleyDbTicketRegistryConcurrencyTests extends TestCase {
     }
 
     private TicketGrantingTicketImpl generateRandomTicket() {
-        final String id = RandomStringUtils.randomAlphanumeric(20);
+        final String id = this.generator.getNewTicketId("TGT");
         final SimplePrincipal principal = new SimplePrincipal(id);
 
         TicketGrantingTicketImpl ticket = new TicketGrantingTicketImpl(id,

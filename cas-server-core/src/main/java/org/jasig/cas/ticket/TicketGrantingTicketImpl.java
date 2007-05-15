@@ -131,15 +131,4 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
 
         return Collections.unmodifiableList(list);
     }
-
-    public boolean equals(final Object object) {
-        if (object == null
-            || !TicketGrantingTicket.class.isAssignableFrom(object.getClass())) {
-            return false;
-        }
-
-        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) object;
-        
-        return ticketGrantingTicket.getId().equals(this.getId());
-    }
 }

@@ -7,7 +7,6 @@ package org.jasig.cas.event;
 
 import java.util.Date;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -42,9 +41,5 @@ public abstract class AbstractEvent extends ApplicationEvent {
      */
     public final Date getPublishedDate() {
         return new Date(this.publishedDate);
-    }
-
-    public final String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 }

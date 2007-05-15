@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.ticket;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -91,24 +90,6 @@ public final class ServiceTicketImpl extends AbstractTicket implements
 
         return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
             authentication, expirationPolicy);
-    }
-
-    public boolean equals(final Object object) {
-        if (object == null
-            || !ServiceTicket.class.isAssignableFrom(object.getClass())) {
-            return false;
-        }
-
-        final ServiceTicket serviceTicket = (ServiceTicket) object;
-
-        return new EqualsBuilder().append(this.getCreationTime(),
-            serviceTicket.getCreationTime()).append(
-            serviceTicket.getGrantingTicket(),
-            serviceTicket.getGrantingTicket()).append(serviceTicket.getId(),
-            this.getId()).append(serviceTicket.getService(), this.getService())
-            .append(serviceTicket.isExpired(), this.isExpired()).append(
-                serviceTicket.isFromNewLogin(), this.isFromNewLogin())
-            .isEquals();
     }
     
     public Authentication getAuthentication() {
