@@ -57,10 +57,9 @@ public final class SimpleWebApplicationServiceImpl extends
             + (ticketId != null ? ticketId.length() : 0) + CONST_PARAM_TICKET.length() + 2);
 
         buffer.append(originalUrl);
-        if(ticketId != null)
-            buffer.append(originalUrl.contains("?") ? "&" : "?");
 
         if (StringUtils.hasText(ticketId)) {
+            buffer.append(originalUrl.contains("?") ? "&" : "?");            
             buffer.append(CONST_PARAM_TICKET);
             buffer.append("=");
             buffer.append(ticketId);
