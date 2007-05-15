@@ -70,7 +70,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         return this.originalUrl;
     }
 
-    public final boolean equals(final Object object) {
+    public boolean equals(final Object object) {
         if (object == null) {
             return false;
         }
