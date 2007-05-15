@@ -54,7 +54,7 @@ public final class SimpleWebApplicationServiceImpl extends
     public String getRedirectUrl(final String ticketId) {
         final String originalUrl = getOriginalUrl();
         final StringBuilder buffer = new StringBuilder(originalUrl.length()
-            + ticketId.length() + CONST_PARAM_TICKET.length() + 2);
+            + (ticketId != null ? ticketId.length() : 0) + CONST_PARAM_TICKET.length() + 2);
 
         buffer.append(originalUrl);
         buffer.append(originalUrl.contains("?") ? "&" : "?");
