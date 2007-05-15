@@ -5,7 +5,14 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -118,8 +125,42 @@ public final class SamlService extends AbstractWebApplicationService {
             + "\" Version=\"2.0\" IssueInstant=\"" + date
             + "\"><saml:NameID>NotUsed</saml:NameID><samlp:SessionIndex>"
             + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
-        
-        this.loggedOutAlready = true;
-        return true;
+
+        HttpURLConnection connection = null;
+        try {
+            final URL logoutUrl = new URL(getOriginalUrl());
+            final String output = "logoutRequest=" + logoutRequest;
+
+            connection = (HttpURLConnection) logoutUrl.openConnection();
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Length", ""
+                + Integer.toString(output.getBytes().length));
+            connection.setRequestProperty("Content-Type",
+                "application/x-www-form-urlencoded");
+            final DataOutputStream printout = new DataOutputStream(connection
+                .getOutputStream());
+            printout.writeBytes(output);
+            printout.flush();
+            printout.close();
+
+            final BufferedReader in = new BufferedReader(new InputStreamReader(connection
+                .getInputStream()));
+
+            while (in.readLine() != null) {
+                // nothing to do
+            }
+            
+            return true;
+        } catch (final MalformedURLException e) {
+            return false;
+        } catch (final IOException e) {
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            this.loggedOutAlready = true;
+        }
     }
 }
