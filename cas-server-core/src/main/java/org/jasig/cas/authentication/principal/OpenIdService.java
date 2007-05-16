@@ -22,14 +22,18 @@ import org.springframework.util.StringUtils;
  */
 public final class OpenIdService extends AbstractWebApplicationService {
 
+    /**
+     * Unique Id for Serialization.
+     */
+    private static final long serialVersionUID = 5776500133123291301L;
+
     private static final String CONST_PARAM_SERVICE = "openid.return_to";
-    
+
     private static PasswordEncoder ENCODER = new DefaultPasswordEncoder("SHA1");
 
     private String identity;
-    
-    private final String signature;
 
+    private final String signature;
 
     protected OpenIdService(final String id, final String originalUrl,
         final String artifactId, final String openIdIdentity,
@@ -48,7 +52,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
         parameters.put("openid.assoc_handle", ticketId);
         parameters.put("openid.return_to", getOriginalUrl());
         parameters.put("openid.signed", "identity,return_to");
-        parameters.put("openid.sig", ENCODER.encode("identity=" + this.identity+",return_to="+getOriginalUrl()));
+        parameters.put("openid.sig", ENCODER.encode("identity=" + this.identity
+            + ",return_to=" + getOriginalUrl()));
 
         builder.append(getOriginalUrl());
         builder.append(getOriginalUrl().contains("?") ? "&" : "?");
@@ -109,6 +114,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
     }
 
     public String getSignature() {
-        return this.signature != null ? this.signature : ENCODER.encode("identity=" + this.identity+",return_to="+getOriginalUrl());
+        return this.signature != null ? this.signature : ENCODER
+            .encode("identity=" + this.identity + ",return_to="
+                + getOriginalUrl());
     }
 }
