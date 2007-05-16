@@ -45,7 +45,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
 
     public void testCreateTicketGrantingTicket() throws Throwable {
         final Method method = CentralAuthenticationService.class.getMethod(
-            "createTicketGrantingTicket", new Class[] {Credentials.class});
+            "createTicketGrantingTicket", new Class<?>[] {Credentials.class});
         final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -60,7 +60,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
 
     public void testDestroyTicketGrantingTicket() throws Throwable {
         Method method = CentralAuthenticationService.class.getMethod(
-            "destroyTicketGrantingTicket", new Class[] {String.class});
+            "destroyTicketGrantingTicket", new Class<?>[] {String.class});
         String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -75,7 +75,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
 
     public void testDelegateTicketGrantingTicket() throws Throwable {
         Method method = CentralAuthenticationService.class.getMethod(
-            "delegateTicketGrantingTicket", new Class[] {String.class,
+            "delegateTicketGrantingTicket", new Class<?>[] {String.class,
                 Credentials.class});
         String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -96,7 +96,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
 
     public void testGrantServiceTicket() throws Throwable {
         Method method = CentralAuthenticationService.class.getMethod(
-            "grantServiceTicket", new Class[] {String.class, Service.class});
+            "grantServiceTicket", new Class<?>[] {String.class, Service.class});
         String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -113,7 +113,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
 
     public void testValidateServiceTicket() throws Throwable {
         Method method = CentralAuthenticationService.class.getMethod(
-            "validateServiceTicket", new Class[] {String.class, Service.class});
+            "validateServiceTicket", new Class<?>[] {String.class, Service.class});
         String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
