@@ -67,7 +67,7 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
 
             advice.afterReturning("tgt", CentralAuthenticationService.class
                 .getMethod("createTicketGrantingTicket",
-                    new Class[] {Credentials.class}), null,
+                    new Class<?>[] {Credentials.class}), null,
                 new CentralAuthenticationServiceImpl());
             assertEquals(1, t.getNumberOfTicketGrantingTicketsVended());
         } catch (Throwable e) {
@@ -105,7 +105,7 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
         try {
             advice.afterReturning(stProxy.getId(),
                 CentralAuthenticationService.class.getMethod(
-                    "grantServiceTicket", new Class[] {String.class,
+                    "grantServiceTicket", new Class<?>[] {String.class,
                         Service.class}), null,
                 new CentralAuthenticationServiceImpl());
             assertEquals(1, ts.getNumberOfProxyTicketsVended());
@@ -116,7 +116,7 @@ public class LogTicketStatisticsAfterReturningAdviceTests extends TestCase {
         try {
             advice.afterReturning(stChild.getId(),
                 CentralAuthenticationService.class.getMethod(
-                    "grantServiceTicket", new Class[] {String.class,
+                    "grantServiceTicket", new Class<?>[] {String.class,
                         Service.class}), null,
                 new CentralAuthenticationServiceImpl());
             assertEquals(1, ts.getNumberOfProxyTicketsVended());
