@@ -29,7 +29,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * class.
      */
     public final Ticket getTicket(final String ticketId,
-        final Class<?> clazz) {
+        final Class<? extends Ticket> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
         final Ticket ticket = this.getTicket(ticketId);
