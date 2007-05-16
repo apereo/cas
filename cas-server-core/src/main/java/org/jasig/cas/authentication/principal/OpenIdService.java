@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.authentication.handler.DefaultPasswordEncoder;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.springframework.util.StringUtils;
+import org.springframework.webflow.util.Base64;
 
 /**
  * @author Scott Battaglia
@@ -29,7 +30,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
     private static final String CONST_PARAM_SERVICE = "openid.return_to";
 
-    private static PasswordEncoder ENCODER = new DefaultPasswordEncoder("SHA1");
+    // TODO use the DH-SHA one algorithm instead of just SHA-1
+    private static final PasswordEncoder ENCODER = new DefaultPasswordEncoder("SHA1");
+
+    private static final Base64 base64 = new Base64();
 
     private String identity;
 
@@ -52,8 +56,9 @@ public final class OpenIdService extends AbstractWebApplicationService {
         parameters.put("openid.assoc_handle", ticketId);
         parameters.put("openid.return_to", getOriginalUrl());
         parameters.put("openid.signed", "identity,return_to");
-        parameters.put("openid.sig", ENCODER.encode("identity=" + this.identity
-            + ",return_to=" + getOriginalUrl()));
+        parameters.put("openid.sig", base64.encodeToString(ENCODER.encode(
+            "identity=" + this.identity + ",return_to=" + getOriginalUrl())
+            .getBytes()));
 
         builder.append(getOriginalUrl());
         builder.append(getOriginalUrl().contains("?") ? "&" : "?");
@@ -114,8 +119,9 @@ public final class OpenIdService extends AbstractWebApplicationService {
     }
 
     public String getSignature() {
-        return this.signature != null ? this.signature : ENCODER
-            .encode("identity=" + this.identity + ",return_to="
-                + getOriginalUrl());
+        return this.signature != null ? this.signature : base64
+            .encodeToString(ENCODER.encode(
+                "identity=" + this.identity + ",return_to=" + getOriginalUrl())
+                .getBytes());
     }
 }
