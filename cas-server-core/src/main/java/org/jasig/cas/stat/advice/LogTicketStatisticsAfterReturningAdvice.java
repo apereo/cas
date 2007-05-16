@@ -91,7 +91,7 @@ public final class LogTicketStatisticsAfterReturningAdvice implements
         }
 
         Method statsStateMutatorMethod = this.ticketStatsManager.getClass()
-            .getMethod(statsStateMutatorMethodName, (Class[]) null);
+            .getMethod(statsStateMutatorMethodName, (Class<?>[]) null);
         statsStateMutatorMethod.invoke(this.ticketStatsManager, (Object[]) null);
     }
 
