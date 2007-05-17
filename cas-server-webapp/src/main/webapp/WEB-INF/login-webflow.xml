@@ -14,15 +14,22 @@
 	
 	<action-state id="extractService">
 		<action bean="extractServiceAction" />
-		<transition on="success" to="ticketGrantingTicketExistsCheckAction" />
+		<!--<transition on="success" to="ticketGrantingTicketExistsCheckAction" />-->
+		<transition on="success" to="openIdSingleSignOnAction" />
 	</action-state>
-
+	
+    <action-state id="openIdSingleSignOnAction">
+    	<action bean="openIdSingleSignOnAction" />
+    	<transition on="success" to="warn" />
+    	<transition on="error" to="ticketGrantingTicketExistsCheckAction" />
+    </action>
+    
 	<action-state id="ticketGrantingTicketExistsCheckAction">
 		<action bean="ticketGrantingTicketExistsAction" />
 		<transition on="ticketGrantingTicketExists" to="hasServiceCheck" />
 		<transition on="noTicketGrantingTicketExists" to="gatewayRequestCheck" />
 	</action-state>
-	
+    
 	<decision-state id="gatewayRequestCheck">
 		<if test="${externalContext.requestParameterMap['gateway'] != '' &amp;&amp; externalContext.requestParameterMap['gateway'] != null &amp;&amp; flowScope.service != null}" then="redirect" else="viewLoginForm" />
 	</decision-state>

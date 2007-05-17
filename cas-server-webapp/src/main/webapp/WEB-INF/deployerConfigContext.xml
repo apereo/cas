@@ -63,6 +63,8 @@
 					+-->
 				<bean
 					class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+                <bean
+                    class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />
 			</list>
 		</property>
 
@@ -89,6 +91,8 @@
 					+-->
 				<bean
 					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+				<bean
+					class="org.jasig.cas.authentication.handler.support.OpenIdCredentialsAuthenticationHandler" />
 			</list>
 		</property>
 	</bean>
