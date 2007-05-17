@@ -235,6 +235,10 @@
 		p:cookiePath="/cas" />
 	
 	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector" />
+    
+    <bean id="openIdSingleSignOnAction" class="org.jasig.cas.web.flow.OpenIdSingleSignOnAction"
+    	p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+    	p:centralAuthenticationService-ref="centralAuthenticationService" />
 	
 	<bean id="addRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
 		p:formView="addServiceView"

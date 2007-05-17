@@ -18,8 +18,17 @@
 			<div style="margin-left: auto; margin-right: auto; left: 50%; width: 300px;">
 				<p><strong><spring:message code="screen.welcome.instructions" /></strong></p>
 				<p>
+				<strong>Session Id: ${session.openIdLocalId}</strong>
+				<strong>Session Id ${session['openIdLocalId']}</strong>
 					<label for="username"><spring:message code="screen.welcome.label.netid" /></label><br />
+					<c:if test="${not empty session.openIdLocalId}">
+					<strong>${session.openIdLocalId}</strong>
+					<input type="hidden" id="username" name="username" value="${session.openIdLocalId}" />
+					</c:if>
+					
+					<c:if test="${empty session.openIdLocalId}">
 					<input class="required" id="username" name="username" size="32" tabindex="1" accesskey="<spring:message code="screen.welcome.label.netid.accesskey" />" />
+					</c:if>
 				</p>
 
 				<p>
