@@ -47,8 +47,6 @@
 			name="mappings">
 			<props>
 				<prop
-					key="/login*openid.mode=checkid_authentication">openIdValidateController</prop>
-				<prop
 					key="/login">loginController</prop>
 			</props>
 		</property>
