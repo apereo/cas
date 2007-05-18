@@ -29,7 +29,20 @@
 	<bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
 	<!-- Handler Mapping -->
-	<bean id="handlerMappingA" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	
+
+	<bean id="handlerMappingA" class="org.jasig.cas.web.support.OpenIdPostUrlHandlerMapping">
+		<property
+			name="mappings">
+			<props>
+				<prop
+					key="/login">openIdValidateController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	
+	<bean id="handlerMappingB" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property
 			name="mappings">
 			<props>
@@ -48,7 +61,7 @@
 	</bean>
 		
 	<bean
-		id="handlerMappingB"
+		id="handlerMappingC"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property
 			name="mappings">

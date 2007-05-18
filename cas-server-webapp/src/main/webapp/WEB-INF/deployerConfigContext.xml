@@ -92,7 +92,8 @@
 				<bean
 					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
 				<bean
-					class="org.jasig.cas.authentication.handler.support.OpenIdCredentialsAuthenticationHandler" />
+					class="org.jasig.cas.authentication.handler.support.OpenIdCredentialsAuthenticationHandler"
+					p:ticketRegistry-ref="ticketRegistry" />
 			</list>
 		</property>
 	</bean>

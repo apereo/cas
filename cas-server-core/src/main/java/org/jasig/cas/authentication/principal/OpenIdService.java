@@ -72,6 +72,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
             } catch (final Exception e) {
                 builder.append(entry.getValue());
             }
+            builder.append("&");
         }
 
         return builder.toString();
