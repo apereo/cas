@@ -162,19 +162,6 @@
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/services/deleteRegisteredService.html</url-pattern>
 	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>cas</servlet-name>
-		<url-pattern>/services/enableRegistryService.html</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>cas</servlet-name>
-		<url-pattern>/services/disableRegistryService.html</url-pattern>
-	</servlet-mapping>
-
-	
-	
 
 	<session-config>
 		<!-- Default to 5 minute session timeouts -->

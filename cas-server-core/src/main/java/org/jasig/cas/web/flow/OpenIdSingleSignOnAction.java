@@ -53,7 +53,9 @@ public class OpenIdSingleSignOnAction extends AbstractAction {
                 .getParameter("openid.identity"));
         final Service service = WebUtils.getService(requestContext);
 
-        requestContext.getFlowScope().put("openIdLocalId", userName);
+        request.getSession().setAttribute("openIdLocalId", userName);
+        
+        System.out.println("OpenIdLocalId: " + userName);
         
         if (ticketGrantingTicketId == null) {
             return error();

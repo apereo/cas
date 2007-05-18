@@ -26,7 +26,7 @@ public final class DefaultOpenIdUserNameExtractor implements
             return null;
         }
 
-        return uri.substring(uri.indexOf("/") + 1);
+        return uri.substring(uri.lastIndexOf("/") + 1);
     }
 
 }

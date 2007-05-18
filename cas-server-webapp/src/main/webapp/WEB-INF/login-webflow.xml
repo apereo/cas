@@ -22,7 +22,7 @@
     	<action bean="openIdSingleSignOnAction" />
     	<transition on="success" to="warn" />
     	<transition on="error" to="ticketGrantingTicketExistsCheckAction" />
-    </action>
+    </action-state>
     
 	<action-state id="ticketGrantingTicketExistsCheckAction">
 		<action bean="ticketGrantingTicketExistsAction" />
