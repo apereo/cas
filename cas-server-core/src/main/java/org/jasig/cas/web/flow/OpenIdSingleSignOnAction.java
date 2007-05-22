@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.authentication.principal.OpenIdService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.annotation.NotNull;
@@ -54,15 +55,17 @@ public class OpenIdSingleSignOnAction extends AbstractAction {
         final Service service = WebUtils.getService(requestContext);
 
         request.getSession().setAttribute("openIdLocalId", userName);
-        
-        System.out.println("OpenIdLocalId: " + userName);
-        
+       
         if (ticketGrantingTicketId == null) {
             return error();
         }
-
-        if (service == null || userName == null) {
+        
+        if (service == null || !(service instanceof OpenIdService)) {
             return error();
+        }
+
+        if (userName == null) {
+            return result("badUsername");
         }
 
         final OpenIdCredentials credentials = new OpenIdCredentials(
