@@ -6,11 +6,17 @@
 package org.jasig.cas.authentication.principal;
 
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.DefaultPasswordEncoder;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.springframework.util.StringUtils;
@@ -23,21 +29,34 @@ import org.springframework.webflow.util.Base64;
  */
 public final class OpenIdService extends AbstractWebApplicationService {
 
+    protected static final Log LOG = LogFactory.getLog(OpenIdService.class);
+    
     /**
      * Unique Id for Serialization.
      */
     private static final long serialVersionUID = 5776500133123291301L;
 
     private static final String CONST_PARAM_SERVICE = "openid.return_to";
-
-    // TODO use the DH-SHA one algorithm instead of just SHA-1
+    
     private static final PasswordEncoder ENCODER = new DefaultPasswordEncoder("SHA1");
 
     private static final Base64 base64 = new Base64();
+    
+    private static final KeyGenerator keyGenerator;
 
     private String identity;
+    
+    private final SecretKey sharedSecret;
 
     private final String signature;
+    
+    static {
+        try {
+            keyGenerator = KeyGenerator.getInstance("HmacSHA1");
+        } catch (final NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     protected OpenIdService(final String id, final String originalUrl,
         final String artifactId, final String openIdIdentity,
@@ -45,6 +64,18 @@ public final class OpenIdService extends AbstractWebApplicationService {
         super(id, originalUrl, artifactId);
         this.identity = openIdIdentity;
         this.signature = signature;
+        this.sharedSecret = keyGenerator.generateKey();
+    }
+    
+    protected String generateHash(final String value) {
+        try {
+            final Mac sha1 = Mac.getInstance("HmacSHA1");
+            sha1.init(this.sharedSecret);
+            return base64.encodeToString(sha1.doFinal(value.getBytes()));
+        } catch (final Exception e) {
+            LOG.error(e,e);
+            return base64.encodeToString(ENCODER.encode(value).getBytes());
+        }
     }
 
     public String getRedirectUrl(final String ticketId) {
@@ -59,9 +90,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
             parameters.put("openid.assoc_handle", ticketId);
             parameters.put("openid.return_to", getOriginalUrl());
             parameters.put("openid.signed", "identity,return_to");
-            parameters.put("openid.sig", base64.encodeToString(ENCODER.encode(
-                "identity=" + this.identity + ",return_to=" + getOriginalUrl())
-                .getBytes()));
+            parameters.put("openid.sig", generateHash(
+                "identity=" + this.identity + ",return_to=" + getOriginalUrl()));
     
             builder.append(getOriginalUrl());
             builder.append(getOriginalUrl().contains("?") ? "&" : "?");
@@ -128,9 +158,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
     }
 
     public String getSignature() {
-        return this.signature != null ? this.signature : base64
-            .encodeToString(ENCODER.encode(
-                "identity=" + this.identity + ",return_to=" + getOriginalUrl())
-                .getBytes());
+        return this.signature != null ? this.signature : generateHash(
+            "identity=" + this.identity + ",return_to=" + getOriginalUrl());
     }
 }
