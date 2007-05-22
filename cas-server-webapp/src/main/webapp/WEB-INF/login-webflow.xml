@@ -22,6 +22,7 @@
     	<action bean="openIdSingleSignOnAction" />
     	<transition on="success" to="warn" />
     	<transition on="error" to="ticketGrantingTicketExistsCheckAction" />
+    	<transition on="badUsername" to="redirect" />
     </action-state>
     
 	<action-state id="ticketGrantingTicketExistsCheckAction">

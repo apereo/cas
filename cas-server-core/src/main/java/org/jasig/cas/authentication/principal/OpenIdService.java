@@ -48,33 +48,41 @@ public final class OpenIdService extends AbstractWebApplicationService {
     }
 
     public String getRedirectUrl(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<String, String>();
         final StringBuilder builder = new StringBuilder();
+        
+        if (ticketId != null) {
+            final Map<String, String> parameters = new HashMap<String, String>();
 
-        parameters.put("openid.mode", "id_res");
-        parameters.put("openid.identity", this.identity);
-        parameters.put("openid.assoc_handle", ticketId);
-        parameters.put("openid.return_to", getOriginalUrl());
-        parameters.put("openid.signed", "identity,return_to");
-        parameters.put("openid.sig", base64.encodeToString(ENCODER.encode(
-            "identity=" + this.identity + ",return_to=" + getOriginalUrl())
-            .getBytes()));
-
-        builder.append(getOriginalUrl());
-        builder.append(getOriginalUrl().contains("?") ? "&" : "?");
-
-        for (final Map.Entry<String, String> entry : parameters.entrySet()) {
-            builder.append(entry.getKey());
-            builder.append("=");
-
-            try {
-                builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            } catch (final Exception e) {
-                builder.append(entry.getValue());
+    
+            parameters.put("openid.mode", "id_res");
+            parameters.put("openid.identity", this.identity);
+            parameters.put("openid.assoc_handle", ticketId);
+            parameters.put("openid.return_to", getOriginalUrl());
+            parameters.put("openid.signed", "identity,return_to");
+            parameters.put("openid.sig", base64.encodeToString(ENCODER.encode(
+                "identity=" + this.identity + ",return_to=" + getOriginalUrl())
+                .getBytes()));
+    
+            builder.append(getOriginalUrl());
+            builder.append(getOriginalUrl().contains("?") ? "&" : "?");
+    
+            for (final Map.Entry<String, String> entry : parameters.entrySet()) {
+                builder.append(entry.getKey());
+                builder.append("=");
+    
+                try {
+                    builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                } catch (final Exception e) {
+                    builder.append(entry.getValue());
+                }
+                builder.append("&");
             }
-            builder.append("&");
+        } else {
+            builder.append(getOriginalUrl());
+            builder.append(getOriginalUrl().contains("?") ? "&" : "?");
+            builder.append("openid.mode=cancel");
         }
-
+        
         return builder.toString();
     }
 
