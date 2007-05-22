@@ -41,7 +41,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
     private static final int DEFAULT_TIMEOUT = 1000;
 
     /** Log instance. */
-    private final Log log = LogFactory.getLog(this.getClass());
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     /**
      * The CredentialsToPrincipalResolver that resolves the principal from the
