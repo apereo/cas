@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
@@ -35,7 +36,13 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
         final WebApplicationService service = WebUtils.getService(request);
         final String ticket = WebUtils.getServiceTicketFromRequestScope(request);
         if (service != null) {
-            return new ExternalRedirect(service.getRedirectUrl(ticket));
+            final Response response = service.getResponse(ticket);
+            
+            if (response.getResponseType() == Response.ResponseType.REDIRECT) {
+                return new ExternalRedirect(service.getResponse(ticket).getUrl());
+            } else if (response.getResponseType() == Response.ResponseType.POST) {
+                
+            }
         }
         
         return null;

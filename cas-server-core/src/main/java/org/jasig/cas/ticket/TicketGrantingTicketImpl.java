@@ -87,6 +87,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
 
         updateState();
         
+        // XXX is this okay, or will this fail with proxy?
+        service.setPrincipal(getAuthentication().getPrincipal());
+        
         this.services.put(id, service);
 
         return serviceTicket;

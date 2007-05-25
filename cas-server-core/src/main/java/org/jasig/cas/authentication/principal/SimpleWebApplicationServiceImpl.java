@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.util.StringUtils;
@@ -51,21 +54,14 @@ public final class SimpleWebApplicationServiceImpl extends
         return new SimpleWebApplicationServiceImpl(id, service, artifactId);
     }
 
-    public String getRedirectUrl(final String ticketId) {
-        final String originalUrl = getOriginalUrl();
-        final StringBuilder buffer = new StringBuilder(originalUrl.length()
-            + (ticketId != null ? ticketId.length() : 0) + CONST_PARAM_TICKET.length() + 2);
-
-        buffer.append(originalUrl);
+    public Response getResponse(final String ticketId) {
+        final Map<String, String> parameters = new HashMap<String, String>();
 
         if (StringUtils.hasText(ticketId)) {
-            buffer.append(originalUrl.contains("?") ? "&" : "?");            
-            buffer.append(CONST_PARAM_TICKET);
-            buffer.append("=");
-            buffer.append(ticketId);
+            parameters.put(CONST_PARAM_TICKET, ticketId);
         }
 
-        return buffer.toString();
+        return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
     public boolean logOutOfService(final String sessionIdentifier) {
