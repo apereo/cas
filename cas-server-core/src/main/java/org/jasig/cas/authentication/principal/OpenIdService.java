@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,13 +77,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
         }
     }
 
-    public String getRedirectUrl(final String ticketId) {
-        final StringBuilder builder = new StringBuilder();
+    public Response getResponse(final String ticketId) {
+        final Map<String, String> parameters = new HashMap<String, String>();
         
         if (ticketId != null) {
-            final Map<String, String> parameters = new HashMap<String, String>();
-
-    
             parameters.put("openid.mode", "id_res");
             parameters.put("openid.identity", this.identity);
             parameters.put("openid.assoc_handle", ticketId);
@@ -92,28 +88,11 @@ public final class OpenIdService extends AbstractWebApplicationService {
             parameters.put("openid.signed", "identity,return_to");
             parameters.put("openid.sig", generateHash(
                 "identity=" + this.identity + ",return_to=" + getOriginalUrl()));
-    
-            builder.append(getOriginalUrl());
-            builder.append(getOriginalUrl().contains("?") ? "&" : "?");
-    
-            for (final Map.Entry<String, String> entry : parameters.entrySet()) {
-                builder.append(entry.getKey());
-                builder.append("=");
-    
-                try {
-                    builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                } catch (final Exception e) {
-                    builder.append(entry.getValue());
-                }
-                builder.append("&");
-            }
         } else {
-            builder.append(getOriginalUrl());
-            builder.append(getOriginalUrl().contains("?") ? "&" : "?");
-            builder.append("openid.mode=cancel");
+            parameters.put("openid.mode", "cancel");
         }
         
-        return builder.toString();
+        return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
     public boolean logOutOfService(final String sessionIdentifier) {

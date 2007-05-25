@@ -18,5 +18,7 @@ package org.jasig.cas.authentication.principal;
  * </p>
  */
 public interface Service extends Principal {
+    
+    void setPrincipal(Principal principal);
     // marker interface for Services
 }

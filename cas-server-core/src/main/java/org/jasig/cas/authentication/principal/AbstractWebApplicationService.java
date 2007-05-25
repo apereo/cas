@@ -29,6 +29,8 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     private final String artifactId;
     
+    private Principal principal;
+    
     protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;
         this.originalUrl = originalUrl;
@@ -82,5 +84,13 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         }
 
         return false;
+    }
+    
+    protected Principal getPrincipal() {
+        return this.principal;
+    }
+
+    public void setPrincipal(final Principal principal) {
+        this.principal = principal;
     }
 }

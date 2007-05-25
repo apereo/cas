@@ -9,14 +9,14 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +57,7 @@ public final class SamlService extends AbstractWebApplicationService {
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
-    public SamlService(final String id) {
+    protected SamlService(final String id) {
         super(id, id, null);
     }
 
@@ -80,32 +80,13 @@ public final class SamlService extends AbstractWebApplicationService {
         return new SamlService(id, service, artifactId);
     }
 
-    public String getRedirectUrl(final String ticketId) {
-        final String service = getOriginalUrl();
-        final StringBuilder buffer = new StringBuilder(ticketId.length()
-            + ticketId.length() + CONST_PARAM_TICKET.length()
-            + CONST_PARAM_SERVICE.length() + 4 + service.length());
+    public Response getResponse(final String ticketId) {
+        final Map<String, String> parameters = new HashMap<String, String>();
 
-        buffer.append(service);
-        buffer.append(service.contains("?") ? "&" : "?");
-        buffer.append(CONST_PARAM_TICKET);
-        buffer.append("=");
-        try {
-            buffer.append(URLEncoder.encode(ticketId, "UTF-8"));
-        } catch (final UnsupportedEncodingException e) {
-            buffer.append(ticketId);
-        }
-        buffer.append("&");
-        buffer.append(CONST_PARAM_SERVICE);
-        buffer.append("=");
+        parameters.put(CONST_PARAM_TICKET, ticketId);
+        parameters.put(CONST_PARAM_SERVICE, getOriginalUrl());
 
-        try {
-            buffer.append(URLEncoder.encode(service, "UTF-8"));
-        } catch (final UnsupportedEncodingException e) {
-            buffer.append(service);
-        }
-
-        return buffer.toString();
+        return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
     public synchronized boolean logOutOfService(final String sessionIdentifier) {
