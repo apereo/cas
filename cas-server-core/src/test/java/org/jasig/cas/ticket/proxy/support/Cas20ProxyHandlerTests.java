@@ -8,6 +8,7 @@ package org.jasig.cas.ticket.proxy.support;
 import java.net.URL;
 
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
 
 import junit.framework.TestCase;
@@ -24,6 +25,7 @@ public class Cas20ProxyHandlerTests extends TestCase {
     protected void setUp() throws Exception {
         this.handler = new Cas20ProxyHandler();
         this.handler.setHttpClient(new HttpClient());
+        this.handler.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
     }
 
     public void testValidProxyTicketWithoutQueryString() throws Exception {
