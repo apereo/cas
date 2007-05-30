@@ -147,7 +147,7 @@
                     <licenseLocation>${basedir}/src/test/clover/clover.license</licenseLocation>
                     <jdk>1.5</jdk>
                     <generateXml>true</generateXml>
-                    <generateHtml>false</generateHtml>
+                    <generateHtml>true</generateHtml>
                     <includes>
                         <include>**/*.java</include>
                     </includes>
@@ -157,7 +157,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>site</phase>
+<!--                        <phase>site</phase>-->
                         <goals>
                             <goal>instrument</goal>
                             <goal>clover</goal>

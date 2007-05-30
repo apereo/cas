@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.springframework.util.Assert;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -19,35 +20,31 @@ import org.springframework.webflow.execution.RequestContext;
  * Common utilities for the web tier.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @version $Revision$ $Date: 2007-02-27 14:35:37 -0500 (Tue, 27 Feb
+ * 2007) $
  * @since 3.1
  */
 public final class WebUtils {
 
     public static final HttpServletRequest getHttpServletRequest(
         final RequestContext context) {
-        if (context.getExternalContext().getClass().equals(
-            ServletExternalContext.class)) {
-            return ((ServletExternalContext) context.getExternalContext())
-                .getRequest();
-        }
-
-        throw new IllegalStateException(
+        Assert.isInstanceOf(ServletExternalContext.class, context
+            .getExternalContext(),
             "Cannot obtain HttpServletRequest from event of type: "
                 + context.getExternalContext().getClass().getName());
+
+        return ((ServletExternalContext) context.getExternalContext())
+            .getRequest();
     }
 
     public static final HttpServletResponse getHttpServletResponse(
         final RequestContext context) {
-        if (context.getExternalContext().getClass().equals(
-            ServletExternalContext.class)) {
-            return ((ServletExternalContext) context.getExternalContext())
-                .getResponse();
-        }
-
-        throw new IllegalStateException(
-            "Cannot obtain HttpServletResponse from event of type: "
+        Assert.isInstanceOf(ServletExternalContext.class, context
+            .getExternalContext(),
+            "Cannot obtain HttpServletRequest from event of type: "
                 + context.getExternalContext().getClass().getName());
+        return ((ServletExternalContext) context.getExternalContext())
+            .getResponse();
     }
 
     public static final String getCookieValue(final HttpServletRequest request,
@@ -66,7 +63,8 @@ public final class WebUtils {
         final List<ArgumentExtractor> argumentExtractors,
         final HttpServletRequest request) {
         for (final ArgumentExtractor argumentExtractor : argumentExtractors) {
-            final WebApplicationService service = argumentExtractor.extractService(request);
+            final WebApplicationService service = argumentExtractor
+                .extractService(request);
 
             if (service != null) {
                 return service;
@@ -76,7 +74,8 @@ public final class WebUtils {
         return null;
     }
 
-    public static final WebApplicationService getService(final RequestContext context) {
+    public static final WebApplicationService getService(
+        final RequestContext context) {
         return (WebApplicationService) context.getFlowScope().get("service");
     }
 
