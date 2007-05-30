@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -12,6 +15,7 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.engine.ViewSelector;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.ViewSelection;
+import org.springframework.webflow.execution.support.ApplicationView;
 import org.springframework.webflow.execution.support.ExternalRedirect;
 
 /**
@@ -36,12 +40,15 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
         final WebApplicationService service = WebUtils.getService(request);
         final String ticket = WebUtils.getServiceTicketFromRequestScope(request);
         if (service != null) {
-            final Response response = service.getResponse(ticket);
+            final Response serviceResponse = service.getResponse(ticket);
             
-            if (response.getResponseType() == Response.ResponseType.REDIRECT) {
+            if (serviceResponse.getResponseType() == Response.ResponseType.REDIRECT) {
                 return new ExternalRedirect(service.getResponse(ticket).getUrl());
-            } else if (response.getResponseType() == Response.ResponseType.POST) {
-                
+            } else if (serviceResponse.getResponseType() == Response.ResponseType.POST) {
+                final Map<String, Object> model = new HashMap<String, Object>();
+                model.put("parameters", serviceResponse.getAttributes());
+                model.put("originalUrl", service.getId());
+                return new ApplicationView("postResponseView", model);
             }
         }
         

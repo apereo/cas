@@ -12,18 +12,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.SamlUtils;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.springframework.util.StringUtils;
 
@@ -39,8 +36,6 @@ import org.springframework.util.StringUtils;
 public final class SamlService extends AbstractWebApplicationService {
 
     private static final Log LOG = LogFactory.getLog(SamlService.class);
-
-    private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
 
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
@@ -94,17 +89,12 @@ public final class SamlService extends AbstractWebApplicationService {
             return true;
         }
 
-        final DateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'");
-        dateFormat.setTimeZone(UTC_TIME_ZONE);
-        final String date = dateFormat.format(new Date());
-
         LOG.debug("Sending logout request for: " + getId());
 
         final String logoutRequest = "<samlp:LogoutRequest ID=\""
             + GENERATOR.getNewTicketId("LR")
-            + "\" Version=\"2.0\" IssueInstant=\"" + date
-            + "\"><saml:NameID>NotUsed</saml:NameID><samlp:SessionIndex>"
+            + "\" Version=\"2.0\" IssueInstant=\"" + SamlUtils.getCurrentDateAndTime()
+            + "\"><saml:NameID>" + getPrincipal().getId() + "</saml:NameID><samlp:SessionIndex>"
             + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
 
         HttpURLConnection connection = null;

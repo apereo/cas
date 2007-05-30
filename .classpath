@@ -56,5 +56,6 @@
 	<classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/oracle/berkeleydb/je/3.2.21/je-3.2.21.jar"/>
 	<classpathentry kind="var" path="M2_REPO/junitperf/junitperf/1.8/junitperf-1.8.jar"/>
+	<classpathentry kind="var" path="M2_REPO/javax/xml/xmldsig/1.0/xmldsig-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
