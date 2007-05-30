@@ -130,7 +130,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
         final TestService testService = new TestService();
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
+        t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), testService,
             new NeverExpiresExpirationPolicy(), false);
         
@@ -141,6 +141,10 @@ public class TicketGrantingTicketImplTests extends TestCase {
     
     protected static class TestService implements WebApplicationService {
         
+        /**
+         * Comment for <code>serialVersionUID</code>
+         */
+        private static final long serialVersionUID = -8318147503545267651L;
         private boolean loggedOut = false;
 
         public String getArtifactId() {

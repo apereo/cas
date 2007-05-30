@@ -136,7 +136,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
         }
         try {
             // searching the directory
-            final List<String> principalList = this.ldapTemplate.search(
+            final List principalList = this.ldapTemplate.search(
                 this.searchBase, searchFilter, getSearchControls(),
                 new AttributesMapper(){
 
@@ -179,7 +179,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
                 return null;
             }
 
-            return new SimplePrincipal(principalList.get(0));
+            return new SimplePrincipal((String) principalList.get(0));
 
         } catch (Exception e) {
             log.error(e, e);
