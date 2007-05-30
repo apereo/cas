@@ -20,8 +20,6 @@ import java.util.zip.InflaterInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.util.DefaultRandomStringGenerator;
 import org.jasig.cas.util.RandomStringGenerator;
 import org.jasig.cas.util.SamlUtils;
@@ -39,8 +37,10 @@ import org.w3c.dom.Document;
  */
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
-    private static final Log LOG = LogFactory
-        .getLog(GoogleAccountsService.class);
+    /**
+     * Comment for <code>serialVersionUID</code>
+     */
+    private static final long serialVersionUID = 6678711809842282833L;
 
     private static final RandomStringGenerator GENERATOR = new DefaultRandomStringGenerator(
         20);
