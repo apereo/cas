@@ -11,7 +11,8 @@ import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @version $Revision$ $Date: 2007-01-22 15:35:37 -0500 (Mon, 22 Jan
+ * 2007) $
  * @since 3.0
  */
 public class Cas20WithoutProxyingValidationSpecificationTests extends TestCase {
@@ -43,4 +44,9 @@ public class Cas20WithoutProxyingValidationSpecificationTests extends TestCase {
             .getAssertion(false, new String[] {"test2"})));
     }
 
+    public void testSettingRenew() {
+        final Cas20WithoutProxyingValidationSpecification validation = new Cas20WithoutProxyingValidationSpecification(
+            true);
+        assertTrue(validation.isRenew());
+    }
 }

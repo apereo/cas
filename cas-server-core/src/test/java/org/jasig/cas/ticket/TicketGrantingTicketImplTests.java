@@ -7,9 +7,13 @@ package org.jasig.cas.ticket;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -120,5 +124,52 @@ public class TicketGrantingTicketImplTests extends TestCase {
             new NeverExpiresExpirationPolicy(), false);
 
         assertFalse(s.isFromNewLogin());
+    }
+    
+    public void testWebApplicationSignOut() {
+        final TestService testService = new TestService();
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
+            .getNewTicketId(ServiceTicket.PREFIX), testService,
+            new NeverExpiresExpirationPolicy(), false);
+        
+        t.expire();
+        
+        assertTrue(testService.isLoggedOut());
+    }
+    
+    protected static class TestService implements WebApplicationService {
+        
+        private boolean loggedOut = false;
+
+        public String getArtifactId() {
+            return null;
+        }
+
+        public Response getResponse(String ticketId) {
+            return null;
+        }
+
+        public boolean logOutOfService(final String sessionIdentifier) {
+            this.loggedOut = true;
+            return false;
+        }
+        
+        public boolean isLoggedOut() {
+            return this.loggedOut;
+        }
+
+        public void setPrincipal(Principal principal) {
+            // nothing to do
+        }
+
+        public Map<String, Object> getAttributes() {
+            return null;
+        }
+
+        public String getId() {
+            return "test";
+        }
     }
 }
