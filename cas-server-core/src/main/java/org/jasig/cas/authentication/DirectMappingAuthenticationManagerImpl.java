@@ -37,6 +37,10 @@ public final class DirectMappingAuthenticationManagerImpl implements
     @NotNull
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
 
+    /**
+     * @throws IllegalArgumentException if a mapping cannot be found.
+     * @see org.jasig.cas.authentication.AuthenticationManager#authenticate(org.jasig.cas.authentication.principal.Credentials)
+     */
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
         final Class< ? > credentialsClass = credentials.getClass();
@@ -74,7 +78,7 @@ public final class DirectMappingAuthenticationManagerImpl implements
         this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
     }
 
-    public final class DirectAuthenticationHandlerMappingHolder {
+    public static final class DirectAuthenticationHandlerMappingHolder {
 
         private AuthenticationHandler authenticationHandler;
 

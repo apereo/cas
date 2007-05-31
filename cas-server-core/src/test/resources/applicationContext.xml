@@ -25,6 +25,9 @@
                 <entry
                         key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
                         value-ref="uniqueTicketIdGenerator" />
+                <entry
+                        key="org.jasig.cas.authentication.principal.OpenIdService"
+                        value-ref="uniqueTicketIdGenerator" />
 			</map>
 		</property>
         <property name="servicesManager"
@@ -51,6 +54,8 @@
 					local="usernamePasswordCredentialsToPrincipalResolver" />
 				<ref
 					local="httpBasedServiceCredentialsToPrincipalResolver" />
+				<bean
+					class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />
 			</list>
 		</property>
 		<property
@@ -60,6 +65,10 @@
 					local="simpleTestUsernamePasswordAuthenticationHandler" />
 				<ref
 					local="httpBasedServiceCredentialsAuthenticationHandler" />
+				<bean
+					class="org.jasig.cas.authentication.handler.support.OpenIdCredentialsAuthenticationHandler">
+					<property name="ticketRegistry" ref="ticketRegistry" />
+				</bean>
 			</list>
 		</property>
 		<property

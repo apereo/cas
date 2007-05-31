@@ -25,8 +25,11 @@ public class DefaultOpenIdUserNameExtractorTests extends TestCase {
     
     public void testExtractionFailed() {
         assertNull(this.extractor
-            .extractLocalUsernameFromUri("http://test.com"));
+            .extractLocalUsernameFromUri("test.com"));
     }
 
-
+    public void testNull() {
+        assertNull(this.extractor
+            .extractLocalUsernameFromUri(null));
+    }
 }
