@@ -99,7 +99,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
         return false;
     }
 
-    public static WebApplicationService createServiceFrom(
+    public static OpenIdService createServiceFrom(
         final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
         final String openIdIdentity = request.getParameter("openid.identity");
