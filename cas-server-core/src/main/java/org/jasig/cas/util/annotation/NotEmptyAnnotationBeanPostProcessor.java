@@ -25,11 +25,11 @@ public final class NotEmptyAnnotationBeanPostProcessor extends
         final Object bean, final String beanName) throws IllegalAccessException {
 
         final Object obj = field.get(bean);
-
+        
         if (obj == null) {
             throw new FatalBeanException(constructMessage(field, beanName));
         }
-
+        
         if (obj instanceof Collection) {
             final Collection< ? > c = (Collection< ? >) obj;
 
@@ -37,8 +37,8 @@ public final class NotEmptyAnnotationBeanPostProcessor extends
                 throw new FatalBeanException(constructMessage(field, beanName));
             }
         }
-
-        if (obj instanceof Array) {
+        
+        if (obj.getClass().isArray()) {
             if (Array.getLength(obj) == 0) {
                 throw new FatalBeanException(constructMessage(field, beanName));
             }
@@ -62,7 +62,4 @@ public final class NotEmptyAnnotationBeanPostProcessor extends
     protected Class<? extends Annotation> getSupportedAnnotation() {
         return NotEmpty.class;
     }
-    
-    
-
 }
