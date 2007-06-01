@@ -102,17 +102,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public final int hashCode() {
         return 34 ^ this.getId().hashCode();
     }
-    
-    public final boolean equals(final Object object) {
-        if (object == null
-            || !this.getClass().isAssignableFrom(object.getClass())) {
-            return false;
-        }
-
-        final Ticket serviceTicket = (Ticket) object;
-        
-        return serviceTicket.getId().equals(this.getId());
-    }
 
     public final String toString() {
         return this.id;

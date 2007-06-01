@@ -199,6 +199,20 @@
     </build>
 
     <dependencies>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.7</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>3.2.1.ga</version>
+			<scope>runtime</scope>
+		</dependency>
+    
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
