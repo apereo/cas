@@ -8,6 +8,7 @@ package org.jasig.cas.services.web.support;
 import java.beans.PropertyEditorSupport;
 
 import org.jasig.cas.services.AttributeRepository;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Convert a String to an Attribute
@@ -19,6 +20,7 @@ import org.jasig.cas.services.AttributeRepository;
  */
 public class AttributePropertyEditor extends PropertyEditorSupport {
     
+    @NotNull
     private final AttributeRepository attributeRepository;
     
     public AttributePropertyEditor(final AttributeRepository attributeRepository) {
