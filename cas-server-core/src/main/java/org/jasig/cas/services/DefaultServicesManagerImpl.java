@@ -52,11 +52,16 @@ public final class DefaultServicesManagerImpl implements ServicesManager {
         }
         
         this.serviceRegistryDao.delete(r);
-        this.services.remove(new Long(r.getId()));
+        this.services.remove(new Long(id));
         
         return r;
     }
 
+    /**
+     * Note, if the repository is empty, this implementation will return a default service to grant all access.
+     * <p>
+     * This preserves default CAS behavior.
+     */
     public RegisteredService findServiceBy(final Service service) {
         final Collection<RegisteredService> c = this.services.values();
         
@@ -74,23 +79,13 @@ public final class DefaultServicesManagerImpl implements ServicesManager {
     }
 
     public RegisteredService findServiceBy(final long id) {
-        final Collection<RegisteredService> c = this.services.values();
+        final RegisteredService r = this.services.get(new Long(id));
         
-        if (c.isEmpty()) {
-            return this.disabledRegisteredService;
+        try {
+            return r == null ? null : (RegisteredService) r.clone();
+        } catch (final CloneNotSupportedException e) {
+            return r;
         }
-
-        for (final RegisteredService r : c) {
-            if (r.getId() == id) {
-                try {
-                    return (RegisteredService) r.clone();
-                } catch (final CloneNotSupportedException e) {
-                    return r;
-                }
-            }
-        }
-
-        return null;
     }
 
     public Collection<RegisteredService> getAllServices() {

@@ -95,4 +95,15 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     public Authentication getAuthentication() {
         return null;
     }
+    
+    public final boolean equals(final Object object) {
+        if (object == null
+            || !(object instanceof ServiceTicket)) {
+            return false;
+        }
+
+        final Ticket serviceTicket = (Ticket) object;
+        
+        return serviceTicket.getId().equals(this.getId());
+    }
 }

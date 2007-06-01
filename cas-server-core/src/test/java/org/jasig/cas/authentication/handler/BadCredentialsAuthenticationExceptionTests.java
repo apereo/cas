@@ -14,9 +14,35 @@ import junit.framework.TestCase;
  */
 public final class BadCredentialsAuthenticationExceptionTests extends TestCase {
 
+    private static final String CODE = "error.authentication.credentials.bad";
+    
     public void testGetCode() {
         AuthenticationException e = new BadCredentialsAuthenticationException();
-        assertEquals("error.authentication.credentials.bad", e.getCode());
-        assertEquals("error.authentication.credentials.bad", e.toString());
+        assertEquals(CODE, e.getCode());
+        assertEquals(CODE, e.toString());
+    }
+    
+    public void testThrowableConstructor() {
+        final RuntimeException r = new RuntimeException();
+        final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(r);
+        
+        assertEquals(CODE, e.getCode());
+        assertEquals(r, e.getCause());
+    }
+    
+    public void testCodeConstructor() {
+        final String MESSAGE = "GG";
+        final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(MESSAGE);
+        
+        assertEquals(MESSAGE, e.getCode());
+    }
+    
+    public void testThrowableConstructorWithCode() {
+        final String MESSAGE = "GG";
+        final RuntimeException r = new RuntimeException();
+        final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(MESSAGE, r);
+        
+        assertEquals(MESSAGE, e.getCode());
+        assertEquals(r, e.getCause());
     }
 }

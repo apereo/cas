@@ -13,13 +13,25 @@ import junit.framework.TestCase;
  * @since 3.0
  */
 public class UnsupportedCredentialsExceptionTests extends TestCase {
+    
+    private static final String CODE = "error.authentication.credentials.unsupported";
 
     public void testNoParamConstructor() {
         new UnsupportedCredentialsException();
     }
 
     public void testGetCode() {
-        assertEquals("error.authentication.credentials.unsupported",
+        assertEquals(CODE,
             new UnsupportedCredentialsException().getCode());
     }
+    
+    public void testThrowableConstructor() {
+        final RuntimeException r = new RuntimeException();
+        final UnsupportedCredentialsException e = new UnsupportedCredentialsException(r);
+        
+        assertEquals(CODE, e.getCode());
+        assertEquals(r, e.getCause());
+    }
+    
+    
 }

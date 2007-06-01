@@ -23,7 +23,7 @@ public class UnknownUsernameAuthenticationException extends
     private static final long serialVersionUID = 3977861752513837361L;
 
     /** The code description of this exception. */
-    private static final String CODE = "error.authentication.credentials.bad.usernameorpassword.password";
+    private static final String CODE = "error.authentication.credentials.bad.usernameorpassword.username";
 
     /**
      * Default constructor that does not allow the chaining of exceptions and
