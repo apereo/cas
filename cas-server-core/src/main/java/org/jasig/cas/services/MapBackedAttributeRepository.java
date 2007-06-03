@@ -26,7 +26,7 @@ public final class MapBackedAttributeRepository implements AttributeRepository {
         return new ArrayList<Attribute>(this.attributes.values());
     }
     
-    public void setAttributes(final Map<String, Attribute> attributes) {
+    public void setAttributesMap(final Map<String, Attribute> attributes) {
         this.attributes = attributes;
     }
 }
