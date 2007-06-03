@@ -35,7 +35,7 @@ public class AttributePropertyEditorTests extends TestCase {
         
         attributes.put("test", this.attr);
         
-        this.attributeRepository.setAttributes(attributes);
+        this.attributeRepository.setAttributesMap(attributes);
         
         this.editor = new AttributePropertyEditor(this.attributeRepository);
     }
