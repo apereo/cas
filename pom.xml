@@ -153,6 +153,7 @@
                     </includes>
                     <excludes>
                         <exclude>**/CasVersion.java</exclude>
+                        <exclude>**/HsqlDbDatabaseLocatorFactoryBean.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>

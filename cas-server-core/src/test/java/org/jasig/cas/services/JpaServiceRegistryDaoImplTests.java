@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.services;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;

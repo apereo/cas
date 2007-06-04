@@ -34,8 +34,6 @@ public class Cas10ResponseViewTests extends TestCase {
 
     private Map<String, Object> model;
 
-    String response;
-
     protected void setUp() throws Exception {
         this.model = new HashMap<String,Object>();
         List<Authentication> list = new ArrayList<Authentication>();
@@ -45,51 +43,65 @@ public class Cas10ResponseViewTests extends TestCase {
     }
 
     public void testSuccessView() throws Exception {
+        final MockWriterHttpMockHttpServletResponse response = new MockWriterHttpMockHttpServletResponse();
         this.view.setSuccessResponse(true);
-        this.view.render(this.model, new MockHttpServletRequest(),
-            new MockWriterHttpMockHttpServletResponse());
-        assertEquals("yes\ntest\n", this.response);
+        this.view.render(this.model, new MockHttpServletRequest(), response
+            );
+        assertEquals("yes\ntest\n", response.getWrittenValue());
     }
 
     public void testFailureView() throws Exception {
+        final MockWriterHttpMockHttpServletResponse response = new MockWriterHttpMockHttpServletResponse();
         this.view.setSuccessResponse(false);
         this.view.render(this.model, new MockHttpServletRequest(),
-            new MockWriterHttpMockHttpServletResponse());
-        assertEquals("no\n\n", this.response);
+            response);
+        assertEquals("no\n\n", response.getWrittenValue());
     }
 
-    protected class MockWriterHttpMockHttpServletResponse extends
+    protected static class MockWriterHttpMockHttpServletResponse extends
         MockHttpServletResponse {
+        
+        private StringBuilder builder = new StringBuilder();
 
         public PrintWriter getWriter() {
             try {
-                return new MockPrintWriter(new ByteArrayOutputStream());
+                return new MockPrintWriter(new ByteArrayOutputStream(), this.builder);
             } catch (Exception e) {
                 throw new RuntimeException();
             }
         }
+        
+        public String getWrittenValue() {
+            return this.builder.toString();
+        }
     }
 
-    private class MockPrintWriter extends PrintWriter {
+    protected static class MockPrintWriter extends PrintWriter {
+        
+        final StringBuilder builder;
 
-        public MockPrintWriter(OutputStream out, boolean autoFlush) {
+        public MockPrintWriter(OutputStream out, boolean autoFlush, final StringBuilder builder) {
             super(out, autoFlush);
+            this.builder = builder;
         }
 
-        public MockPrintWriter(OutputStream out) {
+        public MockPrintWriter(OutputStream out, final StringBuilder builder) {
             super(out);
+            this.builder = builder;
         }
 
-        public MockPrintWriter(Writer out, boolean autoFlush) {
+        public MockPrintWriter(Writer out, boolean autoFlush, final StringBuilder builder) {
             super(out, autoFlush);
+            this.builder = builder;
         }
 
-        public MockPrintWriter(Writer out) {
+        public MockPrintWriter(Writer out, final StringBuilder builder) {
             super(out);
+            this.builder = builder;
         }
 
         public void print(String s) {
-            Cas10ResponseViewTests.this.response = s;
+            this.builder.append(s);
         }
     }
 }
