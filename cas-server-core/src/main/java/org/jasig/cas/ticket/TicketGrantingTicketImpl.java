@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.springframework.util.Assert;
 
 /**
@@ -97,11 +96,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     
     protected synchronized void logOutOfServices() {
         for (final Entry<String, Service> entry : this.services.entrySet()) {
-            final Service service = entry.getValue();
-            
-            if (service instanceof WebApplicationService) {
-                ((WebApplicationService) service).logOutOfService(entry.getKey());
-            }
+            entry.getValue().logOutOfService(entry.getKey());
         }
     }
 

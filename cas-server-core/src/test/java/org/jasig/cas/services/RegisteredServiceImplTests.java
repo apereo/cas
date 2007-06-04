@@ -54,5 +54,12 @@ public class RegisteredServiceImplTests extends TestCase {
         assertEquals(SERVICEID, this.r.getServiceId());
         assertEquals(SSO_ENABLED, this.r.isSsoEnabled());
         assertEquals(THEME, this.r.getTheme());
+        
+        assertFalse(this.r.equals(null));
+        assertFalse(this.r.equals(new Object()));
+        assertTrue(this.r.equals(this.r));
+        
+        this.r.setAllowedAttributes(null);
+        assertNotNull(this.r.getAllowedAttributes());
     }
 }

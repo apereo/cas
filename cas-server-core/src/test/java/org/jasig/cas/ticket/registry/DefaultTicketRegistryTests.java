@@ -18,4 +18,8 @@ public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return new DefaultTicketRegistry();
     }
+    
+    public void testOtherConstructor() {
+        assertNotNull(new DefaultTicketRegistry(10, 10F, 5));
+    }
 }

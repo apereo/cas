@@ -48,18 +48,20 @@ public final class Response {
         builder.append(url.contains("?") ? "&" : "?");
 
         for (final Map.Entry<String, String> entry : parameters.entrySet()) {
-            builder.append(entry.getKey());
-            builder.append("=");
-
-            try {
-                builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            } catch (final Exception e) {
-                builder.append(entry.getValue());
+            if (entry.getValue() != null) {
+                builder.append(entry.getKey());
+                builder.append("=");
+    
+                try {
+                    builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                } catch (final Exception e) {
+                    builder.append(entry.getValue());
+                }
+                builder.append("&");
             }
-            builder.append("&");
         }
 
-        return new Response(ResponseType.REDIRECT, url, null);
+        return new Response(ResponseType.REDIRECT, builder.toString(), null);
     }
 
     public Map<String, String> getAttributes() {

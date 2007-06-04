@@ -26,8 +26,4 @@ public abstract class AbstractCasView extends AbstractView {
     protected final Assertion getAssertionFrom(final Map model) {
         return (Assertion) model.get("assertion");
     }
-    
-    protected final String getDescriptionForError(final Map model) {
-        return (String) model.get("description");
-    }
 }

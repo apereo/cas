@@ -20,6 +20,7 @@ import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.jasig.cas.web.view.Cas10ResponseViewTests.MockWriterHttpMockHttpServletResponse;
 import org.opensaml.SAMLAuthenticationStatement;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import junit.framework.TestCase;
 
@@ -43,7 +44,6 @@ public class Saml10SuccessResponseViewTests extends TestCase {
 
     public void testResponse() throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
-        
         
         final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("testAttribute", "testValue");
@@ -73,9 +73,60 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         assertTrue(written.contains("tac1"));
         assertTrue(written.contains("tac2"));
         assertTrue(written.contains(SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client));
-        
+        assertTrue(written.contains("AuthenticationMethod"));
         
         
     }
     
+    public void testResponseWithoutAuthMethod() throws Exception {
+        final Map<String, Object> model = new HashMap<String, Object>();
+        
+        final Map<String, Object> attributes = new HashMap<String, Object>();
+        attributes.put("testAttribute", "testValue");
+        final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
+        
+        final MutableAuthentication authentication = new MutableAuthentication(principal);
+        final List<Authentication> authentications = new ArrayList<Authentication>();
+        authentications.add(authentication);
+        
+        final Assertion assertion = new ImmutableAssertionImpl(authentications, TestUtils.getService(), true);
+        
+        model.put("assertion", assertion);
+        
+        final MockWriterHttpMockHttpServletResponse servletResponse = new MockWriterHttpMockHttpServletResponse();
+        
+        this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
+        final String written = servletResponse.getWrittenValue();
+        
+        System.out.println(written);
+        
+        assertTrue(written.contains("testPrincipal"));
+        assertTrue(written.contains("testAttribute"));
+        assertTrue(written.contains("testValue"));
+        assertTrue(written.contains("urn:oasis:names:tc:SAML:1.0:am:unspecified"));       
+    }
+    
+    public void testException() {
+        this.response.setIssuer(null);
+        
+final Map<String, Object> model = new HashMap<String, Object>();
+        
+        final Map<String, Object> attributes = new HashMap<String, Object>();
+        final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
+        
+        final MutableAuthentication authentication = new MutableAuthentication(principal);
+        final List<Authentication> authentications = new ArrayList<Authentication>();
+        authentications.add(authentication);
+        
+        final Assertion assertion = new ImmutableAssertionImpl(authentications, TestUtils.getService(), true);
+        
+        model.put("assertion", assertion);
+        
+        try {
+            this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), new MockHttpServletResponse());
+            fail("Exception expected.");
+        } catch (final Exception e) {
+            return;
+        }
+    }
 }
