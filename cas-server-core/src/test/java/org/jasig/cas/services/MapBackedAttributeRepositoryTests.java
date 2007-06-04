@@ -34,7 +34,7 @@ public class MapBackedAttributeRepositoryTests extends TestCase {
         attributes.put("test", this.attr);
         attributes.put("test2", this.attr2);
         
-        this.attributeRepository.setAttributes(attributes);
+        this.attributeRepository.setAttributesMap(attributes);
     }
     
     public void testGetAttribute() {

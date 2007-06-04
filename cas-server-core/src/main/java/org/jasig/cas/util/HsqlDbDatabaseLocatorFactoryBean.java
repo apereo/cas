@@ -9,7 +9,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
 
 /**
- * @author Dmitriy Kopylenko
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.1
@@ -20,7 +19,7 @@ public final class HsqlDbDatabaseLocatorFactoryBean implements FactoryBean {
 
     private String urlRepresentation;
 
-    public void setConfigLocation(Resource configLocation) {
+    public void setConfigLocation(final Resource configLocation) {
         this.configLocation = configLocation;
     }
 

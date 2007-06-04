@@ -14,7 +14,13 @@ import org.springframework.beans.FatalBeanException;
 
 import junit.framework.TestCase;
 
-
+/**
+ * 
+ * @author Scott Battaglia
+ * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
+ * @since 3.1
+ *
+ */
 public class AnnotationBeanPostProcessorTests extends TestCase {
     
     private AbstractAnnotationBeanPostProcessor[] processors = new AbstractAnnotationBeanPostProcessor[] {new GreaterThanAnnotationBeanPostProcessor(), new IsInAnnotationBeanPostProcessor(), new NotEmptyAnnotationBeanPostProcessor(), new NotNullAnnotationBeanPostProcessor()}; 
@@ -100,18 +106,18 @@ protected class GoodTestClass {
         private String testNull = "haha";
         
         @NotEmpty
-        private Collection c =  new ArrayList();
+        private Collection<Object> c =  new ArrayList<Object>();
         
         @NotEmpty
         private Object[] os = new Object[] {new Object()};
         
         @NotEmpty
-        private Map map = new HashMap();
+        private Map<String,String> map = new HashMap<String,String>();
 
         
         public GoodTestClass() {
-            c.add(new Object());
-            map.put("test", "test");
+            this.c.add(new Object());
+            this.map.put("test", "test");
         }
         
     }
