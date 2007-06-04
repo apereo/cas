@@ -83,14 +83,21 @@ public class AnnotationBeanPostProcessorTests extends TestCase {
         private Object[] os2 = new Object[0];
     }
 
-    protected class BadTestClass {
+    protected class BadSuperTestClass {
+
+        @NotNull
+        private String testNull = null;
+    }
+    
+    protected class BadTestClass extends BadSuperTestClass {
         
         @GreaterThan(0)
         @IsIn({0,1,2})
         private int test = -1;
-        
+
         @NotNull
         private String testNull = null;
+
         
         @NotEmpty
         private Map map = new HashMap();

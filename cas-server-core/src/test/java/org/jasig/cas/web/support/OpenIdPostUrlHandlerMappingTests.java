@@ -5,9 +5,12 @@
  */
 package org.jasig.cas.web.support;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.support.GenericWebApplicationContext;
 
 import junit.framework.TestCase;
 
@@ -23,12 +26,17 @@ public class OpenIdPostUrlHandlerMappingTests extends TestCase {
     private OpenIdPostUrlHandlerMapping handlerMapping;
 
     protected void setUp() throws Exception {
+        final GenericWebApplicationContext context = new GenericWebApplicationContext();
+        final RootBeanDefinition definition = new RootBeanDefinition(Object.class);
+        context.registerBeanDefinition("testHandler", definition);
+        context.start();
+
+        final Map<String, Object> properties = new HashMap<String, Object>();
+        properties.put("/login", new Object());
+
         this.handlerMapping = new OpenIdPostUrlHandlerMapping();
-        final Properties properties = new Properties();
-        
-        properties.setProperty("/login", "testHandler");
-        
-        this.handlerMapping.setMappings(properties);
+        this.handlerMapping.setUrlMap(properties);
+        this.handlerMapping.initApplicationContext();
         super.setUp();
     }
     
@@ -62,14 +70,13 @@ public class OpenIdPostUrlHandlerMappingTests extends TestCase {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
     
-    // TODO fix this test
-    /*
     public void testProperMatchCorrectMethodWithParam() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");
         request.setParameter("openid.mode", "check_authentication");
         
+        
         assertNotNull(this.handlerMapping.lookupHandler("/login", request));
-    }*/
+    }
 }

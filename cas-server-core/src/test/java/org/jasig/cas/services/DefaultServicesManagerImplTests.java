@@ -24,7 +24,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
     private DefaultServicesManagerImpl defaultServicesManagerImpl;
 
     protected void setUp() throws Exception {
-        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(new MockServiceRegistryDao());
+        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(new MockServiceRegistryDao(true));
     }
     
     public void testSaveAndGet() {
@@ -77,12 +77,16 @@ public class DefaultServicesManagerImplTests extends TestCase {
         
         this.defaultServicesManagerImpl.save(r);
         
-        assertEquals(1, this.defaultServicesManagerImpl.getAllServices().size());
+        assertEquals(2, this.defaultServicesManagerImpl.getAllServices().size());
         assertTrue(this.defaultServicesManagerImpl.getAllServices().contains(r));
     }
     
     protected class SimpleService implements Service {
         
+        /**
+         * Comment for <code>serialVersionUID</code>
+         */
+        private static final long serialVersionUID = 6572142033945243669L;
         private String id;
 
         protected SimpleService(final String id) {
@@ -98,7 +102,11 @@ public class DefaultServicesManagerImplTests extends TestCase {
         }
 
         public void setPrincipal(Principal principal) {
+            // nothing to do
+        }
 
+        public boolean logOutOfService(String sessionIdentifier) {
+            return false;
         }
     }
 }

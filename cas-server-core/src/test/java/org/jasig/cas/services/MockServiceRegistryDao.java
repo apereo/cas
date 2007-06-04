@@ -9,6 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MockServiceRegistryDao implements ServiceRegistryDao {
+    
+    private boolean loaded;
+    
+    public MockServiceRegistryDao() {
+        this(false);
+    }
+    
+    public MockServiceRegistryDao(final boolean loaded) {
+        this.loaded = loaded;
+    }
 
     public boolean delete(RegisteredService registeredService) {
         return false;
@@ -19,7 +29,16 @@ public class MockServiceRegistryDao implements ServiceRegistryDao {
     }
 
     public List<RegisteredService> load() {
-        return new ArrayList<RegisteredService>();
+        final List<RegisteredService> l = new ArrayList<RegisteredService>();
+        
+        if (this.loaded) {
+            final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+            impl.setId(2500);
+            impl.setServiceId("id");
+            
+            l.add(impl);
+        }
+        return l;
     }
 
     public RegisteredService save(RegisteredService registeredService) {

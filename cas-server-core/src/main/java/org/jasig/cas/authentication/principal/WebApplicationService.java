@@ -28,6 +28,4 @@ public interface WebApplicationService extends Service {
      * @return the artifact if it exists, null otherwise.
      */
     String getArtifactId();
-    
-    boolean logOutOfService(String sessionIdentifier);
 }

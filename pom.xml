@@ -154,6 +154,7 @@
                     <excludes>
                         <exclude>**/CasVersion.java</exclude>
                         <exclude>**/HsqlDbDatabaseLocatorFactoryBean.java</exclude>
+                        <exclude>**/SamlCompliantUniqueTicketIdGenerator.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -200,6 +201,13 @@
     </build>
 
     <dependencies>
+    	<dependency>
+    		<groupId>commons-lang</groupId>
+    		<artifactId>commons-lang</artifactId>
+    		<version>2.2</version>
+    		<scope>runtime</scope>
+    	</dependency>
+    
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>

@@ -40,7 +40,7 @@ public final class SimpleWebApplicationServiceImpl extends
         super(id, originalUrl, artifactId);
     }
 
-    public static WebApplicationService createServiceFrom(
+    public static SimpleWebApplicationServiceImpl createServiceFrom(
         final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
 

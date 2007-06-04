@@ -7,10 +7,8 @@ package org.jasig.cas.authentication.principal;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,7 +59,7 @@ public final class SamlService extends AbstractWebApplicationService {
         super(id, originalUrl, artifactId);
     }
 
-    public static WebApplicationService createServiceFrom(
+    public static SamlService createServiceFrom(
         final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
 
@@ -123,9 +121,7 @@ public final class SamlService extends AbstractWebApplicationService {
             }
             
             return true;
-        } catch (final MalformedURLException e) {
-            return false;
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             return false;
         } finally {
             if (connection != null) {

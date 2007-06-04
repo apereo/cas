@@ -21,4 +21,6 @@ package org.jasig.cas.authentication.principal;
 public interface Service extends Principal {
     
     void setPrincipal(Principal principal);
+    
+    boolean logOutOfService(String sessionIdentifier);
 }

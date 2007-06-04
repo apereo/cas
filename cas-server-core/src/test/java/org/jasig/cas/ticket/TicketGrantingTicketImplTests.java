@@ -29,6 +29,15 @@ public class TicketGrantingTicketImplTests extends TestCase {
 
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
+    public void testEquals() {
+        TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        assertFalse(t.equals(null));
+        assertFalse(t.equals(new Object()));
+        assertTrue(t.equals(t));
+    }
+    
     public void testNullAuthentication() {
         try {
             new TicketGrantingTicketImpl("test", null, null,
@@ -46,6 +55,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
             authentication, new NeverExpiresExpirationPolicy());
 
         assertEquals(t.getAuthentication(), authentication);
+        assertEquals(t.getId(), t.toString());
     }
 
     public void testIsRootTrue() {

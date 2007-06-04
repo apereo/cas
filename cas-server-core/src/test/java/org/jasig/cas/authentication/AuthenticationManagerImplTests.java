@@ -11,10 +11,12 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.util.HttpClient;
 
@@ -69,6 +71,33 @@ public class AuthenticationManagerImplTests extends
             fail("Authentication should have failed.");
         } catch (UnsupportedCredentialsException e) {
             return;
+        }
+    }
+    
+    public void testResolverReturnsNull() throws Exception {
+        AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
+        HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
+        authenticationHandler.setHttpClient(new HttpClient());
+        manager
+            .setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {authenticationHandler}));
+        manager
+            .setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new TestCredentialsToPrincipalResolver()}));
+        try {
+            manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
+            fail("Authentication should have failed.");
+        } catch (BadCredentialsAuthenticationException e) {
+            return;
+        }
+    }
+    
+    protected class TestCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
+
+        public Principal resolvePrincipal(Credentials credentials) {
+            return null;
+        }
+
+        public boolean supports(final Credentials credentials) {
+            return true;
         }
     }
 }
