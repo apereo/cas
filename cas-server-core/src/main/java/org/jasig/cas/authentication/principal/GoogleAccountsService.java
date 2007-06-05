@@ -98,7 +98,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         this.publicKey = publicKey;
     }
 
-    public static WebApplicationService createServiceFrom(
+    public static GoogleAccountsService createServiceFrom(
         final HttpServletRequest request, final DSAPrivateKey privateKey,
         final DSAPublicKey publicKey) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
