@@ -5,10 +5,15 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
+import java.util.zip.DeflaterOutputStream;
 
+import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.jasig.cas.util.DSAPrivateKeyFactoryBean;
 import org.jasig.cas.util.DSAPublicKeyFactoryBean;
 import org.springframework.core.io.ClassPathResource;
@@ -46,7 +51,7 @@ public class GoogleAccountsServiceTests extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         
         final String SAMLRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
-        request.setParameter("SAMLRequest", SAMLRequest);
+        request.setParameter("SAMLRequest", encodeMessage(SAMLRequest));
         
         this.googleAccountsService = GoogleAccountsService.createServiceFrom(request, privateKey, publicKey);
         this.googleAccountsService.setPrincipal(TestUtils.getPrincipal());
@@ -54,7 +59,30 @@ public class GoogleAccountsServiceTests extends TestCase {
     
     public void testResponse() {
         final Response response = this.googleAccountsService.getResponse("ticketId");
+        assertEquals(ResponseType.POST, response.getResponseType());
+        assertTrue(response.getAttributes().containsKey("SAMLResponse"));
+    }
+    
+    protected String encodeMessage(final String xmlString) throws IOException {
+        byte[] xmlBytes = xmlString.getBytes("UTF-8");
+        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+        DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
+          byteOutputStream);
+        deflaterOutputStream.write(xmlBytes, 0, xmlBytes.length);
+        deflaterOutputStream.close();
+
+        // next, base64 encode it
+        Base64 base64Encoder = new Base64();
+        byte[] base64EncodedByteArray = base64Encoder.encode(byteOutputStream
+          .toByteArray());
+        String base64EncodedMessage = new String(base64EncodedByteArray);
         
+        return base64EncodedMessage;
+
+        // finally, URL encode it
+//        String urlEncodedMessage = URLEncoder.encode(base64EncodedMessage, "UTF-8");
+
+//        return urlEncodedMessage;
     }
     
     

@@ -50,15 +50,15 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     private static final String CONST_RELAY_STATE = "RelayState";
 
     private static final String TEMPLATE_SAML_RESPONSE = "<samlp:Response ID=\"<RESPONSE_ID>\" IssueInstant=\"<ISSUE_INSTANT>\" Version=\"2.0\""
-        + "xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\""
-        + "xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\""
-        + "xmlns:xenc=\"http://www.w3.org/2001/04/xmlenc#\">"
+        + " xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\""
+        + " xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\""
+        + " xmlns:xenc=\"http://www.w3.org/2001/04/xmlenc#\">"
         + "<samlp:Status>"
         + "<samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\" />"
         + "</samlp:Status>"
         + "<Assertion ID=\"<ASSERTION_ID>\""
-        + "IssueInstant=\"2003-04-17T00:46:02Z\" Version=\"2.0\""
-        + "xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\">"
+        + " IssueInstant=\"2003-04-17T00:46:02Z\" Version=\"2.0\""
+        + " xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\">"
         + "<Issuer>https://www.opensaml.org/IDP</Issuer>"
         + "<Subject>"
         + "<NameID Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress\">"
@@ -67,7 +67,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         + "<SubjectConfirmation Method=\"urn:oasis:names:tc:SAML:2.0:cm:bearer\"/>"
         + "</Subject>"
         + "<Conditions NotBefore=\"<NOT_BEFORE>\""
-        + "NotOnOrAfter=\"<NOT_ON_OR_AFTER>\">"
+        + " NotOnOrAfter=\"<NOT_ON_OR_AFTER>\">"
         + "</Conditions>"
         + "<AuthnStatement AuthnInstant=\"<AUTHN_INSTANT>\">"
         + "<AuthnContext>"
@@ -102,6 +102,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final HttpServletRequest request, final DSAPrivateKey privateKey,
         final DSAPublicKey publicKey) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
+
+        System.out.println(request.getParameter(CONST_PARAM_SERVICE));
         final String xmlRequest = decodeAuthnRequestXML(request
             .getParameter(CONST_PARAM_SERVICE));
 
@@ -116,7 +118,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             return null;
         }
 
-        final String assertionConsumerServiceUrl = document.getAttributes()
+        final String assertionConsumerServiceUrl = document.getChildNodes()
+            .item(0).getAttributes()
             .getNamedItem("AssertionConsumerServiceURL").getNodeValue();
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
