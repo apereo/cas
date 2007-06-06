@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.Provider;
@@ -43,7 +44,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author Scott Battaglia
@@ -55,8 +55,6 @@ public final class SamlUtils {
     private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
 
     private static final String JSR_105_PROVIDER = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
-
-    private static final String SAML_PROTOCOL_NS_URI_V20 = "urn:oasis:names:tc:SAML:2.0:protocol";
 
     private SamlUtils() {
         // nothing to do
@@ -78,8 +76,8 @@ public final class SamlUtils {
         final Document doc = constructDocumentFromXmlString(samlResponse);
 
         if (doc != null) {
-            final Element signedElement = signSamlElement(doc
-                .getDocumentElement(), privateKey, publicKey);
+            final Element signedElement = signSamlElement((Element) doc
+                .getChildNodes().item(0), privateKey, publicKey);
 
             try {
                 final TransformerFactory tf = TransformerFactory.newInstance();
@@ -101,7 +99,7 @@ public final class SamlUtils {
             final DocumentBuilderFactory factory = DocumentBuilderFactory
                 .newInstance();
             final DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(xml);
+            return builder.parse(new ByteArrayInputStream(xml.getBytes()));
         } catch (final Exception e) {
             return null;
         }
@@ -175,16 +173,6 @@ public final class SamlUtils {
     }
 
     private static Node getXmlSignatureInsertLocation(Element elem) {
-        Node insertLocation = null;
-        NodeList nodeList = elem.getElementsByTagNameNS(
-            SAML_PROTOCOL_NS_URI_V20, "Extensions");
-        if (nodeList.getLength() != 0) {
-            insertLocation = nodeList.item(nodeList.getLength() - 1);
-        } else {
-            nodeList = elem.getElementsByTagNameNS(SAML_PROTOCOL_NS_URI_V20,
-                "Status");
-            insertLocation = nodeList.item(nodeList.getLength() - 1);
-        }
-        return insertLocation;
+        return elem.getElementsByTagName("samlp:Status").item(0);
     }
 }

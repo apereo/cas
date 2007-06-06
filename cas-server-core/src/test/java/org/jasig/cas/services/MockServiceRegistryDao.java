@@ -35,6 +35,7 @@ public class MockServiceRegistryDao implements ServiceRegistryDao {
             final RegisteredServiceImpl impl = new RegisteredServiceImpl();
             impl.setId(2500);
             impl.setServiceId("id");
+            impl.setTheme("mytheme");
             
             l.add(impl);
         }
