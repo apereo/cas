@@ -61,7 +61,7 @@ public final class Response {
             }
         }
 
-        return new Response(ResponseType.REDIRECT, builder.toString(), null);
+        return new Response(ResponseType.REDIRECT, builder.toString(), parameters);
     }
 
     public Map<String, String> getAttributes() {

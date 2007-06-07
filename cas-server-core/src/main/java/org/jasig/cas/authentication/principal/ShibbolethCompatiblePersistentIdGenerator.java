@@ -22,11 +22,11 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements
     PersistentIdGenerator {
 
     private static final byte CONST_SEPARATOR = (byte) '!';
+    
+    private Base64 base64 = new Base64();
 
     @NotNull
     private byte[] salt;
-
-    private final Base64 base64 = new Base64();
 
     public String generate(final Principal principal, final Service service) {
         try {

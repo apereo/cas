@@ -32,8 +32,7 @@ public class GoogleAccountsServiceTests extends TestCase {
 
     private GoogleAccountsService googleAccountsService;
 
-    @Override
-    protected void setUp() throws Exception {
+    public static GoogleAccountsService getGoogleAccountsService() throws Exception {
         final DSAPublicKeyFactoryBean pubKeyFactoryBean = new DSAPublicKeyFactoryBean();
         final DSAPrivateKeyFactoryBean privKeyFactoryBean = new DSAPrivateKeyFactoryBean();
         
@@ -53,7 +52,11 @@ public class GoogleAccountsServiceTests extends TestCase {
         final String SAMLRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         request.setParameter("SAMLRequest", encodeMessage(SAMLRequest));
         
-        this.googleAccountsService = GoogleAccountsService.createServiceFrom(request, privateKey, publicKey);
+        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey);
+    }
+    
+    protected void setUp() throws Exception {       
+        this.googleAccountsService = getGoogleAccountsService();
         this.googleAccountsService.setPrincipal(TestUtils.getPrincipal());
     }
     
@@ -63,7 +66,7 @@ public class GoogleAccountsServiceTests extends TestCase {
         assertTrue(response.getAttributes().containsKey("SAMLResponse"));
     }
     
-    protected String encodeMessage(final String xmlString) throws IOException {
+    protected static String encodeMessage(final String xmlString) throws IOException {
         byte[] xmlBytes = xmlString.getBytes("UTF-8");
         ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
         DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(
@@ -78,12 +81,5 @@ public class GoogleAccountsServiceTests extends TestCase {
         String base64EncodedMessage = new String(base64EncodedByteArray);
         
         return base64EncodedMessage;
-
-        // finally, URL encode it
-//        String urlEncodedMessage = URLEncoder.encode(base64EncodedMessage, "UTF-8");
-
-//        return urlEncodedMessage;
     }
-    
-    
 }
