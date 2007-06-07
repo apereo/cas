@@ -121,12 +121,9 @@
     </licenses>
     <scm>
         <connection>
-            scm:cvs:pserver:anonymous:@developer.ja-sig.org:/home/cvs/jasig:cas3
+	        scm:svn:https://www.ja-sig.org/svn/cas3
         </connection>
-        <developerConnection>
-            scm:cvs:pserver:${user}:@developer.ja-sig.org:/home/cvs/jasig:cas3
-        </developerConnection>
-        <url>http://developer.ja-sig.org/source/browse/jasig/cas3</url>
+        <url>http://developer.ja-sig.org/source/browse/jasigsvn/cas3</url>
     </scm>
     <organization>
         <name>JA-SIG</name>
