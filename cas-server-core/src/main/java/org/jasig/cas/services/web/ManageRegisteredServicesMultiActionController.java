@@ -51,6 +51,7 @@ public final class ManageRegisteredServicesMultiActionController extends
      */
     public ManageRegisteredServicesMultiActionController(
         final ServicesManager servicesManager) {
+        super();
         this.servicesManager = servicesManager;
     }
 
