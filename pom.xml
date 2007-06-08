@@ -7,7 +7,7 @@
     <artifactId>cas-server</artifactId>
     <packaging>pom</packaging>
     <name>JA-SIG Central Authentication Service</name>
-    <version>3.1-m2</version>
+    <version>3.1-m3</version>
     <!-- 
         <description>
         JA-SIG Central Authentication Service (CAS) is an open-source,
@@ -373,7 +373,6 @@
             <url>http://repository.jboss.com/maven2</url>
         </repository>
     </repositories>
-
     <modules>
         <module>cas-server-core</module>
         <module>cas-server-support-generic</module>
@@ -391,6 +390,7 @@
 
     <reporting>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>

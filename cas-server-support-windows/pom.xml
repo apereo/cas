@@ -4,20 +4,19 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.1-m2</version>
+		<version>3.1-m3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-windows</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1-m2</version>
 	<name>JA-SIG CAS SPNEGO/NTLM Support</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
-			<version>3.1-m2</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
@@ -30,12 +29,6 @@
 			<groupId>org.samba.jcifs</groupId>
 			<artifactId>jcifs-ext</artifactId>
 			<version>0.9.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.3</version>
 		</dependency>
 	</dependencies>
 </project>

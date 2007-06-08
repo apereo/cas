@@ -4,20 +4,19 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.1-m2</version>
+		<version>3.1-m3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-integration-berkeleydb</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1-m2</version>
 	<name>JA-SIG CAS BerkeleyDB Integration</name>
 	
 	<dependencies>
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
-			<version>3.1-m2</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
