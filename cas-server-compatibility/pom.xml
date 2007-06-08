@@ -4,15 +4,13 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.1-m2</version>
+		<version>3.1-m3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-compatibility</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1-m2</version>
 	<name>JA-SIG CAS Compatibility Tests</name>
-
 	<build>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<testResources>
