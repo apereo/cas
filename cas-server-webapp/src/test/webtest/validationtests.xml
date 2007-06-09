@@ -52,7 +52,7 @@
 			&config;
 			<steps>
 				&processLogin;
-				<invoke description="Try to validate the ST with wrong service" url="/serviceValidate?service=http://foo.bar/&amp;ticket=foo" />
+				<invoke description="Try to validate a wrong ST with the service" url="/serviceValidate?service=http://foo.bar/&amp;ticket=foo" />
 				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_TICKET.*foo.*" regex="true" />
 				<invoke description="Try to validate the ST with wrong service" url="/serviceValidate?service=http://bar.foo/&amp;ticket=#{serviceTicket}" />
 				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_SERVICE.*#{serviceTicket}.*" regex="true" />
