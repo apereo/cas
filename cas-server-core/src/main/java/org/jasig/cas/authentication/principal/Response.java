@@ -12,6 +12,7 @@ import java.util.Map;
  * Encapsulates a Response to send back for a particular service.
  * 
  * @author Scott Battaglia
+ * @author Arnaud Lesueur
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
@@ -43,21 +44,26 @@ public final class Response {
         final Map<String, String> parameters) {
         final StringBuilder builder = new StringBuilder(
             parameters.size() * 40 + 100);
-
+        boolean isFirst = true;
+        
         builder.append(url);
-        builder.append(url.contains("?") ? "&" : "?");
-
+        
         for (final Map.Entry<String, String> entry : parameters.entrySet()) {
             if (entry.getValue() != null) {
+                if (isFirst) {
+                    builder.append(url.contains("?") ? "&" : "?");
+                    isFirst = false;
+                } else {
+                    builder.append("&");   
+                }
                 builder.append(entry.getKey());
                 builder.append("=");
-    
+
                 try {
                     builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
                 } catch (final Exception e) {
                     builder.append(entry.getValue());
                 }
-                builder.append("&");
             }
         }
 
