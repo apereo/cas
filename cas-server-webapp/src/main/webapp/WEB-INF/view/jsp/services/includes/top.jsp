@@ -66,17 +66,16 @@
 <div id="header">
   <div id="nav-system">
     <ul
-      ><li><a href="help.pdf">Help</a></li
-      ><li><a href="logout.html" title="logout of current session">Log Out</a></li
+      ><li><a href="logout.html" title="logout of current session"><spring:message code="management.services.link.logout" /></a></li
     ></ul>
   </div>
-  <p id="tagline">JA-SIG Central Authentication Service</p>
-  <h1 id="app-name">Services Management</h1>
+  <p id="tagline"><spring:message code="application.title" /></p>
+  <h1 id="app-name"><spring:message code="management.services.title" /></h1>
 </div>
 <div id="nav-main">
   <ul
-    ><li><a id="addServiceView" href="add.html"><span>Add Service</span></a></li
-    ><li><a id="manageServiceView" href="manage.html"><span>Manage Services</span></a></li
+    ><li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li
+    ><li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li
   ></ul>
 </div>
 <!-- CONTENT -->
