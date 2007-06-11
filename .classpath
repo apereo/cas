@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-support-spnego/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-support-spnego/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-ldap/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-support-windows/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-support-windows/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/test/java"/>
 	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-integration-jboss/src/main/java"/>
