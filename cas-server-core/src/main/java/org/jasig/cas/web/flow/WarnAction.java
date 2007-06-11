@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class WarnAction extends AbstractLoginAction {
+public final class WarnAction extends AbstractAction {
 
     /** Event to publish in the scenario where a warning is required. */
     private static final String EVENT_WARN = "warn";

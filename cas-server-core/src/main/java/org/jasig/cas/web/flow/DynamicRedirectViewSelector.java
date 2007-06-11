@@ -39,19 +39,17 @@ public final class DynamicRedirectViewSelector implements ViewSelector {
     public ViewSelection makeEntrySelection(final RequestContext request) {
         final WebApplicationService service = WebUtils.getService(request);
         final String ticket = WebUtils.getServiceTicketFromRequestScope(request);
-        if (service != null) {
-            final Response serviceResponse = service.getResponse(ticket);
+        final Response serviceResponse = service.getResponse(ticket);
             
-            if (serviceResponse.getResponseType() == Response.ResponseType.REDIRECT) {
-                return new ExternalRedirect(service.getResponse(ticket).getUrl());
-            } else if (serviceResponse.getResponseType() == Response.ResponseType.POST) {
+        switch (serviceResponse.getResponseType()) {
+            case POST:
                 final Map<String, Object> model = new HashMap<String, Object>();
                 model.put("parameters", serviceResponse.getAttributes());
                 model.put("originalUrl", service.getId());
                 return new ApplicationView("postResponseView", model);
-            }
+                
+            default:
+                return new ExternalRedirect(service.getResponse(ticket).getUrl());
         }
-        
-        return null;
     }
 }

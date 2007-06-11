@@ -7,7 +7,6 @@ package org.jasig.cas.web.flow;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.authentication.principal.OpenIdService;
 import org.jasig.cas.authentication.principal.Service;
@@ -16,8 +15,6 @@ import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.web.support.OpenIdUserNameExtractor;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,13 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public class OpenIdSingleSignOnAction extends AbstractAction {
-
-    @NotNull
-    private CookieGenerator ticketGrantingTicketCookieGenerator;
-
-    @NotNull
-    private CentralAuthenticationService centralAuthenticationService;
+public class OpenIdSingleSignOnAction extends AbstractLoginAction {
 
     @NotNull
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
@@ -48,7 +39,7 @@ public class OpenIdSingleSignOnAction extends AbstractAction {
             .getHttpServletRequest(requestContext);
         
         final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
-            this.ticketGrantingTicketCookieGenerator.getCookieName());
+            getTicketGrantingTicketCookieGenerator().getCookieName());
         final String userName = this.extractor
             .extractLocalUsernameFromUri(request
                 .getParameter("openid.identity"));
@@ -72,7 +63,7 @@ public class OpenIdSingleSignOnAction extends AbstractAction {
             ticketGrantingTicketId, userName);
 
         try {
-            final String serviceTicketId = this.centralAuthenticationService
+            final String serviceTicketId = getCentralAuthenticationService()
                 .grantServiceTicket(ticketGrantingTicketId, service,
                     credentials);
             WebUtils.putServiceTicketInRequestScope(requestContext,
@@ -82,15 +73,5 @@ public class OpenIdSingleSignOnAction extends AbstractAction {
         }
 
         return success();
-    }
-
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setTicketGrantingTicketCookieGenerator(
-        final CookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 }
