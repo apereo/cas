@@ -111,7 +111,9 @@ public final class TestUtils {
     }
 
     public static Service getService(final String name) {
-        return new SimpleWebApplicationServiceImpl(name);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", name);
+        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
 
     public static Authentication getAuthentication() {

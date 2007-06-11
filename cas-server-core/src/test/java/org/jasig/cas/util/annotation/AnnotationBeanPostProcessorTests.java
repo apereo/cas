@@ -69,54 +69,63 @@ public class AnnotationBeanPostProcessorTests extends TestCase {
     }
     
     protected class BadNotEmptyCollection {
+        @SuppressWarnings("unused")
         @NotEmpty
         private Collection c =  new ArrayList();
     }
 
     protected class BadNotEmptyArray {
+        @SuppressWarnings("unused")
         @NotEmpty
         private Object[] os2 = null;
     }
     
     protected class BadNotEmptyArray2 {
+        @SuppressWarnings("unused")
         @NotEmpty
         private Object[] os2 = new Object[0];
     }
 
     protected class BadSuperTestClass {
 
+        @SuppressWarnings("unused")
         @NotNull
         private String testNull = null;
     }
     
     protected class BadTestClass extends BadSuperTestClass {
         
+        @SuppressWarnings("unused")
         @GreaterThan(0)
         @IsIn({0,1,2})
         private int test = -1;
 
+        @SuppressWarnings("unused")
         @NotNull
         private String testNull = null;
 
         
+        @SuppressWarnings("unused")
         @NotEmpty
         private Map map = new HashMap();
 
     }
 protected class GoodTestClass {
         
+        @SuppressWarnings("unused")
         @GreaterThan(0)
         @IsIn({0,1,2})
         private int test = 1;
         
+        @SuppressWarnings("unused")
         @NotNull
         private String testNull = "haha";
         
         @NotEmpty
         private Collection<Object> c =  new ArrayList<Object>();
         
-        @NotEmpty
-        private Object[] os = new Object[] {new Object()};
+        @SuppressWarnings("unused")
+        private final Object[] os = new Object[] {new Object()};
         
         @NotEmpty
         private Map<String,String> map = new HashMap<String,String>();
