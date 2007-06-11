@@ -13,24 +13,20 @@ package org.jasig.cas.support.spnego.util;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class SpnegoConstants {
+public interface SpnegoConstants {
     
-    private SpnegoConstants() {
-        // constants, do not instanciate
-    }
+    String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
-    public static final String HEADER_AUTHENTICATE = "WWW-Authenticate";
+    String HEADER_AUTHORIZATION = "Authorization";
 
-    public static final String HEADER_AUTHORIZATION = "Authorization";
+    String NEGOTIATE = "Negotiate";
 
-    public static final String NEGOTIATE = "Negotiate";
+    String SPNEGO_FIRST_TIME = "spnegoFirstTime";
 
-    public static final String SPNEGO_FIRST_TIME = "spnegoFirstTime";
+    String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
-    public static final String SPNEGO_CREDENTIALS = "spnegoCredentials";
-
-    public static final byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
+    byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
             (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
     
-    public static final String NTLM = "NTLM";
+    String NTLM = "NTLM";
 }
