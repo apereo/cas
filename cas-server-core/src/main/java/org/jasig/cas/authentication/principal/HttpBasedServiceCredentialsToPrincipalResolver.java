@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.TestUtils;
+
 /**
  * HttpBasedServiceCredentialsToPrincipalResolver extracts the callbackUrl from
  * the HttpBasedServiceCredentials and constructs a SimpleService with the
@@ -23,8 +25,7 @@ public final class HttpBasedServiceCredentialsToPrincipalResolver implements
      */
     public Principal resolvePrincipal(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
-
-        return new SimpleWebApplicationServiceImpl(serviceCredentials.toString());
+        return TestUtils.getService(serviceCredentials.toString());
     }
 
     /**

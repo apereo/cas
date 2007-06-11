@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.springframework.util.StringUtils;
 
 /**
@@ -26,23 +27,26 @@ public final class SimpleWebApplicationServiceImpl extends
 
     private static final String CONST_PARAM_TICKET = "ticket";
 
+    private static final String CONST_PARAM_METHOD = "method";
+
+    private final ResponseType responseType;
+
     /**
      * Unique Id for Serialization
      */
     private static final long serialVersionUID = 8334068957483758042L;
 
-    public SimpleWebApplicationServiceImpl(final String id) {
-        super(id, id, null);
-    }
-    
     private SimpleWebApplicationServiceImpl(final String id,
-        final String originalUrl, final String artifactId) {
+        final String originalUrl, final String artifactId,
+        final ResponseType responseType) {
         super(id, originalUrl, artifactId);
+        this.responseType = responseType;
     }
 
     public static SimpleWebApplicationServiceImpl createServiceFrom(
         final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
+        final String method = request.getParameter(CONST_PARAM_METHOD);
 
         if (!StringUtils.hasText(service)) {
             return null;
@@ -51,7 +55,8 @@ public final class SimpleWebApplicationServiceImpl extends
         final String id = cleanupUrl(service);
         final String artifactId = request.getParameter(CONST_PARAM_TICKET);
 
-        return new SimpleWebApplicationServiceImpl(id, service, artifactId);
+        return new SimpleWebApplicationServiceImpl(id, service, artifactId,
+            "POST".equals(method) ? ResponseType.POST : ResponseType.REDIRECT);
     }
 
     public Response getResponse(final String ticketId) {
@@ -61,6 +66,9 @@ public final class SimpleWebApplicationServiceImpl extends
             parameters.put(CONST_PARAM_TICKET, ticketId);
         }
 
+        if (ResponseType.POST == this.responseType) {
+            return Response.getPostResponse(getOriginalUrl(), parameters);
+        }
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 

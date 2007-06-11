@@ -21,6 +21,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jboss.cache.TreeCache;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * Test case to test the DefaultTicketRegistry based on test cases to test all
@@ -192,13 +193,15 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
 
     public void testGetTicketsFromRegistryEqualToTicketsAdded() {
         final Collection<Ticket> tickets = new ArrayList<Ticket>();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", "test");
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                 "TEST" + i, getAuthentication(),
                 new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket(
-                "tests" + i, new SimpleWebApplicationServiceImpl("test"),
+                "tests" + i, SimpleWebApplicationServiceImpl.createServiceFrom(request),
                 new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
