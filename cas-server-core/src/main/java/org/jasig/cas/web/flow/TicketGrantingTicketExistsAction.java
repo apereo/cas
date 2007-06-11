@@ -5,6 +5,12 @@
  */
 package org.jasig.cas.web.flow;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.cas.util.annotation.NotNull;
+import org.jasig.cas.web.support.WebUtils;
+import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,16 +31,25 @@ import org.springframework.webflow.execution.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public final class TicketGrantingTicketExistsAction extends AbstractLoginAction {
+public final class TicketGrantingTicketExistsAction extends AbstractAction {
 
     /** Event string to denote a TicketGrantingTicket exists. */
     private static final String EVENT_TICKET_GRANTING_TICKET_EXISTS = "ticketGrantingTicketExists";
 
     /** Event string to denote a TicketGrantingTicket does not exist. */
     private static final String EVENT_NO_TICKET_GRANTING_TICKET_EXISTS = "noTicketGrantingTicketExists";
+    
+    @NotNull
+    private CookieGenerator ticketGrantingTicketCookieGenerator;
+    
+    public void setTicketGrantingTicketCookieGenerator(final CookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
+    }
 
     protected Event doExecute(final RequestContext context) {
-        return extractTicketGrantingTicketFromCookie(context) != null
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        return WebUtils.getCookieValue(request,
+            this.ticketGrantingTicketCookieGenerator.getCookieName()) != null
             ? result(EVENT_TICKET_GRANTING_TICKET_EXISTS)
             : result(EVENT_NO_TICKET_GRANTING_TICKET_EXISTS);
     }

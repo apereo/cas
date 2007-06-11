@@ -7,6 +7,7 @@ package org.jasig.cas.web.flow;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -24,6 +25,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public abstract class AbstractLoginAction extends AbstractAction {
 
+    /** Instance of CentralAuthenticationService. */
+    @NotNull
+    private CentralAuthenticationService centralAuthenticationService;
+    
     @NotNull
     private CookieGenerator ticketGrantingTicketCookieGenerator;
     
@@ -33,6 +38,15 @@ public abstract class AbstractLoginAction extends AbstractAction {
     
     protected final CookieGenerator getTicketGrantingTicketCookieGenerator() {
         return this.ticketGrantingTicketCookieGenerator;
+    }
+
+    protected final CentralAuthenticationService getCentralAuthenticationService() {
+        return this.centralAuthenticationService;
+    }
+
+    public final void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     protected final boolean isGatewayPresent(final RequestContext context) {

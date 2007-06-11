@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.annotation.NotEmpty;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -27,6 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
 public final class ExtractServiceAction extends AbstractAction {
 
     /** Extractors for finding the service. */
+    @NotEmpty
     private List<ArgumentExtractor> argumentExtractors;
     
     protected Event doExecute(final RequestContext context) throws Exception {

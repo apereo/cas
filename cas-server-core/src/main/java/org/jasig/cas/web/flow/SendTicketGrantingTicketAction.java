@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,9 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
 
-    @NotNull
-    private CentralAuthenticationService centralAuthenticationService;
-
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketId = 
             extractTicketGrantingTicketFromCookie(context);
@@ -36,7 +31,7 @@ public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
         }
 
         if (ticketGrantingTicketId != null) {
-            this.centralAuthenticationService
+            getCentralAuthenticationService()
                 .destroyTicketGrantingTicket(ticketGrantingTicketId);
         }
 
@@ -44,10 +39,5 @@ public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
             .getHttpServletResponse(context), ticketGrantingTicketFromRequest);
 
         return success();
-    }
-
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
     }
 }

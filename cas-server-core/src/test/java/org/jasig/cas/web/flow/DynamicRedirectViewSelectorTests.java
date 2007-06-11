@@ -32,9 +32,18 @@ public class DynamicRedirectViewSelectorTests extends TestCase {
     private DynamicRedirectViewSelector selector = new DynamicRedirectViewSelector();
 
     public void testNoService() {
+        try {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        assertNull(this.selector.makeEntrySelection(context));
+        this.selector.makeEntrySelection(context);
+        fail("null pointer expected.");
+        } catch (final NullPointerException e) {
+            return;
+        }
+    }
+    
+    public void testNotUsedMethods() {
+        assertFalse(this.selector.isEntrySelectionRenderable(new MockRequestContext()));
     }
     
     public void testWithCasService() {
@@ -48,6 +57,7 @@ public class DynamicRedirectViewSelectorTests extends TestCase {
         
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertTrue(this.selector.makeEntrySelection(context) instanceof ExternalRedirect);
+        assertTrue(this.selector.makeRefreshSelection(context) instanceof ExternalRedirect);
     }
     
     public void testWithGoogleAccountsService() throws Exception {
