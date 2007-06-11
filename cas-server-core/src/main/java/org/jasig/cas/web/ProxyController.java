@@ -8,8 +8,8 @@ package org.jasig.cas.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.util.StringUtils;
@@ -77,8 +77,7 @@ public final class ProxyController extends AbstractController {
     }
 
     private Service getTargetService(final HttpServletRequest request) {
-        final String targetService = request.getParameter("targetService");
-        return TestUtils.getService(targetService);
+        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
 
     private ModelAndView generateErrorView(final String code,
