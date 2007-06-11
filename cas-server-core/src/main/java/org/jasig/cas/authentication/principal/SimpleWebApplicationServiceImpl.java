@@ -25,6 +25,8 @@ public final class SimpleWebApplicationServiceImpl extends
 
     private static final String CONST_PARAM_SERVICE = "service";
 
+    private static final String CONST_PARAM_TARGET_SERVICE = "targetService";
+
     private static final String CONST_PARAM_TICKET = "ticket";
 
     private static final String CONST_PARAM_METHOD = "method";
@@ -35,6 +37,10 @@ public final class SimpleWebApplicationServiceImpl extends
      * Unique Id for Serialization
      */
     private static final long serialVersionUID = 8334068957483758042L;
+    
+    public SimpleWebApplicationServiceImpl(final String id) {
+        this(id, id, null, null);
+    }
 
     private SimpleWebApplicationServiceImpl(final String id,
         final String originalUrl, final String artifactId,
@@ -45,18 +51,22 @@ public final class SimpleWebApplicationServiceImpl extends
 
     public static SimpleWebApplicationServiceImpl createServiceFrom(
         final HttpServletRequest request) {
-        final String service = request.getParameter(CONST_PARAM_SERVICE);
+        final String targetService = request
+            .getParameter(CONST_PARAM_TARGET_SERVICE);
         final String method = request.getParameter(CONST_PARAM_METHOD);
+        final String serviceToUse = StringUtils.hasText(targetService)
+            ? targetService : request.getParameter(CONST_PARAM_SERVICE);
 
-        if (!StringUtils.hasText(service)) {
+        if (!StringUtils.hasText(serviceToUse)) {
             return null;
         }
 
-        final String id = cleanupUrl(service);
+        final String id = cleanupUrl(serviceToUse);
         final String artifactId = request.getParameter(CONST_PARAM_TICKET);
 
-        return new SimpleWebApplicationServiceImpl(id, service, artifactId,
-            "POST".equals(method) ? ResponseType.POST : ResponseType.REDIRECT);
+        return new SimpleWebApplicationServiceImpl(id, serviceToUse,
+            artifactId, "POST".equals(method) ? ResponseType.POST
+                : ResponseType.REDIRECT);
     }
 
     public Response getResponse(final String ticketId) {
