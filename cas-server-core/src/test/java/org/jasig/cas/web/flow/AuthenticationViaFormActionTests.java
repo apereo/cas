@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
@@ -33,17 +32,10 @@ public class AuthenticationViaFormActionTests extends
 
     private AuthenticationViaFormAction action;
 
-    private CookieGenerator cookieGenerator;
-
     private CookieGenerator warnCookieGenerator;
 
     protected void onSetUp() throws Exception {
         this.action = new AuthenticationViaFormAction();
-
-        this.cookieGenerator = new CookieGenerator();
-        this.cookieGenerator.setCookieName("TGT");
-        this.cookieGenerator.setCookieDomain("/");
-        this.cookieGenerator.setCookiePath("/");
 
         this.warnCookieGenerator = new CookieGenerator();
         this.warnCookieGenerator.setCookieName("WARN");
@@ -53,8 +45,6 @@ public class AuthenticationViaFormActionTests extends
 
         this.action
             .setCentralAuthenticationService(getCentralAuthenticationService());
-        this.action
-            .setTicketGrantingTicketCookieGenerator(this.cookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
         this.action.afterPropertiesSet();
     }
@@ -144,8 +134,7 @@ public class AuthenticationViaFormActionTests extends
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        request
-            .setCookies(new Cookie[] {new Cookie("TGT", ticketGrantingTicket)});
+        context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
         request.addParameter("renew", "true");
         request.addParameter("service", "test");
         request.addParameter("username", "test");
@@ -165,8 +154,7 @@ public class AuthenticationViaFormActionTests extends
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        request
-            .setCookies(new Cookie[] {new Cookie("TGT", ticketGrantingTicket)});
+        context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
         request.addParameter("renew", "true");
         request.addParameter("service", "test");
         request.addParameter("username", "test2");
@@ -186,8 +174,7 @@ public class AuthenticationViaFormActionTests extends
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
 
-        request
-            .setCookies(new Cookie[] {new Cookie("TGT", ticketGrantingTicket)});
+        context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
         request.addParameter("renew", "true");
         request.addParameter("service", "test");
 

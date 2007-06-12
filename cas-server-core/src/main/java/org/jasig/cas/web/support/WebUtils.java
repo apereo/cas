@@ -46,6 +46,12 @@ public final class WebUtils {
         return ((ServletExternalContext) context.getExternalContext())
             .getResponse();
     }
+    
+    public static final String getCookieValue(final RequestContext context,
+        final String cookieName) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        return getCookieValue(request, cookieName);
+    }
 
     public static final String getCookieValue(final HttpServletRequest request,
         final String cookieName) {
@@ -84,10 +90,15 @@ public final class WebUtils {
         context.getRequestScope().put("ticketGrantingTicketId", ticketValue);
     }
 
-    public static final String getTicketGrantingTicketFromRequestScope(
+    public static final String getTicketGrantingTicketId(
         final RequestContext context) {
-        return context.getRequestScope().getString("ticketGrantingTicketId");
+        final String tgtFromRequest = context.getRequestScope().getString("ticketGrantingTicketId");
+        final String tgtFromFlow = context.getFlowScope().getString("ticketGrantingTicketId");
+        
+        return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
+
     }
+
 
     public static final void putServiceTicketInRequestScope(
         final RequestContext context, final String ticketValue) {

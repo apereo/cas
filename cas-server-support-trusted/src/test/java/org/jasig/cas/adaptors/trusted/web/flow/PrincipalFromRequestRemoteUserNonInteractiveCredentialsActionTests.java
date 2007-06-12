@@ -23,7 +23,6 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -59,7 +58,6 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests
         centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
         
-        this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());
         this.action.setCentralAuthenticationService(centralAuthenticationService);
     }
     
@@ -79,5 +77,4 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests
         
         assertEquals("error", this.action.execute(context).getId());
     }
-    
 }

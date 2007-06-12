@@ -23,13 +23,11 @@ public final class GenerateServiceTicketAction extends AbstractLoginAction {
 
     protected Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
-        final String ticketGrantingTicketFromRequest = WebUtils.getTicketGrantingTicketFromRequestScope(context);
+        final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
             final String serviceTicketId = getCentralAuthenticationService()
-                .grantServiceTicket(ticketGrantingTicketFromRequest != null
-                    ? ticketGrantingTicketFromRequest
-                    : extractTicketGrantingTicketFromCookie(context),
+                .grantServiceTicket(ticketGrantingTicket,
                     service);
             WebUtils.putServiceTicketInRequestScope(context,
                 serviceTicketId);

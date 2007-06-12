@@ -14,10 +14,11 @@
 	
 	<action-state id="extractService">
 		<action bean="extractServiceAction" />
-		<!--<transition on="success" to="ticketGrantingTicketExistsCheckAction" />-->
-		<transition on="success" to="openIdSingleSignOnAction" />
+		<transition on="success" to="ticketGrantingTicketExistsCheckAction" />
+<!--		<transition on="success" to="openIdSingleSignOnAction" />-->
 	</action-state>
 	
+	<!-- FIX -->
     <action-state id="openIdSingleSignOnAction">
     	<action bean="openIdSingleSignOnAction" />
     	<transition on="success" to="warn" />
