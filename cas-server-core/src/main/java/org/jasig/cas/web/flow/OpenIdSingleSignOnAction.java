@@ -5,17 +5,15 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.authentication.principal.OpenIdService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.web.support.OpenIdUserNameExtractor;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.webflow.execution.Event;
+
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -28,49 +26,35 @@ import org.springframework.webflow.execution.RequestContext;
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public class OpenIdSingleSignOnAction extends AbstractLoginAction {
+public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     @NotNull
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
+    
+    public void setExtractor(final OpenIdUserNameExtractor extractor) {
+        this.extractor = extractor;
+    }
 
-    protected Event doExecute(final RequestContext context)
-        throws Exception {
-        final HttpServletRequest request = WebUtils
-            .getHttpServletRequest(context);
-        
+    @Override
+    protected Credentials constructCredentialsFromRequest(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String userName = this.extractor
-            .extractLocalUsernameFromUri(request
-                .getParameter("openid.identity"));
+            .extractLocalUsernameFromUri(context.getRequestParameters()
+                .get("openid.identity"));
         final Service service = WebUtils.getService(context);
-
-        request.getSession().setAttribute("openIdLocalId", userName);
-       
-        if (ticketGrantingTicketId == null) {
-            return error();
+        
+        context.getExternalContext().getSessionMap().put("openIdLocalId", userName);
+        
+        // clear the service because otherwise we can fake the username
+        if (service instanceof OpenIdService && userName == null) {
+            context.getFlowScope().remove("service");
         }
         
-        if (!(service instanceof OpenIdService)) {
-            return error();
+        if (ticketGrantingTicketId == null || userName == null) {
+            return null;
         }
-
-        if (userName == null) {
-            return result("badUsername");
-        }
-
-        final OpenIdCredentials credentials = new OpenIdCredentials(
+        
+        return new OpenIdCredentials(
             ticketGrantingTicketId, userName);
-
-        try {
-            final String serviceTicketId = getCentralAuthenticationService()
-                .grantServiceTicket(ticketGrantingTicketId, service,
-                    credentials);
-            WebUtils.putServiceTicketInRequestScope(context,
-                serviceTicketId);
-        } catch (final TicketException e) {
-            return error();
-        }
-
-        return success();
     }
 }

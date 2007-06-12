@@ -22,7 +22,7 @@ import org.jasig.cas.util.annotation.NotNull;
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public class GoogleAccountsArgumentExtractor extends AbstractArgumentExtractor {
+public class GoogleAccountsArgumentExtractor implements ArgumentExtractor {
 
     @NotNull
     private DSAPublicKey publicKey;

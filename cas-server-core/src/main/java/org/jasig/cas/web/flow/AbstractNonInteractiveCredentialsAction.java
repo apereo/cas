@@ -5,11 +5,15 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,7 +26,15 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.4
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends
-    AbstractLoginAction {
+    AbstractAction {
+    
+    /** Instance of CentralAuthenticationService. */
+    @NotNull
+    private CentralAuthenticationService centralAuthenticationService;
+    
+    protected final boolean isRenewPresent(final RequestContext context) {
+        return StringUtils.hasText(context.getRequestParameters().get("renew"));
+    }
 
     protected final Event doExecute(final RequestContext context) {
         final Credentials credentials = constructCredentialsFromRequest(context);
@@ -38,7 +50,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             && service != null) {
 
             try {
-                final String serviceTicketId = getCentralAuthenticationService()
+                final String serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketId,
                         service,
                         credentials);
@@ -52,7 +64,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
                     onError(context, credentials);
                     return error();
                 }
-                getCentralAuthenticationService()
+                this.centralAuthenticationService
                     .destroyTicketGrantingTicket(ticketGrantingTicketId);
                 if (logger.isDebugEnabled()) {
                     logger
@@ -66,7 +78,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(
                 context,
-                getCentralAuthenticationService()
+                this.centralAuthenticationService
                     .createTicketGrantingTicket(credentials));
             onSuccess(context, credentials);
             return success();
@@ -74,6 +86,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             onError(context, credentials);
             return error();
         }
+    }
+    
+    public final void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     /**

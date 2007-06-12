@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -37,7 +38,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     private final Authentication authentication;
 
     /** Flag to enforce manual expiration. */
-    private boolean expired = false;
+    private AtomicBoolean expired = new AtomicBoolean(false);
     
     private final Map<String,Service> services = new HashMap<String, Service>();
 
@@ -94,7 +95,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
         return serviceTicket;
     }
     
-    protected synchronized void logOutOfServices() {
+    private void logOutOfServices() {
         for (final Entry<String, Service> entry : this.services.entrySet()) {
             entry.getValue().logOutOfService(entry.getKey());
         }
@@ -105,15 +106,12 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     }
 
     public synchronized void expire() {
-        this.expired = true;
-        
+        this.expired.set(true);
         logOutOfServices();
     }
 
     public boolean isExpiredInternal() {
-        return this.expired
-            || (this.getGrantingTicket() != null && this.getGrantingTicket()
-                .isExpired());
+        return this.expired.get();
     }
 
     public List<Authentication> getChainedAuthentications() {

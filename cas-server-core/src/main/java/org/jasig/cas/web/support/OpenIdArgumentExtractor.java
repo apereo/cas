@@ -18,7 +18,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * @since 3.1
  *
  */
-public class OpenIdArgumentExtractor extends AbstractArgumentExtractor {
+public class OpenIdArgumentExtractor implements ArgumentExtractor {
 
     public WebApplicationService extractService(final HttpServletRequest request) {
         return OpenIdService.createServiceFrom(request);

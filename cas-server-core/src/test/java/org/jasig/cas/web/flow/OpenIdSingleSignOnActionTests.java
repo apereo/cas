@@ -12,6 +12,7 @@ import org.jasig.cas.authentication.principal.OpenIdService;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.web.support.DefaultOpenIdUserNameExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -32,6 +33,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractCentralAuthentication
     protected void onSetUp() throws Exception {
         this.action = new OpenIdSingleSignOnAction();
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.action.setExtractor(new DefaultOpenIdUserNameExtractor());
         this.action.afterPropertiesSet();
     }
     
@@ -59,8 +61,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractCentralAuthentication
         context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
         
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals("badUsername", this.action.doExecute(context).getId());
-        
+        assertEquals("error", this.action.doExecute(context).getId());
     }
     
     public void testSuccessfulServiceTicket() throws Exception {

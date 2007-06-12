@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
@@ -24,13 +26,25 @@ public class DefaultServicesManagerImplTests extends TestCase {
     private DefaultServicesManagerImpl defaultServicesManagerImpl;
 
     protected void setUp() throws Exception {
-        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(new MockServiceRegistryDao(true));
+        final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
+        final List<RegisteredService> list = new ArrayList<RegisteredService>();
+        
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(2500);
+        r.setServiceId("serviceId");
+        r.setName("serviceName");
+        
+        list.add(r);
+        
+        dao.setRegisteredServices(list);
+        this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
     }
     
     public void testSaveAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("test");
+        r.setServiceId("test");
         
         this.defaultServicesManagerImpl.save(r);
         assertNotNull(this.defaultServicesManagerImpl.findServiceBy(1000));

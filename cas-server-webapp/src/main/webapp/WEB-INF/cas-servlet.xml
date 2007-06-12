@@ -183,31 +183,20 @@
 		p:warnCookieGenerator-ref="warnCookieGenerator"
 		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 	
-	<bean id="extractServiceAction" class="org.jasig.cas.web.flow.ExtractServiceAction"
-		p:argumentExtractors-ref="argumentExtractors" />
-	
-	<bean id="automaticCookiePathSetterAction" class="org.jasig.cas.web.flow.AutomaticCookiePathSetterAction"
+	<bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
+		p:argumentExtractors-ref="argumentExtractors"
 		p:warnCookieGenerator-ref="warnCookieGenerator"
 		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 	
 	<bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
 		p:centralAuthenticationService-ref="centralAuthenticationService"
-		p:warnCookieGenerator-ref="warnCookieGenerator"
-		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
+		p:warnCookieGenerator-ref="warnCookieGenerator" />
 	
 	<bean id="generateServiceTicketAction" class="org.jasig.cas.web.flow.GenerateServiceTicketAction"
-		p:centralAuthenticationService-ref="centralAuthenticationService"
-		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
+		p:centralAuthenticationService-ref="centralAuthenticationService" />
 		
 	<bean id="sendTicketGrantingTicketAction" class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction"
 		p:centralAuthenticationService-ref="centralAuthenticationService"
-		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
-		
-	<bean id="ticketGrantingTicketExistsAction" class="org.jasig.cas.web.flow.TicketGrantingTicketExistsAction"
-		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
-		
-	<bean id="warnAction" class="org.jasig.cas.web.flow.WarnAction"
-		p:warnCookieGenerator-ref="warnCookieGenerator"
 		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 
 <!--
@@ -233,13 +222,13 @@
  	
  	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor" />
 	
-	<bean id="warnCookieGenerator" class="org.springframework.web.util.CookieGenerator"
+	<bean id="warnCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
 		p:cookieSecure="true"
 		p:cookieMaxAge="-1"
 		p:cookieName="CASPRIVACY"
 		p:cookiePath="/cas" />
 	
-	<bean id="ticketGrantingTicketCookieGenerator" class="org.springframework.web.util.CookieGenerator"
+	<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
 		p:cookieSecure="true"
 		p:cookieMaxAge="-1"
 		p:cookieName="CASTGC"
@@ -248,7 +237,6 @@
 	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector" />
     
     <bean id="openIdSingleSignOnAction" class="org.jasig.cas.web.flow.OpenIdSingleSignOnAction"
-    	p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
     	p:centralAuthenticationService-ref="centralAuthenticationService" />
 	
 	<bean id="addRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"

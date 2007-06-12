@@ -94,10 +94,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     public final boolean isExpired() {
-        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
+        return this.expirationPolicy.isExpired(this) || (getGrantingTicket() != null && getGrantingTicket().isExpired()) || isExpiredInternal();
     }
 
-    protected abstract boolean isExpiredInternal();
+    protected boolean isExpiredInternal() {
+        return false;
+    }
 
     public final int hashCode() {
         return 34 ^ this.getId().hashCode();
