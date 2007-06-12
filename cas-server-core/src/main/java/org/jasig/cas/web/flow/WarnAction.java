@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
@@ -41,15 +39,8 @@ public final class WarnAction extends AbstractAction {
     }
 
     private boolean isWarnCookiePresent(final RequestContext context) {
-        final HttpServletRequest request = WebUtils
-            .getHttpServletRequest(context);
-        final String value = WebUtils.getCookieValue(request,
-            this.warnCookieGenerator.getCookieName());
-
-        if (value == null) {
-            return false;
-        }
-        return Boolean.valueOf(value).booleanValue();
+        return Boolean.parseBoolean(WebUtils.getCookieValue(context,
+            this.warnCookieGenerator.getCookieName()));
     }
 
     public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {

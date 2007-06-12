@@ -26,7 +26,6 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -59,7 +58,6 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
         
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.setTicketGrantingTicketCookieGenerator(new CookieGenerator());
         this.action.afterPropertiesSet();
     }
     

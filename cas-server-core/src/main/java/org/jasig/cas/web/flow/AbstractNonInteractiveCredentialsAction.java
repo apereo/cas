@@ -26,7 +26,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
 
     protected final Event doExecute(final RequestContext context) {
         final Credentials credentials = constructCredentialsFromRequest(context);
-        final String ticketGrantingTicketId = extractTicketGrantingTicketFromCookie(context);
+        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
 
         if (credentials == null) {

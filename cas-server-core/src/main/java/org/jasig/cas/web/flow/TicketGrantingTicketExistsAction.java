@@ -5,15 +5,12 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 
 /**
  * Action to determine if there is a TicketGrantingTicket or not. One of two
@@ -38,19 +35,24 @@ public final class TicketGrantingTicketExistsAction extends AbstractAction {
 
     /** Event string to denote a TicketGrantingTicket does not exist. */
     private static final String EVENT_NO_TICKET_GRANTING_TICKET_EXISTS = "noTicketGrantingTicketExists";
-    
+
     @NotNull
     private CookieGenerator ticketGrantingTicketCookieGenerator;
-    
-    public void setTicketGrantingTicketCookieGenerator(final CookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
+
+    public void setTicketGrantingTicketCookieGenerator(
+        final CookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
     protected Event doExecute(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        return WebUtils.getCookieValue(request,
-            this.ticketGrantingTicketCookieGenerator.getCookieName()) != null
-            ? result(EVENT_TICKET_GRANTING_TICKET_EXISTS)
-            : result(EVENT_NO_TICKET_GRANTING_TICKET_EXISTS);
+        final String ticketGrantingTicketValue = WebUtils.getCookieValue(
+            context, this.ticketGrantingTicketCookieGenerator.getCookieName());
+
+        if (ticketGrantingTicketValue != null) {
+            context.getFlowScope().put("ticketGrantingTicketId",
+                ticketGrantingTicketValue);
+            return result(EVENT_TICKET_GRANTING_TICKET_EXISTS);
+        }
+        return result(EVENT_NO_TICKET_GRANTING_TICKET_EXISTS);
     }
 }

@@ -33,17 +33,16 @@ public class OpenIdSingleSignOnAction extends AbstractLoginAction {
     @NotNull
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
-    protected Event doExecute(final RequestContext requestContext)
+    protected Event doExecute(final RequestContext context)
         throws Exception {
         final HttpServletRequest request = WebUtils
-            .getHttpServletRequest(requestContext);
+            .getHttpServletRequest(context);
         
-        final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
-            getTicketGrantingTicketCookieGenerator().getCookieName());
+        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String userName = this.extractor
             .extractLocalUsernameFromUri(request
                 .getParameter("openid.identity"));
-        final Service service = WebUtils.getService(requestContext);
+        final Service service = WebUtils.getService(context);
 
         request.getSession().setAttribute("openIdLocalId", userName);
        
@@ -51,7 +50,7 @@ public class OpenIdSingleSignOnAction extends AbstractLoginAction {
             return error();
         }
         
-        if (service == null || !(service instanceof OpenIdService)) {
+        if (!(service instanceof OpenIdService)) {
             return error();
         }
 
@@ -66,7 +65,7 @@ public class OpenIdSingleSignOnAction extends AbstractLoginAction {
             final String serviceTicketId = getCentralAuthenticationService()
                 .grantServiceTicket(ticketGrantingTicketId, service,
                     credentials);
-            WebUtils.putServiceTicketInRequestScope(requestContext,
+            WebUtils.putServiceTicketInRequestScope(context,
                 serviceTicketId);
         } catch (final TicketException e) {
             return error();

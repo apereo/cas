@@ -51,9 +51,6 @@ public class AuthenticationViaFormAction extends FormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    @NotNull
-    private CookieGenerator ticketGrantingTicketCookieGenerator;
-
     protected final void doBind(final RequestContext context,
         final DataBinder binder) throws Exception {
         final HttpServletRequest request = WebUtils
@@ -69,19 +66,15 @@ public class AuthenticationViaFormAction extends FormAction {
 
     public final Event submit(final RequestContext context) throws Exception {
         final Credentials credentials = (Credentials) getFormObject(context);
-        final HttpServletRequest request = WebUtils
-            .getHttpServletRequest(context);
-        final String ticketGrantingTicketIdFromCookie = WebUtils
-            .getCookieValue(request, this.ticketGrantingTicketCookieGenerator
-                .getCookieName());
+        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
 
-        if (StringUtils.hasText(request.getParameter("renew"))
-            && ticketGrantingTicketIdFromCookie != null && service != null) {
+        if (StringUtils.hasText(context.getRequestParameters().get("renew"))
+            && ticketGrantingTicketId != null && service != null) {
 
             try {
                 final String serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketIdFromCookie,
+                    .grantServiceTicket(ticketGrantingTicketId,
                         service, credentials);
                 WebUtils.putServiceTicketInRequestScope(context,
                     serviceTicketId);
@@ -95,7 +88,7 @@ public class AuthenticationViaFormAction extends FormAction {
                     return error();
                 }
                 this.centralAuthenticationService
-                    .destroyTicketGrantingTicket(ticketGrantingTicketIdFromCookie);
+                    .destroyTicketGrantingTicket(ticketGrantingTicketId);
                 if (logger.isDebugEnabled()) {
                     logger
                         .debug(
@@ -168,12 +161,6 @@ public class AuthenticationViaFormAction extends FormAction {
         final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
-    
-    public final void setTicketGrantingTicketCookieGenerator(
-        final CookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
-
     
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;

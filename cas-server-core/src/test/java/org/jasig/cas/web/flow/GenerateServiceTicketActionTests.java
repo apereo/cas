@@ -13,7 +13,6 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -29,17 +28,10 @@ public final class GenerateServiceTicketActionTests extends
 
     private String ticketGrantingTicket;
 
-    private CookieGenerator tgtCookieGenerator;
-
     protected void onSetUp() throws Exception {
         this.action = new GenerateServiceTicketAction();
-        this.tgtCookieGenerator = new CookieGenerator();
-        this.tgtCookieGenerator.setCookieName("TGT");
-
         this.action
             .setCentralAuthenticationService(getCentralAuthenticationService());
-        this.action
-            .setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.afterPropertiesSet();
 
         this.ticketGrantingTicket = getCentralAuthenticationService()
@@ -50,6 +42,7 @@ public final class GenerateServiceTicketActionTests extends
     public void testServiceTicketFromCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket);
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
