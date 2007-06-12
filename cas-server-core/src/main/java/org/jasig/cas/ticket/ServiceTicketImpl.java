@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.ticket;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -31,7 +33,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     /** Is this service ticket the result of a new login. */
     private final boolean fromNewLogin;
 
-    private boolean grantedTicketAlready;
+    private AtomicBoolean grantedTicketAlready = new AtomicBoolean(false);
 
     /**
      * Constructs a new ServiceTicket with a Unique Id, a TicketGrantingTicket,
@@ -66,27 +68,18 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return this.service;
     }
 
-    public boolean isExpiredInternal() {
-        return this.getGrantingTicket().isExpired();
-    }
-
     public boolean isValidFor(final Service serviceToValidate) {
         updateState();
         return this.service.equals(serviceToValidate);
     }
 
-    public synchronized TicketGrantingTicket grantTicketGrantingTicket(
+    public TicketGrantingTicket grantTicketGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
-        if (this.grantedTicketAlready) {
+        if (this.grantedTicketAlready.getAndSet(true)) {
             throw new IllegalStateException(
                 "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
         }
-        this.grantedTicketAlready = true;
-        /*
-         * XXX this is causing ticket validation to fail (because a ticket can
-         * only be "used" once): updateState();
-         */
 
         return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
             authentication, expirationPolicy);

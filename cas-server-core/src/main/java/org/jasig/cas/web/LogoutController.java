@@ -10,11 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.util.annotation.NotNull;
-import org.jasig.cas.web.support.WebUtils;
+import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.util.CookieGenerator;
 
 /**
  * Controller to delete ticket granting ticket cookie in order to log out of
@@ -34,11 +33,11 @@ public final class LogoutController extends AbstractController {
 
     /** CookieGenerator for TGT Cookie */
     @NotNull
-    private CookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** CookieGenerator for Warn Cookie */
     @NotNull
-    private CookieGenerator warnCookieGenerator;
+    private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     /** Logout view name. */
     @NotNull
@@ -53,8 +52,7 @@ public final class LogoutController extends AbstractController {
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final String ticketGrantingTicketId = WebUtils.getCookieValue(request,
-            this.ticketGrantingTicketCookieGenerator.getCookieName());
+        final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         final String service = request.getParameter("service");
 
         if (ticketGrantingTicketId != null) {
@@ -73,11 +71,11 @@ public final class LogoutController extends AbstractController {
     }
 
     public void setTicketGrantingTicketCookieGenerator(
-        final CookieGenerator ticketGrantingTicketCookieGenerator) {
+        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
-    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 

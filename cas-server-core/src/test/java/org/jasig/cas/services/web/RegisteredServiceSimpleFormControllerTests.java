@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.jasig.cas.services.Attribute;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
+import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.MapBackedAttributeRepository;
-import org.jasig.cas.services.MockServiceRegistryDao;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -45,7 +45,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         this.repository.setAttributesMap(attributes);
 
         this.manager = new DefaultServicesManagerImpl(
-            new MockServiceRegistryDao());
+            new InMemoryServiceRegistryDaoImpl());
         
         final RegisteredServiceValidator validator = new RegisteredServiceValidator();
         validator.setServicesManager(this.manager);

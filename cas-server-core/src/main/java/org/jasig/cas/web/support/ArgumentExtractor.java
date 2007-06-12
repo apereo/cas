@@ -8,7 +8,6 @@ package org.jasig.cas.web.support;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Strategy interface for retrieving services and tickets from the request.
@@ -21,15 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.1
  */
 public interface ArgumentExtractor {
-
-    /**
-     * Retrieve the service from the request context.
-     * 
-     * @param context the request context.
-     * @return the fully formed Service or null if it could not be found.
-     */
-    WebApplicationService extractService(RequestContext context);
-
     /**
      * Retrieve the service from the request.
      * 

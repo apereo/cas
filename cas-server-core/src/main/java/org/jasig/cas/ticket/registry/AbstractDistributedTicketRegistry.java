@@ -5,7 +5,8 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.List;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -24,156 +25,72 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  */
 public abstract class AbstractDistributedTicketRegistry extends
     AbstractTicketRegistry {
+    
+    protected static final Method[] SERVICE_TICKET_METHODS = new Method[2];
+    
+    protected static final Method[] TICKET_GRANTING_TICKET_METHODS = new Method[2];
+    
+    static {
+        try {
+            SERVICE_TICKET_METHODS[0] = ServiceTicket.class.getMethod("isValidFor",
+                new Class[] {Service.class});
+            SERVICE_TICKET_METHODS[1] = ServiceTicket.class.getMethod(
+                "grantTicketGrantingTicket", new Class[] {String.class,
+                    Authentication.class, ExpirationPolicy.class});
+            
+            TICKET_GRANTING_TICKET_METHODS[0] = TicketGrantingTicket.class.getMethod("expire", (Class[]) null);
+            TICKET_GRANTING_TICKET_METHODS[1] = TicketGrantingTicket.class.getMethod("grantServiceTicket", new Class[] {String.class, Service.class,ExpirationPolicy.class, boolean.class});
+
+        } catch (final NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     protected abstract void updateTicket(final Ticket ticket);
 
     protected Ticket getProxiedTicketInstance(final Ticket ticket) {
-        if (ticket == null) {
-            return null;
-        }
-        if (ticket instanceof ServiceTicket) {
-            return new ProxiedServiceTicket((ServiceTicket) ticket, this);
-        }
-
-        return new ProxiedTicketGrantingTicket((TicketGrantingTicket) ticket,
+        return (Ticket) ProxiedTicket.newInstance(ticket,
             this);
     }
 
-    private final class ProxiedServiceTicket implements ServiceTicket {
+    private static final class ProxiedTicket implements
+        InvocationHandler {
 
-        /** Unique id for serialization */
-        private static final long serialVersionUID = -8212338455270445676L;
-
-        private final ServiceTicket serviceTicket;
-
-        private AbstractDistributedTicketRegistry ticketRegistry;
-
-        protected ProxiedServiceTicket(final ServiceTicket serviceTicket,
-            final AbstractDistributedTicketRegistry ticketRegistry) {
-            this.serviceTicket = serviceTicket;
-            this.ticketRegistry = ticketRegistry;
-        }
-
-        public Service getService() {
-            return this.serviceTicket.getService();
-        }
-
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id,
-            final Authentication authentication,
-            final ExpirationPolicy expirationPolicy) {
-            return this.serviceTicket.grantTicketGrantingTicket(id,
-                authentication, expirationPolicy);
-        }
-
-        public boolean isFromNewLogin() {
-            return this.serviceTicket.isFromNewLogin();
-        }
-
-        public long getCreationTime() {
-            return this.serviceTicket.getCreationTime();
-        }
-
-        public TicketGrantingTicket getGrantingTicket() {
-            return this.serviceTicket.getGrantingTicket();
-        }
-
-        public String getId() {
-            return this.serviceTicket.getId();
-        }
-
-        public boolean isValidFor(final Service service) {
-            final boolean result = this.serviceTicket.isValidFor(service);
-            this.ticketRegistry.updateTicket(this.serviceTicket);
-
-            return result;
-        }
-
-        public boolean isExpired() {
-            return this.serviceTicket.isExpired();
-        }
-
-        public boolean equals(final Object obj) {
-            return this.serviceTicket.equals(obj);
-        }
-
-        public String toString() {
-            return this.serviceTicket.toString();
-        }
-
-        public int getCountOfUses() {
-            return this.serviceTicket.getCountOfUses();
-        }
-    }
-
-    private final class ProxiedTicketGrantingTicket implements
-        TicketGrantingTicket {
-
-        /** Unique Id for Serializaion */
-        private static final long serialVersionUID = -4361481214176025025L;
-
-        private final TicketGrantingTicket ticket;
+        private final Object ticket;
 
         private final AbstractDistributedTicketRegistry ticketRegistry;
+        
+        private final Method[] methods;
 
-        protected ProxiedTicketGrantingTicket(
-            final TicketGrantingTicket ticket,
+        public static Object newInstance(final Object obj,
             final AbstractDistributedTicketRegistry ticketRegistry) {
-            this.ticket = ticket;
+            if (obj == null) {
+                return null;
+            }
+            
+            return java.lang.reflect.Proxy.newProxyInstance(obj.getClass()
+                .getClassLoader(), obj.getClass().getInterfaces(),
+                new ProxiedTicket(obj, ticketRegistry, obj instanceof ServiceTicket ? SERVICE_TICKET_METHODS : TICKET_GRANTING_TICKET_METHODS));
+        }
+
+        private ProxiedTicket(final Object serviceTicket,
+            final AbstractDistributedTicketRegistry ticketRegistry, final Method[] methods) {
+            this.ticket = serviceTicket;
             this.ticketRegistry = ticketRegistry;
+            this.methods = methods;
         }
 
-        public long getCreationTime() {
-            return this.ticket.getCreationTime();
-        }
+        public Object invoke(final Object proxy, final Method m,
+            final Object[] args) throws Throwable {
+            final Object result = m.invoke(this.ticket, args);
+            
+            for (final Method method : this.methods) {
+                if (method.equals(m)) {
+                    this.ticketRegistry.updateTicket((Ticket) this.ticket);    
+                }
+            }
 
-        public TicketGrantingTicket getGrantingTicket() {
-            return this.ticket.getGrantingTicket();
-        }
-
-        public String getId() {
-            return this.ticket.getId();
-        }
-
-        public boolean isExpired() {
-            return this.ticket.isExpired();
-        }
-
-        public void expire() {
-            this.ticket.expire();
-            this.ticketRegistry.updateTicket(this.ticket);
-        }
-
-        public Authentication getAuthentication() {
-            return this.ticket.getAuthentication();
-        }
-
-        public List<Authentication> getChainedAuthentications() {
-            return this.ticket.getChainedAuthentications();
-        }
-
-        public ServiceTicket grantServiceTicket(final String id,
-            final Service service, final ExpirationPolicy expirationPolicy,
-            final boolean credentialsProvided) {
-            final ServiceTicket serviceTicket = this.ticket.grantServiceTicket(
-                id, service, expirationPolicy, credentialsProvided);
-            this.ticketRegistry.updateTicket(this.ticket);
-            return serviceTicket;
-        }
-
-        public boolean isRoot() {
-            return this.ticket.isRoot();
-        }
-
-        public boolean equals(final Object obj) {
-            return this.ticket.equals(obj);
-        }
-
-        public String toString() {
-            return this.ticket.toString();
-        }
-
-        public int getCountOfUses() {
-            return this.ticket.getCountOfUses();
+            return result;
         }
     }
 }

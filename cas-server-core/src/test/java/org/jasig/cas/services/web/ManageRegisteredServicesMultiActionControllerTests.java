@@ -8,7 +8,7 @@ package org.jasig.cas.services.web;
 import java.util.List;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
-import org.jasig.cas.services.MockServiceRegistryDao;
+import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,7 +32,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
     private ServicesManager servicesManager;
 
     protected void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new MockServiceRegistryDao());
+        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager);
     }
     
@@ -40,6 +40,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
+        r.setServiceId("serviceId");
         
         this.servicesManager.save(r);
         

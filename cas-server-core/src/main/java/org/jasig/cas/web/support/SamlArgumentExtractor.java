@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
+public final class SamlArgumentExtractor implements ArgumentExtractor {
 
     public WebApplicationService extractService(final HttpServletRequest request) {
         return SamlService.createServiceFrom(request);

@@ -8,7 +8,7 @@ package org.jasig.cas.services.web;
 import java.util.Arrays;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
-import org.jasig.cas.services.MockServiceRegistryDao;
+import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -31,7 +31,7 @@ public class ServiceThemeResolverTests extends TestCase {
     private ServicesManager servicesManager;
 
     protected void setUp() throws Exception {
-        this.servicesManager = new DefaultServicesManagerImpl(new MockServiceRegistryDao());
+        this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
         
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");

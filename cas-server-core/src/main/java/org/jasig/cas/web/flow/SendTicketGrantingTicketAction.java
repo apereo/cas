@@ -5,9 +5,11 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,18 +23,18 @@ import org.springframework.webflow.execution.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
+public final class SendTicketGrantingTicketAction extends AbstractAction {
     
     @NotNull
     private CookieGenerator ticketGrantingTicketCookieGenerator;
     
-    public final void setTicketGrantingTicketCookieGenerator(final CookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
-    }
-
+    /** Instance of CentralAuthenticationService. */
+    @NotNull
+    private CentralAuthenticationService centralAuthenticationService;
+    
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context); 
-        final String ticketGrantingTicketValueFromCookie = WebUtils.getCookieValue(context, this.ticketGrantingTicketCookieGenerator.getCookieName());
+        final String ticketGrantingTicketValueFromCookie = context.getFlowScope().getString("ticketGrantingTicketId");
         
         if (ticketGrantingTicketId == null) {
             return success();
@@ -42,10 +44,19 @@ public final class SendTicketGrantingTicketAction extends AbstractLoginAction {
             .getHttpServletResponse(context), ticketGrantingTicketId);
 
         if (ticketGrantingTicketValueFromCookie != null && ticketGrantingTicketId != ticketGrantingTicketValueFromCookie) {
-            getCentralAuthenticationService()
+            this.centralAuthenticationService
                 .destroyTicketGrantingTicket(ticketGrantingTicketValueFromCookie);
         }
 
         return success();
+    }
+    
+    public void setTicketGrantingTicketCookieGenerator(final CookieGenerator ticketGrantingTicketCookieGenerator) {
+        this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
+    }
+    
+    public void setCentralAuthenticationService(
+        final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }

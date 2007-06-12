@@ -7,7 +7,6 @@ package org.jasig.cas.web.support;
 
 import java.util.List;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,8 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  * Common utilities for the web tier.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date: 2007-02-27 14:35:37 -0500 (Tue, 27 Feb
- * 2007) $
+ * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class WebUtils {
@@ -41,28 +39,10 @@ public final class WebUtils {
         final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context
             .getExternalContext(),
-            "Cannot obtain HttpServletRequest from event of type: "
+            "Cannot obtain HttpServletResponse from event of type: "
                 + context.getExternalContext().getClass().getName());
         return ((ServletExternalContext) context.getExternalContext())
             .getResponse();
-    }
-    
-    public static final String getCookieValue(final RequestContext context,
-        final String cookieName) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        return getCookieValue(request, cookieName);
-    }
-
-    public static final String getCookieValue(final HttpServletRequest request,
-        final String cookieName) {
-        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
-            request, cookieName);
-
-        if (cookie == null) {
-            return null;
-        }
-
-        return cookie.getValue();
     }
 
     public static final WebApplicationService getService(
@@ -78,6 +58,13 @@ public final class WebUtils {
         }
 
         return null;
+    }
+    
+    public static final WebApplicationService getService(
+        final List<ArgumentExtractor> argumentExtractors,
+        final RequestContext context) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        return getService(argumentExtractors, request);
     }
 
     public static final WebApplicationService getService(
@@ -98,7 +85,6 @@ public final class WebUtils {
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
 
     }
-
 
     public static final void putServiceTicketInRequestScope(
         final RequestContext context, final String ticketValue) {

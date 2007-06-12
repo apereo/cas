@@ -42,7 +42,7 @@
     
     <bean
     	id="serviceRegistryDao"
-    	class="org.jasig.cas.services.MockServiceRegistryDao" />
+    	class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl" />
 	
 	<bean
 		id="authenticationManager"

@@ -5,32 +5,24 @@
               http://www.springframework.org/schema/webflow
               http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
 
-	<start-state idref="automaticCookiePathSetter"/>
+	<start-state idref="initialFlowSetup"/>
 
-	<action-state id="automaticCookiePathSetter">
-		<action bean="automaticCookiePathSetterAction" />
-		<transition on="success" to="extractService" />
-	</action-state>
-	
-	<action-state id="extractService">
-		<action bean="extractServiceAction" />
-		<transition on="success" to="ticketGrantingTicketExistsCheckAction" />
-<!--		<transition on="success" to="openIdSingleSignOnAction" />-->
+	<action-state id="initialFlowSetup">
+		<action bean="initialFlowSetupAction" />
+		<transition on="success" to="ticketGrantingTicketExistsCheck" />
 	</action-state>
 	
 	<!-- FIX -->
     <action-state id="openIdSingleSignOnAction">
     	<action bean="openIdSingleSignOnAction" />
     	<transition on="success" to="warn" />
-    	<transition on="error" to="ticketGrantingTicketExistsCheckAction" />
+    	<transition on="error" to="ticketGrantingTicketExistsCheck" />
     	<transition on="badUsername" to="redirect" />
     </action-state>
-    
-	<action-state id="ticketGrantingTicketExistsCheckAction">
-		<action bean="ticketGrantingTicketExistsAction" />
-		<transition on="ticketGrantingTicketExists" to="hasServiceCheck" />
-		<transition on="noTicketGrantingTicketExists" to="gatewayRequestCheck" />
-	</action-state>
+	
+	<decision-state id="ticketGrantingTicketExistsCheck">
+		<if test="${flowScope.ticketGrantingTicketId != null}" then="hasServiceCheck" else="gatewayRequestCheck" />
+	</decision-state>
     
 	<decision-state id="gatewayRequestCheck">
 		<if test="${externalContext.requestParameterMap['gateway'] != '' &amp;&amp; externalContext.requestParameterMap['gateway'] != null &amp;&amp; flowScope.service != null}" then="redirect" else="viewLoginForm" />
@@ -42,6 +34,14 @@
 	
 	<decision-state id="renewRequestCheck">
 		<if test="${externalContext.requestParameterMap['renew'] != '' &amp;&amp; externalContext.requestParameterMap['renew'] != null}" then="viewLoginForm" else="generateServiceTicket" />
+	</decision-state>
+	
+	<!-- 
+		The "warn" action makes the determination of whether to redirect directly to the requested
+		service or display the "confirmation" page to go back to the server.
+	-->
+	<decision-state id="warn">
+		<if test="${flowScope.warnCookieValue}" then="showWarningView" else="redirect" />
 	</decision-state>
 	
 	<!-- 
@@ -83,16 +83,6 @@
 		<transition on="error" to="viewLoginForm" />
 		<transition on="gateway" to="redirect" />
 	</action-state>
-	
-	<!-- 
-		The "warn" action makes the determination of whether to redirect directly to the requested
-		service or display the "confirmation" page to go back to the server.
-	-->
-	<action-state id="warn">
-		<action bean="warnAction" />
-		<transition on="redirect" to="redirect" />
-		<transition on="warn" to="showWarningView" />
-	</action-state>
 
 	<!-- 
 		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
@@ -117,6 +107,7 @@
     <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
 
 	<global-transitions>
+		<transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
         <transition to="viewServiceSsoErrorView" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException" />
 		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
 	</global-transitions>

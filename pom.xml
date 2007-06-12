@@ -150,7 +150,7 @@
                     </includes>
                     <excludes>
                         <exclude>**/CasVersion.java</exclude>
-                        <exclude>**/HsqlDbDatabaseLocatorFactoryBean.java</exclude>
+                        <exclude>**/JpaServiceRegistryDaoImpl.java</exclude>
                         <exclude>**/SamlCompliantUniqueTicketIdGenerator.java</exclude>
                     </excludes>
                 </configuration>
@@ -204,20 +204,16 @@
     		<version>2.2</version>
     		<scope>runtime</scope>
     	</dependency>
-    
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.7</version>
-			<scope>runtime</scope>
-		</dependency>
 		
+		<!--
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>3.2.1.ga</version>
 			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
+		-->
     
         <dependency>
             <groupId>commons-logging</groupId>

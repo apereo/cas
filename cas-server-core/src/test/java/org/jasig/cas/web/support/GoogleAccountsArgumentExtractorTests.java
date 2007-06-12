@@ -35,6 +35,8 @@ public class GoogleAccountsArgumentExtractorTests extends TestCase {
         
         pubKeyFactoryBean.setLocation(pubKeyResource);
         privKeyFactoryBean.setLocation(privKeyResource);
+        assertTrue(privKeyFactoryBean.getObjectType().equals(DSAPrivateKey.class));
+        assertTrue(pubKeyFactoryBean.getObjectType().equals(DSAPublicKey.class));
         pubKeyFactoryBean.afterPropertiesSet();
         privKeyFactoryBean.afterPropertiesSet();
         
