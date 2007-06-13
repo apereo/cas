@@ -29,19 +29,6 @@
 	<bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
 	<!-- Handler Mapping -->
-	
-<!--
-	<bean id="handlerMappingA" class="org.jasig.cas.web.support.OpenIdPostUrlHandlerMapping">
-		<property
-			name="mappings">
-			<props>
-				<prop
-					key="/login">openIdValidateController</prop>
-			</props>
-		</property>
-	</bean>
-	-->
-	
 	<bean id="handlerMappingB" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property
 			name="mappings">
@@ -157,15 +144,6 @@
 		p:argumentExtractor-ref="samlArgumentExtractor"
 		p:successView="casSamlServiceSuccessView"
 		p:failureView="casSamlServiceFailureView" />
-<!--		
-	<bean id="openIdValidateController" class="org.jasig.cas.web.ServiceValidateController"
-		p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-		p:centralAuthenticationService-ref="centralAuthenticationService"
-		p:proxyHandler-ref="proxy20Handler"
-		p:argumentExtractor-ref="openIdArgumentExtractor"
-		p:successView="casOpenIdServiceSuccessView"
-		p:failureView="casOpenIdServiceFailureView" />
--->
 
 	<bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController"
 		p:proxyHandler-ref="proxy10Handler"
@@ -211,15 +189,9 @@
  		id="casArgumentExtractor"
  		class="org.jasig.cas.web.support.CasArgumentExtractor" />
 
-<!-- 		
- 	<bean
- 		id="openIdArgumentExtractor"
- 		class="org.jasig.cas.web.support.OpenIdArgumentExtractor" />
- 	-->
  	<util:list id="argumentExtractors">
 		<ref bean="casArgumentExtractor" />
  		<ref bean="samlArgumentExtractor" />
-<!-- 		<ref bean="openIdArgumentExtractor" />-->
  	</util:list>
  	
  	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor" />
