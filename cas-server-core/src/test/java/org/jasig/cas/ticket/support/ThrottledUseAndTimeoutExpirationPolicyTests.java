@@ -41,7 +41,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
     
     public void testTicketIsExpired() {
         try {
-            Thread.sleep(TIMEOUT + 100); // XXX this failed when it was only +1...not accurate??
+            Thread.sleep(TIMEOUT + 100);
             assertTrue(this.ticket.isExpired());
         } catch (InterruptedException e) {
             fail(e.getMessage());
@@ -51,7 +51,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
     public void testTicketUsedButWithTimeout() {
         try {
             this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
-            Thread.sleep(TIMEOUT -100); // XXX this failed when it was only +1...not accurate??
+            Thread.sleep(TIMEOUT -100);
             assertFalse(this.ticket.isExpired());
         } catch (InterruptedException e) {
             fail(e.getMessage());

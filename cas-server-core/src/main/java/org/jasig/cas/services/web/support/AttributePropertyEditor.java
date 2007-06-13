@@ -18,7 +18,7 @@ import org.jasig.cas.util.annotation.NotNull;
  * @since 3.1
  *
  */
-public class AttributePropertyEditor extends PropertyEditorSupport {
+public final class AttributePropertyEditor extends PropertyEditorSupport {
     
     @NotNull
     private final AttributeRepository attributeRepository;

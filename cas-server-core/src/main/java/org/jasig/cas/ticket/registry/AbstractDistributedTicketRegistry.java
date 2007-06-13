@@ -33,13 +33,13 @@ public abstract class AbstractDistributedTicketRegistry extends
     static {
         try {
             SERVICE_TICKET_METHODS[0] = ServiceTicket.class.getMethod("isValidFor",
-                new Class[] {Service.class});
+                new Class<?>[] {Service.class});
             SERVICE_TICKET_METHODS[1] = ServiceTicket.class.getMethod(
-                "grantTicketGrantingTicket", new Class[] {String.class,
+                "grantTicketGrantingTicket", new Class<?>[] {String.class,
                     Authentication.class, ExpirationPolicy.class});
             
-            TICKET_GRANTING_TICKET_METHODS[0] = TicketGrantingTicket.class.getMethod("expire", (Class[]) null);
-            TICKET_GRANTING_TICKET_METHODS[1] = TicketGrantingTicket.class.getMethod("grantServiceTicket", new Class[] {String.class, Service.class,ExpirationPolicy.class, boolean.class});
+            TICKET_GRANTING_TICKET_METHODS[0] = TicketGrantingTicket.class.getMethod("expire", (Class<?>[]) null);
+            TICKET_GRANTING_TICKET_METHODS[1] = TicketGrantingTicket.class.getMethod("grantServiceTicket", new Class<?>[] {String.class, Service.class,ExpirationPolicy.class, boolean.class});
 
         } catch (final NoSuchMethodException e) {
             throw new RuntimeException(e);

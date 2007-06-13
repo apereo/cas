@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.services;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Maintains a list of attributes. Backing store can be anything from a database
@@ -22,7 +22,7 @@ public interface AttributeRepository {
      * 
      * @return the list of Attributes.
      */
-    List<Attribute> getAttributes();
+    Collection<Attribute> getAttributes();
     
     /**
      * Retrieve an attribute based on its id.

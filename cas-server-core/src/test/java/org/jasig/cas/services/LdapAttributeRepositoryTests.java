@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.services;
 
-import java.util.List;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 
@@ -19,7 +19,7 @@ public class LdapAttributeRepositoryTests extends TestCase {
     }
     
     public void testAttribute() {
-        final List<Attribute> a = this.attributeRepository.getAttributes();
+        final Collection<Attribute> a = this.attributeRepository.getAttributes();
         
         assertTrue(!a.isEmpty());
         assertNotNull(this.attributeRepository.getAttribute("l"));
