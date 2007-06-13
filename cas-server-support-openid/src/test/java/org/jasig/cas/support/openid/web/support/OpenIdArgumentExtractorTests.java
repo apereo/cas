@@ -3,8 +3,9 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.support;
+package org.jasig.cas.support.openid.web.support;
 
+import org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;

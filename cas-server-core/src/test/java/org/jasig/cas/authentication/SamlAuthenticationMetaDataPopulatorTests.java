@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.opensaml.SAMLAuthenticationStatement;
 
@@ -41,7 +41,7 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
     }
     
     public void testAuthenticationTypeNotFound() {
-        final OpenIdCredentials credentials = new OpenIdCredentials("test", "Test");
+        final CustomCredentials credentials = new CustomCredentials();
         final MutableAuthentication ma = new MutableAuthentication(TestUtils.getPrincipal());
         
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
@@ -50,10 +50,10 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
     }
     
     public void testAuthenticationTypeFoundCustom() {
-        final OpenIdCredentials credentials = new OpenIdCredentials("test", "Test");
+        final CustomCredentials credentials = new CustomCredentials();
         
         final Map<String, String> added = new HashMap<String, String>();
-        added.put("org.jasig.cas.authentication.principal.OpenIdCredentials", "FF");
+        added.put(CustomCredentials.class.getName(), "FF");
         
         this.populator.setUserDefinedMappings(added);
         
@@ -62,5 +62,9 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
         assertEquals("FF", m2.getAttributes().get("samlAuthenticationStatement::authMethod"));
+    }
+    
+    protected class CustomCredentials implements Credentials {
+        // nothing to do
     }
 }

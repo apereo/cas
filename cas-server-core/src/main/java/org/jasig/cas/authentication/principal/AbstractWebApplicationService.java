@@ -44,9 +44,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     public final String getArtifactId() {
         return this.artifactId;
     }
-    
-    
-    
+
     public final Map<String, Object> getAttributes() {
         return EMPTY_MAP;
     }

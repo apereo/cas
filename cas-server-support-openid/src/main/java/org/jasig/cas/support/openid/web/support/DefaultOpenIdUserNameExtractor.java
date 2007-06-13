@@ -3,7 +3,8 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.support;
+package org.jasig.cas.support.openid.web.support;
+
 
 /**
  * Extracts a local Id from an openid.identity. The default provider can extract

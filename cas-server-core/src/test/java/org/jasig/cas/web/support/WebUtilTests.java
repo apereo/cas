@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 public class WebUtilTests extends TestCase {
 
     public void testFindService() {
-        final OpenIdArgumentExtractor openIdArgumentExtractor = new OpenIdArgumentExtractor();
+        final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
         final CasArgumentExtractor casArgumentExtractor = new CasArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
             openIdArgumentExtractor, casArgumentExtractor};
@@ -36,7 +36,7 @@ public class WebUtilTests extends TestCase {
     }
     
     public void testFoundNoService() {
-        final OpenIdArgumentExtractor openIdArgumentExtractor = new OpenIdArgumentExtractor();
+        final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
             openIdArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
