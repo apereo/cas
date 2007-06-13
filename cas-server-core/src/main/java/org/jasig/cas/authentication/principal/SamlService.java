@@ -5,21 +5,11 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.SamlUtils;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.springframework.util.StringUtils;
 
 /**
@@ -33,17 +23,11 @@ import org.springframework.util.StringUtils;
  */
 public final class SamlService extends AbstractWebApplicationService {
 
-    private static final Log LOG = LogFactory.getLog(SamlService.class);
-
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
 
     /** Constant representing artifact. */
     private static final String CONST_PARAM_TICKET = "SAMLart";
-
-    private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
-
-    private boolean loggedOutAlready = false;
 
     /**
      * Unique Id for serialization.
@@ -82,52 +66,5 @@ public final class SamlService extends AbstractWebApplicationService {
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
-    public synchronized boolean logOutOfService(final String sessionIdentifier) {
-        if (this.loggedOutAlready) {
-            return true;
-        }
-
-        LOG.debug("Sending logout request for: " + getId());
-
-        final String logoutRequest = "<samlp:LogoutRequest ID=\""
-            + GENERATOR.getNewTicketId("LR")
-            + "\" Version=\"2.0\" IssueInstant=\"" + SamlUtils.getCurrentDateAndTime()
-            + "\"><saml:NameID>" + getPrincipal().getId() + "</saml:NameID><samlp:SessionIndex>"
-            + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
-
-        HttpURLConnection connection = null;
-        try {
-            final URL logoutUrl = new URL(getOriginalUrl());
-            final String output = "logoutRequest=" + logoutRequest;
-
-            connection = (HttpURLConnection) logoutUrl.openConnection();
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Length", ""
-                + Integer.toString(output.getBytes().length));
-            connection.setRequestProperty("Content-Type",
-                "application/x-www-form-urlencoded");
-            final DataOutputStream printout = new DataOutputStream(connection
-                .getOutputStream());
-            printout.writeBytes(output);
-            printout.flush();
-            printout.close();
-
-            final BufferedReader in = new BufferedReader(new InputStreamReader(connection
-                .getInputStream()));
-
-            while (in.readLine() != null) {
-                // nothing to do
-            }
-            
-            return true;
-        } catch (final Exception e) {
-            return false;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-            this.loggedOutAlready = true;
-        }
-    }
+ 
 }

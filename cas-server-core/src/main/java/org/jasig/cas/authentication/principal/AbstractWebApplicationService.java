@@ -5,9 +5,20 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.SamlUtils;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 
 /**
  * Abstract implementation of a WebApplicationService.
@@ -19,7 +30,11 @@ import java.util.Map;
  */
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
+    protected static final Log LOG = LogFactory.getLog(SamlService.class);
+    
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
+    
+    private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
     
     /** The id of the service. */
     private final String id;
@@ -30,6 +45,8 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     private final String artifactId;
     
     private Principal principal;
+    
+    private boolean loggedOutAlready = false;
     
     protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;
@@ -90,5 +107,54 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     public void setPrincipal(final Principal principal) {
         this.principal = principal;
+    }
+    
+    public synchronized boolean logOutOfService(final String sessionIdentifier) {
+        if (this.loggedOutAlready) {
+            return true;
+        }
+
+        LOG.debug("Sending logout request for: " + getId());
+
+        final String logoutRequest = "<samlp:LogoutRequest ID=\""
+            + GENERATOR.getNewTicketId("LR")
+            + "\" Version=\"2.0\" IssueInstant=\"" + SamlUtils.getCurrentDateAndTime()
+            + "\"><saml:NameID>@NOT_USED@</saml:NameID><samlp:SessionIndex>"
+            + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
+
+        HttpURLConnection connection = null;
+        try {
+            final URL logoutUrl = new URL(getOriginalUrl());
+            final String output = "logoutRequest=" + logoutRequest;
+
+            connection = (HttpURLConnection) logoutUrl.openConnection();
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Length", ""
+                + Integer.toString(output.getBytes().length));
+            connection.setRequestProperty("Content-Type",
+                "application/x-www-form-urlencoded");
+            final DataOutputStream printout = new DataOutputStream(connection
+                .getOutputStream());
+            printout.writeBytes(output);
+            printout.flush();
+            printout.close();
+
+            final BufferedReader in = new BufferedReader(new InputStreamReader(connection
+                .getInputStream()));
+
+            while (in.readLine() != null) {
+                // nothing to do
+            }
+            
+            return true;
+        } catch (final Exception e) {
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+            this.loggedOutAlready = true;
+        }
     }
 }
