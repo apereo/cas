@@ -20,6 +20,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.services.Attribute;
 import org.jasig.cas.services.RegisteredService;
@@ -91,7 +92,6 @@ public final class CentralAuthenticationServiceImpl implements
      * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
      * created.
      */
-
     @NotNull
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
@@ -113,7 +113,7 @@ public final class CentralAuthenticationServiceImpl implements
 
     /** Encoder to generate PseudoIds. */
     @NotNull
-    private PersistentIdGenerator persistentIdGenerator;
+    private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
 
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
@@ -200,6 +200,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
         }
 
+        // XXX fix this
         final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService
             .get(service.getClass().getName());
 
@@ -258,7 +259,7 @@ public final class CentralAuthenticationServiceImpl implements
                 throw new UnauthorizedProxyingException();
             }
 
-            TicketGrantingTicket ticketGrantingTicket = serviceTicket
+            final TicketGrantingTicket ticketGrantingTicket = serviceTicket
                 .grantTicketGrantingTicket(
                     this.ticketGrantingTicketUniqueTicketIdGenerator
                         .getNewTicketId(TicketGrantingTicket.PREFIX),
