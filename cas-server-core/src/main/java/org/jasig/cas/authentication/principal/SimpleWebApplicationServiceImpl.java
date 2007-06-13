@@ -81,8 +81,4 @@ public final class SimpleWebApplicationServiceImpl extends
         }
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
-
-    public boolean logOutOfService(final String sessionIdentifier) {
-        return false;
-    }
 }
