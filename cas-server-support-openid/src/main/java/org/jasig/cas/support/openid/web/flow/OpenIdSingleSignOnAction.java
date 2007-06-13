@@ -3,15 +3,16 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.flow;
+package org.jasig.cas.support.openid.web.flow;
 
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.OpenIdCredentials;
-import org.jasig.cas.authentication.principal.OpenIdService;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
+import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
+import org.jasig.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.jasig.cas.util.annotation.NotNull;
-import org.jasig.cas.web.support.DefaultOpenIdUserNameExtractor;
-import org.jasig.cas.web.support.OpenIdUserNameExtractor;
+import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 
 import org.springframework.webflow.execution.RequestContext;

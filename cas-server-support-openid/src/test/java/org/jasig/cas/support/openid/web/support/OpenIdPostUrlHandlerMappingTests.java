@@ -3,11 +3,12 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.support;
+package org.jasig.cas.support.openid.web.support;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jasig.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.support.GenericWebApplicationContext;

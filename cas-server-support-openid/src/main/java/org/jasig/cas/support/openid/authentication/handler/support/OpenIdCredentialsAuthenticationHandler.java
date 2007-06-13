@@ -3,12 +3,12 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.handler.support;
+package org.jasig.cas.support.openid.authentication.handler.support;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.annotation.NotNull;

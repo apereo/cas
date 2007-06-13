@@ -3,7 +3,7 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.support.openid.authentication.principal;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -18,6 +18,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.DefaultPasswordEncoder;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.Response;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.util.Base64;
 

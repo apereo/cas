@@ -54,8 +54,8 @@
 					local="usernamePasswordCredentialsToPrincipalResolver" />
 				<ref
 					local="httpBasedServiceCredentialsToPrincipalResolver" />
-				<bean
-					class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />
+<!--				<bean
+					class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />-->
 			</list>
 		</property>
 		<property
@@ -65,10 +65,10 @@
 					local="simpleTestUsernamePasswordAuthenticationHandler" />
 				<ref
 					local="httpBasedServiceCredentialsAuthenticationHandler" />
-				<bean
-					class="org.jasig.cas.authentication.handler.support.OpenIdCredentialsAuthenticationHandler">
+<!--				<bean
+					class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler">
 					<property name="ticketRegistry" ref="ticketRegistry" />
-				</bean>
+				</bean>-->
 			</list>
 		</property>
 		<property

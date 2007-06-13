@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-support-openid/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-support-openid/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-spnego/src/test/java"/>
 	<classpathentry kind="src" path="cas-server-support-spnego/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-ldap/src/test/java"/>

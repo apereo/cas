@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.authentication;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,7 @@ import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.Direc
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 
@@ -65,10 +66,10 @@ public class DirectMappingAuthenticationManagerImplTests extends TestCase {
         }
     }
     
-    public void testAuthenticateOpenId() throws Exception {
+    public void testAuthenticateHttp() throws Exception {
         
         try {
-            final OpenIdCredentials c = new OpenIdCredentials("test", "test");
+            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.cnn.com"));
             this.manager.authenticate(c);
             fail("Exception expected.");
         } catch (final IllegalArgumentException e) {

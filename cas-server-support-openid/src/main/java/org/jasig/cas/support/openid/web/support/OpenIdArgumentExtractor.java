@@ -3,12 +3,13 @@
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
-package org.jasig.cas.web.support;
+package org.jasig.cas.support.openid.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.OpenIdService;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
+import org.jasig.cas.web.support.ArgumentExtractor;
 
 /**
  * Constructs an OpenId Service.
