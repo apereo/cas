@@ -12,14 +12,6 @@
 		<transition on="success" to="ticketGrantingTicketExistsCheck" />
 	</action-state>
 	
-	<!-- FIX -->
-    <action-state id="openIdSingleSignOnAction">
-    	<action bean="openIdSingleSignOnAction" />
-    	<transition on="success" to="warn" />
-    	<transition on="error" to="ticketGrantingTicketExistsCheck" />
-    	<transition on="badUsername" to="redirect" />
-    </action-state>
-	
 	<decision-state id="ticketGrantingTicketExistsCheck">
 		<if test="${flowScope.ticketGrantingTicketId != null}" then="hasServiceCheck" else="gatewayRequestCheck" />
 	</decision-state>
