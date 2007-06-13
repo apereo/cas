@@ -30,7 +30,7 @@
 
 	<!-- Handler Mapping -->
 	
-
+<!--
 	<bean id="handlerMappingA" class="org.jasig.cas.web.support.OpenIdPostUrlHandlerMapping">
 		<property
 			name="mappings">
@@ -40,7 +40,7 @@
 			</props>
 		</property>
 	</bean>
-	
+	-->
 	
 	<bean id="handlerMappingB" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property
@@ -157,7 +157,7 @@
 		p:argumentExtractor-ref="samlArgumentExtractor"
 		p:successView="casSamlServiceSuccessView"
 		p:failureView="casSamlServiceFailureView" />
-		
+<!--		
 	<bean id="openIdValidateController" class="org.jasig.cas.web.ServiceValidateController"
 		p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
 		p:centralAuthenticationService-ref="centralAuthenticationService"
@@ -165,6 +165,7 @@
 		p:argumentExtractor-ref="openIdArgumentExtractor"
 		p:successView="casOpenIdServiceSuccessView"
 		p:failureView="casOpenIdServiceFailureView" />
+-->
 
 	<bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController"
 		p:proxyHandler-ref="proxy10Handler"
@@ -209,15 +210,16 @@
  	<bean
  		id="casArgumentExtractor"
  		class="org.jasig.cas.web.support.CasArgumentExtractor" />
- 		
+
+<!-- 		
  	<bean
  		id="openIdArgumentExtractor"
  		class="org.jasig.cas.web.support.OpenIdArgumentExtractor" />
- 	
+ 	-->
  	<util:list id="argumentExtractors">
 		<ref bean="casArgumentExtractor" />
  		<ref bean="samlArgumentExtractor" />
- 		<ref bean="openIdArgumentExtractor" />
+<!-- 		<ref bean="openIdArgumentExtractor" />-->
  	</util:list>
  	
  	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor" />
@@ -236,9 +238,10 @@
 	
 	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector" />
     
+    <!--
     <bean id="openIdSingleSignOnAction" class="org.jasig.cas.web.flow.OpenIdSingleSignOnAction"
     	p:centralAuthenticationService-ref="centralAuthenticationService" />
-	
+	-->
 	<bean id="addRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
 		p:formView="addServiceView"
 		p:successView="addServiceView"
