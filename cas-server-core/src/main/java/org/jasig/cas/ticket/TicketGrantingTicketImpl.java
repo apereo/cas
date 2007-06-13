@@ -87,8 +87,8 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
 
         updateState();
         
-        // XXX is this okay, or will this fail with proxy?
-        service.setPrincipal(getAuthentication().getPrincipal());
+        final List<Authentication> authentications = getChainedAuthentications();
+        service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
         
         this.services.put(id, service);
 
@@ -134,8 +134,8 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
             return false;
         }
 
-        final Ticket serviceTicket = (Ticket) object;
+        final Ticket ticket = (Ticket) object;
         
-        return serviceTicket.getId().equals(this.getId());
+        return ticket.getId().equals(this.getId());
     }
 }
