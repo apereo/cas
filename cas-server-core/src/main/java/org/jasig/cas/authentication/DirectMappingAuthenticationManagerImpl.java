@@ -31,7 +31,7 @@ public final class DirectMappingAuthenticationManagerImpl implements
     AuthenticationManager {
 
     @NotEmpty
-    private Map<Class< ? >, DirectAuthenticationHandlerMappingHolder> credentialsMapping;
+    private Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping;
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
@@ -43,7 +43,7 @@ public final class DirectMappingAuthenticationManagerImpl implements
      */
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
-        final Class< ? > credentialsClass = credentials.getClass();
+        final Class< ? extends Credentials> credentialsClass = credentials.getClass();
         final DirectAuthenticationHandlerMappingHolder d = this.credentialsMapping
             .get(credentialsClass);
 
@@ -69,7 +69,7 @@ public final class DirectMappingAuthenticationManagerImpl implements
     }
 
     public final void setCredentialsMapping(
-        final Map<Class< ? >, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
+        final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
     }
 
@@ -92,16 +92,16 @@ public final class DirectMappingAuthenticationManagerImpl implements
             return this.authenticationHandler;
         }
 
-        public final void setAuthenticationHandler(
+        public void setAuthenticationHandler(
             final AuthenticationHandler authenticationHandler) {
             this.authenticationHandler = authenticationHandler;
         }
 
-        public final CredentialsToPrincipalResolver getCredentialsToPrincipalResolver() {
+        public CredentialsToPrincipalResolver getCredentialsToPrincipalResolver() {
             return this.credentialsToPrincipalResolver;
         }
 
-        public final void setCredentialsToPrincipalResolver(
+        public void setCredentialsToPrincipalResolver(
             final CredentialsToPrincipalResolver credentialsToPrincipalResolver) {
             this.credentialsToPrincipalResolver = credentialsToPrincipalResolver;
         }

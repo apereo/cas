@@ -13,6 +13,7 @@ import java.util.Map;
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
@@ -27,7 +28,7 @@ public class DirectMappingAuthenticationManagerImplTests extends TestCase {
     protected void setUp() throws Exception {
         this.manager = new DirectMappingAuthenticationManagerImpl();
         
-        final Map<Class<?>, DirectAuthenticationHandlerMappingHolder> mappings = new HashMap<Class<?>, DirectAuthenticationHandlerMappingHolder>();
+        final Map<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder> mappings = new HashMap<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder>();
         final List<AuthenticationMetaDataPopulator> populators = new ArrayList<AuthenticationMetaDataPopulator>();
         populators.add(new SamlAuthenticationMetaDataPopulator());
         

@@ -5,10 +5,9 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import javax.naming.Context;
@@ -33,8 +32,6 @@ import org.apache.commons.logging.LogFactory;
 public final class LdapAttributeRepository implements AttributeRepository {
     
     private Log log = LogFactory.getLog(getClass());
-
-    private final List<Attribute> attributes = new ArrayList<Attribute>();
 
     private final Map<String, Attribute> attributesMap = new HashMap<String, Attribute>();
 
@@ -81,8 +78,8 @@ public final class LdapAttributeRepository implements AttributeRepository {
         return this.attributesMap.get(id);
     }
 
-    public List<Attribute> getAttributes() {
-        return this.attributes;
+    public Collection<Attribute> getAttributes() {
+        return this.attributesMap.values();
     }
 
     private void populateListWithAttributes(
@@ -92,13 +89,12 @@ public final class LdapAttributeRepository implements AttributeRepository {
             return;
         }
 
-        final NamingEnumeration<String> a = (NamingEnumeration<String>) attribute
+        final NamingEnumeration a = attribute
             .getAll();
 
         while (a.hasMore()) {
-            final String s = a.next();
+            final String s = (String) a.next();
             final Attribute current = new Attribute(s, s);
-            this.attributes.add(current);
             this.attributesMap.put(s, current);
         }
     }
