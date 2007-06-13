@@ -1,0 +1,208 @@
+BODY {
+	FONT-FAMILY: verdana, arial, sans-serif; background-color: #ffffff;
+}
+
+TABLE {
+	FONT-SIZE: 9px
+}
+
+.navBar {
+    Font-weight: normal; Font-size: 12px;
+}
+
+TD.itemList {
+ Font-weight: normal; Font-size: 12px; FONT-FAMILY: arial, sans-serif	
+}
+
+DIV.navBar {
+ padding-top:4px; 
+}
+
+DIV.navBarLink {
+    Font-weight: normal; Font-size: 10px; padding-top:4px;
+}
+
+FONT.navBarCurrent {
+    padding: 2px; font-weight: bold; color: #FFFFFF; background-color:#00008B;
+}
+
+TD.reportHeader {
+	 BACKGROUND: #eff7ff; PADDING: 5px; FONT-WEIGHT: bold; FONT-SIZE: 12px; BORDER: #dcdcdc 1px solid;}
+
+.titleText {
+ FONT-WEIGHT: bold; FONT-SIZE: 12px;
+}
+
+TD.titleText {
+	 BACKGROUND: #eff7ff; PADDING-left: 5px;
+}
+
+TD.headerStats {
+	BORDER-LEFT: #dcdcdc 1px solid;
+}
+
+TD.chart {
+  padding: 4px; BORDER: #dcdcdc 1px solid;
+}
+
+TD.chartHeader {
+  padding: 4px; BORDER: #dcdcdc 1px solid; BACKGROUND: #eff7ff;  FONT-WEIGHT: bold; FONT-SIZE: 12px;
+}
+SPAN.subtitle {
+  FONT-SIZE: 9px; font-weight: normal; 
+}
+
+TD.graphHeaderLeft {
+         BACKGROUND: #eff7ff; BORDER: #dcdcdc 1px solid;
+}
+
+TD.graphHeader {
+         BACKGROUND: #eff7ff; BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-TOP: #dcdcdc 1px solid;BORDER-RIGHT: #dcdcdc 1px solid;
+}
+
+TD.graphItem {
+         BACKGROUND: #ffffff; BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-LEFT: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid; PADDING-LEFT: 15px; PADDING-RIGHT: 15px; FONT-WEIGHT: bold; FONT-SIZE: 12px; 
+}
+
+TD.graphPercent {
+         BACKGROUND: #ffffff; BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid;
+}
+TD.graphBarLeft {
+	BACKGROUND: #ffffff; BORDER-BOTTOM: #dcdcdc 1px solid;  
+} 
+TD.graphBar {
+	BACKGROUND: #ffffff; BORDER-BOTTOM: #dcdcdc 1px solid; BORDER-RIGHT: #dcdcdc 1px solid; WIDTH: 50%;
+} 
+
+TD.hspacer {
+	BORDER-BOTTOM:#dcdcdc 1px solid; BORDER-TOP:#dcdcdc 1px solid;
+}
+
+TD.mover {
+	BORDER:#dcdcdc 1px solid;
+}
+
+TABLE.barGraph {
+	WIDTH: 100%;
+}
+TD.empty {
+	FONT-SIZE: 2px; BACKGROUND: #c0c0c0; BORDER:#9c9c9c 1px solid;
+}
+TD.fullcover {
+	FONT-SIZE: 2px; BACKGROUND: #00df00; BORDER:#9c9c9c 1px solid;
+}
+TD.covered {
+	FONT-SIZE: 2px; BACKGROUND: #00df00; BORDER-LEFT:#9c9c9c 1px solid;BORDER-TOP:#9c9c9c 1px solid;BORDER-BOTTOM:#9c9c9c 1px solid;
+}
+TD.uncovered {
+	FONT-SIZE: 2px; BACKGROUND: #df0000; BORDER:#9c9c9c 1px solid;
+}
+TD.tabText {
+	PADDING-RIGHT: 12px; 
+}
+
+DIV.timestamp {
+	FONT-SIZE: 9px; font-weight: normal; padding-left: 1px;
+}
+SPAN.srcFile {
+	FONT-SIZE: 9px
+}
+
+TABLE.srcView {
+	FONT-SIZE: 12px; BORDER-LEFT:#dcdcdc 1px solid;BORDER-RIGHT:#dcdcdc 1px solid; BORDER-BOTTOM:#dcdcdc 1px solid;
+}
+
+TD.lineCount {
+  BACKGROUND: #F0F0F0; BORDER-RIGHT:#dcdcdc 1px solid;  PADDING-RIGHT: 3px;
+}
+TD.lineCountHilight {
+  BACKGROUND: #C8C8F0; BORDER-RIGHT:#dcdcdc 1px solid; PADDING-RIGHT: 3px;
+}
+
+SPAN.Hilight {
+  BACKGROUND: #C8C8F0;
+}
+
+
+
+TD.coverageCount {
+  BACKGROUND: #F0F0F0; BORDER-RIGHT:#dcdcdc 1px solid; PADDING-RIGHT: 3px;
+}
+
+TD.coverageCountHilight {
+  BACKGROUND: #F0C8C8; BORDER-RIGHT:#dcdcdc 1px solid; PADDING-RIGHT: 3px;
+}
+
+TD.srcLineClassStart {
+   WIDTH: 100%; BORDER-TOP:#dcdcdc 1px solid; FONT-WEIGHT: bold;	
+}
+
+.srcCell
+{
+    background: #ffffff;
+    padding-right: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-family: Courier New, Monospace;
+}
+
+.srcLine
+{
+    display: inline;
+    white-space: pre;
+    padding-left: 10px;
+}
+
+.srcLineHilight {
+  background: #F0C8C8;
+  display: inline;
+  white-space: pre;
+  padding-left: 10px;
+}
+
+TD.lineWarning {
+  BACKGROUND: #FFFFA0; BORDER-RIGHT:#dcdcdc 1px solid;  PADDING-RIGHT: 3px;
+}
+
+
+.keyword {
+    color: #2020BF;
+}
+
+.string {
+    color: #BC8F8F;
+}
+
+.javadoc {
+    color: #6060FF; font-style: normal;
+}
+
+.comment {
+    color: #B22222; font-style: italic;
+}
+
+.warning { 
+  border: solid 1px #000000; color: #000000; 
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-family: verdana, arial, sans-serif;
+  font-size: 12pt;
+  width: 80%;
+}
+
+.warning .title {
+  background-color: #ffff60;
+  padding: 5px;
+  font-weight: bold;
+  text-align: left;
+}
+
+.warning .message { 
+  background-color: #ffffe0; color: #000000;
+  padding-left: 30px; padding-top: 10px; padding-bottom: 10px; padding-right: 30px;
+  text-align: left;
+}
+
+TD.footer {
+  BORDER-TOP:#dcdcdc 1px solid;	 FONT-SIZE: 9px
+}

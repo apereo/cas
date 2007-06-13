@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" tests="3" time="0" failures="0" name="org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractorTests">
+  <properties>
+    <property value="Java(TM) 2 Runtime Environment, Standard Edition" name="java.runtime.name"/>
+    <property value="c:\opt\jdk1.5.0_11\jre\bin" name="sun.boot.library.path"/>
+    <property value="1.5.0_11-b03" name="java.vm.version"/>
+    <property value="Sun Microsystems Inc." name="java.vm.vendor"/>
+    <property value="http://java.sun.com/" name="java.vendor.url"/>
+    <property value=";" name="path.separator"/>
+    <property value="Java HotSpot(TM) Client VM" name="java.vm.name"/>
+    <property value="sun.io" name="file.encoding.pkg"/>
+    <property value="US" name="user.country"/>
+    <property value="SUN_STANDARD" name="sun.java.launcher"/>
+    <property value="Service Pack 2" name="sun.os.patch.level"/>
+    <property value="Java Virtual Machine Specification" name="java.vm.specification.name"/>
+    <property value="C:\workspace\cas3" name="user.dir"/>
+    <property value="1.5.0_11-b03" name="java.runtime.version"/>
+    <property value="sun.awt.Win32GraphicsEnvironment" name="java.awt.graphicsenv"/>
+    <property value="C:\workspace\cas3\cas-server-support-openid" name="basedir"/>
+    <property value="c:\opt\jdk1.5.0_11\jre\lib\endorsed" name="java.endorsed.dirs"/>
+    <property value="x86" name="os.arch"/>
+    <property value="C:\DOCUME~1\SBATTA~1\LOCALS~1\Temp\" name="java.io.tmpdir"/>
+    <property value="
+" name="line.separator"/>
+    <property value="Sun Microsystems Inc." name="java.vm.specification.vendor"/>
+    <property value="" name="user.variant"/>
+    <property value="Windows XP" name="os.name"/>
+    <property value="C:\workspace\cas3\cas-server-support-openid\target\clover.license" name="clover.license.path"/>
+    <property value="c:\opt\maven-2.0.6\bin\m2.conf" name="classworlds.conf"/>
+    <property value="Cp1252" name="sun.jnu.encoding"/>
+    <property value="c:\opt\jdk1.5.0_11\bin;.;C:\WINDOWS\system32;C:\WINDOWS;C:\orant\bin;c:\oracle8i\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\system32\WBEM;C:\orant\bin;c:\oracle8i\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\system32\WBEM;C:\opt\cvs-ssh\;C:\opt\apache-ant-1.6.5\bin;C:\opt\maven-1.1-beta-2\bin;c:\opt\maven-2.0.6\bin;;C:\PROGRA~1\E!OC" name="java.library.path"/>
+    <property value="Java Platform API Specification" name="java.specification.name"/>
+    <property value="49.0" name="java.class.version"/>
+    <property value="HotSpot Client Compiler" name="sun.management.compiler"/>
+    <property value="5.1" name="os.version"/>
+    <property value="C:\Documents and Settings\sbattaglia" name="user.home"/>
+    <property value="America/New_York" name="user.timezone"/>
+    <property value="sun.awt.windows.WPrinterJob" name="java.awt.printerjob"/>
+    <property value="1.5" name="java.specification.version"/>
+    <property value="Cp1252" name="file.encoding"/>
+    <property value="battags" name="user.name"/>
+    <property value="c:\opt\maven-2.0.6\boot\classworlds-1.1.jar" name="java.class.path"/>
+    <property value="1.0" name="java.vm.specification.version"/>
+    <property value="32" name="sun.arch.data.model"/>
+    <property value="c:\opt\jdk1.5.0_11\jre" name="java.home"/>
+    <property value="Sun Microsystems Inc." name="java.specification.vendor"/>
+    <property value="en" name="user.language"/>
+    <property value="sun.awt.windows.WToolkit" name="awt.toolkit"/>
+    <property value="mixed mode, sharing" name="java.vm.info"/>
+    <property value="1.5.0_11" name="java.version"/>
+    <property value="c:\opt\jdk1.5.0_11\jre\lib\ext" name="java.ext.dirs"/>
+    <property value="c:\opt\jdk1.5.0_11\jre\lib\rt.jar;c:\opt\jdk1.5.0_11\jre\lib\i18n.jar;c:\opt\jdk1.5.0_11\jre\lib\sunrsasign.jar;c:\opt\jdk1.5.0_11\jre\lib\jsse.jar;c:\opt\jdk1.5.0_11\jre\lib\jce.jar;c:\opt\jdk1.5.0_11\jre\lib\charsets.jar;c:\opt\jdk1.5.0_11\jre\classes" name="sun.boot.class.path"/>
+    <property value="Sun Microsystems Inc." name="java.vendor"/>
+    <property value="c:\opt\maven-2.0.6" name="maven.home"/>
+    <property value="C:\workspace\cas3/cas-server-core/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf" name="java.security.auth.login.config"/>
+    <property value="C:\Documents and Settings\sbattaglia\.m2\repository" name="localRepository"/>
+    <property value="\" name="file.separator"/>
+    <property value="http://java.sun.com/cgi-bin/bugreport.cgi" name="java.vendor.url.bug"/>
+    <property value="little" name="sun.cpu.endian"/>
+    <property value="UnicodeLittle" name="sun.io.unicode.encoding"/>
+    <property value="windows" name="sun.desktop"/>
+    <property value="" name="sun.cpu.isalist"/>
+  </properties>
+  <testcase time="0" name="testNull"/>
+  <testcase time="0" name="testExtractionSuccessful"/>
+  <testcase time="0" name="testExtractionFailed"/>
+</testsuite>
