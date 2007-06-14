@@ -79,8 +79,8 @@ public final class WebUtils {
 
     public static final String getTicketGrantingTicketId(
         final RequestContext context) {
-        final String tgtFromRequest = context.getRequestScope().getString("ticketGrantingTicketId");
-        final String tgtFromFlow = context.getFlowScope().getString("ticketGrantingTicketId");
+        final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
+        final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
         
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
 

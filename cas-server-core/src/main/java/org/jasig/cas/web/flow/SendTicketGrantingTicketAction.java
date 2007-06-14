@@ -34,7 +34,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     
     protected Event doExecute(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context); 
-        final String ticketGrantingTicketValueFromCookie = context.getFlowScope().getString("ticketGrantingTicketId");
+        final String ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get("ticketGrantingTicketId");
         
         if (ticketGrantingTicketId == null) {
             return success();
