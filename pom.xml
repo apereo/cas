@@ -7,7 +7,7 @@
     <artifactId>cas-server</artifactId>
     <packaging>pom</packaging>
     <name>JA-SIG Central Authentication Service</name>
-    <version>3.1-m3</version>
+    <version>3.1-rc1</version>
     <!-- 
         <description>
         JA-SIG Central Authentication Service (CAS) is an open-source,
@@ -204,16 +204,6 @@
     		<version>2.2</version>
     		<scope>runtime</scope>
     	</dependency>
-		
-		<!--
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.2.1.ga</version>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		-->
     
         <dependency>
             <groupId>commons-logging</groupId>
