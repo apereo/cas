@@ -1,6 +1,0 @@
--------------------------------------------------------------------------------
-Battery: org.jasig.cas.support.openid.web.support.OpenIdPostUrlHandlerMappingTests
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Time elapsed: 0.156 sec 
-
-

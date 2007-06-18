@@ -1,6 +1,0 @@
--------------------------------------------------------------------------------
-Battery: org.jasig.cas.support.openid.web.flow.OpenIdSingleSignOnActionTests
--------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Time elapsed: 0.203 sec 
-
-

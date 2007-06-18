@@ -1,6 +1,0 @@
--------------------------------------------------------------------------------
-Battery: org.jasig.cas.support.openid.authentication.principal.OpenIdServiceTests
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 0.078 sec 
-
-
