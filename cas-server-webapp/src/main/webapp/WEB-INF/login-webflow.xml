@@ -44,6 +44,9 @@
 	</action-state>
 	 -->
 	<view-state id="viewLoginForm" view="casLoginView">
+			<render-actions>
+			<action bean="authenticationViaFormAction" method="setupForm"/>
+		</render-actions>
 		<transition on="submit" to="bindAndValidate" />
 	</view-state>
 	

@@ -1,9 +1,0 @@
-#jasig-banner {background:#323265;	border-bottom:#333; width:100%; float:left; padding:5px 0 5px 0; position:relative; margin-bottom:2em;}
-#jasig-banner #jasig-logo {position:absolute; margin:1px 0 5px 5px;}
-#jasig-banner ul {display:inline; float:right; width:85%; text-align:right;}
-#jasig-banner ul li {background:transparent;	padding:0; display:inline;	margin-right:10px; color:white; white-space:nowrap;}
-#jasig-banner ul li a {color:white; text-decoration:none; font-weight:bold; background:none;}
-#jasig-banner ul li a:hover {text-decoration: underline;}
-#jasig-banner img {border: none;}
-#jasig-logo a:hover {text-decoration: none;}
-#jasig-nav {font-weight: bold;}
