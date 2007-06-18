@@ -1,12 +1,10 @@
-<%@page import="org.jasig.cas.CasVersion"%>
-			<div id="copyright">
-				<p>Copyright &copy; 2005-2006 JA-SIG. All rights reserved.</p>
-				<p><a href="http://www.ja-sig.org/products/cas/">Home Page</a> | <a href="http://www.ja-sig.org/wiki/display/CAS/Home">Wiki</a> | <a href="http://www.ja-sig.org/issues">Issue Tracker</a> | <a href="http://www.ja-sig.org/products/cas/community/lists/index.html">Mailing Lists</a></p>
-				<br />
-				<p>Powered by <a href="http://www.ja-sig.org/products/cas/">JA-SIG CAS <%=CasVersion.getVersion() %></a></p>
-			</div>
-
-		</div><!-- END CONTENT -->
-
-    </body>
+		</div>
+	    <div id="footer">
+	        <div>
+	            <p>Copyright &copy; 2005-2007 JA-SIG. All rights reserved.</p>
+	            <p>Powered by <a href="http://www.ja-sig.org/products/cas/">JA-SIG Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
+	        </div>
+	        <a href="http://www.ja-sig.org" title="go to JA-SIG home page"><img id="logo" src="images/ja-sig-logo.gif" width="118" height="31" alt="JA-SIG" title="go to JA-SIG home page" /></a>
+	    </div>
+	</body>
 </html>

@@ -4,12 +4,7 @@ var previous='';
 var eventobj;
 
 // SET FOCUS TO FIRST ELEMENT AND HIDE/SHOW ELEMENTS IF JAVASCRIPT ENABLED
-	function init(){
-		if(document.forms[1] != null && document.forms[1].elements[0] != null) {
-			document.forms[1].elements[0].focus();
-			document.forms[1].elements[0].select();
-		}
-	}
+
 
 // REGULAR EXPRESSION TO HIGHLIGHT ONLY FORM ELEMENTS
 	var intended=/INPUT|TEXTAREA|SELECT|OPTION/
