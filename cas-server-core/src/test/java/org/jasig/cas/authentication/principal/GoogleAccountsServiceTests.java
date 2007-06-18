@@ -14,8 +14,8 @@ import java.util.zip.DeflaterOutputStream;
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Response.ResponseType;
-import org.jasig.cas.util.DSAPrivateKeyFactoryBean;
-import org.jasig.cas.util.DSAPublicKeyFactoryBean;
+import org.jasig.cas.util.PrivateKeyFactoryBean;
+import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -33,8 +33,10 @@ public class GoogleAccountsServiceTests extends TestCase {
     private GoogleAccountsService googleAccountsService;
 
     public static GoogleAccountsService getGoogleAccountsService() throws Exception {
-        final DSAPublicKeyFactoryBean pubKeyFactoryBean = new DSAPublicKeyFactoryBean();
-        final DSAPrivateKeyFactoryBean privKeyFactoryBean = new DSAPrivateKeyFactoryBean();
+        final PublicKeyFactoryBean pubKeyFactoryBean = new PublicKeyFactoryBean();
+        pubKeyFactoryBean.setAlgorithm("DSA");
+        final PrivateKeyFactoryBean privKeyFactoryBean = new PrivateKeyFactoryBean();
+        privKeyFactoryBean.setAlgorithm("DSA");
         
         final ClassPathResource pubKeyResource = new ClassPathResource("DSAPublicKey01.key");
         final ClassPathResource privKeyResource = new ClassPathResource("DSAPrivateKey01.key");

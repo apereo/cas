@@ -8,8 +8,8 @@ package org.jasig.cas.authentication.principal;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -80,18 +80,18 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String relayState;
 
-    private final DSAPublicKey publicKey;
+    private final PublicKey publicKey;
 
-    private final DSAPrivateKey privateKey;
+    private final PrivateKey privateKey;
 
     protected GoogleAccountsService(final String id, final String relayState,
-        final DSAPrivateKey privateKey, final DSAPublicKey publicKey) {
+        final PrivateKey privateKey, final PublicKey publicKey) {
         this(id, id, null, relayState, privateKey, publicKey);
     }
 
     protected GoogleAccountsService(final String id, final String originalUrl,
         final String artifactId, final String relayState,
-        final DSAPrivateKey privateKey, final DSAPublicKey publicKey) {
+        final PrivateKey privateKey, final PublicKey publicKey) {
         super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.privateKey = privateKey;
@@ -99,8 +99,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     public static GoogleAccountsService createServiceFrom(
-        final HttpServletRequest request, final DSAPrivateKey privateKey,
-        final DSAPublicKey publicKey) {
+        final HttpServletRequest request, final PrivateKey privateKey,
+        final PublicKey publicKey) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
 
         System.out.println(request.getParameter(CONST_PARAM_SERVICE));
