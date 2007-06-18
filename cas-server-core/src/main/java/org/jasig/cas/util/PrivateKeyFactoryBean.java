@@ -7,7 +7,7 @@ package org.jasig.cas.util;
 
 import java.io.InputStream;
 import java.security.KeyFactory;
-import java.security.interfaces.DSAPrivateKey;
+import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 
 import org.jasig.cas.util.annotation.NotNull;
@@ -22,12 +22,14 @@ import org.springframework.core.io.Resource;
  * @since 3.1
  *
  */
-public final class DSAPrivateKeyFactoryBean extends AbstractFactoryBean {
+public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
 
     @NotNull
     private Resource location;
+    
+    @NotNull
+    private String algorithm;
 
-    @Override
     protected Object createInstance() throws Exception {
         final InputStream privKey = this.location.getInputStream();
         try {
@@ -35,7 +37,7 @@ public final class DSAPrivateKeyFactoryBean extends AbstractFactoryBean {
             privKey.read(bytes);
             privKey.close();
             final PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
-            KeyFactory factory = KeyFactory.getInstance("DSA");
+            KeyFactory factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePrivate(privSpec);
         } finally {
             privKey.close();
@@ -43,10 +45,14 @@ public final class DSAPrivateKeyFactoryBean extends AbstractFactoryBean {
     }
 
     public Class getObjectType() {
-        return DSAPrivateKey.class;
+        return PrivateKey.class;
     }
 
     public void setLocation(final Resource location) {
         this.location = location;
+    }
+    
+    public void setAlgorithm(final String algorithm) {
+        this.algorithm = algorithm;
     }
 }

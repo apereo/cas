@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.web.support;
 
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,21 +25,21 @@ import org.jasig.cas.util.annotation.NotNull;
 public class GoogleAccountsArgumentExtractor implements ArgumentExtractor {
 
     @NotNull
-    private DSAPublicKey publicKey;
+    private PublicKey publicKey;
 
     @NotNull
-    private DSAPrivateKey privateKey;
+    private PrivateKey privateKey;
 
     public WebApplicationService extractService(final HttpServletRequest request) {
         return GoogleAccountsService.createServiceFrom(request,
             this.privateKey, this.publicKey);
     }
 
-    public void setPrivateKey(final DSAPrivateKey privateKey) {
+    public void setPrivateKey(final PrivateKey privateKey) {
         this.privateKey = privateKey;
     }
 
-    public void setPublicKey(final DSAPublicKey publicKey) {
+    public void setPublicKey(final PublicKey publicKey) {
         this.publicKey = publicKey;
     }
 }

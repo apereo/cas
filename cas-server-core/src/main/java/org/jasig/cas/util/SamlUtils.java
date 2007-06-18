@@ -10,7 +10,6 @@ import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
-import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.DateFormat;
@@ -72,7 +71,7 @@ public final class SamlUtils {
     }
 
     public static String signSamlResponse(final String samlResponse,
-        final DSAPrivateKey privateKey, final DSAPublicKey publicKey) {
+        final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXmlString(samlResponse);
 
         if (doc != null) {
