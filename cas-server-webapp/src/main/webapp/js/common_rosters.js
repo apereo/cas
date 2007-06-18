@@ -91,6 +91,13 @@ function getRef(el)
     else return null;
 }
 
+function init(){
+	if(document.forms[1] != null && document.forms[1].elements[0] != null) {
+		document.forms[1].elements[0].focus();
+		document.forms[1].elements[0].select();
+	}
+}
+
 // transition effect to fade background of element from darker to lighter color
 // could use var redBackground = new initArray(12);redBackground[0]="#33CC00"; format
 function setbgColor(elId, r, g, b){

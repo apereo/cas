@@ -205,9 +205,9 @@ div.row:after, .clearfix:after {
     font:normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;
 }
 #footer #nav-campus-sites li:before,
-#footer #nav-help-desks li:before {content: " ";} /* content: " | " */
+#footer #nav-help-desks li:before {} /* content: " | " */
 #footer #nav-campus-sites li:first-child:before,
-#footer #nav-help-desks li:first-child:before {content: "";}
+#footer #nav-help-desks li:first-child:before {}
 /* All IE browsers */
 * html #footer {height:1px;}
 * html #footer #nav-campus-sites,
@@ -225,7 +225,7 @@ div.row:after, .clearfix:after {
 }
 /* End hide from Mac IE 5 */
 * html #footer #nav-campus-sites li:first-child,
-#footer #nav-help-desks li:first-child {border-left:0;}
+#footer #nav-help-desks li:first-child {border-left:0px none;}
 /*
 _______________________________
 ---    CONTENT  FRAGMENTS    ---
@@ -245,17 +245,17 @@ _______________________________
 .success {
     border:1px dotted #390;
     color:#390;
-    background:#dfa url(../../images/services/success.gif) no-repeat 2em 50%;
+    background:#dfa url('../../images/services/success.gif') no-repeat 2em 50%;
 }
 .info {
     border:1px dotted navy;
     color:navy;
-    background:#eff url(../images/services/info.gif) no-repeat 2em 50%;
+    background:#eff url('../images/services/info.gif') no-repeat 2em 50%;
 }
 .errors {
     border:1px dotted #b00;
     color:#e71708; /* bg */
-    background:#fed url(../../images/error.gif) no-repeat 2em 50%;
+    background:#fed url('../../images/services/error.gif') no-repeat 2em 50%;
 }
 /* style for static info boxes
 #content p.info {
@@ -272,19 +272,15 @@ _______________________________
     font-size:1.1em;
     background-color:#fff;
     color:#000;
-    background:url(../images/info-s.gif) no-repeat 0 0;
+    background:url('../images/info-s.gif') no-repeat 0 0;
     border-color:#fff;
-    padding:0 0 0 2em;
-    line-height:1.5;
+    line-height:1.5; padding-left:2em; padding-right:0; padding-top:0; padding-bottom:0
 }
-#content p.help {background:url(../images/help.gif) no-repeat 0 0;}
+#content p.help {background:url('../images/help.gif') no-repeat 0 0;}
 /* FORMS
  --------------------------------- */
 fieldset {
-    margin:2em 0;
-    padding:10px;
-    border:1px solid #ddd;
-    border-width:1px 0 0;
+    border-left:0px solid #ddd; border-right:0px solid #ddd; border-top:1px solid #ddd; border-bottom:0px solid #ddd; margin:2em 0; padding:10px; 
 }
 fieldset fieldset {
     margin:1.5em 0;
@@ -324,7 +320,7 @@ label.check {xfloat:left;} /* bg */
 .fm-v div.row label.radio {float:left;}
 .fm-v div.row select,
 .fm-v div.row textarea {float:left; clear:both;}
-.fm-v div.row span.msg-error {color:#b00; display:block; float:left; margin-left:1em; padding-left:2em; font-size:1.1em; line-height:1.55; background:url(../images/error-s.gif) left top no-repeat;}
+.fm-v div.row span.msg-error {color:#b00; display:block; float:left; margin-left:1em; padding-left:2em; font-size:1.1em; line-height:1.55; background:url('../images/error-s.gif') no-repeat left top;}
 .fm-v div.row input.btn-submit {display:block; margin:0;} /* float:left; clear:left; margin-bottom:0; or display:block */
 /* horizontally aligned form */
 .fm-h div.row {padding:.5em 0; margin:0; width:100%; float:left; font-size:10px;}
@@ -336,12 +332,12 @@ input.error, select.error, textarea.error {background:#FFEFEF; color:#b00; borde
 .required {background:#ff9;}
 
 .formError {
-background: #fafafa url(../../images/services/alert2.gif) no-repeat 0 50%;
-padding:0 0 0 24px; /* bg */
+background: #fafafa url('../../images/services/alert2.gif') no-repeat 0 50%;
+/* bg */
 color:#b00; /* bg */
 margin-left:.5em; /* bg */
 font-size:1.4em;
-line-height:20px; /* +bg */
+line-height:20px; padding-left:24px; padding-right:0; padding-top:0; padding-bottom:0
 }
 
 
@@ -358,9 +354,7 @@ dd{margin:.5em 0 .5em 2em;line-height:1.5;}
     width:100%;
     font-size:1.1em;
     line-height:normal;
-    padding:1px 0 0 0;
-    margin:1.5em 0 0 0;
-    background: #fff url(../images/bg_tabs_transparent.gif) repeat-x bottom;
+    background: #fff url('../images/bg_tabs_transparent.gif') repeat-x bottom;; margin-left:0; margin-right:0; margin-top:1.5em; margin-bottom:0; padding-left:0; padding-right:0; padding-top:1px; padding-bottom:0
 }
 #nav-tab ul {
     margin:0;
@@ -374,17 +368,15 @@ dd{margin:.5em 0 .5em 2em;line-height:1.5;}
 }
 #nav-tab a {
     float:left;
-    background:url(../images/tab.gif) no-repeat 0 -450px;
+    background:url('../images/tab.gif') no-repeat 0 -450px;
     margin:0;
-    padding:0 0 0 9px;
-    text-decoration:none;
+    text-decoration:none; padding-left:9px; padding-right:0; padding-top:0; padding-bottom:0
 }
 #nav-tab a span {
     float:left;
     display:block;
-    background:url(../images/tab.gif) no-repeat 100% -150px;
-    padding:4px 15px 3px 6px;
-    color:#fff;
+    background:url('../images/tab.gif') no-repeat 100% -150px;
+    color:#fff; padding-left:6px; padding-right:15px; padding-top:4px; padding-bottom:3px
 }
 /* Hide from IE5Mac only \*/
 #nav-tab a span {float:none;}
@@ -404,13 +396,11 @@ dd{margin:.5em 0 .5em 2em;line-height:1.5;}
 /* TAB PANEL
  --------------------------------- */
 #tab-panel {
-    clear:both;
-    margin:0 0 2em 0;
+    border-left:1px solid #ccc; border-right:1px solid #ccc; border-bottom:1px solid #ccc; clear:both;
     padding:9px;
     display:block;
     background-color:#ececec;
-    border:1px solid #ccc;
-    border-top:0;
+    border-top:0px none;; margin-left:0; margin-right:0; margin-top:0; margin-bottom:2em
 }
 /* MIN-HEIGHT WORKAROUND http://www.mezzoblue.com/archives/2004/09/16/minheight_fi/ */
 /* for Mozilla, Safari, Opera, IE5/Mac */
@@ -456,10 +446,9 @@ table.highlight tr:hover td, table.highlight tr.over td {background:#ffc !import
 table.highlight tr.highlightBottom:hover td {background: #ffeff3 !important;}
 /* data tables - search results, status, etc. */
 table.data {
-    margin-bottom:2em;
+    border-left:1px solid #ccc; border-right:0px solid #ccc; border-top:1px solid #ccc; border-bottom:0px solid #ccc; margin-bottom:2em;
     margin-left:1px; /* :BUG: Firefox expands the width of table with border by an extra 1px and moves it that distance to the left */
-    border:1px solid #ccc;
-    border-width:1px 0 0 1px;
+    
 }
 table.data caption {
     text-align:left;
@@ -473,8 +462,7 @@ table.data th {
 }
 table.data th,
 table.data td {
-    border:1px solid #ccc;
-    border-width:0 1px 1px 0;
+    border-left:0px solid #ccc; border-right:1px solid #ccc; border-top:0px solid #ccc; border-bottom:1px solid #ccc; 
 }
 table.data tr.alt td {background:#fafafa;}
 
@@ -482,11 +470,11 @@ table.data tr.alt td {background:#fafafa;}
 
 
 table {
-    border:0;
+    border:0px none;
     border-collapse:collapse;
     empty-cells:show;
     background-color:#fff;
-    font-size:1.1em;
+    font-size:1.1em
     }
 
 .large {width:100%;}
@@ -531,19 +519,18 @@ td a {
     font-size:1.1em;
 }
     
-.add a {background: url(../../images/services/add_service.gif) no-repeat left center;
-    padding:10px 0 10px 35px;
+.add a {background: url('../../images/services/add_service.gif') no-repeat left center;
     text-decoration: none;
     display: inline;
     line-height:32px;
     color:#c1c1c0;
-    font-weight:900;
+    font-weight:900; padding-left:35px; padding-right:0; padding-top:10px; padding-bottom:10px
 }
 
 
 .add a:hover {color:#b00;}
-td a.edit {background: url(../../images/services/edit_service.gif) no-repeat left center;}
-td a.del {background: url(../../images/services/delete_service.gif) no-repeat left center;}
+td a.edit {background: url('../../images/services/edit_service.gif') no-repeat left center;}
+td a.del {background: url('../../images/services/delete_service.gif') no-repeat left center;}
 td a:hover {color:#b00;}
 
 
