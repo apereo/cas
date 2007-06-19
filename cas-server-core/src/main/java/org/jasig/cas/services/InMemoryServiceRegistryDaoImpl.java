@@ -8,6 +8,8 @@ package org.jasig.cas.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jasig.cas.util.DefaultLongNumericGenerator;
+import org.jasig.cas.util.LongNumericGenerator;
 import org.jasig.cas.util.annotation.NotNull;
 
 /**
@@ -22,6 +24,8 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
+    
+    private LongNumericGenerator generator = new DefaultLongNumericGenerator();
 
     public boolean delete(RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
@@ -42,6 +46,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
+        ((RegisteredServiceImpl) registeredService).setId(this.generator.getNextLong());
         this.registeredServices.remove(registeredService);
         this.registeredServices.add(registeredService);
         
