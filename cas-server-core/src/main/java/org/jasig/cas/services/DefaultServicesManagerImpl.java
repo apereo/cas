@@ -41,7 +41,7 @@ public final class DefaultServicesManagerImpl implements ServicesManager {
         this.serviceRegistryDao = serviceRegistryDao;
         this.disabledRegisteredService = constructDefaultRegisteredService();
         
-        loadMap();
+        load();
     }
 
     @Transactional(readOnly = false)
@@ -102,10 +102,15 @@ public final class DefaultServicesManagerImpl implements ServicesManager {
         this.services.put(new Long(r.getId()), r);
     }
     
-    private void loadMap() {
+    public void load() {
+        final ConcurrentHashMap<Long, RegisteredService> localServices = new ConcurrentHashMap<Long, RegisteredService>();
+        
+        
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            this.services.put(new Long(r.getId()), r);
+            localServices.put(new Long(r.getId()), r);
         }
+        
+        this.services = localServices;
     }
     
     private RegisteredService constructDefaultRegisteredService() {
