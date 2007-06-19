@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+<!ENTITY config	SYSTEM "includes/config.xml">
+<!ENTITY definition	SYSTEM "includes/definition.xml">
+<!ENTITY extractServiceTicket	SYSTEM "modules/extractServiceTicket.xml">
+<!ENTITY getLoginFormWithService	SYSTEM "modules/getLoginFormWithService.xml">
+<!ENTITY processLogin	SYSTEM "modules/processLogin.xml">
+<!ENTITY verifyCookie	SYSTEM "modules/verifyCookie.xml">
+<!ENTITY verifyLoginForm	SYSTEM "modules/verifyLoginForm.xml">
+<!ENTITY verifyRedirect	SYSTEM "modules/verifyRedirect.xml">
+]>
+
+<project name="logintests" basedir="." default="main">
+	&definition;
+	<target name="main">
+		<property name="username" value="arnaud.lesueur" />
+
+		<webtest name="CAS 1.0 validation">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate the ST" url="/validate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get yes in the answer and the username" text="yes\n${username}\n" regex="true" />
+				<invoke description="Try to re-validate the ST" url="/validate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get no in the answer" text="no\n\n" regex="true" />
+			</steps>
+		</webtest>
+
+		<webtest name="CAS 1.0 validation failure">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate the ST with wrong service" url="/validate?service=http://foo.bar/&amp;ticket=foo" />
+				<verifyText description="Should get no in the answer" text="no\n\n" regex="true" />
+				<invoke description="Try to validate the ST with wrong service" url="/validate?service=http://bar.foo/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get no in the answer" text="no\n\n" regex="true" />
+			</steps>
+		</webtest>
+
+		<webtest name="CAS 2.0 validation">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate the ST" url="/serviceValidate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get the username in the response" text=".*cas:authenticationSuccess.*${username}.*" regex="true" />
+				<invoke description="Try to re-validate the ST" url="/serviceValidate?service=http://foo.bar/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_TICKET.*#{serviceTicket}.*" regex="true" />
+			</steps>
+		</webtest>
+
+		<webtest name="CAS 2.0 validation failure">
+			&config;
+			<steps>
+				&processLogin;
+				<invoke description="Try to validate a wrong ST with the service" url="/serviceValidate?service=http://foo.bar/&amp;ticket=foo" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_TICKET.*foo.*" regex="true" />
+				<invoke description="Try to validate the ST with wrong service" url="/serviceValidate?service=http://bar.foo/&amp;ticket=#{serviceTicket}" />
+				<verifyText description="Should get INVALID_TICKET in the response" text=".*cas:authenticationFailure.*INVALID_SERVICE.*#{serviceTicket}.*" regex="true" />
+			</steps>
+		</webtest>
+
+
+		<!-- TODO
+		<webtest name="CAS 2.0 validation, acquire proxy-granting ticket, proxy authentication">
+		</webtest>
+		
+		<webtest name="CAS 2.0 unsuccessfull validation at /serviceValidate">
+		</webtest>
+
+		<webtest name="CAS 2.0 unsuccessfull validation at /validate">
+		</webtest>
+
+		<webtest name="CAS 2.0 Multi-level proxy">
+		</webtest>
+
+		<webtest name="CAS 2.0 Proxy-granting ticket invalidation by logout">
+		</webtest>
+		-->
+
+	</target>
+</project>

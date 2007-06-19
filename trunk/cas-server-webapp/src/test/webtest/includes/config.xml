@@ -1,0 +1,19 @@
+<config
+        host="${host}"
+        port="${port}"
+        protocol="${protocol}"
+        basepath="${basepath}"
+        summary="${summary}"
+        saveresponse="${saveresponse}"
+        resultpath="${resultpath}"
+        resultfile="${resultfile}"
+        haltonfailure="${haltonfailure}"
+        haltonerror="${haltonerror}"
+        showhtmlparseroutput="${showhtmlparseroutput}"
+        autorefresh="${autorefresh}" >
+      <option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+      <option name="RedirectEnabled" value="false"/>
+</config>
+
+
+

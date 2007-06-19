@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	<bean
+		id="authenticationHandlerAfterReturningAdvice"
+		class="org.jasig.cas.event.advice.AuthenticationHandlerMethodInterceptor" />
+
+	<bean
+		id="pageRequestHandlerInterceptorAdapter"
+		class="org.jasig.cas.event.advice.HttpRequestHandlerInterceptorAdapter" />
+		
+	<bean
+		id="centralAuthenticationServiceMethodInterceptor"
+		class="org.jasig.cas.event.advice.CentralAuthenticationServiceMethodInterceptor">
+		<property
+			name="ticketRegistry"
+			ref="ticketRegistry" />
+	</bean>
+		
+	<bean
+		id="authenticationHandlerAfterReturningAdviceAdvisor"
+		class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<constructor-arg>
+			<ref
+				local="authenticationHandlerAfterReturningAdvice" />
+		</constructor-arg>
+		<property
+			name="patterns">
+			<list>
+				<value>.*AuthenticationHandler.authenticate.*</value>
+			</list>
+		</property>
+        <property
+        	name="perl5"
+        	value="false" />
+	</bean>
+	
+	<bean
+		id="eventListener"
+		class="org.jasig.cas.event.EventListener">
+		<property
+			name="eventHandlers">
+			<list>
+				<bean
+					class="org.jasig.cas.event.handlers.TestEventHandler" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean
+		id="centralAuthenticationServiceAfterReturningAdviceAdvisor"
+		class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<constructor-arg>
+			<ref
+				local="centralAuthenticationServiceMethodInterceptor" />
+			</constructor-arg>
+		<property
+			name="patterns">
+			<list>
+				<value>.*CentralAuthenticationService.createTicketGrantingTicket.*</value>
+				<value>.*CentralAuthenticationService.delegateTicketGrantingTicket.*</value>
+				<value>.*CentralAuthenticationService.destroyTicketGrantingTicket.*</value>
+				<value>.*CentralAuthenticationService.grantServiceTicket.*</value>
+				<value>.*CentralAuthenticationService.validateServiceTicket.*</value>
+			</list>
+		</property>
+        <property
+        	name="perl5"
+        	value="false" />
+	</bean>
+</beans>

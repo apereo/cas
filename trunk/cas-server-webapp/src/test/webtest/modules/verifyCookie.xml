@@ -1,0 +1,6 @@
+<storeCookie description="storing cookie under : '${CASTGC}'"
+	name="CASTGC" property="CASTGC" />
+<verifyProperty description="verify if sso cookie present" name="CASTGC"
+	text="TGT-\d+-.*" regex="true" />
+<storeCookie description="storing cookie under : '${CASTGC}' (ant)"
+	name="CASTGC" property="CASTGC" propertyType="ant" />
