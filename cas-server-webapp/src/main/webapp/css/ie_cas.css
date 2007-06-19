@@ -6,4 +6,4 @@
 
 * html #sidebar {display:inline;} /* double margin on float bug */
 
-input.btn-submit {padding:2px .25em; width:0; overflow:visible;} /* extra width fix */ 
+* html input.btn-submit {padding:2px .25em; width:0; overflow:visible;} /* extra width fix */ 
