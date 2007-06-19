@@ -46,7 +46,10 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
-        ((RegisteredServiceImpl) registeredService).setId(this.generator.getNextLong());
+        if (registeredService.getId() == -1) {
+            ((RegisteredServiceImpl) registeredService).setId(this.generator.getNextLong());
+        }
+
         this.registeredServices.remove(registeredService);
         this.registeredServices.add(registeredService);
         
