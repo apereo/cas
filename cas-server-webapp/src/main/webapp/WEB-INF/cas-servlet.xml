@@ -221,7 +221,7 @@
 		p:validator-ref="registeredServiceValidator"
 		p:sessionForm="true">
 		<constructor-arg index="0" ref="servicesManager" />
-		<constructor-arg index="1" ref="attributeRegistry" />
+		<constructor-arg index="1" ref="attributeRepository" />
 	</bean>
 	
 	<bean id="editRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
@@ -231,7 +231,7 @@
 		p:validator-ref="registeredServiceValidator"
 		p:sessionForm="false">
 		<constructor-arg index="0" ref="servicesManager" />
-		<constructor-arg index="1" ref="attributeRegistry" />
+		<constructor-arg index="1" ref="attributeRepository" />
 	</bean>
 	
 	<bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
