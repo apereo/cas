@@ -23,11 +23,32 @@
 		<constructor-arg index="0" ref="serviceRegistryDao" />
 	</bean>
 	
-	<bean
-		id="attributeRegistry"
-		class="org.jasig.cas.services.LdapAttributeRepository">
-		<constructor-arg index="0" value="uid=battags,ou=people" />
-		<constructor-arg index="1" value="ldap://ldap.rutgers.edu:389/dc=rutgers,dc=edu" />
+	<bean id="attributeRepository"
+		class="org.jasig.cas.services.MapBackedAttributeRepository">
+		<property name="attributesMap">
+			<map>
+				<entry key="uid">
+					<bean class="org.jasig.cas.services.Attribute">
+						<property name="id" value="uid" />
+						<property name="name" value="uid" />
+					</bean>
+
+				</entry>
+				<entry key="eduPersonAffiliation">
+					<bean class="org.jasig.cas.services.Attribute">
+						<property name="id" value="eduPersonAffiliation" />
+						<property name="name" value="eduPersonAffiliation" />
+					</bean>
+				</entry>
+				<entry key="groupMembership">
+					<bean class="org.jasig.cas.services.Attribute">
+
+						<property name="id" value="groupMembership" />
+						<property name="name" value="groupMembership" />
+					</bean>
+				</entry>
+			</map>
+		</property>
 	</bean>
 	
 	<bean
