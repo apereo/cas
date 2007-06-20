@@ -22,7 +22,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class DefaultServicesManagerImpl implements ServicesManager {
+public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
     /** Instance of ServiceRegistryDao. */
     private ServiceRegistryDao serviceRegistryDao;
@@ -102,10 +102,13 @@ public final class DefaultServicesManagerImpl implements ServicesManager {
         this.services.put(new Long(r.getId()), r);
     }
     
-    public void load() {
+    public void reload() {
+        load();
+    }
+    
+    private void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices = new ConcurrentHashMap<Long, RegisteredService>();
-        
-        
+                
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
             localServices.put(new Long(r.getId()), r);
         }
