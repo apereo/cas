@@ -63,6 +63,11 @@ public class AuthenticationViaFormAction extends FormAction {
 
         super.doBind(context, binder);
     }
+    
+    public Event referenceData(final RequestContext context) throws Exception {
+        context.getRequestScope().put("commandName", getFormObjectName());
+        return success();
+    }
 
     public final Event submit(final RequestContext context) throws Exception {
         final Credentials credentials = (Credentials) getFormObject(context);
