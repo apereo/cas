@@ -68,7 +68,7 @@ http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com
 .info {border:1px dotted navy;    background:#eff url(../images/info.gif) no-repeat 2em 50%; color:navy;}
 .errors {border:1px dotted #b00; background:#fed url(../images/error.gif) no-repeat 2em 50%; color:#b00;}
 .success {border:1px dotted #390; background:#dfa url(../images/confirm.gif) no-repeat 2em 50%; color:#390;}
-    .info h2, .errors h2, .success h2 {color:#d21033 !important; font-weight:900 !important;}
+    .info h2, .errors h2, .success h2 {color:#d21033 !important; font-weight:900 !important; font-size:1.8em !important;}
     .success h2 {color: green !important;}
     .info ul, .errors ul, .success ul {margin:0 !important; padding:0 !important; list-style-type:none !important;}
 
