@@ -9,7 +9,7 @@ import java.security.cert.X509Certificate;
 
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.springframework.beans.factory.InitializingBean;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * This class is targeted at usage for mapping to an existing user record. It
@@ -29,13 +29,14 @@ import org.springframework.beans.factory.InitializingBean;
  * @since 3.1
  */
 public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver
-    extends AbstractX509CertificateCredentialsToPrincipalResolver implements
-    InitializingBean {
+    extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
     /** Prefix for Certificate Serial Number. */
+    @NotNull
     private String serialNumberPrefix = "SERIALNUMBER=";
 
     /** Prefix for Value Delimiter. */
+    @NotNull
     private String valueDelimiter = ", ";
 
     /**
@@ -55,19 +56,6 @@ public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalR
      */
     public void setValueDelimiter(final String valueDelimiter) {
         this.valueDelimiter = valueDelimiter;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        if (this.serialNumberPrefix == null) {
-            log.info("Converting null serialNumberPrefix to empty String.");
-            this.serialNumberPrefix = "";
-        }
-
-        if (this.valueDelimiter == null) {
-            log.info("Converting null valueDelimiter to empty String.");
-            this.valueDelimiter = "";
-
-        }
     }
 
     protected Principal resolvePrincipalInternal(
