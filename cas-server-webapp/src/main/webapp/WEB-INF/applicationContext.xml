@@ -113,6 +113,9 @@
 					<entry
 						key="org.jasig.cas.authentication.principal.SamlService"
 						value-ref="samlServiceTicketUniqueIdGenerator" />
+					<entry
+						key="org.jasig.cas.authentication.principal.GoogleAccountsService"
+						value-ref="serviceTicketUniqueIdGenerator" />
 				</map>
 			</property>
 	</bean>
