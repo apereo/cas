@@ -61,4 +61,18 @@ public class Attribute {
     public String toString() {
         return this.name;
     }
+    
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        
+        if (!(object instanceof Attribute)) {
+            return false;
+        }
+        
+        final Attribute attribute = (Attribute) object;
+        
+        return this.name.equals(attribute.getName()) && this.id.equals(attribute.getId());
+    }
 }
