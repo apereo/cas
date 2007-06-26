@@ -69,7 +69,7 @@
 		</span>
 			
 		<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
-			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" itemValue="id" itemLabel="name" />
+			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</span>
 		</div>
 	</fieldset>
