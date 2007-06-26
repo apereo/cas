@@ -22,7 +22,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.services.Attribute;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
@@ -332,13 +331,13 @@ public final class CentralAuthenticationServiceImpl implements
                     .getService()) : principal.getId();
             final Map<String, Object> attributes = new HashMap<String, Object>();
 
-            for (final Attribute attribute : registeredService
+            for (final String attribute : registeredService
                 .getAllowedAttributes()) {
                 final Object value = principal.getAttributes().get(
-                    attribute.getName());
+                    attribute);
 
                 if (value != null) {
-                    attributes.put(attribute.getName(), value);
+                    attributes.put(attribute, value);
                 }
             }
 

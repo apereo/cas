@@ -11,13 +11,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.cas.services.Attribute;
-import org.jasig.cas.services.AttributeRepository;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.web.support.AttributePropertyEditor;
 import org.jasig.cas.util.annotation.NotNull;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -41,13 +39,13 @@ public final class RegisteredServiceSimpleFormController extends
 
     /** Instance of AttributeRegistry. */
     @NotNull
-    private final AttributeRepository attributeRepository;
+    private final IPersonAttributeDao personAttributeDao;
 
     public RegisteredServiceSimpleFormController(
         final ServicesManager servicesManager,
-        final AttributeRepository attributeRepository) {
+        final IPersonAttributeDao attributeRepository) {
         this.servicesManager = servicesManager;
-        this.attributeRepository = attributeRepository;
+        this.personAttributeDao = attributeRepository;
     }
 
     /**
@@ -63,7 +61,6 @@ public final class RegisteredServiceSimpleFormController extends
             "name", "allowedToProxy", "enabled", "ssoEnabled",
             "anonymousAccess"});
         binder.setDisallowedFields(new String[] {"id"});
-        binder.registerCustomEditor(Attribute.class, new AttributePropertyEditor(this.attributeRepository));
     }
 
     /**
@@ -111,7 +108,7 @@ public final class RegisteredServiceSimpleFormController extends
         throws Exception {
         final Map<String, Object> model = new HashMap<String, Object>();
         model
-            .put("availableAttributes", this.attributeRepository.getAttributes());
+            .put("availableAttributes", this.personAttributeDao.getPossibleUserAttributeNames());
         model.put("pageTitle", getFormView());
         model.put("commandName", getCommandName());
         return model;

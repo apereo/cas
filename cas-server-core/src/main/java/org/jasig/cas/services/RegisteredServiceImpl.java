@@ -40,7 +40,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     
     @ManyToMany(fetch=FetchType.EAGER,cascade={CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name="rs_attributes")
-    private List<Attribute> allowedAttributes = new ArrayList<Attribute>();
+    private List<String> allowedAttributes = new ArrayList<String>();
 
     private String description;
 
@@ -66,9 +66,9 @@ public class RegisteredServiceImpl implements RegisteredService {
         this.anonymousAccess = anonymousAccess;
     }
 
-    public List<Attribute> getAllowedAttributes() {
+    public List<String> getAllowedAttributes() {
         return this.allowedAttributes != null ? this.allowedAttributes
-            : new ArrayList<Attribute>();
+            : new ArrayList<String>();
     }
 
     public long getId() {
@@ -120,7 +120,7 @@ public class RegisteredServiceImpl implements RegisteredService {
         return false;
     }
 
-    public void setAllowedAttributes(final List<Attribute> allowedAttributes) {
+    public void setAllowedAttributes(final List<String> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
     }
 
