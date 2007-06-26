@@ -31,7 +31,7 @@ public class RegisteredServiceImplTests extends TestCase {
         final boolean ALLOWED_TO_PROXY = false;
         final boolean ANONYMOUS_ACCESS = true;
         final boolean SSO_ENABLED = false;
-        final List<Attribute> ALLOWED_ATTRIBUTES = Arrays.asList(new Attribute[] {new Attribute("Test", "test")});
+        final List<String> ALLOWED_ATTRIBUTES = Arrays.asList(new String[] {"Test"});
         
         this.r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
         this.r.setAllowedToProxy(ALLOWED_TO_PROXY);

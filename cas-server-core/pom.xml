@@ -14,6 +14,13 @@
 	<name>JA-SIG CAS Core</name>
 	<dependencies>
 		<dependency>
+			<groupId>org.jasig.service</groupId>
+			<artifactId>person-directory</artifactId>
+			<version>1.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+	
+		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.7</version>

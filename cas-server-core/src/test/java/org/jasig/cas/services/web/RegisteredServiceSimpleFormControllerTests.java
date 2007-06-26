@@ -8,14 +8,13 @@ package org.jasig.cas.services.web;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.services.Attribute;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.MapBackedAttributeRepository;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.support.RegisteredServiceValidator;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
@@ -34,15 +33,15 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
     private ServicesManager manager;
 
-    private MapBackedAttributeRepository repository;
+    private StubPersonAttributeDao repository;
 
     @Override
     protected void setUp() throws Exception {
-        final Map<String, Attribute> attributes = new HashMap<String, Attribute>();
-        attributes.put("test", new Attribute("test", "test"));
+        final Map<String, String> attributes = new HashMap<String, String>();
+        attributes.put("test", "test");
 
-        this.repository = new MapBackedAttributeRepository();
-        this.repository.setAttributesMap(attributes);
+        this.repository = new StubPersonAttributeDao();
+        this.repository.setBackingMap(attributes);
 
         this.manager = new DefaultServicesManagerImpl(
             new InMemoryServiceRegistryDaoImpl());

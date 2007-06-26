@@ -38,7 +38,7 @@ public interface RegisteredService extends Cloneable {
      * 
      * @return the list of attributes
      */
-    List<Attribute> getAllowedAttributes();
+    List<String> getAllowedAttributes();
 
     /**
      * Is this application allowed to take part in the proxying capabilities of
