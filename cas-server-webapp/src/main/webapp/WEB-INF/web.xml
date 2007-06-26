@@ -9,14 +9,12 @@
 		<param-value>
 			/WEB-INF/applicationContext.xml,
 			/WEB-INF/deployerConfigContext.xml
+			/WEB-INF/securityContext.xml
+
 		</param-value>
 	</context-param>
 
 	<!-- 
-		place this into the contextConfigLocation to enable
-		service restrictions.
-		/WEB-INF/approvedServices.xml,
-		
 		place this into the contextConfigLocation to enable remote services
 		/WEB-INF/remoteServices.xml,
 		classpath:org/codehaus/xfire/spring/xfire.xml
@@ -38,6 +36,21 @@
 		<param-name>log4jExposeWebAppRoot</param-name>
 		<param-value>false</param-value>
 	</context-param>
+
+	<filter>
+		<filter-name>Acegi Filter Chain Proxy</filter-name>
+		<filter-class>org.acegisecurity.util.FilterToBeanProxy</filter-class>
+		<init-param>
+			<param-name>targetClass</param-name>
+			<param-value>org.acegisecurity.util.FilterChainProxy</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>Acegi Filter Chain Proxy</filter-name>
+		<url-pattern>/services/*</url-pattern>
+	</filter-mapping>
+
 
 	<!--
 		- Configures Log4J for this web app.
@@ -102,7 +115,7 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-
+	
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/login</url-pattern>
