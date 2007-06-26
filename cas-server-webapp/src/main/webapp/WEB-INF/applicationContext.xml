@@ -24,29 +24,12 @@
 	</bean>
 	
 	<bean id="attributeRepository"
-		class="org.jasig.cas.services.MapBackedAttributeRepository">
-		<property name="attributesMap">
+		class="org.jasig.services.persondir.support.StubPersonAttributeDao">
+		<property name="backingMap">
 			<map>
-				<entry key="uid">
-					<bean class="org.jasig.cas.services.Attribute">
-						<property name="id" value="uid" />
-						<property name="name" value="uid" />
-					</bean>
-
-				</entry>
-				<entry key="eduPersonAffiliation">
-					<bean class="org.jasig.cas.services.Attribute">
-						<property name="id" value="eduPersonAffiliation" />
-						<property name="name" value="eduPersonAffiliation" />
-					</bean>
-				</entry>
-				<entry key="groupMembership">
-					<bean class="org.jasig.cas.services.Attribute">
-
-						<property name="id" value="groupMembership" />
-						<property name="name" value="groupMembership" />
-					</bean>
-				</entry>
+				<entry key="uid" value="uid" />
+				<entry key="eduPersonAffiliation" value="eduPersonAffiliation" /> 
+				<entry key="groupMembership" value="groupMembership" />
 			</map>
 		</property>
 	</bean>
