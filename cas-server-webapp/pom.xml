@@ -12,6 +12,69 @@
   <name>JA-SIG CAS Web Application</name>
   <url>http://maven.apache.org</url>
   <dependencies>
+  		<dependency>
+  			<groupId>org.acegisecurity</groupId>
+  			<artifactId>acegi-security</artifactId>
+  			<version>1.0.3</version>
+  			<scope>runtime</scope>
+  			<exclusions>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-aop</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-beans</artifactId>
+  				</exclusion>  				
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-context</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-core</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-dao</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-jdbc</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-remoting</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-support</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-web</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-webmvc</artifactId>
+  				</exclusion>
+			</exclusions>  				
+  		</dependency>
+  		
+  		<dependency>
+  			<groupId>net.sf.ehcache</groupId>
+  			<artifactId>ehcache</artifactId>
+  			<version>1.2.3</version>
+  			<scope>runtime</scope>
+  		</dependency>
+
+  		<dependency>
+  			<groupId>cas</groupId>
+  			<artifactId>casclient</artifactId>
+  			<version>2.1.1</version>
+  			<scope>runtime</scope>
+  		</dependency>
+  
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
