@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+	<bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties"
+		p:service="https://localhost:8443/cas/services/j_acegi_cas_security_check"
+		p:sendRenew="false" />
+		
+	<bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter"
+		p:authenticationManager-ref="casAuthenticationManager"
+		p:authenticationFailureUrl="/authorizationFailure.jsp"
+		p:defaultTargetUrl="/services/manage.html"
+		p:filterProcessesUrl="/services/j_acegi_cas_security_check" />
+		
+	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter"
+		p:authenticationEntryPoint-ref="casProcessingFilterEntryPoint" />
+
+	<bean id="casProcessingFilterEntryPoint" class="org.acegisecurity.ui.cas.CasProcessingFilterEntryPoint"
+		p:loginUrl="https://localhost:8443/cas/login"
+		p:serviceProperties-ref="serviceProperties" />
+
+	<bean id="casAuthenticationManager" class="org.acegisecurity.providers.ProviderManager">
+		<property name="providers">
+		    <list>
+		      <ref bean="casAuthenticationProvider"/>
+		    </list>
+		</property>
+	</bean>
+
+	<bean id="casAuthenticationProvider" class="org.acegisecurity.providers.cas.CasAuthenticationProvider"
+		p:casAuthoritiesPopulator-ref="casAuthoritiesPopulator"
+		p:casProxyDecider-ref="casProxyDecider"
+		p:ticketValidator-ref="casProxyTicketValidator"
+		p:statelessTicketCache-ref="statelessTicketCache"
+		p:key="my_password_for_this_auth_provider_only" />
+
+	<bean id="casProxyTicketValidator" class="org.acegisecurity.providers.cas.ticketvalidator.CasProxyTicketValidator"
+		p:casValidate="https://localhost:8443/cas/proxyValidate"
+	  	p:serviceProperties-ref="serviceProperties">
+	  	<property name="proxyCallbackUrl"><null /></property>
+	  </bean>
+
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+		p:configLocation="classpath:/ehcache-failsafe.xml" />
+    
+	<bean id="ticketCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+		p:cacheManager-ref="cacheManager"
+		p:cacheName="ticketCache" />
+   
+	<bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.EhCacheBasedTicketCache"
+		p:cache-ref="ticketCacheBackend" />
+
+	<bean id="casAuthoritiesPopulator" class="org.acegisecurity.providers.cas.populator.DaoCasAuthoritiesPopulator"
+		p:userDetailsService-ref="inMemoryDaoImpl" />
+
+	<bean id="casProxyDecider" class="org.acegisecurity.providers.cas.proxy.RejectProxyTickets" />
+	
+	<bean id="accessDecisionManager" class="org.acegisecurity.vote.AffirmativeBased">
+		<property name="decisionVoters">
+			<list>
+				<bean class="org.acegisecurity.vote.RoleVoter" />
+			</list>
+		</property>
+	</bean>
+       
+	<bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor"
+		p:authenticationManager-ref="casAuthenticationManager"
+	  	p:accessDecisionManager-ref="accessDecisionManager">
+		<property name="objectDefinitionSource">
+		<value>
+			CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+			PATTERN_TYPE_APACHE_ANT
+	    	/**=ROLE_ADMIN
+	    </value>
+		</property>
+	</bean>
+	
+	<bean id="inMemoryDaoImpl" class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
+		<property name="userMap">
+			<value>
+		      battags=notused,ROLE_ADMIN
+		    </value>
+		</property>
+	</bean>  
+	
+	<bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
+		<property name="filterInvocationDefinitionSource">
+			<value>
+			CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
+			PATTERN_TYPE_APACHE_ANT
+			/**=httpSessionContextIntegrationFilter,logoutFilter,casProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
+			/**/*.jsp=#NONE#
+    		</value>
+		</property>
+	</bean>
+	
+	<bean id="httpSessionContextIntegrationFilter" class="org.acegisecurity.context.HttpSessionContextIntegrationFilter" />
+	
+	<bean id="logoutFilter" class="org.acegisecurity.ui.logout.LogoutFilter" 
+		p:filterProcessesUrl="/services/logout.html">
+		<constructor-arg index="0" value="/services/logout.jsp" />
+		<constructor-arg index="1">
+			<list>
+				<bean class="org.acegisecurity.ui.logout.SecurityContextLogoutHandler"
+					p:invalidateHttpSession="true" />
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>
