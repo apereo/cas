@@ -163,6 +163,16 @@
 	
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>
+		<url-pattern>/services/logout.html</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
+		<url-pattern>/services/loggedOut.html</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
 		<url-pattern>/services/manage.html</url-pattern>
 	</servlet-mapping>
 	
