@@ -92,8 +92,8 @@
 			<value>
 			CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 			PATTERN_TYPE_APACHE_ANT
+			/**/loggedOut.html=#NONE#
 			/**=httpSessionContextIntegrationFilter,logoutFilter,casProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
-			/**/*.jsp=#NONE#
     		</value>
 		</property>
 	</bean>
@@ -102,7 +102,7 @@
 	
 	<bean id="logoutFilter" class="org.acegisecurity.ui.logout.LogoutFilter" 
 		p:filterProcessesUrl="/services/logout.html">
-		<constructor-arg index="0" value="/services/logout.jsp" />
+		<constructor-arg index="0" value="/services/loggedOut.html" />
 		<constructor-arg index="1">
 			<list>
 				<bean class="org.acegisecurity.ui.logout.SecurityContextLogoutHandler"

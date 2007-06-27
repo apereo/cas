@@ -85,6 +85,11 @@
 					key="/services/edit.html">
 					editRegisteredServiceSimpleFormController
 				</prop>
+				
+				<prop
+					key="/services/loggedOut.html">
+					serviceLogoutViewController
+				</prop>
 			
 				<prop
 					key="/services/*">
@@ -102,6 +107,11 @@
 		</property>
 		 -->
 	</bean>
+	
+	<bean
+		id="serviceLogoutViewController"
+		class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+		p:viewName="serviceLogoutView" />
 
 	<bean
 		id="loginController"
