@@ -15,7 +15,7 @@
   		<dependency>
   			<groupId>org.acegisecurity</groupId>
   			<artifactId>acegi-security</artifactId>
-  			<version>1.0.3</version>
+  			<version>1.0.4</version>
   			<scope>runtime</scope>
   			<exclusions>
   				<exclusion>
