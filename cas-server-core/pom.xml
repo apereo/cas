@@ -20,6 +20,7 @@
 			<scope>compile</scope>
 		</dependency>
 	
+	<!-- TESTS FOR JPA -->
 		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
@@ -40,6 +41,15 @@
 			<version>3.3.0.ga</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+			<version>1.3.4</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- END TESTS FOR JPA -->
 
 		<dependency>
 			<groupId>org.apache.santuario</groupId>

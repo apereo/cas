@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.services;
 
-import java.util.List;
-
 import org.jasig.cas.authentication.principal.Service;
 
 /**
@@ -38,7 +36,7 @@ public interface RegisteredService extends Cloneable {
      * 
      * @return the list of attributes
      */
-    List<String> getAllowedAttributes();
+    String[] getAllowedAttributes();
 
     /**
      * Is this application allowed to take part in the proxying capabilities of
