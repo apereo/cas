@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.test.jpa.AbstractJpaTests;
@@ -57,7 +55,13 @@ public class JpaServiceRegistryDaoImplTests extends AbstractJpaTests {
         
         assertEquals(r, r2);
         assertEquals(r2, r3);
-        // XXX fix assertTrue(r3.getAllowedAttributes().contains("Test"));
+        
+        for (int i = 0; i < r3.getAllowedAttributes().length; i++) {
+            if (r3.getAllowedAttributes()[i].equals("Test")) {
+                return;
+            }
+        }
+        fail("Attribute 'Test' expected in array of allowed attributes.");
     }
     
     public void testSaveMethodWithExistingServiceNoAttribute() {
@@ -107,9 +111,18 @@ public class JpaServiceRegistryDaoImplTests extends AbstractJpaTests {
         
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
-        // XXX fix assertTrue(r3.getAllowedAttributes().contains("Test"));
+
+        boolean found = false;
+        for (int i = 0; i < r3.getAllowedAttributes().length; i++) {
+            if (r3.getAllowedAttributes()[i].equals("Test")) {
+                found = true;
+            }
+        }
+        
+        assertTrue(found);
         
         r.setAllowedAttributes(new String[0]);
+        this.dao.save(r);
         final RegisteredService r4 = this.dao.findServiceById(r.getId());
         assertTrue(r4.getAllowedAttributes().length == 0);
     }
