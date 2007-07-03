@@ -92,7 +92,7 @@
 			<value>
 			CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
 			PATTERN_TYPE_APACHE_ANT
-			/**/loggedOut.html=#NONE#
+			/**/loggedout.html=#NONE#
 			/**=httpSessionContextIntegrationFilter,logoutFilter,casProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
     		</value>
 		</property>
