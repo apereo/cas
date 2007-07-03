@@ -18,6 +18,24 @@
 			<artifactId>person-directory</artifactId>
 			<version>1.0.1</version>
 			<scope>compile</scope>
+			<exclusions>
+	  			<exclusion>
+	  				<groupId>org.springframework</groupId>
+	  				<artifactId>spring-core</artifactId>
+	  			</exclusion>
+	  			<exclusion>
+	  				<groupId>org.springframework</groupId>
+	  				<artifactId>spring-dao</artifactId>
+	  			</exclusion>
+	  			<exclusion>
+	  				<groupId>org.springframework</groupId>
+	  				<artifactId>spring-jdbc</artifactId>
+	  			</exclusion>
+	  			<exclusion>
+	  				<groupId>org.springframework</groupId>
+	  				<artifactId>spring-beans</artifactId>
+	  			</exclusion>  
+	  		</exclusions>
 		</dependency>
 	
 	<!-- TESTS FOR JPA -->
