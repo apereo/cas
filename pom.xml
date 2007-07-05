@@ -150,7 +150,6 @@
                     </includes>
                     <excludes>
                         <exclude>**/CasVersion.java</exclude>
-                        <exclude>**/JpaServiceRegistryDaoImpl.java</exclude>
                         <exclude>**/SamlCompliantUniqueTicketIdGenerator.java</exclude>
                     </excludes>
                 </configuration>
