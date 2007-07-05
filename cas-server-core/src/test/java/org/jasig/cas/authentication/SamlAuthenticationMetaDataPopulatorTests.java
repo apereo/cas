@@ -65,6 +65,11 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
     }
     
     protected class CustomCredentials implements Credentials {
+
+        /**
+         * Comment for <code>serialVersionUID</code>
+         */
+        private static final long serialVersionUID = -3387599342233073148L;
         // nothing to do
     }
 }

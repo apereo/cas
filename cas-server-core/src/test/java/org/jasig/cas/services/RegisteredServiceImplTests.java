@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.TestCase;
 
 /**
