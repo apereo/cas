@@ -20,7 +20,7 @@ public interface RandomStringGenerator {
     int getMinLength();
 
     /**
-     * @return the maximum length as an int gauranteed by this generator.
+     * @return the maximum length as an int guaranteed by this generator.
      */
     int getMaxLength();
 
