@@ -14,18 +14,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.util.DefaultRandomStringGenerator;
-import org.jasig.cas.util.RandomStringGenerator;
 import org.jasig.cas.util.SamlUtils;
+import org.jdom.Document;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.util.Base64;
-import org.w3c.dom.Document;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -42,8 +41,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      */
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private static final RandomStringGenerator GENERATOR = new DefaultRandomStringGenerator(
-        20);
+    private static Random random = new Random();
+    
+    private static final char[] charMapping = {
+      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+      'p'};
 
     private static final String CONST_PARAM_SERVICE = "SAMLRequest";
 
@@ -66,7 +68,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         + "</NameID>"
         + "<SubjectConfirmation Method=\"urn:oasis:names:tc:SAML:2.0:cm:bearer\"/>"
         + "</Subject>"
-        + "<Conditions NotBefore=\"<NOT_BEFORE>\""
+        + "<Conditions NotBefore=\"2003-04-17T00:46:02Z\""
         + " NotOnOrAfter=\"<NOT_ON_OR_AFTER>\">"
         + "</Conditions>"
         + "<AuthnStatement AuthnInstant=\"<AUTHN_INSTANT>\">"
@@ -76,7 +78,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         + "</AuthnContextClassRef>"
         + "</AuthnContext>"
         + "</AuthnStatement>"
-        + "</Assertion>" + "</samlp:Response>";
+        + "</Assertion></samlp:Response>";
 
     private final String relayState;
 
@@ -103,7 +105,6 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final PublicKey publicKey) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
 
-        System.out.println(request.getParameter(CONST_PARAM_SERVICE));
         final String xmlRequest = decodeAuthnRequestXML(request
             .getParameter(CONST_PARAM_SERVICE));
 
@@ -118,9 +119,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             return null;
         }
 
-        final String assertionConsumerServiceUrl = document.getChildNodes()
-            .item(0).getAttributes()
-            .getNamedItem("AssertionConsumerServiceURL").getNodeValue();
+        final String assertionConsumerServiceUrl = document.getRootElement().getAttribute("AssertionConsumerServiceURL").getValue();
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
             relayState, privateKey, publicKey);
@@ -151,25 +150,37 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
         final Calendar c = Calendar.getInstance();
         c.setTime(new Date());
-        c.add(Calendar.MINUTE, 5);
-
+        c.add(Calendar.YEAR, 1);
+        
         samlResponse = samlResponse.replace("<USERNAME_STRING>", getPrincipal()
             .getId());
-        samlResponse = samlResponse.replace("<RESPONSE_ID>", GENERATOR
-            .getNewString());
+        samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());
         samlResponse = samlResponse.replace("<ISSUE_INSTANT>", SamlUtils
             .getCurrentDateAndTime());
         samlResponse = samlResponse.replace("<AUTHN_INSTANT>", SamlUtils
             .getCurrentDateAndTime());
-        samlResponse = samlResponse.replace("<NOT_BEFORE>", SamlUtils
-            .getCurrentDateAndTime());
         samlResponse = samlResponse.replace("<NOT_ON_OR_AFTER>", SamlUtils
             .getFormattedDateAndTime(c.getTime()));
-        samlResponse = samlResponse.replace("<ASSERTION_ID>", GENERATOR
-            .getNewString());
+        samlResponse = samlResponse.replace("<ASSERTION_ID>", createID());
 
         return samlResponse;
     }
+    
+    private static String createID() {
+        final byte[] bytes = new byte[20]; // 160 bits
+        random.nextBytes(bytes);
+
+        final char[] chars = new char[40];
+
+        for (int i = 0; i < bytes.length; i++) {
+          int left = (bytes[i] >> 4) & 0x0f;
+          int right = bytes[i] & 0x0f;
+          chars[i * 2] = charMapping[left];
+          chars[i * 2 + 1] = charMapping[right];
+        }
+
+        return String.valueOf(chars);
+      }
 
     private static String decodeAuthnRequestXML(
         final String encodedRequestXmlString) {
