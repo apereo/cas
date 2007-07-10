@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -33,27 +32,28 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.input.DOMBuilder;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 /**
+ * Utilities adopted from the Google sample code.
+ * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class SamlUtils {
 
-    private static final TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
-
     private static final String JSR_105_PROVIDER = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
+
+    private static final String SAML_PROTOCOL_NS_URI_V20 = "urn:oasis:names:tc:SAML:2.0:protocol";
 
     private SamlUtils() {
         // nothing to do
@@ -66,7 +66,8 @@ public final class SamlUtils {
     public static String getFormattedDateAndTime(final Date date) {
         final DateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ss'Z'");
-        dateFormat.setTimeZone(UTC_TIME_ZONE);
+        // Google Does not set this.
+        // dateFormat.setTimeZone(UTC_TIME_ZONE);
         return dateFormat.format(date);
     }
 
@@ -75,30 +76,19 @@ public final class SamlUtils {
         final Document doc = constructDocumentFromXmlString(samlResponse);
 
         if (doc != null) {
-            final Element signedElement = signSamlElement((Element) doc
-                .getChildNodes().item(0), privateKey, publicKey);
-
-            try {
-                final TransformerFactory tf = TransformerFactory.newInstance();
-                final Transformer trans = tf.newTransformer();
-                final StringWriter sw = new StringWriter();
-                trans.transform(new DOMSource(signedElement), new StreamResult(
-                    sw));
-                return sw.toString();
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-
+            final Element signedElement = signSamlElement(doc.getRootElement(),
+                privateKey, publicKey);
+            doc.setRootElement((Element) signedElement.detach());
+            return new XMLOutputter().outputString(doc);
         }
         throw new RuntimeException("Error signing SAML Response: Null document");
     }
 
-    public static Document constructDocumentFromXmlString(final String xml) {
+    public static Document constructDocumentFromXmlString(String xmlString) {
         try {
-            final DocumentBuilderFactory factory = DocumentBuilderFactory
-                .newInstance();
-            final DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(new ByteArrayInputStream(xml.getBytes()));
+            final SAXBuilder builder = new SAXBuilder();
+            return builder
+                .build(new ByteArrayInputStream(xmlString.getBytes()));
         } catch (final Exception e) {
             return null;
         }
@@ -152,18 +142,24 @@ public final class SamlUtils {
             // Create a KeyInfo and add the KeyValue to it
             final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections
                 .singletonList(keyValuePair));
+            // Convert the JDOM document to w3c (Java XML signature API requires
+            // w3c
+            // representation)
+            org.w3c.dom.Element w3cElement = toDom(element);
 
-            final DOMSignContext dsc = new DOMSignContext(privKey, element);
+            // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
+            // location of the resulting XMLSignature's parent element
+            DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
 
-            final Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(element);
+            org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
             dsc.setNextSibling(xmlSigInsertionPoint);
 
             // Marshal, generate (and sign) the enveloped signature
-            final XMLSignature signature = sigFactory.newXMLSignature(
-                signedInfo, keyInfo);
+            XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
+                keyInfo);
             signature.sign(dsc);
 
-            return element;
+            return toJdom(w3cElement);
 
         } catch (final Exception e) {
             throw new RuntimeException("Error signing SAML element: "
@@ -171,7 +167,41 @@ public final class SamlUtils {
         }
     }
 
-    private static Node getXmlSignatureInsertLocation(Element elem) {
-        return elem.getElementsByTagName("samlp:Status").item(0);
+    private static Node getXmlSignatureInsertLocation(org.w3c.dom.Element elem) {
+        org.w3c.dom.Node insertLocation = null;
+        org.w3c.dom.NodeList nodeList = elem.getElementsByTagNameNS(
+            SAML_PROTOCOL_NS_URI_V20, "Extensions");
+        if (nodeList.getLength() != 0) {
+            insertLocation = nodeList.item(nodeList.getLength() - 1);
+        } else {
+            nodeList = elem.getElementsByTagNameNS(SAML_PROTOCOL_NS_URI_V20,
+                "Status");
+            insertLocation = nodeList.item(nodeList.getLength() - 1);
+        }
+        return insertLocation;
     }
+
+    private static org.w3c.dom.Element toDom(final Element element) {
+        return toDom(element.getDocument()).getDocumentElement();
+    }
+
+    private static org.w3c.dom.Document toDom(final Document doc) {
+        try {
+            final XMLOutputter xmlOutputter = new XMLOutputter();
+            final StringWriter elemStrWriter = new StringWriter();
+            xmlOutputter.output(doc, elemStrWriter);
+            final byte[] xmlBytes = elemStrWriter.toString().getBytes();
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory
+                .newInstance();
+            dbf.setNamespaceAware(true);
+            return dbf.newDocumentBuilder().parse(
+                new ByteArrayInputStream(xmlBytes));
+        } catch (final Exception e) {
+            return null;
+        }
+    }
+    
+    private static Element toJdom(final org.w3c.dom.Element e) {
+        return  new DOMBuilder().build(e);
+      }
 }
