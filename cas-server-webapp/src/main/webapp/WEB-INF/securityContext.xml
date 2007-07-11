@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
 	<bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties"
-		p:service="https://localhost:8443/cas/services/j_acegi_cas_security_check"
+		p:service="${cas.securityContext.serviceProperties.service}"
 		p:sendRenew="false" />
 		
 	<bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter"
@@ -20,7 +20,7 @@
 		p:authenticationEntryPoint-ref="casProcessingFilterEntryPoint" />
 
 	<bean id="casProcessingFilterEntryPoint" class="org.acegisecurity.ui.cas.CasProcessingFilterEntryPoint"
-		p:loginUrl="https://localhost:8443/cas/login"
+		p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
 		p:serviceProperties-ref="serviceProperties" />
 
 	<bean id="casAuthenticationManager" class="org.acegisecurity.providers.ProviderManager">
@@ -39,7 +39,7 @@
 		p:key="my_password_for_this_auth_provider_only" />
 
 	<bean id="casProxyTicketValidator" class="org.acegisecurity.providers.cas.ticketvalidator.CasProxyTicketValidator"
-		p:casValidate="https://localhost:8443/cas/proxyValidate"
+		p:casValidate="${cas.securityContext.casProxyTicketValidator.casValidate}"
 	  	p:serviceProperties-ref="serviceProperties">
 	  	<property name="proxyCallbackUrl"><null /></property>
 	  </bean>
