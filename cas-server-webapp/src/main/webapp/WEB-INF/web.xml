@@ -10,7 +10,6 @@
 			/WEB-INF/applicationContext.xml,
 			/WEB-INF/deployerConfigContext.xml
 			/WEB-INF/securityContext.xml
-
 		</param-value>
 	</context-param>
 
