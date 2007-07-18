@@ -13,6 +13,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
@@ -159,7 +160,9 @@ public class ServiceValidateController extends AbstractController {
             }
 
             return success;
-        } catch (TicketException te) {
+        } catch (final TicketValidationException e) {
+            return generateErrorView(e.getCode(), e.getCode(), new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
+        } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
                 new Object[] {serviceTicketId});
         }
