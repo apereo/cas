@@ -7,9 +7,6 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-
 /**
  * Returns a new principal based on the Sereial Number of the certificate.
  * 
@@ -20,8 +17,8 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 public final class X509CertificateCredentialsToSerialNumberPrincipalResolver
     extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
-    protected Principal resolvePrincipalInternal(
+    protected String resolvePrincipalInternal(
         final X509Certificate certificate) {
-        return new SimplePrincipal(certificate.getSerialNumber().toString());
+        return certificate.getSerialNumber().toString();
     }
 }

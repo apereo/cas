@@ -7,8 +7,6 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.annotation.NotNull;
 
 /**
@@ -58,10 +56,10 @@ public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalR
         this.valueDelimiter = valueDelimiter;
     }
 
-    protected Principal resolvePrincipalInternal(
+    protected String resolvePrincipalInternal(
         final X509Certificate certificate) {
-        return new SimplePrincipal(this.serialNumberPrefix
+        return this.serialNumberPrefix
             + certificate.getSerialNumber().toString() + this.valueDelimiter
-            + certificate.getIssuerDN().getName());
+            + certificate.getIssuerDN().getName();
     }
 }

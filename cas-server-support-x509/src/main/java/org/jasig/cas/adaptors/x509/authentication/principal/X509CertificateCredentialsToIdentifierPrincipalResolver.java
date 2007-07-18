@@ -7,8 +7,6 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.annotation.NotNull;
 
 /**
@@ -30,7 +28,7 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
     @NotNull
     private String identifier = DEFAULT_IDENTIFIER;
 
-    protected Principal resolvePrincipalInternal(
+    protected String resolvePrincipalInternal(
         final X509Certificate certificate) {
         String username = this.identifier;
         
@@ -40,9 +38,9 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
 
         final String[] entries = certificate.getSubjectDN().getName().split(
             ENTRIES_DELIMITER);
-
-        for (int i = 0; i < entries.length; i++) {
-            final String[] nameValuePair = entries[i]
+        
+        for (final String val : entries) {
+            final String[] nameValuePair = val
                 .split(NAME_VALUE_PAIR_DELIMITER);
             final String name = nameValuePair[0].trim();
             final String value = nameValuePair[1];
@@ -58,7 +56,7 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
             return null;
         }
 
-        return new SimplePrincipal(username);
+        return username;
     }
     
     public void setIdentifier(final String identifier) {
