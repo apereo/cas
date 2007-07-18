@@ -5,10 +5,8 @@
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
+import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 /**
  * Implementation of CredentialsToPrincipalResolver that converts the OpenId
@@ -18,12 +16,11 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public class OpenIdCredentialsToPrincipalResolver implements
-    CredentialsToPrincipalResolver {
+public final class OpenIdCredentialsToPrincipalResolver extends
+    AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
-    public Principal resolvePrincipal(final Credentials credentials) {
-        final OpenIdCredentials c = (OpenIdCredentials) credentials;
-        return new SimplePrincipal(c.getUsername());
+    protected String extractPrincipalId(final Credentials credentials) {
+        return ((OpenIdCredentials) credentials).getUsername();
     }
 
     public boolean supports(final Credentials credentials) {

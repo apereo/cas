@@ -5,9 +5,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Implementation of CredentialsToPrincipalResolver for Credentials based on
  * UsernamePasswordCredentials when a SimplePrincipal (username only) is
@@ -22,28 +19,12 @@ import org.apache.commons.logging.LogFactory;
  * @since 3.0
  * @see org.jasig.cas.authentication.principal.SimplePrincipal
  */
-public final class UsernamePasswordCredentialsToPrincipalResolver implements
-    CredentialsToPrincipalResolver {
+public final class UsernamePasswordCredentialsToPrincipalResolver extends
+    AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
-    /** Logging instance. */
-    private final Log log = LogFactory.getLog(getClass());
-
-    /**
-     * Constructs a SimplePrincipal from the username provided in the
-     * credentials.
-     * 
-     * @param credentials the Username and Password provided as credentials.
-     * @return an instance of the principal where the id is the username.
-     */
-    public Principal resolvePrincipal(final Credentials credentials) {
+    protected String extractPrincipalId(final Credentials credentials) {
         final UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) credentials;
-
-        if (log.isDebugEnabled()) {
-            log.debug("Creating SimplePrincipal for ["
-                + usernamePasswordCredentials.getUsername() + "]");
-        }
-
-        return new SimplePrincipal(usernamePasswordCredentials.getUsername());
+        return usernamePasswordCredentials.getUsername();
     }
 
     /**

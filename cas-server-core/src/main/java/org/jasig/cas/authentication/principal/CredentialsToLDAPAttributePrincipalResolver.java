@@ -5,25 +5,20 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.util.LdapUtils;
 import org.jasig.cas.util.annotation.IsIn;
 import org.jasig.cas.util.annotation.NotNull;
-import org.jasig.services.persondir.IPersonAttributeDao;
 
 import org.springframework.ldap.AttributesMapper;
 import org.springframework.ldap.LdapTemplate;
@@ -36,17 +31,13 @@ import org.springframework.ldap.support.LdapContextSource;
  * @version $Revision:$ $Date:$
  * @since 3.1
  */
-public final class CredentialsToLDAPAttributePrincipalResolver implements
-    CredentialsToPrincipalResolver {
+public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     /** The default maximum number of results to return. */
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
 
     /** The default timeout. */
     private static final int DEFAULT_TIMEOUT = 1000;
-
-    /** Log instance. */
-    protected final Log log = LogFactory.getLog(this.getClass());
 
     /**
      * The CredentialsToPrincipalResolver that resolves the principal from the
@@ -65,7 +56,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
 
     /** The attribute that contains the value that should become the principal */
     @NotNull
-    protected String principalAttributeName;
+    private String[] attributeIds;
 
     /** The search base to find the user under. */
     @NotNull
@@ -81,32 +72,24 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
 
     /** The amount of time to wait. */
     private int timeout = DEFAULT_TIMEOUT;
-  
-    /** Repository of principal attributes to be retrieved */
-    private IPersonAttributeDao attributeRepository;
 
     private SearchControls getSearchControls() {
         final SearchControls constraints = new SearchControls();
-        final String[] attributeIds = new String[] {this.principalAttributeName};
         if (log.isDebugEnabled()) {
             log.debug("returning searchcontrols: scope=" + this.scope
                 + "; search base=" + this.searchBase
-                + "; attributes=" + attributesToString(attributeIds)
+                + "; attributes=" + Arrays.toString(this.attributeIds)
                 + "; timeout=" + this.timeout
                 + "; maxNumberResults=" + this.maxNumberResults);
         }
         constraints.setSearchScope(this.scope);
-        constraints.setReturningAttributes(attributeIds);
+        constraints.setReturningAttributes(this.attributeIds);
         constraints.setTimeLimit(this.timeout);
         constraints.setCountLimit(this.maxNumberResults);
         return constraints;
     }
-
-    public Principal resolvePrincipal(final Credentials credentials) {
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to resolve a principal...");
-        }
-
+    
+    protected String extractPrincipalId(final Credentials credentials) {
         final Principal principal = this.credentialsToPrincipalResolver
             .resolvePrincipal(credentials);
 
@@ -120,7 +103,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
             log.debug("Resolved " + principal + ". Trying LDAP resolve now...");
         }
 
-        final Principal ldapPrincipal = resolveFromLDAP(principal.getId());
+        final String ldapPrincipal = resolveFromLDAP(principal.getId());
 
         if (ldapPrincipal == null) {
             log.info("Initial principal \"" + principal.getId()
@@ -128,28 +111,37 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
         } else {
             log.debug("Resolved " + principal + " to " + ldapPrincipal);
         }
-
-        if (this.attributeRepository != null) {
-            final Map attributes = this.attributeRepository.getUserAttributes(ldapPrincipal.getId());
-            attributes.putAll(ldapPrincipal.getAttributes());
-            return new SimplePrincipal(ldapPrincipal.getId(), attributes);
-        }
-        
+     
         return ldapPrincipal;
     }
 
-    private Principal resolveFromLDAP(final String lookupAttributeValue) {
+    private String resolveFromLDAP(final String lookupAttributeValue) {
         final String searchFilter = LdapUtils.getFilterWithValues(this.filter,
             lookupAttributeValue);
 
         if (log.isDebugEnabled()) {
             log.debug("LDAP search with filter \"" + searchFilter + "\"");
         }
+        
         try {
             // searching the directory
+            final String idAttribute = this.attributeIds[0];
             final List principalList = this.ldapTemplate.search(
                 this.searchBase, searchFilter, getSearchControls(),
-                new PrincipalAttributesMapper(this.principalAttributeName));
+                
+                new AttributesMapper() {
+                    public Object mapFromAttributes(final Attributes attrs)
+                        throws NamingException {
+                        final Attribute attribute = attrs.get(idAttribute);
+                        if (attribute == null) {
+                            log.debug("Principal attribute \"" + idAttribute + "\" "
+                                + "not found in LDAP search results. Returning null.");
+                            return null;
+                        }
+                        return attribute.get();
+                    }
+                    
+                });
             if (principalList.isEmpty()) {
                 log.debug("LDAP search returned zero results.");
                 return null;
@@ -161,28 +153,13 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
 
                 return null;
             }
-            return (Principal) principalList.get(0);
+            return (String) principalList.get(0);
 
         } catch (Exception e) {
             log.error(e, e);
             return null;
         }
-    }
-    
-   private String attributesToString(String[] attributes) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append('{');
-        int i = 0;
-        for (String attr : attributes) {
-            if (i++ > 0) {
-                sb.append(',');
-            }
-            sb.append(attr);
-        }
-        sb.append('}');
-        return sb.toString();
-    }
-    
+    } 
 
     /*
      * Delegates checking to the configured CredentialsToPrincipalResolver.
@@ -220,7 +197,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
      * @param principalAttributeName The principalAttributeName to set.
      */
     public final void setPrincipalAttributeName(final String principalAttributeName) {
-        this.principalAttributeName = principalAttributeName;
+        this.attributeIds = new String[] {principalAttributeName};
     }
 
     /**
@@ -249,35 +226,5 @@ public final class CredentialsToLDAPAttributePrincipalResolver implements
      */
     public final void setTimeout(final int timeout) {
         this.timeout = timeout;
-    }
-   
-    /**
-     * @param repository Attribute repository containing attributes to fetch
-     * about principal when credentials are resolved.
-     */
-    public final void setPersonAttributeDao(final IPersonAttributeDao repository) {
-        this.attributeRepository = repository;
-    }
-    
-    class PrincipalAttributesMapper implements AttributesMapper {
-
-        private String idAttribute;
-
-        public PrincipalAttributesMapper(final String idAttribute) {
-            this.idAttribute = idAttribute;
-        }
-        
-        public Object mapFromAttributes(final Attributes attrs)
-            throws NamingException {
-            
-            final Attribute attribute = attrs.get(this.idAttribute);
-            if (attribute == null) {
-                log.debug("Principal attribute \"" + this.idAttribute + "\" "
-                    + "not found in LDAP search results. Returning null.");
-                return null;
-            }
-            final String id = (String) attribute.get();
-            return new SimplePrincipal(id);
-        }        
     }
 }
