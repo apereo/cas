@@ -311,12 +311,12 @@ public final class CentralAuthenticationServiceImpl implements
                 }
 
                 if (!serviceTicket.isValidFor(service)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("ServiceTicket [" + serviceTicketId
-                            + "] does not match supplied service: " + service);
+                    if (log.isErrorEnabled()) {
+                        log.error("ServiceTicket [" + serviceTicketId
+                            + "] with service [" + serviceTicket.getService().getId() + " does not match supplied service [" + service + "]");
                     }
 
-                    throw new TicketValidationException();
+                    throw new TicketValidationException(service);
                 }
             }
 

@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.ticket;
 
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Service;
+
 import junit.framework.TestCase;
 
 /**
@@ -18,16 +21,13 @@ public class TicketValidationExceptionTests extends TestCase {
 
     private static final String CODE = "INVALID_SERVICE";
     
-    public void testDefaultConstructor() {
-        final TicketValidationException e = new TicketValidationException();
-        assertEquals(CODE, e.getCode());
-    }
+    private Service service = TestUtils.getService();
+    
     
     public void testThrowableConstructor() {
-        final RuntimeException e = new RuntimeException();
-        final TicketValidationException t = new TicketValidationException(e);
+        final TicketValidationException t = new TicketValidationException(this.service);
         
         assertNotSame(CODE, t.getCode());
-        assertEquals(e, t.getCause());
+        assertEquals(this.service, t.getOriginalService());
     }
 }
