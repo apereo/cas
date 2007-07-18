@@ -27,7 +27,7 @@ public class TicketValidationExceptionTests extends TestCase {
     public void testThrowableConstructor() {
         final TicketValidationException t = new TicketValidationException(this.service);
         
-        assertNotSame(CODE, t.getCode());
+        assertSame(CODE, t.getCode());
         assertEquals(this.service, t.getOriginalService());
     }
 }
