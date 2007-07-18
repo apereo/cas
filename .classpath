@@ -66,5 +66,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/jasig/service/person-directory/1.0.1/person-directory-1.0.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.7/hsqldb-1.8.0.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jdom/jdom/1.0/jdom-1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/acegisecurity/acegi-security/1.0.4/acegi-security-1.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
