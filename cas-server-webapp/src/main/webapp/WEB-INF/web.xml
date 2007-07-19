@@ -179,6 +179,12 @@
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/services/edit.html</url-pattern>
 	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
+		<url-pattern>/openid/*</url-pattern>
+	</servlet-mapping>
+
 	
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>

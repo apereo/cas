@@ -8,6 +8,9 @@
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
        
+	<bean id="casPropertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		p:location="/WEB-INF/cas.properties" />
+       
 	<!-- Theme Resolver -->
 	<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
 		p:defaultThemeName="default"
@@ -95,8 +98,12 @@
 					key="/services/*">
 					manageRegisteredServicesMultiActionController
 				</prop>
+				<prop
+					key="/openid/*">openIdProviderController</prop>
 			</props>
 		</property>
+		<property
+			name="alwaysUseFullPath" value="true" />
 		<!--
 		uncomment this to enable sending PageRequest events. 
 		<property
@@ -107,6 +114,11 @@
 		</property>
 		 -->
 	</bean>
+	
+	<bean
+		id="openIdProviderController"
+		class="org.jasig.cas.web.OpenIdProviderController"
+		p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}" />
 	
 	<bean
 		id="serviceLogoutViewController"
