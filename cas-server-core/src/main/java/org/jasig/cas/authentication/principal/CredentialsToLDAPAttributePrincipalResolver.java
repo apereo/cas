@@ -34,7 +34,7 @@ import org.springframework.ldap.support.LdapContextSource;
 public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     /** The default maximum number of results to return. */
-    private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
+    private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 2;
 
     /** The default timeout. */
     private static final int DEFAULT_TIMEOUT = 1000;
@@ -67,9 +67,6 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractP
         SearchControls.SUBTREE_SCOPE})
     private int scope = SearchControls.SUBTREE_SCOPE;
 
-    /** The maximum number of results to return. */
-    private int maxNumberResults = DEFAULT_MAX_NUMBER_OF_RESULTS;
-
     /** The amount of time to wait. */
     private int timeout = DEFAULT_TIMEOUT;
 
@@ -79,13 +76,12 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractP
             log.debug("returning searchcontrols: scope=" + this.scope
                 + "; search base=" + this.searchBase
                 + "; attributes=" + Arrays.toString(this.attributeIds)
-                + "; timeout=" + this.timeout
-                + "; maxNumberResults=" + this.maxNumberResults);
+                + "; timeout=" + this.timeout);
         }
         constraints.setSearchScope(this.scope);
         constraints.setReturningAttributes(this.attributeIds);
         constraints.setTimeLimit(this.timeout);
-        constraints.setCountLimit(this.maxNumberResults);
+        constraints.setCountLimit(DEFAULT_MAX_NUMBER_OF_RESULTS);
         return constraints;
     }
     
@@ -205,13 +201,6 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractP
      */
     public final void setScope(final int scope) {
         this.scope = scope;
-    }
-
-    /**
-     * @param maxNumberResults The maxNumberResults to set.
-     */
-    public final void setMaxNumberResults(final int maxNumberResults) {
-        this.maxNumberResults = maxNumberResults;
     }
 
     /**
