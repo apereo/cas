@@ -98,7 +98,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     }
 
     public boolean matches(final Service service) {
-        return PATH_MATCHER.match(this.serviceId, service.getId());
+        return service != null && PATH_MATCHER.match(this.serviceId, service.getId());
     }
 
     public boolean equals(final Object obj) {
