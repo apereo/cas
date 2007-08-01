@@ -41,6 +41,8 @@ public class Saml10FailureResponseView extends AbstractCasView {
 
         response.getWriter().print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         response.setContentType("text/xml");
+        response.getWriter().print("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body>");
         response.getWriter().print(samlResponse.toString());
+        response.getWriter().print("</SOAP-ENV:Body></SOAP-ENV:Envelope>");
     }
 }

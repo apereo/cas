@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.io.BufferedReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,10 @@ public final class SamlService extends AbstractWebApplicationService {
 
     /** Constant representing artifact. */
     private static final String CONST_PARAM_TICKET = "SAMLart";
+    
+    private static final String CONST_START_ARTIFACT_XML_TAG = "<samlp:AssertionArtifact>";
+    
+    private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
     /**
      * Unique Id for serialization.
@@ -43,16 +48,34 @@ public final class SamlService extends AbstractWebApplicationService {
         super(id, originalUrl, artifactId);
     }
 
+    /**
+     * This always returns true because a SAML Service does not receive the TARGET value on validation.
+     */
+    public boolean matches(final Service service) {
+        return true;
+    }
+
     public static SamlService createServiceFrom(
         final HttpServletRequest request) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
-
-        if (!StringUtils.hasText(service)) {
+        final String artifactId;
+        final String requestBody = getRequestBody(request);
+        
+        if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
             return null;
         }
 
         final String id = cleanupUrl(service);
-        final String artifactId = request.getParameter(CONST_PARAM_TICKET);
+        
+        if (StringUtils.hasText(requestBody)) {
+            final int startTagLocation = requestBody.indexOf(CONST_START_ARTIFACT_XML_TAG);
+            final int artifactStartLocation = startTagLocation + CONST_START_ARTIFACT_XML_TAG.length();
+            final int endTagLocation = requestBody.indexOf(CONST_END_ARTIFACT_XML_TAG);
+
+            artifactId = requestBody.substring(artifactStartLocation, endTagLocation);
+        } else {
+            artifactId = null;
+        }
 
         return new SamlService(id, service, artifactId);
     }
@@ -65,6 +88,19 @@ public final class SamlService extends AbstractWebApplicationService {
 
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
-
- 
+    
+    protected static String getRequestBody(final HttpServletRequest request) {
+        final StringBuilder builder = new StringBuilder();
+        try {
+            final BufferedReader reader = request.getReader();
+            
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            return builder.toString();
+        } catch (final Exception e) {
+           return null;
+        }
+    }
 }

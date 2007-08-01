@@ -70,7 +70,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
 
     public boolean isValidFor(final Service serviceToValidate) {
         updateState();
-        return this.service.equals(serviceToValidate);
+        return serviceToValidate.matches(this.service);
     }
 
     public TicketGrantingTicket grantTicketGrantingTicket(

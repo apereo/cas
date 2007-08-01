@@ -67,6 +67,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     }
 
     protected static final String cleanupUrl(final String url) {
+        if (url == null) {
+            return null;
+        }
+
         final int jsessionPosition = url.indexOf(";jsession");
 
         if (jsessionPosition == -1) {
@@ -107,6 +111,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     public void setPrincipal(final Principal principal) {
         this.principal = principal;
+    }
+    
+    public boolean matches(final Service service) {
+        return this.id.equals(service.getId());
     }
     
     public synchronized boolean logOutOfService(final String sessionIdentifier) {
