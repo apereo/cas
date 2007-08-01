@@ -127,7 +127,11 @@ public class Saml10SuccessResponseView extends AbstractCasView {
             response.getWriter().print(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             response.setContentType("text/xml");
+            
+            
+            response.getWriter().print("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body>");
             response.getWriter().print(xmlResponse);
+            response.getWriter().print("</SOAP-ENV:Body></SOAP-ENV:Envelope>");
             response.flushBuffer();
         } catch (final Exception e) {
             log.error(e, e);

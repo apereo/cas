@@ -23,4 +23,6 @@ public interface Service extends Principal {
     void setPrincipal(Principal principal);
     
     boolean logOutOfService(String sessionIdentifier);
+    
+    boolean matches(Service service);
 }

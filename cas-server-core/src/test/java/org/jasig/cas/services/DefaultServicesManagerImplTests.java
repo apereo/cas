@@ -122,5 +122,9 @@ public class DefaultServicesManagerImplTests extends TestCase {
         public boolean logOutOfService(String sessionIdentifier) {
             return false;
         }
+        
+        public boolean matches(Service service) {
+            return true;
+        }
     }
 }
