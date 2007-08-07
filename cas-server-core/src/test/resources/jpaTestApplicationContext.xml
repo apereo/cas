@@ -12,7 +12,15 @@
 
 <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="factoryBean"
 	p:dataSource-ref="dataSource"
-	p:jpaVendorAdapter-ref="jpaVendorAdapter" />
+	p:jpaVendorAdapter-ref="jpaVendorAdapter">
+	<property name="jpaProperties">
+		<props>
+			<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+			<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+		</props>
+	</property>
+</bean>
+
 
 <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" id="jpaVendorAdapter"
 	p:generateDdl="true"
