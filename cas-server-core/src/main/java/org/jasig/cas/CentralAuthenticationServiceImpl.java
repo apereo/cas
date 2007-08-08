@@ -316,7 +316,7 @@ public final class CentralAuthenticationServiceImpl implements
                             + "] with service [" + serviceTicket.getService().getId() + " does not match supplied service [" + service + "]");
                     }
 
-                    throw new TicketValidationException(service);
+                    throw new TicketValidationException(serviceTicket.getService());
                 }
             }
 
