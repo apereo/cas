@@ -42,7 +42,7 @@
 	<classpathentry kind="var" path="M2_REPO/jgroups/jgroups/2.4.1/jgroups-2.4.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.2/commons-lang-2.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs-ext/0.9.4/jcifs-ext-0.9.4.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs/1.2.9/jcifs-1.2.9.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/samba/jcifs/jcifs/1.2.15/jcifs-1.2.15.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0.3/spring-binding-1.0.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-common/4.0.4/jboss-common-4.0.4.jar"/>
