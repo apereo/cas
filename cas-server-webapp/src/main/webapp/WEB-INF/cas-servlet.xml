@@ -203,8 +203,8 @@
 <!--
 	<bean
 		id="x509Check"
-		parent="abstractCasLoginAction"
-		class="org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction" />
+		p:centralAuthenticationService-ref="centralAuthenticationService"
+		class="org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction" /> 
  -->
  
  	<bean
