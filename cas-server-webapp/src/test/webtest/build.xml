@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+distributed with this file and available online at
+http://www.ja-sig.org/products/cas/overview/license/
 
+Automate UAT tests for CAS using Canoo Webtest
+
+Made by Arnaud Lesueur for JA-SIG and CAS Community
+-->
 <project name="CAS WebTests" basedir="." default="all">
 
 	<property file="properties/local.properties" />

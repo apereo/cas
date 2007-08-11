@@ -1,4 +1,14 @@
 <?xml version="1.0"?>
+<!--
+Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+distributed with this file and available online at
+http://www.ja-sig.org/products/cas/overview/license/
+
+Automate UAT tests for CAS using Canoo Webtest
+
+Made by Arnaud Lesueur for JA-SIG and CAS Community
+-->
+
 <!DOCTYPE project [
 <!ENTITY config	SYSTEM "includes/config.xml">
 <!ENTITY definition	SYSTEM "includes/definition.xml">

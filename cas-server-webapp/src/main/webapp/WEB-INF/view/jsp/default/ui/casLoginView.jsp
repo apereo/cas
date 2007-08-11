@@ -39,8 +39,8 @@
 							<input type="hidden" name="lt" value="${flowExecutionKey}" />
 							<input type="hidden" name="_eventId" value="submit" />
 
-	                        <input class="btn-submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" type="submit" />
-	                        <input class="btn-reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" type="reset" />
+	                        <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" type="submit" />
+	                        <input class="btn-reset" name="reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" type="reset" />
 	                    </div>
 	                </div>
 	            </fieldset>
