@@ -9,5 +9,3 @@
 		<pathelement path="${webtest.home}/lib" />
 	</classpath>
 </taskdef>
-
-<property file="data/users.properties" />
