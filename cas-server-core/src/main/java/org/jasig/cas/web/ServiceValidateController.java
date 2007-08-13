@@ -12,6 +12,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
@@ -165,6 +166,8 @@ public class ServiceValidateController extends AbstractController {
         } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
                 new Object[] {serviceTicketId});
+        } catch (final UnauthorizedServiceException e) {
+            return generateErrorView(e.getMessage(), e.getMessage(), null);
         }
     }
 
