@@ -30,9 +30,9 @@
 
 /* RESET --------------------------------- */
 /* reset some properties for elements since defaults are not crossbrowser - http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/ */
-html,body,div,span,h1,h2,h3,h4,h5,h6,p,a,em,img,strong,ol,ul,li,fieldset,form,label,legend {margin:0; padding:0; border:0; outline:0; font-weight:inherit; font-style:inherit; font-size:100%; font-family:inherit; vertical-align:baseline;}
+html,body,div,span,h1,h2,h3,p,a,img,ul,li,fieldset,form,label,legend {margin:0; padding:0; border:0; outline:0; font-weight:inherit; font-style:inherit; font-size:100%; font-family:inherit; vertical-align:baseline;}
 :focus {outline:0;}
-ol,ul {list-style:none; font-size:1.1em; padding:0 0 18px 40px;}
+ul {list-style:none; font-size:1.1em; padding:0 0 18px 40px;}
 
 /* browser default font-size is 16px which is too big so we make it 16px x 62.5% = 10px */
     body {font:normal 400 62.5%/1.0 Verdana, sans-serif; min-width:960px; background:#fff; color:#333;}
@@ -41,17 +41,15 @@ ol,ul {list-style:none; font-size:1.1em; padding:0 0 18px 40px;}
  - used to clear or contain floats within a non-floated container
  - this ruleset is used by UAs that handle :after - not IE - see ie_cas.css for IE fix
 http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com/blog/59 */
-#header:after, #content:after, #footer:after, .clearfix:after, #login .fm-v:after, #fm-search div.row:after, #fm-search div.col:after {content:"."; clear:both; display:block; height:0; visibility:hidden;}
+#header:after, #content:after, #footer:after, .clearfix:after {content:"."; clear:both; display:block; height:0; visibility:hidden;}
 
 
 /* HEADER --------------------------------- */
 #header {position:relative; top:0; left:0; padding-top:52px; background:#fff url(../images/ja-sig-logo.gif) no-repeat scroll 25px 10px;}
-    #header p#tagline {display:none; padding:0 0 2px 3px; color:#fff; font-size:1.2em; line-height:1.6;}
     #header h1#app-name {clear:both; padding:0 0 0 25px; background:#210f7a; color:#fff; font:normal 400 2.8em/2.5em Georgia,"Times New Roman", serif;} /* d21033 */
 
 /* CONTENT --------------------------------- */
 #content {clear:both; padding:1px 0; margin:0 25px 2em;}
-    #content h1 {margin:15px 0; xbackground:transparent; xcolor:#000; font:normal 2.2em Georgia,"Times New Roman", serif; text-transform:capitalize; letter-spacing:-1px;}
     #content h2 {margin:0 0 .5em 0; font-size:1.3em; font-weight:400; color:#000; xborder-bottom:1px solid #eee; padding:3px 0; xletter-spacing:-1px;}
     #content h3 {font:1em arial, helvetica, sans-serif; font-weight:400;}
 
@@ -61,27 +59,19 @@ http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com
 #footer {clear:both; position:relative; margin:0 25px 1em; border-top:1px solid #ccc; padding:0 0 1px 0; background:transparent; color:#999;}
     #footer img#logo {position:absolute; right:0; top:0; margin-top:10px;}
     #footer div {clear:left; margin:1em 5px .5em; overflow:hidden;}
-    #footer h4 {clear:left; float:left; margin:0; padding:0; font:normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;}
 
 /* MESSAGES --------------------------------- */
 .info, .errors, .success {clear:both; margin:18px 0; padding:20px 20px 20px 100px; font-size:10px; line-height:1.5;}
 .info {border:1px dotted 008;    background:#eff url(../images/info.gif) no-repeat 20px 18px; color:#008;}
 .errors {border:1px dotted #d21033; background:#fed url(../images/error.gif) no-repeat 20px 18px; color:#d21033; padding-bottom: 40px;}
 .success {border:1px dotted #390; background:#dfa url(../images/confirm.gif) no-repeat 20px 18px; color:#390;}
-    #content .info h2, #content .errors h2, #content .success h2 {font-family:Georgia,"Times New Roman",Times,serif; font-size:18px; line-height:48px; font-weight:400; margin:0 18px 0 0; padding:0;}
+    #content .errors h2, #content .success h2 {font-family:Georgia,"Times New Roman",Times,serif; font-size:18px; line-height:48px; font-weight:400; margin:0 18px 0 0; padding:0;}
     #content .success h2 {color: #008 !important;}
-    #content .errors h2, #content .errors h3 {color:#b00 !important;}
-    #content .success h2, #content .success h3 {color:#060 !important;}
-    .info ul, .errors ul, .success ul {margin:0 !important; padding:0 !important; list-style-type:none !important;}
-    
-/*	#content .info, #content .errors, #content .success {clear:both; margin:18px 0; padding:0 0 0 90px; font-size:10px; line-height:1.5;}*/
-
+    #content .errors h2 {color:#b00 !important;}
+    #content .success h2 {color:#060 !important;}
     
 
 /* static messages */
-#content p.info,
-#content p.help {padding:0 0 0 2em; border-color:#fff; background:#fff url(../images/info-s.gif) no-repeat 0 0; font-weight:400; color:#000; line-height:1.5;}
-#content p.help {background:url(../images/help.gif) no-repeat 0 0;}
 #content #msg p {padding:0;}
 
 /* FORMS --------------------------------- */
@@ -91,22 +81,12 @@ http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com
 
 
     .fm-v div.row {float:left; margin:0; padding:.5em 0; width:100%;}
-        .fm-v div.row label {float:left; width:100%; line-height:1.5;}
-        .fm-v div.row input, .fm-v div.row select, .fm-v div.row textarea {float:left; clear:left;}
-    
-        .fm-v div.row input.check {float:left; clear:left; margin:0 .5em 0 0; border:0; width:1.3em; height:1.3em; position:relative; top:.1em;}
-        .fm-v div.row label.check {float:left; width:auto;}
-    
-        .fm-v div.row input.radio {float:left; clear:left; margin:0 .5em 0 0; border:0; width:1.3em; height:1.3em; position:relative; top:.1em;}
-        .fm-v div.row label.radio {float:left; width:auto;}
-    
-        .fm-v div.row span.msg-error {float:left; display:block; position:relative; top:.2em; margin:0 0 0 1em; padding:0 0 0 2em; font-size:1.1em; line-height:1.55; background:url(../images/error-s.gif) left top no-repeat; color:#b00;}
-        .fm-v span.msg-error {float:left; display:block; xposition:relative; xtop:.2em; margin:1em 0; padding:0 0 0 2em; font-size:1.1em; line-height:1.55; background:url(../images/error-s.gif) left top no-repeat; color:#b00;}
-        .fm-v div.row input.btn-submit {display:block; margin:0;} /* float:left; clear:left; margin-bottom:0; or display:block */
+    .fm-v div.row label {float:left; width:100%; line-height:1.5;}
+    .fm-v div.row input.btn-submit {display:block; margin:0;}
 
 
 /* highlight errors */
-    input.error {background:#FFEFEF; color:#b00;} /* border-color:#b00; */
+    input.error {background:#FFEFEF; color:#b00;}
 
 /* mark as required */
     .required {background:#ffd;}
