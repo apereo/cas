@@ -16,7 +16,7 @@ be granted NetIDs.
 
 2.  RELEASE INFO
 
-CAS requires J2SE 1.4 and J2EE1.3.
+CAS requires J2SE 1.5 and J2EE1.3.
 
 3. DISTRIBUTION JAR FILES
 
@@ -31,6 +31,6 @@ contains a war file that can be used for demo purposes.
 
 6. NOTE
 If building CAS from the source, running the test cases currently requires an active Internet connection.
-Please see: http://maven.apache.org/faq.html#ignoring-broken-tests on how to disable the tests.
+Please see: http://maven.apache.org/general.html#skip-test on how to disable the tests.
 
 
