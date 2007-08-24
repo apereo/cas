@@ -79,6 +79,11 @@ Steps for creating a custom skin
    The "<spring:theme code="css" />" will be replaced with the appropriate 
    URL to that directory.
 
+Documentation
+---------------------------------
+Documentation for CAS can be found in the CAS User Manual:
+http://www.ja-sig.org/wiki/display/CASUM/Home
+
 --------------------------
 Author: Drew Mazurek
 Version: $Revision$ $Date$
