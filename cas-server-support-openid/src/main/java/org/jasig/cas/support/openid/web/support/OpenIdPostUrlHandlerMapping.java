@@ -20,16 +20,10 @@ public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
     @Override
     protected Object lookupHandler(final String urlPath, final HttpServletRequest request) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Request Method Type: " + request.getMethod());
-            logger.debug("Request Parameter: " + request.getParameter("openid.mode"));
-        }
+
         if ("POST".equals(request.getMethod()) && "check_authentication".equals(request.getParameter("openid.mode"))) {
-            logger.debug("Using this Handler.");
             return super.lookupHandler(urlPath, request);
         }
-        
-        logger.debug("Delegating to next handler.");
         
         return null;
     }
