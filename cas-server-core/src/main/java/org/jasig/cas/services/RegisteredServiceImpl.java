@@ -60,8 +60,6 @@ public class RegisteredServiceImpl implements RegisteredService {
     }
 
     public String[] getAllowedAttributes() {
-        /*return this.allowedAttributes != null ? this.allowedAttributes
-            : new ArrayList<String>();*/
         return this.allowedAttributes != null ? this.allowedAttributes : new String[0];
     }
 
@@ -105,9 +103,22 @@ public class RegisteredServiceImpl implements RegisteredService {
         if (obj == null) {
             return false;
         }
+        
+        if (obj == this) {
+            return true;
+        }
 
         if (obj instanceof RegisteredService) {
             final RegisteredService r = (RegisteredService) obj;
+            
+            if (r.getServiceId() == null && this.getServiceId() == null) {
+                return true;
+            }
+            
+            if (r.getServiceId() == null || this.getServiceId() == null) {
+                return false;
+            }
+
             return this.getServiceId().equals(r.getServiceId());
         }
 

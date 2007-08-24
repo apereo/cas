@@ -59,4 +59,10 @@ public class RegisteredServiceImplTests extends TestCase {
         this.r.setAllowedAttributes(null);
         assertNotNull(this.r.getAllowedAttributes());
     }
+    
+    public void testEquals() {
+        assertTrue(new RegisteredServiceImpl().equals(new RegisteredServiceImpl()));
+        assertFalse(new RegisteredServiceImpl().equals(null));
+        assertFalse(new RegisteredServiceImpl().equals(new Object()));
+    }
 }
