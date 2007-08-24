@@ -19,7 +19,7 @@ The following steps will deploy the included demo of CAS.  Start here if
 you're new to CAS and want to see it in action.  These steps assume
 you will be using Tomcat as your servlet container.
 
-1. copy target/cas.war to Tomcat's webapps/ directory
+1. copy modules/cas-server-webapp/cas.war to Tomcat's webapps/ directory
 
 2. start Tomcat
 
@@ -46,7 +46,7 @@ to do is create your own skin.
 
 There are two skins included with CAS.  One is called "default" and the 
 other is called "simple".  "simple" is meant to be used as a template for
-building your own skin.  If you look in webapp/WEB-INF/view/jsp/simple/ui, 
+building your own skin.  If you look in cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/simple/ui, 
 you will see that a skin is made up of the following files:
 
 casConfirmView.jsp      displayed when the user is warned before being
@@ -63,15 +63,14 @@ serviceErrorView.jsp    used in conjunction with the service registry feature,
 
 Steps for creating a custom skin
 --------------------------------
-
-1. copy the contents of webapp/WEB-INF/view/jsp/simple/ui into
-   webapp/WEB-INF/view/jsp/default/ui (backup this directory first if
+1. copy the contents of cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/simple/ui into
+   cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/default/ui (backup this directory first if
    you want to save the default pages that come with CAS).
 
 2. edit each of the pages to appear as you want them.  Take care when 
    you're editing these pages not to change any of the forms or logic tags
    unless you're sure you know what you're doing.  If you need to include 
-   a css file, put it in webapp/themes/default/cas.css and reference it 
+   a css file, put it in cas-server-webapp/src/main/webapp/themes/default/cas.css and reference it 
    with the following link tag:
 
    <link rel="stylesheet" href="<spring:theme code="css" />" type="text/css" 
@@ -79,13 +78,6 @@ Steps for creating a custom skin
 
    The "<spring:theme code="css" />" will be replaced with the appropriate 
    URL to that directory.
-
-Custom Plugins & Building
--------------------------
-
-3. The remaining steps for building CAS can be found in 
-   localPlugins/README.txt.  Please view this file to finish your 
-   CAS installation.
 
 --------------------------
 Author: Drew Mazurek
