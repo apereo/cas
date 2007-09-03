@@ -5,7 +5,7 @@
         #cas #login {float:left; margin:0 -296px 0 0; padding:15px; width:258px; min-height:15em; background:#eee; position:relative; border:0;}
         #cas #login:before {line-height:0.1; font-size:1px; background:transparent url("../images/key-point_tr.gif") no-repeat top right; margin:-15px -15px 0 -15px; height:15px; display:block; content:url("../images/key-point_tl.gif");}
         #cas #login:after {display:block; clear:both; padding-top:15px; line-height:0.1; font-size:1px; content:url("../images/key-point_bl.gif"); margin:-15px; height:8px; background:transparent url("../images/key-point_br.gif") scroll no-repeat bottom right;}
-            #cas #login h2 {border-bottom:1px solid #ddd; padding:3px 0; font:normal 400 17px Georgia, "Times New Roman", Times, serif; text-transform:capitalize; color:#333;}
+            #cas #login h2 {border-bottom:1px solid #ddd; padding:3px 0; font:normal 400 17px Georgia, "Times New Roman", Times, serif; color:#333;}
             #cas #login label {font-size:11px;}
             #cas #login label span.accesskey {text-decoration:underline;}
             #cas #login input {letter-spacing:1px;}
