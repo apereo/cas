@@ -62,7 +62,9 @@
 							><li><a href="${loginUrl}ur">Urdu</a></li
 							><li><a href="${loginUrl}zh_CN">Chinese (Simplified)</a></li
 							><li><a href="${loginUrl}de">Deutsch</a></li
-							><li class="last"><a href="${loginUrl}ja">Japanese</a></li
+							><li><a href="${loginUrl}ja">Japanese</a></li
+							><li><a href="${loginUrl}hr">Croatian</a></li
+							><li class="last"><a href="${loginUrl}cs">Czech</a></li
 						></ul>
 	                </div>
 	            </div>
