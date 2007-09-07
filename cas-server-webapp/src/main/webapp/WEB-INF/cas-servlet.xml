@@ -13,12 +13,12 @@
        
 	<!-- Theme Resolver -->
 	<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
-		p:defaultThemeName="default"
+		p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
         p:argumentExtractors-ref="argumentExtractors" />
 
 	<!-- View Resolver -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
-		p:basename="default_views"
+		p:basename="${cas.viewResolver.basename}"
 		p:order="0" />
 	
 	<!-- Locale Resolver -->
