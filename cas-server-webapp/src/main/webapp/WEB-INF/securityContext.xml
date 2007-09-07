@@ -55,7 +55,7 @@
 		p:cache-ref="ticketCacheBackend" />
 
 	<bean id="casAuthoritiesPopulator" class="org.acegisecurity.providers.cas.populator.DaoCasAuthoritiesPopulator"
-		p:userDetailsService-ref="inMemoryDaoImpl" />
+		p:userDetailsService-ref="userDetailsService" />
 
 	<bean id="casProxyDecider" class="org.acegisecurity.providers.cas.proxy.RejectProxyTickets" />
 	
@@ -77,15 +77,7 @@
 	    	/**=ROLE_ADMIN
 	    </value>
 		</property>
-	</bean>
-	
-	<bean id="inMemoryDaoImpl" class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
-		<property name="userMap">
-			<value>
-		      battags=notused,ROLE_ADMIN
-		    </value>
-		</property>
-	</bean>  
+	</bean> 
 	
 	<bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
 		<property name="filterInvocationDefinitionSource">
