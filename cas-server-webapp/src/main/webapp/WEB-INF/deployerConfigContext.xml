@@ -92,4 +92,19 @@
 			</list>
 		</property>
 	</bean>
+
+
+	<!--
+	This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
+	More robust deployments will want to use another option, such as the Jdbc version.
+	
+	The name of this should remain "userDetailsService" in order for Acegi to find it. 
+	 -->	
+	<bean id="userDetailsService" class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
+		<property name="userMap">
+			<value>
+		      battags=notused,ROLE_ADMIN
+		    </value>
+		</property>
+	</bean> 
 </beans>
