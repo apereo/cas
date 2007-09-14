@@ -26,6 +26,9 @@ import org.springframework.util.PathMatcher;
 @Entity
 public class RegisteredServiceImpl implements RegisteredService {
 
+    /** Unique Id for serialization. */
+    private static final long serialVersionUID = -5136788302682868276L;
+
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
     @Id
