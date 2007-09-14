@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.services;
 
+import java.io.Serializable;
+
 import org.jasig.cas.authentication.principal.Service;
 
 /**
@@ -15,7 +17,7 @@ import org.jasig.cas.authentication.principal.Service;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public interface RegisteredService extends Cloneable {
+public interface RegisteredService extends Cloneable, Serializable {
 
     /**
      * Is this application currently allowed to use CAS?
