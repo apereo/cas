@@ -25,21 +25,6 @@
 		class="org.jasig.cas.services.DefaultServicesManagerImpl">
 		<constructor-arg index="0" ref="serviceRegistryDao" />
 	</bean>
-	
-	<bean id="attributeRepository"
-		class="org.jasig.services.persondir.support.StubPersonAttributeDao">
-		<property name="backingMap">
-			<map>
-				<entry key="uid" value="uid" />
-				<entry key="eduPersonAffiliation" value="eduPersonAffiliation" /> 
-				<entry key="groupMembership" value="groupMembership" />
-			</map>
-		</property>
-	</bean>
-	
-	<bean
-		id="serviceRegistryDao"
-		class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl" />
 
 	<bean id="httpClient" class="org.jasig.cas.util.HttpClient"
 		p:readTimeout="5000"
