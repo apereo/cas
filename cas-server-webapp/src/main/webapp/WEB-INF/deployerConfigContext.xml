@@ -99,11 +99,15 @@
 	More robust deployments will want to use another option, such as the Jdbc version.
 	
 	The name of this should remain "userDetailsService" in order for Acegi to find it. 
+	
+	To use this, you should add an entry similar to the following between the two value tags:
+	battags=notused,ROLE_ADMIN
+	
+	where battags is the username you want to grant access to.  You can put one entry per line.
 	 -->	
 	<bean id="userDetailsService" class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
 		<property name="userMap">
 			<value>
-		      battags=notused,ROLE_ADMIN
 		    </value>
 		</property>
 	</bean> 
