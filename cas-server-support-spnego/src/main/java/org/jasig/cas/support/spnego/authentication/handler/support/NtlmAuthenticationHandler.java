@@ -22,7 +22,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
-import org.springframework.beans.factory.InitializingBean;
+import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Implementation of an AuthenticationHandler for NTLM supports.
@@ -34,12 +34,12 @@ import org.springframework.beans.factory.InitializingBean;
  */
 
 public class NtlmAuthenticationHandler extends
-    AbstractPreAndPostProcessingAuthenticationHandler implements
-    InitializingBean {
+    AbstractPreAndPostProcessingAuthenticationHandler {
 
     private boolean loadBalance = true;
 
-    private String domainController;
+    @NotNull
+    private String domainController = Config.getProperty("jcifs.smb.client.domain");;
 
     protected final boolean doAuthentication(final Credentials credentials)
         throws AuthenticationException {
@@ -108,12 +108,5 @@ public class NtlmAuthenticationHandler extends
 
     public void setDomainController(final String domainController) {
         this.domainController = domainController;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        if (this.domainController == null) {
-            this.domainController = Config
-                .getProperty("jcifs.smb.client.domain");
-        }
     }
 }
