@@ -124,10 +124,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
         LOG.debug("Sending logout request for: " + getId());
 
-        final String logoutRequest = "<samlp:LogoutRequest ID=\""
+        final String logoutRequest = "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""
             + GENERATOR.getNewTicketId("LR")
             + "\" Version=\"2.0\" IssueInstant=\"" + SamlUtils.getCurrentDateAndTime()
-            + "\"><saml:NameID>@NOT_USED@</saml:NameID><samlp:SessionIndex>"
+            + "\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@</saml:NameID><samlp:SessionIndex>"
             + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
 
         HttpURLConnection connection = null;
