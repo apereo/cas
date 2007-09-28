@@ -1,0 +1,2 @@
+<enableJavaScript enable="false" />
+<invoke description="Go to login page" url="/login" />

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean
+		name="centralAuthenticationService"
+		class="org.jasig.cas.CentralAuthenticationServiceImpl">
+		<property
+			name="authenticationManager"
+			ref="authenticationManager" />
+		<property
+			name="serviceTicketExpirationPolicy"
+			ref="neverExpiresExpirationPolicy" />
+		<property
+			name="ticketGrantingTicketExpirationPolicy"
+			ref="neverExpiresExpirationPolicy" />
+		<property
+			name="ticketRegistry"
+			ref="ticketRegistry" />
+		<property
+			name="ticketGrantingTicketUniqueTicketIdGenerator"
+			ref="uniqueTicketIdGenerator" />
+		<property
+			name="uniqueTicketIdGeneratorsForService">
+			<map>
+                <entry
+                        key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                        value-ref="uniqueTicketIdGenerator" />
+                <entry
+                        key="org.jasig.cas.authentication.principal.OpenIdService"
+                        value-ref="uniqueTicketIdGenerator" />
+			</map>
+		</property>
+        <property name="servicesManager"
+        ref="servicesManager" />
+	</bean>
+    
+    <bean
+    	id="servicesManager"
+    	class="org.jasig.cas.services.DefaultServicesManagerImpl">
+    	<constructor-arg index="0" ref="serviceRegistryDao" />
+    </bean>
+    
+    <bean
+    	id="serviceRegistryDao"
+    	class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl" />
+	
+	<bean
+		id="authenticationManager"
+		class="org.jasig.cas.authentication.AuthenticationManagerImpl">
+		<property
+			name="credentialsToPrincipalResolvers">
+			<list>
+				<ref
+					local="usernamePasswordCredentialsToPrincipalResolver" />
+				<ref
+					local="httpBasedServiceCredentialsToPrincipalResolver" />
+<!--				<bean
+					class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />-->
+			</list>
+		</property>
+		<property
+			name="authenticationHandlers">
+			<list>
+				<ref
+					local="simpleTestUsernamePasswordAuthenticationHandler" />
+				<ref
+					local="httpBasedServiceCredentialsAuthenticationHandler" />
+<!--				<bean
+					class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler">
+					<property name="ticketRegistry" ref="ticketRegistry" />
+				</bean>-->
+			</list>
+		</property>
+		<property
+			name="authenticationMetaDataPopulators">
+			<list>
+				<ref
+					local="authenticationMetaDataPopulator" />
+			</list>
+		</property>
+			
+	</bean>
+	
+	<bean
+		id="neverExpiresExpirationPolicy"
+		class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
+		
+	<bean
+		id="ticketRegistry"
+		class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+		
+	<bean
+		id="uniqueTicketIdGenerator" 
+		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
+
+	<bean
+		id="usernamePasswordCredentialsToPrincipalResolver"
+		class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+		
+	<bean
+		id="httpBasedServiceCredentialsToPrincipalResolver"
+		class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+		
+	<bean
+		id="httpBasedServiceCredentialsAuthenticationHandler"
+		class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
+		<property name="httpClient">
+			<bean class="org.jasig.cas.util.HttpClient" />
+		</property>
+	</bean>
+	
+	<bean
+		id="simpleTestUsernamePasswordAuthenticationHandler"
+		class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />		
+		
+	<bean
+		id="authenticationMetaDataPopulator"
+		class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
+</beans>

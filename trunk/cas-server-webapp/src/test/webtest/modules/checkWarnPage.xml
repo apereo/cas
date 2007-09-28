@@ -1,0 +1,1 @@
+<verifyText description="Verify redirect link present" text="http://foo.bar/\?ticket=ST-\d+-\w+" regex="true"/>

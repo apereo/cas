@@ -1,0 +1,13 @@
+The end-user documentation included with a redistribution, if any,
+must include the following acknowledgement:
+
+  "This product includes software developed by the JA-SIG Collaborative
+   (http://www.ja-sig.org/)."
+
+Alternately, this acknowledgement may appear in the software itself,
+if and wherever such third-party acknowledgements normally appear.
+
+The names "CAS", "Central Authentication Service" and "JA-SIG Central
+Authentication Service" must not be used to endorse or promote products
+derived from this software without prior written permission. For written
+permission, please contact wgthom@rutgers.edu

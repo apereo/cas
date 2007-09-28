@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC  "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="ticketRegistry"
+		class="org.jasig.cas.ticket.registry.JBossCacheTicketRegistry">
+		<property name="cache" ref="cache" />
+	</bean>
+
+	<bean id="cache" class="org.jasig.cas.util.JBossCacheFactoryBean">
+		<property name="configLocation"
+			value="classpath:jbossTestCache.xml" />
+	</bean>
+</beans>

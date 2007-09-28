@@ -1,0 +1,3 @@
+<storeResponseCode description="store status of response" property="status" />
+<verifyProperty description="should be a 200" name="status" text="200" />
+<verifyText description="See login form" text=".*username.*password.*submit.*" regex="true" />

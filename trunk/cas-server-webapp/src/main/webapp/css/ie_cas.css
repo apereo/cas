@@ -1,0 +1,9 @@
+/* "* html" hack used to hide styles from IE7 */
+#header, #content, #footer, .clearfix, #student .row, #student .col {zoom:1;} /* needs to be seen by IE7 to trigger hasLayout */
+
+/* FOOTER --------------------------------- */
+#footer {padding-bottom:1em;}
+
+* html #sidebar {display:inline;} /* double margin on float bug */
+
+* html input.btn-submit {padding:2px .25em; width:0; overflow:visible;} /* extra width fix */ 

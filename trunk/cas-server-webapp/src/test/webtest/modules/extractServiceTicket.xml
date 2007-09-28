@@ -1,0 +1,4 @@
+<groovy description="Extract the service ticket">
+	def m = step.webtestProperties.location;
+	step.setWebtestProperty('serviceTicket',m.substring(m.indexOf("ST-")),'dynamic');
+</groovy>

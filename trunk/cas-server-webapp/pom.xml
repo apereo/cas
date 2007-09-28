@@ -1,0 +1,132 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.1.1-rc1</version>
+	</parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-webapp</artifactId>
+  <packaging>war</packaging>
+  <name>JA-SIG CAS Web Application</name>
+  <dependencies>
+  		<dependency>
+  			<groupId>org.acegisecurity</groupId>
+  			<artifactId>acegi-security</artifactId>
+  			<version>1.0.4</version>
+  			<scope>runtime</scope>
+  			<exclusions>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-aop</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-beans</artifactId>
+  				</exclusion>  				
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-context</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-core</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-dao</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-jdbc</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-remoting</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-support</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-web</artifactId>
+  				</exclusion>
+  				<exclusion>
+  					<groupId>org.springframework</groupId>
+  					<artifactId>spring-webmvc</artifactId>
+  				</exclusion>
+			</exclusions>  				
+  		</dependency>
+  		
+  		<dependency>
+  			<groupId>net.sf.ehcache</groupId>
+  			<artifactId>ehcache</artifactId>
+  			<version>1.2.3</version>
+  			<scope>runtime</scope>
+  		</dependency>
+
+  		<dependency>
+  			<groupId>cas</groupId>
+  			<artifactId>casclient</artifactId>
+  			<version>2.1.1</version>
+  			<scope>runtime</scope>
+  		</dependency>
+  
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>quartz</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.5.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.1.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+			<type>jar</type>
+		</dependency>
+		
+		<dependency>
+			<groupId>ognl</groupId>
+			<artifactId>ognl</artifactId>
+			<version>2.6.9</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!--
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1</version>
+			<scope>runtime</scope>
+		</dependency>
+		-->
+
+  </dependencies>
+  <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warName>cas</warName>
+				</configuration>
+			</plugin>
+		</plugins>
+  </build>
+</project>

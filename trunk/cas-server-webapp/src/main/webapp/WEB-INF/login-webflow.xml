@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <flow xmlns="http://www.springframework.org/schema/webflow"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="
+              http://www.springframework.org/schema/webflow
+              http://www.springframework.org/schema/webflow/spring-webflow-1.0.xsd">
+
+	<start-state idref="initialFlowSetup"/>
+
+	<action-state id="initialFlowSetup">
+		<action bean="initialFlowSetupAction" />
+		<transition on="success" to="ticketGrantingTicketExistsCheck" />
+	</action-state>
+	
+	<decision-state id="ticketGrantingTicketExistsCheck">
+		<if test="${flowScope.ticketGrantingTicketId != null}" then="hasServiceCheck" else="gatewayRequestCheck" />
+	</decision-state>
+    
+	<decision-state id="gatewayRequestCheck">
+		<if test="${externalContext.requestParameterMap['gateway'] != '' &amp;&amp; externalContext.requestParameterMap['gateway'] != null &amp;&amp; flowScope.service != null}" then="redirect" else="viewLoginForm" />
+	</decision-state>
+	
+	<decision-state id="hasServiceCheck">
+		<if test="${flowScope.service != null}" then="renewRequestCheck" else="viewGenericLoginSuccess" />
+	</decision-state>
+	
+	<decision-state id="renewRequestCheck">
+		<if test="${externalContext.requestParameterMap['renew'] != '' &amp;&amp; externalContext.requestParameterMap['renew'] != null}" then="viewLoginForm" else="generateServiceTicket" />
+	</decision-state>
+	
+	<!-- 
+		The "warn" action makes the determination of whether to redirect directly to the requested
+		service or display the "confirmation" page to go back to the server.
+	-->
+	<decision-state id="warn">
+		<if test="${flowScope.warnCookieValue}" then="showWarningView" else="redirect" />
+	</decision-state>
+	
+	<!-- 
+	<action-state id="startAuthenticate">
+		<action bean="x509Check" />
+		<transition on="success" to="sendTicketGrantingTicket" />
+		<transition on="error" to="viewLoginForm" />
+	</action-state>
+	 -->
+	<view-state id="viewLoginForm" view="casLoginView">
+			<render-actions>
+			<action bean="authenticationViaFormAction" method="setupForm"/>
+			<action bean="authenticationViaFormAction" method="referenceData"/>
+		</render-actions>
+		<transition on="submit" to="bindAndValidate" />
+	</view-state>
+	
+	<action-state id="bindAndValidate">
+		<action bean="authenticationViaFormAction" />
+		<transition on="success" to="submit" />
+		<transition on="error" to="viewLoginForm" />
+	</action-state>
+	
+	<action-state id="submit">
+		<action bean="authenticationViaFormAction" method="submit" />
+		<transition on="warn" to="warn" />
+		<transition on="success" to="sendTicketGrantingTicket" />
+		<transition on="error" to="viewLoginForm" />
+	</action-state>
+	
+	<action-state id="sendTicketGrantingTicket">
+		<action bean="sendTicketGrantingTicketAction" />
+		<transition on="success" to="serviceCheck" />
+	</action-state>
+
+	<decision-state id="serviceCheck">
+		<if test="${flowScope.service != null}" then="generateServiceTicket" else="viewGenericLoginSuccess" />
+	</decision-state>
+	
+	<action-state id="generateServiceTicket">
+		<action bean="generateServiceTicketAction" />
+		<transition on="success" to ="warn" />
+		<transition on="error" to="viewLoginForm" />
+		<transition on="gateway" to="redirect" />
+	</action-state>
+
+	<!-- 
+		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
+		They have only initialized their single-sign on session.
+	-->
+	<end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView" />
+
+	<!-- 
+		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a 
+		view defines in default_views.properties that display the "Please click here to go to the service." message.
+	-->
+	<end-state id="showWarningView" view="casLoginConfirmView" />
+
+	<!-- 
+		The "redirect" end state allows CAS to properly end the workflow while still redirecting
+		the user back to the service required.
+	-->
+	<end-state id="redirect" view="bean:dynamicRedirectViewSelector" />
+	
+	<end-state id="viewServiceErrorView" view="viewServiceErrorView" />
+    
+    <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
+
+	<global-transitions>
+		<transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
+        <transition to="viewServiceSsoErrorView" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException" />
+		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
+	</global-transitions>
+</flow>
