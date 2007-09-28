@@ -48,6 +48,10 @@ public final class LogoutController extends AbstractController {
      * service request parameter.
      */
     private boolean followServiceRedirects;
+    
+    public LogoutController() {
+        setCacheSeconds(0);
+    }
 
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
