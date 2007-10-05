@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -133,7 +134,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         HttpURLConnection connection = null;
         try {
             final URL logoutUrl = new URL(getOriginalUrl());
-            final String output = "logoutRequest=" + logoutRequest;
+            final String output = "logoutRequest=" + URLEncoder.encode(logoutRequest, "UTF-8");
 
             connection = (HttpURLConnection) logoutUrl.openConnection();
             connection.setDoInput(true);
