@@ -13,7 +13,9 @@
 	<bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter"
 		p:authenticationManager-ref="casAuthenticationManager"
 		p:authenticationFailureUrl="/authorizationFailure.jsp"
+		p:alwaysUseDefaultTargetUrl="true"
 		p:defaultTargetUrl="/services/manage.html"
+		
 		p:filterProcessesUrl="/services/j_acegi_cas_security_check" />
 		
 	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter"
