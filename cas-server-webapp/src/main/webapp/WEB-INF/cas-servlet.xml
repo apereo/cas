@@ -18,8 +18,14 @@
 
 	<!-- View Resolver -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
-		p:basename="${cas.viewResolver.basename}"
-		p:order="0" />
+		p:order="0">
+		<property name="basenames">
+			<list>
+				<value>${cas.viewResolver.basename}</value>
+				<value>protocol_views</value>
+			</list>
+		</property>
+	</bean>
 	
 	<!-- Locale Resolver -->
 	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" />
