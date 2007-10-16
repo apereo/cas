@@ -80,7 +80,7 @@ Made by Arnaud Lesueur for JA-SIG and CAS Community
 				<verifyText description="Should get the username and the PGTIOU in the response" text=".*cas:authenticationSuccess.*${username}.*cas:proxyGrantingTicket.*PGTIOU.*" regex="true" />
 				<storeRegEx description="Extract the pgtIOU" text=".*(PGTIOU-\d+-\w+).*" group="1" property="pgtIOU" />
 
-				<invoke description="Get a PGT" url="https://localhost/pgtest1/index.jsp" />
+				<invoke description="Get a PGT" url="${proxyCallBackURL1}" />
 				<verifyText description="Should get the PGT in the response" text=".*#.*#.*" regex="true" />
 				<storeRegEx description="Extract the PGT" text=".*#(.*)#.*" group="1" property="pgt" />
 
