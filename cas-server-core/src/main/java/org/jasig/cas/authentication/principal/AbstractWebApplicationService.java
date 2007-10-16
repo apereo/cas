@@ -55,6 +55,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         this.artifactId = artifactId;
     }
     
+    public final String toString() {
+        return this.id;
+    }
+    
     public final String getId() {
         return this.id;
     }
