@@ -39,7 +39,7 @@ public class NtlmAuthenticationHandler extends
     private boolean loadBalance = true;
 
     @NotNull
-    private String domainController = Config.getProperty("jcifs.smb.client.domain");;
+    private String domainController = Config.getProperty("jcifs.smb.client.domain");
 
     protected final boolean doAuthentication(final Credentials credentials)
         throws AuthenticationException {
