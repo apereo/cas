@@ -46,7 +46,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         final RegisteredService rService = this.servicesManager
             .findServiceBy(service);
 
-        return service != null && rService.getTheme() != null ? rService
+        return service != null && rService != null && rService.getTheme() != null ? rService
             .getTheme() : getDefaultThemeName();
     }
 
