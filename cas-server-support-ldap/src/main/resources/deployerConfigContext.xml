@@ -99,7 +99,7 @@
 	</bean>
 	
 	<bean id="contextSource" class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource">
-		<property name="authenticatedReadOnly" value="true" />
+		<property name="anonymousReadOnly" value="false" />
 		<property name="password" value="{password_goes_here}" />
 		<property name="pooled" value="true" />
 		<property name="urls">
