@@ -17,6 +17,7 @@
 	<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg
 			index="0"
+			type="int"
 			value="50" />
 	</bean>
 	
@@ -33,6 +34,7 @@
 	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
 		<constructor-arg
 			index="0"
+			type="int"
 			value="20" />
 	</bean>
 	 
