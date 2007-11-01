@@ -94,7 +94,7 @@ public final class SpnegoCredentialsAction extends
                 logger.debug("Obtained output token: " + new String(nextToken));
             }
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
-                ? SpnegoConstants.NTLM : SpnegoConstants.NTLM)
+                ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
                 + " " + Base64.encode(nextToken));
         } else {
             logger.debug("Unable to obtain the output token required.");
