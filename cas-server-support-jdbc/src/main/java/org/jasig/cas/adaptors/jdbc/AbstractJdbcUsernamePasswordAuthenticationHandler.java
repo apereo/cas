@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import javax.sql.DataSource;
-
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+
+import javax.sql.DataSource;
 
 /**
  * Abstract class for database authentication handlers.
@@ -34,6 +34,7 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
      */
     public final void setDataSource(final DataSource dataSource) {
         this.jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.dataSource = dataSource;
     }
 
     /**
