@@ -9,7 +9,7 @@ import org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.ldap.LdapTemplate;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.util.Assert;
 
 /**
@@ -40,7 +40,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     /**
      * Method to set the datasource and generate a JdbcTemplate.
      * 
-     * @param dataSource the datasource to use.
+     * @param contextSource the datasource to use.
      */
     public final void setContextSource(final AuthenticatedLdapContextSource contextSource) {
         this.contextSource = contextSource;
