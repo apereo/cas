@@ -238,7 +238,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-ldap</artifactId>
-			<version>1.1.2</version>
+			<version>1.2</version>
 			<scope>compile</scope>
 		</dependency>
 

@@ -5,14 +5,13 @@
  */
 package org.jasig.cas.adaptors.ldap.util;
 
-import java.util.Hashtable;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.ldap.core.support.LdapContextSource;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
-
-import org.springframework.dao.DataAccessResourceFailureException;
-import org.springframework.ldap.support.LdapContextSource;
+import java.util.Hashtable;
 
 public class AuthenticatedLdapContextSource extends LdapContextSource {
     

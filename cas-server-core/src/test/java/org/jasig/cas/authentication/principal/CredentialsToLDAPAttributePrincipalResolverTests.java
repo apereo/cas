@@ -5,9 +5,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.springframework.ldap.support.LdapContextSource;
-
 import junit.framework.TestCase;
+import org.springframework.ldap.core.support.LdapContextSource;
 
 /**
  * 
