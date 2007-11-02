@@ -5,24 +5,19 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.util.Arrays;
-import java.util.List;
+import org.jasig.cas.util.LdapUtils;
+import org.jasig.cas.util.annotation.IsIn;
+import org.jasig.cas.util.annotation.NotNull;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
-
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.util.LdapUtils;
-import org.jasig.cas.util.annotation.IsIn;
-import org.jasig.cas.util.annotation.NotNull;
-
-import org.springframework.ldap.AttributesMapper;
-import org.springframework.ldap.LdapTemplate;
-import org.springframework.ldap.support.LdapContextSource;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Jan Van der Velpen
@@ -176,7 +171,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractP
     /**
      * Method to set the datasource and generate a LDAPTemplate.
      * 
-     * @param dataSource the datasource to use.
+     * @param contextSource the datasource to use.
      */
     public final void setContextSource(final LdapContextSource contextSource) {
         this.ldapTemplate = new LdapTemplate(contextSource);
@@ -197,7 +192,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractP
     }
 
     /**
-     * @param filter The scope to set.
+     * @param scope The scope to set.
      */
     public final void setScope(final int scope) {
         this.scope = scope;

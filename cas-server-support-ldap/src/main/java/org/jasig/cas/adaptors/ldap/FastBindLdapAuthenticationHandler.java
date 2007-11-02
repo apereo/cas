@@ -2,15 +2,15 @@
  * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.ja-sig.org/products/cas/overview/license/
- */
+ */                                     
 package org.jasig.cas.adaptors.ldap;
-
-import javax.naming.directory.DirContext;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
 import org.springframework.dao.DataAccessResourceFailureException;
+
+import javax.naming.directory.DirContext;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the

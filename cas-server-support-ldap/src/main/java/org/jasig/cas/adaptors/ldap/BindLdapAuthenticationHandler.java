@@ -5,21 +5,20 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.LdapUtils;
+import org.jasig.cas.util.annotation.IsIn;
+import org.springframework.ldap.core.NameClassPairCallbackHandler;
+import org.springframework.ldap.core.SearchExecutor;
 
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
-
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.LdapUtils;
-import org.jasig.cas.util.annotation.IsIn;
-import org.springframework.ldap.NameClassPairCallbackHandler;
-import org.springframework.ldap.SearchExecutor;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handler to do LDAP bind.
