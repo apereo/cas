@@ -5,15 +5,13 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.jasig.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping;
+import junit.framework.TestCase;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
-import junit.framework.TestCase;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -28,6 +26,7 @@ public class OpenIdPostUrlHandlerMappingTests extends TestCase {
 
     protected void setUp() throws Exception {
         final GenericWebApplicationContext context = new GenericWebApplicationContext();
+        context.refresh();
         final RootBeanDefinition definition = new RootBeanDefinition(Object.class);
         context.registerBeanDefinition("testHandler", definition);
         context.start();
