@@ -25,8 +25,8 @@ public final class UsernamePasswordCredentialsValidator implements Validator {
 
     public void validate(final Object o, final Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username",
-            "required.username", null);
+            "required.username");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password",
-            "required.password", null);
+            "required.password");
     }
 }
