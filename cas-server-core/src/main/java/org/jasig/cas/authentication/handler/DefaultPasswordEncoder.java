@@ -5,10 +5,12 @@
  */
 package org.jasig.cas.authentication.handler;
 
+import org.jasig.cas.util.annotation.NotNull;
+import org.springframework.util.StringUtils;
+
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Implementation of PasswordEncoder using message digest. Can accept any
@@ -28,6 +30,8 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
     @NotNull
     private final String encodingAlgorithm;
 
+    private String characterEncoding;
+
     public DefaultPasswordEncoder(final String encodingAlgorithm) {
         this.encodingAlgorithm = encodingAlgorithm;
     }
@@ -40,13 +44,21 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         try {
             MessageDigest messageDigest = MessageDigest
                 .getInstance(this.encodingAlgorithm);
-            messageDigest.update(password.getBytes());
+
+            if (StringUtils.hasText(this.characterEncoding)) {
+                messageDigest.update(password.getBytes(this.characterEncoding));
+            } else {
+                messageDigest.update(password.getBytes());
+            }
+
 
             final byte[] digest = messageDigest.digest();
 
             return getFormattedText(digest);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (final NoSuchAlgorithmException e) {
             throw new SecurityException(e);
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -64,5 +76,9 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
             buf.append(HEX_DIGITS[bytes[j] & 0x0f]);
         }
         return buf.toString();
+    }
+
+    public final void setCharacterEncoding(final String characterEncoding) {
+        this.characterEncoding = characterEncoding;
     }
 }
