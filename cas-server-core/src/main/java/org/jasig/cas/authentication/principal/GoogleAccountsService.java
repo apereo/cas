@@ -5,6 +5,12 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.util.SamlUtils;
+import org.jdom.Document;
+import org.springframework.util.StringUtils;
+import org.springframework.webflow.util.Base64;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -18,13 +24,6 @@ import java.util.Random;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jasig.cas.util.SamlUtils;
-import org.jdom.Document;
-import org.springframework.util.StringUtils;
-import org.springframework.webflow.util.Base64;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -239,7 +238,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[5000];
+        final byte[] xmlMessageBytes = new byte[7168];
         inflater.setInput(bytes);
 
         try {
