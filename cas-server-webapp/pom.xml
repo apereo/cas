@@ -14,7 +14,7 @@
   		<dependency>
   			<groupId>org.acegisecurity</groupId>
   			<artifactId>acegi-security</artifactId>
-  			<version>1.0.4</version>
+  			<version>1.0.5</version>
   			<scope>runtime</scope>
   			<exclusions>
   				<exclusion>
@@ -60,13 +60,6 @@
 			</exclusions>  				
   		</dependency>
   		
-  		<dependency>
-  			<groupId>net.sf.ehcache</groupId>
-  			<artifactId>ehcache</artifactId>
-  			<version>1.2.3</version>
-  			<scope>runtime</scope>
-  		</dependency>
-
   		<dependency>
   			<groupId>cas</groupId>
   			<artifactId>casclient</artifactId>

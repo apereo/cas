@@ -157,7 +157,36 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>2.5-rc1</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context-support</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		
+  		<dependency>
+  			<groupId>net.sf.ehcache</groupId>
+  			<artifactId>ehcache</artifactId>
+  			<version>1.4.0-beta</version>
+  			<scope>runtime</scope>
+  		</dependency>
 
         <dependency>
 			<groupId>org.springframework</groupId>
