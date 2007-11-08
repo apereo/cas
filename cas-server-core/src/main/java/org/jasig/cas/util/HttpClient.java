@@ -5,15 +5,15 @@
  */
 package org.jasig.cas.util;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.util.annotation.GreaterThan;
 import org.jasig.cas.util.annotation.NotNull;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author Scott Battaglia
@@ -76,7 +76,7 @@ public final class HttpClient {
                         + responseCode);
             }
         } catch (final IOException e) {
-            // nothing to do
+            log.error(e,e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
