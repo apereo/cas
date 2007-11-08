@@ -5,17 +5,17 @@
  */
 package org.jasig.cas.services.web;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * ThemeResolver to determine the theme for CAS based on the service provided.
@@ -46,7 +46,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         final RegisteredService rService = this.servicesManager
             .findServiceBy(service);
 
-        return service != null && rService != null && rService.getTheme() != null ? rService
+        return service != null && rService != null && StringUtils.hasText(rService.getTheme()) ? rService
             .getTheme() : getDefaultThemeName();
     }
 
