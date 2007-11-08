@@ -5,11 +5,6 @@
  */
 package org.jasig.cas;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
@@ -28,12 +23,12 @@ import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -41,6 +36,11 @@ import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Concrete implementation of a CentralAuthenticationService, and also the
@@ -169,7 +169,7 @@ public final class CentralAuthenticationServiceImpl implements
         final RegisteredService registeredService = this.servicesManager
             .findServiceBy(service);
 
-        if (registeredService == null) {
+        if (registeredService == null || !registeredService.isEnabled()) {
             if (log.isDebugEnabled()) {
                 log.debug("Service [" + service.getId()
                     + "] not found in ServiceRegistry.");
@@ -253,7 +253,7 @@ public final class CentralAuthenticationServiceImpl implements
             final RegisteredService registeredService = this.servicesManager
                 .findServiceBy(serviceTicket.getService());
 
-            if (registeredService == null
+            if (registeredService == null || !registeredService.isEnabled()
                 || !registeredService.isAllowedToProxy()) {
                 throw new UnauthorizedProxyingException();
             }
@@ -287,7 +287,7 @@ public final class CentralAuthenticationServiceImpl implements
         final RegisteredService registeredService = this.servicesManager
             .findServiceBy(service);
 
-        if (registeredService == null) {
+        if (registeredService == null || !registeredService.isEnabled()) {
             throw new UnauthorizedServiceException(
                 "Service not allowed to validate tickets.");
         }
