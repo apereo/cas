@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.event;
 
-import java.io.Serializable;
-
 import org.jasig.cas.ticket.Ticket;
 import org.springframework.util.Assert;
 
@@ -19,22 +17,8 @@ import org.springframework.util.Assert;
  * @since 3.0
  */
 public class TicketEvent extends AbstractEvent {
-
-    /** TicketEvent of type Create Ticket Granting Ticket. */
-    public static final TicketEventType CREATE_TICKET_GRANTING_TICKET = new TicketEventType(
-        "CREATE_TICKET_GRANTING_TICKET");
-
-    /** TicketEvent of type Create Service Ticket. */
-    public static final TicketEventType CREATE_SERVICE_TICKET = new TicketEventType(
-        "CREATE_SERVICE_TICKET");
-
-    /** TicketEvent of type Destroy Ticket Granting Ticket. */
-    public static final TicketEventType DESTROY_TICKET_GRANTING_TICKET = new TicketEventType(
-        "DESTROY_TICKET_GRANTING_TICKET");
-
-    /** TicketEvent of type Validate Service Ticket. */
-    public static final TicketEventType VALIDATE_SERVICE_TICKET = new TicketEventType(
-        "VALIDATE_SERVICE_TICKET");
+    
+    public static enum TicketEventType {CREATE_TICKET_GRANTING_TICKET, CREATE_SERVICE_TICKET, DESTROY_TICKET_GRANTING_TICKET, VALIDATE_SERVICE_TICKET}
 
     /** Unique Serializable Id. */
     private static final long serialVersionUID = 3904682686680347187L;
@@ -120,33 +104,5 @@ public class TicketEvent extends AbstractEvent {
      */
     public final TicketEventType getTicketEventType() {
         return this.ticketEventType;
-    }
-
-    /**
-     * Enumeration class to denote what ticket event occurred.
-     * 
-     * @author Scott Battaglia
-     * @version $Revision$ $Date$
-     * @since 3.0
-     */
-    public static final class TicketEventType implements Serializable {
-
-        /** Serializable Unique Id. */
-        private static final long serialVersionUID = 3258689897039671865L;
-
-        /** The name of the event. */
-        private final String name;
-
-        protected TicketEventType(final String name) {
-            this.name = name;
-        }
-
-        public String getEventTypeAsString() {
-            return this.name;
-        }
-
-        public String toString() {
-            return this.name;
-        }
     }
 }

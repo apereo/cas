@@ -16,6 +16,7 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.event.TicketEvent;
+import org.jasig.cas.event.TicketEvent.TicketEventType;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,7 +55,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             .getCredentialsWithSameUsernameAndPassword()}, method, ticketId));
 
         assertNotNull(this.event);
-        assertEquals(TicketEvent.CREATE_TICKET_GRANTING_TICKET, this.event
+        assertEquals(TicketEventType.CREATE_TICKET_GRANTING_TICKET, this.event
             .getTicketEventType());
     }
 
@@ -69,7 +70,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
         this.advice.invoke(new MockMethodInvocation(new Object[] {ticketId}, method, null));
 
         assertNotNull(this.event);
-        assertEquals(TicketEvent.DESTROY_TICKET_GRANTING_TICKET, this.event
+        assertEquals(TicketEventType.DESTROY_TICKET_GRANTING_TICKET, this.event
             .getTicketEventType());
     }
 
@@ -90,7 +91,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             TestUtils.getCredentialsWithSameUsernameAndPassword()}, method, ticketGrantingTicketId));
 
         assertNotNull(this.event);
-        assertEquals(TicketEvent.CREATE_TICKET_GRANTING_TICKET, this.event
+        assertEquals(TicketEventType.CREATE_TICKET_GRANTING_TICKET, this.event
             .getTicketEventType());
     }
 
@@ -107,7 +108,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             ticketId, TestUtils.getService()}, method, serviceTicketId));
 
         assertNotNull(this.event);
-        assertEquals(TicketEvent.CREATE_SERVICE_TICKET, this.event
+        assertEquals(TicketEventType.CREATE_SERVICE_TICKET, this.event
             .getTicketEventType());
     }
 
@@ -126,7 +127,7 @@ public class CentralAuthenticationServiceMethodInterceptorTests extends
             serviceTicketId, TestUtils.getService()}, method, assertion));
 
         assertNotNull(this.event);
-        assertEquals(TicketEvent.VALIDATE_SERVICE_TICKET, this.event
+        assertEquals(TicketEventType.VALIDATE_SERVICE_TICKET, this.event
             .getTicketEventType());
     }
 

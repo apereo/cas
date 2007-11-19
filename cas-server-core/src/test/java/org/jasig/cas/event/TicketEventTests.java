@@ -6,6 +6,7 @@
 package org.jasig.cas.event;
 
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.event.TicketEvent.TicketEventType;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -23,10 +24,10 @@ public class TicketEventTests extends TestCase {
         TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
     private TicketEvent ticketEvent1 = new TicketEvent(this.tgt,
-        TicketEvent.CREATE_TICKET_GRANTING_TICKET);
+        TicketEventType.CREATE_TICKET_GRANTING_TICKET);
 
     private TicketEvent ticketEvent2 = new TicketEvent(
-        TicketEvent.DESTROY_TICKET_GRANTING_TICKET, "test");
+        TicketEventType.DESTROY_TICKET_GRANTING_TICKET, "test");
 
     public void testGetTicketId() {
         assertEquals("test1", this.ticketEvent1.getTicketId());
@@ -39,17 +40,17 @@ public class TicketEventTests extends TestCase {
     }
 
     public void testGetTicketEventType() {
-        assertEquals(TicketEvent.CREATE_TICKET_GRANTING_TICKET,
+        assertEquals(TicketEventType.CREATE_TICKET_GRANTING_TICKET,
             this.ticketEvent1.getTicketEventType());
-        assertEquals(TicketEvent.DESTROY_TICKET_GRANTING_TICKET,
+        assertEquals(TicketEventType.DESTROY_TICKET_GRANTING_TICKET,
             this.ticketEvent2.getTicketEventType());
     }
 
     public void testGetTicketEventTypeAsString() {
         assertEquals("CREATE_TICKET_GRANTING_TICKET", this.ticketEvent1
-            .getTicketEventType().getEventTypeAsString());
+            .getTicketEventType().toString());
         assertEquals("DESTROY_TICKET_GRANTING_TICKET", this.ticketEvent2
-            .getTicketEventType().getEventTypeAsString());
+            .getTicketEventType().toString());
     }
     
     public void testGetTicketEventTypeToString() {

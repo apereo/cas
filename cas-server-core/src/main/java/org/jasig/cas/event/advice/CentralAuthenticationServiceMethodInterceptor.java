@@ -8,6 +8,7 @@ package org.jasig.cas.event.advice;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.jasig.cas.event.TicketEvent;
+import org.jasig.cas.event.TicketEvent.TicketEventType;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.annotation.NotNull;
@@ -50,20 +51,20 @@ public class CentralAuthenticationServiceMethodInterceptor implements
 
         if (methodName.equals("createTicketGrantingTicket")) {
             ticketEvent = new TicketEvent(ticket,
-                TicketEvent.CREATE_TICKET_GRANTING_TICKET);
+                TicketEventType.CREATE_TICKET_GRANTING_TICKET);
         } else if (methodName.equals("delegateTicketGrantingTicket")) {
             ticketEvent = new TicketEvent(ticket,
-                TicketEvent.CREATE_TICKET_GRANTING_TICKET);
+                TicketEventType.CREATE_TICKET_GRANTING_TICKET);
         } else if (methodName.equals("grantServiceTicket")) {
             ticketEvent = new TicketEvent(ticket,
-                TicketEvent.CREATE_SERVICE_TICKET);
+                TicketEventType.CREATE_SERVICE_TICKET);
         } else if (methodName.equals("destroyTicketGrantingTicket")) {
             ticketEvent = new TicketEvent(
-                TicketEvent.DESTROY_TICKET_GRANTING_TICKET, (String) method
+                TicketEventType.DESTROY_TICKET_GRANTING_TICKET, (String) method
                     .getArguments()[0]);
         } else if (methodName.equals("validateServiceTicket")) {
             ticketEvent = new TicketEvent(ticket,
-                TicketEvent.VALIDATE_SERVICE_TICKET);
+                TicketEventType.VALIDATE_SERVICE_TICKET);
         }
 
         if (ticketEvent != null) {
