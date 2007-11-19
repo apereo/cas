@@ -35,7 +35,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webflow/1.0.3/spring-webflow-1.0.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius/20060406/jradius-20060406.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius-dictionary/20060406/jradius-dictionary-20060406.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-ldap/1.1.2/spring-ldap-1.1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-ldap/1.2/spring-ldap-1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-cache/1.4.1.GA/jboss-cache-1.4.1.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-system/4.0.2/jboss-system-4.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-jmx/4.0.4/jboss-jmx-4.0.4.jar"/>
@@ -68,7 +68,7 @@
 	<classpathentry kind="var" path="M2_REPO/jdom/jdom/1.0/jdom-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/acegisecurity/acegi-security/1.0.4/acegi-security-1.0.4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-entitymanager/3.3.1.ga/hibernate-entitymanager-3.3.1.ga.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.4.ga/hibernate-3.2.4.ga.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.4.sp1/hibernate-3.2.4.sp1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-annotations/3.3.0.ga/hibernate-annotations-3.3.0.ga.jar"/>
 	<classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-commons-annotations/3.3.0.ga/hibernate-commons-annotations-3.3.0.ga.jar"/>
