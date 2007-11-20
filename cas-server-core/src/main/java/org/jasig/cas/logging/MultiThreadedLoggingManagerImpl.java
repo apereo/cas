@@ -5,8 +5,10 @@
  */
 package org.jasig.cas.logging;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.jasig.cas.util.annotation.NotNull;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * 
@@ -21,15 +23,29 @@ public final class MultiThreadedLoggingManagerImpl implements LoggingManager {
     private final LoggingDao loggingDao;
     
     @NotNull
-    private ThreadPoolTaskExecutor executor;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     
     public MultiThreadedLoggingManagerImpl(final LoggingDao loggingDao) {
         this.loggingDao = loggingDao;
-        this.executor = new ThreadPoolTaskExecutor();
     }
+    
+    public void log(final LogRequest logRequest) {
+        this.executorService.execute(new LoggingTask(logRequest, this.loggingDao));
+    }
+    
+    protected class LoggingTask implements Runnable {
+        
+        private final LoggingDao loggingDao;
+        
+        private final LogRequest logRequest;
+        
+        public LoggingTask(final LogRequest logRequest, final LoggingDao loggingDao) {
+            this.loggingDao = loggingDao;
+            this.logRequest = logRequest;
+        }
 
-    public void log(final LogRequest request) {
-        // TODO Auto-generated method stub
-
+        public void run() {
+            this.loggingDao.save(this.logRequest);
+        }
     }
 }
