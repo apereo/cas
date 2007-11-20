@@ -10,7 +10,7 @@
 			/WEB-INF/applicationContext.xml,
 			/WEB-INF/deployerConfigContext.xml
 			/WEB-INF/securityContext.xml
-			
+			/WEB-INF/auditTrailContext.xml
 		</param-value>
 	</context-param>
 
@@ -20,7 +20,7 @@
 		classpath:org/codehaus/xfire/spring/xfire.xml
 		
 		place this into the contextConfigLocation to enable the event publishing
-		/WEB-INF/auditTrailContext.xml
+		
 	-->
 
 	<!--
