@@ -15,12 +15,12 @@ import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
  * CREATE TABLE CAS_LOGGING
  * (
  *   LOG_DATE           DATE                       NOT NULL,
- *   CLIENT_IP_ADDRESS  VARCHAR2(15 BYTE)          NOT NULL,
- *   CLIENT_USER_AGENT  VARCHAR2(255 BYTE),
- *   PRINCIPAL          VARCHAR2(255 BYTE),
- *   SERVICE            VARCHAR2(255 BYTE),
- *   EVENT_TYPE         VARCHAR2(255 BYTE)         NOT NULL,
- *   SERVER_IP_ADDRESS  VARCHAR2(15 BYTE)          NOT NULL
+ *   CLIENT_IP_ADDRESS  VARCHAR(15) NOT NULL,
+ *   CLIENT_USER_AGENT  VARCHAR(255),
+ *   PRINCIPAL          VARCHAR(255),
+ *   SERVICE            VARCHAR(255),
+ *   EVENT_TYPE         VARCHAR(255)         NOT NULL,
+ *   SERVER_IP_ADDRESS  VARCHAR(15)          NOT NULL
  * )
  * 
  * 
