@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.event;
 
-import org.jasig.cas.authentication.principal.Credentials;
-
 /**
  * Event for letting listeners know about authentication requests and whether
  * they were successful or not. Provides handlers with access to the original
@@ -29,6 +27,8 @@ public class AuthenticationEvent extends AbstractEvent {
 
     /** The AuthenticationHandler class used to generate this event. */
     private Class<?> authenticationHandlerClass;
+    
+    private String principal;
 
     /**
      * Constructs the AuthenticationEvent using the credentials as the source
@@ -38,22 +38,14 @@ public class AuthenticationEvent extends AbstractEvent {
      * @param successfulAuthentication boolean of whether the authentication was
      * successful or not.
      */
-    public AuthenticationEvent(final Credentials credentials,
+    public AuthenticationEvent(final String principal,
         final boolean successfulAuthentication,
         final Class<?> authenticationHandlerClass) {
-        super(credentials);
+        super(principal);
 
         this.successfulAuthentication = successfulAuthentication;
         this.authenticationHandlerClass = authenticationHandlerClass;
-    }
-
-    /**
-     * Method to return the Credentials for the Authentication.
-     * 
-     * @return the Credentials.
-     */
-    public final Credentials getCredentials() {
-        return (Credentials) getSource();
+        this.principal = principal;
     }
 
     /**
@@ -73,5 +65,9 @@ public class AuthenticationEvent extends AbstractEvent {
      */
     public final Class<?> getAuthenticationHandlerClass() {
         return this.authenticationHandlerClass;
+    }
+    
+    public String getPrincipal() {
+        return this.principal;
     }
 }

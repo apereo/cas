@@ -34,7 +34,7 @@ public class EventListenerTests extends TestCase {
 
     public void testHandlEvent() {
         AuthenticationEvent e = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), true,
+            .getCredentialsWithSameUsernameAndPassword().toString(), true,
             AuthenticationHandler.class);
 
         this.eventListener.onApplicationEvent(e);
@@ -48,7 +48,7 @@ public class EventListenerTests extends TestCase {
 
     public void testNotHandlEvent() {
         AuthenticationEvent e = new AuthenticationEvent(TestUtils
-            .getCredentialsWithSameUsernameAndPassword(), true,
+            .getCredentialsWithSameUsernameAndPassword().toString(), true,
             AuthenticationHandler.class);
 
         this.eventListener

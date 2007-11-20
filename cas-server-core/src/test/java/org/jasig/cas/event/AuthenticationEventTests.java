@@ -21,28 +21,28 @@ public class AuthenticationEventTests extends TestCase {
 
     public void testGetCredentials() {
         assertEquals("Credentials are not equal.", TestUtils
-            .getCredentialsWithSameUsernameAndPassword(),
+            .getCredentialsWithSameUsernameAndPassword().toString(),
             new AuthenticationEvent(TestUtils
-                .getCredentialsWithSameUsernameAndPassword(), true,
-                AuthenticationHandler.class).getCredentials());
+                .getCredentialsWithSameUsernameAndPassword().toString(), true,
+                AuthenticationHandler.class).getPrincipal());
     }
 
     public void testIsSuccessful() {
         assertTrue("Authentication success is false.", new AuthenticationEvent(
-            TestUtils.getCredentialsWithSameUsernameAndPassword(), true,
+            TestUtils.getCredentialsWithSameUsernameAndPassword().toString(), true,
             AuthenticationHandler.class).isSuccessfulAuthentication());
     }
 
     public void testIsNotSuccessful() {
         assertFalse("Authentication success is true.", new AuthenticationEvent(
-            TestUtils.getCredentialsWithSameUsernameAndPassword(), false,
+            TestUtils.getCredentialsWithSameUsernameAndPassword().toString(), false,
             AuthenticationHandler.class).isSuccessfulAuthentication());
     }
 
     public void testPublishedDate() {
         final long startDate = System.currentTimeMillis();
         final Date publishedDate = new AuthenticationEvent(
-            TestUtils.getCredentialsWithSameUsernameAndPassword(), false,
+            TestUtils.getCredentialsWithSameUsernameAndPassword().toString(), false,
             AuthenticationHandler.class).getPublishedDate();
         final long endDate = System.currentTimeMillis();
         
@@ -53,7 +53,7 @@ public class AuthenticationEventTests extends TestCase {
     public void testAuthenticationClass() {
         assertEquals("AuthenticationHandler classes not equal.",
             AuthenticationHandler.class, new AuthenticationEvent(TestUtils
-                .getCredentialsWithSameUsernameAndPassword(), false,
+                .getCredentialsWithSameUsernameAndPassword().toString(), false,
                 AuthenticationHandler.class).getAuthenticationHandlerClass());
     }
 }
