@@ -28,7 +28,7 @@ public final class AuthenticationLoggingEventHandler extends AbstractLoggingEven
     protected LogRequest constructLogRequest(final ApplicationEvent event,
         final ClientInfo clientInfo) {
         final AuthenticationEvent authenticationEvent = (AuthenticationEvent) event;
-        final String principal = authenticationEvent.getCredentials().toString();
+        final String principal = authenticationEvent.getPrincipal();
         final String eventType = "AUTHENTICATION_" + (authenticationEvent.isSuccessfulAuthentication() ? "SUCCESS" : "FAILURE");
         final String service = null;
         return new LogRequest(clientInfo, principal, service, eventType);

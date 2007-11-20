@@ -26,38 +26,26 @@ public class TicketEventTests extends TestCase {
     private TicketEvent ticketEvent1 = new TicketEvent(this.tgt,
         TicketEventType.CREATE_TICKET_GRANTING_TICKET);
 
-    private TicketEvent ticketEvent2 = new TicketEvent(
-        TicketEventType.DESTROY_TICKET_GRANTING_TICKET, "test");
-
     public void testGetTicketId() {
-        assertEquals("test1", this.ticketEvent1.getTicketId());
-        assertEquals("test", this.ticketEvent2.getTicketId());
+        assertEquals("test1", this.ticketEvent1.getTicket().getId());
     }
 
     public void testGetTicket() {
         assertEquals(this.tgt, this.ticketEvent1.getTicket());
-        assertNull(this.ticketEvent2.getTicket());
     }
 
     public void testGetTicketEventType() {
         assertEquals(TicketEventType.CREATE_TICKET_GRANTING_TICKET,
             this.ticketEvent1.getTicketEventType());
-        assertEquals(TicketEventType.DESTROY_TICKET_GRANTING_TICKET,
-            this.ticketEvent2.getTicketEventType());
     }
 
     public void testGetTicketEventTypeAsString() {
         assertEquals("CREATE_TICKET_GRANTING_TICKET", this.ticketEvent1
-            .getTicketEventType().toString());
-        assertEquals("DESTROY_TICKET_GRANTING_TICKET", this.ticketEvent2
             .getTicketEventType().toString());
     }
     
     public void testGetTicketEventTypeToString() {
         assertEquals("CREATE_TICKET_GRANTING_TICKET", this.ticketEvent1
             .getTicketEventType().toString());
-        assertEquals("DESTROY_TICKET_GRANTING_TICKET", this.ticketEvent2
-            .getTicketEventType().toString());
     }
-
 }

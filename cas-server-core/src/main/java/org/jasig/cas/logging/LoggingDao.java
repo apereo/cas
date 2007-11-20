@@ -5,8 +5,20 @@
  */
 package org.jasig.cas.logging;
 
-
+/**
+ * Dao to log requests to a specific location.
+ * 
+ * @author Scott Battaglia
+ * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
+ * @since 3.1.2
+ *
+ */
 public interface LoggingDao {
 
+    /**
+     * Save the log request.
+     * 
+     * @param logRequest the log request to save.
+     */
     void save(LogRequest logRequest);
 }

@@ -17,6 +17,8 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.event.TicketEvent;
+import org.jasig.cas.event.TicketEvent.TicketEventType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
@@ -35,6 +37,8 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -71,7 +75,7 @@ import java.util.Map;
  * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl implements
-    CentralAuthenticationService {
+    CentralAuthenticationService, ApplicationEventPublisherAware {
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Log log = LogFactory.getLog(this.getClass());
@@ -79,6 +83,8 @@ public final class CentralAuthenticationServiceImpl implements
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
     private TicketRegistry ticketRegistry;
+    
+    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
@@ -137,6 +143,8 @@ public final class CentralAuthenticationServiceImpl implements
             ticket.expire();
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
         }
+        
+        this.applicationEventPublisher.publishEvent(new TicketEvent(ticket, TicketEventType.DESTROY_TICKET_GRANTING_TICKET));
     }
 
     /**
@@ -220,6 +228,7 @@ public final class CentralAuthenticationServiceImpl implements
                     .getPrincipal().getId() + "]");
         }
 
+        this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, serviceTicket.getGrantingTicket().getGrantingTicket() != null ? TicketEventType.CREATE_PROXY_TICKET : TicketEventType.CREATE_SERVICE_TICKET));
         return serviceTicket.getId();
     }
 
@@ -266,6 +275,7 @@ public final class CentralAuthenticationServiceImpl implements
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
+            this.applicationEventPublisher.publishEvent(new TicketEvent(ticketGrantingTicket, TicketEventType.CREATE_PROXY_GRANTING_TICKET));
             return ticketGrantingTicket.getId();
         } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
@@ -307,6 +317,7 @@ public final class CentralAuthenticationServiceImpl implements
                         log.debug("ServiceTicket [" + serviceTicketId
                             + "] has expired.");
                     }
+                    this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, TicketEventType.VALIDATE_SERVICE_TICKET_FAILURE));
                     throw new InvalidTicketException();
                 }
 
@@ -315,7 +326,7 @@ public final class CentralAuthenticationServiceImpl implements
                         log.error("ServiceTicket [" + serviceTicketId
                             + "] with service [" + serviceTicket.getService().getId() + " does not match supplied service [" + service + "]");
                     }
-
+                    this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, TicketEventType.VALIDATE_SERVICE_TICKET_FAILURE));
                     throw new TicketValidationException(serviceTicket.getService());
                 }
             }
@@ -358,6 +369,7 @@ public final class CentralAuthenticationServiceImpl implements
             }
             authentications.add(mutableAuthentication);
 
+            this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, TicketEventType.VALIDATE_SERVICE_TICKET_SUCCESS));
             return new ImmutableAssertionImpl(authentications, serviceTicket
                 .getService(), serviceTicket.isFromNewLogin());
         } finally {
@@ -390,6 +402,7 @@ public final class CentralAuthenticationServiceImpl implements
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
+            this.applicationEventPublisher.publishEvent(new TicketEvent(ticketGrantingTicket, TicketEventType.CREATE_TICKET_GRANTING_TICKET));
             return ticketGrantingTicket.getId();
         } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
@@ -459,5 +472,9 @@ public final class CentralAuthenticationServiceImpl implements
     public void setPersistentIdGenerator(
         final PersistentIdGenerator persistentIdGenerator) {
         this.persistentIdGenerator = persistentIdGenerator;
+    }
+    
+    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

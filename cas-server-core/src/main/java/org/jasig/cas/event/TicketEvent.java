@@ -18,16 +18,13 @@ import org.springframework.util.Assert;
  */
 public class TicketEvent extends AbstractEvent {
     
-    public static enum TicketEventType {CREATE_TICKET_GRANTING_TICKET, CREATE_SERVICE_TICKET, DESTROY_TICKET_GRANTING_TICKET, VALIDATE_SERVICE_TICKET}
+    public static enum TicketEventType {CREATE_TICKET_GRANTING_TICKET, CREATE_SERVICE_TICKET, DESTROY_TICKET_GRANTING_TICKET, VALIDATE_SERVICE_TICKET_SUCCESS, VALIDATE_SERVICE_TICKET_FAILURE, CREATE_PROXY_GRANTING_TICKET, CREATE_PROXY_TICKET}
 
     /** Unique Serializable Id. */
     private static final long serialVersionUID = 3904682686680347187L;
 
     /** The TicketEventType for this event. */
     private final TicketEventType ticketEventType;
-
-    /** The String id of the Ticket for this event. */
-    private final String ticketId;
 
     /**
      * Constructs a TicketEvent with the Ticket as the source.
@@ -38,18 +35,6 @@ public class TicketEvent extends AbstractEvent {
     public TicketEvent(final Ticket ticket,
         final TicketEventType ticketEventType) {
         this(ticket, ticketEventType, null);
-    }
-
-    /**
-     * Constructs a TicketEvent without a Ticket using the TicketId as the
-     * source object.
-     * 
-     * @param ticketEventType the type of TicketEvent
-     * @param ticketId the identifier for the ticket.
-     */
-    public TicketEvent(final TicketEventType ticketEventType,
-        final String ticketId) {
-        this(null, ticketEventType, ticketId);
     }
 
     /**
@@ -70,22 +55,7 @@ public class TicketEvent extends AbstractEvent {
         Assert.isTrue(ticketId != null || ticket != null,
             "ticketId or ticket is required");
 
-        if (ticket != null) {
-            this.ticketId = ticket.getId();
-        } else {
-            this.ticketId = ticketId;
-        }
-
         this.ticketEventType = ticketEventType;
-    }
-
-    /**
-     * Method to retrieve the Id of the Ticket.
-     * 
-     * @return the id of the ticket.
-     */
-    public final String getTicketId() {
-        return this.ticketId;
     }
 
     /**
@@ -94,7 +64,7 @@ public class TicketEvent extends AbstractEvent {
      * @return the ticket, or null if we have no ticket.
      */
     public final Ticket getTicket() {
-        return (getSource() instanceof Ticket) ? (Ticket) getSource() : null;
+        return (Ticket) getSource();
     }
 
     /**
