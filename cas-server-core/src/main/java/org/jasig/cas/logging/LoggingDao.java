@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.logging;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * Dao to log requests to a specific location.
  * 
@@ -21,4 +24,10 @@ public interface LoggingDao {
      * @param logRequest the log request to save.
      */
     void save(LogRequest logRequest);
+    
+    List<LogRequest> findByPrincipal(String principal, Date fromDate);
+    
+    List<LogRequest> findByEventType(String eventType, Date fromDate);
+    
+    List<LogRequest> retrieveByDateFrom(Date fromDate);
 }

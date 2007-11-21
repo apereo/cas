@@ -5,6 +5,14 @@
  */
 package org.jasig.cas.logging;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * 
  * @author Scott Battaglia
@@ -12,17 +20,39 @@ package org.jasig.cas.logging;
  * @since 3.1.2
  *
  */
+@Entity
+@Table(name="CAS_LOGGING")
 public final class LogRequest {
+    @Id
+    @Column(name="ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Embedded
+    private ClientInfo clientInfo;
     
-    private final ClientInfo clientInfo;
+    @Column(name="PRINCIPAL",length=255,nullable=true,updatable=false,insertable=true)
+    private String principal;
     
-    private final String principal;
+    @Column(name="SERVICE",length=255,nullable=true,updatable=false,insertable=true)
+    private String service;
     
-    private final String service;
+    @Column(name="EVENT_TYPE",length=255,nullable=false,updatable=false,insertable=true)
+    private String eventType;
     
-    private final String eventType;
+    public LogRequest() {
+        // nothing to do
+    }
     
     public LogRequest(final ClientInfo clientInfo, final String principal, final String service, final String eventType) {
+        
+        // TODO cleanup
+//        final String userAgent = logRequest.getClientInfo().getUserAgent();
+//        final String truncatedUserAgent = userAgent != null && userAgent.length() > 255 ? userAgent.substring(0, 255) : userAgent;
+        
+//        final String service = logRequest.getService();
+//        final String truncatedService = service != null && service.length() > 255 ? service.substring(0, 255) : service;
+
         this.clientInfo = clientInfo;
         this.principal = principal;
         this.service = service;
