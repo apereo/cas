@@ -2,7 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
 
 	<bean
 		id="eventListener"
@@ -30,14 +32,32 @@
 	
 	<bean
 		id="loggingDao"
-		class="org.jasig.cas.logging.JdbcLoggingDaoImpl"
-		p:dataSource-ref="loggingDataSource" />
-	
+		class="org.jasig.cas.logging.JpaLoggingDaoImpl"
+		p:entityManagerFactory-ref="entityManagerFactory" />
+		
 	<bean
-		id="loggingDataSource"
+		id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		p:dataSource-ref="dataSource">
+        <property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+				p:generateDdl="true"
+				p:showSql="true" />
+        </property>
+	</bean>
+ 	
+	<bean
+		id="transactionManager2"
+		class="org.springframework.orm.jpa.JpaTransactionManager"
+		p:entityManagerFactory-ref="entityManagerFactory" />
+ 	        
+    <tx:annotation-driven transaction-manager="transactionManager2"/>
+
+    <bean
+		id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
 		p:driverClassName="com.mysql.jdbc.Driver"
 		p:url="jdbc:mysql://localhost/cas"
-		p:username="root"
-		p:password="" />
+		p:password=""
+		p:username="root" />
 </beans>

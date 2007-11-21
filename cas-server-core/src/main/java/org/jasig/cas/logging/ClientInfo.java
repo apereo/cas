@@ -7,6 +7,10 @@ package org.jasig.cas.logging;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -16,15 +20,25 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.1.2
  *
  */
+@Embeddable
 public class ClientInfo {
 
+    @Column(name="CLIENT_IP_ADDRESS",length=15,nullable=false,updatable=false,insertable=true)
     private String clientIpAddress;
     
+    @Column(name="CLIENT_USER_AGENT",length=255,nullable=false,updatable=false,insertable=true)
     private String userAgent;
     
+    @Column(name="LOG_DATE",nullable=false,updatable=false,insertable=true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date requestDate = new Date();
     
+    @Column(name="SERVER_IP_ADDRESS",nullable=false,updatable=false,insertable=true)
     private String serverIpAddress;
+    
+    public ClientInfo() {
+        // nothing to do
+    }
     
     public ClientInfo(final HttpServletRequest request) {
         this.clientIpAddress = request.getRemoteAddr();
