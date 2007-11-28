@@ -35,14 +35,20 @@ public class ClientInfo {
     
     @Column(name="SERVER_IP_ADDRESS",nullable=false,updatable=false,insertable=true)
     private String serverIpAddress;
-    
+
     public ClientInfo() {
         // nothing to do
     }
     
     public ClientInfo(final HttpServletRequest request) {
         this.clientIpAddress = request.getRemoteAddr();
-        this.userAgent = request.getHeader("User-Agent");
+        final String userAgentTemp = request.getHeader("User-Agent");
+        
+        if (userAgentTemp != null && userAgentTemp.length() > 255) {
+            this.userAgent = userAgentTemp.substring(0, 255);
+        } else {
+            this.userAgent = userAgentTemp;
+        }
         this.serverIpAddress = request.getLocalAddr();
     }
     

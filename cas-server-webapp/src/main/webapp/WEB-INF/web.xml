@@ -7,7 +7,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			/WEB-INF/applicationContext.xml,
+			/WEB-INF/applicationContext.xml
 			/WEB-INF/deployerConfigContext.xml
 			/WEB-INF/securityContext.xml
 			/WEB-INF/auditTrailContext.xml
@@ -20,7 +20,6 @@
 		classpath:org/codehaus/xfire/spring/xfire.xml
 		
 		place this into the contextConfigLocation to enable the event publishing
-		
 	-->
 
 	<!--
@@ -195,7 +194,11 @@
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/openid/*</url-pattern>
 	</servlet-mapping>
-
+	
+	<servlet-mapping>
+		<servlet-name>cas</servlet-name>
+		<url-pattern>/services/viewLogRequests.html</url-pattern>
+	</servlet-mapping>
 	
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>

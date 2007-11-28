@@ -28,7 +28,13 @@
 		id="loggingManager"
 		class="org.jasig.cas.logging.MultiThreadedLoggingManagerImpl">
 		<constructor-arg index="0" ref="loggingDao" />
+		<constructor-arg index="1" ref="transactionTemplate" />
 	</bean>
+	
+	<bean
+		id="transactionTemplate"
+		class="org.springframework.transaction.support.TransactionTemplate"
+		p:transactionManager-ref="transactionManager" />
 	
 	<bean
 		id="loggingDao"
@@ -38,26 +44,22 @@
 	<bean
 		id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-		p:dataSource-ref="dataSource">
+		p:dataSource-ref="auditTrailDataSource">
         <property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
 				p:generateDdl="true"
-				p:showSql="true" />
+				p:showSql="false" />
         </property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
 	</bean>
- 	
-	<bean
-		id="transactionManager2"
-		class="org.springframework.orm.jpa.JpaTransactionManager"
-		p:entityManagerFactory-ref="entityManagerFactory" />
- 	        
-    <tx:annotation-driven transaction-manager="transactionManager2"/>
 
-    <bean
-		id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-		p:driverClassName="com.mysql.jdbc.Driver"
-		p:url="jdbc:mysql://localhost/cas"
-		p:password=""
-		p:username="root" />
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
+	p:entityManagerFactory-ref="entityManagerFactory" />
+ 	        
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>

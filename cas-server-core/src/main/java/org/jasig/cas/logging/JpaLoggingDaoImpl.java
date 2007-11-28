@@ -25,14 +25,18 @@ public final class JpaLoggingDaoImpl extends JpaDaoSupport implements LoggingDao
     }
 
     public List<LogRequest> findByEventType(final String eventType, final Date fromDate) {
-        return getJpaTemplate().find("Select l from LogRequest l WHERE l.eventType = ?1 AND l.clientInfo.requestDate >= ?2", eventType, fromDate);
+        return getJpaTemplate().find("Select l from LogRequest l WHERE l.eventType = ?1 AND l.clientInfo.requestDate >= ?2 ORDER BY l.clientInfo.requestDate DESC, l.id DESC", eventType, fromDate);
+    }
+    
+    public List<LogRequest> findByPrincipalAndEventType(final String principal, final String eventType, final Date fromDate) {
+        return getJpaTemplate().find("Select l from LogRequest l WHERE LOWER(l.principal) LIKE ?1 AND l.eventType = ?2 AND l.clientInfo.requestDate >= ?3 ORDER BY l.clientInfo.requestDate DESC, l.id DESC", principal.toLowerCase() + "%", eventType, fromDate);
     }
 
     public List<LogRequest> findByPrincipal(final String principal, final Date fromDate) {
-        return getJpaTemplate().find("Select l from LogRequest l WHERE LOWER(l.principal) = ?1 AND l.clientInfo.requestDate >= ?2", principal.toLowerCase(), fromDate);
+        return getJpaTemplate().find("Select l from LogRequest l WHERE LOWER(l.principal) LIKE ?1 AND l.clientInfo.requestDate >= ?2 ORDER BY l.clientInfo.requestDate DESC, l.id DESC", principal.toLowerCase() + "%", fromDate);
     }
 
     public List<LogRequest> retrieveByDateFrom(final Date fromDate) {
-        return getJpaTemplate().find("Select l from LogRequest l WHERE l.clientInfo.requestDate >= ?1", fromDate);
+        return getJpaTemplate().find("Select l from LogRequest l WHERE l.clientInfo.requestDate >= ?1 ORDER BY l.clientInfo.requestDate DESC, l.id DESC", fromDate);
     }
 }
