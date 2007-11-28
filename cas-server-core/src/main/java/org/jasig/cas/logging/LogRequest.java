@@ -21,7 +21,7 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name="CAS_LOGGING")
+@Table(name="cas_logging")
 public final class LogRequest {
     @Id
     @Column(name="ID")
@@ -45,17 +45,13 @@ public final class LogRequest {
     }
     
     public LogRequest(final ClientInfo clientInfo, final String principal, final String service, final String eventType) {
-        
-        // TODO cleanup
-//        final String userAgent = logRequest.getClientInfo().getUserAgent();
-//        final String truncatedUserAgent = userAgent != null && userAgent.length() > 255 ? userAgent.substring(0, 255) : userAgent;
-        
-//        final String service = logRequest.getService();
-//        final String truncatedService = service != null && service.length() > 255 ? service.substring(0, 255) : service;
-
         this.clientInfo = clientInfo;
         this.principal = principal;
-        this.service = service;
+        if (service != null && service.length() > 255) {
+            this.service = service.substring(0, 255);
+        } else {
+            this.service = service;
+        }
         this.eventType = eventType;
     }
 

@@ -30,4 +30,6 @@ public interface LoggingDao {
     List<LogRequest> findByEventType(String eventType, Date fromDate);
     
     List<LogRequest> retrieveByDateFrom(Date fromDate);
+    
+    List<LogRequest> findByPrincipalAndEventType(String principal, String eventType, Date fromDate);
 }

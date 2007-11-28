@@ -136,14 +136,15 @@ public final class CentralAuthenticationServiceImpl implements
         final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
             .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
-        if (ticket != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Ticket found.  Expiring and then deleting.");
-            }
-            ticket.expire();
-            this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+        if (ticket == null) {
+            return;
         }
-        
+
+        if (log.isDebugEnabled()) {
+            log.debug("Ticket found.  Expiring and then deleting.");
+        }
+        ticket.expire();
+        this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
         this.applicationEventPublisher.publishEvent(new TicketEvent(ticket, TicketEventType.DESTROY_TICKET_GRANTING_TICKET));
     }
 

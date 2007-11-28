@@ -99,6 +99,9 @@
 					key="/services/loggedOut.html">
 					serviceLogoutViewController
 				</prop>
+				
+				<prop
+					key="/services/viewLogRequests.html">searchLogsController</prop>
 			
 				<prop
 					key="/services/*">
@@ -119,6 +122,12 @@
 			</list>
 		</property>
 		 -->
+	</bean>
+	
+	<bean
+		id="searchLogsController"
+		class="org.jasig.cas.logging.web.SearchLogsController">
+		<constructor-arg index="0" ref="loggingManager" />
 	</bean>
 	
 	<bean

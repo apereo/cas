@@ -5,9 +5,12 @@
  */
 package org.jasig.cas.logging;
 
+import java.util.List;
+
 
 public interface LoggingManager {
     
     void log(LogRequest request);
-
+    
+    List<LogRequest> search(LogSearchRequest logSearchRequest);
 }

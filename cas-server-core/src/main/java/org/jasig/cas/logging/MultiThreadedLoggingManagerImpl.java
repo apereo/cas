@@ -5,10 +5,16 @@
  */
 package org.jasig.cas.logging;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.jasig.cas.util.annotation.NotNull;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.StringUtils;
 
 /**
  * 
@@ -25,27 +31,60 @@ public final class MultiThreadedLoggingManagerImpl implements LoggingManager {
     @NotNull
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     
-    public MultiThreadedLoggingManagerImpl(final LoggingDao loggingDao) {
+    @NotNull
+    private final TransactionTemplate transactionTemplate;
+    
+    public MultiThreadedLoggingManagerImpl(final LoggingDao loggingDao, final TransactionTemplate transactionTemplate) {
         this.loggingDao = loggingDao;
+        this.transactionTemplate = transactionTemplate;
     }
     
+    @Transactional(readOnly=false)
     public void log(final LogRequest logRequest) {
-        this.executorService.execute(new LoggingTask(logRequest, this.loggingDao));
+        this.executorService.execute(new LoggingTask(logRequest, this.loggingDao, this.transactionTemplate));
     }
-    
+
+    @Transactional(readOnly=true)
+    public List<LogRequest> search(final LogSearchRequest logSearchRequest) {
+        final boolean hasPrincipal = StringUtils.hasText(logSearchRequest.getPrincipal());
+        final boolean hasEventType = StringUtils.hasText(logSearchRequest.getEventType());
+        if (hasPrincipal && hasEventType) {
+            return this.loggingDao.findByPrincipalAndEventType(logSearchRequest.getPrincipal(), logSearchRequest.getEventType(), logSearchRequest.getDateFrom());
+        }
+        
+        if (hasPrincipal) {
+            return this.loggingDao.findByPrincipal(logSearchRequest.getPrincipal(), logSearchRequest.getDateFrom());
+        }
+        
+        if (hasEventType) {
+            return this.loggingDao.findByEventType(logSearchRequest.getEventType(), logSearchRequest.getDateFrom());
+        }
+        
+        return this.loggingDao.retrieveByDateFrom(logSearchRequest.getDateFrom());
+    }
+
     protected class LoggingTask implements Runnable {
         
-        private final LoggingDao loggingDao;
+        final LoggingDao loggingDao;
         
-        private final LogRequest logRequest;
+        final LogRequest logRequest;
         
-        public LoggingTask(final LogRequest logRequest, final LoggingDao loggingDao) {
+        private final TransactionTemplate transactionTemplate;
+        
+        public LoggingTask(final LogRequest logRequest, final LoggingDao loggingDao, final TransactionTemplate transactionTemplate) {
             this.loggingDao = loggingDao;
             this.logRequest = logRequest;
+            this.transactionTemplate = transactionTemplate;
         }
 
         public void run() {
-            this.loggingDao.save(this.logRequest);
+              
+            this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                protected void doInTransactionWithoutResult(
+                    final TransactionStatus transactionStatus) {
+                    LoggingTask.this.loggingDao.save(LoggingTask.this.logRequest);
+                }
+            });          
         }
     }
 }
