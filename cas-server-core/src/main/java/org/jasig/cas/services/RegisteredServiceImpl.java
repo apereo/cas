@@ -99,7 +99,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     }
 
     public boolean matches(final Service service) {
-        return service != null && PATH_MATCHER.match(this.serviceId, service.getId());
+        return service != null && PATH_MATCHER.match(this.serviceId.toLowerCase(), service.getId().toLowerCase());
     }
 
     public boolean equals(final Object obj) {
