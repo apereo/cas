@@ -101,6 +101,12 @@
 				</prop>
 				
 				<prop
+					key="/services/viewCurrentStatistics.html">currentStatisticsController</prop>
+				
+				<prop
+					key="/services/viewStatistics.html">statisticsViewController</prop>
+				
+				<prop
 					key="/services/viewLogRequests.html">searchLogsController</prop>
 			
 				<prop
@@ -122,6 +128,19 @@
 			</list>
 		</property>
 		 -->
+	</bean>
+
+	<bean
+		id="currentStatisticsController"
+		class="org.jasig.cas.logging.web.CurrentStatisticsController">
+		<constructor-arg index="0" ref="statisticsManager" />
+	</bean>
+
+	
+	<bean
+		id="statisticsViewController"
+		class="org.jasig.cas.logging.web.StatisticsViewController">
+		<constructor-arg index="0" ref="statisticsManager" />
 	</bean>
 	
 	<bean

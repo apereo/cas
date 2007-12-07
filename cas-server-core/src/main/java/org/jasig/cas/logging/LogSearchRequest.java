@@ -18,10 +18,13 @@ import java.util.Date;
  */
 public class LogSearchRequest {
     
+    /** The user to search for. */
     private String principal;
     
+    /** The type of event to search for. */
     private String eventType;
     
+    /** What date to start searching from. */
     private Date dateFrom;
     
     public LogSearchRequest() {

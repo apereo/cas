@@ -15,6 +15,8 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.context.ApplicationEvent;
 
 /**
+ * Event handler that can process TicketEvents.
+ * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1.2
