@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Maintains information about the client who is requesting access.
  * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $

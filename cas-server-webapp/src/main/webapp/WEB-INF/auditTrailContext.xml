@@ -25,6 +25,18 @@
 	</bean>
 	
 	<bean
+		id="statisticsManager"
+		class="org.jasig.cas.logging.statistics.DefaultStatisticsManagerImpl">
+		<constructor-arg index="0" ref="statisticsDao" />
+		<constructor-arg index="1" ref="loggingDao" />
+	</bean>
+	
+	<bean
+		id="statisticsDao"
+		class="org.jasig.cas.logging.statistics.JpaStatisticsDaoImpl"
+		p:entityManagerFactory-ref="entityManagerFactory" />
+	
+	<bean
 		id="loggingManager"
 		class="org.jasig.cas.logging.MultiThreadedLoggingManagerImpl">
 		<constructor-arg index="0" ref="loggingDao" />
@@ -60,6 +72,25 @@
 
 	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
 	p:entityManagerFactory-ref="entityManagerFactory" />
+	
+	<bean id="statisticsManagerJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+		p:targetObject-ref="statisticsManager"
+		p:targetMethod="processLatestLogRequests" />
+
+	<bean
+		id="triggerJobDetailStatisticsManager"
+		class="org.springframework.scheduling.quartz.CronTriggerBean"
+		p:jobDetail-ref="statisticsManagerJobDetail"
+		p:cronExpression="30 2 * * * ?" />
+
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref
+					local="triggerJobDetailStatisticsManager" />
+			</list>
+		</property>
+	</bean>
  	        
     <tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>

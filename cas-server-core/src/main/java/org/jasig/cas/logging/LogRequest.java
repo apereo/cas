@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
+ * Representation of the information that CAS wishes to log for further processing
+ * and auditing.
  * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $

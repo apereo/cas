@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
+ * Web Controller to accept search requests and process them and return the results.
  * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
@@ -61,7 +62,7 @@ public class SearchLogsController extends AbstractController {
             eventTypes.add(t.name());
         }
         
-        modelAndView.addObject("pageTitle", "logSearchResultsView");
+        modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("logRequests", logRequests);
         modelAndView.addObject("logSearchRequest", logSearchRequest);
         modelAndView.addObject("eventTypes", eventTypes);

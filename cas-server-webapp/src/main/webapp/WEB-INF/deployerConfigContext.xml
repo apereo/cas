@@ -141,6 +141,7 @@
 	Sample datasource for the audit trail.  Deployers will want to replace this with an enterprise-ready
 	database.
 	 -->
+
     <bean
 		id="auditTrailDataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
@@ -148,4 +149,6 @@
 		p:jdbcUrl="jdbc:hsqldb:mem:cas"
 		p:password=""
 		p:user="sa" />
+
+
 </beans>

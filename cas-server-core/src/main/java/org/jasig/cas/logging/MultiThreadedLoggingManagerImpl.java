@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.logging;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +18,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 /**
+ * Implementation of {@link LoggingManager} that sends {@link LogRequest}s to a separate thread
+ * to be processed.  This ensures that logging will not cause requests to take too long to process.
  * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
@@ -25,12 +28,15 @@ import org.springframework.util.StringUtils;
  */
 public final class MultiThreadedLoggingManagerImpl implements LoggingManager {
     
+    /** Instance of the Data Access Object to log requests. */
     @NotNull
     private final LoggingDao loggingDao;
     
+    /** ExecutorService that has one thread to asynchronously save requests. */
     @NotNull
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     
+    /** Instance of TransactionTemplate to manually execute a transaction since threads are not in the same transaction. */
     @NotNull
     private final TransactionTemplate transactionTemplate;
     
@@ -60,7 +66,7 @@ public final class MultiThreadedLoggingManagerImpl implements LoggingManager {
             return this.loggingDao.findByEventType(logSearchRequest.getEventType(), logSearchRequest.getDateFrom());
         }
         
-        return this.loggingDao.retrieveByDateFrom(logSearchRequest.getDateFrom());
+        return this.loggingDao.retrieveByDateRange(logSearchRequest.getDateFrom(), new Date());
     }
 
     protected class LoggingTask implements Runnable {
