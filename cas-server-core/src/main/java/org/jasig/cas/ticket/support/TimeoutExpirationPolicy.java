@@ -11,6 +11,9 @@ import org.jasig.cas.ticket.TicketState;
 /**
  * Expiration policy that is based on a certain time period for a ticket to
  * exist.
+ * <p>
+ * The expiration policy defined by this class is one of inactivity.  If you are inactive for the specified
+ * amount of time, the ticket will be expired.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
