@@ -35,7 +35,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-binding/1.0.5/spring-binding-1.0.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius/20060406/jradius-20060406.jar"/>
 	<classpathentry kind="var" path="M2_REPO/net/sf/jradius/jradius-dictionary/20060406/jradius-dictionary-20060406.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-ldap/1.2/spring-ldap-1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/ldap/spring-ldap/1.2.1/spring-ldap-1.2.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-cache/1.4.1.GA/jboss-cache-1.4.1.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-system/4.0.2/jboss-system-4.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-jmx/4.0.4/jboss-jmx-4.0.4.jar"/>
@@ -77,5 +77,6 @@
 	<classpathentry kind="var" path="M2_REPO/asm/asm/1.5.3/asm-1.5.3.jar"/>
 	<classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.5/spring-webmvc-2.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/springframework/ldap/spring-ldap-tiger/1.2.1/spring-ldap-tiger-1.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
