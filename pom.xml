@@ -277,19 +277,13 @@
 			<version>1.2.1</version>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
+
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-tiger</artifactId>
 			<version>1.2.1</version>
 			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.sun.jndi.ldap</groupId>
-			<artifactId>ldapbp</artifactId>
-			<version>1.0</version>
-			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
