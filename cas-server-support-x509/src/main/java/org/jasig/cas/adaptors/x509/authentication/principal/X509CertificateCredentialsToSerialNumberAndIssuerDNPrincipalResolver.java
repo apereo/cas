@@ -7,7 +7,7 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * This class is targeted at usage for mapping to an existing user record. It

@@ -7,13 +7,13 @@ package org.jasig.cas.ticket.proxy.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Proxy Handler to handle the default callback functionality of CAS 2.0.

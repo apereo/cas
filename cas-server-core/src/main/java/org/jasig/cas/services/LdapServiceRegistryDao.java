@@ -14,7 +14,7 @@ import javax.naming.directory.BasicAttributes;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.simple.SimpleLdapTemplate;
 import org.springframework.ldap.filter.AndFilter;

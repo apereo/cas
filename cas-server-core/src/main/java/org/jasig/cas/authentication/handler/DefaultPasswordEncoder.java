@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;

@@ -22,7 +22,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Implementation of an AuthenticationHandler for NTLM supports.

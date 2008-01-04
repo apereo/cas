@@ -11,7 +11,7 @@ import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.support.openid.web.support.OpenIdUserNameExtractor;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 

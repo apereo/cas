@@ -7,7 +7,7 @@ package org.jasig.cas.adaptors.ldap;
 
 import org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.util.Assert;

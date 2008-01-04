@@ -8,7 +8,7 @@ package org.jasig.cas.authentication.principal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.webflow.util.Base64;
 
 /**

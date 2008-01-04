@@ -5,10 +5,10 @@
  */
 package org.jasig.cas.services.web;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.util.StringUtils;

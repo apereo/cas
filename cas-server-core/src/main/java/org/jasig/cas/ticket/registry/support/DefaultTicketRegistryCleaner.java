@@ -12,10 +12,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Class that will iterate through the registry and check for tickets that are

@@ -18,7 +18,7 @@ import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCrede
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Authentication Handler that accepts X509 Certificiates, determines their

@@ -5,9 +5,9 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.inspektr.common.ioc.annotation.IsIn;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.util.LdapUtils;
-import org.jasig.cas.util.annotation.IsIn;
-import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;

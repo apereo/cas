@@ -13,9 +13,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
@@ -46,7 +46,7 @@ public final class ManageRegisteredServicesMultiActionController extends
     /**
      * Constructor that takes the required {@link ServicesManager}.
      * 
-     * @param servicesManager the Servies Manager that manages the
+     * @param servicesManager the Services Manager that manages the
      * RegisteredServices.
      */
     public ManageRegisteredServicesMultiActionController(

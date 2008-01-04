@@ -5,12 +5,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the

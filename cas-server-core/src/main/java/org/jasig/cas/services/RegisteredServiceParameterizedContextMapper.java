@@ -21,7 +21,6 @@ public final class RegisteredServiceParameterizedContextMapper extends AbstractP
 
     private boolean getBooleanAttribute(final DirContextOperations context, final String attributeName, final boolean defaultValue) {
         final String value = context.getStringAttribute("attributeName");
-        
         return value == null ? defaultValue : Boolean.parseBoolean(value);
     }
     

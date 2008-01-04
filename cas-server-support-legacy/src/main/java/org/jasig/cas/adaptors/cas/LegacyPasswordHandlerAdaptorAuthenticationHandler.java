@@ -7,7 +7,7 @@ package org.jasig.cas.adaptors.cas;
 
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 import edu.yale.its.tp.cas.auth.PasswordHandler;
 

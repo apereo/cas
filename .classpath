@@ -53,7 +53,6 @@
 	<classpathentry kind="var" path="M2_REPO/trove/trove/1.0.2/trove-1.0.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
 	<classpathentry kind="var" path="M2_REPO/cas/cas/2.0.12/cas-2.0.12.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/sun/jndi/ldap/ldapbp/1.0/ldapbp-1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.2/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/taglibs/standard/1.1.2/standard-1.1.2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
@@ -78,5 +77,7 @@
 	<classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.5/spring-webmvc-2.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/ldap/spring-ldap-tiger/1.2.1/spring-ldap-tiger-1.2.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/inspektr/inspektr-core/0.5.2/inspektr-core-0.5.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/aspectj/aspectjrt/1.5.3/aspectjrt-1.5.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
