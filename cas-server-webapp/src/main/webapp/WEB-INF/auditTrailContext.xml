@@ -7,6 +7,15 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 	<aop:aspectj-autoproxy/> 
+	
+	<bean id="statisticManagementAspect" class="org.inspektr.statistics.StatisticManagementAspect">
+		<constructor-arg index="0">
+			<list>
+              <bean class="org.inspektr.statistics.support.InMemoryStatisticManager" />
+			</list>
+		</constructor-arg>
+		<constructor-arg index="1" value="CAS" />
+	</bean>
 
 	<bean id="auditTrailManagementAspect" class="org.inspektr.audit.AuditTrailManagementAspect">
 		<constructor-arg index="0" ref="auditablePrincipalResolver" />
@@ -24,7 +33,7 @@
       	</constructor-arg>
 		<constructor-arg index="3" value="CAS" />
    </bean>
-   
+
 	<bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialBasedAuditablePrincipalResolver">
 		<constructor-arg index="0" ref="ticketRegistry" />
 	</bean>
