@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;

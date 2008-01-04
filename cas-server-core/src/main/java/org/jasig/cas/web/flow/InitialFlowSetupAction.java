@@ -9,9 +9,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.inspektr.common.ioc.annotation.NotEmpty;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.util.annotation.NotEmpty;
-import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;

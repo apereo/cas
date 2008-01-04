@@ -111,6 +111,13 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.inspektr</groupId>
+			<artifactId>inspektr-core</artifactId>
+			<version>0.5.3</version>
+			<scope>compile</scope>
+		</dependency>
+	
+		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.2</version>

@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.services.web.support;
 
+import org.inspektr.common.ioc.annotation.GreaterThan;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.annotation.GreaterThan;
-import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 

@@ -5,10 +5,10 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 

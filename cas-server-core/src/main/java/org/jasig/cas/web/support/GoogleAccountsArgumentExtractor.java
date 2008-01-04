@@ -10,9 +10,9 @@ import java.security.PublicKey;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.util.annotation.NotNull;
 
 /**
  * Constructs a GoogleAccounts compatible service and provides the public and

@@ -13,9 +13,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.SAMLAttribute;

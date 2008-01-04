@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.inspektr.common.ioc.annotation.NotEmpty;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.util.annotation.NotEmpty;
-import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.util.Assert;
 
 /**

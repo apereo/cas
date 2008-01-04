@@ -14,9 +14,9 @@ import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.annotation.NotNull;
 import org.springframework.util.Assert;
 
 /**

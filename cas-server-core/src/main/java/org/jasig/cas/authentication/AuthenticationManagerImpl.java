@@ -10,6 +10,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.inspektr.audit.annotation.Auditable;
+import org.inspektr.common.ioc.annotation.NotEmpty;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
@@ -17,11 +20,6 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.event.AuthenticationEvent;
-import org.jasig.cas.util.annotation.NotEmpty;
-import org.jasig.cas.util.annotation.NotNull;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 
 /**
  * <p>
@@ -59,7 +57,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
  * @see org.jasig.cas.authentication.AuthenticationMetaDataPopulator
  */
 
-public final class AuthenticationManagerImpl implements AuthenticationManager, ApplicationEventPublisherAware {
+public final class AuthenticationManagerImpl implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnings, etc. */
     private final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
@@ -75,17 +73,13 @@ public final class AuthenticationManagerImpl implements AuthenticationManager, A
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
-    
-    @NotNull
-    private ApplicationEventPublisher applicationEventPublisher;
 
+    @Auditable(action="AUTHENTICATION",successSuffix="_SUCCESS",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver.class)
     public Authentication authenticate(final Credentials credentials)
         throws AuthenticationException {
         boolean foundSupported = false;
         boolean authenticated = false;
         
-        Class<?> successfulAuthenticationHandlerClass = null;
-
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
@@ -106,7 +100,6 @@ public final class AuthenticationManagerImpl implements AuthenticationManager, A
                                 + credentials.toString());
                     }
                     authenticated = true;
-                    successfulAuthenticationHandlerClass = authenticationHandler.getClass();
                     break;
                 }
             }
@@ -114,11 +107,9 @@ public final class AuthenticationManagerImpl implements AuthenticationManager, A
 
         if (!authenticated) {
             if (foundSupported) {
-                this.applicationEventPublisher.publishEvent(new AuthenticationEvent(credentials.toString(), false, null));
                 throw BadCredentialsAuthenticationException.ERROR;
             }
 
-            this.applicationEventPublisher.publishEvent(new AuthenticationEvent(credentials.toString(), false, null));
             throw UnsupportedCredentialsException.ERROR;
         }
 
@@ -144,13 +135,11 @@ public final class AuthenticationManagerImpl implements AuthenticationManager, A
                         .debug("CredentialsToPrincipalResolver found but no principal returned.");
                 }
 
-                this.applicationEventPublisher.publishEvent(new AuthenticationEvent(credentials.toString(), false, null));
                 throw BadCredentialsAuthenticationException.ERROR;
             }
 
             log.error("CredentialsToPrincipalResolver not found for "
                 + credentials.getClass().getName());
-            this.applicationEventPublisher.publishEvent(new AuthenticationEvent(credentials.toString(), false, null));
             throw UnsupportedCredentialsException.ERROR;
         }
 
@@ -159,7 +148,6 @@ public final class AuthenticationManagerImpl implements AuthenticationManager, A
                 .populateAttributes(authentication, credentials);
         }
 
-        this.applicationEventPublisher.publishEvent(new AuthenticationEvent(authentication.getPrincipal().getId(), true, successfulAuthenticationHandlerClass));
         return new ImmutableAuthentication(authentication.getPrincipal(),
             authentication.getAttributes());
     }
@@ -188,9 +176,5 @@ public final class AuthenticationManagerImpl implements AuthenticationManager, A
     public void setAuthenticationMetaDataPopulators(
         final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators) {
         this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
-    }
-
-    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

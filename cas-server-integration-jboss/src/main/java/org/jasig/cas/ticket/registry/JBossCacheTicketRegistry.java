@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.Node;
 import org.jboss.cache.TreeCache;

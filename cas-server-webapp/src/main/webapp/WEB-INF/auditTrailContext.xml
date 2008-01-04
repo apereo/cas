@@ -2,95 +2,30 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-	<bean
-		id="eventListener"
-		class="org.jasig.cas.event.EventListener">
-		<property
-			name="eventHandlers">
-			<list>
-				<bean
-					class="org.jasig.cas.logging.events.AuthenticationLoggingEventHandler">
-					<constructor-arg index="0" ref="loggingManager" />
-				</bean>
-				<bean
-					class="org.jasig.cas.logging.events.TicketLoggingEventHandler">
-					<constructor-arg index="0" ref="loggingManager" />
-				</bean>
+	<aop:aspectj-autoproxy/> 
+
+	<bean id="auditTrailManagementAspect" class="org.inspektr.audit.AuditTrailManagementAspect">
+		<constructor-arg index="0" ref="auditablePrincipalResolver" />
+		<constructor-arg index="1">
+         	<list>
+	         	<bean class="org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver" />
+	         	<bean class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver" />
+	         	<bean class="org.jasig.cas.audit.spi.ServiceResourceResolver" />
 			</list>
-		</property>
-	</bean>
-	
-	<bean
-		id="statisticsManager"
-		class="org.jasig.cas.logging.statistics.DefaultStatisticsManagerImpl">
-		<constructor-arg index="0" ref="statisticsDao" />
-		<constructor-arg index="1" ref="loggingDao" />
-	</bean>
-	
-	<bean
-		id="statisticsDao"
-		class="org.jasig.cas.logging.statistics.JpaStatisticsDaoImpl"
-		p:entityManagerFactory-ref="entityManagerFactory" />
-	
-	<bean
-		id="loggingManager"
-		class="org.jasig.cas.logging.MultiThreadedLoggingManagerImpl">
-		<constructor-arg index="0" ref="loggingDao" />
-		<constructor-arg index="1" ref="transactionTemplate" />
-	</bean>
-	
-	<bean
-		id="transactionTemplate"
-		class="org.springframework.transaction.support.TransactionTemplate"
-		p:transactionManager-ref="transactionManager" />
-	
-	<bean
-		id="loggingDao"
-		class="org.jasig.cas.logging.JpaLoggingDaoImpl"
-		p:entityManagerFactory-ref="entityManagerFactory" />
-		
-	<bean
-		id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-		p:dataSource-ref="auditTrailDataSource">
-        <property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-				p:generateDdl="true"
-				p:showSql="false" />
-        </property>
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
-	p:entityManagerFactory-ref="entityManagerFactory" />
-	
-	<bean id="statisticsManagerJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-		p:targetObject-ref="statisticsManager"
-		p:targetMethod="processLatestLogRequests" />
-
-	<bean
-		id="triggerJobDetailStatisticsManager"
-		class="org.springframework.scheduling.quartz.CronTriggerBean"
-		p:jobDetail-ref="statisticsManagerJobDetail"
-		p:cronExpression="30 2 * * * ?" />
-
-	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
+		</constructor-arg>
+		<constructor-arg index="2">
 			<list>
-				<ref
-					local="triggerJobDetailStatisticsManager" />
+				<bean class="org.inspektr.audit.support.ConsoleAuditTrailManager" />
 			</list>
-		</property>
+      	</constructor-arg>
+		<constructor-arg index="3" value="CAS" />
+   </bean>
+   
+	<bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialBasedAuditablePrincipalResolver">
+		<constructor-arg index="0" ref="ticketRegistry" />
 	</bean>
- 	        
-    <tx:annotation-driven transaction-manager="transactionManager"/>
 </beans>

@@ -7,6 +7,8 @@ package org.jasig.cas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.inspektr.audit.annotation.Auditable;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.MutableAuthentication;
@@ -17,8 +19,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.event.TicketEvent;
-import org.jasig.cas.event.TicketEvent.TicketEventType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
@@ -34,11 +34,8 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.jasig.cas.util.annotation.NotNull;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -75,7 +72,7 @@ import java.util.Map;
  * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl implements
-    CentralAuthenticationService, ApplicationEventPublisherAware {
+    CentralAuthenticationService {
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Log log = LogFactory.getLog(this.getClass());
@@ -83,8 +80,6 @@ public final class CentralAuthenticationServiceImpl implements
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
     private TicketRegistry ticketRegistry;
-    
-    private ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
@@ -112,7 +107,7 @@ public final class CentralAuthenticationServiceImpl implements
     @NotNull
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
-    /** Implementation of Service Registry */
+    /** Implementation of Service Manager */
     @NotNull
     private ServicesManager servicesManager;
 
@@ -126,6 +121,7 @@ public final class CentralAuthenticationServiceImpl implements
      * 
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
+    @Auditable(action="TICKET_GRANTING_TICKET_DESTROYED",actionResolverClass=org.inspektr.audit.spi.support.DefaultAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
@@ -145,13 +141,13 @@ public final class CentralAuthenticationServiceImpl implements
         }
         ticket.expire();
         this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
-        this.applicationEventPublisher.publishEvent(new TicketEvent(ticket, TicketEventType.DESTROY_TICKET_GRANTING_TICKET));
     }
 
     /**
      * @throws IllegalArgumentException if TicketGrantingTicket ID, Credentials
      * or Service are null.
      */
+    @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketException {
@@ -228,11 +224,10 @@ public final class CentralAuthenticationServiceImpl implements
                 + serviceTicket.getGrantingTicket().getAuthentication()
                     .getPrincipal().getId() + "]");
         }
-
-        this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, serviceTicket.getGrantingTicket().getGrantingTicket() != null ? TicketEventType.CREATE_PROXY_TICKET : TicketEventType.CREATE_SERVICE_TICKET));
         return serviceTicket.getId();
     }
 
+    @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
         return this.grantServiceTicket(ticketGrantingTicketId, service, null);
@@ -242,6 +237,7 @@ public final class CentralAuthenticationServiceImpl implements
      * @throws IllegalArgumentException if the ServiceTicketId or the
      * Credentials are null.
      */
+    @Auditable(action="PROXY_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
 
@@ -276,7 +272,6 @@ public final class CentralAuthenticationServiceImpl implements
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
-            this.applicationEventPublisher.publishEvent(new TicketEvent(ticketGrantingTicket, TicketEventType.CREATE_PROXY_GRANTING_TICKET));
             return ticketGrantingTicket.getId();
         } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
@@ -287,6 +282,8 @@ public final class CentralAuthenticationServiceImpl implements
      * @throws IllegalArgumentException if the ServiceTicketId or the Service
      * are null.
      */
+    @Auditable(action="SERVICE_TICKET_VALIDATE",successSuffix="D",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
+    // TODO principal
     public Assertion validateServiceTicket(final String serviceTicketId,
         final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
@@ -318,7 +315,6 @@ public final class CentralAuthenticationServiceImpl implements
                         log.debug("ServiceTicket [" + serviceTicketId
                             + "] has expired.");
                     }
-                    this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, TicketEventType.VALIDATE_SERVICE_TICKET_FAILURE));
                     throw new InvalidTicketException();
                 }
 
@@ -327,7 +323,6 @@ public final class CentralAuthenticationServiceImpl implements
                         log.error("ServiceTicket [" + serviceTicketId
                             + "] with service [" + serviceTicket.getService().getId() + " does not match supplied service [" + service + "]");
                     }
-                    this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, TicketEventType.VALIDATE_SERVICE_TICKET_FAILURE));
                     throw new TicketValidationException(serviceTicket.getService());
                 }
             }
@@ -370,7 +365,6 @@ public final class CentralAuthenticationServiceImpl implements
             }
             authentications.add(mutableAuthentication);
 
-            this.applicationEventPublisher.publishEvent(new TicketEvent(serviceTicket, TicketEventType.VALIDATE_SERVICE_TICKET_SUCCESS));
             return new ImmutableAssertionImpl(authentications, serviceTicket
                 .getService(), serviceTicket.isFromNewLogin());
         } finally {
@@ -383,6 +377,8 @@ public final class CentralAuthenticationServiceImpl implements
     /**
      * @throws IllegalArgumentException if the credentials are null.
      */
+    @Auditable(action="TICKET_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
+    // TODO resolve principal 
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
         Assert.notNull(credentials, "credentials cannot be null");
@@ -402,8 +398,6 @@ public final class CentralAuthenticationServiceImpl implements
                 authentication, this.ticketGrantingTicketExpirationPolicy);
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
-
-            this.applicationEventPublisher.publishEvent(new TicketEvent(ticketGrantingTicket, TicketEventType.CREATE_TICKET_GRANTING_TICKET));
             return ticketGrantingTicket.getId();
         } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
@@ -473,9 +467,5 @@ public final class CentralAuthenticationServiceImpl implements
     public void setPersistentIdGenerator(
         final PersistentIdGenerator persistentIdGenerator) {
         this.persistentIdGenerator = persistentIdGenerator;
-    }
-    
-    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

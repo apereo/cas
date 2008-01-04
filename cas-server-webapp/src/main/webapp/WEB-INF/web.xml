@@ -38,7 +38,7 @@
 	
 	<filter>
 		<filter-name>CAS Client Info Logging Filter</filter-name>
-		<filter-class>org.jasig.cas.logging.web.ThreadLocalClientInfoLoggingFilter</filter-class>
+		<filter-class>org.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
 	</filter>
 
 	<filter>
@@ -59,7 +59,6 @@
 		<filter-name>CAS Client Info Logging Filter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
 
 	<!--
 		- Configures Log4J for this web app.

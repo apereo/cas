@@ -125,11 +125,5 @@
 	<!-- ADVISORS -->	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 	
-	<bean id="notNullAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.NotNullAnnotationBeanPostProcessor" />
-	
-	<bean id="greaterThanAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.GreaterThanAnnotationBeanPostProcessor" />
-	
-	<bean id="notEmptyAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.NotEmptyAnnotationBeanPostProcessor" />
-	
-	<bean id="isInAnnotationBeanPostProcessor" class="org.jasig.cas.util.annotation.IsInAnnotationBeanPostProcessor" />
+	<bean id="validationAnnotationBeanPostProcessor" class="org.inspektr.common.ioc.validation.ValidationAnnotationBeanPostProcessor" />
 </beans>

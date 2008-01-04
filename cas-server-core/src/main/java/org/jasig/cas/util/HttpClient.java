@@ -7,8 +7,8 @@ package org.jasig.cas.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.cas.util.annotation.GreaterThan;
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.GreaterThan;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

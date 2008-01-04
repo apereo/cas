@@ -10,7 +10,7 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 

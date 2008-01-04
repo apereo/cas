@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.util;
 
-import org.jasig.cas.util.annotation.NotNull;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.opensaml.artifact.SAMLArtifact;
 import org.opensaml.artifact.SAMLArtifactType0002;
 import org.opensaml.artifact.URI;
