@@ -126,57 +126,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
-        <!-- For auditing -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.3.1.ga</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-commons-annotations</artifactId>
-			<version>3.3.0.ga</version>
-			<scope>runtime</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.3.0.ga</version>
-			<scope>runtime</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate</artifactId>
-			<version>3.2.4.sp1</version>
-			<scope>runtime</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>concurrent</groupId>
-			<artifactId>concurrent</artifactId>
-			<version>1.3.4</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>c3p0</groupId>
-			<artifactId>c3p0</artifactId>
-			<version>0.9.1.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>1.8.0.7</version>
-			<scope>runtime</scope>
-		</dependency>
-
   </dependencies>
   <build>
 		<plugins>
