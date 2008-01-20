@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.Response.ResponseType;
+import org.jasig.cas.util.HttpClient;
 import org.springframework.util.StringUtils;
 
 /**
@@ -39,18 +40,22 @@ public final class SimpleWebApplicationServiceImpl extends
     private static final long serialVersionUID = 8334068957483758042L;
     
     public SimpleWebApplicationServiceImpl(final String id) {
-        this(id, id, null, null);
+        this(id, id, null, null, null);
     }
 
     private SimpleWebApplicationServiceImpl(final String id,
         final String originalUrl, final String artifactId,
-        final ResponseType responseType) {
-        super(id, originalUrl, artifactId);
+        final ResponseType responseType, final HttpClient httpClient) {
+        super(id, originalUrl, artifactId, httpClient);
         this.responseType = responseType;
+    }
+    
+    public static SimpleWebApplicationServiceImpl createServiceFrom(final HttpServletRequest request) {
+        return createServiceFrom(request, null);
     }
 
     public static SimpleWebApplicationServiceImpl createServiceFrom(
-        final HttpServletRequest request) {
+        final HttpServletRequest request, final HttpClient httpClient) {
         final String targetService = request
             .getParameter(CONST_PARAM_TARGET_SERVICE);
         final String method = request.getParameter(CONST_PARAM_METHOD);
@@ -66,7 +71,7 @@ public final class SimpleWebApplicationServiceImpl extends
 
         return new SimpleWebApplicationServiceImpl(id, serviceToUse,
             artifactId, "POST".equals(method) ? ResponseType.POST
-                : ResponseType.REDIRECT);
+                : ResponseType.REDIRECT, httpClient);
     }
 
     public Response getResponse(final String ticketId) {

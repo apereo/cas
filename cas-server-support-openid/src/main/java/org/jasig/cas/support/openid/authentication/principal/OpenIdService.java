@@ -62,7 +62,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
     protected OpenIdService(final String id, final String originalUrl,
         final String artifactId, final String openIdIdentity,
         final String signature) {
-        super(id, originalUrl, artifactId);
+        super(id, originalUrl, artifactId, null);
         this.identity = openIdIdentity;
         this.signature = signature;
         this.sharedSecret = keyGenerator.generateKey();

@@ -22,7 +22,7 @@ public class SamlServiceTests extends TestCase {
     public void testResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final SamlService impl = SamlService.createServiceFrom(request, null);
         
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
@@ -33,7 +33,7 @@ public class SamlServiceTests extends TestCase {
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "http://www.cnn.com/;jsession=test");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final SamlService impl = SamlService.createServiceFrom(request, null);
         
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -41,7 +41,7 @@ public class SamlServiceTests extends TestCase {
     public void testResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final SamlService impl = SamlService.createServiceFrom(request, null);
         
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -54,7 +54,7 @@ public class SamlServiceTests extends TestCase {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent(body.getBytes());
         
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final SamlService impl = SamlService.createServiceFrom(request, null);
         assertEquals("artifact", impl.getArtifactId());
     }
 }

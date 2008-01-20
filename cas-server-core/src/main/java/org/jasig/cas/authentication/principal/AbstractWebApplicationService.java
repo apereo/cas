@@ -5,12 +5,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.SamlUtils;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
@@ -49,10 +44,13 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     
     private boolean loggedOutAlready = false;
     
-    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
+    private final HttpClient httpClient;
+    
+    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId, final HttpClient httpClient) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
+        this.httpClient = httpClient;
     }
     
     public final String toString() {
@@ -134,40 +132,13 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             + "\" Version=\"2.0\" IssueInstant=\"" + SamlUtils.getCurrentDateAndTime()
             + "\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@</saml:NameID><samlp:SessionIndex>"
             + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
-
-        HttpURLConnection connection = null;
-        try {
-            final URL logoutUrl = new URL(getOriginalUrl());
-            final String output = "logoutRequest=" + URLEncoder.encode(logoutRequest, "UTF-8");
-
-            connection = (HttpURLConnection) logoutUrl.openConnection();
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Length", ""
-                + Integer.toString(output.getBytes().length));
-            connection.setRequestProperty("Content-Type",
-                "application/x-www-form-urlencoded");
-            final DataOutputStream printout = new DataOutputStream(connection
-                .getOutputStream());
-            printout.writeBytes(output);
-            printout.flush();
-            printout.close();
-
-            final BufferedReader in = new BufferedReader(new InputStreamReader(connection
-                .getInputStream()));
-
-            while (in.readLine() != null) {
-                // nothing to do
-            }
-            
-            return true;
-        } catch (final Exception e) {
-            return false;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-            this.loggedOutAlready = true;
+        
+        this.loggedOutAlready = true;
+        
+        if (this.httpClient != null) {
+            return this.httpClient.sendMessageToEndPoint(getOriginalUrl(), logoutRequest);
         }
+        
+        return false;
     }
 }
