@@ -93,7 +93,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     protected GoogleAccountsService(final String id, final String originalUrl,
         final String artifactId, final String relayState,
         final PrivateKey privateKey, final PublicKey publicKey) {
-        super(id, originalUrl, artifactId);
+        super(id, originalUrl, artifactId, null);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;

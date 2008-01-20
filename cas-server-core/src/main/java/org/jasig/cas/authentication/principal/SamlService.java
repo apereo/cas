@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.util.HttpClient;
 import org.springframework.util.StringUtils;
 
 /**
@@ -40,12 +41,12 @@ public final class SamlService extends AbstractWebApplicationService {
     private static final long serialVersionUID = -6867572626767140223L;
 
     protected SamlService(final String id) {
-        super(id, id, null);
+        super(id, id, null, new HttpClient());
     }
 
     protected SamlService(final String id, final String originalUrl,
-        final String artifactId) {
-        super(id, originalUrl, artifactId);
+        final String artifactId, final HttpClient httpClient) {
+        super(id, originalUrl, artifactId, httpClient);
     }
 
     /**
@@ -56,7 +57,7 @@ public final class SamlService extends AbstractWebApplicationService {
     }
 
     public static SamlService createServiceFrom(
-        final HttpServletRequest request) {
+        final HttpServletRequest request, final HttpClient httpClient) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
         final String artifactId;
         final String requestBody = getRequestBody(request);
@@ -77,7 +78,7 @@ public final class SamlService extends AbstractWebApplicationService {
             artifactId = null;
         }
 
-        return new SamlService(id, service, artifactId);
+        return new SamlService(id, service, artifactId, httpClient);
     }
 
     public Response getResponse(final String ticketId) {

@@ -10,10 +10,14 @@ import org.apache.commons.logging.LogFactory;
 import org.inspektr.common.ioc.annotation.GreaterThan;
 import org.inspektr.common.ioc.annotation.NotNull;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * @author Scott Battaglia
@@ -39,6 +43,44 @@ public final class HttpClient {
 
     @GreaterThan(0)
     private int readTimeout = 5000;
+    
+    public boolean sendMessageToEndPoint(final String url, final String message) {
+        HttpURLConnection connection = null;
+        try {
+            final URL logoutUrl = new URL(url);
+            final String output = "logoutRequest=" + URLEncoder.encode(message, "UTF-8");
+
+            connection = (HttpURLConnection) logoutUrl.openConnection();
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setReadTimeout(this.readTimeout);
+            connection.setConnectTimeout(this.connectionTimeout);
+            connection.setRequestProperty("Content-Length", ""
+                + Integer.toString(output.getBytes().length));
+            connection.setRequestProperty("Content-Type",
+                "application/x-www-form-urlencoded");
+            final DataOutputStream printout = new DataOutputStream(connection
+                .getOutputStream());
+            printout.writeBytes(output);
+            printout.flush();
+            printout.close();
+
+            final BufferedReader in = new BufferedReader(new InputStreamReader(connection
+                .getInputStream()));
+
+            while (in.readLine() != null) {
+                // nothing to do
+            }
+            
+            return true;
+        } catch (final Exception e) {
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
 
     public boolean isValidEndPoint(final String url) {
         try {
