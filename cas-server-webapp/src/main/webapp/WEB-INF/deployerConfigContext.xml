@@ -136,19 +136,4 @@
 	<bean
 		id="serviceRegistryDao"
 		class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl" />
-	
-	<!-- 
-	Sample datasource for the audit trail.  Deployers will want to replace this with an enterprise-ready
-	database.
-	 -->
-
-    <bean
-		id="auditTrailDataSource"
-		class="com.mchange.v2.c3p0.ComboPooledDataSource"
-		p:driverClass="org.hsqldb.jdbcDriver"
-		p:jdbcUrl="jdbc:hsqldb:mem:cas"
-		p:password=""
-		p:user="sa" />
-
-
 </beans>
