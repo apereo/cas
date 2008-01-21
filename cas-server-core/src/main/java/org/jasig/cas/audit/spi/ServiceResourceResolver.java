@@ -20,7 +20,7 @@ public class ServiceResourceResolver implements AuditableResourceResolver {
 
     public String resolveFrom(final JoinPoint joinPoint, final Object retval) {
         final Service service = (Service) joinPoint.getArgs()[1];
-        return service.getId();
+        return retval.toString() + " for " + service.getId();
     }
 
     public String resolveFrom(final JoinPoint joinPoint, final Exception ex) {
