@@ -14,6 +14,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,7 +25,10 @@ import java.net.URLEncoder;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class HttpClient {
+public final class HttpClient implements Serializable {
+
+    /** Unique Id for serialization. */
+    private static final long serialVersionUID = -5306738686476129516L;
 
     /** The default status codes we accept. */
     private static final int[] DEFAULT_ACCEPTABLE_CODES = new int[] {
