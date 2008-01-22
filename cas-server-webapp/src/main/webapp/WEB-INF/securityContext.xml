@@ -46,15 +46,7 @@
 	  	<property name="proxyCallbackUrl"><null /></property>
 	  </bean>
 
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
-		p:configLocation="classpath:/ehcache-failsafe.xml" />
-    
-	<bean id="ticketCacheBackend" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
-		p:cacheManager-ref="cacheManager"
-		p:cacheName="ticketCache" />
-   
-	<bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.EhCacheBasedTicketCache"
-		p:cache-ref="ticketCacheBackend" />
+	<bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.NullStatelessTicketCache" />
 
 	<bean id="casAuthoritiesPopulator" class="org.acegisecurity.providers.cas.populator.DaoCasAuthoritiesPopulator"
 		p:userDetailsService-ref="userDetailsService" />
