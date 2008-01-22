@@ -14,50 +14,22 @@
   		<dependency>
   			<groupId>org.acegisecurity</groupId>
   			<artifactId>acegi-security</artifactId>
-  			<version>1.0.5</version>
+  			<version>1.0.6</version>
   			<scope>runtime</scope>
   			<exclusions>
   				<exclusion>
-  					<groupId>org.springframework</groupId>
   					<artifactId>spring-aop</artifactId>
+  					<groupId>org.springframework</groupId>
   				</exclusion>
   				<exclusion>
-  					<groupId>org.springframework</groupId>
-  					<artifactId>spring-beans</artifactId>
-  				</exclusion>  				
-  				<exclusion>
-  					<groupId>org.springframework</groupId>
-  					<artifactId>spring-context</artifactId>
-  				</exclusion>
-  				<exclusion>
-  					<groupId>org.springframework</groupId>
-  					<artifactId>spring-core</artifactId>
-  				</exclusion>
-  				<exclusion>
-  					<groupId>org.springframework</groupId>
-  					<artifactId>spring-dao</artifactId>
-  				</exclusion>
-  				<exclusion>
-  					<groupId>org.springframework</groupId>
   					<artifactId>spring-jdbc</artifactId>
+  					<groupId>org.springframework</groupId>
   				</exclusion>
   				<exclusion>
+  					<artifactId>spring-dao</artifactId>
   					<groupId>org.springframework</groupId>
-  					<artifactId>spring-remoting</artifactId>
   				</exclusion>
-  				<exclusion>
-  					<groupId>org.springframework</groupId>
-  					<artifactId>spring-support</artifactId>
-  				</exclusion>
-  				<exclusion>
-  					<groupId>org.springframework</groupId>
-  					<artifactId>spring-web</artifactId>
-  				</exclusion>
-  				<exclusion>
-  					<groupId>org.springframework</groupId>
-  					<artifactId>spring-webmvc</artifactId>
-  				</exclusion>
-			</exclusions>  				
+  			</exclusions>
   		</dependency>
   		
   		<dependency>
