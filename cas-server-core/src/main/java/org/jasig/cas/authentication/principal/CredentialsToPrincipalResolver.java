@@ -47,7 +47,7 @@ public interface CredentialsToPrincipalResolver {
      * that information or information derived from the Credentials object.
      * 
      * @param credentials from which to resolve Principal
-     * @return resolved Principal
+     * @return resolved Principal, or null if the principal could not be resolved.
      */
     Principal resolvePrincipal(Credentials credentials);
 
