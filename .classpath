@@ -77,7 +77,7 @@
 	<classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/2.5/spring-webmvc-2.5.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/springframework/ldap/spring-ldap-tiger/1.2.1/spring-ldap-tiger-1.2.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/inspektr/inspektr-core/0.5.5/inspektr-core-0.5.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/inspektr/inspektr-core/0.6/inspektr-core-0.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/aspectj/aspectjrt/1.5.3/aspectjrt-1.5.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
