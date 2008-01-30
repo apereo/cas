@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<!-- Expiration policies -->
+	<bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy">
+		<!-- This argument is the number of times that a ticket can be used before its considered expired. -->
+		<constructor-arg
+			index="0"
+			value="1" />
+		
+		<!-- This argument is the time a ticket can exist before its considered expired.  -->
+		<constructor-arg
+			index="1"
+			value="300000" />
+	</bean>
+	
+	<bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy">
+		<!-- This argument is the time a ticket can exist before its considered expired.  -->
+		<constructor-arg
+			index="0"
+			value="7200000" />
+	</bean>
+</beans>
