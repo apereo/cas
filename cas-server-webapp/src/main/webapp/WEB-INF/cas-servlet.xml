@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
        
-	<bean id="casPropertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+	<bean id="casPropertyPlaceholderConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
 		p:location="/WEB-INF/cas.properties" />
        
 	<!-- Theme Resolver -->
