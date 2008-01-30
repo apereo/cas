@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+       
+    <!-- Ticket Registry -->
+	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+	
+	<!--Quartz -->
+	<!-- TICKET REGISTRY CLEANER -->
+	<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+		p:ticketRegistry-ref="ticketRegistry" />
+	
+	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+		p:targetObject-ref="ticketRegistryCleaner"
+		p:targetMethod="clean" />
+	
+	<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+		p:jobDetail-ref="jobDetailTicketRegistryCleaner"
+		p:startDelay="20000"
+		p:repeatInterval="5000000" />
+
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref
+					local="triggerJobDetailTicketRegistryCleaner" />
+			</list>
+		</property>
+	</bean>
+</beans>

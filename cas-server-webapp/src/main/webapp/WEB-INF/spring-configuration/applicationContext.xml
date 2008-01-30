@@ -96,32 +96,6 @@
 	<bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler"
 		p:httpClient-ref="httpClient" />
 	
-	<!-- Ticket Registry -->
-	<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
-	
-	<!--Quartz -->
-	<!-- TICKET REGISTRY CLEANER -->
-	<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-		p:ticketRegistry-ref="ticketRegistry" />
-	
-	<bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-		p:targetObject-ref="ticketRegistryCleaner"
-		p:targetMethod="clean" />
-	
-	<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
-		p:jobDetail-ref="jobDetailTicketRegistryCleaner"
-		p:startDelay="20000"
-		p:repeatInterval="5000000" />
-
-	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref
-					local="triggerJobDetailTicketRegistryCleaner" />
-			</list>
-		</property>
-	</bean>
-	
 	<!-- ADVISORS -->	
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 	
