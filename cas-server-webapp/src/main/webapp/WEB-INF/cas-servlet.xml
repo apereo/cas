@@ -212,18 +212,7 @@
 		p:centralAuthenticationService-ref="centralAuthenticationService"
 		class="org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction" /> 
  -->
- 
- 	<bean
- 		id="casArgumentExtractor"
- 		class="org.jasig.cas.web.support.CasArgumentExtractor" />
-
- 	<util:list id="argumentExtractors">
-		<ref bean="casArgumentExtractor" />
- 		<ref bean="samlArgumentExtractor" />
- 	</util:list>
  	
- 	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor" />
-	
 	<bean id="warnCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
 		p:cookieSecure="true"
 		p:cookieMaxAge="-1"
