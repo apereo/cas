@@ -203,32 +203,9 @@
 	<bean id="sendTicketGrantingTicketAction" class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction"
 		p:centralAuthenticationService-ref="centralAuthenticationService"
 		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
-
-<!--
-	<bean
-		id="x509Check"
-		p:centralAuthenticationService-ref="centralAuthenticationService"
-		class="org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction" /> 
- -->
- 	
-	<bean id="warnCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-		p:cookieSecure="true"
-		p:cookieMaxAge="-1"
-		p:cookieName="CASPRIVACY"
-		p:cookiePath="/cas" />
-	
-	<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-		p:cookieSecure="true"
-		p:cookieMaxAge="-1"
-		p:cookieName="CASTGC"
-		p:cookiePath="/cas" />
 	
 	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector" />
-    
-    <!--
-    <bean id="openIdSingleSignOnAction" class="org.jasig.cas.web.flow.OpenIdSingleSignOnAction"
-    	p:centralAuthenticationService-ref="centralAuthenticationService" />
-	-->
+
 	<bean id="addRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
 		p:formView="addServiceView"
 		p:successView="addServiceView"
