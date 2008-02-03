@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.2-RC3</version>
+		<version>3.2-RC4</version>
 	</parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -33,6 +33,12 @@
   			<artifactId>casclient</artifactId>
   			<version>2.1.1</version>
   			<scope>runtime</scope>
+  		</dependency>
+  		
+  		<dependency>
+  			<groupId>org.springframework</groupId>
+  			<artifactId>spring-aop</artifactId>
+  			<version>2.5.1</version>
   		</dependency>
   
 		<dependency>
