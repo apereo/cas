@@ -10,7 +10,7 @@ import org.jasig.cas.util.HttpClient;
 /**
  * Abstract class for handling the enabling and disabling of Single Sign Out features.
  * 
- * @author scottbattaglia
+ * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1.2
  *
@@ -30,5 +30,9 @@ public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
     
     protected HttpClient getHttpClientIfSingleSignOutEnabled() {
         return this.disableSingleSignOut ? this.httpClient : null; 
+    }
+    
+    public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
+        this.disableSingleSignOut = disableSingleSignOut;
     }
 }
