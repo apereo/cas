@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.2-RC2</version>
+		<version>3.2-RC3</version>
 	</parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -17,20 +17,16 @@
   			<version>1.0.6</version>
   			<scope>runtime</scope>
   			<exclusions>
-  				<exclusion>
-  					<artifactId>spring-aop</artifactId>
-  					<groupId>org.springframework</groupId>
-  				</exclusion>
-  				<exclusion>
-  					<artifactId>spring-jdbc</artifactId>
-  					<groupId>org.springframework</groupId>
-  				</exclusion>
-  				<exclusion>
-  					<artifactId>spring-dao</artifactId>
-  					<groupId>org.springframework</groupId>
-  				</exclusion>
-  			</exclusions>
-  		</dependency>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-remoting</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-support</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
   		
   		<dependency>
   			<groupId>cas</groupId>

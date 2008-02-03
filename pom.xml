@@ -11,7 +11,7 @@
 	<artifactId>cas-server</artifactId>
 	<packaging>pom</packaging>
 	<name>JA-SIG Central Authentication Service</name>
-	<version>3.2-RC2</version>
+	<version>3.2-RC3</version>
 	<url>http://www.ja-sig.org/products/cas/</url>
 	<ciManagement>
 		<system>QuickBuild</system>
@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>org.inspektr</groupId>
 			<artifactId>inspektr-core</artifactId>
-			<version>0.6</version>
+			<version>0.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 	
@@ -188,26 +188,6 @@
 			<version>1.0.5</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-webmvc</artifactId>
-				</exclusion>
 				<exclusion>
 					<artifactId>spring-portlet</artifactId>
 					<groupId>org.springframework</groupId>
