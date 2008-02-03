@@ -20,7 +20,7 @@ import org.springframework.core.io.Resource;
  * username it will compare the supplied password (first put through a
  * PasswordTranslator) that is compared to the password provided in the file. If
  * there is a match, the user is authenticated. Note that the default password
- * translator is a plaintext password translator and the defeault separator is
+ * translator is a plaintext password translator and the default separator is
  * "::" (without quotes).
  * 
  * @author Scott Battaglia
