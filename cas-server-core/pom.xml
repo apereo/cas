@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.2-RC2</version>
+		<version>3.2-RC3</version>
 	</parent>
 	<description>CAS core</description>
 	<modelVersion>4.0.0</modelVersion>
@@ -19,29 +19,24 @@
 			<version>1.0.1</version>
 			<scope>compile</scope>
 			<exclusions>
-	  			<exclusion>
-	  				<groupId>org.springframework</groupId>
-	  				<artifactId>spring-core</artifactId>
-	  			</exclusion>
-	  			<exclusion>
-	  				<groupId>org.springframework</groupId>
-	  				<artifactId>spring-dao</artifactId>
-	  			</exclusion>
-	  			<exclusion>
-	  				<groupId>org.springframework</groupId>
-	  				<artifactId>spring-jdbc</artifactId>
-	  			</exclusion>
-	  			<exclusion>
-	  				<groupId>org.springframework</groupId>
-	  				<artifactId>spring-beans</artifactId>
-	  			</exclusion>  
-	  		</exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-dao</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<dependency>
 			<groupId>jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>2.5.1</version>
 			<scope>compile</scope>
 		</dependency>
 	
