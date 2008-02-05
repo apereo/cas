@@ -5,6 +5,11 @@
  */
 package org.jasig.cas.web.support;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.util.HttpClient;
 
 /**
@@ -17,6 +22,8 @@ import org.jasig.cas.util.HttpClient;
  */
 public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
     ArgumentExtractor {
+    
+    private final Log log = LogFactory.getLog(getClass());
 
     /** Whether single sign out is disabled or not. */
     private boolean disableSingleSignOut = false;
@@ -35,4 +42,18 @@ public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
     public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
         this.disableSingleSignOut = disableSingleSignOut;
     }
+    
+    public final WebApplicationService extractService(final HttpServletRequest request) {
+        final WebApplicationService service = extractServiceInternal(request);
+        
+        if (service == null) {
+            log.debug("Extractor did not generate service.");
+        } else {
+            log.debug("Extractor generated service for: " + service.getId());
+        }
+        
+        return service;
+    }
+    
+    protected abstract WebApplicationService extractServiceInternal(final HttpServletRequest request);
 }
