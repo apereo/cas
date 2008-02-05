@@ -12,6 +12,8 @@
 			index="0"
 			type="int"
 			value="50" />
+		<constructor-arg
+			index="1" value="${host.name}" />
 	</bean>
 
 	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
@@ -19,7 +21,20 @@
 			index="0"
 			type="int"
 			value="20" />
+		<constructor-arg
+			index="1" value="${host.name}" />
 	</bean>
+	
+<bean
+      id="proxy20TicketUniqueIdGenerator"
+      class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+		<constructor-arg
+			index="0"
+			type="int"
+			value="20" />
+		<constructor-arg
+			index="1" value="${host.name}" />
+</bean>
 	 
 	<bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.util.SamlCompliantUniqueTicketIdGenerator">
 		<constructor-arg index="0" value="https://localhost:8443" />
