@@ -238,7 +238,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[7168];
+        final byte[] xmlMessageBytes = new byte[10000];
         
         final byte[] extendedBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
@@ -248,6 +248,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
         try {
             final int resultLength = inflater.inflate(xmlMessageBytes);
+            inflater.end();
 
             if (!inflater.finished()) {
                 throw new RuntimeException("buffer not large enough.");
