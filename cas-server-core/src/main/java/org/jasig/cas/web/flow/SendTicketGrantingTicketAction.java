@@ -7,8 +7,8 @@ package org.jasig.cas.web.flow;
 
 import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,7 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 public final class SendTicketGrantingTicketAction extends AbstractAction {
     
     @NotNull
-    private CookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     
     /** Instance of CentralAuthenticationService. */
     @NotNull
@@ -40,7 +40,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             return success();
         }
         
-        this.ticketGrantingTicketCookieGenerator.addCookie(WebUtils
+        this.ticketGrantingTicketCookieGenerator.addCookie(WebUtils.getHttpServletRequest(context), WebUtils
             .getHttpServletResponse(context), ticketGrantingTicketId);
 
         if (ticketGrantingTicketValueFromCookie != null && ticketGrantingTicketId != ticketGrantingTicketValueFromCookie) {
@@ -51,7 +51,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
         return success();
     }
     
-    public void setTicketGrantingTicketCookieGenerator(final CookieGenerator ticketGrantingTicketCookieGenerator) {
+    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator= ticketGrantingTicketCookieGenerator;
     }
     

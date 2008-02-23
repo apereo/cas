@@ -8,25 +8,25 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
     
-    private CookieGenerator ticketGrantingTicketCookieGenerator;
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     
     private MockRequestContext context;
     
     protected void onSetUp() throws Exception {
         this.action = new SendTicketGrantingTicketAction();
         
-        this.ticketGrantingTicketCookieGenerator = new CookieGenerator();
+        this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
         
         this.ticketGrantingTicketCookieGenerator.setCookieName("TGT");
         
