@@ -55,6 +55,8 @@ import java.util.Map;
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
  * of available tickets.</li>
+ * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for TGTs and ST in order to store them
+ * in different locations (i.e. long term memory or short-term)</li>
  * <li> <code>authenticationManager</code> - The service that will handle
  * authentication.</li>
  * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
@@ -82,6 +84,10 @@ public final class CentralAuthenticationServiceImpl implements
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
     private TicketRegistry ticketRegistry;
+    
+    /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
+    @NotNull
+    private TicketRegistry serviceTicketRegistry;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
@@ -217,7 +223,7 @@ public final class CentralAuthenticationServiceImpl implements
                 .getNewTicketId(ServiceTicket.PREFIX), service,
                 this.serviceTicketExpirationPolicy, credentials != null);
 
-        this.ticketRegistry.addTicket(serviceTicket);
+        this.serviceTicketRegistry.addTicket(serviceTicket);
 
         if (log.isInfoEnabled()) {
             log.info("Granted service ticket ["
@@ -255,7 +261,7 @@ public final class CentralAuthenticationServiceImpl implements
                 .authenticate(credentials);
 
             final ServiceTicket serviceTicket;
-            serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(
+            serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(
                 serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
@@ -295,7 +301,7 @@ public final class CentralAuthenticationServiceImpl implements
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry
+        final ServiceTicket serviceTicket = (ServiceTicket) this.serviceTicketRegistry
             .getTicket(serviceTicketId, ServiceTicket.class);
 
         final RegisteredService registeredService = this.servicesManager
@@ -375,7 +381,7 @@ public final class CentralAuthenticationServiceImpl implements
                 .getService(), serviceTicket.isFromNewLogin());
         } finally {
             if (serviceTicket.isExpired()) {
-                this.ticketRegistry.deleteTicket(serviceTicketId);
+                this.serviceTicketRegistry.deleteTicket(serviceTicketId);
             }
         }
     }
@@ -417,6 +423,14 @@ public final class CentralAuthenticationServiceImpl implements
      */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
+        
+        if (this.serviceTicketRegistry == null) {
+            this.serviceTicketRegistry = ticketRegistry;
+        }
+    }
+    
+    public void setServiceTicketRegistry(final TicketRegistry serviceTicketRegistry) {
+        this.serviceTicketRegistry = serviceTicketRegistry;
     }
 
     /**
