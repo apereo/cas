@@ -5,7 +5,9 @@
  */
 package org.jasig.cas.services.web;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
@@ -37,8 +39,8 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        final Map<String, String> attributes = new HashMap<String, String>();
-        attributes.put("test", "test");
+        final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        attributes.put("test", Arrays.asList(new Object[] {"test"}));
 
         this.repository = new StubPersonAttributeDao();
         this.repository.setBackingMap(attributes);
