@@ -22,6 +22,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
     private static final long TIMEOUT = 5000;
 
     private static final int NUMBER_OF_USES = 5;
+    
+    private static final int TIMEOUT_BUFFER = 100;
 
     private ExpirationPolicy expirationPolicy;
 
@@ -47,7 +49,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
 
     public void testTicketIsExpiredByTime() {
         try {
-            Thread.sleep(TIMEOUT + 15);
+            Thread.sleep(TIMEOUT + TIMEOUT_BUFFER);
             assertTrue(this.ticket.isExpired());
         } catch (InterruptedException e) {
             fail(e.getMessage());
