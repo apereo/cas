@@ -36,7 +36,7 @@ public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
     }
     
     protected HttpClient getHttpClientIfSingleSignOutEnabled() {
-        return this.disableSingleSignOut ? this.httpClient : null; 
+        return !this.disableSingleSignOut ? this.httpClient : null; 
     }
     
     public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
