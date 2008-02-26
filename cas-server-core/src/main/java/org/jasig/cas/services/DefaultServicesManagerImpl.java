@@ -39,7 +39,25 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
             .notNull(serviceRegistryDao, "serviceRegistryDao cannot be null.");
 
         this.serviceRegistryDao = serviceRegistryDao;
-        this.disabledRegisteredService = constructDefaultRegisteredService();
+        this.disabledRegisteredService = constructDefaultRegisteredService(new String[0]);
+        
+        load();
+    }
+    
+    /**
+     * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
+     * can include a set of default attributes to use if no services are defined in the registry.
+     * 
+     * @param serviceRegistryDao the Service Registry Dao.
+     * @param defaultAttributes the list of default attributes to use.
+     */
+    public DefaultServicesManagerImpl(
+        final ServiceRegistryDao serviceRegistryDao, final String[] defaultAttributes) {
+        Assert
+            .notNull(serviceRegistryDao, "serviceRegistryDao cannot be null.");
+
+        this.serviceRegistryDao = serviceRegistryDao;
+        this.disabledRegisteredService = constructDefaultRegisteredService(defaultAttributes);
         
         load();
     }
@@ -116,12 +134,13 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         this.services = localServices;
     }
     
-    private RegisteredService constructDefaultRegisteredService() {
+    private RegisteredService constructDefaultRegisteredService(final String[] attributes) {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setAllowedToProxy(true);
         r.setAnonymousAccess(false);
         r.setEnabled(true);
         r.setSsoEnabled(true);
+        r.setAllowedAttributes(attributes);
         
         return r;
     }
