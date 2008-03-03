@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class ServiceTicketImplTests extends TestCase {
 
-    private TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
+    private TicketGrantingTicketImpl ticketGrantingTicket = new TicketGrantingTicketImpl(
         "test", TestUtils.getAuthentication(),
         new NeverExpiresExpirationPolicy());
 

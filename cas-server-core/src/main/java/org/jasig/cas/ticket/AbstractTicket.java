@@ -5,6 +5,12 @@
  */
 package org.jasig.cas.ticket;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+
 import org.springframework.util.Assert;
 
 /**
@@ -19,39 +25,54 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
+@MappedSuperclass
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     /** The ExpirationPolicy this ticket will be following. */
-    private final ExpirationPolicy expirationPolicy;
+    // XXX removed final
+    @Lob
+    @Column(name="EXPIRATION_POLICY", nullable=false)
+    private ExpirationPolicy expirationPolicy;
 
     /** The unique identifier for this ticket. */
-    private final String id;
+    @Id
+    @Column(name="ID", nullable=false, unique=true)
+    private String id;
 
     /** The TicketGrantingTicket this is associated with. */
-    private final TicketGrantingTicket ticketGrantingTicket;
+    @ManyToOne
+    private TicketGrantingTicketImpl ticketGrantingTicket;
 
     /** The last time this ticket was used. */
+    @Column(name="LAST_TIME_USED")
     private long lastTimeUsed;
 
     /** The previous last time this ticket was used. */
+    @Column(name="PREVIOUS_LAST_TIME_USED")
     private long previousLastTimeUsed;
 
     /** The time the ticket was created. */
+    @Column(name="CREATION_TIME")
     private long creationTime;
 
     /** The number of times this was used. */
+    @Column(name="NUMBER_OF_TIMES_USED")
     private int countOfUses;
+    
+    protected AbstractTicket() {
+        // nothing to do
+    }
 
     /**
-     * Constructs a new Ticket with a unqiue id, a possible parent Ticket (can
+     * Constructs a new Ticket with a unique id, a possible parent Ticket (can
      * be null) and a specified Expiration Policy.
      * 
      * @param id the unique identifier for the ticket
      * @param ticket the parent TicketGrantingTicket
-     * @param expirationPolicy the expirartion policy for the ticket.
+     * @param expirationPolicy the expiration policy for the ticket.
      * @throws IllegalArgumentException if the id or expiration policy is null.
      */
-    public AbstractTicket(final String id, final TicketGrantingTicket ticket,
+    public AbstractTicket(final String id, final TicketGrantingTicketImpl ticket,
         final ExpirationPolicy expirationPolicy) {
         Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
         Assert.notNull(id, "id cannot be null");

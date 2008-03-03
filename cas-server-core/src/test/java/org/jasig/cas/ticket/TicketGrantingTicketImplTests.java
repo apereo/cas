@@ -67,7 +67,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
 
     public void testIsRootFalse() {
-        TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
+        TicketGrantingTicketImpl t1 = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
@@ -106,7 +106,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
         principals.add(authentication);
         principals.add(authentication1);
 
-        TicketGrantingTicket t1 = new TicketGrantingTicketImpl("test", null,
+        TicketGrantingTicketImpl t1 = new TicketGrantingTicketImpl("test", null,
             authentication1, new NeverExpiresExpirationPolicy());
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", t1,
             authentication, new NeverExpiresExpirationPolicy());

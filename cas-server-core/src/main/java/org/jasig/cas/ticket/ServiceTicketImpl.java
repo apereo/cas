@@ -7,6 +7,11 @@ package org.jasig.cas.ticket;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -21,6 +26,8 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
+@Entity
+@Table(name="SERVICETICKET")
 public final class ServiceTicketImpl extends AbstractTicket implements
     ServiceTicket {
 
@@ -28,12 +35,20 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     private static final long serialVersionUID = 1296808733190507408L;
 
     /** The service this ticket is valid for. */
-    private final Service service;
+    @Lob
+    @Column(name="SERVICE",nullable=false)
+    private Service service;
 
     /** Is this service ticket the result of a new login. */
-    private final boolean fromNewLogin;
+    @Column(name="FROM_NEW_LOGIN",nullable=false)
+    private boolean fromNewLogin;
 
+    @Column(name="TICKET_ALREADY_GRANTED",nullable=false)
     private AtomicBoolean grantedTicketAlready = new AtomicBoolean(false);
+    
+    public ServiceTicketImpl() {
+        // exists for JPA purposes
+    }
 
     /**
      * Constructs a new ServiceTicket with a Unique Id, a TicketGrantingTicket,
@@ -49,7 +64,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
      * Service are null.
      */
     protected ServiceTicketImpl(final String id,
-        final TicketGrantingTicket ticket, final Service service,
+        final TicketGrantingTicketImpl ticket, final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
 
@@ -81,7 +96,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
         }
 
-        return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
+        return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
             authentication, expirationPolicy);
     }
     
