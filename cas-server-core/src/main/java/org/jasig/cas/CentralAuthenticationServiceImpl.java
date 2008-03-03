@@ -38,6 +38,7 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -131,6 +132,7 @@ public final class CentralAuthenticationServiceImpl implements
      */
     @Auditable(action="TICKET_GRANTING_TICKET_DESTROYED",actionResolverClass=org.inspektr.audit.spi.support.DefaultAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
     @Statistic(name="DESTROY_TICKET_GRANTING_TICKET",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
+    @Transactional(readOnly = false)
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
@@ -158,6 +160,7 @@ public final class CentralAuthenticationServiceImpl implements
      */
     @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
     @Statistic(name="GRANT_SERVICE_TICKET",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
+    @Transactional(readOnly = false)
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
         throws TicketException {
@@ -239,6 +242,7 @@ public final class CentralAuthenticationServiceImpl implements
 
     @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
     @Statistic(name="GRANT_SERVICE_TICKET",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
+    @Transactional(readOnly = false)
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
         return this.grantServiceTicket(ticketGrantingTicketId, service, null);
@@ -250,6 +254,7 @@ public final class CentralAuthenticationServiceImpl implements
      */
     @Auditable(action="PROXY_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
     @Statistic(name="GRANT_PROXY_TICKET",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
+    @Transactional(readOnly = false)
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
 
@@ -296,6 +301,7 @@ public final class CentralAuthenticationServiceImpl implements
      */
     @Auditable(action="SERVICE_TICKET_VALIDATE",successSuffix="D",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
     @Statistic(name="SERVICE_TICKET_VALIDATE",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
+    @Transactional(readOnly = false)
     public Assertion validateServiceTicket(final String serviceTicketId,
         final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
@@ -391,6 +397,7 @@ public final class CentralAuthenticationServiceImpl implements
      */
     @Auditable(action="TICKET_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
     @Statistic(name="CREATE_TICKET_GRANTING_TICKET",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
+    @Transactional(readOnly = false)
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketCreationException {
         Assert.notNull(credentials, "credentials cannot be null");

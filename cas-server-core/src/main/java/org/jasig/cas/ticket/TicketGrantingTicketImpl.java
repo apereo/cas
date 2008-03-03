@@ -9,9 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -28,6 +32,8 @@ import org.springframework.util.Assert;
  * @version $Revision: 1.3 $ $Date: 2007/02/20 14:41:04 $
  * @since 3.0
  */
+@Entity
+@Table(name="TICKETGRANTINGTICKET")
 public final class TicketGrantingTicketImpl extends AbstractTicket implements
     TicketGrantingTicket {
 
@@ -35,12 +41,22 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     private static final long serialVersionUID = -8673232562725683059L;
 
     /** The authenticated object for which this ticket was generated for. */
-    private final Authentication authentication;
+
+    @Lob
+    @Column(name="AUTHENTICATION", nullable=false)
+    private Authentication authentication;
 
     /** Flag to enforce manual expiration. */
+    @Column(name="EXPIRED", nullable=false)
     private AtomicBoolean expired = new AtomicBoolean(false);
     
-    private final Map<String,Service> services = new HashMap<String, Service>();
+    @Lob
+    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
+    private final HashMap<String,Service> services = new HashMap<String, Service>();
+    
+    public TicketGrantingTicketImpl() {
+        // nothing to do
+    }
 
     /**
      * Constructs a new TicketGrantingTicket.
@@ -52,7 +68,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
      * @throws IllegalArgumentException if the Authentication object is null
      */
     public TicketGrantingTicketImpl(final String id,
-        final TicketGrantingTicket ticketGrantingTicket,
+        final TicketGrantingTicketImpl ticketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {
         super(id, ticketGrantingTicket, policy);
 
