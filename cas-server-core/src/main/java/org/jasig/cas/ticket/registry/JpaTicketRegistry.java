@@ -7,11 +7,14 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
 
 import org.inspektr.common.ioc.annotation.NotNull;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -46,11 +49,43 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     public boolean deleteTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
-        if (ticket != null) {
+        
+        if (ticket == null) {
+            return false;
+        }
+        
+        if (ticket instanceof ServiceTicket) {
             this.jpaTemplate.remove(ticket);
             return true;
         }
-        return false;
+        
+        deleteTicketAndChildren(ticket);
+        return true;        
+    }
+    
+    private void deleteTicketAndChildren(final Ticket ticket) {
+        final Map<String,Object> params = new HashMap<String,Object>();
+        params.put("id", ticket.getId());
+        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = this.jpaTemplate.findByNamedParams("from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", params);
+        final List<ServiceTicketImpl> serviceTicketImpls = this.jpaTemplate.findByNamedParams("from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", params);
+        
+        for (final ServiceTicketImpl s : serviceTicketImpls) {
+            removeTicket(s);
+        }
+        
+        for (final TicketGrantingTicketImpl t : ticketGrantingTicketImpls) {
+            deleteTicketAndChildren(t);
+        }
+        
+        removeTicket(ticket);
+    }
+    
+    private void removeTicket(final Ticket ticket) {
+        try {
+            this.jpaTemplate.remove(ticket);
+        } catch (final Exception e) {
+            // ticket was probably removed via other means
+        }
     }
 
     public Ticket getTicket(final String ticketId) {

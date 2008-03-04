@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.ticket;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
