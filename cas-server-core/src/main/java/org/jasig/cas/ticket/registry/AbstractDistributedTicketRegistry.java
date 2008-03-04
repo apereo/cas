@@ -8,6 +8,8 @@ package org.jasig.cas.ticket.registry;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -29,6 +31,8 @@ public abstract class AbstractDistributedTicketRegistry extends
     protected static final Method[] SERVICE_TICKET_METHODS = new Method[2];
     
     protected static final Method[] TICKET_GRANTING_TICKET_METHODS = new Method[2];
+    
+    protected final Log log = LogFactory.getLog(this.getClass());
     
     static {
         try {

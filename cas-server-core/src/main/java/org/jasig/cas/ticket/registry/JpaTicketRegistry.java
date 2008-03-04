@@ -7,6 +7,7 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -45,21 +46,35 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     public boolean deleteTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
-        this.jpaTemplate.remove(ticket);
-        return true;
+        if (ticket != null) {
+            this.jpaTemplate.remove(ticket);
+            return true;
+        }
+        return false;
     }
 
     public Ticket getTicket(final String ticketId) {
-        if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-            return this.jpaTemplate.find(TicketGrantingTicketImpl.class, ticketId);
+        try {
+            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
+                return this.jpaTemplate.find(TicketGrantingTicketImpl.class, ticketId);
+            }
+            
+            return this.jpaTemplate.find(ServiceTicketImpl.class, ticketId);
+        } catch (final Exception e) {
+            log.error(e,e);
         }
-        
-        return this.jpaTemplate.find(ServiceTicketImpl.class, ticketId);
+        return null;
     }
 
     public Collection<Ticket> getTickets() {
-        return new ArrayList<Ticket>();
-        // TODO Auto-generated method stub
+        final List<TicketGrantingTicketImpl> tgts = this.jpaTemplate.find("from TicketGrantingTicketImpl");
+        final List<ServiceTicketImpl> sts = this.jpaTemplate.find(" from ServiceTicketImpl");
+        
+        final List<Ticket> tickets = new ArrayList<Ticket>();
+        tickets.addAll(tgts);
+        tickets.addAll(sts);
+        
+        return tickets;
     }
     
     public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
