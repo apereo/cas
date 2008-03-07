@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.ticket;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -37,7 +36,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     /** The unique identifier for this ticket. */
     @Id
-    @Column(name="ID", nullable=false, unique=true)
+    @Column(name="ID", nullable=false)
     private String id;
 
     /** The TicketGrantingTicket this is associated with. */
