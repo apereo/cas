@@ -35,13 +35,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     
     public DefaultServicesManagerImpl(
         final ServiceRegistryDao serviceRegistryDao) {
-        Assert
-            .notNull(serviceRegistryDao, "serviceRegistryDao cannot be null.");
-
-        this.serviceRegistryDao = serviceRegistryDao;
-        this.disabledRegisteredService = constructDefaultRegisteredService(new String[0]);
-        
-        load();
+        this(serviceRegistryDao, new String[0]);
     }
     
     /**
