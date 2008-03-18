@@ -64,7 +64,8 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     public void postHandle(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
         final ModelAndView modelAndView) throws Exception {
-        if (!request.getMethod().equals("POST")) {
+        if (!request.getMethod().equals("GET")
+            || !"casLoginView".equals(modelAndView.getViewName())) {
             return;
         }
 
