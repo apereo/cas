@@ -48,7 +48,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
      */
     private Map<String,BigInteger>[] restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
 
-    /** The threshhold before we stop someone from authenticating. */
+    /** The threshold before we stop someone from authenticating. */
     private BigInteger failureThreshhold = DEFAULT_FAILURE_THRESHHOLD;
 
     /** The failure timeout before we clean up one failure attempt. */
@@ -64,8 +64,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     public void postHandle(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
         final ModelAndView modelAndView) throws Exception {
-        if (request.getMethod().equals("GET")
-            || !modelAndView.getViewName().equals("casLoginView")) {
+        if (!request.getMethod().equals("POST")) {
             return;
         }
 
