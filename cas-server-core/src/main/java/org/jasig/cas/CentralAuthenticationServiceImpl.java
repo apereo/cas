@@ -369,7 +369,7 @@ public final class CentralAuthenticationServiceImpl implements
             final Principal modifiedPrincipal = new SimplePrincipal(
                 principalId, attributes);
             final MutableAuthentication mutableAuthentication = new MutableAuthentication(
-                modifiedPrincipal);
+                modifiedPrincipal, authentication.getAuthenticatedDate());
             mutableAuthentication.getAttributes().putAll(
                 authentication.getAttributes());
             mutableAuthentication.getAuthenticatedDate().setTime(
