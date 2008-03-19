@@ -26,10 +26,15 @@ public final class MutableAuthentication extends AbstractAuthentication {
     private static final long serialVersionUID = -4415875344376642246L;
 
     /** The date/time this authentication object became valid. */
-    private final Date authenticatedDate = new Date();
+    private final Date authenticatedDate;
 
     public MutableAuthentication(final Principal principal) {
+        this(principal, new Date());
+    }
+    
+    public MutableAuthentication(final Principal principal, final Date date) {
         super(principal, new HashMap<String, Object>());
+        this.authenticatedDate = date;
     }
 
     public Date getAuthenticatedDate() {
