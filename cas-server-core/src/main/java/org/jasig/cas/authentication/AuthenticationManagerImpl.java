@@ -16,6 +16,7 @@ import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
+import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
@@ -79,6 +80,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager {
         throws AuthenticationException {
         boolean foundSupported = false;
         boolean authenticated = false;
+        AuthenticationHandler authenticatedClass = null;
         
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
@@ -99,6 +101,7 @@ public final class AuthenticationManagerImpl implements AuthenticationManager {
                                 + " successfully authenticated the user which provided the following credentials: "
                                 + credentials.toString());
                     }
+                    authenticatedClass = authenticationHandler;
                     authenticated = true;
                     break;
                 }
@@ -142,6 +145,11 @@ public final class AuthenticationManagerImpl implements AuthenticationManager {
                 + credentials.getClass().getName());
             throw UnsupportedCredentialsException.ERROR;
         }
+        
+        if (authenticatedClass instanceof NamedAuthenticationHandler) {
+            final NamedAuthenticationHandler a = (NamedAuthenticationHandler) authenticatedClass;
+            authentication.getAttributes().put(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, a.getName());
+        }        
 
         for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator : this.authenticationMetaDataPopulators) {
             authentication = authenticationMetaDataPopulator

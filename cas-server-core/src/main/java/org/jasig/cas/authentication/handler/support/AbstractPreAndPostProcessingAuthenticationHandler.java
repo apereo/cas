@@ -7,8 +7,9 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
@@ -21,10 +22,14 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @since 3.1
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler
-    implements AuthenticationHandler {
+    implements NamedAuthenticationHandler {
     
     /** Instance of logging for subclasses. */
     protected Log log = LogFactory.getLog(this.getClass());
+    
+    /** The name of the authentication handler. */
+    @NotNull
+    private String name = getClass().getName();
 
     /**
      * Method to execute before authentication occurs.
@@ -46,6 +51,14 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     protected boolean postAuthenticate(final Credentials credentials,
         final boolean authenticated) {
         return authenticated;
+    }
+    
+    public final void setName(final String name) {
+        this.name = name;
+    }
+    
+    public final String getName() {
+        return this.name;
     }
 
     public final boolean authenticate(final Credentials credentials)
