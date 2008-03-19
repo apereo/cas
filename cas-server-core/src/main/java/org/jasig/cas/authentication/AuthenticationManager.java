@@ -21,6 +21,8 @@ import org.jasig.cas.authentication.principal.Credentials;
  * </p>
  */
 public interface AuthenticationManager {
+    
+    String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
 
     /**
      * Method to validate the credentials provided. On successful validation, a
