@@ -36,6 +36,9 @@ public final class CookieRetrievingCookieGenerator extends CookieGenerator {
         } else {
             final Cookie cookie = createCookie(cookieValue);
             cookie.setMaxAge(this.rememberMeMaxAge);
+            if (isCookieSecure()) {
+                cookie.setSecure(true);
+            }
             response.addCookie(cookie);
         }
     }
