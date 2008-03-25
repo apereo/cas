@@ -141,15 +141,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
                 return false;
         } else if (!identity.equals(other.identity))
             return false;
-        if (signature == null) {
-            if (other.signature != null)
-                return false;
-        } else if (!signature.equals(other.signature))
-            return false;
         return true;
     }
-    
-    
 
     public String getIdentity() {
         return this.identity;
