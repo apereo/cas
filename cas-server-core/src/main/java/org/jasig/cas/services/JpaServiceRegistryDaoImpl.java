@@ -43,6 +43,6 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
     }
 
     public RegisteredService findServiceById(final long id) {
-        return getJpaTemplate().find(RegisteredServiceImpl.class, new Long(id));
+        return getJpaTemplate().find(RegisteredServiceImpl.class, id);
     }
 }

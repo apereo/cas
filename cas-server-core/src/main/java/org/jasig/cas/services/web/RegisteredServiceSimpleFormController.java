@@ -81,7 +81,7 @@ public final class RegisteredServiceSimpleFormController extends
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
             "/services/manage.html#" + service.getId(), true));
         modelAndView.addObject("action", "add");
-        modelAndView.addObject("id", new Long(service.getId()));
+        modelAndView.addObject("id", service.getId());
 
         return modelAndView;
     }

@@ -64,7 +64,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
         
         this.serviceRegistryDao.delete(r);
-        this.services.remove(new Long(id));
+        this.services.remove(id);
         
         return r;
     }
@@ -91,7 +91,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = this.services.get(new Long(id));
+        final RegisteredService r = this.services.get(id);
         
         try {
             return r == null ? null : (RegisteredService) r.clone();
@@ -111,7 +111,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Transactional(readOnly = false)
     public synchronized void save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
-        this.services.put(new Long(r.getId()), r);
+        this.services.put(r.getId(), r);
     }
     
     public void reload() {
@@ -122,7 +122,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         final ConcurrentHashMap<Long, RegisteredService> localServices = new ConcurrentHashMap<Long, RegisteredService>();
                 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            localServices.put(new Long(r.getId()), r);
+            localServices.put(r.getId(), r);
         }
         
         this.services = localServices;

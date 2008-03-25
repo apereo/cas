@@ -36,7 +36,7 @@ public final class HttpClient implements Serializable {
         HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
         HttpURLConnection.HTTP_ACCEPTED};
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private static final Log log = LogFactory.getLog(HttpClient.class);
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
@@ -50,6 +50,7 @@ public final class HttpClient implements Serializable {
     
     public boolean sendMessageToEndPoint(final String url, final String message) {
         HttpURLConnection connection = null;
+        BufferedReader in = null;
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Attempting to access " + url);
@@ -72,7 +73,7 @@ public final class HttpClient implements Serializable {
             printout.flush();
             printout.close();
 
-            final BufferedReader in = new BufferedReader(new InputStreamReader(connection
+            in = new BufferedReader(new InputStreamReader(connection
                 .getInputStream()));
 
             while (in.readLine() != null) {
@@ -88,6 +89,13 @@ public final class HttpClient implements Serializable {
             log.error(e,e);
             return false;
         } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (final IOException e) {
+                    // can't do anything
+                }
+            }
             if (connection != null) {
                 connection.disconnect();
             }

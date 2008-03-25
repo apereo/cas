@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
+import java.util.Arrays;
+
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
@@ -71,7 +73,7 @@ public final class SpnegoCredentials implements Credentials {
         this.principal = principal;
     }
 
-    public boolean IsNtlm() {
+    public boolean isNtlm() {
         return this.isNtlm;
     }
 
@@ -96,9 +98,9 @@ public final class SpnegoCredentials implements Credentials {
 
         final SpnegoCredentials c = (SpnegoCredentials) obj;
 
-        return this.initToken.equals(c.getInitToken())
+        return Arrays.equals(this.initToken, c.getInitToken())
             && this.principal.equals(c.getPrincipal())
-            && this.nextToken.equals(c.getNextToken());
+            && Arrays.equals(this.nextToken, c.getNextToken());
     }
 
     public int hashCode() {

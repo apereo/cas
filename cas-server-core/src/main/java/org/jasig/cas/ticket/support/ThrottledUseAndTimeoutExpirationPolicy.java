@@ -22,7 +22,7 @@ import org.jasig.cas.ticket.TicketState;
 public final class ThrottledUseAndTimeoutExpirationPolicy implements
     ExpirationPolicy {
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private static final Log log = LogFactory.getLog(ThrottledUseAndTimeoutExpirationPolicy.class);
 
     /** Static ID for serialization. */
     private static final long serialVersionUID = -848036845536731268L;

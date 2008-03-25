@@ -30,12 +30,11 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
  */
 public class BerkeleyDbTicketRegistryTests extends TestCase {
 
-
 	BerkeleyDbTicketRegistry reg;
 
-	public static String DEFAULT_ID = "123";
+	public static final String DEFAULT_ID = "123";
 
-	public static Random rand = new Random();
+	public static final Random rand = new Random();
 
 	protected void setUp() throws Exception {
 

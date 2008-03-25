@@ -112,7 +112,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         thread.start();
     }
 
-    protected final class ExpirationThread extends Thread {
+    protected final static class ExpirationThread extends Thread {
 
         /** Reference to the map of restricted IP addresses. */
         private Map<String, BigInteger>[] restrictedIpAddressMaps;

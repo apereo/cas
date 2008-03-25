@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.services;
 
+import java.util.Arrays;
+
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -101,31 +103,66 @@ public class RegisteredServiceImpl implements RegisteredService {
     public boolean matches(final Service service) {
         return service != null && PATH_MATCHER.match(this.serviceId.toLowerCase(), service.getId().toLowerCase());
     }
+    
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(this.allowedAttributes);
+        result = prime * result + (this.allowedToProxy ? 1231 : 1237);
+        result = prime * result + (this.anonymousAccess ? 1231 : 1237);
+        result = prime * result
+            + ((this.description == null) ? 0 : this.description.hashCode());
+        result = prime * result + (this.enabled ? 1231 : 1237);
+        result = prime * result + (int) (this.id ^ (this.id >>> 32));
+        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
+        result = prime * result
+            + ((this.serviceId == null) ? 0 : this.serviceId.hashCode());
+        result = prime * result + (this.ssoEnabled ? 1231 : 1237);
+        result = prime * result + ((this.theme == null) ? 0 : this.theme.hashCode());
+        return result;
+    }
 
     public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        
-        if (obj == this) {
+        if (this == obj)
             return true;
-        }
-
-        if (obj instanceof RegisteredService) {
-            final RegisteredService r = (RegisteredService) obj;
-            
-            if (r.getServiceId() == null && this.getServiceId() == null) {
-                return true;
-            }
-            
-            if (r.getServiceId() == null || this.getServiceId() == null) {
+        if (obj == null)
+            return false;
+        if (!(obj instanceof RegisteredServiceImpl))
+            return false;
+        final RegisteredServiceImpl other = (RegisteredServiceImpl) obj;
+        if (!Arrays.equals(this.allowedAttributes, other.allowedAttributes))
+            return false;
+        if (this.allowedToProxy != other.allowedToProxy)
+            return false;
+        if (this.anonymousAccess != other.anonymousAccess)
+            return false;
+        if (this.description == null) {
+            if (other.description != null)
                 return false;
-            }
-
-            return this.getServiceId().equals(r.getServiceId());
-        }
-
-        return false;
+        } else if (!this.description.equals(other.description))
+            return false;
+        if (this.enabled != other.enabled)
+            return false;
+        if (this.id != other.id)
+            return false;
+        if (this.name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!this.name.equals(other.name))
+            return false;
+        if (this.serviceId == null) {
+            if (other.serviceId != null)
+                return false;
+        } else if (!this.serviceId.equals(other.serviceId))
+            return false;
+        if (this.ssoEnabled != other.ssoEnabled)
+            return false;
+        if (this.theme == null) {
+            if (other.theme != null)
+                return false;
+        } else if (!this.theme.equals(other.theme))
+            return false;
+        return true;
     }
 
     public void setAllowedAttributes(final String[] allowedAttributes) {

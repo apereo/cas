@@ -24,10 +24,10 @@ import junit.framework.TestCase;
 
 public class AbstractX509CertificateTests extends TestCase {
 
-    public static X509Certificate VALID_CERTIFICATE = new CasX509Certficate(
+    public static final X509Certificate VALID_CERTIFICATE = new CasX509Certficate(
         true);
 
-    public static X509Certificate INVALID_CERTIFICATE = new CasX509Certficate(
+    public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certficate(
         false);
 
     protected static class CasX509Certficate extends X509Certificate {
@@ -153,7 +153,7 @@ public class AbstractX509CertificateTests extends TestCase {
         }
 
         public String toString() {
-            return null;
+            return "JA-SIG";
         }
 
         public void verify(PublicKey arg0, String arg1)
