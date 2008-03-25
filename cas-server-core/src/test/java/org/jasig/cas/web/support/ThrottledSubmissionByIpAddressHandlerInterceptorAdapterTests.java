@@ -55,7 +55,7 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
     public void testEnoughFailuresToChangeView() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final ModelAndView modelAndView = new ModelAndView("casLoginView");
-        request.setMethod("POST");
+        request.setMethod("GET");
         request.setRemoteAddr("111.111.111.111");
        for (int i = 0; i < CONST_FAILURE_THRESHHOLD+1; i++) {
            this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
@@ -67,7 +67,7 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
     public void testFailuresThenSuccess() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final ModelAndView modelAndView = new ModelAndView("casLoginView");
-        request.setMethod("POST");
+        request.setMethod("GET");
         request.setRemoteAddr("111.111.111.111");
        for (int i = 0; i < CONST_FAILURE_THRESHHOLD+1; i++) {
            this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
@@ -82,5 +82,4 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
        this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
        assertEquals("casLoginView", modelAndView.getViewName());
     }
-    
 }
