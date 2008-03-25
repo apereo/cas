@@ -69,7 +69,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
         }
 
         if (principal != null) {
-            if (spnegoCredentials.IsNtlm()) {
+            if (spnegoCredentials.isNtlm()) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("NTLM Credentials is valid for user ["
                         + principal.getName() + "]");

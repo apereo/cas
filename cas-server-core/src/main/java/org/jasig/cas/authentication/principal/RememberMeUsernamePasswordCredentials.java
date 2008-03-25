@@ -24,6 +24,26 @@ public class RememberMeUsernamePasswordCredentials extends
     public final boolean isRememberMe() {
         return this.rememberMe;
     }
+    
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (rememberMe ? 1231 : 1237);
+        return result;
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final RememberMeUsernamePasswordCredentials other = (RememberMeUsernamePasswordCredentials) obj;
+        if (this.rememberMe != other.rememberMe)
+            return false;
+        return true;
+    }
 
     public final void setRememberMe(boolean rememberMe) {
         this.rememberMe = rememberMe;

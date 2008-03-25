@@ -101,7 +101,7 @@ public class JaasAuthenticationHandler extends
      * accepted in the callback array. This code based loosely on example given
      * in Sun's javadoc for CallbackHandler interface.
      */
-    protected class UsernamePasswordCallbackHandler implements CallbackHandler {
+    protected static final class UsernamePasswordCallbackHandler implements CallbackHandler {
 
         /** The username of the principal we are trying to authenticate. */
         private final String userName;

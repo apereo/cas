@@ -118,21 +118,38 @@ public final class OpenIdService extends AbstractWebApplicationService {
             signature);
     }
 
-    public boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-
-        if (!(object instanceof OpenIdService)) {
-            return false;
-        }
-
-        final OpenIdService service = (OpenIdService) object;
-
-        return getIdentity().equals(service.getIdentity())
-            && getSignature().equals(service.getSignature())
-            && this.getOriginalUrl().equals(service.getOriginalUrl());
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+            + ((identity == null) ? 0 : identity.hashCode());
+        result = prime * result
+            + ((signature == null) ? 0 : signature.hashCode());
+        return result;
     }
+
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final OpenIdService other = (OpenIdService) obj;
+        if (identity == null) {
+            if (other.identity != null)
+                return false;
+        } else if (!identity.equals(other.identity))
+            return false;
+        if (signature == null) {
+            if (other.signature != null)
+                return false;
+        } else if (!signature.equals(other.signature))
+            return false;
+        return true;
+    }
+    
+    
 
     public String getIdentity() {
         return this.identity;

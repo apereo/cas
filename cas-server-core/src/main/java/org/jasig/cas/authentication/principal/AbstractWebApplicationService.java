@@ -108,6 +108,14 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         return false;
     }
     
+    public int hashCode() {
+        final int prime = 41;
+        int result = 1;
+        result = prime * result
+            + ((this.id == null) ? 0 : this.id.hashCode());
+        return result;
+    }
+    
     protected Principal getPrincipal() {
         return this.principal;
     }

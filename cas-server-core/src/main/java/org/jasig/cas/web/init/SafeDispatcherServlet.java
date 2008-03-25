@@ -51,7 +51,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
     public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
 
     /** Instance of Commons Logging. */
-    private Log log = LogFactory.getLog(getClass());
+    private static final Log log = LogFactory.getLog(SafeDispatcherServlet.class);
 
     /** The actual DispatcherServlet to which we will delegate to. */
     private DispatcherServlet delegate = new DispatcherServlet();
