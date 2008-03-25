@@ -113,7 +113,6 @@ public class RegisteredServiceImpl implements RegisteredService {
         result = prime * result
             + ((this.description == null) ? 0 : this.description.hashCode());
         result = prime * result + (this.enabled ? 1231 : 1237);
-        result = prime * result + (int) (this.id ^ (this.id >>> 32));
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         result = prime * result
             + ((this.serviceId == null) ? 0 : this.serviceId.hashCode());
@@ -142,8 +141,6 @@ public class RegisteredServiceImpl implements RegisteredService {
         } else if (!this.description.equals(other.description))
             return false;
         if (this.enabled != other.enabled)
-            return false;
-        if (this.id != other.id)
             return false;
         if (this.name == null) {
             if (other.name != null)
