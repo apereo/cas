@@ -16,6 +16,7 @@ import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class that will iterate through the registry and check for tickets that are
@@ -48,6 +49,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private TicketRegistry ticketRegistry;
 
+    @Transactional(readOnly=false)
     public void clean() {
         final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
         final Collection<Ticket> ticketsInCache;
