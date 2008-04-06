@@ -18,6 +18,8 @@ public interface SpnegoConstants {
     String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
     String HEADER_AUTHORIZATION = "Authorization";
+    
+    String HEADER_USER_AGENT = "User-Agent";
 
     String NEGOTIATE = "Negotiate";
 

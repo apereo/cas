@@ -5,6 +5,10 @@
  */
 package org.jasig.cas.support.spnego.web.flow;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * First action of a SPNEGO flow : negociation.<br/> The server checks if the
- * negociation string is in the request header:
+ * negociation string is in the request header and this is a supported browser:
  * <ul>
  * <li>If found do nothing and return <code>success()</code></li>
  * <li>else add a WWW-Authenticate response header and a 401 response status,
@@ -36,7 +40,9 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     /** Whether this is using the NTLM protocol or not. */
     private boolean ntlm = false;
-    
+
+    private List<String> supportedBrowser;
+
     private String messageBeginPrefix = constructMessagePrefix();
 
     protected Event doExecute(RequestContext context) {
@@ -46,19 +52,24 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
             .getHttpServletResponse(context);
         final String authorizationHeader = request
             .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        final String userAgent = request
+            .getHeader(SpnegoConstants.HEADER_USER_AGENT);
 
-        if (!StringUtils.hasText(authorizationHeader)
-            || !authorizationHeader.startsWith(this.messageBeginPrefix)
-            || authorizationHeader.length() <= this.messageBeginPrefix.length()) {
-            if (logger.isDebugEnabled()) {
-                logger
-                    .debug("Authorization header not found.  Sending WWW-Authenticate header");
+        if (StringUtils.hasText(userAgent) && isSupportedBrowser(userAgent)) {
+            if (!StringUtils.hasText(authorizationHeader)
+                || !authorizationHeader.startsWith(this.messageBeginPrefix)
+                || authorizationHeader.length() <= this.messageBeginPrefix
+                    .length()) {
+                if (logger.isDebugEnabled()) {
+                    logger
+                        .debug("Authorization header not found. Sending WWW-Authenticate header");
+                }
+                response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE,
+                    this.ntlm ? SpnegoConstants.NTLM
+                        : SpnegoConstants.NEGOTIATE);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
-            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, this.ntlm
-                ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
-
         return success();
     }
 
@@ -66,10 +77,30 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         this.ntlm = ntlm;
         this.messageBeginPrefix = constructMessagePrefix();
     }
-    
+
+    public void setSupportedBrowser(final List<String> supportedBrowser) {
+        this.supportedBrowser = supportedBrowser;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        if (this.supportedBrowser == null) {
+            this.supportedBrowser = new ArrayList<String>();
+            this.supportedBrowser.add("MSIE");
+            this.supportedBrowser.add("Firefox");
+            this.supportedBrowser.add("AppleWebKit");
+        }
+    }
+
     protected String constructMessagePrefix() {
-        return (this.ntlm ? SpnegoConstants.NTLM
-            : SpnegoConstants.NEGOTIATE)
+        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
             + " ";
+    }
+
+    protected boolean isSupportedBrowser(final String userAgent) {
+        for (Iterator<String> it = this.supportedBrowser.iterator(); it.hasNext();) {
+            if (userAgent.contains(it.next()))
+                return true;
+        }
+        return false;
     }
 }
