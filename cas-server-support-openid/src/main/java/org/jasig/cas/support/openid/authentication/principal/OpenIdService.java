@@ -122,9 +122,9 @@ public final class OpenIdService extends AbstractWebApplicationService {
         final int prime = 31;
         int result = 1;
         result = prime * result
-            + ((identity == null) ? 0 : identity.hashCode());
+            + ((this.identity == null) ? 0 : this.identity.hashCode());
         result = prime * result
-            + ((signature == null) ? 0 : signature.hashCode());
+            + ((this.signature == null) ? 0 : this.signature.hashCode());
         return result;
     }
 
@@ -136,10 +136,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
         if (getClass() != obj.getClass())
             return false;
         final OpenIdService other = (OpenIdService) obj;
-        if (identity == null) {
+        if (this.identity == null) {
             if (other.identity != null)
                 return false;
-        } else if (!identity.equals(other.identity))
+        } else if (!this.identity.equals(other.identity))
             return false;
         return true;
     }

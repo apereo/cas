@@ -28,9 +28,9 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 public abstract class AbstractDistributedTicketRegistry extends
     AbstractTicketRegistry {
     
-    private static final Method[] SERVICE_TICKET_METHODS = new Method[2];
+    protected static final Method[] SERVICE_TICKET_METHODS = new Method[2];
     
-    private static final Method[] TICKET_GRANTING_TICKET_METHODS = new Method[2];
+    protected static final Method[] TICKET_GRANTING_TICKET_METHODS = new Method[2];
     
     protected final Log log = LogFactory.getLog(this.getClass());
     
