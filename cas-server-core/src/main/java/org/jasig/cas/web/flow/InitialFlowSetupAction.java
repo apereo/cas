@@ -15,6 +15,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -52,12 +53,12 @@ public final class InitialFlowSetupAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         if (!this.pathPopulated) {
-            logger.info("Setting ContextPath for cookies to: "
-                + context.getExternalContext().getContextPath());
-            this.warnCookieGenerator.setCookiePath(context.getExternalContext()
-                .getContextPath());
-            this.ticketGrantingTicketCookieGenerator.setCookiePath(context
-                .getExternalContext().getContextPath());
+            final String contextPath = context.getExternalContext().getContextPath();
+            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath : "/";
+            logger.info("Setting path for cookies to: "
+                + cookiePath);
+            this.warnCookieGenerator.setCookiePath(cookiePath);
+            this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
             this.pathPopulated = true;
         }
 
