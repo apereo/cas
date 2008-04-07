@@ -12,6 +12,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -42,15 +44,16 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     /** Cache of the starting Integer. */
     protected static final BigInteger ONE = BigInteger.valueOf(1);
 
+    private final Log log = LogFactory.getLog(getClass());
     /**
      * The array of maps of restricted IPs mapped to failures. (simulating
      * buckets)
      */
-    private Map<String,BigInteger>[] restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
+    private final Map<String,BigInteger>[] restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
 
     /** The threshold before we stop someone from authenticating. */
     private BigInteger failureThreshhold = DEFAULT_FAILURE_THRESHHOLD;
-
+    
     /** The failure timeout before we clean up one failure attempt. */
     int failureTimeout = DEFAULT_FAILURE_TIMEOUT;
     
@@ -68,26 +71,33 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
             || !"casLoginView".equals(modelAndView.getViewName())) {
             return;
         }
-
         final String remoteAddr = request.getRemoteAddr();
-        final String lastQuad = remoteAddr.substring(remoteAddr
-            .lastIndexOf(".") + 1);
-        final int intVersionOfLastQuad = Integer.parseInt(lastQuad);
-        final Map<String, BigInteger> quadMap = this.restrictedIpAddressMaps[intVersionOfLastQuad - 1];
 
-        synchronized (quadMap) {
-            final BigInteger original = quadMap.get(lastQuad);
-            BigInteger integer = ONE;
+        // workaround for the IPv6 bug in the original adapter. See CAS-639
+        try {
+            final String lastQuad = remoteAddr.substring(remoteAddr.lastIndexOf(".") + 1);
+            final int intVersionOfLastQuad = Integer.parseInt(lastQuad);
+            final Map<String, BigInteger> quadMap = this.restrictedIpAddressMaps[intVersionOfLastQuad - 1];
 
-            if (original != null) {
-                integer = original.add(ONE);
+            synchronized (quadMap) {
+                final BigInteger original = quadMap.get(lastQuad);
+                BigInteger integer = ONE;
+    
+                if (original != null) {
+                    integer = original.add(ONE);
+                }
+    
+                quadMap.put(lastQuad, integer);
+    
+                if (integer.compareTo(this.failureThreshhold) == 1) {
+                    log.warn("Possible hacking attack from " + remoteAddr + ". More than " + this.failureThreshhold + " failed login attempts within " + this.failureTimeout + " seconds.");
+                    modelAndView.setViewName("casFailureAuthenticationThreshhold");
+                }
             }
-
-            quadMap.put(lastQuad, integer);
-
-            if (integer.compareTo(this.failureThreshhold) == 1) {
-                modelAndView.setViewName("casFailureAuthenticationThreshhold");
-            }
+        } catch (NumberFormatException e) {
+            log.warn("Skipping ip-address blocking. Possible reason: IPv6 Address not supported: " + e.getMessage());
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
         }
     }
 
