@@ -62,6 +62,7 @@
 							><li><a href="${loginUrl}ja">Japanese</a></li
 							><li><a href="${loginUrl}hr">Croatian</a></li
 							><li><a href="${loginUrl}cs">Czech</a></li
+							><li><a href="${loginUrl}sl">Slovenian</a></li
 							><li class="last"><a href="${loginUrl}pl">Polish</a></li
 						></ul>
 	                </div>
