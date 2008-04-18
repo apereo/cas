@@ -7,6 +7,7 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         }
         
         if (ticket instanceof ServiceTicket) {
-            this.jpaTemplate.remove(ticket);
+            removeTicket(ticket);
             return true;
         }
         
@@ -82,6 +83,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     
     private void removeTicket(final Ticket ticket) {
         try {
+            if (log.isDebugEnabled()) {
+                final Date creationDate = new Date(ticket.getCreationTime());
+                log.debug("Removing Ticket >" + ticket.getId() + "< created: " + creationDate.toString());
+             }
             this.jpaTemplate.remove(ticket);
         } catch (final Exception e) {
             // ticket was probably removed via other means
