@@ -40,21 +40,21 @@ public class OpenIdPostUrlHandlerMappingTests extends TestCase {
         super.setUp();
     }
     
-    public void testNoMatch() {
+    public void testNoMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
         
         assertNull(this.handlerMapping.lookupHandler("/hello", request));
     }
     
-    public void testImproperMatch() {
+    public void testImproperMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
         
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
     
-    public void testProperMatchWrongMethod() {
+    public void testProperMatchWrongMethod() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("GET");
@@ -62,7 +62,7 @@ public class OpenIdPostUrlHandlerMappingTests extends TestCase {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
     
-    public void testProperMatchCorrectMethodNoParam() {
+    public void testProperMatchCorrectMethodNoParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");
@@ -70,7 +70,7 @@ public class OpenIdPostUrlHandlerMappingTests extends TestCase {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
     
-    public void testProperMatchCorrectMethodWithParam() {
+    public void testProperMatchCorrectMethodWithParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");
