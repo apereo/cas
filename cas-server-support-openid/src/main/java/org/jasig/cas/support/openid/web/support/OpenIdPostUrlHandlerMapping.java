@@ -19,7 +19,7 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
     @Override
-    protected Object lookupHandler(final String urlPath, final HttpServletRequest request) {
+    protected Object lookupHandler(final String urlPath, final HttpServletRequest request) throws Exception {
 
         if ("POST".equals(request.getMethod()) && "check_authentication".equals(request.getParameter("openid.mode"))) {
             return super.lookupHandler(urlPath, request);

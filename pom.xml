@@ -155,14 +155,14 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>2.5.1</version>
+			<version>2.5.4</version>
 			<scope>compile</scope>
 		</dependency>
 		
         <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>2.5.1</version>
+			<version>2.5.4</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -274,6 +274,7 @@
 		<module>cas-server-support-x509</module>
 		<module>cas-server-integration-jboss</module>
 		<module>cas-server-integration-berkeleydb</module>
+		<module>cas-server-integration-restlet</module>
 		<module>cas-server-webapp</module>
 	</modules>
 
