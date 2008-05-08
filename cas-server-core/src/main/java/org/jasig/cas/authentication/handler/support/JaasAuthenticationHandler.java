@@ -80,7 +80,6 @@ public class JaasAuthenticationHandler extends
                 log.debug("Authentication failed for: "
                     + credentials.getUsername());
             }
-            fle.printStackTrace();
             return false;
         }
 
