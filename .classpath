@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-core/src/main/resources"/>
-	<classpathentry kind="src" path="cas-server-support-openid/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-support-openid/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-support-spnego/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-support-spnego/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-support-ldap/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-integration-jboss/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-core/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="cas-server-core/src/main/resources" path="cas-server-core/src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="cas-server-core/src/test/resources" path="cas-server-core/src/test/resources"/>
 	<classpathentry kind="src" path="cas-server-support-generic/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-support-generic/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="cas-server-support-generic/src/test/resources" path="cas-server-support-generic/src/test/resources"/>
 	<classpathentry kind="src" path="cas-server-support-jdbc/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-ldap/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-support-ldap/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="cas-server-support-ldap/src/main/resources" path="cas-server-support-ldap/src/main/resources"/>
 	<classpathentry kind="src" path="cas-server-support-legacy/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-support-radius/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-support-trusted/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-support-x509/src/main/java"/>
-	<classpathentry kind="src" path="cas-server-core/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-core/src/test/resources"/>
-	<classpathentry kind="src" path="cas-server-integration-jboss/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-integration-jboss/src/test/resources"/>
-	<classpathentry kind="src" path="cas-server-support-generic/src/test/java"/>
-	<classpathentry kind="src" path="cas-server-support-generic/src/test/resources"/>
 	<classpathentry kind="src" path="cas-server-support-legacy/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-support-openid/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-support-openid/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-support-radius/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-support-spnego/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-support-spnego/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-support-trusted/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-trusted/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-support-x509/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-support-x509/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-integration-jboss/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-integration-jboss/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="cas-server-integration-jboss/src/test/resources" path="cas-server-integration-jboss/src/test/resources"/>
+	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-integration-berkeleydb/src/test/java"/>
+	<classpathentry kind="src" path="cas-server-integration-restlet/src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/modules"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -12,14 +12,30 @@
   <name>JA-SIG CAS Web Application</name>
   <dependencies>
   		<dependency>
-  			<groupId>org.acegisecurity</groupId>
-  			<artifactId>acegi-security</artifactId>
-  			<version>1.0.6</version>
+  			<groupId>org.springframework.security</groupId>
+  			<artifactId>spring-security-cas-client</artifactId>
+  			<version>2.0.1</version>
   			<scope>runtime</scope>
   			<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>
-					<artifactId>spring-remoting</artifactId>
+					<artifactId>spring-dao</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-tx</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-jdbc</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-dao</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
@@ -27,13 +43,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-  		
-  		<dependency>
-  			<groupId>cas</groupId>
-  			<artifactId>casclient</artifactId>
-  			<version>2.1.1</version>
-  			<scope>runtime</scope>
-  		</dependency>
+		
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-client-core</artifactId>
+			<version>3.1.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
   		
   		<dependency>
   			<groupId>org.springframework</groupId>

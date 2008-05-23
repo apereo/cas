@@ -3,97 +3,44 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
 
-	<bean id="serviceProperties" class="org.acegisecurity.ui.cas.ServiceProperties"
+	<sec:http entry-point-ref="casProcessingFilterEntryPoint">
+    	<sec:intercept-url pattern="/**" access="ROLE_ADMIN" />
+        <sec:logout logout-url="/services/logout.html" logout-success-url="/services/loggedOut.html" />
+    </sec:http>
+
+	<sec:authentication-manager alias="casAuthenticationManager"/>
+	
+	<bean id="serviceProperties" class="org.springframework.security.ui.cas.ServiceProperties"
 		p:service="${cas.securityContext.serviceProperties.service}"
 		p:sendRenew="false" />
-		
-	<bean id="casProcessingFilter" class="org.acegisecurity.ui.cas.CasProcessingFilter"
+      
+	<bean id="casProcessingFilter" class="org.springframework.security.ui.cas.CasProcessingFilter"
 		p:authenticationManager-ref="casAuthenticationManager"
 		p:authenticationFailureUrl="/authorizationFailure.jsp"
 		p:alwaysUseDefaultTargetUrl="true"
-		p:defaultTargetUrl="/services/manage.html"
-		
-		p:filterProcessesUrl="/services/j_acegi_cas_security_check" />
-		
-	<bean id="exceptionTranslationFilter" class="org.acegisecurity.ui.ExceptionTranslationFilter"
-		p:authenticationEntryPoint-ref="casProcessingFilterEntryPoint" />
+		p:filterProcessesUrl="/services/j_acegi_cas_security_check"
+		p:defaultTargetUrl="/services/manage.html">
+  		<sec:custom-filter after="CAS_PROCESSING_FILTER" />
+	</bean>
 
-	<bean id="casProcessingFilterEntryPoint" class="org.acegisecurity.ui.cas.CasProcessingFilterEntryPoint"
+	<bean id="casProcessingFilterEntryPoint" class="org.springframework.security.ui.cas.CasProcessingFilterEntryPoint"
 		p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
 		p:serviceProperties-ref="serviceProperties" />
 
-	<bean id="casAuthenticationManager" class="org.acegisecurity.providers.ProviderManager">
-		<property name="providers">
-		    <list>
-		      <ref bean="casAuthenticationProvider"/>
-		    </list>
-		</property>
-	</bean>
-
-	<bean id="casAuthenticationProvider" class="org.acegisecurity.providers.cas.CasAuthenticationProvider"
-		p:casAuthoritiesPopulator-ref="casAuthoritiesPopulator"
-		p:casProxyDecider-ref="casProxyDecider"
-		p:ticketValidator-ref="casProxyTicketValidator"
-		p:statelessTicketCache-ref="statelessTicketCache"
-		p:key="my_password_for_this_auth_provider_only" />
-
-	<bean id="casProxyTicketValidator" class="org.acegisecurity.providers.cas.ticketvalidator.CasProxyTicketValidator"
-		p:casValidate="${cas.securityContext.casProxyTicketValidator.casValidate}"
-	  	p:serviceProperties-ref="serviceProperties">
-	  	<property name="proxyCallbackUrl"><null /></property>
-	  </bean>
-
-	<bean id="statelessTicketCache" class="org.acegisecurity.providers.cas.cache.NullStatelessTicketCache" />
-
-	<bean id="casAuthoritiesPopulator" class="org.acegisecurity.providers.cas.populator.DaoCasAuthoritiesPopulator"
-		p:userDetailsService-ref="userDetailsService" />
-
-	<bean id="casProxyDecider" class="org.acegisecurity.providers.cas.proxy.RejectProxyTickets" />
-	
-	<bean id="accessDecisionManager" class="org.acegisecurity.vote.AffirmativeBased">
-		<property name="decisionVoters">
-			<list>
-				<bean class="org.acegisecurity.vote.RoleVoter" />
-			</list>
-		</property>
-	</bean>
-       
-	<bean id="filterInvocationInterceptor" class="org.acegisecurity.intercept.web.FilterSecurityInterceptor"
-		p:authenticationManager-ref="casAuthenticationManager"
-	  	p:accessDecisionManager-ref="accessDecisionManager">
-		<property name="objectDefinitionSource">
-		<value>
-			CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-			PATTERN_TYPE_APACHE_ANT
-	    	/**=ROLE_ADMIN
-	    </value>
-		</property>
-	</bean> 
-	
-	<bean id="filterChainProxy" class="org.acegisecurity.util.FilterChainProxy">
-		<property name="filterInvocationDefinitionSource">
-			<value>
-			CONVERT_URL_TO_LOWERCASE_BEFORE_COMPARISON
-			PATTERN_TYPE_APACHE_ANT
-			/**/loggedout.html=#NONE#
-			/**=httpSessionContextIntegrationFilter,logoutFilter,casProcessingFilter,exceptionTranslationFilter,filterInvocationInterceptor
-    		</value>
-		</property>
-	</bean>
-	
-	<bean id="httpSessionContextIntegrationFilter" class="org.acegisecurity.context.HttpSessionContextIntegrationFilter" />
-	
-	<bean id="logoutFilter" class="org.acegisecurity.ui.logout.LogoutFilter" 
-		p:filterProcessesUrl="/services/logout.html">
-		<constructor-arg index="0" value="/services/loggedOut.html" />
-		<constructor-arg index="1">
-			<list>
-				<bean class="org.acegisecurity.ui.logout.SecurityContextLogoutHandler"
-					p:invalidateHttpSession="true" />
-			</list>
-		</constructor-arg>
+	<bean id="casAuthenticationProvider" class="org.springframework.security.providers.cas.CasAuthenticationProvider"
+		p:key="my_password_for_this_auth_provider_only"
+		p:serviceProperties-ref="serviceProperties"
+		p:userDetailsService-ref="userDetailsService">
+	    <sec:custom-authentication-provider />
+	    <property name="ticketValidator">
+	      <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+	        <constructor-arg index="0" value="${cas.securityContext.ticketValidator.casServerUrlPrefix}" />
+	        </bean>
+	    </property>
 	</bean>
 </beans>

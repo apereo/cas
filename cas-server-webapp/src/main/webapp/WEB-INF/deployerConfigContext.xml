@@ -105,7 +105,7 @@
 	
 	where battags is the username you want to grant access to.  You can put one entry per line.
 	 -->	
-	<bean id="userDetailsService" class="org.acegisecurity.userdetails.memory.InMemoryDaoImpl">
+	<bean id="userDetailsService" class="org.springframework.security.userdetails.memory.InMemoryDaoImpl">
 		<property name="userMap">
 			<value>
 			
