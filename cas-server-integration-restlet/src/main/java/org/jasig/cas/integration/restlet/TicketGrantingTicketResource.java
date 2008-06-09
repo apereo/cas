@@ -16,7 +16,9 @@ import org.restlet.data.Status;
 import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * Implementation of a Restlet resource for creating Service Tickets from a 
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 3.2.2
  *
  */
+@Configurable(preConstruction = true, autowire = Autowire.BY_TYPE)
 public final class TicketGrantingTicketResource extends Resource {
     
     @Autowired

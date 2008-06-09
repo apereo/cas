@@ -20,7 +20,9 @@ import org.restlet.data.Status;
 import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.WebRequest;
@@ -33,6 +35,7 @@ import org.springframework.web.context.request.WebRequest;
  * @since 3.2.2
  * 
  */
+@Configurable(preConstruction = true, autowire = Autowire.BY_TYPE)
 public class TicketResource extends Resource {
     
     @Autowired
