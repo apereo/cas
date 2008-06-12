@@ -49,7 +49,7 @@ public abstract class AbstractAuthentication implements Authentication {
         Authentication a = (Authentication) o;
 
         return this.principal.equals(a.getPrincipal())
-            && this.getAuthenticatedDate().equals(a.getAuthenticatedDate());
+            && this.getAuthenticatedDate().equals(a.getAuthenticatedDate()) && this.attributes.equals(a.getAttributes());
     }
 
     public final int hashCode() {

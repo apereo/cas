@@ -202,14 +202,11 @@ public final class CentralAuthenticationServiceImpl implements
 
         if (credentials != null) {
             try {
-                Authentication authentication = this.authenticationManager
+                final Authentication authentication = this.authenticationManager
                     .authenticate(credentials);
+                final Authentication originalAuthentication = ticketGrantingTicket.getAuthentication();
 
-                final Principal originalPrincipal = ticketGrantingTicket
-                    .getAuthentication().getPrincipal();
-                final Principal newPrincipal = authentication.getPrincipal();
-
-                if (!newPrincipal.equals(originalPrincipal)) {
+                if (!(authentication.getPrincipal().equals(originalAuthentication.getPrincipal()) && authentication.getAttributes().equals(originalAuthentication.getAttributes()))) {
                     throw new TicketCreationException();
                 }
             } catch (final AuthenticationException e) {
