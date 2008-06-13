@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
+import java.util.Locale;
+
+import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
 
@@ -20,13 +23,31 @@ import org.jasig.cas.authentication.principal.Credentials;
  */
 public final class SpnegoCredentialsToPrincipalResolver extends
     AbstractPersonDirectoryCredentialsToPrincipalResolver {
+    
+    public static enum Transform {NONE, UPPERCASE, LOWERCASE}
+    
+    @NotNull
+    private Transform transformPrincipalId = Transform.NONE; 
 
     protected String extractPrincipalId(final Credentials credentials) {
-        return ((SpnegoCredentials) credentials).getPrincipal().getId();
+        final SpnegoCredentials c = (SpnegoCredentials) credentials;
+        
+        switch (this.transformPrincipalId) {
+            case UPPERCASE:
+                return c.getPrincipal().getId().toUpperCase(Locale.ENGLISH);
+            case LOWERCASE:
+                return c.getPrincipal().getId().toLowerCase(Locale.ENGLISH);
+            default:
+                return c.getPrincipal().getId();
+        }
     }
 
     public boolean supports(final Credentials credentials) {
         return credentials != null
             && SpnegoCredentials.class.equals(credentials.getClass());
+    }
+    
+    public void setTransformPrincipalId(final Transform transform) {
+        this.transformPrincipalId = transform;
     }
 }
