@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.AbstractTicket;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -32,6 +33,8 @@ public abstract class AbstractDistributedTicketRegistry extends
     
     protected static final Method[] TICKET_GRANTING_TICKET_METHODS = new Method[2];
     
+    protected static final Method ABSTRACT_GT_METHOD;
+    
     protected final Log log = LogFactory.getLog(this.getClass());
     
     static {
@@ -44,6 +47,8 @@ public abstract class AbstractDistributedTicketRegistry extends
             
             TICKET_GRANTING_TICKET_METHODS[0] = TicketGrantingTicket.class.getMethod("expire", (Class<?>[]) null);
             TICKET_GRANTING_TICKET_METHODS[1] = TicketGrantingTicket.class.getMethod("grantServiceTicket", new Class<?>[] {String.class, Service.class,ExpirationPolicy.class, boolean.class});
+            
+            ABSTRACT_GT_METHOD = AbstractTicket.class.getMethod("getGrantingTicket", (Class<?>[]) null);
 
         } catch (final NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -87,6 +92,20 @@ public abstract class AbstractDistributedTicketRegistry extends
         public Object invoke(final Object proxy, final Method m,
             final Object[] args) throws Throwable {
             final Object result = m.invoke(this.ticket, args);
+            
+            if (ABSTRACT_GT_METHOD.equals(m)) {
+                if (result == null) {
+                    return null;
+                }
+                final Ticket oldTicket = (Ticket) result;
+                final Ticket t = this.ticketRegistry.getTicket(oldTicket.getId());
+                
+                if (t != null) {
+                    return ProxiedTicket.newInstance(t, this.ticketRegistry);
+                }
+                
+                return null;
+            }
             
             for (final Method method : this.methods) {
                 if (method.equals(m)) {
