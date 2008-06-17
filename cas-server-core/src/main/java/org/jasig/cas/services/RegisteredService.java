@@ -32,6 +32,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      * information such as user id.
      */
     boolean isAnonymousAccess();
+    
+    /**
+     * Sets whether we should bother to read the attribute list or not.
+     * 
+     * @return true if we should read it, false otherwise.
+     */
+    boolean isIgnoreAttributes();
 
     /**
      * Returns the list of allowed attributes.
