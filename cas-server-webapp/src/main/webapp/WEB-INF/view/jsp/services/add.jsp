@@ -71,6 +71,11 @@
 		<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</span>
+		
+				<span class="oneChoice">
+					<form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
+					<label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
+				</span>
 		</div>
 	</fieldset>
 	<div class="actions">

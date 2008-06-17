@@ -55,6 +55,8 @@ public class RegisteredServiceImpl implements RegisteredService {
     private boolean ssoEnabled = true;
 
     private boolean anonymousAccess = false;
+    
+    private boolean ignoreAttributes = false;
 
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
@@ -197,6 +199,14 @@ public class RegisteredServiceImpl implements RegisteredService {
     public void setTheme(final String theme) {
         this.theme = theme;
     }
+    
+    public boolean isIgnoreAttributes() {
+        return this.ignoreAttributes;
+    }
+    
+    public void setIgnoreAttributes(final boolean ignoreAttributes) {
+        this.ignoreAttributes = ignoreAttributes;
+    }
 
     public Object clone() throws CloneNotSupportedException {
         final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
@@ -211,6 +221,7 @@ public class RegisteredServiceImpl implements RegisteredService {
         registeredServiceImpl.setSsoEnabled(this.ssoEnabled);
         registeredServiceImpl.setTheme(this.theme);
         registeredServiceImpl.setAnonymousAccess(this.anonymousAccess);
+        registeredServiceImpl.setIgnoreAttributes(this.ignoreAttributes);
 
         return registeredServiceImpl;
     }

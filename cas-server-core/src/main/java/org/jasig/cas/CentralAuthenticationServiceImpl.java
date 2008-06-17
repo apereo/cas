@@ -351,26 +351,35 @@ public final class CentralAuthenticationServiceImpl implements
             final String principalId = registeredService.isAnonymousAccess()
                 ? this.persistentIdGenerator.generate(principal, serviceTicket
                     .getService()) : principal.getId();
-            final Map<String, Object> attributes = new HashMap<String, Object>();
-
-            for (final String attribute : registeredService
-                .getAllowedAttributes()) {
-                final Object value = principal.getAttributes().get(
-                    attribute);
-
-                if (value != null) {
-                    attributes.put(attribute, value);
+                
+            final Authentication authToUse;
+            
+            if (!registeredService.isIgnoreAttributes()) {
+                final Map<String, Object> attributes = new HashMap<String, Object>();
+    
+                for (final String attribute : registeredService
+                    .getAllowedAttributes()) {
+                    final Object value = principal.getAttributes().get(
+                        attribute);
+    
+                    if (value != null) {
+                        attributes.put(attribute, value);
+                    }
                 }
-            }
 
-            final Principal modifiedPrincipal = new SimplePrincipal(
-                principalId, attributes);
-            final MutableAuthentication mutableAuthentication = new MutableAuthentication(
-                modifiedPrincipal, authentication.getAuthenticatedDate());
-            mutableAuthentication.getAttributes().putAll(
-                authentication.getAttributes());
-            mutableAuthentication.getAuthenticatedDate().setTime(
-                authentication.getAuthenticatedDate().getTime());
+                final Principal modifiedPrincipal = new SimplePrincipal(
+                    principalId, attributes);
+                final MutableAuthentication mutableAuthentication = new MutableAuthentication(
+                    modifiedPrincipal, authentication.getAuthenticatedDate());
+                mutableAuthentication.getAttributes().putAll(
+                    authentication.getAttributes());
+                mutableAuthentication.getAuthenticatedDate().setTime(
+                    authentication.getAuthenticatedDate().getTime());
+                authToUse = mutableAuthentication;
+            } else {
+                authToUse = authentication;
+            }
+            
 
             final List<Authentication> authentications = new ArrayList<Authentication>();
 
@@ -378,7 +387,7 @@ public final class CentralAuthenticationServiceImpl implements
                 authentications.add(serviceTicket.getGrantingTicket()
                     .getChainedAuthentications().get(i));
             }
-            authentications.add(mutableAuthentication);
+            authentications.add(authToUse);
 
             return new ImmutableAssertionImpl(authentications, serviceTicket
                 .getService(), serviceTicket.isFromNewLogin());

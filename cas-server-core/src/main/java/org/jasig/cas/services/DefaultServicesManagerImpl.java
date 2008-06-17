@@ -136,6 +136,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         r.setSsoEnabled(true);
         r.setAllowedAttributes(attributes);
         
+        if (attributes == null || attributes.length == 0) {
+            r.setIgnoreAttributes(true);
+        }
+
         return r;
     }
 }
