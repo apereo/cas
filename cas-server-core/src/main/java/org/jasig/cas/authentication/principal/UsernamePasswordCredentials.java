@@ -56,7 +56,7 @@ public class UsernamePasswordCredentials implements Credentials {
     }
 
     public String toString() {
-        return this.username;
+        return "[username: " + this.username + "]";
     }
 
     public boolean equals(final Object obj) {

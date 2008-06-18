@@ -55,7 +55,7 @@ public class HttpBasedServiceCredentials implements Credentials {
      * provided. i.e. this caches the value of URL.toExternalForm()
      */
     public final String toString() {
-        return this.callbackUrlAsString;
+        return "[callbackUrl: " + this.callbackUrlAsString + "]";
     }
 
     public int hashCode() {

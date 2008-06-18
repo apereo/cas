@@ -30,4 +30,8 @@ public final class RemoteAddressCredentials implements Credentials {
     public String getRemoteAddress() {
         return this.remoteAddress;
     }
+    
+    public String toString() {
+        return "[remote IP Address: " + this.remoteAddress + "]";
+    }
 }
