@@ -47,6 +47,6 @@ public final class PrincipalBearingCredentials implements Credentials {
     }
 
     public String toString() {
-        return this.principal.toString();
+        return "[trusted Principal Name: " + this.principal.toString() + "]";
     }
 }

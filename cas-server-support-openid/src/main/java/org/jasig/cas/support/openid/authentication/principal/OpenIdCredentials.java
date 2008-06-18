@@ -38,4 +38,8 @@ public final class OpenIdCredentials implements Credentials {
         return this.username;
     }
     
+    public String toString() {
+        return "username: " + this.username;
+    }
+    
 }
