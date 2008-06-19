@@ -93,29 +93,31 @@ public class Saml10SuccessResponseView extends AbstractCasView {
             samlAuthenticationStatement
                 .setSubject(getSamlSubject(authentication));
 
-            final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
-
-            attributeStatement.setSubject(getSamlSubject(authentication));
-            samlAssertion.addStatement(attributeStatement);
-
-            for (final String key : authentication.getPrincipal()
-                .getAttributes().keySet()) {
-                final Object value = authentication.getPrincipal()
-                    .getAttributes().get(key);
-
-                final SAMLAttribute attribute = new SAMLAttribute();
-                attribute.setName(key);
-                attribute.setNamespace(NAMESPACE);
-
-                if (value instanceof Collection) {
-                    attribute.setValues((Collection) value);
-                } else {
-                    final Collection<Object> c = new ArrayList<Object>();
-                    c.add(value);
-                    attribute.setValues(c);
+            if (!authentication.getPrincipal().getAttributes().isEmpty()) {
+                final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
+    
+                attributeStatement.setSubject(getSamlSubject(authentication));
+                samlAssertion.addStatement(attributeStatement);
+    
+                for (final String key : authentication.getPrincipal()
+                    .getAttributes().keySet()) {
+                    final Object value = authentication.getPrincipal()
+                        .getAttributes().get(key);
+    
+                    final SAMLAttribute attribute = new SAMLAttribute();
+                    attribute.setName(key);
+                    attribute.setNamespace(NAMESPACE);
+    
+                    if (value instanceof Collection) {
+                        attribute.setValues((Collection) value);
+                    } else {
+                        final Collection<Object> c = new ArrayList<Object>();
+                        c.add(value);
+                        attribute.setValues(c);
+                    }
+    
+                    attributeStatement.addAttribute(attribute);
                 }
-
-                attributeStatement.addAttribute(attribute);
             }
 
             samlAssertion.addStatement(samlAuthenticationStatement);
