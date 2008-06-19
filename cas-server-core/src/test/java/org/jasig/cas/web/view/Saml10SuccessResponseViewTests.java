@@ -74,8 +74,32 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         assertTrue(written.contains("tac2"));
         assertTrue(written.contains(SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client));
         assertTrue(written.contains("AuthenticationMethod"));
+    }
+    
+    public void testResponseWithNoAttributes() throws Exception {
+        final Map<String, Object> model = new HashMap<String, Object>();
         
+        final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
         
+        final MutableAuthentication authentication = new MutableAuthentication(principal);
+        authentication.getAttributes().put("samlAuthenticationStatement::authMethod", SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client);
+        authentication.getAttributes().put("testSamlAttribute", "value");
+        
+        final List<Authentication> authentications = new ArrayList<Authentication>();
+        authentications.add(authentication);
+        
+        final Assertion assertion = new ImmutableAssertionImpl(authentications, TestUtils.getService(), true);
+        
+        model.put("assertion", assertion);
+        
+        final MockWriterHttpMockHttpServletResponse servletResponse = new MockWriterHttpMockHttpServletResponse();
+        
+        this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
+        final String written = servletResponse.getWrittenValue();
+        
+        assertTrue(written.contains("testPrincipal"));
+        assertTrue(written.contains(SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client));
+        assertTrue(written.contains("AuthenticationMethod"));
     }
     
     public void testResponseWithoutAuthMethod() throws Exception {
@@ -98,8 +122,6 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
         final String written = servletResponse.getWrittenValue();
         
-        System.out.println(written);
-        
         assertTrue(written.contains("testPrincipal"));
         assertTrue(written.contains("testAttribute"));
         assertTrue(written.contains("testValue"));
@@ -109,7 +131,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
     public void testException() {
         this.response.setIssuer(null);
         
-final Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<String, Object>();
         
         final Map<String, Object> attributes = new HashMap<String, Object>();
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
