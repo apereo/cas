@@ -13,9 +13,9 @@ import java.util.Set;
 
 import org.jasig.cas.ticket.Ticket;
 import org.inspektr.common.ioc.annotation.NotNull;
+import org.jboss.cache.Cache;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.Node;
-import org.jboss.cache.TreeCache;
 
 /**
  * Implementation of TicketRegistry that is backed by a JBoss TreeCache.
@@ -32,7 +32,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
 
     /** Instance of JBoss TreeCache. */
     @NotNull
-    private TreeCache cache;
+    private Cache<String, Ticket> cache;
     
     
     
@@ -78,7 +78,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             if (log.isDebugEnabled()){
                 log.debug("Retrieving ticket from registry for: " + ticketId);
             }
-            return getProxiedTicketInstance((Ticket) this.cache.get(FQN_TICKET, ticketId));
+            return getProxiedTicketInstance(this.cache.get(FQN_TICKET, ticketId));
         } catch (final CacheException e) {
             log.error(e, e);
             return null;
@@ -87,17 +87,17 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
 
     public Collection<Ticket> getTickets() {
         try {
-            final Node node = this.cache.get(FQN_TICKET);
+            final Node<String, Ticket> node = this.cache.getNode(FQN_TICKET);
 
             if (node == null) {
                 return Collections.emptyList();
             }
             
-            final Set<Object> keys = node.getDataKeys();
+            final Set<String> keys = node.getKeys();
             final List<Ticket> list = new ArrayList<Ticket>();
 
-            for (final Object key : keys) {
-                list.add((Ticket) node.get(key));
+            for (final String key : keys) {
+                list.add(node.get(key));
             }
 
             return list;
@@ -106,7 +106,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
         }
     }
 
-    public void setCache(final TreeCache cache) {
+    public void setCache(final Cache<String, Ticket> cache) {
         this.cache = cache;
     }
 }

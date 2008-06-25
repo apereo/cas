@@ -19,7 +19,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jboss.cache.TreeCache;
+import org.jboss.cache.Cache;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -39,7 +39,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
 
     private JBossCacheTicketRegistry registry;
     
-    private TreeCache treeCache;
+    private Cache<String, Ticket> treeCache;
     
     private static final int TICKETS_IN_REGISTRY = 10;
 
@@ -64,8 +64,8 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         this.registry = (JBossCacheTicketRegistry) context
             .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
 
-        this.treeCache = (TreeCache) context.getBean("cache");
-        this.treeCache.removeData("/ticket");
+        this.treeCache = (Cache<String, Ticket>) context.getBean("cache");
+        this.treeCache.removeNode("/ticket");
         
         return this.registry;
     }
