@@ -7,10 +7,13 @@ package org.jasig.cas.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.cache.PropertyConfigurator;
-import org.jboss.cache.TreeCache;
+import org.jasig.cas.ticket.Ticket;
+import org.jboss.cache.Cache;
+import org.jboss.cache.CacheFactory;
+import org.jboss.cache.DefaultCacheFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 
@@ -21,41 +24,38 @@ import org.springframework.core.io.Resource;
  * @since 3.0.5
  *
  */
-public final class JBossCacheFactoryBean implements FactoryBean, DisposableBean {
+public final class JBossCacheFactoryBean implements FactoryBean, InitializingBean, DisposableBean {
     
-    private Log log = LogFactory.getLog(this.getClass());
+    private final Log log = LogFactory.getLog(this.getClass());
     
-    private TreeCache cache = new TreeCache();
+    private Cache<String, Ticket> cache;
     
-    public JBossCacheFactoryBean() throws Exception {
-        // nothing to do
-    }
+    private Resource configLocation;
 
     public Object getObject() throws Exception {
         return this.cache;
     }
 
-    public Class<TreeCache> getObjectType() {
-        return TreeCache.class;
+    public Class<Cache> getObjectType() {
+        return Cache.class;
     }
 
     public boolean isSingleton() {
         return true;
     }
 
+    public void afterPropertiesSet() throws Exception {
+        final CacheFactory<String, Ticket> cf = new DefaultCacheFactory<String, Ticket>();
+        this.cache = cf.createCache(this.configLocation.getInputStream());
+    }
+
     @Required
     public void setConfigLocation(final Resource configLocation) {
-        try {
-            new PropertyConfigurator().configure(this.cache, configLocation.getInputStream());
-            log.info("Starting TreeCache service.");
-            this.cache.startService();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.configLocation = configLocation;
     }
 
     public void destroy() throws Exception {
         log.info("Shutting down TreeCache service.");
-        this.cache.stopService();
+        this.cache.destroy();
     }
 }
