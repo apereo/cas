@@ -13,6 +13,7 @@
 	    <style type="text/css" media="screen">@import 'css/cas.css'/**/;</style>
 	    <!--[if gte IE 6]><style type="text/css" media="screen">@import 'css/ie_cas.css';</style><![endif]-->
 	    <script type="text/javascript" src="js/common_rosters.js"></script>
+	    <link rel="icon" href="<%= request.getContextPath() %>/favicon.ico" type="image/x-icon" />
 	</head>
 
 	<body id="cas" onload="init();">
