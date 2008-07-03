@@ -32,14 +32,23 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
         this.users.put("scott", "rutgers");
         this.users.put("dima", "javarules");
         this.users.put("bill", "thisisAwesoME");
+        this.users.put("brian", "tést");
 
         this.authenticationHandler = new AcceptUsersAuthenticationHandler();
 
         this.authenticationHandler.setUsers(this.users);
     }
+    
+    public void testSupportsSpecialCharacters() throws Exception {
+        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        c.setUsername("brian");
+        c.setPassword("tést");
+        assertTrue(this.authenticationHandler.authenticate(c));
+
+    }
 
     public void testSupportsProperUserCredentials() throws Exception {
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
