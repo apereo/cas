@@ -21,7 +21,7 @@
         <!--
         Configure the TransactionManager
     -->
-        <attribute name="TransactionManagerLookupClass">org.jboss.cache.DummyTransactionManagerLookup</attribute>
+        <attribute name="TransactionManagerLookupClass">org.jboss.cache.transaction.DummyTransactionManagerLookup</attribute>
 
         <!--
             Isolation level : SERIALIZABLE
