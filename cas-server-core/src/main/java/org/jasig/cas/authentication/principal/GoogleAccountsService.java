@@ -65,10 +65,15 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         + "<NameID Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress\">"
         + "<USERNAME_STRING>"
         + "</NameID>"
-        + "<SubjectConfirmation Method=\"urn:oasis:names:tc:SAML:2.0:cm:bearer\"/>"
+        + "<SubjectConfirmation Method=\"urn:oasis:names:tc:SAML:2.0:cm:bearer\">"
+        + "<SubjectConfirmationData Recipient=\"<ACS_URL>\" NotOnOrAfter=\"<NOT_ON_OR_AFTER>\" InResponseTo=\"<REQUEST_ID>\" />"
+        + "</SubjectConfirmation>"
         + "</Subject>"
         + "<Conditions NotBefore=\"2003-04-17T00:46:02Z\""
         + " NotOnOrAfter=\"<NOT_ON_OR_AFTER>\">"
+        + "<AudienceRestriction>"
+        + "<Audience><ACS_URL></Audience>"
+        + "</AudienceRestriction>"
         + "</Conditions>"
         + "<AuthnStatement AuthnInstant=\"<AUTHN_INSTANT>\">"
         + "<AuthnContext>"
@@ -84,19 +89,22 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     private final PublicKey publicKey;
 
     private final PrivateKey privateKey;
+    
+    private final String requestId;
 
-    protected GoogleAccountsService(final String id, final String relayState,
+    protected GoogleAccountsService(final String id, final String relayState, final String requestId,
         final PrivateKey privateKey, final PublicKey publicKey) {
-        this(id, id, null, relayState, privateKey, publicKey);
+        this(id, id, null, relayState, requestId, privateKey, publicKey);
     }
 
     protected GoogleAccountsService(final String id, final String originalUrl,
-        final String artifactId, final String relayState,
+        final String artifactId, final String relayState, final String requestId,
         final PrivateKey privateKey, final PublicKey publicKey) {
         super(id, originalUrl, artifactId, null);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
+        this.requestId = requestId;
     }
 
     public static GoogleAccountsService createServiceFrom(
@@ -118,10 +126,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             return null;
         }
 
-        final String assertionConsumerServiceUrl = document.getRootElement().getAttribute("AssertionConsumerServiceURL").getValue();
+        final String assertionConsumerServiceUrl = document.getRootElement().getAttributeValue("AssertionConsumerServiceURL");
+        final String requestId = document.getRootElement().getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
-            relayState, privateKey, publicKey);
+            relayState, requestId, privateKey, publicKey);
     }
 
     public Response getResponse(final String ticketId) {
@@ -158,9 +167,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             .getCurrentDateAndTime());
         samlResponse = samlResponse.replace("<AUTHN_INSTANT>", SamlUtils
             .getCurrentDateAndTime());
-        samlResponse = samlResponse.replace("<NOT_ON_OR_AFTER>", SamlUtils
+        samlResponse = samlResponse.replaceAll("<NOT_ON_OR_AFTER>", SamlUtils
             .getFormattedDateAndTime(c.getTime()));
         samlResponse = samlResponse.replace("<ASSERTION_ID>", createID());
+        samlResponse = samlResponse.replaceAll("<ACS_URL>", getId());
+        samlResponse = samlResponse.replace("<REQUEST_ID>", this.requestId);
 
         return samlResponse;
     }
