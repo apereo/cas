@@ -13,7 +13,7 @@
 			--%>
 			<c:if test="${not empty param['url']}">
 			<p>
-				<spring:message code="screen.logout.redirect" arguments="${param['url']}" />
+				<spring:message code="screen.logout.redirect" arguments="${fn:escapeXml(param.url)}" />
 			</p>
 			</c:if>
 		</div>
