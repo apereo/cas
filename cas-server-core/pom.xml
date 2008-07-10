@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>3.3.1.ga</version>
+      <version>3.3.2.GA</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -55,13 +55,13 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
-      <version>3.3.0.ga</version>
+      <version>3.3.1.GA</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
-      <version>3.2.4.sp1</version>
+      <version>3.2.5.ga</version>
       <scope>test</scope>
     </dependency>
     <dependency>
