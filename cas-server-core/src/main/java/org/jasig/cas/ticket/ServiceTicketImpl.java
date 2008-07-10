@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.ticket;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
@@ -31,8 +29,8 @@ import org.springframework.util.Assert;
 public final class ServiceTicketImpl extends AbstractTicket implements
     ServiceTicket {
 
-    /** Unique ID for serializing. */
-    private static final long serialVersionUID = 1296808733190507408L;
+    /** Unique Id for serialization. */
+    private static final long serialVersionUID = -4223319704861765405L;
 
     /** The service this ticket is valid for. */
     @Lob
@@ -44,7 +42,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     private boolean fromNewLogin;
 
     @Column(name="TICKET_ALREADY_GRANTED",nullable=false)
-    private AtomicBoolean grantedTicketAlready = new AtomicBoolean(false);
+    private Boolean grantedTicketAlready = false;
     
     public ServiceTicketImpl() {
         // exists for JPA purposes
@@ -91,9 +89,12 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     public TicketGrantingTicket grantTicketGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
-        if (this.grantedTicketAlready.getAndSet(true)) {
-            throw new IllegalStateException(
-                "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
+        synchronized (this) {
+            if(this.grantedTicketAlready) {
+                throw new IllegalStateException(
+                    "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
+            }
+            this.grantedTicketAlready = true;
         }
 
         return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),

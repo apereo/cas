@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,8 +36,8 @@ import org.springframework.util.Assert;
 public final class TicketGrantingTicketImpl extends AbstractTicket implements
     TicketGrantingTicket {
 
-    /** The Unique ID for serializing. */
-    private static final long serialVersionUID = -8673232562725683059L;
+    /** Unique Id for serialization. */
+    private static final long serialVersionUID = -5197946718924166491L;
 
     /** The authenticated object for which this ticket was generated for. */
 
@@ -48,7 +47,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
 
     /** Flag to enforce manual expiration. */
     @Column(name="EXPIRED", nullable=false)
-    private AtomicBoolean expired = new AtomicBoolean(false);
+    private Boolean expired = false;
     
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
@@ -122,12 +121,12 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     }
 
     public synchronized void expire() {
-        this.expired.set(true);
+        this.expired = true;
         logOutOfServices();
     }
 
     public boolean isExpiredInternal() {
-        return this.expired.get();
+        return this.expired;
     }
 
     public List<Authentication> getChainedAuthentications() {
