@@ -9,20 +9,19 @@ import java.security.Principal;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.restlet.Context;
+import org.restlet.data.Form;
 import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.restlet.data.Status;
 import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.WebRequest;
@@ -35,16 +34,13 @@ import org.springframework.web.context.request.WebRequest;
  * @since 3.2.2
  * 
  */
-@Configurable(preConstruction = true, autowire = Autowire.BY_TYPE)
 public class TicketResource extends Resource {
     
+    private static final Log log = LogFactory.getLog(TicketResource.class);
+
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
     
-    public TicketResource(final Context context, final Request request, final Response response) {
-        super(context, request, response);
-    }
-
     public final boolean allowGet() {
         return false;
     }
@@ -53,13 +49,16 @@ public class TicketResource extends Resource {
         return true;
     }
 
-    @Override
     public final void acceptRepresentation(final Representation entity)
         throws ResourceException {
-        super.acceptRepresentation(entity);
+        log.debug("Obtaining credentials...");
+     
+        System.out.println(getRequest().getEntityAsForm().toString());
+        
         final Credentials c = obtainCredentials();
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
+            System.out.println(ticketGrantingTicketId);
             getResponse().setStatus(Status.SUCCESS_CREATED);
             getResponse().setLocationRef(ticketGrantingTicketId);
         } catch (final TicketException e) {
@@ -70,17 +69,26 @@ public class TicketResource extends Resource {
     protected Credentials obtainCredentials() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
+        final RestletWebRequest webRequest = new RestletWebRequest(getRequest());
         
-        binder.bind(new RestletWebRequest(getRequest()));
+        if (log.isDebugEnabled()) {
+            log.debug(getRequest().getEntityAsForm().toString());
+            log.debug("Username from RestletWebRequest: " + webRequest.getParameter("username"));
+        }
+        
+        binder.bind(webRequest);
         
         return c;
     }
     
     protected class RestletWebRequest implements WebRequest {
         
+        private final Form form;
+        
         private final Request request;
         
         public RestletWebRequest(final Request request) {
+            this.form = getRequest().getEntityAsForm();
             this.request = request;
         }
 
@@ -101,25 +109,15 @@ public class TicketResource extends Resource {
         }
 
         public String getParameter(String paramName) {
-            return (String) this.request.getAttributes().get(paramName);
+            return this.form.getFirstValue(paramName);
         }
 
         public Map getParameterMap() {
-            return this.request.getAttributes();
+            return this.form.getValuesMap();
         }
 
         public String[] getParameterValues(String paramName) {
-            final Object o = this.request.getAttributes().get(paramName);
-            
-            if (o instanceof String) {
-                return new String[] {(String) o};
-            }
-            
-            if (o instanceof String[]) {
-                return (String[]) o;
-            }
-            
-            return null;
+            return this.form.getValuesArray(paramName);
         }
 
         public String getRemoteUser() {
