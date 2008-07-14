@@ -7,6 +7,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">
+	<description>
+		This is the configuration file for the Spring Security configuration used with the services management tool.  You shouldn't
+		have to modify anything in this file directly.  The configuration options should all be in the cas.properties file.
+	</description>
 
 	<sec:http entry-point-ref="casProcessingFilterEntryPoint">
     	<sec:intercept-url pattern="/**" access="ROLE_ADMIN" />

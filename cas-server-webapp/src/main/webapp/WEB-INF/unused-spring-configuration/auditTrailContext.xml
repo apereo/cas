@@ -5,6 +5,11 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+	<description>
+	Configuration file for the Inspektr package which handles auditing and statistics for Java applications.  If enabled this should be modified
+	to log audit and statistics information the same way your local applications do.  The default is currently to log to the console which 
+	is good for debugging/testing purposes.
+	</description>
 
 	<aop:aspectj-autoproxy/> 
 	

@@ -5,6 +5,10 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+	<description>
+		Argument Extractors are what are used to translate HTTP requests into requests of the appropriate protocol (i.e. CAS, SAML, SAML2,
+		OpenId, etc.).  By default CAS and SAML are enabled.
+	</description>
  	<bean
  		id="casArgumentExtractor"
  		class="org.jasig.cas.web.support.CasArgumentExtractor" />
