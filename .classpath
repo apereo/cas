@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="cas-server-core/src/main/java"/>
+	<classpathentry kind="src" path="cas-server-integration-memcached/src/main/java"/>
 	<classpathentry kind="src" path="cas-server-core/src/test/java"/>
 	<classpathentry excluding="**" kind="src" output="cas-server-core/src/main/resources" path="cas-server-core/src/main/resources"/>
 	<classpathentry excluding="**" kind="src" output="cas-server-core/src/test/resources" path="cas-server-core/src/test/resources"/>
