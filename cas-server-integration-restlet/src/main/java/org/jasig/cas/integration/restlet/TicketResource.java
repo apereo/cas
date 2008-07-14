@@ -31,7 +31,7 @@ import org.springframework.web.context.request.WebRequest;
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @since 3.2.2
+ * @since 3.3
  * 
  */
 public class TicketResource extends Resource {
@@ -51,10 +51,11 @@ public class TicketResource extends Resource {
 
     public final void acceptRepresentation(final Representation entity)
         throws ResourceException {
-        log.debug("Obtaining credentials...");
+        if (log.isDebugEnabled()) {
+            log.debug("Obtaining credentials...");
+            log.debug(getRequest().getEntityAsForm().toString());
+        }
      
-        System.out.println(getRequest().getEntityAsForm().toString());
-        
         final Credentials c = obtainCredentials();
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
@@ -62,6 +63,7 @@ public class TicketResource extends Resource {
             getResponse().setStatus(Status.SUCCESS_CREATED);
             getResponse().setLocationRef(ticketGrantingTicketId);
         } catch (final TicketException e) {
+            log.error(e,e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         }
     }
@@ -164,6 +166,5 @@ public class TicketResource extends Resource {
         public void setAttribute(String name, Object value, int scope) {
             // nothing to do
         }
-        
     }
 }
