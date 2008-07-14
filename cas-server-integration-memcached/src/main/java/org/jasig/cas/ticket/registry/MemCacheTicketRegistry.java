@@ -65,26 +65,26 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 
 	protected void updateTicket(final Ticket ticket) {
 		if (ticket instanceof TicketGrantingTicket) {
-			client.replace(ticket.getId(), this.tgtTimeout, ticket);
+			this.client.replace(ticket.getId(), this.tgtTimeout, ticket);
 		}
 		
 		if (ticket instanceof ServiceTicket) {
-			client.replace(ticket.getId(), this.stTimeout, ticket);
+			this.client.replace(ticket.getId(), this.stTimeout, ticket);
 		}
 	}
 
 	public void addTicket(final Ticket ticket) {
 		if (ticket instanceof TicketGrantingTicket) {
-			client.add(ticket.getId(), this.tgtTimeout, ticket);
+			this.client.add(ticket.getId(), this.tgtTimeout, ticket);
 		}
 		
 		if (ticket instanceof ServiceTicket) {
-			client.add(ticket.getId(), this.stTimeout, ticket);
+			this.client.add(ticket.getId(), this.stTimeout, ticket);
 		}
 	}
 
 	public boolean deleteTicket(final String ticketId) {
-		Future<Boolean> f= client.delete(ticketId);
+		Future<Boolean> f= this.client.delete(ticketId);
 		try {
 			return f.get().booleanValue();
 		} catch (final Exception e) {
@@ -94,7 +94,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 	}
 
 	public Ticket getTicket(final String ticketId) {
-		final Ticket t = (Ticket) client.get(ticketId);
+		final Ticket t = (Ticket) this.client.get(ticketId);
 		if (t == null) {
 			return null;
 		}
