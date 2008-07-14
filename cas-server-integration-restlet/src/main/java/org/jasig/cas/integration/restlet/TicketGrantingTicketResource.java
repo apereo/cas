@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
- * @since 3.2.2
+ * @since 3.3
  *
  */
 public final class TicketGrantingTicketResource extends Resource {
@@ -39,42 +39,32 @@ public final class TicketGrantingTicketResource extends Resource {
     private CentralAuthenticationService centralAuthenticationService;
     
     private String ticketGrantingTicketId;
-    
-    @Override
+
     public void init(final Context context, final Request request, final Response response) {
         super.init(context, request, response);
         this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
         this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
-        setModifiable(true);
-        
-        System.out.println("TicketGrantingTicketId: " + this.ticketGrantingTicketId);
     }
 
-    @Override
     public boolean allowDelete() {
         return true;
     }
 
-    @Override
     public boolean allowPost() {
         return true;
     }
 
-    @Override
     public void removeRepresentations() throws ResourceException {
         this.centralAuthenticationService.destroyTicketGrantingTicket(this.ticketGrantingTicketId);
         getResponse().setStatus(Status.SUCCESS_OK);
     }
 
-    @Override
     public void acceptRepresentation(final Representation entity)
         throws ResourceException {
-        final Form form = new Form(entity);
+        final Form form = getRequest().getEntityAsForm();
         final String serviceUrl = form.getFirstValue("service");
-        System.out.println("Service Url: " + serviceUrl);
-        final SimpleWebApplicationServiceImpl service = new SimpleWebApplicationServiceImpl(serviceUrl);
         try {
-            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(this.ticketGrantingTicketId, service);
+            final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(this.ticketGrantingTicketId, new SimpleWebApplicationServiceImpl(serviceUrl));
             getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
         } catch (final InvalidTicketException e) {
             log.error(e,e);
