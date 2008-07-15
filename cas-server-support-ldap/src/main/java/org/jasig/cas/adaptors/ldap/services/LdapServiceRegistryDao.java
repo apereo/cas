@@ -111,7 +111,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     public List<RegisteredService> load() {
         try {
-            return this.ldapTemplate.search(this.serviceBaseDn, ldapServiceMapper.getLoadFilter().encode(), this.cachedSearchControls, ldapServiceMapper);
+            return this.ldapTemplate.search(this.serviceBaseDn, this.ldapServiceMapper.getLoadFilter().encode(), this.cachedSearchControls, this.ldapServiceMapper);
         } catch (final Exception e) {
             log.error("Exception while loading Registered Services from LDAP Directory...", e);
             return new ArrayList<RegisteredService>();
