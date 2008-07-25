@@ -7,13 +7,13 @@ package org.jasig.cas.services;
 
 import java.util.Arrays;
 
-import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import javax.persistence.GenerationType;
 
+import org.hibernate.annotations.CollectionOfElements;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
@@ -37,7 +37,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = -1;
     
-    @Basic
+    @CollectionOfElements
     private String[] allowedAttributes = new String[0];
 
     private String description;
