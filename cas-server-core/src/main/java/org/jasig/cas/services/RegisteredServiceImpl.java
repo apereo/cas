@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.GenerationType;
 
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.IndexColumn;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
@@ -38,6 +39,7 @@ public class RegisteredServiceImpl implements RegisteredService {
     private long id = -1;
     
     @CollectionOfElements
+    @IndexColumn(name="allowed_attribute_id")
     private String[] allowedAttributes = new String[0];
 
     private String description;
