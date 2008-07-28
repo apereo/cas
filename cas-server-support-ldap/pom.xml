@@ -18,5 +18,42 @@
 			<artifactId>cas-server-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap</artifactId>
+			<version>1.2.1</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-beans</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-dao</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-jdbc</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-tiger</artifactId>
+			<version>1.2.1</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>

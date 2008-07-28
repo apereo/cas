@@ -31,9 +31,27 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-orm</artifactId>
-      <version>2.5.4</version>
+      <version>${spring.version}</version>
       <scope>compile</scope>
     </dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-core</artifactId>
+		<version>${spring.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-beans</artifactId>
+		<version>${spring.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-webmvc</artifactId>
+		<version>${spring.version}</version>
+		<scope>compile</scope>
+	</dependency>
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -103,7 +121,7 @@
     <dependency>
     	<groupId>org.springframework</groupId>
     	<artifactId>spring-jdbc</artifactId>
-    	<version>2.5.4</version>
+    	<version>${spring.version}</version>
     	<scope>test</scope>
     </dependency>
   </dependencies>
