@@ -137,6 +137,10 @@
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-support</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-core</artifactId>
+				</exclusion>
 			</exclusions> 
 		</dependency>
 	
@@ -174,28 +178,13 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>2.5.4</version>
-			<scope>compile</scope>
-		</dependency>
 		
         <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>2.5.4</version>
+			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
-  		<dependency>
-  			<groupId>net.sf.ehcache</groupId>
-  			<artifactId>ehcache</artifactId>
-  			<version>1.4.0-beta2</version>
-  			<scope>runtime</scope>
-  		</dependency>
-
 
 		<dependency>
 			<groupId>log4j</groupId>
@@ -257,6 +246,14 @@
 					<groupId>struts</groupId>
 					<artifactId>struts</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -265,31 +262,6 @@
 			<artifactId>servlet-api</artifactId>
 			<version>2.4</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.ldap</groupId>
-			<artifactId>spring-ldap</artifactId>
-			<version>1.2.1</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-beans</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>spring-core</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
-		<dependency>
-
-			<groupId>org.springframework.ldap</groupId>
-			<artifactId>spring-ldap-tiger</artifactId>
-			<version>1.2.1</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
@@ -350,5 +322,6 @@
 	<properties>
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
+		<spring.version>2.5.5</spring.version>
 	</properties>
 </project>

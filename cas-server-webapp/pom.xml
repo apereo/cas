@@ -14,7 +14,7 @@
   		<dependency>
   			<groupId>org.springframework.security</groupId>
   			<artifactId>spring-security-cas-client</artifactId>
-  			<version>2.0.1</version>
+  			<version>2.0.3</version>
   			<scope>runtime</scope>
   			<exclusions>
 				<exclusion>
@@ -35,7 +35,7 @@
 				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
-					<artifactId>spring-dao</artifactId>
+					<artifactId>spring-context</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.springframework</groupId>
@@ -43,23 +43,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-client-core</artifactId>
-			<version>3.1.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
   		
   		<dependency>
   			<groupId>org.springframework</groupId>
   			<artifactId>spring-aop</artifactId>
-  			<version>2.5.4</version>
+  			<version>${spring.version}</version>
   		</dependency>
   
 		<dependency>
