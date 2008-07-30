@@ -32,6 +32,6 @@
 
 <!ELEMENT proxyTicket (#PCDATA)>
 
-<!ATTLIST authenticationFailure code PCDATA #REQUIRED>
+<!ATTLIST authenticationFailure code CDATA #REQUIRED>
 
-<!ATTLIST proxyFailure code PCDATA #REQUIRED>
+<!ATTLIST proxyFailure code CDATA #REQUIRED>
