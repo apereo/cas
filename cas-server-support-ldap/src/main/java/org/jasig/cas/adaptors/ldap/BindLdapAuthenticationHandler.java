@@ -9,6 +9,7 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
 import org.inspektr.common.ioc.annotation.IsIn;
+import org.springframework.ldap.core.DistinguishedName;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.SearchExecutor;
 
@@ -74,20 +75,22 @@ public class BindLdapAuthenticationHandler extends
             new NameClassPairCallbackHandler(){
 
                 public void handleNameClassPair(final NameClassPair nameClassPair) {
-                    cns.add(nameClassPair.getName());
+                    cns.add(nameClassPair.getNameInNamespace());
                 }
             });
-
+        
         if (cns.isEmpty()
             || (cns.size() > 1 && !this.allowMultipleAccounts)) {
+            System.out.println("List was empty.");
             return false;
         }
-
+        
         for (final String dn : cns) {
             DirContext test = null;
+            String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
                 test = this.getContextSource().getDirContext(
-                    composeCompleteDnToCheck(dn, credentials),
+                    finalDn,
                     credentials.getPassword());
 
                 if (test != null) {
@@ -105,7 +108,7 @@ public class BindLdapAuthenticationHandler extends
 
     protected String composeCompleteDnToCheck(final String dn,
         final UsernamePasswordCredentials credentials) {
-        return dn + "," + this.searchBase;
+        return dn;
     }
 
     private final SearchControls getSearchControls() {
