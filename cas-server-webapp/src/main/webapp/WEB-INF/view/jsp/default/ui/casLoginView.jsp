@@ -45,7 +45,8 @@
 	            <div id="sidebar">
 	                <p><spring:message code="screen.welcome.security" /></p>
 	                <div id="list-languages">
-						<c:set var="query" value="<%=request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "")%>" />
+	                <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
+						<c:set var="query" value="<%=queryString%>" />
 						<c:set var="loginUrl" value="login?${query}${not empty query ? '&' : ''}locale=" />
 	                    <h3>Languages:</h3>
 						<ul
