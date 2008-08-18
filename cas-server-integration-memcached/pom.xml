@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.3</version>
+		<version>3.3.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
@@ -36,7 +36,7 @@
 		<repository>
 			<id>dustin</id>
 			<name>dustin</name>
-			<url>http://bleu.west.spy.net/~dustin/repo</url>
+			<url>http://bleu.west.spy.net/~dustin/repo/</url>
 			<layout>legacy</layout>
 		</repository>
 	</repositories>
