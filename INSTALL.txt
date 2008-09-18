@@ -19,13 +19,21 @@ The following steps will deploy the included demo of CAS.  Start here if
 you're new to CAS and want to see it in action.  These steps assume
 you will be using Tomcat as your servlet container.
 
-1. copy modules/cas-server-webapp/cas.war to Tomcat's webapps/ directory
+
+Quick Demo
+----------
+
+The following steps will deploy the included demo of CAS. Start here if
+you're new to CAS and want to see it in action. These steps assume
+you will be using Tomcat as your servlet container.
+
+1. copy modules/cas-server-webapp-VERSION.war to Tomcat's webapps/ directory
 
 2. start Tomcat
 
 3. access the CAS login page by opening up a web browser and visiting:
 
-   http://hostname:8080/cas/login (see note below)
+   http://hostname:8080/cas-server-webapp-VERSION/login (see note below) 
 
    You should see the CAS login page asking you for your username and
    password.  The default authentication plugin accepts NetID=password.
