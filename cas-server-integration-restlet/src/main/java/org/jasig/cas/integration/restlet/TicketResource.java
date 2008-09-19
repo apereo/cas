@@ -16,6 +16,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
 import org.restlet.data.Form;
+import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.restlet.data.Status;
 import org.restlet.resource.Representation;
@@ -59,9 +60,9 @@ public class TicketResource extends Resource {
         final Credentials c = obtainCredentials();
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
-            System.out.println(ticketGrantingTicketId);
             getResponse().setStatus(Status.SUCCESS_CREATED);
-            getResponse().setLocationRef(ticketGrantingTicketId);
+            final Reference ticket_ref = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
+            getResponse().setLocationRef(ticket_ref); 
         } catch (final TicketException e) {
             log.error(e,e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
