@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -46,8 +48,16 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
                 + principalId + "]");
         }
         
-        final Map attributes = this.attributeRepository.getUserAttributes(principalId);
-        return new SimplePrincipal(principalId, attributes);
+        final Map<String, List<Object>> attributes = this.attributeRepository.getMultivaluedUserAttributes(principalId);
+        
+        final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
+        
+        for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
+            final String key = entry.getKey();
+            final Object value = entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue();
+            convertedAttributes.put(key, value);
+        }
+        return new SimplePrincipal(principalId, convertedAttributes);
     }
     
     /**
