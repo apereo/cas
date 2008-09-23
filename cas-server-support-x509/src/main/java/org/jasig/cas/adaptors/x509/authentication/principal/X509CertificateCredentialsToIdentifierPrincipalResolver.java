@@ -9,9 +9,13 @@ import java.security.cert.X509Certificate;
 
 import org.inspektr.common.ioc.annotation.NotNull;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * @author Anders Svensson
  * @author Scott Battaglia
+ * @author Barry Silk
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
@@ -38,6 +42,12 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
 
         final String[] entries = certificate.getSubjectDN().getName().split(
             ENTRIES_DELIMITER);
+
+        //[fix by Barry Silk]
+        // Make sure entries are sorted by length, in descending order
+        // This is to prevent a substition of a shorter length descriptor
+        // e.g., $CN must get replaced prior to $C
+        Arrays.sort(entries, new LengthComparator());
         
         for (final String val : entries) {
             final String[] nameValuePair = val
@@ -62,4 +72,22 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
     public void setIdentifier(final String identifier) {
         this.identifier = identifier;
     }
+    
+    //[fix by Barry Silk, see above]
+    class LengthComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            String s1 = (String) o1;
+            String s2 = (String) o2;
+            String[] nameValuePair1 = s1.split(NAME_VALUE_PAIR_DELIMITER);
+            String name1 = nameValuePair1[0].trim();
+            String[] nameValuePair2 = s2.split(NAME_VALUE_PAIR_DELIMITER);
+            String name2 = nameValuePair2[0].trim();
+            int len1 = name1.length();
+            int len2 = name2.length();
+            if (len1 > len2) return -1;
+            if (len2 > len1) return 1;
+            return 0;
+        }
+    }
+
 }
