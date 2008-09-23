@@ -140,15 +140,15 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                    log.debug("this is a CA certificate");
 
                    // check pathLength when CA cert
-                   //if unlimited and unlimited not allowed
+                   //if unlimited/unspecified and unlimited/unspecified not allowed: warn+stop
                    if (pathLength == Integer.MAX_VALUE && this.maxPathLength_allowUnspecified != true) {
                        if (log.isWarnEnabled()) {
                            log.warn("authentication failed; cert pathLength not specified"
-                                   + " and unlimited not allowed by config [see maxPathLength_allow_unlimited]");
+                                   + " and unlimited/unspecified not allowed by config [see maxPathLength_allow_unlimited]");
                        }
                        return false;
-                   //else if more than allowed length
-                   } else if (pathLength > this.maxPathLength ) {
+                   //else if more than allowed length but not unlimited/unspecified: warn+stop
+                   } else if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
                        if (log.isWarnEnabled()) {
                            log.warn("authentication failed; cert pathLength ["
                                + pathLength
