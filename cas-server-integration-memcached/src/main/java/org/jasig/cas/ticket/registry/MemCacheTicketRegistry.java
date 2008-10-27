@@ -39,7 +39,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 	@GreaterThan(0)
 	private final int stTimeout;
 	
-	private boolean synchronizeUpdatesToRegistry;
+	private boolean synchronizeUpdatesToRegistry = false;
 	
 	/**
 	 * Host names should be given in a list of the format: &lt;hostname&gt;:&lt;port&gt;
