@@ -30,7 +30,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     
     /** Repository of principal attributes to be retrieved */
     @NotNull
-    private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao();
+    private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
 
     public final Principal resolvePrincipal(final Credentials credentials) {
         if (log.isDebugEnabled()) {
