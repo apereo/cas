@@ -64,7 +64,7 @@ public class TicketResource extends Resource {
             getResponse().setStatus(determineStatus());
             final Reference ticket_ref = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
             getResponse().setLocationRef(ticket_ref);
-            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>" + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription() + "</title></head><body><h1>Created</h1><p>The object has been created and can be found <a href=\"http://blah.com/cas/v1/tickets/TGT-54353485093458340\">here</a>.</p></body></html>", MediaType.TEXT_HTML);            
+            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>" + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription() + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticket_ref + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>", MediaType.TEXT_HTML);        
         } catch (final TicketException e) {
             log.error(e,e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
