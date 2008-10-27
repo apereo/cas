@@ -39,6 +39,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 	@GreaterThan(0)
 	private final int stTimeout;
 	
+	private boolean synchronizeUpdatesToRegistry;
+	
 	/**
 	 * Host names should be given in a list of the format: &lt;hostname&gt;:&lt;port&gt;
 	 * 
@@ -62,24 +64,34 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 			throw new IllegalStateException(e);
 		}
 	}
+	
+	private void handleSynchronousRequest(final Future f) {
+	    try {
+	        if (this.synchronizeUpdatesToRegistry) {
+	            f.get();
+	        }
+	    } catch (final Exception e) {
+	        // ignore these.
+	    }
+	}
 
 	protected void updateTicket(final Ticket ticket) {
 		if (ticket instanceof TicketGrantingTicket) {
-			this.client.replace(ticket.getId(), this.tgtTimeout, ticket);
+			handleSynchronousRequest(this.client.replace(ticket.getId(), this.tgtTimeout, ticket));
 		}
 		
 		if (ticket instanceof ServiceTicket) {
-			this.client.replace(ticket.getId(), this.stTimeout, ticket);
+			handleSynchronousRequest(this.client.replace(ticket.getId(), this.stTimeout, ticket));
 		}
 	}
 
 	public void addTicket(final Ticket ticket) {
 		if (ticket instanceof TicketGrantingTicket) {
-			this.client.add(ticket.getId(), this.tgtTimeout, ticket);
+		    handleSynchronousRequest(this.client.add(ticket.getId(), this.tgtTimeout, ticket));
 		}
 		
 		if (ticket instanceof ServiceTicket) {
-			this.client.add(ticket.getId(), this.stTimeout, ticket);
+		    handleSynchronousRequest(this.client.add(ticket.getId(), this.stTimeout, ticket));
 		}
 	}
 
@@ -113,5 +125,9 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 
 	public void destroy() throws Exception {
 		this.client.shutdown();
+	}
+	
+	public void setSynchronizeUpdatesToRegistry(final boolean b) {
+	    this.synchronizeUpdatesToRegistry = b;
 	}
 }
