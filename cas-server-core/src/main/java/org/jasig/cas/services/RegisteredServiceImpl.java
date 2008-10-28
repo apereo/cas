@@ -7,9 +7,11 @@ package org.jasig.cas.services;
 
 import java.util.Arrays;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 
 import javax.persistence.GenerationType;
 
@@ -38,8 +40,11 @@ public class RegisteredServiceImpl implements RegisteredService {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = -1;
     
+    
     @CollectionOfElements
-    @IndexColumn(name="allowed_attribute_id")
+    @JoinTable(name = "rs_attributes")
+    @Column(name = "a_name", nullable = false)
+    @IndexColumn(name = "a_id")
     private String[] allowedAttributes = new String[0];
 
     private String description;
