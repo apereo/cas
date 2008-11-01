@@ -66,17 +66,22 @@ public class JCSIFSpnegoAuthenticationHandlerTests extends TestCase {
 
     public void testGetSimpleCredentials() {
         String myNtlmUser = "DOMAIN\\Username";
+        String myNtlmUserWithNoDomain = "Username";
         String myKerberosUser = "Username@DOMAIN.COM";
 
         this.authenticationHandler.setPrincipalWithDomainName(true);
         assertEquals(new SimplePrincipal(myNtlmUser), this.authenticationHandler
                 .getSimplePrincipal(myNtlmUser, true));
+        assertEquals(new SimplePrincipal(myNtlmUserWithNoDomain), this.authenticationHandler
+                .getSimplePrincipal(myNtlmUserWithNoDomain, false));
         assertEquals(new SimplePrincipal(myKerberosUser), this.authenticationHandler
                 .getSimplePrincipal(myKerberosUser, false));
 
         this.authenticationHandler.setPrincipalWithDomainName(false);
         assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
                 .getSimplePrincipal(myNtlmUser, true));
+        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
+                .getSimplePrincipal(myNtlmUserWithNoDomain, true));
         assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
                 .getSimplePrincipal(myKerberosUser, false));
     }
