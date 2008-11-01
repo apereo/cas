@@ -16,6 +16,7 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
 
 import java.security.Principal;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
@@ -117,7 +118,8 @@ public final class JCIFSSpnegoAuthenticationHandler extends
             return new SimplePrincipal(name);
         }
         if (isNtlm) {
-            return new SimplePrincipal(name.split("\\\\")[1]);
+        	return Pattern.matches("\\w+\\\\\\w+", name) ? new SimplePrincipal
+        			(name.split("\\\\")[1]) : new SimplePrincipal(name);
         }
         return new SimplePrincipal(name.split("@")[0]);
     }
