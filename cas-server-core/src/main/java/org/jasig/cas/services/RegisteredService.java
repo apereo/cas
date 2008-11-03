@@ -92,6 +92,14 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the description of the service.
      */
     String getDescription();
+   
+    /**
+     * Gets the relative evaluation order of this service when determining
+     * matches.
+     * @return Evaluation order relative to other registered services.
+     * Services with lower values will be evaluated for a match before others.
+     */
+    int getEvaluationOrder();
 
     /**
      * Returns whether the service matches the registered service.

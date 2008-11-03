@@ -29,7 +29,8 @@ import org.springframework.util.PathMatcher;
  * @since 3.1
  */
 @Entity
-public class RegisteredServiceImpl implements RegisteredService {
+public class RegisteredServiceImpl
+    implements RegisteredService, Comparable<RegisteredService> {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5136788302682868276L;
@@ -64,6 +65,9 @@ public class RegisteredServiceImpl implements RegisteredService {
     private boolean anonymousAccess = false;
     
     private boolean ignoreAttributes = false;
+   
+    @Column(name = "evaluation_order", nullable = false)
+    private int evaluationOrder;
 
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
@@ -214,6 +218,14 @@ public class RegisteredServiceImpl implements RegisteredService {
     public void setIgnoreAttributes(final boolean ignoreAttributes) {
         this.ignoreAttributes = ignoreAttributes;
     }
+    
+    public void setEvaluationOrder(final int evaluationOrder) {
+        this.evaluationOrder = evaluationOrder;
+    }
+
+    public int getEvaluationOrder() {
+        return this.evaluationOrder;
+    }
 
     public Object clone() throws CloneNotSupportedException {
         final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
@@ -229,7 +241,18 @@ public class RegisteredServiceImpl implements RegisteredService {
         registeredServiceImpl.setTheme(this.theme);
         registeredServiceImpl.setAnonymousAccess(this.anonymousAccess);
         registeredServiceImpl.setIgnoreAttributes(this.ignoreAttributes);
+        registeredServiceImpl.setEvaluationOrder(this.evaluationOrder);
 
         return registeredServiceImpl;
     }
+    
+
+    public int compareTo(final RegisteredService other) {
+        final int result = this.evaluationOrder - other.getEvaluationOrder();
+        if (result == 0) {
+            return (int)(this.id - other.getId());
+        }
+        return result;
+    }
+
 }

@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.services.web;
 
+
 import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -59,7 +60,7 @@ public final class RegisteredServiceSimpleFormController extends
         final ServletRequestDataBinder binder) throws Exception {
         binder.setRequiredFields(new String[] {"description", "serviceId",
             "name", "allowedToProxy", "enabled", "ssoEnabled",
-            "anonymousAccess"});
+            "anonymousAccess", "evaluationOrder"});
         binder.setDisallowedFields(new String[] {"id"});
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
@@ -77,6 +78,7 @@ public final class RegisteredServiceSimpleFormController extends
         final RegisteredService service = (RegisteredService) command;
 
         this.servicesManager.save(service);
+        logger.info("Saved changes to service " + service.getId());
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
             "/services/manage.html#" + service.getId(), true));
@@ -91,13 +93,19 @@ public final class RegisteredServiceSimpleFormController extends
         final String id = request.getParameter("id");
 
         if (!StringUtils.hasText(id)) {
+            logger.debug("Created new service.");
             return new RegisteredServiceImpl();
         }
+        
+        final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
+        
+        if (service != null) {
+            logger.debug("Loaded service " + service.getServiceId());
+        } else {
+            logger.debug("Invalid service id specified.");
+        }
 
-        final long serviceId = Long.parseLong(id);
-
-        return this.servicesManager
-            .findServiceBy(serviceId);
+        return service;
     }
 
     /**
