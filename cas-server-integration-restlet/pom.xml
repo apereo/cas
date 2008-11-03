@@ -22,21 +22,21 @@
 		<dependency>
 			<groupId>org.restlet</groupId>
 			<artifactId>org.restlet</artifactId>
-			<version>1.1-M4</version>
+			<version>1.1.1</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.restlet</groupId>
 			<artifactId>org.restlet.ext.spring</artifactId>
-			<version>1.1-M4</version>
+			<version>1.1.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.noelios.restlet</groupId>
 			<artifactId>com.noelios.restlet.ext.spring</artifactId>
-			<version>1.1-M4</version>
+			<version>1.1.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		
