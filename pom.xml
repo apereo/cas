@@ -344,6 +344,6 @@
 	<properties>
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
-		<spring.version>2.5.5</spring.version>
+		<spring.version>2.5.6</spring.version>
 	</properties>
 </project>
