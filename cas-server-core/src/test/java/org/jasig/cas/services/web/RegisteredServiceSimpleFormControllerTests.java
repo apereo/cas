@@ -87,6 +87,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         request.addParameter("enabled", "true");
         request.addParameter("ssoEnabled", "true");
         request.addParameter("anonymousAccess", "false");
+        request.addParameter("evaluationOrder", "1");
 
         request.setMethod("POST");
 
@@ -117,6 +118,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         request.addParameter("enabled", "true");
         request.addParameter("ssoEnabled", "true");
         request.addParameter("anonymousAccess", "false");
+        request.addParameter("evaluationOrder", "2");
         request.addParameter("id", "1000");
 
         request.setMethod("POST");

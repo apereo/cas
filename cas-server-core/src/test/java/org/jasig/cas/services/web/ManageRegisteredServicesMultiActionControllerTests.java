@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.services.web;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -41,6 +41,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         r.setId(1200);
         r.setName("name");
         r.setServiceId("serviceId");
+        r.setEvaluationOrder(1);
         
         this.servicesManager.save(r);
         
@@ -72,6 +73,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
+        r.setEvaluationOrder(2);
         
         this.servicesManager.save(r);
         
@@ -80,7 +82,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         assertNotNull(modelAndView);
         assertEquals("manageServiceView", modelAndView.getViewName());
         
-        final List list = (List) modelAndView.getModel().get("services");
-        assertTrue(list.contains(r));
+        final Collection c = (Collection) modelAndView.getModel().get("services");
+        assertTrue(c.contains(r));
     }
 }

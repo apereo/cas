@@ -33,6 +33,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
+        r.setEvaluationOrder(1);
         
         list.add(r);
         
@@ -88,6 +89,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
         r.setId(1000);
         r.setName("test");
         r.setServiceId("test");
+        r.setEvaluationOrder(2);
         
         this.defaultServicesManagerImpl.save(r);
         
