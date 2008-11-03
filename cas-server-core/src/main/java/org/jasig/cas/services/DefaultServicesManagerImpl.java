@@ -7,6 +7,7 @@ package org.jasig.cas.services;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -75,7 +76,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * This preserves default CAS behavior.
      */
     public RegisteredService findServiceBy(final Service service) {
-        final Collection<RegisteredService> c = this.services.values();
+        final Collection<RegisteredService> c = convertToTreeSet();
         
         if (c.isEmpty()) {
             return this.disabledRegisteredService;
@@ -98,6 +99,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         } catch (final CloneNotSupportedException e) {
             return r;
         }
+    }
+    
+    protected TreeSet<RegisteredService> convertToTreeSet() {
+        return new TreeSet<RegisteredService>(this.services.values());
     }
 
     public Collection<RegisteredService> getAllServices() {
