@@ -17,7 +17,7 @@ public interface NumericGenerator {
     /**
      * Method to retrieve the next number as a String.
      * 
-     * @return the Strign representation of the next number in the sequence
+     * @return the String representation of the next number in the sequence
      */
     String getNextNumberAsString();
 
