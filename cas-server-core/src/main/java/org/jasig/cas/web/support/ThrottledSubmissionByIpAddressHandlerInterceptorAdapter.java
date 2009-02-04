@@ -7,7 +7,12 @@ package org.jasig.cas.web.support;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,11 +37,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     extends HandlerInterceptorAdapter implements InitializingBean {
 
-    private static final int MAX_SIZE_OF_MAP_ARRAY = 256;
-
     /** Default value for the failure threshhold before you're locked out. */
-    private static final BigInteger DEFAULT_FAILURE_THRESHHOLD = BigInteger
-        .valueOf(100);
+    private static final int DEFAULT_FAILURE_THRESHHOLD = 100;
 
     /** The default timeout (in seconds) to clear one failure attempt. */
     private static final int DEFAULT_FAILURE_TIMEOUT = 60;
@@ -45,24 +47,14 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     protected static final BigInteger ONE = BigInteger.valueOf(1);
 
     private final Log log = LogFactory.getLog(getClass());
-    /**
-     * The array of maps of restricted IPs mapped to failures. (simulating
-     * buckets)
-     */
-    private final Map<String,BigInteger>[] restrictedIpAddressMaps = new Map[MAX_SIZE_OF_MAP_ARRAY];
+    
+    private ConcurrentMap<String, AtomicInteger> ipMap = new ConcurrentHashMap<String, AtomicInteger>();
 
     /** The threshold before we stop someone from authenticating. */
-    private BigInteger failureThreshhold = DEFAULT_FAILURE_THRESHHOLD;
+    private int failureThreshhold = DEFAULT_FAILURE_THRESHHOLD;
     
     /** The failure timeout before we clean up one failure attempt. */
     int failureTimeout = DEFAULT_FAILURE_TIMEOUT;
-    
-    public ThrottledSubmissionByIpAddressHandlerInterceptorAdapter() {
-        for (int i = 0; i < MAX_SIZE_OF_MAP_ARRAY; i++) {
-            this.restrictedIpAddressMaps[i] = new HashMap<String, BigInteger>();
-        }
-
-    }
 
     public void postHandle(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
@@ -72,36 +64,16 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
             return;
         }
         final String remoteAddr = request.getRemoteAddr();
-
-        // workaround for the IPv6 bug in the original adapter. See CAS-639
-        try {
-            final String lastQuad = remoteAddr.substring(remoteAddr.lastIndexOf(".") + 1);
-            final int intVersionOfLastQuad = Integer.parseInt(lastQuad);
-            final Map<String, BigInteger> quadMap = this.restrictedIpAddressMaps[intVersionOfLastQuad - 1];
-
-            synchronized (quadMap) {
-                final BigInteger original = quadMap.get(lastQuad);
-                BigInteger integer = ONE;
-    
-                if (original != null) {
-                    integer = original.add(ONE);
-                }
-    
-                quadMap.put(lastQuad, integer);
-    
-                if (integer.compareTo(this.failureThreshhold) == 1) {
-                    log.warn("Possible hacking attack from " + remoteAddr + ". More than " + this.failureThreshhold + " failed login attempts within " + this.failureTimeout + " seconds.");
-                    modelAndView.setViewName("casFailureAuthenticationThreshhold");
-                }
-            }
-        } catch (NumberFormatException e) {
-            log.warn("Skipping ip-address blocking. Possible reason: IPv6 Address not supported: " + e.getMessage());
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
+        final AtomicInteger atomicInteger = this.ipMap.putIfAbsent(remoteAddr, new AtomicInteger(0));
+        atomicInteger.incrementAndGet();
+              
+        if (atomicInteger.intValue() >= this.failureThreshhold) {
+            log.warn("Possible hacking attack from " + remoteAddr + ". More than " + this.failureThreshhold + " failed login attempts within " + this.failureTimeout + " seconds.");
+            modelAndView.setViewName("casFailureAuthenticationThreshhold");
         }
     }
 
-    public void setFailureThreshhold(final BigInteger failureThreshhold) {
+    public void setFailureThreshhold(final int failureThreshhold) {
         this.failureThreshhold = failureThreshhold;
     }
 
@@ -117,7 +89,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     public void afterPropertiesSet() throws Exception {
 
         final Thread thread = new ExpirationThread(
-            this.restrictedIpAddressMaps, this.failureTimeout);
+            this.ipMap, this.failureTimeout);
         thread.setDaemon(true);
         thread.start();
     }
@@ -125,15 +97,15 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
     protected final static class ExpirationThread extends Thread {
 
         /** Reference to the map of restricted IP addresses. */
-        private Map<String, BigInteger>[] restrictedIpAddressMaps;
+        private ConcurrentMap<String, AtomicInteger> ipMap;
 
         /** The timeout failure. */
         private int failureTimeout;
 
         public ExpirationThread(
-            final Map<String, BigInteger>[] restrictedIpAddressMaps,
+            final ConcurrentMap<String, AtomicInteger> ipMap,
             final int failureTimeout) {
-            this.restrictedIpAddressMaps = restrictedIpAddressMaps;
+            this.ipMap = ipMap;
             this.failureTimeout = failureTimeout;
         }
 
@@ -149,24 +121,17 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         }
 
         private void cleanUpFailures() {
-            final int length = this.restrictedIpAddressMaps.length;
-            for (int i = 0; i < length; i++) {
-                final Map<String, BigInteger> map = this.restrictedIpAddressMaps[i];
-
-                synchronized (map) {
-                    for (final String key : map.keySet()) {
-                        final BigInteger integer = map.get(key);
-                        final BigInteger newValue = integer.subtract(ONE);
-
-                        if (newValue.equals(BigInteger.ZERO)) {
-                            map.remove(key);
-                        } else {
-                            map.put(key, newValue);
-                        }
-                    }
-
+            final Set<String> keys = this.ipMap.keySet();
+            
+            for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) {
+                final String key = iter.next();
+                final AtomicInteger integer = this.ipMap.get(key);
+                final int  newValue = integer.decrementAndGet();
+                
+                if (newValue == 0) {
+                    iter.remove();
                 }
             }
-        }
+         }
     }
 }
