@@ -13,6 +13,7 @@
 	</description>
 
 	<sec:http entry-point-ref="casProcessingFilterEntryPoint">
+		<sec:intercept-url pattern="/services/loggedout.html" filters="none" /> 
     	<sec:intercept-url pattern="/**" access="ROLE_ADMIN" />
         <sec:logout logout-url="/services/logout.html" logout-success-url="/services/loggedOut.html" />
     </sec:http>
