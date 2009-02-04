@@ -23,7 +23,7 @@ import org.springframework.web.util.CookieGenerator;
  * @since 3.1
  *
  */
-public final class CookieRetrievingCookieGenerator extends CookieGenerator {
+public class CookieRetrievingCookieGenerator extends CookieGenerator {
     
     /** The maximum age the cookie should be remembered for.
      * The default is three months (7889231 in seconds, according to Google) */
