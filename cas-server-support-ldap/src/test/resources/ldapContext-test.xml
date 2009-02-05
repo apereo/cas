@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+  
+  
+  <!-- 
+  NOTE:
+  Create a ldap.properties file from ldap.properties.sample to customize unit
+  tests for your environment.
+   -->
+
+  <bean
+    class="org.springframework.beans.factory.config.PropertyOverrideConfigurer"
+    p:location="file:ldap.properties"
+    p:ignoreResourceNotFound="true" />
+    
+  <bean id="contextSource"
+    class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"
+    p:url="ldap://ldap1.rutgers.edu">
+    <property name="baseEnvironmentProperties">
+      <map>
+        <entry key="java.naming.security.protocol" value="ssl" />
+      </map>
+    </property>
+  </bean>
+  
+  <bean id="fastBindAuthHandler"
+    class="org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler"
+    p:filter="uid=%u,ou=people,dc=rutgers,dc=edu"
+    p:contextSource-ref="contextSource"
+  />
+
+  <bean id="ldapResolver"
+    class="org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver"
+    p:filter="rutgersEduIID=%u"
+    p:principalAttributeName="uid"
+    p:searchBase="ou=people,dc=rutgers,dc=edu"
+    p:contextSource-ref="contextSource">
+    <property name="credentialsToPrincipalResolver">
+      <bean
+        class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver">
+      </bean>
+    </property>
+  </bean>
+  
+  <bean id="resolverTestConfig"
+    class="org.jasig.cas.authentication.principal.ResolverTestConfig"
+    p:existsCredential="SRB54"
+    p:existsPrincipal="battags"
+    p:notExistsCredential="SRB"
+    p:tooManyCredential="S*"
+  />
+</beans>

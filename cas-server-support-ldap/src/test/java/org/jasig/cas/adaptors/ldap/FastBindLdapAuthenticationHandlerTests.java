@@ -5,10 +5,8 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-
-import junit.framework.TestCase;
+import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
  * 
@@ -17,29 +15,30 @@ import junit.framework.TestCase;
  * @since 3.1
  *
  */
-public class FastBindLdapAuthenticationHandlerTests extends TestCase {
+public class FastBindLdapAuthenticationHandlerTests
+  extends AbstractDependencyInjectionSpringContextTests {
 
-    private FastBindLdapAuthenticationHandler handler;
-
-    protected void setUp() throws Exception {
-        final AuthenticatedLdapContextSource contextSource = new AuthenticatedLdapContextSource();
-        contextSource.setUrl("ldap://ldap1.rutgers.edu");
-        contextSource.afterPropertiesSet();
-        
-        this.handler = new FastBindLdapAuthenticationHandler();
-        this.handler.setContextSource(contextSource);
-        this.handler.setFilter("uid=%u,ou=people,dc=rutgers,dc=edu");
-        this.handler.afterPropertiesSet();
-    }
+    protected FastBindLdapAuthenticationHandler fastBindAuthHandler;
     
+    public FastBindLdapAuthenticationHandlerTests() {
+        // Switch on field level injection
+        setPopulateProtectedVariables(true);
+    }
+
     public void testBadUsernamePassword() throws Exception {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setUsername("battags");
         c.setPassword("ThisIsObviouslyNotMyRealPassword");
         
-        assertFalse(this.handler.authenticate(c));
+        assertFalse(this.fastBindAuthHandler.authenticate(c));
     }
     
-    
+    /**
+     * Specifies the Spring configuration to load for this test fixture.
+     * @see org.springframework.test.AbstractSingleSpringContextTests#getConfigLocations()
+     */
+    protected String[] getConfigLocations() {
+        return new String[] { "classpath:/ldapContext-test.xml" };
+    }
     
 }
