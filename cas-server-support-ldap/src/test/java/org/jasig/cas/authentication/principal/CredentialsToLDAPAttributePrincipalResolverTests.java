@@ -5,8 +5,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import junit.framework.TestCase;
-import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 /**
  * 
@@ -15,53 +14,53 @@ import org.springframework.ldap.core.support.LdapContextSource;
  * @since 3.1
  *
  */
-public class CredentialsToLDAPAttributePrincipalResolverTests extends TestCase {
+public class CredentialsToLDAPAttributePrincipalResolverTests
+  extends AbstractDependencyInjectionSpringContextTests {
 
-    private CredentialsToLDAPAttributePrincipalResolver resolver;
+    protected CredentialsToLDAPAttributePrincipalResolver ldapResolver;
+
+    protected ResolverTestConfig resolverTestConfig;
     
-    private UsernamePasswordCredentialsToPrincipalResolver test = new UsernamePasswordCredentialsToPrincipalResolver();
-
-    protected void setUp() throws Exception {
-        final LdapContextSource contextSource = new LdapContextSource();
-        contextSource.setAnonymousReadOnly(true);
-        contextSource.setUrl("ldap://ldap1.rutgers.edu");
-        contextSource.afterPropertiesSet();
-        
-        this.resolver = new CredentialsToLDAPAttributePrincipalResolver();
-        this.resolver.setCredentialsToPrincipalResolver(this.test);
-        this.resolver.setPrincipalAttributeName("uid");
-        this.resolver.setContextSource(contextSource);
-        this.resolver.setFilter("rutgersEduIID=%u");
-        this.resolver.setSearchBase("ou=people,dc=rutgers,dc=edu");
-   }
+    public CredentialsToLDAPAttributePrincipalResolverTests() {
+        // Switch on field level injection
+        setPopulateProtectedVariables(true);
+    }
     
     public void testRuIdFound() {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("SRB54");
+        credentials.setUsername(this.resolverTestConfig.getExistsCredential());
         
-        assertTrue(this.resolver.supports(credentials));
+        assertTrue(this.ldapResolver.supports(credentials));
         
-        final Principal p = this.resolver.resolvePrincipal(credentials);
+        final Principal p = this.ldapResolver.resolvePrincipal(credentials);
         
         assertNotNull(p);
-        assertEquals("battags", p.getId());
+        assertEquals(this.resolverTestConfig.getExistsPrincipal(), p.getId());
     }
     
     public void testRuIdNotFound() {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("SRB");
+        credentials.setUsername(this.resolverTestConfig.getNotExistsCredential());
         
-        final Principal p = this.resolver.resolvePrincipal(credentials);
+        final Principal p = this.ldapResolver.resolvePrincipal(credentials);
         
         assertNull(p);
     }
     
     public void testTooMany() {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
-        credentials.setUsername("S*");
+        credentials.setUsername(this.resolverTestConfig.getTooManyCredential());
         
-        final Principal p = this.resolver.resolvePrincipal(credentials);
+        final Principal p = this.ldapResolver.resolvePrincipal(credentials);
         
         assertNull(p);
+    }
+    
+    /**
+     * Specifies the Spring configuration to load for this test fixture.
+     * @see org.springframework.test.AbstractSingleSpringContextTests#getConfigLocations()
+     */
+    protected String[] getConfigLocations() {
+        return new String[] { "classpath:/ldapContext-test.xml" };
     }
 }

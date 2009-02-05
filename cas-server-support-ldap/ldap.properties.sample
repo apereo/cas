@@ -1,0 +1,19 @@
+# Test LDAP server URL
+contextSource.url=ldap://ldap1.rutgers.edu
+
+# Settings for org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler
+fastBindAuthHandler.filter=uid=%u,ou=people,dc=rutgers,dc=edu
+
+# Settings for
+# org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver
+ldapResolver.filter=rutgersEduIID=%u
+ldapResolver.principalAttributeName=uid
+ldapResolver.searchBase=ou=people,dc=rutgers,dc=edu
+
+# Settings for
+# org.jasig.cas.authentication.principal.ResolverTestConfig
+# that define the test data for unit test of ldapResolver above
+resolverTestConfig.existsCredential="SRB54"
+resolverTestConfig.existsPrincipal="battags"
+resolverTestConfig.notExistsCredential="SRB"
+resolverTestConfig.tooManyCredential="S*"
