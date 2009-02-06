@@ -1,5 +1,7 @@
 # Test LDAP server URL
 contextSource.url=ldap://ldap1.rutgers.edu
+#contextSource.userDn=
+#contextSource.password=
 
 # Settings for org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler
 fastBindAuthHandler.filter=uid=%u,ou=people,dc=rutgers,dc=edu

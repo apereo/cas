@@ -77,6 +77,9 @@ public abstract class AbstractLdapPersonDirectoryCredentialsToPrincipalResolver 
      */
     public final void setContextSource(final LdapContextSource contextSource) {
         this.ldapTemplate = new LdapTemplate(contextSource);
+
+        // Fix for http://www.ja-sig.org/issues/browse/CAS-663
+        this.ldapTemplate.setIgnorePartialResultException(true);
     }
 
     /**

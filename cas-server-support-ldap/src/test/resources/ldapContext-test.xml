@@ -19,7 +19,9 @@
     
   <bean id="contextSource"
     class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"
-    p:url="ldap://ldap1.rutgers.edu">
+    p:url="ldap://ldap1.rutgers.edu"
+    p:userDn=""
+    p:password="">
     <property name="baseEnvironmentProperties">
       <map>
         <entry key="java.naming.security.protocol" value="ssl" />
