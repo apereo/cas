@@ -29,16 +29,19 @@ public final class FastBindLdapAuthenticationHandler extends
         throws AuthenticationException {
         DirContext dirContext = null;
         try {
+            final String bindDn = LdapUtils.getFilterWithValues(
+                getFilter(),
+                credentials.getUsername());
+            log.debug("Performing LDAP bind with credential: " + bindDn);
             dirContext = this.getContextSource().getDirContext(
-                LdapUtils.getFilterWithValues(getFilter(), credentials
-                    .getUsername()), credentials.getPassword());
+                bindDn,
+                credentials.getPassword());
             return true;
         } catch (DataAccessResourceFailureException e) {
             return false;
         } finally {
             if (dirContext != null) {
-                LdapUtils
-                    .closeContext(dirContext);
+                LdapUtils.closeContext(dirContext);
             }
         }
     }
