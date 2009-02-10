@@ -55,4 +55,25 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!--
+            If you enable the bind authentication handler unit tests,
+            you need an LDAP infrastructure to test against.
+            Create an ldap.properties file from the ldap.properties.sample
+            template suitable for your environment.
+            -->
+            <exclude>**/*Bind*Tests.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
 </project>

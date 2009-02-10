@@ -11,7 +11,7 @@
   Create a ldap.properties file from ldap.properties.sample to customize unit
   tests for your environment.
    -->
-
+   
   <bean
     class="org.springframework.beans.factory.config.PropertyOverrideConfigurer"
     p:location="file:ldap.properties"
@@ -28,11 +28,58 @@
       </map>
     </property>
   </bean>
+      
+  <bean id="saslMd5ContextSource"
+    class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"
+    p:url="ldap://ldap1.rutgers.edu"
+    p:userDn=""
+    p:password="">
+    <property name="baseEnvironmentProperties">
+      <map>
+        <entry key="java.naming.security.authentication" value="DIGEST-MD5" />
+      </map>
+    </property>
+  </bean>
   
+  <bean id="bindAuthHandler"
+    class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+    p:filter="uid=%u"
+    p:searchBase="ou=people,dc=rutgers,dc=edu"
+    p:contextSource-ref="contextSource"
+  />
+  
+  <bean id="bindTestConfig"
+    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    p:existsCredential="battags"
+    p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
+    p:existsFailurePassword="ThisIsObviouslyNotMyRealPassword"
+    p:notExistsCredential="nobody123"
+  />
+
   <bean id="fastBindAuthHandler"
     class="org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler"
-    p:filter="uid=%u,ou=people,dc=rutgers,dc=edu"
+    p:filter="%u"
     p:contextSource-ref="contextSource"
+  />
+    
+  <bean id="fastBindTestConfig"
+    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    p:existsCredential="battags"
+    p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
+    p:existsFailurePassword="ThisIsObviouslyNotMyRealPassword"
+    p:notExistsCredential="nobody123"
+  />
+  
+  <bean id="saslMd5FastBindAuthHandler"
+    class="org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler"
+    p:filter="uid=%u,ou=people,dc=rutgers,dc=edu"
+    p:contextSource-ref="saslMd5ContextSource"
+  />
+    
+  <bean id="saslMd5FastBindTestConfig"
+    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    p:existsCredential="battags"
+    p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
   />
 
   <bean id="ldapResolver"
