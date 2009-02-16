@@ -108,7 +108,7 @@
 				<value>ldap://ldap2.rutgers.edu:636/</value>
 			</list>
 		</property>
-		<property name="userName" value="{username_goes_here}" />
+		<property name="userDn" value="{username_goes_here}" />
 		<property name="baseEnvironmentProperties">
 			<map>
 				<entry>
