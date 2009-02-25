@@ -64,7 +64,16 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
             return;
         }
         final String remoteAddr = request.getRemoteAddr();
-        final AtomicInteger atomicInteger = this.ipMap.putIfAbsent(remoteAddr, new AtomicInteger(0));
+        final AtomicInteger newInteger = new AtomicInteger(0);
+        final AtomicInteger currentInteger = this.ipMap.putIfAbsent(remoteAddr, newInteger);
+        final AtomicInteger atomicInteger;
+
+        if (currentInteger != null) {
+            atomicInteger = currentInteger;
+        } else {
+            atomicInteger = newInteger;
+        }
+        
         atomicInteger.incrementAndGet();
               
         if (atomicInteger.intValue() >= this.failureThreshhold) {

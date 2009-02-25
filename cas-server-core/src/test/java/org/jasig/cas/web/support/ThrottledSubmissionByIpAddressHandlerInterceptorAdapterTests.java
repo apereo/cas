@@ -26,7 +26,7 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
 
     protected void setUp() throws Exception {
         this.adapter = new ThrottledSubmissionByIpAddressHandlerInterceptorAdapter();
-        this.adapter.setFailureThreshhold(BigInteger.valueOf(CONST_FAILURE_THRESHHOLD));
+        this.adapter.setFailureThreshhold(CONST_FAILURE_THRESHHOLD);
         this.adapter.setFailureTimeout(CONST_FAILURE_TIMEOUT);
         this.adapter.afterPropertiesSet();
     }
