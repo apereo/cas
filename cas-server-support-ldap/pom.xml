@@ -23,7 +23,7 @@
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap</artifactId>
 			<version>1.2.1</version>
-			<scope>test</scope>
+			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<artifactId>spring-beans</artifactId>
@@ -52,7 +52,7 @@
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-tiger</artifactId>
 			<version>1.2.1</version>
-			<scope>test</scope>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
   
