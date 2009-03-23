@@ -64,6 +64,18 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 			throw new IllegalStateException(e);
 		}
 	}
+
+    /**
+     * This alternative constructor takes time in milliseconds.  It has the timeout parameters first because, otherwise it would be almost
+     * impossible to differentiate the two.
+     * 
+     * @param ticketGrantingTicketTimeOut
+     * @param serviceTicketTimeOut
+     * @param hostnames
+     */
+    public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut, final String[] hostnames) {
+        this(hostnames, (int) (ticketGrantingTicketTimeOut / 1000), (int) (serviceTicketTimeOut / 1000));
+    }
 	
 	private void handleSynchronousRequest(final Future f) {
 	    try {
