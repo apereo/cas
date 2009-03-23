@@ -58,6 +58,7 @@ public final class HttpClient implements Serializable {
             connection = (HttpURLConnection) logoutUrl.openConnection();
             connection.setDoInput(true);
             connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
             connection.setReadTimeout(this.readTimeout);
             connection.setConnectTimeout(this.connectionTimeout);
             connection.setRequestProperty("Content-Length", ""
