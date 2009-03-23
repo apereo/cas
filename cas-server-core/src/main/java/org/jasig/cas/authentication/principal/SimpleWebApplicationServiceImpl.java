@@ -43,6 +43,10 @@ public final class SimpleWebApplicationServiceImpl extends
         this(id, id, null, null, null);
     }
 
+    public SimpleWebApplicationServiceImpl(final String id, final HttpClient httpClient) {
+        this(id, id, null, null, httpClient);
+    }
+
     private SimpleWebApplicationServiceImpl(final String id,
         final String originalUrl, final String artifactId,
         final ResponseType responseType, final HttpClient httpClient) {
