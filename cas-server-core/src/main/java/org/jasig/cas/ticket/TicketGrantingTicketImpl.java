@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -39,8 +41,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
 
-    /** The authenticated object for which this ticket was generated for. */
+    private static final Log LOG = LogFactory.getLog(TicketGrantingTicketImpl.class);
 
+    /** The authenticated object for which this ticket was generated for. */
     @Lob
     @Column(name="AUTHENTICATION", nullable=false)
     private Authentication authentication;
@@ -112,7 +115,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     
     private void logOutOfServices() {
         for (final Entry<String, Service> entry : this.services.entrySet()) {
-            entry.getValue().logOutOfService(entry.getKey());
+
+            if (!entry.getValue().logOutOfService(entry.getKey())) {
+                LOG.warn("Logout message not sent to [" + entry.getValue().getId() + "]; Continuing processing...");   
+            }
         }
     }
 
