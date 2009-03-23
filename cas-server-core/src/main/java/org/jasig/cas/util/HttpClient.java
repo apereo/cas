@@ -15,10 +15,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 
 /**
  * @author Scott Battaglia
@@ -83,8 +80,10 @@ public final class HttpClient implements Serializable {
             if (log.isDebugEnabled()) {
                 log.debug("Finished sending message to" + url);
             }
-            
             return true;
+        } catch (final SocketTimeoutException e) {
+            log.warn("Socket Timeout Detected while attempting to send message to [" + url + "].");
+            return false;
         } catch (final Exception e) {
             log.error(e,e);
             return false;
