@@ -98,7 +98,7 @@
 		</property>
 	</bean>
 	
-	<bean id="contextSource" class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource">
+	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
 		<property name="anonymousReadOnly" value="false" />
 		<property name="password" value="{password_goes_here}" />
 		<property name="pooled" value="true" />

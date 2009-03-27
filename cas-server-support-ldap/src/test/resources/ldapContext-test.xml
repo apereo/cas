@@ -18,7 +18,7 @@
     p:ignoreResourceNotFound="true" />
     
   <bean id="contextSource"
-    class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"
+    class="org.springframework.ldap.core.support.LdapContextSource"
     p:url="ldap://ldap1.rutgers.edu"
     p:userDn=""
     p:password="">
@@ -30,7 +30,7 @@
   </bean>
       
   <bean id="saslMd5ContextSource"
-    class="org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource"
+    class="org.springframework.ldap.core.support.LdapContextSource"
     p:url="ldap://ldap1.rutgers.edu"
     p:userDn=""
     p:password="">

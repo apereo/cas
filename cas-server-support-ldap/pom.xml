@@ -21,8 +21,8 @@
 		
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>
-			<artifactId>spring-ldap</artifactId>
-			<version>1.2.1</version>
+			<artifactId>spring-ldap-core</artifactId>
+			<version>1.3.0.RELEASE</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -38,10 +38,6 @@
 					<groupId>org.springframework</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>spring-dao</artifactId>
-					<groupId>org.springframework</groupId>
-				</exclusion>
-				<exclusion>
 					<artifactId>spring-jdbc</artifactId>
 					<groupId>org.springframework</groupId>
 				</exclusion>
@@ -50,8 +46,8 @@
 		
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>
-			<artifactId>spring-ldap-tiger</artifactId>
-			<version>1.2.1</version>
+			<artifactId>spring-ldap-core-tiger</artifactId>
+			<version>1.3.0.RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
