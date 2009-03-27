@@ -8,7 +8,7 @@ package org.jasig.cas.adaptors.ldap;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
-import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.ldap.NamingException;
 
 import javax.naming.directory.DirContext;
 
@@ -32,12 +32,12 @@ public final class FastBindLdapAuthenticationHandler extends
             final String bindDn = LdapUtils.getFilterWithValues(
                 getFilter(),
                 credentials.getUsername());
-            log.debug("Performing LDAP bind with credential: " + bindDn);
+            this.log.debug("Performing LDAP bind with credential: " + bindDn);
             dirContext = this.getContextSource().getContext(
                 bindDn,
                 credentials.getPassword());
             return true;
-        } catch (DataAccessResourceFailureException e) {
+        } catch (NamingException e) {
             return false;
         } finally {
             if (dirContext != null) {
