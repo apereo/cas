@@ -88,7 +88,7 @@ public class BindLdapAuthenticationHandler extends
             DirContext test = null;
             String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
-                test = this.getContextSource().getDirContext(
+                test = this.getContextSource().getContext(
                     finalDn,
                     credentials.getPassword());
 

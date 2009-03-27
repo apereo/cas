@@ -33,7 +33,7 @@ public final class FastBindLdapAuthenticationHandler extends
                 getFilter(),
                 credentials.getUsername());
             log.debug("Performing LDAP bind with credential: " + bindDn);
-            dirContext = this.getContextSource().getDirContext(
+            dirContext = this.getContextSource().getContext(
                 bindDn,
                 credentials.getPassword());
             return true;

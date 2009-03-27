@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.adaptors.ldap.util.AuthenticatedLdapContextSource;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.ContextSource;
 import org.springframework.util.Assert;
 
 /**
@@ -28,7 +28,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     
     /** Instance of ContextSource */
     @NotNull
-    private AuthenticatedLdapContextSource contextSource;
+    private ContextSource contextSource;
 
     /** The filter path to the uid of the user. */
     @NotNull
@@ -42,7 +42,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
      * 
      * @param contextSource the datasource to use.
      */
-    public final void setContextSource(final AuthenticatedLdapContextSource contextSource) {
+    public final void setContextSource(final ContextSource contextSource) {
         this.contextSource = contextSource;
         this.ldapTemplate = new LdapTemplate(contextSource);
     }
@@ -60,7 +60,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
         return this.ldapTemplate;
     }
 
-    protected final AuthenticatedLdapContextSource getContextSource() {
+    protected final ContextSource getContextSource() {
         return this.contextSource;
     }
 
