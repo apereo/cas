@@ -118,7 +118,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
             return new SimplePrincipal(name);
         }
         if (isNtlm) {
-        	return Pattern.matches("\\w+\\\\\\w+", name) ? new SimplePrincipal
+        	return Pattern.matches("\\S+\\\\\\S+", name) ? new SimplePrincipal
         			(name.split("\\\\")[1]) : new SimplePrincipal(name);
         }
         return new SimplePrincipal(name.split("@")[0]);
