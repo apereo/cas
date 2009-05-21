@@ -37,7 +37,7 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
         
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
-        assertEquals(m2.getAttributes().get("samlAuthenticationStatement::authMethod"), SAMLAuthenticationStatement.AuthenticationMethod_Password);
+        assertEquals(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"), SAMLAuthenticationStatement.AuthenticationMethod_Password);
     }
     
     public void testAuthenticationTypeNotFound() {
@@ -46,7 +46,7 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
         
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
-        assertNull(m2.getAttributes().get("samlAuthenticationStatement::authMethod"));
+        assertNull(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));
     }
     
     public void testAuthenticationTypeFoundCustom() {
@@ -61,7 +61,7 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
         
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
-        assertEquals("FF", m2.getAttributes().get("samlAuthenticationStatement::authMethod"));
+        assertEquals("FF", m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));
     }
     
     protected class CustomCredentials implements Credentials {
