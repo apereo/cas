@@ -121,7 +121,7 @@ public final class ThrottledSubmissionByIpAddressHandlerInterceptorAdapter
         public void run() {
             while (true) {
                 try {
-                    Thread.sleep(this.failureTimeout * 60);
+                    Thread.sleep(this.failureTimeout * 1000);
                     cleanUpFailures();
                 } catch (final InterruptedException e) {
                     // nothing to do
