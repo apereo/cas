@@ -67,8 +67,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     private void deleteTicketAndChildren(final Ticket ticket) {
         final Map<String,Object> params = new HashMap<String,Object>();
         params.put("id", ticket.getId());
-        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = this.jpaTemplate.findByNamedParams("from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", params);
-        final List<ServiceTicketImpl> serviceTicketImpls = this.jpaTemplate.findByNamedParams("from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", params);
+        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = this.jpaTemplate.findByNamedParams("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", params);
+        final List<ServiceTicketImpl> serviceTicketImpls = this.jpaTemplate.findByNamedParams("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", params);
         
         for (final ServiceTicketImpl s : serviceTicketImpls) {
             removeTicket(s);
@@ -96,10 +96,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     public Ticket getTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-                return this.jpaTemplate.find(TicketGrantingTicketImpl.class, ticketId);
+                return getProxiedTicketInstance(this.jpaTemplate.find(TicketGrantingTicketImpl.class, ticketId));
             }
             
-            return this.jpaTemplate.find(ServiceTicketImpl.class, ticketId);
+            return getProxiedTicketInstance(this.jpaTemplate.find(ServiceTicketImpl.class, ticketId));
         } catch (final Exception e) {
             log.error(e,e);
         }
@@ -107,8 +107,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     }
 
     public Collection<Ticket> getTickets() {
-        final List<TicketGrantingTicketImpl> tgts = this.jpaTemplate.find("from TicketGrantingTicketImpl");
-        final List<ServiceTicketImpl> sts = this.jpaTemplate.find(" from ServiceTicketImpl");
+        final List<TicketGrantingTicketImpl> tgts = this.jpaTemplate.find("select t from TicketGrantingTicketImpl t");
+        final List<ServiceTicketImpl> sts = this.jpaTemplate.find("select s from ServiceTicketImpl s");
         
         final List<Ticket> tickets = new ArrayList<Ticket>();
         tickets.addAll(tgts);
