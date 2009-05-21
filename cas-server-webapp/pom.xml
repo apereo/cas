@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.3.2</version>
+		<version>3.3.3-SNAPSHOT</version>
 	</parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -55,6 +55,12 @@
 			<artifactId>cas-server-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+<dependency>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-support-ldap</artifactId>
+	<version>${project.version}</version>
+</dependency>
 		
 		<dependency>
 			<groupId>quartz</groupId>
