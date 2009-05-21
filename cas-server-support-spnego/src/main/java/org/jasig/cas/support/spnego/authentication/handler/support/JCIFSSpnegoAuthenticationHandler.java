@@ -59,7 +59,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
                 nextToken = this.authentication.getNextToken();
             }
         } catch (jcifs.spnego.AuthenticationException e) {
-            throw new BadCredentialsAuthenticationException();
+            throw new BadCredentialsAuthenticationException(e);
         }
         // evaluate jcifs response
         if (nextToken != null) {
