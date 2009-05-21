@@ -52,9 +52,7 @@ Customization
 After you've gotten CAS working, one of the first things you will want 
 to do is create your own skin.
 
-There are two skins included with CAS.  One is called "default" and the 
-other is called "simple".  "simple" is meant to be used as a template for
-building your own skin.  If you look in cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/simple/ui, 
+There is one skin included with CAS; Its called "default" If you look in cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/default/ui,
 you will see that a skin is made up of the following files:
 
 casConfirmView.jsp      displayed when the user is warned before being
@@ -71,11 +69,7 @@ serviceErrorView.jsp    used in conjunction with the service registry feature,
 
 Steps for creating a custom skin
 --------------------------------
-1. copy the contents of cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/simple/ui into
-   cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/default/ui (backup this directory first if
-   you want to save the default pages that come with CAS).
-
-2. edit each of the pages to appear as you want them.  Take care when 
+   Edit each of the pages to appear as you want them.  Take care when
    you're editing these pages not to change any of the forms or logic tags
    unless you're sure you know what you're doing.  If you need to include 
    a css file, put it in cas-server-webapp/src/main/webapp/themes/default/cas.css and reference it 
