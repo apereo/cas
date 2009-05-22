@@ -144,7 +144,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         this.loggedOutAlready = true;
         
         if (this.httpClient != null) {
-            return this.httpClient.sendMessageToEndPoint(getOriginalUrl(), logoutRequest);
+            return this.httpClient.sendMessageToEndPoint(getOriginalUrl(), logoutRequest, true);
         }
         
         return false;
