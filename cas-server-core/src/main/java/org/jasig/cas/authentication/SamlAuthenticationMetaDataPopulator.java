@@ -25,7 +25,7 @@ import org.opensaml.SAMLAuthenticationStatement;
 public class SamlAuthenticationMetaDataPopulator implements
     AuthenticationMetaDataPopulator {
 
-    private static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
+    public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
 
     private Map<String, String> authenticationMethods = new HashMap<String, String>();
 

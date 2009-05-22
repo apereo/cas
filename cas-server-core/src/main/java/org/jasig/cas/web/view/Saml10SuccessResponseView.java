@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
 import org.opensaml.SAMLAssertion;
@@ -65,7 +66,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
                 .getChainedAuthentications().get(0);
             final Date currentDate = new Date();
             final String authenticationMethod = (String) authentication
-                .getAttributes().get("samlAuthenticationStatement::authMethod");
+                .getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
             final Service service = assertion.getService();
             final SAMLResponse samlResponse = new SAMLResponse(null, service
                 .getId(), new ArrayList<Object>(), null);
