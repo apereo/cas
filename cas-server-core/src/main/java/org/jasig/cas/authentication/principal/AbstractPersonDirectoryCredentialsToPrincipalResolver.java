@@ -49,6 +49,10 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
         }
         
         final Map<String, List<Object>> attributes = this.attributeRepository.getMultivaluedUserAttributes(principalId);
+
+        if (attributes == null) {
+            return new SimplePrincipal(principalId);
+        }
         
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
         
