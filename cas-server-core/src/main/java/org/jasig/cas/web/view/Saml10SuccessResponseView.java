@@ -49,12 +49,17 @@ public class Saml10SuccessResponseView extends AbstractCasView {
     /** Namespace for custom attributes. */
     private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
 
+    private static final String DEFAULT_ENCODING = "UTF-8";
+
     /** The issuer, generally the hostname. */
     @NotNull
     private String issuer;
 
     /** The amount of time in milliseconds this is valid for. */
     private long issueLength = 30000;
+
+    @NotNull
+    private String encoding = DEFAULT_ENCODING;
 
     protected void renderMergedOutputModel(final Map model,
         final HttpServletRequest request, final HttpServletResponse response)
@@ -127,11 +132,8 @@ public class Saml10SuccessResponseView extends AbstractCasView {
 
             final String xmlResponse = samlResponse.toString();
 
-            response.getWriter().print(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            response.setContentType("text/xml");
-            
-            
+            response.setContentType("text/xml; charset=" + this.encoding);
+            response.getWriter().print("<?xml version=\"1.0\" encoding=\"" + this.encoding + "\"?>");
             response.getWriter().print("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body>");
             response.getWriter().print(xmlResponse);
             response.getWriter().print("</SOAP-ENV:Body></SOAP-ENV:Envelope>");
@@ -160,5 +162,9 @@ public class Saml10SuccessResponseView extends AbstractCasView {
 
     public void setIssuer(final String issuer) {
         this.issuer = issuer;
+    }
+
+    public void setEncoding(final String encoding) {
+        this.encoding = encoding;
     }
 }

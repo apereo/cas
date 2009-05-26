@@ -16,6 +16,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.opensaml.SAMLException;
 import org.opensaml.SAMLResponse;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Represents a failed attempt at validating a ticket, responding via a SAML
@@ -27,22 +28,29 @@ import org.opensaml.SAMLResponse;
  */
 public class Saml10FailureResponseView extends AbstractCasView {
 
+    private static final String DEFAULT_ENCODING = "UTF-8";
+
     private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
+
+    @NotNull
+    private String encoding = DEFAULT_ENCODING;
 
     protected void renderMergedOutputModel(final Map model,
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        final WebApplicationService service = this.samlArgumentExtractor.extractService(
-            request);
+        final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
 
-        final SAMLResponse samlResponse = new SAMLResponse(
-            service.getArtifactId(), service.getId(), new ArrayList<Object>(), new SAMLException("Success"));
+        final SAMLResponse samlResponse = new SAMLResponse(service.getArtifactId(), service.getId(), new ArrayList<Object>(), new SAMLException("Success"));
         samlResponse.setIssueInstant(new Date());
 
-        response.getWriter().print("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        response.setContentType("text/xml");
+        response.setContentType("text/xml; charset=" + this.encoding);
+        response.getWriter().print("<?xml version=\"1.0\" encoding=\"" + this.encoding + "\"?>");
         response.getWriter().print("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body>");
         response.getWriter().print(samlResponse.toString());
         response.getWriter().print("</SOAP-ENV:Body></SOAP-ENV:Envelope>");
+    }
+
+    public void setEncoding(final String encoding) {
+        this.encoding = encoding;
     }
 }
