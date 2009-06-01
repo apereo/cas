@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.inspektr.common.ioc.annotation.GreaterThan;
 import org.inspektr.common.ioc.annotation.NotNull;
+import org.springframework.util.Assert;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -39,6 +40,9 @@ public final class HttpClient implements Serializable {
 
     private static final Log log = LogFactory.getLog(HttpClient.class);
 
+    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
+
+
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
@@ -49,11 +53,15 @@ public final class HttpClient implements Serializable {
     @GreaterThan(0)
     private int readTimeout = 5000;
 
-    @NotNull
-    private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
-    public void setExecutorService(final ExecutorService executorService) {
-        this.executorService = executorService;
+    /**
+     * Note that changing this executor will affect all httpClients.  While not ideal, this change was made because certain ticket registries
+     * were persisting the HttpClient and thus getting serializable exceptions.
+     * @param executorService
+     */
+    public static void setExecutorService(final ExecutorService executorService) {
+        Assert.notNull(executorService);
+        EXECUTOR_SERVICE = executorService;
     }
 
     /**
@@ -67,7 +75,7 @@ public final class HttpClient implements Serializable {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      */
     public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = this.executorService.submit(new MessageSender(url, message, this.readTimeout, this.connectionTimeout));
+        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message, this.readTimeout, this.connectionTimeout));
 
         if (async) {
             return true;
