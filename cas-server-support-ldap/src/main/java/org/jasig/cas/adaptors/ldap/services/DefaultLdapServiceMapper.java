@@ -24,7 +24,7 @@ import org.springframework.ldap.filter.Filter;
 public final class DefaultLdapServiceMapper extends LdapServiceMapper {
 
     @NotNull
-    private String objectclass = "casSerivce";
+    private String objectclass = "casService";
 
     @NotNull
     private String serviceIdAttribute = "casServiceUrlPattern";
@@ -45,7 +45,7 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
     private String serviceSsoEnabledAttribute = "casServiceSsoEnabled";
 
     @NotNull
-    private String serviceAnonymousAccessAttribute = "casSericeAnonymousAccess";
+    private String serviceAnonymousAccessAttribute = "casServiceAnonymousAccess";
 
     @NotNull
     private String serviceAllowedToProxyAttribute = "casServiceAllowedToProxy";
