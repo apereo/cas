@@ -49,7 +49,6 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private TicketRegistry ticketRegistry;
 
-    @Transactional(readOnly=false)
     public void clean() {
         final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
         final Collection<Ticket> ticketsInCache;

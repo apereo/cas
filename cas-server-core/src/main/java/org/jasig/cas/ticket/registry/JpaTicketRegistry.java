@@ -20,6 +20,7 @@ import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -48,6 +49,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         this.jpaTemplate.persist(ticket);
     }
 
+    @Transactional(readOnly = false)
     public boolean deleteTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
         
@@ -106,6 +108,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         return null;
     }
 
+    @Transactional(readOnly=false)
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = this.jpaTemplate.find("select t from TicketGrantingTicketImpl t");
         final List<ServiceTicketImpl> sts = this.jpaTemplate.find("select s from ServiceTicketImpl s");
