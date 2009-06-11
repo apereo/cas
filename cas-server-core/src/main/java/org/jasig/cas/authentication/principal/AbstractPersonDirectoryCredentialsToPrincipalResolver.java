@@ -27,6 +27,8 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
 
     /** Log instance. */
     protected final Log log = LogFactory.getLog(this.getClass());
+
+    private boolean returnNullIfNoAttributes = false;
     
     /** Repository of principal attributes to be retrieved */
     @NotNull
@@ -50,8 +52,12 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
         
         final Map<String, List<Object>> attributes = this.attributeRepository.getMultivaluedUserAttributes(principalId);
 
-        if (attributes == null) {
+        if (attributes == null & !this.returnNullIfNoAttributes) {
             return new SimplePrincipal(principalId);
+        }
+
+        if (attributes == null && this.returnNullIfNoAttributes) {
+            return null;
         }
         
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
@@ -74,5 +80,9 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     
     public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
+    }
+
+    public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
+        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
     }
 }
