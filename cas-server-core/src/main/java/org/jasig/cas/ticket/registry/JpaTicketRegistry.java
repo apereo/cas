@@ -108,7 +108,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         return null;
     }
 
-    @Transactional(readOnly=false)
+    @Transactional(readOnly=true)
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = this.jpaTemplate.find("select t from TicketGrantingTicketImpl t");
         final List<ServiceTicketImpl> sts = this.jpaTemplate.find("select s from ServiceTicketImpl s");
