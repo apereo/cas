@@ -51,7 +51,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Transactional(readOnly = false)
     public boolean deleteTicket(final String ticketId) {
-        final Ticket ticket = getTicket(ticketId);
+        final Ticket ticket = getRawTicket(ticketId);
         
         if (ticket == null) {
             return false;
@@ -91,19 +91,23 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
              }
             this.jpaTemplate.remove(ticket);
         } catch (final Exception e) {
-            // ticket was probably removed via other means
+            log.error("Error removing " + ticket + " from registry.", e);
         }
     }
-
+    
     public Ticket getTicket(final String ticketId) {
+        return getProxiedTicketInstance(getRawTicket(ticketId));
+    }
+    
+    private Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-                return getProxiedTicketInstance(this.jpaTemplate.find(TicketGrantingTicketImpl.class, ticketId));
+                return this.jpaTemplate.find(TicketGrantingTicketImpl.class, ticketId);
             }
             
-            return getProxiedTicketInstance(this.jpaTemplate.find(ServiceTicketImpl.class, ticketId));
+            return this.jpaTemplate.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
-            log.error(e,e);
+            log.error("Error getting ticket " + ticketId + " from registry.", e);
         }
         return null;
     }
