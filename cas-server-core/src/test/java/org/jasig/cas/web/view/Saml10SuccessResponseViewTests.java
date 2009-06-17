@@ -14,6 +14,7 @@ import java.util.Map;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.MutableAuthentication;
+import org.jasig.cas.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
@@ -51,7 +52,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
         
         final MutableAuthentication authentication = new MutableAuthentication(principal);
-        authentication.getAttributes().put("samlAuthenticationStatement::authMethod", SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client);
+        authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD, SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client);
         authentication.getAttributes().put("testSamlAttribute", "value");
         
         final List<Authentication> authentications = new ArrayList<Authentication>();
@@ -82,7 +83,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
         
         final MutableAuthentication authentication = new MutableAuthentication(principal);
-        authentication.getAttributes().put("samlAuthenticationStatement::authMethod", SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client);
+        authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD, SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client);
         authentication.getAttributes().put("testSamlAttribute", "value");
         
         final List<Authentication> authentications = new ArrayList<Authentication>();
