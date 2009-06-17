@@ -31,7 +31,26 @@
 						<outputDirectory>src</outputDirectory>
 						<lineEnding>unix</lineEnding>
 						<useDefaultExcludes>true</useDefaultExcludes>
+                        <includes>
+                            <include>**/*.java</include>
+                            <include>**/*.xml</include>
+                            <include>**/*.properties</include>
+                            <include>**/*.jsp</include>
+                            <include>**/*.css</include>
+                            <include>**/*.jsp</include>
+                            <include>**/*.html</include>
+                            <include>**/*.txt</include>
+                        </includes>
 					</fileSet>
+
+                     <fileSet>
+                         <directory>src</directory>
+                         <outputDirectory>src</outputDirectory>
+                         <includes>
+                             <include>**/*.gif</include>
+                             <include>**/*.ico</include>
+                         </includes>
+                     </fileSet>
 					
 					<fileSet>
 						<lineEnding>unix</lineEnding>
