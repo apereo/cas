@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.util.HttpClient;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Abstract class for handling the enabling and disabling of Single Sign Out features.
@@ -29,7 +30,8 @@ public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
     private boolean disableSingleSignOut = false;
     
     /** Default instance of HttpClient. */
-    private HttpClient httpClient = new HttpClient();
+    @NotNull
+    private HttpClient httpClient;
     
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;

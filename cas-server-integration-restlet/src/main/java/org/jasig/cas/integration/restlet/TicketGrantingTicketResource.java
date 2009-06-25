@@ -22,6 +22,7 @@ import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Implementation of a Restlet resource for creating Service Tickets from a 
@@ -36,14 +37,14 @@ public final class TicketGrantingTicketResource extends Resource {
     
     private final static Log log = LogFactory.getLog(TicketGrantingTicketResource.class);
 
-    private final static HttpClient HTTP_CLIENT = new HttpClient();
-    
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
     
     private String ticketGrantingTicketId;
 
-    private HttpClient httpClient = HTTP_CLIENT;
+    @Autowired
+    @NotNull
+    private HttpClient httpClient;
 
     public void init(final Context context, final Request request, final Response response) {
         super.init(context, request, response);
