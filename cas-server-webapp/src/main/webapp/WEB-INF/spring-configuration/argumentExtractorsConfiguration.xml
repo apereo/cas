@@ -11,9 +11,11 @@
 	</description>
  	<bean
  		id="casArgumentExtractor"
- 		class="org.jasig.cas.web.support.CasArgumentExtractor" />
+ 		class="org.jasig.cas.web.support.CasArgumentExtractor"
+         p:httpClient-ref="httpClient" />
 
- 	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor" />
+ 	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor"
+             p:httpClient-ref="httpClient" />
  	
  	<util:list id="argumentExtractors">
 		<ref bean="casArgumentExtractor" />

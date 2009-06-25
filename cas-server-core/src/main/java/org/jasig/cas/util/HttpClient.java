@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.inspektr.common.ioc.annotation.GreaterThan;
 import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.util.Assert;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -27,7 +28,7 @@ import java.util.concurrent.Future;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class HttpClient implements Serializable {
+public final class HttpClient implements Serializable, DisposableBean {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5306738686476129516L;
@@ -59,7 +60,7 @@ public final class HttpClient implements Serializable {
      * were persisting the HttpClient and thus getting serializable exceptions.
      * @param executorService
      */
-    public static void setExecutorService(final ExecutorService executorService) {
+    public void setExecutorService(final ExecutorService executorService) {
         Assert.notNull(executorService);
         EXECUTOR_SERVICE = executorService;
     }
@@ -109,8 +110,8 @@ public final class HttpClient implements Serializable {
 
             final int responseCode = connection.getResponseCode();
 
-            for (int i = 0; i < this.acceptableCodes.length; i++) {
-                if (responseCode == this.acceptableCodes[i]) {
+            for (final int acceptableCode : this.acceptableCodes) {
+                if (responseCode == acceptableCode) {
                     if (log.isDebugEnabled()) {
                         log.debug("Response code from server matched "
                             + responseCode + ".");
@@ -150,6 +151,10 @@ public final class HttpClient implements Serializable {
 
     public void setReadTimeout(final int readTimeout) {
         this.readTimeout = readTimeout;
+    }
+
+    public void destroy() throws Exception {
+        EXECUTOR_SERVICE.shutdown();
     }
 
     private static final class MessageSender implements Callable<Boolean> {

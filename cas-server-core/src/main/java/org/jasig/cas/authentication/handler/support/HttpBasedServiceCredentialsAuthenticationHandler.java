@@ -11,6 +11,7 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.HttpClient;
+import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Class to validate the credentials presented by communicating with the web
@@ -38,6 +39,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements
     private final Log log = LogFactory.getLog(getClass());
 
     /** Instance of Apache Commons HttpClient */
+    @NotNull
     private HttpClient httpClient;
 
     public boolean authenticate(final Credentials credentials) {
