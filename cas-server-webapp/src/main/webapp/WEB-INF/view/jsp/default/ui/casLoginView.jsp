@@ -64,6 +64,7 @@
 							><li><a href="${loginUrl}cs">Czech</a></li
 							><li><a href="${loginUrl}sl">Slovenian</a></li
 							><li><a href="${loginUrl}pl">Polish</a></li
+                            ><li><a href="${loginUrl}pt_BR">Portuguese (Brazil)</a></li
 							><li class="last"><a href="${loginUrl}tr">Turkish</a></li
 						></ul>
 	                </div>
