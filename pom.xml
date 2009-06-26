@@ -295,6 +295,14 @@
 		</repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>jasig.repo</id>
+            <name>Jasig Nexus Repository</name>
+            <url>http://developer.jasig.org/repo/content/repositories/m2/</url>
+        </repository>
+   </distributionManagement>
+
 	<modules>
 		<module>cas-server-core</module>
 		<module>cas-server-support-generic</module>
