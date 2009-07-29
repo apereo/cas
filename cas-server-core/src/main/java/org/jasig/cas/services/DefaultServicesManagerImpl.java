@@ -13,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Default implementation of the {@link ServicesManager} interface. If there are
@@ -24,6 +26,8 @@ import org.springframework.util.Assert;
  * @since 3.1
  */
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
+
+    private final Log log = LogFactory.getLog(getClass());
 
     /** Instance of ServiceRegistryDao. */
     private ServiceRegistryDao serviceRegistryDao;
@@ -120,6 +124,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
     
     public void reload() {
+        log.info("Reloading registered services.");
         load();
     }
     
@@ -127,10 +132,12 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         final ConcurrentHashMap<Long, RegisteredService> localServices = new ConcurrentHashMap<Long, RegisteredService>();
                 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
+            log.debug("Adding registered service " + r.getServiceId());
             localServices.put(r.getId(), r);
         }
         
         this.services = localServices;
+        log.info(String.format("Loaded %s services.", this.services.size()));
     }
     
     private RegisteredService constructDefaultRegisteredService(final String[] attributes) {

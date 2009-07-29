@@ -23,13 +23,4 @@
 		p:jobDetail-ref="jobDetailTicketRegistryCleaner"
 		p:startDelay="20000"
 		p:repeatInterval="5000000" />
-
-	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref
-					local="triggerJobDetailTicketRegistryCleaner" />
-			</list>
-		</property>
-	</bean>
 </beans>

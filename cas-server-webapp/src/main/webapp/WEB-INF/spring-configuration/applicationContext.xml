@@ -18,6 +18,20 @@
 		<constructor-arg index="0" ref="serviceRegistryDao" />
 	</bean>
 
+    <!--
+        Job to periodically reload services from service registry.
+        This job is needed for a clustered CAS environment since service changes
+        in one CAS node are not known to the other until a reload.
+    -->
+    <bean id="serviceRegistryReloaderJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+        p:targetObject-ref="servicesManager"
+        p:targetMethod="reload" />
+
+    <bean id="periodicServiceRegistryReloaderTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+        p:jobDetail-ref="serviceRegistryReloaderJobDetail"
+        p:startDelay="120000"
+        p:repeatInterval="120000" />
+
 	<bean id="httpClient" class="org.jasig.cas.util.HttpClient"
 		p:readTimeout="5000"
 		p:connectionTimeout="5000" />
@@ -46,4 +60,7 @@
 	<bean id="advisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 	
 	<bean id="validationAnnotationBeanPostProcessor" class="org.inspektr.common.ioc.validation.ValidationAnnotationBeanPostProcessor" />
+
+    <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
+    <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean" />
 </beans>

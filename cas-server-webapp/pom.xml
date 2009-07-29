@@ -6,7 +6,7 @@
 		<version>3.3.4-SNAPSHOT</version>
 	</parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jasig.cas</groupId>
+  <groupId>org.jasig.cas</groupId>        
   <artifactId>cas-server-webapp</artifactId>
   <packaging>war</packaging>
   <name>JA-SIG CAS Web Application</name>
