@@ -5,6 +5,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContext;
 import org.quartz.Trigger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Map;
 
@@ -21,11 +23,19 @@ import java.util.Map;
  **/
 public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean implements ApplicationContextAware, InitializingBean {
 
+    private final Log log = LogFactory.getLog(getClass());
+
+
     private ApplicationContext applicationContext;
 
     public void afterPropertiesSet() throws Exception {
-        final Map<String,Trigger> triggers = this.applicationContext.getBeansOfType(Trigger.class);
+        final Map<String,Trigger> triggers = (Map<String,Trigger>) this.applicationContext.getBeansOfType(Trigger.class);
         super.setTriggers(triggers.values().toArray(new Trigger[triggers.size()]));
+
+        if (log.isDebugEnabled()) {
+            System.out.println("Autowired the following triggers defined in application context: " + triggers.keySet().toString());
+        }
+
         super.afterPropertiesSet();
     }
 
