@@ -32,7 +32,7 @@ public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean i
         super.setTriggers(triggers.values().toArray(new Trigger[triggers.size()]));
 
         if (log.isDebugEnabled()) {
-            System.out.println("Autowired the following triggers defined in application context: " + triggers.keySet().toString());
+            log.debug("Autowired the following triggers defined in application context: " + triggers.keySet().toString());
         }
 
         super.afterPropertiesSet();
