@@ -25,7 +25,6 @@ public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean i
 
     private final Log log = LogFactory.getLog(getClass());
 
-
     private ApplicationContext applicationContext;
 
     public void afterPropertiesSet() throws Exception {
