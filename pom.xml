@@ -11,7 +11,7 @@
 	<artifactId>cas-server</artifactId>
 	<packaging>pom</packaging>
 	<name>JA-SIG Central Authentication Service</name>
-	<version>3.3.4-SNAPSHOT</version>
+	<version>3.3.4</version>
 	<url>http://www.ja-sig.org/products/cas/</url>
 	<ciManagement>
 		<system>QuickBuild</system>
