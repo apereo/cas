@@ -75,7 +75,7 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
         
        assertEquals("casFailureAuthenticationThreshhold", modelAndView.getViewName());
        
-       Thread.sleep((CONST_FAILURE_TIMEOUT +2) * 1000);
+       Thread.sleep((CONST_FAILURE_TIMEOUT + 10) * 1000);
      
        modelAndView.setViewName("casLoginView");
        
