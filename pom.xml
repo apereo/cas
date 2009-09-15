@@ -57,36 +57,40 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clover-plugin</artifactId>
-				<configuration>
-					<licenseLocation>
-						${basedir}/src/test/clover/clover.license
-					</licenseLocation>
-					<jdk>1.5</jdk>
-					<generateXml>true</generateXml>
-					<generateHtml>true</generateHtml>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
-					<excludes>
+
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-clover2-plugin</artifactId>
+                <version>${clover.version}</version>
+                <configuration>
+                    <license><![CDATA[oPpoNpLipDQKHHXaIXJPCIsoqRpdAfeXwIImkDIRoTnriq
+mi2KuXZFGad>>Lz0ULLXhqIo2KPjARsdren1aP3vzebzkM
+qNNNUvQNpqopPoOQRqmTvqoPnOnMopRPqpSUtxrWTxOxTu
+pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
+97W9kZkUUnmm]]></license>
+                    <jdk>1.5</jdk>
+                    <generateXml>true</generateXml>
+                    <generateHtml>true</generateHtml>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
 						<exclude>**/CasVersion.java</exclude>
 						<exclude>
 							**/SamlCompliantUniqueTicketIdGenerator.java
 						</exclude>
-					</excludes>
-				</configuration>
-				<executions>
-					<execution>
-						<!--                        <phase>site</phase>-->
-						<goals>
-							<goal>instrument</goal>
-							<goal>clover</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>instrument</goal>
+                            <goal>clover</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -353,5 +357,6 @@
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
 		<spring.version>2.5.6</spring.version>
+        <clover.version>2.6.0</clover.version>
 	</properties>
 </project>
