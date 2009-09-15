@@ -98,7 +98,7 @@
 		- Spring WebMVC controllers as configured in cas-servlet.xml.
 		-   
 		- The choice made above about how to handle a broken ApplicationContext at 
-		- context initialization applies here as well, sicne this servlet is load-on-startup.
+		- context initialization applies here as well, since this servlet is load-on-startup.
 		-
 		- If you'd like these errors to be fatal and prevent the CAS servlet from loading at all,
 		- use org.springframework.web.servlet.DispatcherServlet.
@@ -188,21 +188,6 @@
 		<url-pattern>/openid/*</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>cas</servlet-name>
-		<url-pattern>/services/viewCurrentStatistics.html</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>cas</servlet-name>
-		<url-pattern>/services/viewStatistics.html</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>cas</servlet-name>
-		<url-pattern>/services/viewLogRequests.html</url-pattern>
-	</servlet-mapping>
-	
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/services/deleteRegisteredService.html</url-pattern>
