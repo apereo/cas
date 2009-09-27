@@ -5,9 +5,7 @@
  */
 package org.jasig.cas.web.support;
 
-import java.math.BigInteger;
-
-import org.jasig.cas.web.support.ThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
+import org.jasig.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,17 +16,16 @@ import junit.framework.TestCase;
 public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extends
     TestCase {
 
-    private ThrottledSubmissionByIpAddressHandlerInterceptorAdapter adapter;
+    private InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter adapter;
     
     private static final int CONST_FAILURE_THRESHHOLD = 3;
     
     private static final int CONST_FAILURE_TIMEOUT = 2;
 
     protected void setUp() throws Exception {
-        this.adapter = new ThrottledSubmissionByIpAddressHandlerInterceptorAdapter();
-        this.adapter.setFailureThreshhold(CONST_FAILURE_THRESHHOLD);
-        this.adapter.setFailureTimeout(CONST_FAILURE_TIMEOUT);
-        this.adapter.afterPropertiesSet();
+        this.adapter = new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter();
+        this.adapter.setFailureThreshold(CONST_FAILURE_THRESHHOLD);
+        this.adapter.setFailureRangeInSeconds(CONST_FAILURE_TIMEOUT);
     }
     
     public void testOneFailure() throws Exception {
@@ -52,34 +49,33 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
         assertEquals("redirect", modelAndView.getViewName());
     }
     
-    public void testEnoughFailuresToChangeView() throws Exception {
+    public void testEnoughFailuresToCauseProblem() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final ModelAndView modelAndView = new ModelAndView("casLoginView");
-        request.setMethod("GET");
+        request.setMethod("POST");
         request.setRemoteAddr("111.111.111.111");
        for (int i = 0; i < CONST_FAILURE_THRESHHOLD+1; i++) {
            this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
        }
-        
-       assertEquals("casFailureAuthenticationThreshhold", modelAndView.getViewName());
+
+        assertFalse(this.adapter.preHandle(request,new MockHttpServletResponse(), new Object()));
     }
     
     public void testFailuresThenSuccess() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final ModelAndView modelAndView = new ModelAndView("casLoginView");
-        request.setMethod("GET");
+        request.setMethod("POST");
         request.setRemoteAddr("111.111.111.111");
        for (int i = 0; i < CONST_FAILURE_THRESHHOLD+1; i++) {
            this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
        }
         
-       assertEquals("casFailureAuthenticationThreshhold", modelAndView.getViewName());
+       assertFalse(this.adapter.preHandle(request,new MockHttpServletResponse(), new Object()));
+
+       for (int i = 0; i < CONST_FAILURE_THRESHHOLD; i++) {
+           this.adapter.decrementCounts();
+       }
        
-       Thread.sleep((CONST_FAILURE_TIMEOUT + 10) * 1000);
-     
-       modelAndView.setViewName("casLoginView");
-       
-       this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
-       assertEquals("casLoginView", modelAndView.getViewName());
+       assertTrue(this.adapter.preHandle(request, new MockHttpServletResponse(), new Object()));
     }
 }
