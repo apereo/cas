@@ -356,7 +356,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 	<properties>
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
-		<spring.version>2.5.6</spring.version>
+		<spring.version>2.5.6.SEC01</spring.version>
         <clover.version>2.6.0</clover.version>
 	</properties>
 </project>
