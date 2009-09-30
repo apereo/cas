@@ -212,6 +212,11 @@
 		<error-code>404</error-code>
 		<location>/</location>
 	</error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/view/jsp/default/ui/casBlockedView.jsp</location>
+    </error-page>
 	
 	<welcome-file-list>
   		<welcome-file>index.jsp</welcome-file>
