@@ -47,12 +47,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     protected final int findCount(final HttpServletRequest request, final String usernameParameter, final int failureRangeInSeconds) {
-        final String SQL = "Select count(*) from COM_AUDIT_TRAIL where AUD_CLIENT_IP = ? and AUD_USER = ? AND (AUD_ACTION = ? OR AUD_ACTION = ?) AND APPLIC_CD = ? AND AUD_DATE >= ?";
+        final String SQL = "Select count(*) from COM_AUDIT_TRAIL where AUD_CLIENT_IP = ? and AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ?";
         final String userToUse = constructUsername(request, usernameParameter);
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.SECOND, -1 * failureRangeInSeconds);
         final Date oldestDate = calendar.getTime();
-        return this.jdbcTemplate.queryForInt(SQL, new Object[] {request.getRemoteAddr(), userToUse, INSPEKTR_ACTION, "AUTHENTICATION_FAILED", this.applicationCode, oldestDate}, new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP});
+        return this.jdbcTemplate.queryForInt(SQL, new Object[] {request.getRemoteAddr(), userToUse, INSPEKTR_ACTION, this.applicationCode, oldestDate}, new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP});
     }
 
     @Override
