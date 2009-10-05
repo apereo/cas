@@ -7,6 +7,7 @@ package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+import org.springframework.util.Assert;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
@@ -32,6 +33,9 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
         final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
         this.numberOfUses = numberOfUses;
+        Assert.isTrue(this.numberOfUses > 0, "numberOfUsers must be greater than 0.");
+        Assert.isTrue(this.timeToKillInMilliSeconds > 0, "timeToKillInMilliseconds must be greater than 0.");
+
     }
 
     public boolean isExpired(final TicketState ticketState) {
