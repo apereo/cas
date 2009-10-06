@@ -73,7 +73,7 @@ public final class SamlService extends AbstractWebApplicationService {
             final int artifactStartLocation = startTagLocation + CONST_START_ARTIFACT_XML_TAG.length();
             final int endTagLocation = requestBody.indexOf(CONST_END_ARTIFACT_XML_TAG);
 
-            artifactId = requestBody.substring(artifactStartLocation, endTagLocation);
+            artifactId = requestBody.substring(artifactStartLocation, endTagLocation).trim();
         } else {
             artifactId = null;
         }
