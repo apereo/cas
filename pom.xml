@@ -237,7 +237,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webflow</artifactId>
-			<version>1.0.5</version>
+			<version>${spring.webflow.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -279,6 +279,18 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-webmvc</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -356,6 +368,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 	<properties>
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
+        <spring.webflow.version>1.0.6</spring.webflow.version>
 		<spring.version>2.5.6.SEC01</spring.version>
         <clover.version>2.6.0</clover.version>
 	</properties>
