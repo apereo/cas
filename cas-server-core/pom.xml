@@ -20,6 +20,14 @@
           <artifactId>spring-dao</artifactId>
           <groupId>org.springframework</groupId>
         </exclusion>
+        <exclusion>
+        	<artifactId>spring-tx</artifactId>
+        	<groupId>org.springframework</groupId>
+        </exclusion>
+        <exclusion>
+        	<artifactId>spring-context</artifactId>
+        	<groupId>org.springframework</groupId>	
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
