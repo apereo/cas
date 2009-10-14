@@ -188,15 +188,13 @@ public final class CentralAuthenticationServiceImpl implements
             .findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Service [" + service.getId()
-                    + "] not found in ServiceRegistry.");
-            }
+            log.warn("ServiceManagement: Unauthorized Service Access. Service [" + service.getId() + "] not found in Service Registry.");
             throw new UnauthorizedServiceException();
         }
 
         if (!registeredService.isSsoEnabled() && credentials == null
             && ticketGrantingTicket.getCountOfUses() > 0) {
+            log.warn("ServiceManagement: Service Not Allowed to use SSO.  Service [" + service.getId() + "]");
             throw new UnauthorizedSsoServiceException();
         }
 
@@ -275,6 +273,7 @@ public final class CentralAuthenticationServiceImpl implements
 
             if (registeredService == null || !registeredService.isEnabled()
                 || !registeredService.isAllowedToProxy()) {
+                log.warn("ServiceManagement: Service Attempted to Proxy, but is not allowed.  Service: [" + serviceTicket.getService().getId() + "]");
                 throw new UnauthorizedProxyingException();
             }
 
@@ -311,6 +310,7 @@ public final class CentralAuthenticationServiceImpl implements
             .findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
+            log.warn("ServiceManagement: Service does not exist is not enabled, and thus not allowed to validate tickets.   Service: [" + service.getId() + "]");
             throw new UnauthorizedServiceException(
                 "Service not allowed to validate tickets.");
         }
