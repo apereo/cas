@@ -43,7 +43,9 @@ public interface TicketGrantingTicket extends Ticket {
         ExpirationPolicy expirationPolicy, boolean credentialsProvided);
 
     /**
-     * Explicitly expire a ticket.
+     * Explicitly expire a ticket.  This method will log out of any service associated with the
+     * Ticket Granting Ticket.
+     * 
      */
     void expire();
 

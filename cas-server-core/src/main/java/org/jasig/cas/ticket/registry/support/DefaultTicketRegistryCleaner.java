@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +71,12 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
             + " found to be removed.  Removing now.");
 
         for (final Ticket ticket : ticketsToRemove) {
+            // THIS WILL MAKE SURE WE LOG OUT.  The calls are Async so we should be fine with this.
+            if (ticket instanceof TicketGrantingTicket) {
+                ((TicketGrantingTicket) ticket).expire();
+            }
+
+
             this.ticketRegistry.deleteTicket(ticket.getId());
         }
 
