@@ -92,24 +92,27 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     
     private final String requestId;
 
+    private final String alternateUserName;
+
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-        final PrivateKey privateKey, final PublicKey publicKey) {
-        this(id, id, null, relayState, requestId, privateKey, publicKey);
+        final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
+        this(id, id, null, relayState, requestId, privateKey, publicKey, alternateUserName);
     }
 
     protected GoogleAccountsService(final String id, final String originalUrl,
         final String artifactId, final String relayState, final String requestId,
-        final PrivateKey privateKey, final PublicKey publicKey) {
+        final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
         super(id, originalUrl, artifactId, null);
         this.relayState = relayState;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.requestId = requestId;
+        this.alternateUserName = alternateUserName;
     }
 
     public static GoogleAccountsService createServiceFrom(
         final HttpServletRequest request, final PrivateKey privateKey,
-        final PublicKey publicKey) {
+        final PublicKey publicKey, final String alternateUserName) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
 
         final String xmlRequest = decodeAuthnRequestXML(request
@@ -130,7 +133,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String requestId = document.getRootElement().getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
-            relayState, requestId, privateKey, publicKey);
+            relayState, requestId, privateKey, publicKey, alternateUserName);
     }
 
     public Response getResponse(final String ticketId) {
@@ -159,9 +162,21 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final Calendar c = Calendar.getInstance();
         c.setTime(new Date());
         c.add(Calendar.YEAR, 1);
+
+        final String userId;
+
+        if (this.alternateUserName == null) {
+            userId = getPrincipal().getId();
+        } else {
+            final String attributeValue = (String) getPrincipal().getAttributes().get(this.alternateUserName);
+            if (attributeValue == null) {
+                userId = getPrincipal().getId();
+            } else {
+                userId = attributeValue;
+            }
+        }
         
-        samlResponse = samlResponse.replace("<USERNAME_STRING>", getPrincipal()
-            .getId());
+        samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);
         samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());
         samlResponse = samlResponse.replace("<ISSUE_INSTANT>", SamlUtils
             .getCurrentDateAndTime());
