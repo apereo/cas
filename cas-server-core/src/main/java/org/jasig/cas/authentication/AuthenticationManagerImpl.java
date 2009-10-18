@@ -5,18 +5,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.inspektr.audit.annotation.Auditable;
 import org.inspektr.common.ioc.annotation.NotEmpty;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
@@ -58,10 +52,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @see org.jasig.cas.authentication.AuthenticationMetaDataPopulator
  */
 
-public final class AuthenticationManagerImpl implements AuthenticationManager {
-
-    /** Log instance for logging events, errors, warnings, etc. */
-    private final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
+public final class AuthenticationManagerImpl extends AbstractAuthenticationManager {
 
     /** An array of authentication handlers. */
     @NotEmpty
@@ -71,13 +62,8 @@ public final class AuthenticationManagerImpl implements AuthenticationManager {
     @NotEmpty
     private List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers;
 
-    /** An array of AuthenticationAttributesPopulators. */
-    @NotNull
-    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
-
-    @Auditable(action="AUTHENTICATION",successSuffix="_SUCCESS",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver.class)
-    public Authentication authenticate(final Credentials credentials)
-        throws AuthenticationException {
+    @Override
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
         boolean foundSupported = false;
         boolean authenticated = false;
         AuthenticationHandler authenticatedClass = null;
@@ -116,7 +102,6 @@ public final class AuthenticationManagerImpl implements AuthenticationManager {
             throw UnsupportedCredentialsException.ERROR;
         }
 
-        Authentication authentication = null;
         foundSupported = false;
 
         for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver : this.credentialsToPrincipalResolvers) {
@@ -125,39 +110,21 @@ public final class AuthenticationManagerImpl implements AuthenticationManager {
                     .resolvePrincipal(credentials);
                 foundSupported = true;
                 if (principal != null) {
-                    authentication = new MutableAuthentication(principal);
-                    break;
+                    return new Pair<AuthenticationHandler,Principal>(authenticatedClass, principal);
                 }
             }
         }
 
-        if (authentication == null) {
-            if (foundSupported) {
-                if (log.isDebugEnabled()) {
-                    log
-                        .debug("CredentialsToPrincipalResolver found but no principal returned.");
-                }
-
-                throw BadCredentialsAuthenticationException.ERROR;
+        if (foundSupported) {
+            if (log.isDebugEnabled()) {
+                log.debug("CredentialsToPrincipalResolver found but no principal returned.");
             }
 
-            log.error("CredentialsToPrincipalResolver not found for "
-                + credentials.getClass().getName());
-            throw UnsupportedCredentialsException.ERROR;
-        }
-        
-        if (authenticatedClass instanceof NamedAuthenticationHandler) {
-            final NamedAuthenticationHandler a = (NamedAuthenticationHandler) authenticatedClass;
-            authentication.getAttributes().put(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, a.getName());
-        }        
-
-        for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator : this.authenticationMetaDataPopulators) {
-            authentication = authenticationMetaDataPopulator
-                .populateAttributes(authentication, credentials);
+            throw BadCredentialsAuthenticationException.ERROR;
         }
 
-        return new ImmutableAuthentication(authentication.getPrincipal(),
-            authentication.getAttributes());
+        log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
+        throw UnsupportedCredentialsException.ERROR;
     }
 
     /**
@@ -175,14 +142,5 @@ public final class AuthenticationManagerImpl implements AuthenticationManager {
     public void setCredentialsToPrincipalResolvers(
         final List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers) {
         this.credentialsToPrincipalResolvers = credentialsToPrincipalResolvers;
-    }
-
-    /**
-     * @param authenticationMetaDataPopulators the
-     * authenticationMetaDataPopulators to set.
-     */
-    public void setAuthenticationMetaDataPopulators(
-        final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators) {
-        this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
     }
 }
