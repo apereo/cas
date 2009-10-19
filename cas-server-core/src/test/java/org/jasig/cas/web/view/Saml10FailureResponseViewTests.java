@@ -5,7 +5,7 @@
  */
 package org.jasig.cas.web.view;
 
-import java.util.HashMap;
+import java.util.Collections;
 
 import org.jasig.cas.web.view.Cas10ResponseViewTests.MockWriterHttpMockHttpServletResponse;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,9 +28,13 @@ public class Saml10FailureResponseViewTests extends TestCase {
         final MockWriterHttpMockHttpServletResponse response = new MockWriterHttpMockHttpServletResponse();
         request.addParameter("TARGET", "service");
         
-        this.view.renderMergedOutputModel(new HashMap(), request, response);
+        final String description = "Validation failed";
+        this.view.renderMergedOutputModel(
+            Collections.singletonMap("description", description), request, response);
         
-        assertTrue(response.getWrittenValue().contains("Status"));
+        final String responseText = response.getWrittenValue();
+        assertTrue(responseText.contains("Status"));
+        assertTrue(responseText.contains(description));
     }
     
 }
