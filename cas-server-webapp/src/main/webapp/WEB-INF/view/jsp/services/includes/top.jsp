@@ -79,6 +79,7 @@
   <ul
     ><li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li
     ><li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li
+    ><li><a id="viewStatisticsView" href="viewStatistics.html"><span><spring:message code="viewStatisticsView" /></span></a></li
   ></ul>
 </div>
 <!-- CONTENT -->

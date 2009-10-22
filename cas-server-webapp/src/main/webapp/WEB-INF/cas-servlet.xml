@@ -97,6 +97,10 @@
 					key="/services/loggedOut.html">
 					serviceLogoutViewController
 				</prop>
+
+                <prop key="/services/viewStatistics.html">
+                    viewStatisticsController
+                </prop>
 			
 				<prop
 					key="/services/*">
@@ -181,6 +185,10 @@
 
 	<bean id="proxyController" class="org.jasig.cas.web.ProxyController"
 		p:centralAuthenticationService-ref="centralAuthenticationService" />
+
+    <bean id="viewStatisticsController" class="org.jasig.cas.web.StatisticsController">
+        <constructor-arg index="0" ref="ticketRegistry" />
+    </bean>
 
 	<bean id="logoutController" class="org.jasig.cas.web.LogoutController"
 		p:centralAuthenticationService-ref="centralAuthenticationService"
