@@ -62,13 +62,12 @@ public class BindLdapAuthenticationHandler extends
         final SearchControls searchControls = getSearchControls();
         
         final String base = this.searchBase;
-        
+        final String filter = LdapUtils.getFilterWithValues(getFilter(), credentials.getUsername());
         this.getLdapTemplate().search(
             new SearchExecutor() {
 
                 public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
-                    return context.search(base, LdapUtils.getFilterWithValues(getFilter(), credentials
-                        .getUsername()), searchControls);
+                    return context.search(base, filter, searchControls);
                 }
             },
             new NameClassPairCallbackHandler(){
@@ -78,9 +77,12 @@ public class BindLdapAuthenticationHandler extends
                 }
             });
         
-        if (cns.isEmpty()
-            || (cns.size() > 1 && !this.allowMultipleAccounts)) {
-            System.out.println("List was empty.");
+        if (cns.isEmpty()) {
+            this.log.info("Search for " + filter + " returned 0 results.");
+            return false;
+        }
+        if (cns.size() > 1 && !this.allowMultipleAccounts) {
+            this.log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
             return false;
         }
         
@@ -88,6 +90,7 @@ public class BindLdapAuthenticationHandler extends
             DirContext test = null;
             String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
+                this.log.debug("Performing LDAP bind with credential: " + dn);
                 test = this.getContextSource().getContext(
                     finalDn,
                     credentials.getPassword());
