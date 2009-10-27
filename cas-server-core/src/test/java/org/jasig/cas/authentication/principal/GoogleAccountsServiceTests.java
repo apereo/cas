@@ -52,7 +52,7 @@ public class GoogleAccountsServiceTests extends TestCase {
         final String SAMLRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         request.setParameter("SAMLRequest", encodeMessage(SAMLRequest));
         
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey);
+        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, "username");
     }
     
     protected void setUp() throws Exception {       
