@@ -208,12 +208,12 @@
 		<exception-type>org.springframework.context.ApplicationContextException</exception-type>
 		<location>/WEB-INF/view/jsp/brokenContext.jsp</location>
 	</error-page>
-<!--
+
 	<error-page>
-		<exception-type>java.lang.Exception</exception-type>
+        <error-code>500</error-code>
 		<location>/WEB-INF/view/jsp/errors.jsp</location>
 	</error-page>
--->
+
 	<error-page>
 		<error-code>404</error-code>
 		<location>/</location>
