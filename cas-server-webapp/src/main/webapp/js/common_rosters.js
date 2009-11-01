@@ -92,10 +92,15 @@ function getRef(el)
 }
 
 function init(){
-	if(document.forms[1] != null && document.forms[1].elements[0] != null) {
-		document.forms[1].elements[0].focus();
-		document.forms[1].elements[0].select();
-	}
+    var firstForm = document.forms[0];
+
+    if (firstForm != null) {
+        var firstElement = firstForm.elements[0];
+        if (firstElement != null) {
+            firstElement.focus();
+            firstElement.select();
+        }
+    }
 }
 
 // transition effect to fade background of element from darker to lighter color

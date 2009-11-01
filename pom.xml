@@ -10,13 +10,9 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server</artifactId>
 	<packaging>pom</packaging>
-	<name>JA-SIG Central Authentication Service</name>
+	<name>Jasig Central Authentication Service</name>
 	<version>3.3.5-SNAPSHOT</version>
-	<url>http://www.ja-sig.org/products/cas/</url>
-	<ciManagement>
-		<system>QuickBuild</system>
-		<url>http://developer.ja-sig.org/builds/</url>
-	</ciManagement>
+	<url>http://www.jasig.org/cas/</url>
 	<inceptionYear>2004</inceptionYear>
 
 	<licenses>
@@ -356,13 +352,13 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-txt</artifactId>
+				<artifactId>spring-tx</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webflow</artifactId>
-				<version>1.0.5</version>
+				<version>${spring.webflow.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
