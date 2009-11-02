@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * @author Scott Battaglia
@@ -22,7 +22,17 @@ import java.util.Collection;
  */
 public final class StatisticsController extends AbstractController {
 
+    private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
+
+    private static final int NUMBER_OF_MILLISECONDS_IN_AN_HOUR = 3600000;
+
+    private static final int NUMBER_OF_MILLISECONDS_IN_A_MINUTE = 60000;
+
+    private static final int NUMBER_OF_MILLISECONDS_IN_A_SECOND = 1000;
+
     private final TicketRegistry ticketRegistry;
+
+    private final Date upTimeStartDate = new Date();
 
     public StatisticsController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
@@ -31,6 +41,10 @@ public final class StatisticsController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) throws Exception {
         final ModelAndView modelAndView = new ModelAndView("viewStatisticsView");
+        modelAndView.addObject("startTime", this.upTimeStartDate);
+        final double difference = System.currentTimeMillis() - this.upTimeStartDate.getTime();
+
+        modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<Integer>(Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR, NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)), new LinkedList<String>(Arrays.asList("day","hour","minute","second","millisecond"))));
         modelAndView.addObject("totalMemory", Runtime.getRuntime().totalMemory() / 1024 / 1024);
         modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
         modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / 1024 / 1024);
@@ -70,5 +84,20 @@ public final class StatisticsController extends AbstractController {
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
 
         return modelAndView;
+    }
+
+    protected String calculateUptime(final double difference, final Queue<Integer> calculations, final Queue<String> labels) {
+        if (calculations.isEmpty()) {
+            return "";
+        }
+
+        final int value = calculations.remove();
+        final double time = Math.floor(difference / value);
+        final double newDifference = difference - (time * value);
+        final String currentLabel = labels.remove();
+        final String label = time == 0 || time > 1 ? currentLabel + "s" : currentLabel;
+
+        return Integer.toString(new Double(time).intValue()) + " "+ label + " " + calculateUptime(newDifference, calculations, labels);
+        
     }
 }
