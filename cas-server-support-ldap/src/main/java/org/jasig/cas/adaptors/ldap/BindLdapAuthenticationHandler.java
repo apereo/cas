@@ -78,11 +78,11 @@ public class BindLdapAuthenticationHandler extends
             });
         
         if (cns.isEmpty()) {
-            this.log.info("Search for " + filter + " returned 0 results.");
+            log.info("Search for " + filter + " returned 0 results.");
             return false;
         }
         if (cns.size() > 1 && !this.allowMultipleAccounts) {
-            this.log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
+            log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
             return false;
         }
         
