@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.3.5-SNAPSHOT</version>
+		<version>3.3.5</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.jboss.cache</groupId>
 			<artifactId>jbosscache-core</artifactId>
-			<version>2.1.1.GA</version>
+			<version>2.2.2.GA</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>
