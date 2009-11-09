@@ -9,6 +9,14 @@
     </thead>
     <tbody>
         <tr>
+            <td>Server</td>
+            <td>${serverIpAddress} (${serverHostName})</td>
+        </tr>
+        <tr>
+            <td>CAS Ticket Suffix</td>
+            <td>${casTicketSuffix}</td>
+        </tr>
+        <tr>
             <td>Server Start Time</td>
             <td>${startTime}</td>
         </tr>

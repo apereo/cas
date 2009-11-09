@@ -186,7 +186,8 @@
 	<bean id="proxyController" class="org.jasig.cas.web.ProxyController"
 		p:centralAuthenticationService-ref="centralAuthenticationService" />
 
-    <bean id="viewStatisticsController" class="org.jasig.cas.web.StatisticsController">
+    <bean id="viewStatisticsController" class="org.jasig.cas.web.StatisticsController"
+        p:casTicketSuffix="${host.name}">
         <constructor-arg index="0" ref="ticketRegistry" />
     </bean>
 

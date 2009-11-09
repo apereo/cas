@@ -34,8 +34,14 @@ public final class StatisticsController extends AbstractController {
 
     private final Date upTimeStartDate = new Date();
 
+    private String casTicketSuffix;
+
     public StatisticsController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
+    }
+
+    public void setCasTicketSuffix(final String casTicketSuffix) {
+        this.casTicketSuffix = casTicketSuffix;
     }
 
     @Override
@@ -49,6 +55,9 @@ public final class StatisticsController extends AbstractController {
         modelAndView.addObject("maxMemory", Runtime.getRuntime().maxMemory() / 1024 / 1024);
         modelAndView.addObject("freeMemory", Runtime.getRuntime().freeMemory() / 1024 / 1024);
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
+        modelAndView.addObject("serverHostName", httpServletRequest.getServerName());
+        modelAndView.addObject("serverIpAddress", httpServletRequest.getLocalAddr());
+        modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
 
         int unexpiredTgts = 0;
         int unexpiredSts = 0;
