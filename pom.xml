@@ -128,6 +128,22 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 					</descriptors>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>  
 		</plugins>
 	</build>
 
@@ -301,6 +317,22 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<version>2.4</version>
 			<scope>provided</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <scope>compile</scope>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <scope>compile</scope>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+
 	</dependencies>
 
 	<repositories>
@@ -431,5 +463,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <spring.webflow.version>1.0.6</spring.webflow.version>
 		<spring.version>2.5.6.SEC01</spring.version>
         <clover.version>2.6.0</clover.version>
+        <aspectj.version>1.6.6</aspectj.version>
 	</properties>
 </project>
