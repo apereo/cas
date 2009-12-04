@@ -1,5 +1,11 @@
 <%@include file="includes/top.jsp"%>
 
+    <c:if test="${fn:length(services) eq 0}">
+        <div id="status" class="errors"><p>CAS is currently running in "open mode" because no services are configured within this tool.  Once you configure this tool
+        to have a service, CAS is no longer considered open and thus any application that wishes to use CAS must be registered in this tool.  That includes <strong>THIS TOOL</strong>.
+        If you are going to use this tool, the FIRST SERVICE TO ADD IS THIS SERVICE ITSELF.</p></div>
+    </c:if>
+
 	<c:if test="${not empty param.status}">
 		<div id="msg" class="success"><spring:message code="management.services.status.${param.status}" arguments="${param.serviceName}" /></div>
 	</c:if>
