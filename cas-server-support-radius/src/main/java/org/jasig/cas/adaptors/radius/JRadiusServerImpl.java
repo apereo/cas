@@ -8,22 +8,21 @@ package org.jasig.cas.adaptors.radius;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import net.jradius.client.RadiusClient;
+import net.jradius.client.auth.PAPAuthenticator;
+import net.jradius.client.auth.RadiusAuthenticator;
+import net.jradius.dictionary.Attr_UserName;
+import net.jradius.dictionary.Attr_UserPassword;
+import net.jradius.exception.RadiusException;
+import net.jradius.exception.UnknownAttributeException;
+import net.jradius.packet.AccessAccept;
+import net.jradius.packet.AccessRequest;
+import net.jradius.packet.RadiusPacket;
+import net.jradius.packet.attribute.AttributeFactory;
+import net.jradius.packet.attribute.AttributeList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-
-import net.sf.jradius.client.RadiusClient;
-import net.sf.jradius.client.auth.PAPAuthenticator;
-import net.sf.jradius.client.auth.RadiusAuthenticator;
-import net.sf.jradius.dictionary.Attr_UserName;
-import net.sf.jradius.dictionary.Attr_UserPassword;
-import net.sf.jradius.exception.RadiusException;
-import net.sf.jradius.exception.UnknownAttributeException;
-import net.sf.jradius.packet.AccessAccept;
-import net.sf.jradius.packet.AccessRequest;
-import net.sf.jradius.packet.RadiusPacket;
-import net.sf.jradius.packet.attribute.AttributeFactory;
-import net.sf.jradius.packet.attribute.AttributeList;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
