@@ -19,23 +19,30 @@
 			<version>${project.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>net.sf.jradius</groupId>
-			<artifactId>jradius</artifactId>
-			<version>20060406</version>
-		</dependency>
+        <dependency>
+            <groupId>net.jradius</groupId>
+            <artifactId>jradius-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
-		<dependency>
-			<groupId>net.sf.jradius</groupId>
-			<artifactId>jradius-dictionary</artifactId>
-			<version>20060406</version>
-		</dependency>
+        <dependency>
+            <groupId>net.jradius</groupId>
+            <artifactId>jradius-dictionary</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.gnu</groupId>
-			<artifactId>gnu-crypto</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-
+        <dependency>
+            <groupId>net.jradius</groupId>
+            <artifactId>jradius-extended</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 	</dependencies>
+
+    <repositories>
+        <repository>
+          <id>coova</id>
+          <name>Coova Repository</name>
+          <url>http://dev.coova.org/mvn</url>
+        </repository>
+  </repositories>
 </project>
