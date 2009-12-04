@@ -76,8 +76,7 @@ import java.util.Map;
  * @version $Revision: 1.16 $ $Date: 2007/04/24 18:11:36 $
  * @since 3.0
  */
-public final class CentralAuthenticationServiceImpl implements
-    CentralAuthenticationService {
+public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Log log = LogFactory.getLog(this.getClass());
@@ -137,11 +136,9 @@ public final class CentralAuthenticationServiceImpl implements
         Assert.notNull(ticketGrantingTicketId);
 
         if (log.isDebugEnabled()) {
-            log.debug("Removing ticket [" + ticketGrantingTicketId
-                + "] from registry.");
+            log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
         }
-        final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry
-            .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticket == null) {
             return;
@@ -161,17 +158,13 @@ public final class CentralAuthenticationServiceImpl implements
     @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
     @Statistic(name="GRANT_SERVICE_TICKET",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
     @Transactional(readOnly = false)
-    public String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, final Credentials credentials)
-        throws TicketException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws TicketException {
 
-        Assert.notNull(ticketGrantingTicketId,
-            "ticketGrantingticketId cannot be null");
+        Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
         final TicketGrantingTicket ticketGrantingTicket;
-        ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
-            .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticketGrantingTicket == null) {
             throw new InvalidTicketException();
@@ -261,8 +254,7 @@ public final class CentralAuthenticationServiceImpl implements
                 .authenticate(credentials);
 
             final ServiceTicket serviceTicket;
-            serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(
-                serviceTicketId, ServiceTicket.class);
+            serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
                 throw new InvalidTicketException();
@@ -298,46 +290,33 @@ public final class CentralAuthenticationServiceImpl implements
     @Auditable(action="SERVICE_TICKET_VALIDATE",successSuffix="D",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
     @Statistic(name="SERVICE_TICKET_VALIDATE",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
     @Transactional(readOnly = false)
-    public Assertion validateServiceTicket(final String serviceTicketId,
-        final Service service) throws TicketException {
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final ServiceTicket serviceTicket = (ServiceTicket) this.serviceTicketRegistry
-            .getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
-        final RegisteredService registeredService = this.servicesManager
-            .findServiceBy(service);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
             log.warn("ServiceManagement: Service does not exist is not enabled, and thus not allowed to validate tickets.   Service: [" + service.getId() + "]");
-            throw new UnauthorizedServiceException(
-                "Service not allowed to validate tickets.");
+            throw new UnauthorizedServiceException("Service not allowed to validate tickets.");
         }
 
         if (serviceTicket == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("ServiceTicket [" + serviceTicketId
-                    + "] does not exist.");
-            }
+            log.info("ServiceTicket [" + serviceTicketId + "] does not exist.");
             throw new InvalidTicketException();
         }
 
         try {
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("ServiceTicket [" + serviceTicketId
-                            + "] has expired.");
-                    }
+                    log.info("ServiceTicket [" + serviceTicketId + "] has expired.");
                     throw new InvalidTicketException();
                 }
 
                 if (!serviceTicket.isValidFor(service)) {
-                    if (log.isErrorEnabled()) {
-                        log.error("ServiceTicket [" + serviceTicketId
-                            + "] with service [" + serviceTicket.getService().getId() + " does not match supplied service [" + service + "]");
-                    }
+                    log.error("ServiceTicket [" + serviceTicketId + "] with service [" + serviceTicket.getService().getId() + " does not match supplied service [" + service + "]");
                     throw new TicketValidationException(serviceTicket.getService());
                 }
             }
@@ -384,13 +363,11 @@ public final class CentralAuthenticationServiceImpl implements
             final List<Authentication> authentications = new ArrayList<Authentication>();
 
             for (int i = 0; i < authenticationChainSize - 1; i++) {
-                authentications.add(serviceTicket.getGrantingTicket()
-                    .getChainedAuthentications().get(i));
+                authentications.add(serviceTicket.getGrantingTicket().getChainedAuthentications().get(i));
             }
             authentications.add(authToUse);
 
-            return new ImmutableAssertionImpl(authentications, serviceTicket
-                .getService(), serviceTicket.isFromNewLogin());
+            return new ImmutableAssertionImpl(authentications, serviceTicket.getService(), serviceTicket.isFromNewLogin());
         } finally {
             if (serviceTicket.isExpired()) {
                 this.serviceTicketRegistry.deleteTicket(serviceTicketId);
@@ -404,14 +381,8 @@ public final class CentralAuthenticationServiceImpl implements
     @Auditable(action="TICKET_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
     @Statistic(name="CREATE_TICKET_GRANTING_TICKET",requiredPrecision={Precision.DAY,Precision.MINUTE,Precision.HOUR})
     @Transactional(readOnly = false)
-    public String createTicketGrantingTicket(final Credentials credentials)
-        throws TicketCreationException {
+    public String createTicketGrantingTicket(final Credentials credentials) throws TicketCreationException {
         Assert.notNull(credentials, "credentials cannot be null");
-
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to create TicketGrantingTicket for "
-                + credentials);
-        }
 
         try {
             final Authentication authentication = this.authenticationManager
