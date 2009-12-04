@@ -126,38 +126,31 @@ public class ServiceValidateController extends AbstractController {
                     proxyGrantingTicketId = this.centralAuthenticationService
                         .delegateTicketGrantingTicket(serviceTicketId,
                             serviceCredentials);
-                } catch (TicketException e) {
+                } catch (final TicketException e) {
                     logger.error("TicketException generating ticket for: "
                         + serviceCredentials, e);
                 }
             }
 
-            final Assertion assertion = this.centralAuthenticationService
-                .validateServiceTicket(serviceTicketId,
-                    service);
+            final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
 
-            final ValidationSpecification validationSpecification = this
-                .getCommandClass();
-            final ServletRequestDataBinder binder = new ServletRequestDataBinder(
-                validationSpecification, "validationSpecification");
+            final ValidationSpecification validationSpecification = this.getCommandClass();
+            final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
             initBinder(request, binder);
             binder.bind(request);
 
             if (!validationSpecification.isSatisfiedBy(assertion)) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("ServiceTicket [" + serviceTicketId
-                        + "] does not satisfy validation specification.");
+                    logger.debug("ServiceTicket [" + serviceTicketId + "] does not satisfy validation specification.");
                 }
-                return generateErrorView("INVALID_TICKET",
-                    "INVALID_TICKET_SPEC", null);
+                return generateErrorView("INVALID_TICKET", "INVALID_TICKET_SPEC", null);
             }
 
             final ModelAndView success = new ModelAndView(this.successView);
             success.addObject(MODEL_ASSERTION, assertion);
 
             if (serviceCredentials != null && proxyGrantingTicketId != null) {
-                final String proxyIou = this.proxyHandler.handle(
-                    serviceCredentials, proxyGrantingTicketId);
+                final String proxyIou = this.proxyHandler.handle(serviceCredentials, proxyGrantingTicketId);
                 success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
             }
 
@@ -172,21 +165,19 @@ public class ServiceValidateController extends AbstractController {
         }
     }
 
-    private ModelAndView generateErrorView(final String code,
-        final String description, final Object[] args) {
+    private ModelAndView generateErrorView(final String code, final String description, final Object[] args) {
         final ModelAndView modelAndView = new ModelAndView(this.failureView);
+        final String convertedDescription = getMessageSourceAccessor().getMessage(description, args, description);
         modelAndView.addObject("code", code);
-        modelAndView.addObject("description", getMessageSourceAccessor()
-            .getMessage(description, args, description));
+        modelAndView.addObject("description", convertedDescription);
 
         return modelAndView;
     }
 
     private ValidationSpecification getCommandClass() {
         try {
-            return (ValidationSpecification) this.validationSpecificationClass
-                .newInstance();
-        } catch (Exception e) {
+            return (ValidationSpecification) this.validationSpecificationClass.newInstance();
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }

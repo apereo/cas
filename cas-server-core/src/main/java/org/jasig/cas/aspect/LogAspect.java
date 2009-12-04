@@ -12,6 +12,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
+import java.util.Arrays;
+
 
 /**
  * 
@@ -35,11 +37,7 @@ public class LogAspect {
                 if (args == null || args.length == 0) {
                     arguments = "";
                 } else {
-                    final StringBuilder stringBuilder = new StringBuilder();
-                    for (final Object o : args) {
-                        stringBuilder.append(o != null ? o.toString() : null).append(", ");
-                    }
-                    arguments = stringBuilder.substring(0, stringBuilder.length()-3);
+                    arguments = Arrays.deepToString(args);
                 }
                 log.trace("Entering method [" + methodName + " with arguments [" + arguments + "]");
             }
