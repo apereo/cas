@@ -40,6 +40,7 @@
 	<action-state id="startAuthenticate">
 		<action bean="x509Check" />
 		<transition on="success" to="sendTicketGrantingTicket" />
+		<transition on="warn" to="warn" />
 		<transition on="error" to="viewLoginForm" />
 	</action-state>
 	 -->
