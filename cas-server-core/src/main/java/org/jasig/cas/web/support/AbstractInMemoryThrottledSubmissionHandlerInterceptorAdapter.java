@@ -62,15 +62,19 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      */
     public final void decrementCounts() {
         final Set<String> keys = this.ipMap.keySet();
+        log.debug("Decrementing counts for throttler.  Starting key count: " + keys.size());
 
         for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) {
             final String key = iter.next();
             final AtomicInteger integer = this.ipMap.get(key);
             final int  newValue = integer.decrementAndGet();
 
+            log.trace("Decrementing count for key [" + key + "]; starting count [" + integer + "]; ending count [" + newValue + "]");
+
             if (newValue == 0) {
                 iter.remove();
             }
         }
+        log.debug("Done decrementing count for throttler.");
     }
 }
