@@ -43,16 +43,22 @@ public final class ManageRegisteredServicesMultiActionController extends
     private final PropertyComparator propertyComparator = new PropertyComparator(
         "name", false, true);
 
+    @NotNull
+    private final String defaultServiceUrl;
+    
+
     /**
      * Constructor that takes the required {@link ServicesManager}.
      * 
      * @param servicesManager the Services Manager that manages the
      * RegisteredServices.
+     * @param defaultServiceUrl the service management tool's url.
      */
     public ManageRegisteredServicesMultiActionController(
-        final ServicesManager servicesManager) {
+        final ServicesManager servicesManager, final String defaultServiceUrl) {
         super();
         this.servicesManager = servicesManager;
+        this.defaultServiceUrl = defaultServiceUrl;
     }
 
     /**
@@ -97,6 +103,7 @@ public final class ManageRegisteredServicesMultiActionController extends
 
         model.put("services", services);
         model.put("pageTitle", VIEW_NAME);
+        model.put("defaultServiceUrl", this.defaultServiceUrl);
 
         return new ModelAndView(VIEW_NAME, model);
     }

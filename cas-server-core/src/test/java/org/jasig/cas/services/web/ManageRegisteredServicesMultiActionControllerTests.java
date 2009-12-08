@@ -33,7 +33,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
 
     protected void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
-        this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager);
+        this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, "foo");
     }
     
     public void testDeleteService() {
