@@ -7,9 +7,7 @@ package org.jasig.cas.ticket.registry.support;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,29 +16,37 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Class that will iterate through the registry and check for tickets that are
- * expired. If a ticket is expired it is removed from the registry. This process
- * is only required so that the size of the TicketRegistry will not grow
- * significantly large. The functionality of CAS is not dependent on a Ticket
- * being removed as soon as it is expired.
+ * The default ticket registry cleaner scans the entire CAS ticket registry
+ * for expired tickets and removes them.  This process is only required so that
+ * the size of the ticket registry will not grow beyond a reasonable size.
+ * The functionality of CAS is not dependent on a ticket being removed as soon
+ * as it is expired.
+ * <p><strong>NEW</strong> in 3.3.6:</p>
  * <p>
- * Note that this version grabs an Unmodifiable collection and does the
- * expiration checking outside of the synchronization block, thus allowing
- * processing to continue.
+ * Locking strategies may be used to support high availability environments.
+ * In a clustered CAS environment with several CAS nodes executing ticket
+ * cleanup, it is desirable to execute cleanup from only one CAS node at a time.
+ * This dramatically reduces the potential for deadlocks in
+ * {@link JpaTicketRegistry}, for example.  By default this implementation
+ * uses {@link NoOpLockingStrategy} to preserve the same semantics as previous
+ * versions, but {@link JdbcLockingStrategy} should be used with
+ * {@link JpaTicketRegistry} in a clustered CAS environment.
  * </p>
  * <p>
  * The following property is required.
  * </p>
  * <ul>
- * <li>ticketRegistry - the Registry to clean.</li>
+ * <li>ticketRegistry - CAS ticket registry.</li>
  * </ul>
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
+ * @version $Revision$
  * @since 3.0
+ * @see org.jasig.cas.ticket.registry.JdbcLockingStrategy
+ * @see org.jasig.cas.ticket.registry.NoOpLockingStrategy
  */
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
@@ -51,44 +57,63 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private TicketRegistry ticketRegistry;
 
+    /** Execution locking strategy */
+    @NotNull
+    private LockingStrategy lock = new NoOpLockingStrategy();
+
+
+    /**
+     * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
+     */ 
     public void clean() {
-        final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
-        final Collection<Ticket> ticketsInCache;
-
-        log
-            .info("Starting cleaning of expired tickets from ticket registry at ["
-                + new Date() + "]");
-
-        ticketsInCache = this.ticketRegistry.getTickets();
-
-        for (final Ticket ticket : ticketsInCache) {
-            if (ticket.isExpired()) {
-                ticketsToRemove.add(ticket);
-            }
+        this.log.info("Beginning ticket cleanup.");
+        this.log.debug("Attempting to acquire ticket cleanup lock.");
+        if (!this.lock.acquire()) {
+            this.log.info("Could not obtain lock.  Aborting cleanup.");
+            return;
         }
-
-        log.info(ticketsToRemove.size()
-            + " found to be removed.  Removing now.");
-
-        for (final Ticket ticket : ticketsToRemove) {
-            // THIS WILL MAKE SURE WE LOG OUT.  The calls are Async so we should be fine with this.
-            if (ticket instanceof TicketGrantingTicket) {
-                ((TicketGrantingTicket) ticket).expire();
+        this.log.debug("Acquired lock.  Proceeding with cleanup.");
+        try {
+            final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
+            final Collection<Ticket> ticketsInCache;
+            ticketsInCache = this.ticketRegistry.getTickets();
+            for (final Ticket ticket : ticketsInCache) {
+                if (ticket.isExpired()) {
+                    ticketsToRemove.add(ticket);
+                }
             }
 
-
-            this.ticketRegistry.deleteTicket(ticket.getId());
+            this.log.info(ticketsToRemove.size() + " tickets found to be removed.");
+            for (final Ticket ticket : ticketsToRemove) {
+                // CAS-686: Expire TGT to trigger single sign-out
+                if (ticket instanceof TicketGrantingTicket) {
+                    ((TicketGrantingTicket) ticket).expire();
+                }
+                this.ticketRegistry.deleteTicket(ticket.getId());
+            }
+        } finally {
+            this.log.debug("Releasing ticket cleanup lock.");
+            this.lock.release();
         }
 
-        log
-            .info("Finished cleaning of expired tickets from ticket registry at ["
-                + new Date() + "]");
+        this.log.info("Finished ticket cleanup.");
     }
+
 
     /**
      * @param ticketRegistry The ticketRegistry to set.
      */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
+    }
+
+
+    /**
+     * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
+     * strategy is preferable if not required for some ticket backing stores,
+     * such as JPA, in a clustered CAS environment.
+     */
+    public void setLock(final LockingStrategy strategy) {
+        this.lock = strategy;
     }
 }
