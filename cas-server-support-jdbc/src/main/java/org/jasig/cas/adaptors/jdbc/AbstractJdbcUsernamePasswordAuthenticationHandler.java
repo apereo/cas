@@ -18,8 +18,7 @@ import javax.sql.DataSource;
  * @version $Revision$ $Date$
  * @since 3.0.3
  */
-public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     @NotNull
     private SimpleJdbcTemplate jdbcTemplate;

@@ -39,9 +39,7 @@ public class RadiusAuthenticationHandler extends
      */
     private boolean failoverOnAuthenticationFailure;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
 
         for (final RadiusServer radiusServer : this.servers) {
             try {

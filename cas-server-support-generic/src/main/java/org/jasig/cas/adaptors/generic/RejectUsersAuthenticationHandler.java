@@ -34,11 +34,11 @@ public class RejectUsersAuthenticationHandler extends
     @NotNull
     private List<String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
 
-        if (this.users.contains(credentials.getUsername())) {
+        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+
+        if (this.users.contains(transformedUsername)) {
             throw new BlockedCredentialsAuthenticationException();
         }
 

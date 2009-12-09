@@ -62,7 +62,8 @@ public class BindLdapAuthenticationHandler extends
         final SearchControls searchControls = getSearchControls();
         
         final String base = this.searchBase;
-        final String filter = LdapUtils.getFilterWithValues(getFilter(), credentials.getUsername());
+        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+        final String filter = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
         this.getLdapTemplate().search(
             new SearchExecutor() {
 
@@ -113,7 +114,7 @@ public class BindLdapAuthenticationHandler extends
         return dn;
     }
 
-    private final SearchControls getSearchControls() {
+    private SearchControls getSearchControls() {
         final SearchControls constraints = new SearchControls();
         constraints.setSearchScope(this.scope);
         constraints.setReturningAttributes(new String[0]);

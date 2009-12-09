@@ -6,9 +6,7 @@
 package org.jasig.cas.authentication.handler.support;
 
 import org.inspektr.common.ioc.annotation.NotNull;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.PasswordEncoder;
-import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
+import org.jasig.cas.authentication.handler.*;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -46,6 +44,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     @NotNull
     private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
+    @NotNull
+    private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
+
     /**
      * Method automatically handles conversion to UsernamePasswordCredentials
      * and delegates to abstract authenticateUsernamePasswordInternal so
@@ -78,6 +79,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         return this.passwordEncoder;
     }
 
+    protected final PrincipalNameTransformer getPrincipalNameTransformer() {
+        return this.principalNameTransformer;
+    }
+
     /**
      * Method to set the class to support.
      * 
@@ -106,6 +111,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      */
     public final void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public final void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
+        this.principalNameTransformer = principalNameTransformer;
     }
 
     /**
