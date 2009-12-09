@@ -7,9 +7,9 @@ package org.jasig.cas.ticket.registry.support;
 
 
 /**
- * No-Op locking strategy that allows the use of {@link HATicketRegistryCleaner}
- * in environments where locking the registry for cleaning is either unnecessary
- * or not possible.
+ * No-Op locking strategy that allows the use of {@link DefaultTicketRegistryCleaner}
+ * in environments where exclusive access to the registry for cleaning is either
+ * unnecessary or not possible.
  *
  * @author Marvin Addison
  * @version $Revision$
