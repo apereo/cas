@@ -27,10 +27,8 @@ public final class QueryDatabaseAuthenticationHandler extends
     @NotNull
     private String sql;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
-        final String username = credentials.getUsername();
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+        final String username = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String password = credentials.getPassword();
         final String encryptedPassword = this.getPasswordEncoder().encode(
             password);

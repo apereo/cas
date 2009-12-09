@@ -21,21 +21,15 @@ import javax.naming.directory.DirContext;
  * @version $Revision$ $Date$
  * @since 3.0.3
  */
-public final class FastBindLdapAuthenticationHandler extends
-    AbstractLdapUsernamePasswordAuthenticationHandler {
+public final class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
-    protected boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
+    protected boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
         DirContext dirContext = null;
         try {
-            final String bindDn = LdapUtils.getFilterWithValues(
-                getFilter(),
-                credentials.getUsername());
+            final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+            final String bindDn = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
             this.log.debug("Performing LDAP bind with credential: " + bindDn);
-            dirContext = this.getContextSource().getContext(
-                bindDn,
-                credentials.getPassword());
+            dirContext = this.getContextSource().getContext(bindDn, credentials.getPassword());
             return true;
         } catch (NamingException e) {
             return false;

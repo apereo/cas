@@ -64,13 +64,15 @@ public class JaasAuthenticationHandler extends
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
 
+        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Attempting authentication for: "
-                    + credentials.getUsername());
+                    + transformedUsername);
             }
             final LoginContext lc = new LoginContext(this.realm,
-                new UsernamePasswordCallbackHandler(credentials.getUsername(),
+                new UsernamePasswordCallbackHandler(transformedUsername,
                     credentials.getPassword()));
 
             lc.login();
@@ -78,14 +80,14 @@ public class JaasAuthenticationHandler extends
         } catch (final LoginException fle) {
             if (log.isDebugEnabled()) {
                 log.debug("Authentication failed for: "
-                    + credentials.getUsername());
+                    + transformedUsername);
             }
             return false;
         }
 
         if (log.isDebugEnabled()) {
             log.debug("Authentication succeeded for: "
-                + credentials.getUsername());
+                + transformedUsername);
         }
         return true;
     }
@@ -123,9 +125,7 @@ public class JaasAuthenticationHandler extends
 
         public void handle(final Callback[] callbacks)
             throws UnsupportedCallbackException {
-            for (int i = 0; i < callbacks.length; i++) {
-                final Callback callback = callbacks[i];
-
+            for (final Callback callback : callbacks ) {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);
                 } else if (callback.getClass().equals(PasswordCallback.class)) {

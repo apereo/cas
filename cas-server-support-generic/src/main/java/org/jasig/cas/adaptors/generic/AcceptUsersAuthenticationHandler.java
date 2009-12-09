@@ -36,14 +36,13 @@ public class AcceptUsersAuthenticationHandler extends
     @NotNull
     private Map<String, String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials) {
-
-        final String cachedPassword = this.users.get(credentials.getUsername());
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
+        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+        final String cachedPassword = this.users.get(transformedUsername);
 
         if (cachedPassword == null) {
             if (log.isDebugEnabled()) {
-                log.debug("The user [" + credentials.getUsername()
+                log.debug("The user [" + transformedUsername
                     + "] was not found in the map.");
             }
             return false;

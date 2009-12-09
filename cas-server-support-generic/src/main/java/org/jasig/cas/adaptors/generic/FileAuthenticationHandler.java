@@ -41,14 +41,8 @@ public class FileAuthenticationHandler extends
     @NotNull
     private Resource fileName;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials) {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
         BufferedReader bufferedReader = null;
-
-        if (credentials.getUsername() == null
-            || credentials.getPassword() == null) {
-            return false;
-        }
 
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream()));
@@ -58,7 +52,8 @@ public class FileAuthenticationHandler extends
                 final String userName = lineFields[0];
                 final String password = lineFields[1];
 
-                if (credentials.getUsername().equals(userName)) {
+                final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+                if (transformedUsername.equals(userName)) {
                     if (this.getPasswordEncoder().encode(
                         credentials.getPassword()).equals(password)) {
                         return true;

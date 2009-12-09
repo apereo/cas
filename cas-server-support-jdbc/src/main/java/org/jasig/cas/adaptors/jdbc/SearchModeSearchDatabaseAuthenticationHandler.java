@@ -38,13 +38,12 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        UsernamePasswordCredentials credentials) throws AuthenticationException {
-        final String encyptedPassword = getPasswordEncoder().encode(
-            credentials.getPassword());
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+        final String encyptedPassword = getPasswordEncoder().encode(credentials.getPassword());
 
         final int count = getJdbcTemplate().queryForInt(this.sql,
-            credentials.getUsername(), encyptedPassword);
+           transformedUsername, encyptedPassword);
 
         return count > 0;
     }

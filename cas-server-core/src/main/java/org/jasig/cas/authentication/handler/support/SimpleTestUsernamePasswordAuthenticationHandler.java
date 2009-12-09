@@ -27,8 +27,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
                 + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
     }
 
-    public boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials) {
+    public boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
 
