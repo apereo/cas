@@ -29,14 +29,13 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * In a clustered CAS environment with several CAS nodes executing ticket
  * cleanup, it is desirable to execute cleanup from only one CAS node at a time.
  * This dramatically reduces the potential for deadlocks in
- * {@link JpaTicketRegistry}, for example.  By default this implementation
- * uses {@link NoOpLockingStrategy} to preserve the same semantics as previous
- * versions, but {@link JdbcLockingStrategy} should be used with
- * {@link JpaTicketRegistry} in a clustered CAS environment.
+ * {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}, for example.
+ * By default this implementation uses {@link NoOpLockingStrategy} to preserve
+ * the same semantics as previous versions, but {@link JdbcLockingStrategy}
+ * should be used with {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}
+ * in a clustered CAS environment.
  * </p>
- * <p>
- * The following property is required.
- * </p>
+ * <p>The following property is required.</p>
  * <ul>
  * <li>ticketRegistry - CAS ticket registry.</li>
  * </ul>
@@ -45,8 +44,8 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @author Marvin S. Addison
  * @version $Revision$
  * @since 3.0
- * @see org.jasig.cas.ticket.registry.JdbcLockingStrategy
- * @see org.jasig.cas.ticket.registry.NoOpLockingStrategy
+ * @see org.jasig.cas.ticket.registry.support.JdbcLockingStrategy
+ * @see org.jasig.cas.ticket.registry.support.NoOpLockingStrategy
  */
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
@@ -111,7 +110,9 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     /**
      * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
      * strategy is preferable if not required for some ticket backing stores,
-     * such as JPA, in a clustered CAS environment.
+     * such as JPA, in a clustered CAS environment.  Use {@link JdbcLockingStrategy}
+     * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
+     * CAS environment.
      */
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;

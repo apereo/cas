@@ -21,17 +21,17 @@ import org.springframework.transaction.annotation.Transactional;
  * Locking strategy that uses database storage for lock state that has the
  * following properties:
  * <ul>
- * <li>Exclusivity - only only client at a time may acquire the lock</li>
- * <li>Non-reentrant - an attempt to re-acquire the lock by the current
+ * <li><strong>Exclusivity</strong> - Only only client at a time may acquire the lock.</li>
+ * <li><strong>Non-reentrant</strong> - An attempt to re-acquire the lock by the current
  * holder will fail.</li>
- * <li>Lock expiration - locks are acquired with an expiration such that
+ * <li><strong>Lock expiration</strong> - Locks are acquired with an expiration such that
  * a request to acquire the lock after the expiration date will succeed even
  * if it is currently held by another client.</li>
  * </ul>
  * <p>
  * This class requires a backing database table to exist based on the
  * following template:
- * <code>
+ * <pre>
  * CREATE TABLE LOCKS (
  *   APPLICATION_ID VARCHAR(50) NOT NULL,
  *   UNIQUE_ID VARCHAR(50) NULL,
@@ -39,7 +39,9 @@ import org.springframework.transaction.annotation.Transactional;
  * );
  * ALTER TABLE LOCKS ADD CONSTRAINT LOCKS_PK
  * PRIMARY KEY (APPLICATION_ID);
- * </code>
+ * </pre>
+ * </p>
+ * <p>
  * Note that table and column names can be controlled through instance
  * properties, but the create table script above is consistent with defaults.
  * </p>
