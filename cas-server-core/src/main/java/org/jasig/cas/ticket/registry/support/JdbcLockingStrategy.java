@@ -259,7 +259,6 @@ public class JdbcLockingStrategy
         case HSQL:
         case SqlServer:
             // Neither HSQL nor SQL Server support FOR UPDATE
-            sb.insert(0, "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;");
             break;
         default:
             // SQL-92 compliant platforms support FOR UPDATE updatability clause
