@@ -257,10 +257,9 @@ public class JdbcLockingStrategy
             this.applicationIdColumnName));
         switch (this.platform) {
         case HSQL:
-            // HSQL doesn't support any syntax for exclusive row-level locking
-            break;
         case SqlServer:
-            sb.insert(0, "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ\nGO\n");
+            // Neither HSQL nor SQL Server support FOR UPDATE
+            sb.insert(0, "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;");
             break;
         default:
             // SQL-92 compliant platforms support FOR UPDATE updatability clause
@@ -277,22 +276,33 @@ public class JdbcLockingStrategy
     @Transactional
     public boolean acquire() {
         boolean lockAcquired = false;
-        final SqlRowSet rowSet = (SqlRowSet) this.jdbcTemplate.query(
-            this.selectSql,
-            new Object[] {this.applicationId},
-            new SqlRowSetResultSetExtractor());
-        final Timestamp expDate = getExpirationDate();
-        if (!rowSet.next()) {
-            // No row exists for this applicationId so create it.
-            // Row is created with uniqueId of this instance
-            // which indicates the lock is initially held by this instance.
-            this.jdbcTemplate.update(this.createSql, new Object[] {this.applicationId, this.uniqueId, expDate});
-            return true;
+        if (this.platform == DatabasePlatform.SqlServer) {
+           this.jdbcTemplate.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE");
         }
-        lockAcquired = canAcquire(rowSet);
-        if (lockAcquired) {
-            // Update unique ID of row to indicate this instance holds lock
-            this.jdbcTemplate.update(this.updateAcquireSql, new Object[] {this.uniqueId, expDate, this.applicationId});
+        try {
+	        final SqlRowSet rowSet = (SqlRowSet) this.jdbcTemplate.query(
+	            this.selectSql,
+	            new Object[] {this.applicationId},
+	            new SqlRowSetResultSetExtractor());
+	        final Timestamp expDate = getExpirationDate();
+	        if (!rowSet.next()) {
+	            // No row exists for this applicationId so create it.
+	            // Row is created with uniqueId of this instance
+	            // which indicates the lock is initially held by this instance.
+	            this.jdbcTemplate.update(this.createSql, new Object[] {this.applicationId, this.uniqueId, expDate});
+	            return true;
+	        }
+	        lockAcquired = canAcquire(rowSet);
+	        if (lockAcquired) {
+	            // Update unique ID of row to indicate this instance holds lock
+	            this.jdbcTemplate.update(this.updateAcquireSql, new Object[] {this.uniqueId, expDate, this.applicationId});
+	        }
+        } finally {
+            // Always attempt to revert current connection to default isolation
+            // level on SQL Server
+	        if (this.platform == DatabasePlatform.SqlServer) {
+	           this.jdbcTemplate.execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+	        }
         }
         return lockAcquired;
     }
