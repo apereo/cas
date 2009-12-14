@@ -7,6 +7,8 @@ package org.jasig.cas.web.support;
 
 import org.inspektr.audit.AuditTrailManager;
 import org.inspektr.audit.AuditableActionContext;
+import org.inspektr.common.web.ClientInfo;
+import org.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,8 +60,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     @Override
     protected final void updateCount(final HttpServletRequest request, final String usernameParameter) {
         final String userToUse = constructUsername(request, usernameParameter);
-
-        final AuditableActionContext context = new AuditableActionContext(userToUse, userToUse, INSPEKTR_ACTION, this.applicationCode, new Date(), request.getRemoteAddr(), request.getLocalAddr());
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        final AuditableActionContext context = new AuditableActionContext(userToUse, userToUse, INSPEKTR_ACTION, this.applicationCode, new Date(), clientInfo.getClientIpAddress(), clientInfo.getServerIpAddress());
         this.auditTrailManager.record(context);
     }
 
