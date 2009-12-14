@@ -69,7 +69,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         return EMPTY_MAP;
     }
 
-    protected static final String cleanupUrl(final String url) {
+    protected static String cleanupUrl(final String url) {
         if (url == null) {
             return null;
         }
