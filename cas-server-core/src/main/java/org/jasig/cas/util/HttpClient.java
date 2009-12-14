@@ -94,7 +94,7 @@ public final class HttpClient implements Serializable, DisposableBean {
             final URL u = new URL(url);
             return isValidEndPoint(u);
         } catch (final MalformedURLException e) {
-            log.error(e,e);
+            log.error(e.getMessage(),e);
             return false;
         }
     }
@@ -113,20 +113,17 @@ public final class HttpClient implements Serializable, DisposableBean {
             for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Response code from server matched "
-                            + responseCode + ".");
+                        log.debug("Response code from server matched " + responseCode + ".");
                     }
                     return true;
                 }
             }
 
             if (log.isDebugEnabled()) {
-                log
-                    .debug("Response Code did not match any of the acceptable response codes.  Code returned was "
-                        + responseCode);
+                log.debug("Response Code did not match any of the acceptable response codes.  Code returned was " + responseCode);
             }
         } catch (final IOException e) {
-            log.error(e,e);
+            log.error(e.getMessage(),e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -211,7 +208,7 @@ public final class HttpClient implements Serializable, DisposableBean {
                 log.warn("Socket Timeout Detected while attempting to send message to [" + url + "].");
                 return false;
             } catch (final Exception e) {
-                log.error(e,e);
+                log.warn(e.getMessage());
                 return false;
             } finally {
                 if (in != null) {
