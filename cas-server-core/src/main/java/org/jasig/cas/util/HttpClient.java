@@ -208,7 +208,7 @@ public final class HttpClient implements Serializable, DisposableBean {
                 log.warn("Socket Timeout Detected while attempting to send message to [" + url + "].");
                 return false;
             } catch (final Exception e) {
-                log.warn(e.getMessage());
+                log.warn("Error Sending message to url endpoint [" + url + "].  Error is [" + e.getMessage() + "]");
                 return false;
             } finally {
                 if (in != null) {
