@@ -138,5 +138,21 @@
           <version>1.3</version>
           <scope>test</scope>
       </dependency>
+
+        <dependency>
+            <groupId>org.perf4j</groupId>
+            <artifactId>perf4j</artifactId>
+            <version>${perf4j.version}</version>
+            <classifier>log4jonly</classifier>
+            <scope>compile</scope>
+        </dependency>
+
+      <dependency>
+          <groupId>commons-jexl</groupId>
+          <artifactId>commons-jexl</artifactId>
+          <version>${commons.jexl.version}</version>
+          <scope>runtime</scope>
+          <type>jar</type>
+      </dependency>
   </dependencies>
 </project>
