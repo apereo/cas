@@ -27,9 +27,9 @@ import java.util.Set;
  */
 public final class ValidatorBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
 
-    private Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Override
     public Object postProcessBeforeInitialization(final Object bean, final String beanName) throws BeansException {
