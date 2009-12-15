@@ -52,7 +52,7 @@ public class RemoteCentralAuthenticationServiceTests extends
 
     public void testDontUseValidatorsToCheckValidCredentials() {
         try {
-            this.remoteCentralAuthenticationService.setValidators(null);
+            this.remoteCentralAuthenticationService.setValidators(new Validator[0]);
             this.remoteCentralAuthenticationService
                 .createTicketGrantingTicket(TestUtils
                     .getCredentialsWithDifferentUsernameAndPassword());
