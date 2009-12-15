@@ -77,8 +77,7 @@
     <bean id="advisorAutoProxyCreator"
           class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
-    <bean id="validationAnnotationBeanPostProcessor"
-          class="org.inspektr.common.ioc.validation.ValidationAnnotationBeanPostProcessor"/>
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.ValidatorBeanPostProcessor" />
 
     <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
     <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>

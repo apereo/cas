@@ -13,7 +13,7 @@
     <dependency>
       <groupId>org.jasig.service</groupId>
       <artifactId>person-directory-impl</artifactId>
-      <version>1.5.0-RC5</version>
+      <version>${person.directory.version}</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -75,25 +75,20 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
-      <version>3.3.2.GA</version>
+      <version>3.4.0.GA</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-annotations</artifactId>
+        <version>3.4.0.GA</version>
+        <scope>compile</scope>
+        <type>jar</type>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-commons-annotations</artifactId>
       <version>3.3.0.ga</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.3.1.GA</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-      <version>3.2.5.ga</version>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -89,7 +89,38 @@
 			<version>2.6.9</version>
 			<scope>runtime</scope>
 		</dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+            <scope>runtime</scope>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+          <dependency>
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+              <version>${commons.logging.version}</version>
+          </dependency>
   </dependencies>
+
+    <repositories>
+        <repository>
+             <id>Version99</id>
+             <name>Version 99 Does Not Exist Maven repository</name>
+             <layout>default</layout>
+             <url>http://no-commons-logging.zapto.org/mvn2</url>
+         </repository>
+    </repositories>
+
   <build>
 		<plugins>
 			<plugin>
