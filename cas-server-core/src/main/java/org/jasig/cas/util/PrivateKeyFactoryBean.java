@@ -10,9 +10,10 @@ import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Factory Bean for creating a private key from a file.

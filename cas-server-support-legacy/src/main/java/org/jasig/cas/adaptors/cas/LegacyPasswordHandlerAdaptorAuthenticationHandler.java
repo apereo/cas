@@ -7,9 +7,10 @@ package org.jasig.cas.adaptors.cas;
 
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.inspektr.common.ioc.annotation.NotNull;
 
 import edu.yale.its.tp.cas.auth.PasswordHandler;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * An AuthenticationHandler that obtains the hidden HttpServletRequest bound to

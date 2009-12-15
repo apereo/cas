@@ -6,10 +6,10 @@
 package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
 import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class for database authentication handlers.

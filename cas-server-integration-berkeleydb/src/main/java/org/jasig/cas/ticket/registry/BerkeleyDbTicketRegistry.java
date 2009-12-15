@@ -10,8 +10,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.FileSystemResource;
@@ -32,6 +30,8 @@ import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.je.LockMode;
 import com.sleepycat.je.OperationStatus;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of the TicketRegistry that is backed by a BerkeleyDb.

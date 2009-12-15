@@ -8,9 +8,10 @@ package org.jasig.cas.authentication.principal;
 import java.util.Arrays;
 
 import javax.naming.directory.SearchControls;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
-import org.inspektr.common.ioc.annotation.IsIn;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 
@@ -48,8 +49,8 @@ public abstract class AbstractLdapPersonDirectoryCredentialsToPrincipalResolver 
     private String searchBase;
 
     /** The scope. */
-    @IsIn({SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
-        SearchControls.SUBTREE_SCOPE})
+    @Min(0)
+    @Max(2)
     private int scope = SearchControls.SUBTREE_SCOPE;
 
     /** The amount of time to wait. */

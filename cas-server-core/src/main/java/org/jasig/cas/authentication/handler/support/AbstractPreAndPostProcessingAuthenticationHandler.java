@@ -7,10 +7,11 @@ package org.jasig.cas.authentication.handler.support;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract authentication handler that allows deployers to utilize the bundled

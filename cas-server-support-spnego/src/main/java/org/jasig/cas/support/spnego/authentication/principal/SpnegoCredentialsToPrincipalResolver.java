@@ -7,9 +7,10 @@ package org.jasig.cas.support.spnego.authentication.principal;
 
 import java.util.Locale;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a

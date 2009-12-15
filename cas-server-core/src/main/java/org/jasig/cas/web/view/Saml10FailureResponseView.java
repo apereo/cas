@@ -11,12 +11,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.opensaml.SAMLException;
 import org.opensaml.SAMLResponse;
-import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Represents a failed attempt at validating a ticket, responding via a SAML

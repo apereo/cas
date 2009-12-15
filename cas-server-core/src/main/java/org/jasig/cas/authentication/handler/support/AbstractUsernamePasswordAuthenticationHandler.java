@@ -5,10 +5,11 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.*;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the

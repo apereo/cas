@@ -6,11 +6,12 @@
 package org.jasig.cas.adaptors.ldap;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle common LDAP functionality.

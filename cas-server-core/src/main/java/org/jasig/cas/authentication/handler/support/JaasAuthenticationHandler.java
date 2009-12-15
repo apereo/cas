@@ -13,8 +13,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.validation.constraints.NotNull;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.util.Assert;
@@ -54,10 +54,7 @@ public class JaasAuthenticationHandler extends
     private String realm = DEFAULT_REALM;
     
     public JaasAuthenticationHandler() {
-        Assert
-        .notNull(
-            Configuration.getConfiguration(),
-            "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+        Assert.notNull(Configuration.getConfiguration(), "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     protected final boolean authenticateUsernamePasswordInternal(

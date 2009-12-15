@@ -7,12 +7,13 @@ package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
 import org.inspektr.audit.spi.AuditablePrincipalResolver;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * AuditablePrincipalResolver that can retrieve the username from either the Ticket or from the Credentials.

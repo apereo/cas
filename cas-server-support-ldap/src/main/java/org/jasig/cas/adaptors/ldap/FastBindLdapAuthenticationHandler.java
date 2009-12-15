@@ -31,7 +31,7 @@ public final class FastBindLdapAuthenticationHandler extends AbstractLdapUsernam
             this.log.debug("Performing LDAP bind with credential: " + bindDn);
             dirContext = this.getContextSource().getContext(bindDn, credentials.getPassword());
             return true;
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             return false;
         } finally {
             if (dirContext != null) {

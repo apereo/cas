@@ -11,7 +11,9 @@ import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.inspektr.common.ioc.annotation.NotEmpty;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
@@ -24,7 +26,8 @@ public class RadiusAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
-    @NotEmpty
+    @NotNull
+    @Size(min=1)
     private List<RadiusServer> servers;
 
     /**

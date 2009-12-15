@@ -7,8 +7,9 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.InitializingBean;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Class that given a table, username field and password field will query a

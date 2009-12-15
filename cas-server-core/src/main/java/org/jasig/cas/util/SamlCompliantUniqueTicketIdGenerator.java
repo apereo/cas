@@ -5,10 +5,11 @@
  */
 package org.jasig.cas.util;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.opensaml.artifact.SAMLArtifact;
 import org.opensaml.artifact.SAMLArtifactType0002;
 import org.opensaml.artifact.URI;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for

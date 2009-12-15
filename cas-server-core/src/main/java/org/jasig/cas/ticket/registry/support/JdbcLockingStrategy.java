@@ -9,8 +9,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlRowSetResultSetExtractor;

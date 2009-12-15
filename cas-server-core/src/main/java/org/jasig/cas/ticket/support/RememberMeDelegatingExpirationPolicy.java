@@ -5,10 +5,11 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.RememberMeCredentials;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Delegates to different expiration policies depending on whether remember me

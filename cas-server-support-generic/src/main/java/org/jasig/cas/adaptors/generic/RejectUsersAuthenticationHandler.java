@@ -11,7 +11,8 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BlockedCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.inspektr.common.ioc.annotation.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one

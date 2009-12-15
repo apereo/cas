@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.cas.ticket.Ticket;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jboss.cache.Cache;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.Node;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of TicketRegistry that is backed by a JBoss TreeCache.

@@ -9,11 +9,11 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.common.ioc.annotation.GreaterThan;
-import org.inspektr.common.ioc.annotation.NotNull;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
@@ -32,10 +32,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     protected final Log log = LogFactory.getLog(getClass());
 
-    @GreaterThan(0)
+    @Min(0)
     private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;
 
-    @GreaterThan(0)
+    @Min(0)
     private int failureRangeInSeconds = DEFAULT_FAILURE_RANGE_IN_SECONDS;
 
     @NotNull

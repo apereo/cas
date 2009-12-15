@@ -11,11 +11,12 @@ import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.support.openid.web.support.OpenIdUserNameExtractor;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Attempts to utilize an existing single sign on session, but only if the

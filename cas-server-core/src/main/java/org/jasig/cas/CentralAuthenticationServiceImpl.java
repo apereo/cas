@@ -8,7 +8,6 @@ package org.jasig.cas;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.inspektr.audit.annotation.Auditable;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.MutableAuthentication;
@@ -40,6 +39,7 @@ import org.perf4j.aop.Profiled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
