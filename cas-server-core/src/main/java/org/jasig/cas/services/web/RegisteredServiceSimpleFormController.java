@@ -6,7 +6,6 @@
 package org.jasig.cas.services.web;
 
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -21,6 +20,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +31,7 @@ import java.util.Map;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class RegisteredServiceSimpleFormController extends
-    SimpleFormController {
+public final class RegisteredServiceSimpleFormController extends SimpleFormController {
 
     /** Instance of ServiceRegistryManager */
     @NotNull

@@ -5,9 +5,9 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,8 +24,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public final class DefaultPasswordEncoder implements PasswordEncoder {
 
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5',
-        '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     @NotNull
     private final String encodingAlgorithm;

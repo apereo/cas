@@ -332,7 +332,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <version>${aspectj.version}</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>${javax.validation.version}</version>
+            <scope>compile</scope>
+        </dependency>
 	</dependencies>
 
 	<repositories>
@@ -464,6 +469,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<spring.version>2.5.6.SEC01</spring.version>
         <clover.version>2.6.0</clover.version>
         <aspectj.version>1.6.6</aspectj.version>
+        <javax.validation.version>1.0.0.GA</javax.validation.version>
         <perf4j.version>0.9.12</perf4j.version>
         <commons.jexl.version>1.1</commons.jexl.version>
 	</properties>

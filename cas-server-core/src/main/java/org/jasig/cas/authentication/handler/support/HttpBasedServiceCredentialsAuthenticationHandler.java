@@ -11,7 +11,8 @@ import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.HttpClient;
-import org.inspektr.common.ioc.annotation.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Class to validate the credentials presented by communicating with the web
@@ -26,8 +27,7 @@ import org.inspektr.common.ioc.annotation.NotNull;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class HttpBasedServiceCredentialsAuthenticationHandler implements
-    AuthenticationHandler {
+public final class HttpBasedServiceCredentialsAuthenticationHandler implements AuthenticationHandler {
 
     /** The string representing the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";

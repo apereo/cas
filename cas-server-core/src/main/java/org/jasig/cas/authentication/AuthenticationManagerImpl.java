@@ -7,7 +7,6 @@ package org.jasig.cas.authentication;
 
 import java.util.List;
 
-import org.inspektr.common.ioc.annotation.NotEmpty;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
@@ -15,6 +14,9 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * <p>
@@ -55,11 +57,13 @@ import org.jasig.cas.authentication.principal.Principal;
 public final class AuthenticationManagerImpl extends AbstractAuthenticationManager {
 
     /** An array of authentication handlers. */
-    @NotEmpty
+    @NotNull
+    @Size(min=1)
     private List<AuthenticationHandler> authenticationHandlers;
 
     /** An array of CredentialsToPrincipalResolvers. */
-    @NotEmpty
+    @NotNull
+    @Size(min=1)
     private List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers;
 
     @Override

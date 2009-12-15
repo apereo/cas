@@ -9,8 +9,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 

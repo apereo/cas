@@ -12,8 +12,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.Service;

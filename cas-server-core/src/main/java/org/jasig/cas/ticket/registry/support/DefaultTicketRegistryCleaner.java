@@ -11,11 +11,12 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * The default ticket registry cleaner scans the entire CAS ticket registry

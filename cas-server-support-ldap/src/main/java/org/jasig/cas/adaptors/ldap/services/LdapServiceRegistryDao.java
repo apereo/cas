@@ -7,7 +7,6 @@ package org.jasig.cas.adaptors.ldap.services;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServiceRegistryDao;
@@ -15,6 +14,7 @@ import org.springframework.ldap.core.*;
 
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.ModificationItem;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**

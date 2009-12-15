@@ -10,9 +10,10 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * FactoryBean for creating a public key from a file.

@@ -7,8 +7,9 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Class that if provided a query that returns a password (parameter of query

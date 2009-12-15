@@ -8,7 +8,6 @@ package org.jasig.cas.adaptors.ldap;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
-import org.inspektr.common.ioc.annotation.IsIn;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.SearchExecutor;
 
@@ -17,6 +16,8 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class BindLdapAuthenticationHandler extends
     private String searchBase;
 
     /** The scope. */
-    @IsIn({SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
-        SearchControls.SUBTREE_SCOPE})
+    @Min(0)
+    @Max(2)
     private int scope = SearchControls.SUBTREE_SCOPE;
 
     /** The maximum number of results to return. */

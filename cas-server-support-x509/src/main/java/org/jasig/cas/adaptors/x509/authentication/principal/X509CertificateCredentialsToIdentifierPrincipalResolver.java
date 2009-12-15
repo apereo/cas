@@ -5,9 +5,8 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import javax.validation.constraints.NotNull;
 import java.security.cert.X509Certificate;
-
-import org.inspektr.common.ioc.annotation.NotNull;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,8 +39,7 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
             log.info("Creating principal for: " + certificate.getSubjectDN().getName());
         }
 
-        final String[] entries = certificate.getSubjectDN().getName().split(
-            ENTRIES_DELIMITER);
+        final String[] entries = certificate.getSubjectDN().getName().split(ENTRIES_DELIMITER);
 
         //[fix by Barry Silk]
         // Make sure entries are sorted by length, in descending order
@@ -50,8 +48,7 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
         Arrays.sort(entries, new LengthComparator());
         
         for (final String val : entries) {
-            final String[] nameValuePair = val
-                .split(NAME_VALUE_PAIR_DELIMITER);
+            final String[] nameValuePair = val.split(NAME_VALUE_PAIR_DELIMITER);
             final String name = nameValuePair[0].trim();
             final String value = nameValuePair[1];
 
@@ -74,18 +71,20 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
     }
     
     //[fix by Barry Silk, see above]
-    class LengthComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            String s1 = (String) o1;
-            String s2 = (String) o2;
-            String[] nameValuePair1 = s1.split(NAME_VALUE_PAIR_DELIMITER);
-            String name1 = nameValuePair1[0].trim();
-            String[] nameValuePair2 = s2.split(NAME_VALUE_PAIR_DELIMITER);
-            String name2 = nameValuePair2[0].trim();
-            int len1 = name1.length();
-            int len2 = name2.length();
-            if (len1 > len2) return -1;
-            if (len2 > len1) return 1;
+    class LengthComparator implements Comparator<String> {
+        public int compare(final String s1, final String s2) {
+            final String[] nameValuePair1 = s1.split(NAME_VALUE_PAIR_DELIMITER);
+            final String name1 = nameValuePair1[0].trim();
+            final String[] nameValuePair2 = s2.split(NAME_VALUE_PAIR_DELIMITER);
+            final String name2 = nameValuePair2[0].trim();
+            final int len1 = name1.length();
+            final int len2 = name2.length();
+            if (len1 > len2) {
+                return -1;
+            }
+            if (len2 > len1) {
+                return 1;
+            }
             return 0;
         }
     }

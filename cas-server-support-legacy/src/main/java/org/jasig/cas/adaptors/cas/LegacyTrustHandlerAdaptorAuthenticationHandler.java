@@ -7,10 +7,11 @@ package org.jasig.cas.adaptors.cas;
 
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.util.StringUtils;
 
 import edu.yale.its.tp.cas.auth.TrustHandler;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Adaptor class to adapt the legacy CAS TrustHandler to the new

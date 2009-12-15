@@ -10,7 +10,8 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.inspektr.common.ioc.annotation.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is

@@ -12,8 +12,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.beans.support.PropertyComparator;
@@ -29,8 +29,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class ManageRegisteredServicesMultiActionController extends
-    MultiActionController {
+public final class ManageRegisteredServicesMultiActionController extends MultiActionController {
 
     /** View name for the Manage Services View. */
     private static final String VIEW_NAME = "manageServiceView";
@@ -40,8 +39,7 @@ public final class ManageRegisteredServicesMultiActionController extends
     private final ServicesManager servicesManager;
 
     /** Used to ensure services are sorted by name. */
-    private final PropertyComparator propertyComparator = new PropertyComparator(
-        "name", false, true);
+    private final PropertyComparator propertyComparator = new PropertyComparator("name", false, true);
 
     @NotNull
     private final String defaultServiceUrl;

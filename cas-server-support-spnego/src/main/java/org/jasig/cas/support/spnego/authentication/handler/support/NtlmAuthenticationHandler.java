@@ -22,7 +22,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
-import org.inspektr.common.ioc.annotation.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of an AuthenticationHandler for NTLM supports.
@@ -39,7 +40,7 @@ public class NtlmAuthenticationHandler extends
 
     private boolean loadBalance = true;
 
-    @NotNull		
+    @NotNull
     private String domainController = Config.getProperty("jcifs.smb.client.domain");
     
     private String includePattern = null;

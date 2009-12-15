@@ -8,8 +8,9 @@ package org.jasig.cas.authentication.principal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.webflow.util.Base64;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.

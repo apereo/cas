@@ -8,9 +8,10 @@ package org.jasig.cas.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.util.DefaultLongNumericGenerator;
 import org.jasig.cas.util.LongNumericGenerator;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.

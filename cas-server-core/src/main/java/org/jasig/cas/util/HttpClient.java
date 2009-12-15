@@ -7,11 +7,12 @@ package org.jasig.cas.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.common.ioc.annotation.GreaterThan;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.springframework.util.Assert;
 import org.springframework.beans.factory.DisposableBean;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -46,12 +47,13 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
+    @Size(min=1)
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
 
-    @GreaterThan(0)
+    @Min(0)
     private int connectionTimeout = 5000;
 
-    @GreaterThan(0)
+    @Min(0)
     private int readTimeout = 5000;
 
 

@@ -14,12 +14,12 @@ import java.util.concurrent.Future;
 
 import net.spy.memcached.MemcachedClient;
 
-import org.inspektr.common.ioc.annotation.GreaterThan;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
+
+import javax.validation.constraints.Min;
 
 /**
  * Memcache (or Repcache) backed ticket registry.
@@ -33,10 +33,10 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 	
 	private final MemcachedClient client;
 	
-	@GreaterThan(0)
+	@Min(0)
 	private final int tgtTimeout;
 	
-	@GreaterThan(0)
+	@Min(0)
 	private final int stTimeout;
 	
 	private boolean synchronizeUpdatesToRegistry = false;

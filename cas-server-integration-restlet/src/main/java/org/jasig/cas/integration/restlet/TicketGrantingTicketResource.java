@@ -22,7 +22,8 @@ import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.inspektr.common.ioc.annotation.NotNull;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of a Restlet resource for creating Service Tickets from a 

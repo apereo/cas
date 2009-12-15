@@ -5,13 +5,13 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.util.LdapUtils;
 import org.springframework.ldap.core.AttributesMapper;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

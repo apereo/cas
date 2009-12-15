@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -16,6 +15,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive

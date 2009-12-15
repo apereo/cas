@@ -5,13 +5,14 @@
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Ensures that the OpenId provided matches with the existing

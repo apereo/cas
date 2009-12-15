@@ -6,12 +6,12 @@
 package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.util.HttpClient;
-import org.inspektr.common.ioc.annotation.NotNull;
 
 /**
  * Abstract class for handling the enabling and disabling of Single Sign Out features.

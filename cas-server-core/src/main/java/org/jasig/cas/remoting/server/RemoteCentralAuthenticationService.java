@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.remoting.server;
 
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
@@ -16,6 +15,8 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Wrapper implementation around a CentralAuthenticationService that does
@@ -34,15 +35,15 @@ import org.springframework.validation.Validator;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class RemoteCentralAuthenticationService implements
-    CentralAuthenticationService {
+public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {
 
     /** The CORE to delegate to. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
     /** The validators to check the Credentials. */
-    private Validator[] validators;
+    @NotNull
+    private Validator[] validators = new Validator[0];
 
     /**
      * @throws IllegalArgumentException if the Credentials are null or if given
@@ -51,81 +52,60 @@ public final class RemoteCentralAuthenticationService implements
     public String createTicketGrantingTicket(final Credentials credentials)
         throws TicketException {
         Assert.notNull(credentials, "credentials cannot be null");
+        checkForErrors(credentials);
 
-        final Errors errors = validateCredentials(credentials);
-        if (errors.hasErrors()) {
-            throw new IllegalArgumentException("Error validating credentials: "
-                + errors.toString());
-        }
-
-        return this.centralAuthenticationService
-            .createTicketGrantingTicket(credentials);
+        return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
     }
 
-    public String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service) throws TicketException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketException {
 
-        return this.centralAuthenticationService.grantServiceTicket(
-            ticketGrantingTicketId, service);
+        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
 
     /**
      * @throws IllegalArgumentException if given invalid credentials
      */
-    public String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, final Credentials credentials)
-        throws TicketException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws TicketException {
+        checkForErrors(credentials);
 
-        if (credentials != null) {
-            final Errors errors = validateCredentials(credentials);
-            if (errors.hasErrors()) {
-                throw new IllegalArgumentException(
-                    "Error validating credentials: " + errors.toString());
-            }
-        }
-
-        return this.centralAuthenticationService.grantServiceTicket(
-            ticketGrantingTicketId, service, credentials);
+        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
     }
 
-    public Assertion validateServiceTicket(final String serviceTicketId,
-        final Service service) throws TicketException {
-        return this.centralAuthenticationService.validateServiceTicket(
-            serviceTicketId, service);
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
+        return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
     }
 
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
-        this.centralAuthenticationService
-            .destroyTicketGrantingTicket(ticketGrantingTicketId);
+        this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
     }
 
     /**
      * @throws IllegalArgumentException if the credentials are invalid.
      */
-    public String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials credentials) throws TicketException {
+    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials) throws TicketException {
+        checkForErrors(credentials);
 
+        return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
+    }
+
+    private void checkForErrors(final Credentials credentials) {
+        if (credentials == null) {
+            return;
+        }
+        
         final Errors errors = validateCredentials(credentials);
         if (errors.hasErrors()) {
             throw new IllegalArgumentException("Error validating credentials: "
                 + errors.toString());
         }
-
-        return this.centralAuthenticationService.delegateTicketGrantingTicket(
-            serviceTicketId, credentials);
     }
 
     private Errors validateCredentials(final Credentials credentials) {
         final Errors errors = new BindException(credentials, "credentials");
 
-        if (this.validators == null) {
-            return errors;
-        }
-
-        for (int i = 0; i < this.validators.length; i++) {
-            if (this.validators[i].supports(credentials.getClass())) {
-                ValidationUtils.invokeValidator(this.validators[i],
-                    credentials, errors);
+        for (final Validator validator : this.validators) {
+            if (validator.supports(credentials.getClass())) {
+                ValidationUtils.invokeValidator(validator, credentials, errors);
             }
         }
 

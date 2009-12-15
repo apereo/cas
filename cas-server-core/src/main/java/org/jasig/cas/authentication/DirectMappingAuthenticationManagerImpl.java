@@ -5,12 +5,8 @@
  */
 package org.jasig.cas.authentication;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.inspektr.common.ioc.annotation.NotEmpty;
-import org.inspektr.common.ioc.annotation.NotNull;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
@@ -18,6 +14,9 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Authentication Manager that provides a direct mapping between credentials
@@ -29,7 +28,8 @@ import org.springframework.util.Assert;
  */
 public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthenticationManager {
 
-    @NotEmpty
+    @NotNull
+    @Size(min=1)
     private Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping;
 
     /**
