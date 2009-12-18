@@ -61,15 +61,6 @@
     </logger>
 
     <!--
-      The root logger sends all log statements EXCEPT those sent to the perf4j
-      logger to System.out.
-    -->
-    <root>
-        <level value="ERROR"/>
-        <appender-ref ref="console"/>
-    </root>
-
-    <!--
         WARNING: Setting the org.springframework logger to DEBUG displays debug information about
         the request parameter values being bound to the command objects.  This could expose your
         password in the log file.  If you are sharing your log files, it is recommend you selectively
@@ -93,4 +84,13 @@
         <level value="INFO" />
         <appender-ref ref="cas" />
     </logger>
+
+    <!--
+      The root logger sends all log statements EXCEPT those sent to the perf4j
+      logger to System.out.
+    -->
+    <root>
+        <level value="ERROR"/>
+        <appender-ref ref="console"/>
+    </root>
 </log4j:configuration>
