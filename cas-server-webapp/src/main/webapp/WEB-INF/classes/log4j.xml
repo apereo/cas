@@ -13,12 +13,12 @@
     </appender>
 
     <appender name="cas" class="org.apache.log4j.RollingFileAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/>
-        </layout>
         <param name="File" value="cas.log" />
         <param name="MaxFileSize" value="512KB" />
         <param name="MaxBackupIndex" value="3" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/>
+        </layout>
     </appender>
 
     <!-- Perf4J appenders -->
@@ -27,16 +27,11 @@
        into GroupedTimingStatistics messages which it sends on the
        file appender defined below
     -->
-    <appender name="CoalescingStatistics"
-              class="org.perf4j.log4j.AsyncCoalescingStatisticsAppender">
-        <!--
-          The TimeSlice option is used to determine the time window for which
-          all received StopWatch logs are aggregated to create a single
-          GroupedTimingStatistics log. Here we set it to 10 seconds, overriding
-          the default of 30000 ms
-        -->
+    <appender name="CoalescingStatistics" class="org.perf4j.log4j.AsyncCoalescingStatisticsAppender">
         <param name="TimeSlice" value="60000"/>
         <appender-ref ref="fileAppender"/>
+        <appender-ref ref="graphExecutionTimes"/>
+        <appender-ref ref="graphExecutionTPS"/>
     </appender>
 
     <!-- This file appender is used to output aggregated performance statistics -->
@@ -46,6 +41,18 @@
             <param name="ConversionPattern" value="%m%n"/>
         </layout>
     </appender>
+
+       <appender name="graphExecutionTimes" class="org.perf4j.log4j.GraphingStatisticsAppender">
+           <!-- Possible GraphTypes are Mean, Min, Max, StdDev, Count and TPS -->
+           <param name="GraphType" value="Mean"/>
+           <!-- The tags of the timed execution blocks to graph are specified here -->
+           <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET" />
+       </appender>
+
+       <appender name="graphExecutionTPS" class="org.perf4j.log4j.GraphingStatisticsAppender">
+           <param name="GraphType" value="TPS" />
+           <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET" />
+       </appender>
 
     <!-- Loggers -->
     <!--
