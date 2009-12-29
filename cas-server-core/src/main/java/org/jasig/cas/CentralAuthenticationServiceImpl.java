@@ -129,7 +129,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
     @Auditable(action="TICKET_GRANTING_TICKET_DESTROYED",actionResolverClass=org.inspektr.audit.spi.support.DefaultAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
-    @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET",logFailuresSeparately = true)
+    @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
@@ -155,7 +155,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * or Service are null.
      */
     @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
-    @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = true)
+    @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws TicketException {
 
@@ -228,7 +228,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
-    @Profiled(tag = "GRANT_SERVICE_TICKET",logFailuresSeparately = true)
+    @Profiled(tag = "GRANT_SERVICE_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
@@ -240,7 +240,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * Credentials are null.
      */
     @Auditable(action="PROXY_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
-    @Profiled(tag="GRANT_PROXY_GRANTING_TICKET",logFailuresSeparately = true)
+    @Profiled(tag="GRANT_PROXY_GRANTING_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String delegateTicketGrantingTicket(final String serviceTicketId,
         final Credentials credentials) throws TicketException {
@@ -287,7 +287,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * are null.
      */
     @Auditable(action="SERVICE_TICKET_VALIDATE",successSuffix="D",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
-    @Profiled(tag="VALIDATE_SERVICE_TICKET",logFailuresSeparately = true)
+    @Profiled(tag="VALIDATE_SERVICE_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
@@ -378,7 +378,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @throws IllegalArgumentException if the credentials are null.
      */
     @Auditable(action="TICKET_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
-    @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = true)
+    @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String createTicketGrantingTicket(final Credentials credentials) throws TicketCreationException {
         Assert.notNull(credentials, "credentials cannot be null");

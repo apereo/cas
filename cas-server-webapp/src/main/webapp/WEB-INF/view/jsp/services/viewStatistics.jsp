@@ -69,4 +69,13 @@
     </tbody>
 </table>
 
+<h2>Performance Statistics</h2>
+
+<c:forEach items="${graphingStatisticAppenders}" var="appender">
+<h3>${appender.name}</h3>
+
+<img src="${appender.chartGenerator.chartUrl}" alt="${appender.name}" />
+
+</c:forEach>
+
 <%@include file="includes/bottom.jsp" %>

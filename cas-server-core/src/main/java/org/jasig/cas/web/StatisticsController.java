@@ -8,6 +8,7 @@ package org.jasig.cas.web;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.perf4j.log4j.GraphingStatisticsAppender;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -86,11 +87,14 @@ public final class StatisticsController extends AbstractController {
             // this means the ticket registry doesn't support this information.
         }
 
+        final Collection<GraphingStatisticsAppender> appenders = GraphingStatisticsAppender.getAllGraphingStatisticsAppenders();
+
         modelAndView.addObject("unexpiredTgts", unexpiredTgts);
         modelAndView.addObject("unexpiredSts", unexpiredSts);
         modelAndView.addObject("expiredTgts", expiredTgts);
         modelAndView.addObject("expiredSts", expiredSts);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
+        modelAndView.addObject("graphingStatisticAppenders", appenders);
 
         return modelAndView;
     }
