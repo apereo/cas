@@ -13,18 +13,17 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.validation.ValidationContext;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.DataBinder;
 import org.springframework.validation.Errors;
 import org.springframework.web.util.CookieGenerator;
-import org.springframework.webflow.action.FormAction;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -36,7 +35,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public class AuthenticationViaFormAction extends FormAction {
+public class AuthenticationViaFormAction {
 
     /**
      * Binder that allows additional binding of form object beyond Spring
@@ -51,101 +50,70 @@ public class AuthenticationViaFormAction extends FormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    protected final void doBind(final RequestContext context,
-        final DataBinder binder) throws Exception {
-        final HttpServletRequest request = WebUtils
-            .getHttpServletRequest(context);
-        final Credentials credentials = (Credentials) binder.getTarget();
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
-        if (this.credentialsBinder != null) {
+    public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+
+        if (this.credentialsBinder != null && this.credentialsBinder.supports(credentials.getClass())) {
             this.credentialsBinder.bind(request, credentials);
         }
-
-        super.doBind(context, binder);
     }
     
-    public Event referenceData(final RequestContext context) throws Exception {
-        context.getRequestScope().put("commandName", getFormObjectName());
-        return success();
-    }
-
-    public final Event submit(final RequestContext context) throws Exception {
-        final Credentials credentials = (Credentials) getFormObject(context);
+    public final String submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
 
-        if (StringUtils.hasText(context.getRequestParameters().get("renew"))
-            && ticketGrantingTicketId != null && service != null) {
+        if (StringUtils.hasText(context.getRequestParameters().get("renew")) && ticketGrantingTicketId != null && service != null) {
 
             try {
-                final String serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId,
-                        service, credentials);
-                WebUtils.putServiceTicketInRequestScope(context,
-                    serviceTicketId);
+                final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
+                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
-                return warn();
+                return "warn";
             } catch (final TicketException e) {
-                if (e.getCause() != null
-                    && AuthenticationException.class.isAssignableFrom(e
-                        .getCause().getClass())) {
-                    populateErrorsInstance(context, e);
-                    return error();
+                if (e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass())) {
+                    populateErrorsInstance(e, messageContext);
+                    return "error";
                 }
-                this.centralAuthenticationService
-                    .destroyTicketGrantingTicket(ticketGrantingTicketId);
+                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 if (logger.isDebugEnabled()) {
-                    logger
-                        .debug(
-                            "Attempted to generate a ServiceTicket using renew=true with different credentials",
-                            e);
+                    logger.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
                 }
             }
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInRequestScope(context,
-                this.centralAuthenticationService
-                    .createTicketGrantingTicket(credentials));
-
+            WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
-            return success();
+            return "success";
         } catch (final TicketException e) {
-            populateErrorsInstance(context, e);
-            return error();
+            populateErrorsInstance(e, messageContext);
+            return "error";
         }
     }
 
-    private final Event warn() {
-        return result("warn");
-    }
 
-    private final void populateErrorsInstance(final RequestContext context,
-        final TicketException e) {
+    private void populateErrorsInstance(final TicketException e, final MessageContext messageContext) {
 
         try {
-            final Errors errors = getFormErrors(context);
-            errors.reject(e.getCode(), e.getCode());
+            messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).defaultText(e.getCode()).build());
         } catch (final Exception fe) {
-            logger.error(fe, fe);
+            logger.error(fe.getMessage(), fe);
         }
     }
 
-    private void putWarnCookieIfRequestParameterPresent(
-        final RequestContext context) {
-        final HttpServletResponse response = WebUtils
-            .getHttpServletResponse(context);
+    private void putWarnCookieIfRequestParameterPresent(final RequestContext context) {
+        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
-        if (StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get("warn"))) {
+        if (StringUtils.hasText(context.getExternalContext().getRequestParameterMap().get("warn"))) {
             this.warnCookieGenerator.addCookie(response, "true");
         } else {
             this.warnCookieGenerator.removeCookie(response);
         }
     }
 
-    public final void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
+    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -161,38 +129,14 @@ public class AuthenticationViaFormAction extends FormAction {
      * things other than HttpServletRequest parameters in populating the
      * Credentials (or more sophisticated consideration of the
      * HttpServletRequest parameters).
+     *
+     * @param credentialsBinder the credentials binder to set.
      */
-    public final void setCredentialsBinder(
-        final CredentialsBinder credentialsBinder) {
+    public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
     
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-    protected void initAction() {
-        if (this.getFormObjectClass() == null) {
-            this.setFormObjectClass(UsernamePasswordCredentials.class);
-            this.setFormObjectName("credentials");
-            this.setValidator(new UsernamePasswordCredentialsValidator());
-
-            logger.info("FormObjectClass not set.  Using default class of "
-                + this.getFormObjectClass().getName() + " with formObjectName "
-                + this.getFormObjectName() + " and validator "
-                + this.getValidator().getClass().getName() + ".");
-        }
-
-        Assert
-            .isTrue(Credentials.class.isAssignableFrom(this
-                .getFormObjectClass()),
-                "CommandClass must be of type Credentials.");
-
-        if (this.credentialsBinder != null) {
-            Assert.isTrue(this.credentialsBinder.supports(this
-                .getFormObjectClass()),
-                "CredentialsBinder does not support supplied FormObjectClass: "
-                    + this.getClass().getName());
-        }
     }
 }

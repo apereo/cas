@@ -14,6 +14,7 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.DefaultPasswordEncoder;
@@ -21,7 +22,6 @@ import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.util.Base64;
 
 /**
  * @author Scott Battaglia
@@ -41,8 +41,6 @@ public final class OpenIdService extends AbstractWebApplicationService {
     
     private static final PasswordEncoder ENCODER = new DefaultPasswordEncoder("SHA1");
 
-    private static final Base64 base64 = new Base64();
-    
     private static final KeyGenerator keyGenerator;
 
     private String identity;
@@ -72,10 +70,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
         try {
             final Mac sha1 = Mac.getInstance("HmacSHA1");
             sha1.init(this.sharedSecret);
-            return base64.encodeToString(sha1.doFinal(value.getBytes()));
+            return Base64.encodeBase64String(sha1.doFinal(value.getBytes()));
         } catch (final Exception e) {
             LOG.error(e,e);
-            return base64.encodeToString(ENCODER.encode(value).getBytes());
+            return Base64.encodeBase64String(ENCODER.encode(value).getBytes());
         }
     }
 

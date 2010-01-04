@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.webflow.execution.repository.FlowExecutionKey;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 import junit.framework.TestCase;
@@ -44,7 +44,16 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
                 public String toString() {
                     return "test";
                 }
-            
+
+                @Override
+                public boolean equals(Object o) {
+                    return true;
+                }
+
+                @Override
+                public int hashCode() {
+                    return 0;
+                }
             }, new RuntimeException())));
 
         assertEquals(request.getRequestURI(), ((RedirectView) model.getView())
@@ -64,7 +73,16 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
                 public String toString() {
                     return "test";
                 }
-            
+
+                @Override
+                public boolean equals(Object o) {
+                    return true;
+                }
+
+                @Override
+                public int hashCode() {
+                    return 0;
+                }
             }, new RuntimeException())));
 
         assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())

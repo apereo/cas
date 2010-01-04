@@ -6,7 +6,6 @@
 package org.jasig.cas.support.spnego.web.flow;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -97,9 +96,10 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
     }
 
     protected boolean isSupportedBrowser(final String userAgent) {
-        for (Iterator<String> it = this.supportedBrowser.iterator(); it.hasNext();) {
-            if (userAgent.contains(it.next()))
+        for (final String supportedBrowser : this.supportedBrowser) {
+            if (userAgent.contains(supportedBrowser)) {
                 return true;
+            }
         }
         return false;
     }

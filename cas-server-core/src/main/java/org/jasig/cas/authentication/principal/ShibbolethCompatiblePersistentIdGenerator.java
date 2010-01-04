@@ -8,7 +8,7 @@ package org.jasig.cas.authentication.principal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.springframework.webflow.util.Base64;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.validation.constraints.NotNull;
 
@@ -24,8 +24,6 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements
 
     private static final byte CONST_SEPARATOR = (byte) '!';
     
-    private Base64 base64 = new Base64();
-
     @NotNull
     private byte[] salt;
 
@@ -37,7 +35,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements
             md.update(principal.getId().getBytes());
             md.update(CONST_SEPARATOR);
 
-            return this.base64.encodeToString(md.digest(this.salt)).replaceAll(
+            return Base64.encodeBase64String(md.digest(this.salt)).replaceAll(
                 System.getProperty("line.separator"), "");
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
