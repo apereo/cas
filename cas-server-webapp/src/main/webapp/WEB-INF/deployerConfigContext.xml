@@ -15,7 +15,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 	<!--
 		| This bean declares our AuthenticationManager.  The CentralAuthenticationService service bean
 		| declared in applicationContext.xml picks up this AuthenticationManager by reference to its id, 
@@ -98,20 +100,17 @@
 	This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
 	More robust deployments will want to use another option, such as the Jdbc version.
 	
-	The name of this should remain "userDetailsService" in order for Acegi to find it. 
+	The name of this should remain "userDetailsService" in order for Spring Security to find it.
 	
 	To use this, you should add an entry similar to the following between the two value tags:
 	battags=notused,ROLE_ADMIN
 	
 	where battags is the username you want to grant access to.  You can put one entry per line.
-	 -->	
-	<bean id="userDetailsService" class="org.springframework.security.userdetails.memory.InMemoryDaoImpl">
-		<property name="userMap">
-			<value>
-			
-		    </value>
-		</property>
-	</bean> 
+	 -->
+
+    <sec:user-service id="userDetailsService">
+        <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />
+    </sec:user-service>
 	
 	<!-- 
 	Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation
