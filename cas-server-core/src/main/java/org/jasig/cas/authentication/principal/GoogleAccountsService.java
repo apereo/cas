@@ -8,7 +8,6 @@ package org.jasig.cas.authentication.principal;
 import org.jasig.cas.util.SamlUtils;
 import org.jdom.Document;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.util.Base64;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -24,6 +23,8 @@ import java.util.Random;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -254,9 +255,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static byte[] base64Decode(final String xml) {
         try {
-            final Base64 base64Decoder = new Base64();
             final byte[] xmlBytes = xml.getBytes("UTF-8");
-            return base64Decoder.decode(xmlBytes);
+            return Base64.decodeBase64(xmlBytes);
         } catch (final Exception e) {
             return null;
         }

@@ -24,28 +24,27 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class WebUtils {
 
-    public static final HttpServletRequest getHttpServletRequest(
+    public static HttpServletRequest getHttpServletRequest(
         final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context
             .getExternalContext(),
             "Cannot obtain HttpServletRequest from event of type: "
                 + context.getExternalContext().getClass().getName());
 
-        return ((ServletExternalContext) context.getExternalContext())
-            .getRequest();
+        return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
 
-    public static final HttpServletResponse getHttpServletResponse(
+    public static HttpServletResponse getHttpServletResponse(
         final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context
             .getExternalContext(),
             "Cannot obtain HttpServletResponse from event of type: "
                 + context.getExternalContext().getClass().getName());
-        return ((ServletExternalContext) context.getExternalContext())
-            .getResponse();
+        return (HttpServletResponse) context.getExternalContext()
+            .getNativeResponse();
     }
 
-    public static final WebApplicationService getService(
+    public static WebApplicationService getService(
         final List<ArgumentExtractor> argumentExtractors,
         final HttpServletRequest request) {
         for (final ArgumentExtractor argumentExtractor : argumentExtractors) {
@@ -60,24 +59,24 @@ public final class WebUtils {
         return null;
     }
     
-    public static final WebApplicationService getService(
+    public static WebApplicationService getService(
         final List<ArgumentExtractor> argumentExtractors,
         final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         return getService(argumentExtractors, request);
     }
 
-    public static final WebApplicationService getService(
+    public static WebApplicationService getService(
         final RequestContext context) {
         return (WebApplicationService) context.getFlowScope().get("service");
     }
 
-    public static final void putTicketGrantingTicketInRequestScope(
+    public static void putTicketGrantingTicketInRequestScope(
         final RequestContext context, final String ticketValue) {
         context.getRequestScope().put("ticketGrantingTicketId", ticketValue);
     }
 
-    public static final String getTicketGrantingTicketId(
+    public static String getTicketGrantingTicketId(
         final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
         final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
@@ -86,12 +85,12 @@ public final class WebUtils {
 
     }
 
-    public static final void putServiceTicketInRequestScope(
+    public static void putServiceTicketInRequestScope(
         final RequestContext context, final String ticketValue) {
         context.getRequestScope().put("serviceTicketId", ticketValue);
     }
 
-    public static final String getServiceTicketFromRequestScope(
+    public static String getServiceTicketFromRequestScope(
         final RequestContext context) {
         return context.getRequestScope().getString("serviceTicketId");
     }

@@ -77,6 +77,10 @@
         <level value="WARN" />
     </logger>
 
+    <logger name="org.springframework.webflow">
+        <level value="DEBUG" />
+    </logger>
+
     <logger name="org.jasig" additivity="true">
         <level value="INFO" />
         <appender-ref ref="cas" />

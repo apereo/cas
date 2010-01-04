@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  * UsernamePasswordCredentials respresents the username and password that a user
  * may provide in order to prove the authenticity of who they say they are.
@@ -22,9 +25,13 @@ public class UsernamePasswordCredentials implements Credentials {
     private static final long serialVersionUID = -8343864967200862794L;
 
     /** The username. */
+    @NotNull
+    @Size(min=1,message = "required.username")
     private String username;
 
     /** The password. */
+    @NotNull
+    @Size(min=1, message = "required.password")
     private String password;
 
     /**

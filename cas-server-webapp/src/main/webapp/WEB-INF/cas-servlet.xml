@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:flow="http://www.springframework.org/schema/webflow-config"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"       
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-1.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd">
        
 	<bean id="casPropertyPlaceholderConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
 		p:location="/WEB-INF/cas.properties" />
@@ -35,23 +35,8 @@
 	
 	<bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
-	<!-- Handler Mapping -->
-	<bean id="handlerMappingB" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property
-			name="mappings">
-			<props>
-				<prop
-					key="/login">loginController</prop>
-			</props>
-		</property>
-		<property
-			name="interceptors">
-			<list>
-				<ref bean="localeChangeInterceptor" />
-			</list>
-		</property>
-	</bean>
-		
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
+	
 	<bean
 		id="handlerMappingC"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -133,29 +118,38 @@
 		class="org.springframework.web.servlet.mvc.ParameterizableViewController"
 		p:viewName="serviceLogoutView" />
 
-	<bean
-		id="loginController"
-		class="org.springframework.webflow.executor.mvc.FlowController"
-		p:flowExecutor-ref="flowExecutor"
-		p:defaultFlowId="login-webflow">
-		<property
-			name="argumentHandler">
-			<bean class="org.springframework.webflow.executor.support.RequestParameterFlowExecutorArgumentHandler"
-				p:flowExecutionKeyArgumentName="lt"
-				p:defaultFlowId="login-webflow" />
-		</property>
-	</bean>
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:flowRegistry-ref="flowRegistry" p:order="2">
+        <property name="interceptors">
+            <ref local="localeChangeInterceptor" />
+        </property>
+    </bean>
 
-	<flow:executor id="flowExecutor" registry-ref="flowRegistry">
-		<flow:execution-attributes>
-			<flow:alwaysRedirectOnPause value="false"/>
-		</flow:execution-attributes>
-	</flow:executor>
 
-	<flow:registry id="flowRegistry">
-		<flow:location path="/WEB-INF/login-webflow.xml"/>
-	</flow:registry>
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter"
+        p:flowExecutor-ref="flowExecutor"
+        p:flowUrlHandler-ref="flowUrlHandler" />
 
+    <bean id="flowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler" />
+
+    <webflow:flow-executor id="flowExecutor" flow-registry="flowRegistry">
+        <webflow:flow-execution-attributes>
+            <webflow:always-redirect-on-pause value="false" />
+        </webflow:flow-execution-attributes>
+    </webflow:flow-executor>
+
+    <webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
+        <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
+    </webflow:flow-registry>
+
+    <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" />
+
+    <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+        <property name="viewResolvers">
+            <list>
+                <ref local="viewResolver" />
+            </list>
+        </property>
+    </bean>
 	<bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController"
 		p:centralAuthenticationService-ref="centralAuthenticationService"
 		p:proxyHandler-ref="proxy20Handler"
@@ -213,8 +207,6 @@
 		p:centralAuthenticationService-ref="centralAuthenticationService"
 		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
 	
-	<bean id="dynamicRedirectViewSelector" class="org.jasig.cas.web.flow.DynamicRedirectViewSelector" />
-
 	<bean id="addRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
 		p:formView="addServiceView"
 		p:successView="addServiceView"
@@ -242,4 +234,9 @@
 		<constructor-arg index="0" ref="servicesManager" />
         <constructor-arg index="1" value="${cas.securityContext.serviceProperties.service}" />
 	</bean>
+
+    <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator" />
+
+    <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
+            p:messageInterpolator-ref="messageInterpolator" />
 </beans>

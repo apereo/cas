@@ -6,6 +6,8 @@
 package org.jasig.cas.integration.restlet;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -128,8 +130,14 @@ public class TicketResource extends Resource {
             return this.form.getFirstValue(paramName);
         }
 
-        public Map getParameterMap() {
-            return this.form.getValuesMap();
+        public Map<String, String[]> getParameterMap() {
+            final Map<String, String[]> conversion = new HashMap<String,String[]>();
+
+            for (final Map.Entry<String, String> entry : this.form.getValuesMap().entrySet()) {
+                conversion.put(entry.getKey(), new String[] {entry.getValue()});
+            }
+
+            return conversion;
         }
 
         public String[] getParameterValues(String paramName) {
@@ -179,6 +187,26 @@ public class TicketResource extends Resource {
 
         public void setAttribute(String name, Object value, int scope) {
             // nothing to do
+        }
+
+        public String getHeader(final String s) {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        public String[] getHeaderValues(String s) {
+            return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        public Iterator<String> getHeaderNames() {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        public Iterator<String> getParameterNames() {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        public Object resolveReference(String s) {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
         }
     }
 }

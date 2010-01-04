@@ -1,12 +1,12 @@
 package org.jasig.cas.util;
 
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContext;
 import org.quartz.Trigger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import java.util.Map;
 
