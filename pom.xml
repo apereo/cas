@@ -294,6 +294,13 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
              <layout>default</layout>
              <url>http://no-commons-logging.zapto.org/mvn2</url>
          </repository>
+
+        <repository>
+            <id>jboss</id>
+            <name>JBoss Repository</name>
+            <layout>default</layout>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>
     </repositories>
     
 	<dependencyManagement>
@@ -424,6 +431,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
                 <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate.validator.version}</version>
             </dependency>
 		</dependencies>
 	</dependencyManagement>

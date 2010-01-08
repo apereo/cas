@@ -11,12 +11,10 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
-import org.springframework.validation.Validator;
 
+import javax.validation.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 /**
  * Wrapper implementation around a CentralAuthenticationService that does
@@ -43,14 +41,13 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
 
     /** The validators to check the Credentials. */
     @NotNull
-    private Validator[] validators = new Validator[0];
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     /**
      * @throws IllegalArgumentException if the Credentials are null or if given
      * invalid credentials.
      */
-    public String createTicketGrantingTicket(final Credentials credentials)
-        throws TicketException {
+    public String createTicketGrantingTicket(final Credentials credentials) throws TicketException {
         Assert.notNull(credentials, "credentials cannot be null");
         checkForErrors(credentials);
 
@@ -58,7 +55,6 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketException {
-
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
 
@@ -93,23 +89,10 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
             return;
         }
         
-        final Errors errors = validateCredentials(credentials);
-        if (errors.hasErrors()) {
-            throw new IllegalArgumentException("Error validating credentials: "
-                + errors.toString());
+        final Set<ConstraintViolation<Credentials>> errors = this.validator.validate(credentials);
+        if (!errors.isEmpty()) {
+            throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
         }
-    }
-
-    private Errors validateCredentials(final Credentials credentials) {
-        final Errors errors = new BindException(credentials, "credentials");
-
-        for (final Validator validator : this.validators) {
-            if (validator.supports(credentials.getClass())) {
-                ValidationUtils.invokeValidator(validator, credentials, errors);
-            }
-        }
-
-        return errors;
     }
 
     /**
@@ -126,9 +109,9 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     /**
      * Set the list of validators.
      * 
-     * @param validators The array of validators to use.
+     * @param validator The array of validators to use.
      */
-    public void setValidators(final Validator[] validators) {
-        this.validators = validators;
+    public void setValidator(final Validator validator) {
+        this.validator = validator;
     }
 }
