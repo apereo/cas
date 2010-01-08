@@ -8,8 +8,6 @@ package org.jasig.cas.remoting.server;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketException;
-import org.jasig.cas.validation.UsernamePasswordCredentialsValidator;
-import org.springframework.validation.Validator;
 
 /**
  * @author Scott Battaglia
@@ -23,39 +21,25 @@ public class RemoteCentralAuthenticationServiceTests extends
 
     protected void onSetUp() throws Exception {
         this.remoteCentralAuthenticationService = new RemoteCentralAuthenticationService();
+        this.remoteCentralAuthenticationService.setCentralAuthenticationService(getCentralAuthenticationService());
+    }
 
-        this.remoteCentralAuthenticationService
-            .setCentralAuthenticationService(getCentralAuthenticationService());
-
-        Validator[] validators = new Validator[1];
-        validators[0] = new UsernamePasswordCredentialsValidator();
-
-        this.remoteCentralAuthenticationService.setValidators(validators);
+    public void testValidCredentials() throws TicketException {
+        this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     public void testInvalidCredentials() throws TicketException {
         try {
-            this.remoteCentralAuthenticationService
-                .createTicketGrantingTicket(TestUtils
-                    .getCredentialsWithDifferentUsernameAndPassword(null, null));
+            this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null));
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
             return;
         }
     }
 
-    public void testValidCredentials() throws TicketException {
-        this.remoteCentralAuthenticationService
-            .createTicketGrantingTicket(TestUtils
-                .getCredentialsWithSameUsernameAndPassword());
-    }
-
     public void testDontUseValidatorsToCheckValidCredentials() {
         try {
-            this.remoteCentralAuthenticationService.setValidators(new Validator[0]);
-            this.remoteCentralAuthenticationService
-                .createTicketGrantingTicket(TestUtils
-                    .getCredentialsWithDifferentUsernameAndPassword());
+            this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail("TicketException expected.");
         } catch (TicketException e) {
             return;
