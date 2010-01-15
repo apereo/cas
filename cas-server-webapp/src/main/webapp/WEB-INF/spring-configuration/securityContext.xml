@@ -12,7 +12,7 @@
 
 	<sec:http entry-point-ref="casProcessingFilterEntryPoint" auto-config="true">
 		<sec:intercept-url pattern="/services/loggedout.html" filters="none" /> 
-    	<sec:intercept-url pattern="/**" access="ROLE_ADMIN" />
+    	<sec:intercept-url pattern="/**" access="${cas.securityContext.serviceProperties.adminRoles}" />
         <sec:logout logout-url="/services/logout.html" logout-success-url="/services/loggedOut.html" />
         <sec:custom-filter ref="casProcessingFilter" after="CAS_FILTER" />
     </sec:http>
