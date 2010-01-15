@@ -41,6 +41,7 @@
                             <include>**/*.html</include>
                             <include>**/*.txt</include>
                             <include>**/*.js</include>
+                            <include>**/*.conf</include>
                         </includes>
 					</fileSet>
 
@@ -50,6 +51,7 @@
                          <includes>
                              <include>**/*.gif</include>
                              <include>**/*.ico</include>
+                             <include>**/*.key</include>
                          </includes>
                      </fileSet>
 					
