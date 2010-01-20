@@ -7,6 +7,9 @@ package org.jasig.cas.services;
 
 import junit.framework.TestCase;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 
  * @author Scott Battaglia
@@ -28,7 +31,7 @@ public class RegisteredServiceImplTests extends TestCase {
         final boolean ALLOWED_TO_PROXY = false;
         final boolean ANONYMOUS_ACCESS = true;
         final boolean SSO_ENABLED = false;
-        final String[] ALLOWED_ATTRIBUTES = new String[] {"Test"};
+        final List<String> ALLOWED_ATTRIBUTES = Arrays.asList("Test");
         
         this.r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
         this.r.setAllowedToProxy(ALLOWED_TO_PROXY);

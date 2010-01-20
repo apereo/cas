@@ -16,6 +16,7 @@ import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.Filter;
 
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
 
 /**
  * Default implementation of LdapServiceMapper which maps each property of RegisteredService to a explicit LDAP attribute
@@ -70,7 +71,7 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
         s.setDescription(ctx.getStringAttribute(this.serviceDescriptionAttribute));
         s.setSsoEnabled(SpringLdapUtils.getBoolean(ctx, this.serviceSsoEnabledAttribute));
         s.setTheme(ctx.getStringAttribute(this.serviceThemeAttribute));
-        s.setAllowedAttributes(ctx.getStringAttributes(this.serviceAllowedAttributesAttribute));
+        s.setAllowedAttributes(Arrays.asList(ctx.getStringAttributes(this.serviceAllowedAttributesAttribute)));
 
         return s;
     }
@@ -83,7 +84,7 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
         SpringLdapUtils.setBoolean(ctx, this.serviceAnonymousAccessAttribute, service.isAnonymousAccess());
         SpringLdapUtils.setBoolean(ctx, this.serviceSsoEnabledAttribute, service.isSsoEnabled());
         ctx.setAttributeValue(this.serviceThemeAttribute, service.getTheme());
-        ctx.setAttributeValues(this.serviceAllowedAttributesAttribute, service.getAllowedAttributes(), false);
+        ctx.setAttributeValues(this.serviceAllowedAttributesAttribute, service.getAllowedAttributes().toArray(new String[service.getAllowedAttributes().size()]), false);
         ctx.setAttributeValue(this.serviceDescriptionAttribute, service.getDescription());
         if (!SpringLdapUtils.containsObjectClass(ctx, this.objectclass))
             ctx.addAttributeValue(SpringLdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass);

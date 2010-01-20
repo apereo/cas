@@ -5,7 +5,9 @@
  */
 package org.jasig.cas.services;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,11 +44,11 @@ public class RegisteredServiceImpl
     private long id = -1;
     
     
-    @CollectionOfElements
+    @CollectionOfElements(targetElement = String.class)
     @JoinTable(name = "rs_attributes")
     @Column(name = "a_name", nullable = false)
     @IndexColumn(name = "a_id")
-    private String[] allowedAttributes = new String[0];
+    private List<String> allowedAttributes = new ArrayList<String>();
 
     private String description;
 
@@ -77,8 +79,8 @@ public class RegisteredServiceImpl
         this.anonymousAccess = anonymousAccess;
     }
 
-    public String[] getAllowedAttributes() {
-        return this.allowedAttributes != null ? this.allowedAttributes : new String[0];
+    public List<String> getAllowedAttributes() {
+        return this.allowedAttributes != null ? this.allowedAttributes : new ArrayList<String>();
     }
 
     public long getId() {
@@ -116,66 +118,47 @@ public class RegisteredServiceImpl
     public boolean matches(final Service service) {
         return service != null && PATH_MATCHER.match(this.serviceId.toLowerCase(), service.getId().toLowerCase());
     }
-    
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode(this.allowedAttributes);
-        result = prime * result + (this.allowedToProxy ? 1231 : 1237);
-        result = prime * result + (this.anonymousAccess ? 1231 : 1237);
-        result = prime * result
-            + ((this.description == null) ? 0 : this.description.hashCode());
-        result = prime * result + (this.enabled ? 1231 : 1237);
-        result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
-        result = prime * result
-            + ((this.serviceId == null) ? 0 : this.serviceId.hashCode());
-        result = prime * result + (this.ssoEnabled ? 1231 : 1237);
-        result = prime * result + ((this.theme == null) ? 0 : this.theme.hashCode());
-        return result;
-    }
 
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegisteredServiceImpl)) return false;
+
+        RegisteredServiceImpl that = (RegisteredServiceImpl) o;
+
+        if (allowedToProxy != that.allowedToProxy) return false;
+        if (anonymousAccess != that.anonymousAccess) return false;
+        if (enabled != that.enabled) return false;
+        if (evaluationOrder != that.evaluationOrder) return false;
+        if (ignoreAttributes != that.ignoreAttributes) return false;
+        if (ssoEnabled != that.ssoEnabled) return false;
+        if (allowedAttributes != null ? !allowedAttributes.equals(that.allowedAttributes) : that.allowedAttributes != null)
             return false;
-        if (!(obj instanceof RegisteredServiceImpl))
-            return false;
-        final RegisteredServiceImpl other = (RegisteredServiceImpl) obj;
-        if (!Arrays.equals(this.allowedAttributes, other.allowedAttributes))
-            return false;
-        if (this.allowedToProxy != other.allowedToProxy)
-            return false;
-        if (this.anonymousAccess != other.anonymousAccess)
-            return false;
-        if (this.description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!this.description.equals(other.description))
-            return false;
-        if (this.enabled != other.enabled)
-            return false;
-        if (this.name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!this.name.equals(other.name))
-            return false;
-        if (this.serviceId == null) {
-            if (other.serviceId != null)
-                return false;
-        } else if (!this.serviceId.equals(other.serviceId))
-            return false;
-        if (this.ssoEnabled != other.ssoEnabled)
-            return false;
-        if (this.theme == null) {
-            if (other.theme != null)
-                return false;
-        } else if (!this.theme.equals(other.theme))
-            return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (serviceId != null ? !serviceId.equals(that.serviceId) : that.serviceId != null) return false;
+        if (theme != null ? !theme.equals(that.theme) : that.theme != null) return false;
+
         return true;
     }
 
-    public void setAllowedAttributes(final String[] allowedAttributes) {
+    @Override
+    public int hashCode() {
+        int result = allowedAttributes != null ? allowedAttributes.hashCode() : 0;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (serviceId != null ? serviceId.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (theme != null ? theme.hashCode() : 0);
+        result = 31 * result + (allowedToProxy ? 1 : 0);
+        result = 31 * result + (enabled ? 1 : 0);
+        result = 31 * result + (ssoEnabled ? 1 : 0);
+        result = 31 * result + (anonymousAccess ? 1 : 0);
+        result = 31 * result + (ignoreAttributes ? 1 : 0);
+        result = 31 * result + evaluationOrder;
+        return result;
+    }
+
+    public void setAllowedAttributes(final List<String> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
     }
 
