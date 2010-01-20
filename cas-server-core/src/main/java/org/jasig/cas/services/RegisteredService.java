@@ -6,6 +6,7 @@
 package org.jasig.cas.services;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.jasig.cas.authentication.principal.Service;
 
@@ -45,7 +46,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * 
      * @return the list of attributes
      */
-    String[] getAllowedAttributes();
+    List<String> getAllowedAttributes();
 
     /**
      * Is this application allowed to take part in the proxying capabilities of

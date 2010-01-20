@@ -5,9 +5,7 @@
  */
 package org.jasig.cas.services;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jasig.cas.authentication.principal.Service;
@@ -40,7 +38,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     
     public DefaultServicesManagerImpl(
         final ServiceRegistryDao serviceRegistryDao) {
-        this(serviceRegistryDao, new String[0]);
+        this(serviceRegistryDao, new ArrayList<String>());
     }
     
     /**
@@ -51,7 +49,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * @param defaultAttributes the list of default attributes to use.
      */
     public DefaultServicesManagerImpl(
-        final ServiceRegistryDao serviceRegistryDao, final String[] defaultAttributes) {
+        final ServiceRegistryDao serviceRegistryDao, final List<String> defaultAttributes) {
         Assert
             .notNull(serviceRegistryDao, "serviceRegistryDao cannot be null.");
 
@@ -140,7 +138,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         log.info(String.format("Loaded %s services.", this.services.size()));
     }
     
-    private RegisteredService constructDefaultRegisteredService(final String[] attributes) {
+    private RegisteredService constructDefaultRegisteredService(final List<String> attributes) {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setAllowedToProxy(true);
         r.setAnonymousAccess(false);
@@ -148,7 +146,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         r.setSsoEnabled(true);
         r.setAllowedAttributes(attributes);
         
-        if (attributes == null || attributes.length == 0) {
+        if (attributes == null || attributes.isEmpty()) {
             r.setIgnoreAttributes(true);
         }
 

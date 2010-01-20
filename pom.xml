@@ -167,6 +167,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
                     <groupId>aspectj</groupId>
                     <artifactId>aspectjrt</artifactId>
                 </exclusion>
+
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
 			</exclusions> 
 		</dependency>
 	
@@ -175,13 +180,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<artifactId>commons-lang</artifactId>
 			<version>2.2</version>
 			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${commons.logging.version}</version>
-			<type>jar</type>
 		</dependency>
 
 		<dependency>
@@ -289,26 +287,72 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		</repository>
 
         <repository>
-             <id>Version99</id>
-             <name>Version 99 Does Not Exist Maven repository</name>
-             <layout>default</layout>
-             <url>http://no-commons-logging.zapto.org/mvn2</url>
-         </repository>
-
-        <repository>
             <id>jboss</id>
             <name>JBoss Repository</name>
             <layout>default</layout>
-            <url>http://repository.jboss.com/maven2</url>
+            <url>http://repository.jfboss.com/maven2</url>
         </repository>
     </repositories>
     
 	<dependencyManagement>
 		<dependencies>
             <dependency>
+                <groupId>commons-jexl</groupId>
+                <artifactId>commons-jexl</artifactId>
+                <version>1.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.jasig.service</groupId>
+                <artifactId>person-directory-impl</artifactId>
+                <version>${person.directory.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.4</version>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.core.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate.core.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-annotations</artifactId>
+                <version>${hibernate.core.version}</version>
+                <scope>compile</scope>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.java-persistence</groupId>
+                <artifactId>jpa-api</artifactId>
+                <version>${jpa.version}</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -329,6 +373,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
                 <version>${spring.security.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             
 			<!-- Spring Managed Dependencies -->			
@@ -362,6 +412,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
 				<version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
@@ -414,6 +470,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 				<groupId>org.springframework.webflow</groupId>
 				<artifactId>spring-webflow</artifactId>
 				<version>${spring.webflow.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
 			</dependency>
 		    <dependency>
                 <groupId>javax.servlet</groupId>
@@ -422,7 +484,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             </dependency>
 
             <dependency>
-                <groupId>org.spectj</groupId>
+                <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
@@ -506,9 +568,10 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <perf4j.version>0.9.12</perf4j.version>
         <commons.jexl.version>1.1</commons.jexl.version>
         <hibernate.validator.version>4.0.1.GA</hibernate.validator.version>
+        <hibernate.core.version>3.5.0-Beta-2</hibernate.core.version>
         <slf4j.version>1.5.8</slf4j.version>
-        <commons.logging.version>99.0-does-not-exist</commons.logging.version>
         <person.directory.version>1.5.0-RC6</person.directory.version>
         <servlet.api.version>2.5</servlet.api.version>
+        <jpa.version>2.0-cr-1</jpa.version>
 	</properties>
 </project>

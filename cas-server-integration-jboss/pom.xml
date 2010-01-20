@@ -24,6 +24,12 @@
 			<artifactId>jbosscache-core</artifactId>
 			<version>2.2.2.GA</version>
 			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 	

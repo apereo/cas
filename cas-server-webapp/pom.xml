@@ -34,12 +34,6 @@
 			<version>${project.version}</version>
 		</dependency>
 
-<dependency>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-ldap</artifactId>
-	<version>${project.version}</version>
-</dependency>
-
       <dependency>
           <groupId>org.springframework</groupId>
           <artifactId>spring-context-support</artifactId>
@@ -81,12 +75,6 @@
             <scope>runtime</scope>
             <type>jar</type>
         </dependency>
-
-          <dependency>
-              <groupId>commons-logging</groupId>
-              <artifactId>commons-logging</artifactId>
-              <version>${commons.logging.version}</version>
-          </dependency>
   </dependencies>
 
   <build>
