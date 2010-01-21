@@ -19,6 +19,7 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.util.HttpClient;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia

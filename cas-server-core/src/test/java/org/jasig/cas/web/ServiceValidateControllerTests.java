@@ -20,6 +20,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia

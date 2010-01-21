@@ -50,8 +50,8 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
             log.debug("Creating SimplePrincipal for ["
                 + principalId + "]");
         }
-        
-        final Map<String, List<Object>> attributes = this.attributeRepository.getMultivaluedUserAttributes(principalId);
+
+        final Map<String, List<Object>> attributes = this.attributeRepository.getPerson(principalId).getAttributes();
 
         if (attributes == null & !this.returnNullIfNoAttributes) {
             return new SimplePrincipal(principalId);

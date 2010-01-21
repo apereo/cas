@@ -5,7 +5,9 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -14,18 +16,13 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * @since 3.1
  *
  */
-public class CredentialsToLDAPAttributePrincipalResolverTests
-  extends AbstractDependencyInjectionSpringContextTests {
+@ContextConfiguration(locations = "classpath:/ldapContext-test.xml")
+public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJUnit4SpringContextTests {
 
     protected CredentialsToLDAPAttributePrincipalResolver ldapResolver;
 
     protected ResolverTestConfig resolverTestConfig;
     
-    public CredentialsToLDAPAttributePrincipalResolverTests() {
-        // Switch on field level injection
-        setPopulateProtectedVariables(true);
-    }
-
     // XXX TEMPORARILY DISABLED TEST SO WE CAN BUILD
     /*
     public void testRuIdFound() {
@@ -56,13 +53,5 @@ public class CredentialsToLDAPAttributePrincipalResolverTests
         final Principal p = this.ldapResolver.resolvePrincipal(credentials);
         
         assertNull(p);
-    }
-    
-    /**
-     * Specifies the Spring configuration to load for this test fixture.
-     * @see org.springframework.test.AbstractSingleSpringContextTests#getConfigLocations()
-     */
-    protected String[] getConfigLocations() {
-        return new String[] { "classpath:/ldapContext-test.xml" };
     }
 }

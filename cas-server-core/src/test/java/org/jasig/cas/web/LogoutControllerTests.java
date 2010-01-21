@@ -12,6 +12,7 @@ import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -30,8 +31,6 @@ public class LogoutControllerTests extends
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     protected void onSetUp() throws Exception {
-        super.onSetUp();
-        
        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
         
         this.warnCookieGenerator.setCookieName("test");

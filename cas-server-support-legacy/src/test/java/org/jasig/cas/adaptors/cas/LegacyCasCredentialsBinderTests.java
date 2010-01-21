@@ -14,7 +14,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import junit.framework.TestCase;
 
 /**
- * Partial testcase for LegacyCasCredentialsBinder.
+ * Partial test case for LegacyCasCredentialsBinder.
  * 
  * @version $Revision$ $Date$
  */
@@ -37,10 +37,8 @@ public class LegacyCasCredentialsBinderTests extends TestCase {
      */
     public void testSupports() {
         assertTrue(this.credentialsBinder.supports(LegacyCasCredentials.class));
-        assertTrue(this.credentialsBinder
-            .supports(LegacyCasTrustedCredentials.class));
-        assertFalse(this.credentialsBinder
-            .supports(AdHocUnsupportedCredentials.class));
+        assertTrue(this.credentialsBinder.supports(LegacyCasTrustedCredentials.class));
+        assertFalse(this.credentialsBinder.supports(AdHocUnsupportedCredentials.class));
     }
 
     public void testBindMethod() {
