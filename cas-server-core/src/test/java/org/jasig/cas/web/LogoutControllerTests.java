@@ -9,9 +9,12 @@ import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.Assert.*;
 
@@ -23,14 +26,15 @@ import static org.junit.Assert.*;
 public class LogoutControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
-    
+
     private LogoutController logoutController;
-    
+
     private CookieRetrievingCookieGenerator warnCookieGenerator;
     
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    protected void onSetUp() throws Exception {
+    @Before
+    public void onSetUp() throws Exception {
        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
         
         this.warnCookieGenerator.setCookieName("test");
@@ -40,8 +44,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         
         
         this.logoutController = new LogoutController();
-        this.logoutController
-            .setCentralAuthenticationService(getCentralAuthenticationService());
+        this.logoutController.setCentralAuthenticationService(getCentralAuthenticationService());
         this.logoutController.setLogoutView("test");
         this.logoutController.setWarnCookieGenerator(this.warnCookieGenerator);
         this.logoutController.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);

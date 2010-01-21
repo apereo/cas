@@ -8,6 +8,7 @@ package org.jasig.cas.remoting.server;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketException;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -17,12 +18,12 @@ import static org.junit.Assert.*;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class RemoteCentralAuthenticationServiceTests extends
-    AbstractCentralAuthenticationServiceTest {
+public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTest {
 
     private RemoteCentralAuthenticationService remoteCentralAuthenticationService;
 
-    protected void onSetUp() throws Exception {
+    @Before
+    public void onSetUp() throws Exception {
         this.remoteCentralAuthenticationService = new RemoteCentralAuthenticationService();
         this.remoteCentralAuthenticationService.setCentralAuthenticationService(getCentralAuthenticationService());
     }

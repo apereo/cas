@@ -16,6 +16,8 @@ import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
 import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -27,16 +29,16 @@ import static org.junit.Assert.*;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ServiceValidateControllerTests extends
-    AbstractCentralAuthenticationServiceTest {
+public class ServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private static final String CONST_SUCCESS_VIEW = "casServiceSuccessView";
     
     private static final String CONST_FAILURE_VIEW = "casServiceFailureView";
     
     private ServiceValidateController serviceValidateController;
-    
-    protected void onSetUp() throws Exception {
+
+    @Before
+    public void onSetUp() throws Exception {
         StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.serviceValidateController = new ServiceValidateController();
@@ -67,6 +69,7 @@ public class ServiceValidateControllerTests extends
         return request;
     }
 
+    @Test
     public void testAfterPropertesSetTestEverything() throws Exception {
         this.serviceValidateController
             .setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
@@ -75,12 +78,14 @@ public class ServiceValidateControllerTests extends
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
     }
 
+    @Test
     public void testEmptyParams() throws Exception {
         assertNotNull(this.serviceValidateController.handleRequestInternal(
             new MockHttpServletRequest(), new MockHttpServletResponse())
             .getModel().get("code"));
     }
 
+    @Test
     public void testValidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -98,6 +103,7 @@ public class ServiceValidateControllerTests extends
                 new MockHttpServletResponse()).getViewName());
     }
 
+    @Test
     public void testValidServiceTicketInvalidSpec() throws Exception {
 
         assertEquals(CONST_FAILURE_VIEW,
@@ -106,6 +112,7 @@ public class ServiceValidateControllerTests extends
                 .getViewName());
     }
 
+    @Test
     public void testValidServiceTicketRuntimeExceptionWithSpec()
         throws Exception {
         this.serviceValidateController
@@ -122,6 +129,7 @@ public class ServiceValidateControllerTests extends
         }
     }
 
+    @Test
     public void testInvalidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -141,6 +149,7 @@ public class ServiceValidateControllerTests extends
                 new MockHttpServletResponse()).getViewName());
     }
 
+    @Test
     public void testValidServiceTicketWithPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
@@ -161,6 +170,7 @@ public class ServiceValidateControllerTests extends
                 new MockHttpServletResponse()).getViewName());
     }
 
+    @Test
     public void testValidServiceTicketWithBadPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
@@ -182,6 +192,7 @@ public class ServiceValidateControllerTests extends
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 
+    @Test
     public void testValidServiceTicketWithInvalidPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()

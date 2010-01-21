@@ -290,7 +290,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <id>jboss</id>
             <name>JBoss Repository</name>
             <layout>default</layout>
-            <url>http://repository.jfboss.com/maven2</url>
+            <url>http://repository.jboss.com/maven2</url>
         </repository>
     </repositories>
     

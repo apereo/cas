@@ -12,6 +12,8 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -34,7 +36,8 @@ public class AuthenticationViaFormActionTests extends
 
     private CookieGenerator warnCookieGenerator;
 
-    protected void onSetUp() throws Exception {
+    @Before
+    public void onSetUp() throws Exception {
         this.action = new AuthenticationViaFormAction();
 
         this.warnCookieGenerator = new CookieGenerator();
@@ -49,6 +52,7 @@ public class AuthenticationViaFormActionTests extends
  //       this.action.afterPropertiesSet();
     }
 
+    @Test
     public void testSuccessfulAuthenticationWithNoService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
@@ -64,6 +68,7 @@ public class AuthenticationViaFormActionTests extends
 //        assertEquals("success", this.action.submit(context).getId());
     }
 
+    @Test
     public void testSuccessfulAuthenticationWithNoServiceAndWarn()
         throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -84,6 +89,7 @@ public class AuthenticationViaFormActionTests extends
 //            .getCookieName()));
     }
 
+    @Test
     public void testSuccessfulAuthenticationWithServiceAndWarn()
         throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -105,6 +111,7 @@ public class AuthenticationViaFormActionTests extends
 //            .getCookieName()));
     }
 
+    @Test
     public void testFailedAuthenticationWithNoService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockRequestContext context = new MockRequestContext();
@@ -127,6 +134,7 @@ public class AuthenticationViaFormActionTests extends
 //        assertEquals("error", this.action.submit(context).getId());
     }
 
+    @Test
     public void testRenewWithServiceAndSameCredentials() throws Exception {
         final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -147,6 +155,7 @@ public class AuthenticationViaFormActionTests extends
      //   assertEquals("warn", this.action.submit(context).getId());
     }
 
+    @Test
     public void testRenewWithServiceAndDifferentCredentials() throws Exception {
         final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -167,6 +176,7 @@ public class AuthenticationViaFormActionTests extends
     //    assertEquals("success", this.action.submit(context).getId());
     }
 
+    @Test
     public void testRenewWithServiceAndBadCredentials() throws Exception {
         final String ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -191,6 +201,7 @@ public class AuthenticationViaFormActionTests extends
    //     assertEquals("error", this.action.submit(context).getId());
     }
 
+    @Test
     public void testTestBindingWithoutCredentialsBinder() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -205,6 +216,7 @@ public class AuthenticationViaFormActionTests extends
 
     }
 
+    @Test
     public void testTestBindingWithCredentialsBinder() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
@@ -237,6 +249,7 @@ public class AuthenticationViaFormActionTests extends
 
     }
 
+    @Test
     public void testSetCredentialsBinderNoFailure() throws Exception {
         final CredentialsBinder c = new CredentialsBinder(){
 

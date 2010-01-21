@@ -10,6 +10,8 @@ import javax.servlet.http.Cookie;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.web.support.WebUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -22,24 +24,23 @@ import static org.junit.Assert.*;
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
-public final class GenerateServiceTicketActionTests extends
-    AbstractCentralAuthenticationServiceTest {
+public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTest {
 
     private GenerateServiceTicketAction action;
 
     private String ticketGrantingTicket;
 
-    protected void onSetUp() throws Exception {
+    @Before
+    public void onSetUp() throws Exception {
         this.action = new GenerateServiceTicketAction();
         this.action
             .setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.afterPropertiesSet();
 
-        this.ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
+    @Test
     public void testServiceTicketFromCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
@@ -56,6 +57,7 @@ public final class GenerateServiceTicketActionTests extends
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
 
+    @Test
     public void testTicketGrantingTicketFromRequest() throws Exception {
         MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
@@ -71,6 +73,7 @@ public final class GenerateServiceTicketActionTests extends
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }
 
+    @Test
     public void testTicketGrantingTicketNoTgt() throws Exception {
         MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
@@ -83,6 +86,7 @@ public final class GenerateServiceTicketActionTests extends
         assertEquals("error", this.action.execute(context).getId());
     }
 
+    @Test
     public void testTicketGrantingTicketNotTgtButGateway() throws Exception {
         MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put("service", TestUtils.getService());
