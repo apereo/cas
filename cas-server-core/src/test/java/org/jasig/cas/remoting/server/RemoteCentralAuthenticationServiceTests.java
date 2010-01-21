@@ -8,6 +8,8 @@ package org.jasig.cas.remoting.server;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketException;
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -25,10 +27,12 @@ public class RemoteCentralAuthenticationServiceTests extends
         this.remoteCentralAuthenticationService.setCentralAuthenticationService(getCentralAuthenticationService());
     }
 
+    @Test
     public void testValidCredentials() throws TicketException {
         this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
+    @Test
     public void testInvalidCredentials() throws TicketException {
         try {
             this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null));
@@ -38,6 +42,7 @@ public class RemoteCentralAuthenticationServiceTests extends
         }
     }
 
+    @Test
     public void testDontUseValidatorsToCheckValidCredentials() {
         try {
             this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
@@ -47,11 +52,13 @@ public class RemoteCentralAuthenticationServiceTests extends
         }
     }
 
+    @Test
     public void testDestroyTicketGrantingTicket() {
         this.remoteCentralAuthenticationService
             .destroyTicketGrantingTicket("test");
     }
 
+    @Test
     public void testGrantServiceTicketWithValidTicketGrantingTicket()
         throws TicketException {
         final String ticketId = this.remoteCentralAuthenticationService
@@ -61,6 +68,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             TestUtils.getService());
     }
 
+    @Test
     public void testGrantServiceTicketWithValidCredentials()
         throws TicketException {
         final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
@@ -71,6 +79,7 @@ public class RemoteCentralAuthenticationServiceTests extends
                 .getCredentialsWithSameUsernameAndPassword());
     }
 
+    @Test
     public void testGrantServiceTicketWithNullCredentials()
         throws TicketException {
         final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
@@ -80,6 +89,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             ticketGrantingTicketId, TestUtils.getService(), null);
     }
 
+    @Test
     public void testGrantServiceTicketWithEmptyCredentials()
         throws TicketException {
         final String ticketGrantingTicketId = this.remoteCentralAuthenticationService
@@ -95,6 +105,7 @@ public class RemoteCentralAuthenticationServiceTests extends
         }
     }
 
+    @Test
     public void testValidateServiceTicketWithValidService()
         throws TicketException {
         final String ticketGrantingTicket = this.remoteCentralAuthenticationService
@@ -107,6 +118,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             serviceTicket, TestUtils.getService());
     }
 
+    @Test
     public void testDelegateTicketGrantingTicketWithValidCredentials()
         throws TicketException {
         final String ticketGrantingTicket = this.remoteCentralAuthenticationService
@@ -118,6 +130,7 @@ public class RemoteCentralAuthenticationServiceTests extends
             serviceTicket, TestUtils.getHttpBasedServiceCredentials());
     }
 
+    @Test
     public void testDelegateTicketGrantingTicketWithInvalidCredentials()
         throws TicketException {
         final String ticketGrantingTicket = this.remoteCentralAuthenticationService

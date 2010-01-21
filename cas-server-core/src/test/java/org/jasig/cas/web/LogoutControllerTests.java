@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.RedirectView;
@@ -19,8 +20,7 @@ import static org.junit.Assert.*;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class LogoutControllerTests extends
-    AbstractCentralAuthenticationServiceTest {
+public class LogoutControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
     
@@ -47,11 +47,13 @@ public class LogoutControllerTests extends
         this.logoutController.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
     }
 
+    @Test
     public void testLogoutNoCookie() throws Exception {
         assertNotNull(this.logoutController.handleRequestInternal(
             new MockHttpServletRequest(), new MockHttpServletResponse()));
     }
 
+    @Test
     public void testLogoutForServiceWithFollowRedirects() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "TestService");
@@ -60,6 +62,7 @@ public class LogoutControllerTests extends
             new MockHttpServletResponse()).getView() instanceof RedirectView);
     }
 
+    @Test
     public void testLogoutForServiceWithNoFollowRedirects() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "TestService");
@@ -68,6 +71,7 @@ public class LogoutControllerTests extends
             new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
+    @Test
     public void testLogoutCookie() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
