@@ -10,6 +10,8 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -17,9 +19,9 @@ import static org.junit.Assert.*;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class CentralAuthenticationServiceImplTests extends
-    AbstractCentralAuthenticationServiceTest {
+public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTest {
 
+    @Test
     public void testBadCredentialsOnTicketGrantingTicketCreation() {
         try {
             getCentralAuthenticationService().createTicketGrantingTicket(
@@ -30,6 +32,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testGoodCredentialsOnTicketGrantingTicketCreation() {
         try {
             assertNotNull(getCentralAuthenticationService()
@@ -40,10 +43,12 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testDestroyTicketGrantingTicketWithNonExistantTicket() {
         getCentralAuthenticationService().destroyTicketGrantingTicket("test");
     }
 
+    @Test
     public void testDestroyTicketGrantingTicketWithValidTicket()
         throws TicketException {
         final String ticketId = getCentralAuthenticationService()
@@ -52,6 +57,7 @@ public class CentralAuthenticationServiceImplTests extends
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId);
     }
 
+    @Test
     public void testDestroyTicketGrantingTicketWithInvalidTicket()
         throws TicketException {
         final String ticketId = getCentralAuthenticationService()
@@ -68,6 +74,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testGrantServiceTicketWithValidTicketGrantingTicket()
         throws TicketException {
         final String ticketId = getCentralAuthenticationService()
@@ -77,6 +84,7 @@ public class CentralAuthenticationServiceImplTests extends
             TestUtils.getService());
     }
 
+    @Test
     public void testGrantServiceTicketWithInvalidTicketGrantingTicket()
         throws TicketException {
         final String ticketId = getCentralAuthenticationService()
@@ -91,9 +99,9 @@ public class CentralAuthenticationServiceImplTests extends
             // nothing to do here, exception is expected.
         }
     }
-    
-    public void testGrantServiceTicketWithExpiredTicketGrantingTicket()
-    throws TicketException {
+
+    @Test
+    public void testGrantServiceTicketWithExpiredTicketGrantingTicket() throws TicketException {
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(new ExpirationPolicy() {
             private static final long serialVersionUID = 1L;
 
@@ -114,8 +122,8 @@ public class CentralAuthenticationServiceImplTests extends
     }
 }
 
-    public void testDelegateTicketGrantingTicketWithProperParams()
-        throws TicketException {
+    @Test
+    public void testDelegateTicketGrantingTicketWithProperParams() throws TicketException {
         final String ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -125,6 +133,7 @@ public class CentralAuthenticationServiceImplTests extends
             serviceTicketId, TestUtils.getHttpBasedServiceCredentials());
     }
 
+    @Test
     public void testDelegateTicketGrantingTicketWithBadCredentials()
         throws TicketException {
         final String ticketId = getCentralAuthenticationService()
@@ -141,6 +150,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testDelegateTicketGrantingTicketWithBadServiceTicket()
         throws TicketException {
         final String ticketId = getCentralAuthenticationService()
@@ -158,6 +168,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testGrantServiceTicketWithValidCredentials()
         throws TicketException {
         final String ticketGrantingTicket = getCentralAuthenticationService()
@@ -168,6 +179,7 @@ public class CentralAuthenticationServiceImplTests extends
             TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
+    @Test
     public void testGrantServiceTicketWithInvalidCredentials()
         throws TicketException {
         final String ticketGrantingTicket = getCentralAuthenticationService()
@@ -183,6 +195,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testGrantServiceTicketWithDifferentCredentials()
         throws TicketException {
         final String ticketGrantingTicket = getCentralAuthenticationService()
@@ -198,6 +211,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testValidateServiceTicketWithExpires() throws TicketException {
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService())
             .setServiceTicketExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(
@@ -216,6 +230,7 @@ public class CentralAuthenticationServiceImplTests extends
             .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
     }
 
+    @Test
     public void testValidateServiceTicketWithValidService()
         throws TicketException {
         final String ticketGrantingTicket = getCentralAuthenticationService()
@@ -228,6 +243,7 @@ public class CentralAuthenticationServiceImplTests extends
             TestUtils.getService());
     }
 
+    @Test
     public void testValidateServiceTicketWithInvalidService()
         throws TicketException {
         final String ticketGrantingTicket = getCentralAuthenticationService()
@@ -245,6 +261,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testValidateServiceTicketWithInvalidServiceTicket()
         throws TicketException {
         final String ticketGrantingTicket = getCentralAuthenticationService()
@@ -264,6 +281,7 @@ public class CentralAuthenticationServiceImplTests extends
         }
     }
 
+    @Test
     public void testValidateServiceTicketNonExistantTicket() {
         try {
             getCentralAuthenticationService().validateServiceTicket("test",

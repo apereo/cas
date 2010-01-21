@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.*;
@@ -19,8 +21,10 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = "classpath:/ldapContext-test.xml")
 public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJUnit4SpringContextTests {
 
+    @Autowired
     protected CredentialsToLDAPAttributePrincipalResolver ldapResolver;
 
+    @Autowired
     protected ResolverTestConfig resolverTestConfig;
     
     // XXX TEMPORARILY DISABLED TEST SO WE CAN BUILD
@@ -36,7 +40,8 @@ public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJU
         assertNotNull(p);
         assertEquals(this.resolverTestConfig.getExistsPrincipal(), p.getId());
     }*/
-    
+
+    @Test
     public void testRuIdNotFound() {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername(this.resolverTestConfig.getNotExistsCredential());
@@ -45,7 +50,8 @@ public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJU
         
         assertNull(p);
     }
-    
+
+    @Test
     public void testTooMany() {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername(this.resolverTestConfig.getTooManyCredential());

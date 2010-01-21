@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import static org.junit.Assert.*;
@@ -21,14 +22,11 @@ import static org.junit.Assert.*;
  * @since 3.1
  *
  */
-@ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
+@ContextConfiguration(locations= {"classpath:jpaTestApplicationContext.xml"})
 public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4SpringContextTests {
 
+    @Autowired(required=true)
     private JpaServiceRegistryDaoImpl dao;
-   
-    public void setDao(final JpaServiceRegistryDaoImpl dao) {
-        this.dao = dao;
-    }
 
     @Test
     public void testSaveMethodWithNonExistentServiceAndNoAttributes() {

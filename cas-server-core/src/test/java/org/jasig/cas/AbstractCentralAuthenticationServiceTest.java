@@ -7,6 +7,7 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
@@ -15,21 +16,20 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-@ContextConfiguration("applicationContext.xml")
+@ContextConfiguration(locations={"/applicationContext.xml"})
 public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJUnit4SpringContextTests {
 
+    @Autowired(required = true)
     private CentralAuthenticationService centralAuthenticationService;
 
+    @Autowired(required=true)
     private TicketRegistry ticketRegistry;
 
+    @Autowired(required=true)
     private AuthenticationManager authenticationManager;
 
     public AuthenticationManager getAuthenticationManager() {
         return this.authenticationManager;
-    }
-
-    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
     }
 
     public CentralAuthenticationService getCentralAuthenticationService() {
@@ -42,9 +42,5 @@ public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJ
 
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
     }
 }

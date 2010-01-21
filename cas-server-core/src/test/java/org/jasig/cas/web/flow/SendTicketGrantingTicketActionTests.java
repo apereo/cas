@@ -10,6 +10,8 @@ import javax.servlet.http.Cookie;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -23,8 +25,9 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     
     private MockRequestContext context;
-    
-    protected void onSetUp() throws Exception {
+
+    @Before
+    public void onSetUp() throws Exception {
         this.action = new SendTicketGrantingTicketAction();
         
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
@@ -39,13 +42,15 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         
         this.context = new MockRequestContext();
     }
-    
+
+    @Test
     public void testNoTgtToSet() throws Exception {
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         
         assertEquals("success", this.action.execute(this.context).getId());
     }
-    
+
+    @Test
     public void testTgtToSet() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final String TICKET_VALUE = "test";
@@ -56,7 +61,8 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         assertEquals("success", this.action.execute(this.context).getId());
         assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
     }
-    
+
+    @Test
     public void testTgtToSetRemovingOldTgt() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -68,10 +74,4 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         assertEquals("success", this.action.execute(this.context).getId());
         assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
     }
-    
-    
-    
- 
-    
-    
 }

@@ -19,6 +19,8 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver;
 import org.jasig.cas.util.HttpClient;
+import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -26,9 +28,9 @@ import static org.junit.Assert.*;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class AuthenticationManagerImplTests extends
-    AbstractCentralAuthenticationServiceTest {
+public class AuthenticationManagerImplTests extends AbstractCentralAuthenticationServiceTest {
 
+    @Test
     public void testSuccessfulAuthentication() throws Exception {
         assertEquals(TestUtils.getPrincipal(),
             getAuthenticationManager().authenticate(
@@ -36,6 +38,7 @@ public class AuthenticationManagerImplTests extends
                 .getPrincipal());
     }
 
+    @Test
     public void testFailedAuthentication() throws Exception {
         try {
             getAuthenticationManager().authenticate(
@@ -46,6 +49,7 @@ public class AuthenticationManagerImplTests extends
         }
     }
 
+    @Test
     public void testNoHandlerFound() throws AuthenticationException {
         try {
             getAuthenticationManager().authenticate(new Credentials(){
@@ -59,14 +63,15 @@ public class AuthenticationManagerImplTests extends
         }
     }
 
+    @Test
     public void testNoResolverFound() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
         authenticationHandler.setHttpClient(new HttpClient());
         manager
-            .setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {authenticationHandler}));
+            .setAuthenticationHandlers(Arrays.asList((AuthenticationHandler) authenticationHandler));
         manager
-            .setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new UsernamePasswordCredentialsToPrincipalResolver()}));
+            .setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver) new UsernamePasswordCredentialsToPrincipalResolver()));
         try {
             manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
             fail("Authentication should have failed.");
@@ -74,15 +79,16 @@ public class AuthenticationManagerImplTests extends
             return;
         }
     }
-    
+
+    @Test
     public void testResolverReturnsNull() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
         authenticationHandler.setHttpClient(new HttpClient());
         manager
-            .setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {authenticationHandler}));
+            .setAuthenticationHandlers(Arrays.asList((AuthenticationHandler) authenticationHandler));
         manager
-            .setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new TestCredentialsToPrincipalResolver()}));
+            .setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver) new TestCredentialsToPrincipalResolver()));
         try {
             manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
             fail("Authentication should have failed.");
