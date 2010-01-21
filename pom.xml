@@ -178,14 +178,14 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>2.2</version>
+			<version>${commons.lang.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -199,7 +199,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.15</version>
+			<version>${log4j.version}</version>
 			<type>jar</type>
 			<scope>runtime</scope>
             <exclusions>
@@ -323,7 +323,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.4</version>
+                <version>${commons.codec.version}</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -573,5 +573,9 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <person.directory.version>1.5.0-RC6</person.directory.version>
         <servlet.api.version>2.5</servlet.api.version>
         <jpa.version>2.0-cr-1</jpa.version>
+        <commons.codec.version>1.4</commons.codec.version>
+        <log4j.version>1.2.15</log4j.version>
+        <junit.version>4.7</junit.version>
+        <commons.lang.version>2.4</commons.lang.version>
 	</properties>
 </project>
