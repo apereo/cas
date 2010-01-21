@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import static org.junit.Assert.*;
@@ -20,7 +21,7 @@ import static org.junit.Assert.*;
  * @since 3.1
  *
  */
-@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
+@ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
 public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4SpringContextTests {
 
     private JpaServiceRegistryDaoImpl dao;
@@ -29,6 +30,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
         this.dao = dao;
     }
 
+    @Test
     public void testSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
@@ -42,7 +44,8 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
         assertEquals(r, r2);
         assertEquals(r2, r3);
     }
-    
+
+    @Test
     public void testSaveMethodWithNonExistentServiceAndAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
@@ -59,7 +62,8 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
 
         assertTrue(r.getAllowedAttributes().contains("Test"));
     }
-    
+
+    @Test
     public void testSaveMethodWithExistingServiceNoAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
@@ -83,7 +87,8 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
     }
-    
+
+    @Test
     public void testSaveMethodWithExistingServiceAddAttribute() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("test");
