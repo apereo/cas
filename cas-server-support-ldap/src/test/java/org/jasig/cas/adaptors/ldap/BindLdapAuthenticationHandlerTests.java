@@ -6,7 +6,9 @@
 package org.jasig.cas.adaptors.ldap;
 
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import static org.junit.Assert.*;
 
 
 /**
@@ -17,17 +19,11 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
  * @since 3.0
  *
  */
-public class BindLdapAuthenticationHandlerTests extends
-    AbstractDependencyInjectionSpringContextTests {
+@ContextConfiguration(locations = "classpath:/ldapContext-test.xml")
+public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringContextTests {
 
     protected BindLdapAuthenticationHandler bindAuthHandler;
     protected BindTestConfig bindTestConfig;
-    
-    public BindLdapAuthenticationHandlerTests() {
-        // Switch on field level injection
-        setPopulateProtectedVariables(true);
-    }
-    
 
     public void testSuccessUsernamePassword() throws Exception {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
@@ -53,13 +49,5 @@ public class BindLdapAuthenticationHandlerTests extends
         c.setPassword("");
         
         assertFalse(this.bindAuthHandler.authenticate(c));
-    }
-
-    /**
-     * Specifies the Spring configuration to load for this test fixture.
-     * @see org.springframework.test.AbstractSingleSpringContextTests#getConfigLocations()
-     */
-    protected String[] getConfigLocations() {
-        return new String[] { "classpath:/ldapContext-test.xml" };
     }
 }

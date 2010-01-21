@@ -10,6 +10,7 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia

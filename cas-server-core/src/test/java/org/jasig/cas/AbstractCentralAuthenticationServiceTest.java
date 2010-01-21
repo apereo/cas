@@ -7,15 +7,16 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public abstract class AbstractCentralAuthenticationServiceTest extends
-    AbstractDependencyInjectionSpringContextTests {
+@ContextConfiguration("applicationContext.xml")
+public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJUnit4SpringContextTests {
 
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -27,8 +28,7 @@ public abstract class AbstractCentralAuthenticationServiceTest extends
         return this.authenticationManager;
     }
 
-    public void setAuthenticationManager(
-        AuthenticationManager authenticationManager) {
+    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
@@ -36,8 +36,7 @@ public abstract class AbstractCentralAuthenticationServiceTest extends
         return this.centralAuthenticationService;
     }
 
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -47,9 +46,5 @@ public abstract class AbstractCentralAuthenticationServiceTest extends
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
-    }
-
-    protected String[] getConfigLocations() {
-        return new String[] {"applicationContext.xml"};
     }
 }

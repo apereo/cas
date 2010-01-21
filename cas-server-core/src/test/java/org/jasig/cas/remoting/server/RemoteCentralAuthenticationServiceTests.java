@@ -8,6 +8,7 @@ package org.jasig.cas.remoting.server;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketException;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia

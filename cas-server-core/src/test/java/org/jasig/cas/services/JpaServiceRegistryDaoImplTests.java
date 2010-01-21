@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.test.jpa.AbstractJpaTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -18,14 +20,11 @@ import org.springframework.test.jpa.AbstractJpaTests;
  * @since 3.1
  *
  */
-public class JpaServiceRegistryDaoImplTests extends AbstractJpaTests {
+@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
+public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4SpringContextTests {
 
     private JpaServiceRegistryDaoImpl dao;
-
-    protected String[] getConfigLocations() {
-        return new String[] {"classpath:jpaTestApplicationContext.xml"};
-    }
-    
+   
     public void setDao(final JpaServiceRegistryDaoImpl dao) {
         this.dao = dao;
     }

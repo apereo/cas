@@ -14,6 +14,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -43,7 +44,7 @@ public class ProxyControllerTests extends
             .get("code"));
     }
 
-    public void testNonExistantPGT() throws Exception {
+    public void testNonExistentPGT() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("pgt", "TestService");
         request.addParameter("targetService", "service");

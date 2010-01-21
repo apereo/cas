@@ -201,7 +201,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
 			<type>jar</type>
-			<scope>runtime</scope>
+			<scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.mail</groupId>
