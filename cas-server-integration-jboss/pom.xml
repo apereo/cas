@@ -11,6 +11,20 @@
 	<artifactId>cas-server-integration-jboss</artifactId>
 	<packaging>jar</packaging>
 	<name>JA-SIG CAS JBoss Cache Integration</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <systemPropertyVariables>
+            <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 	
 	<dependencies>
 		<dependency>
