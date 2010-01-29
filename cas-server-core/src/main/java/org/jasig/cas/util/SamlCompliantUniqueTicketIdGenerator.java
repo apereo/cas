@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.util;
 
-import org.opensaml.artifact.SAMLArtifact;
 import org.opensaml.artifact.SAMLArtifactType0001;
 import org.opensaml.artifact.SAMLArtifactType0002;
 import org.opensaml.artifact.URI;
