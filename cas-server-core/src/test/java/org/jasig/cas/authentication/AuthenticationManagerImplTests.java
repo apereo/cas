@@ -63,24 +63,17 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
         }
     }
 
-    @Test
+    @Test(expected=UnsupportedCredentialsException.class)
     public void testNoResolverFound() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
         authenticationHandler.setHttpClient(new HttpClient());
-        manager
-            .setAuthenticationHandlers(Arrays.asList((AuthenticationHandler) authenticationHandler));
-        manager
-            .setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver) new UsernamePasswordCredentialsToPrincipalResolver()));
-        try {
+        manager.setAuthenticationHandlers(Arrays.asList((AuthenticationHandler) authenticationHandler));
+        manager.setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver) new UsernamePasswordCredentialsToPrincipalResolver()));
             manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
-            fail("Authentication should have failed.");
-        } catch (UnsupportedCredentialsException e) {
-            return;
-        }
     }
 
-    @Test
+    @Test(expected = BadCredentialsAuthenticationException.class)
     public void testResolverReturnsNull() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
@@ -89,12 +82,7 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
             .setAuthenticationHandlers(Arrays.asList((AuthenticationHandler) authenticationHandler));
         manager
             .setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver) new TestCredentialsToPrincipalResolver()));
-        try {
             manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
-            fail("Authentication should have failed.");
-        } catch (BadCredentialsAuthenticationException e) {
-            return;
-        }
     }
     
     protected class TestCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
