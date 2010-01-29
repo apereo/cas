@@ -292,6 +292,15 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <layout>default</layout>
             <url>http://repository.jboss.com/maven2</url>
         </repository>
+
+        <repository>
+            <id>Spring-Snapshot</id>
+            <name>Spring Snapshot</name>
+            <url>http://maven.springframework.org/snapshot</url>
+            <snapshots><enabled>true</enabled></snapshots>
+            <releases><enabled>false</enabled></releases>
+        </repository>
+
     </repositories>
     
 	<dependencyManagement>
@@ -560,7 +569,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
         <spring.webflow.version>2.0.8.RELEASE</spring.webflow.version>
-		<spring.version>3.0.0.RELEASE</spring.version>
+        <spring.version>3.0.1.BUILD-SNAPSHOT</spring.version>
         <spring.security.version>3.0.0.RELEASE</spring.security.version>
         <clover.version>2.6.0</clover.version>
         <aspectj.version>1.6.7</aspectj.version>
