@@ -116,4 +116,6 @@
 	<bean
 		id="authenticationMetaDataPopulator"
 		class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
+
+    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
 </beans>

@@ -50,7 +50,7 @@ public final class TestUtils {
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
     
-    public static final String CONST_GOOD_URL = "https://www.ja-sig.org";
+    public static final String CONST_GOOD_URL = "https://wwws.mint.com/";
 
     private TestUtils() {
         // do not instanciate
