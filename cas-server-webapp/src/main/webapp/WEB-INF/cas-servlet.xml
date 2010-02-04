@@ -12,7 +12,17 @@
 	<!-- Theme Resolver -->
 	<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
 		p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
-        p:argumentExtractors-ref="argumentExtractors" />
+        p:argumentExtractors-ref="argumentExtractors"
+        p:servicesManager-ref="servicesManager">
+        <property name="mobileBrowsers">
+            <list>
+                <value>.*iPhone.*</value>
+                <value>.*Android.*</value>
+                <value>.*Safari.*Pre.*</value>
+                <value>.*Nokia.*AppleWebKit.*</value>
+            </list>
+        </property>
+    </bean>
 
 	<!-- View Resolver -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
