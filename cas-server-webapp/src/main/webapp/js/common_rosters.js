@@ -11,32 +11,25 @@ var currentRow = null;
 function addLoadEvent(fn)
 {
     // Mozilla
-    if (typeof window.addEventListener != 'undefined')
-    {
+    if (typeof window.addEventListener != 'undefined') {
         window.addEventListener('load', fn, false);
     }
     // Opera
-    else if (typeof document.addEventListener != 'undefined')
-    {
+    else if (typeof document.addEventListener != 'undefined') {
         document.addEventListener('load', fn, false);
     }
     // IE
-    else if (typeof window.attachEvent != 'undefined')
-    {
+    else if (typeof window.attachEvent != 'undefined') {
         window.attachEvent('onload', fn);
     }
     // IE5Mac and others that don't support the above methods
-    else
-    {
+    else {
         var oldfn = window.onload;
-        if (typeof window.onload != 'function')
-        {
+        if (typeof window.onload != 'function') {
             window.onload = fn;
         }
-        else
-        {
-            window.onload = function()
-            {
+        else {
+            window.onload = function() {
                 oldfn();
                 fn();
             };
@@ -45,18 +38,14 @@ function addLoadEvent(fn)
 }
 
 // Add className to class attribute
-function addClass(target, classValue)
-{
+function addClass(target, classValue) {
     var pattern = new RegExp("(^| )" + classValue + "( |$)");
 
-    if (!pattern.test(target.className))
-    {
-        if (target.className == "")
-        {
+    if (!pattern.test(target.className)) {
+        if (target.className == "") {
             target.className = classValue;
         }
-        else
-        {
+        else {
             target.className += " " + classValue;
         }
     }
@@ -65,8 +54,7 @@ function addClass(target, classValue)
 }
 
 // Remove className from class attribute
-function removeClass(target, classValue)
-{
+function removeClass(target, classValue) {
     var removedClass = target.className;
     var pattern = new RegExp("(^| )" + classValue + "( |$)");
 
@@ -78,14 +66,11 @@ function removeClass(target, classValue)
 }
 
 // Return a reference to element
-function getRef(el)
-{
-    if(typeof el == "string")
-    {
+function getRef(el) {
+    if(typeof el == "string") {
         return document.getElementById(el);
     }
-    else if(typeof el == "object")
-    {
+    else if(typeof el == "object") {
         return el;
     }
     else return null;
