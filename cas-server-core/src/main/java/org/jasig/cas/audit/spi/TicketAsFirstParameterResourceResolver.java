@@ -6,7 +6,8 @@
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
-import org.inspektr.audit.spi.AuditableResourceResolver;
+import org.inspektr.audit.spi.AuditResourceResolver;
+import org.jasig.cas.util.AopUtils;
 
 /**
  * Implementation of the ResourceResolver that can determine the Ticket Id from the first parameter of the method call.
@@ -17,13 +18,13 @@ import org.inspektr.audit.spi.AuditableResourceResolver;
  *
  */
 public final class TicketAsFirstParameterResourceResolver implements
-    AuditableResourceResolver {
+    AuditResourceResolver {
 
-    public String resolveFrom(final JoinPoint joinPoint, final Exception exception) {
-        return joinPoint.getArgs()[0].toString();
+    public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
+        return new String[] { AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString() };
     }
 
-    public String resolveFrom(final JoinPoint joinPoint, final Object object) {
-        return joinPoint.getArgs()[0].toString();
+    public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
+        return new String[] { AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0].toString() };
     }
 }
