@@ -6,8 +6,9 @@
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
-import org.inspektr.audit.spi.AuditableResourceResolver;
+import org.inspektr.audit.spi.AuditResourceResolver;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.util.AopUtils;
 
 /**
  * Converts the Credentials object into a String resource identifier.
@@ -18,15 +19,15 @@ import org.jasig.cas.authentication.principal.Credentials;
  *
  */
 public final class CredentialsAsFirstParameterResourceResolver implements
-    AuditableResourceResolver {
+    AuditResourceResolver {
 
-    public String resolveFrom(final JoinPoint joinPoint, final Object retval) {
-        final Credentials credentials = (Credentials) joinPoint.getArgs()[0];
-        return "supplied credentials: " + credentials.toString();
+    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
+        final Credentials credentials = (Credentials) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
+        return new String[] { "supplied credentials: " + credentials.toString() };
     }
 
-    public String resolveFrom(final JoinPoint joinPoint, final Exception exception) {
-        final Credentials credentials = (Credentials) joinPoint.getArgs()[0];
-        return "supplied credentials: " + credentials.toString();
+    public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
+        final Credentials credentials = (Credentials) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
+        return new String[] { "supplied credentials: " + credentials.toString() };
     }
 }

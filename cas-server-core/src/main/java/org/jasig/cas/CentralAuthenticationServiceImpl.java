@@ -7,7 +7,7 @@ package org.jasig.cas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.audit.annotation.Auditable;
+import org.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.MutableAuthentication;
@@ -128,7 +128,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * 
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
-    @Auditable(action="TICKET_GRANTING_TICKET_DESTROYED",actionResolverClass=org.inspektr.audit.spi.support.DefaultAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
+    @Audit(
+        action="DESTROY_TICKET_GRANTING_TICKET",
+        actionResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
+        resourceResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
@@ -154,7 +157,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @throws IllegalArgumentException if TicketGrantingTicket ID, Credentials
      * or Service are null.
      */
-    @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
+    @Audit(
+        action="GRANT_SERVICE_TICKET",
+        actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
+        resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws TicketException {
@@ -227,7 +233,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return serviceTicket.getId();
     }
 
-    @Auditable(action="SERVICE_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.ServiceResourceResolver.class)
+    @Audit(
+        action="GRANT_SERVICE_TICKET",
+        actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
+        resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "GRANT_SERVICE_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String grantServiceTicket(final String ticketGrantingTicketId,
@@ -239,7 +248,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @throws IllegalArgumentException if the ServiceTicketId or the
      * Credentials are null.
      */
-    @Auditable(action="PROXY_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
+    @Audit(
+        action="GRANT_PROXY_GRANTING_TICKET",
+        actionResolverName="GRANT_PROXY_GRANTING_TICKET_RESOLVER",
+        resourceResolverName="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="GRANT_PROXY_GRANTING_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String delegateTicketGrantingTicket(final String serviceTicketId,
@@ -286,7 +298,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @throws IllegalArgumentException if the ServiceTicketId or the Service
      * are null.
      */
-    @Auditable(action="SERVICE_TICKET_VALIDATE",successSuffix="D",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver.class)
+    @Audit(
+        action="VALIDATE_SERVICE_TICKET",
+        actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
+        resourceResolverName="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="VALIDATE_SERVICE_TICKET",logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
@@ -377,7 +392,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /**
      * @throws IllegalArgumentException if the credentials are null.
      */
-    @Auditable(action="TICKET_GRANTING_TICKET",successSuffix="_CREATED",failureSuffix="_NOT_CREATED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver.class)
+    @Audit(
+        action="CREATE_TICKET_GRANTING_TICKET",
+        actionResolverName="CREATE_TICKET_GRANTING_TICKET_RESOLVER",
+        resourceResolverName="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String createTicketGrantingTicket(final Credentials credentials) throws TicketCreationException {

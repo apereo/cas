@@ -7,7 +7,7 @@ package org.jasig.cas.authentication;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.audit.annotation.Auditable;
+import org.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
@@ -33,7 +33,10 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     @NotNull
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
 
-    @Auditable(action="AUTHENTICATION",successSuffix="_SUCCESS",failureSuffix="_FAILED",actionResolverClass=org.inspektr.audit.spi.support.ObjectCreationAuditableActionResolver.class,resourceResolverClass=org.jasig.cas.audit.spi.CredentialsAsFirstParameterResourceResolver.class)
+    @Audit(
+        action="AUTHENTICATION",
+        actionResolverName="AUTHENTICATION_RESOLVER",
+        resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
     public final Authentication authenticate(final Credentials credentials) throws AuthenticationException {
 
         final Pair<AuthenticationHandler, Principal> pair = authenticateAndObtainPrincipal(credentials);
