@@ -162,12 +162,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     </dependency>
     <dependency>
       <groupId>org.inspektr</groupId>
-      <artifactId>inspektr-statistics</artifactId>
-      <version>${inspektr.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.inspektr</groupId>
       <artifactId>inspektr-support-spring</artifactId>
       <version>${inspektr.version}</version>
       <scope>compile</scope>
