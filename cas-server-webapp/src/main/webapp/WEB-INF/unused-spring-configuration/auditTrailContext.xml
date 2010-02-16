@@ -36,19 +36,19 @@
           <ref local="authenticationActionResolver" />
         </entry>
         <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
-          <ref local="ticketActionResolver" />
+          <ref local="ticketCreationActionResolver" />
         </entry>
         <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
-          <ref local="ticketActionResolver" />
+          <bean class="org.inspektr.audit.spi.support.DefaultAuditActionResolver" />
         </entry>
         <entry key="GRANT_SERVICE_TICKET_RESOLVER">
-          <ref local="ticketActionResolver" />
+          <ref local="ticketCreationActionResolver" />
         </entry>
         <entry key="GRANT_PROXY_GRANTING_TICKET_RESOLVER">
-          <ref local="ticketActionResolver" />
+          <ref local="ticketCreationActionResolver" />
         </entry>
         <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
-          <ref local="ticketActionResolver" />
+          <ref local="ticketValidationActionResolver" />
         </entry>
       </map>
     </constructor-arg>
@@ -91,10 +91,19 @@
     <constructor-arg index="1" value="_FAILED" />
   </bean>
   
-  <bean id="ticketActionResolver"
+  <bean id="ticketCreationActionResolver"
     class="org.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->
-    <constructor-arg index="0" value="_SUCCEEDED" />
+    <constructor-arg index="0" value="_CREATED" />
+    
+    <!-- String failureSuffix -->
+    <constructor-arg index="1" value="_NOT_CREATED" />
+  </bean>
+  
+  <bean id="ticketValidationActionResolver"
+    class="org.inspektr.audit.spi.support.DefaultAuditActionResolver">
+    <!-- String successSuffix -->
+    <constructor-arg index="0" value="D" />
     
     <!-- String failureSuffix -->
     <constructor-arg index="1" value="_FAILED" />

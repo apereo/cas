@@ -129,7 +129,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
     @Audit(
-        action="DESTROY_TICKET_GRANTING_TICKET",
+        action="TICKET_GRANTING_TICKET_DESTROYED",
         actionResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName="DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET",logFailuresSeparately = false)
@@ -158,7 +158,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * or Service are null.
      */
     @Audit(
-        action="GRANT_SERVICE_TICKET",
+        action="SERVICE_TICKET",
         actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
         resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
@@ -234,7 +234,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     @Audit(
-        action="GRANT_SERVICE_TICKET",
+        action="SERVICE_TICKET",
         actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
         resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "GRANT_SERVICE_TICKET",logFailuresSeparately = false)
@@ -249,7 +249,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * Credentials are null.
      */
     @Audit(
-        action="GRANT_PROXY_GRANTING_TICKET",
+        action="PROXY_GRANTING_TICKET",
         actionResolverName="GRANT_PROXY_GRANTING_TICKET_RESOLVER",
         resourceResolverName="GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="GRANT_PROXY_GRANTING_TICKET",logFailuresSeparately = false)
@@ -299,7 +299,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * are null.
      */
     @Audit(
-        action="VALIDATE_SERVICE_TICKET",
+        action="SERVICE_TICKET_VALIDATE",
         actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
         resourceResolverName="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag="VALIDATE_SERVICE_TICKET",logFailuresSeparately = false)
@@ -393,7 +393,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @throws IllegalArgumentException if the credentials are null.
      */
     @Audit(
-        action="CREATE_TICKET_GRANTING_TICKET",
+        action="TICKET_GRANTING_TICKET",
         actionResolverName="CREATE_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName="CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
