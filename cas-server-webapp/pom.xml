@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jasig.cas</groupId>
         <artifactId>cas-server</artifactId>
-        <version>3.3.6-SNAPSHOT</version>
+        <version>3.4-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.cas</groupId>
@@ -11,6 +11,12 @@
     <packaging>war</packaging>
     <name>JA-SIG CAS Web Application</name>
     <dependencies>
+        <dependency>
+            <groupId>org.inspektr</groupId>
+            <artifactId>inspektr-support-spring</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-cas-client</artifactId>
