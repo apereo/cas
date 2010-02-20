@@ -41,7 +41,10 @@
 	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
 	
 	<bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
-		p:viewClass="org.springframework.web.servlet.view.AbstractUrlBasedView" />
+		p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
+        p:prefix="/WEB-INF/view/jsp/"
+        p:suffix=".jsp"
+        p:order="1"/>
 	
 	<bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
@@ -103,6 +106,8 @@
 				</prop>
 				<prop
 					key="/openid/*">openIdProviderController</prop>
+                <prop
+                        key="/authorizationFailure.html">passThroughController</prop>
 			</props>
 		</property>
 		<property
@@ -117,6 +122,8 @@
 		</property>
 		 -->
 	</bean>
+
+    <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController" /> 
 	
 	<bean
 		id="openIdProviderController"
