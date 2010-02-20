@@ -15,12 +15,12 @@
         p:argumentExtractors-ref="argumentExtractors"
         p:servicesManager-ref="servicesManager">
         <property name="mobileBrowsers">
-            <list>
-                <value>.*iPhone.*</value>
-                <value>.*Android.*</value>
-                <value>.*Safari.*Pre.*</value>
-                <value>.*Nokia.*AppleWebKit.*</value>
-            </list>
+            <map>
+                <entry key=".*iPhone.*" value="iphone" />
+                <entry key=".*Android.*" value="iphone" />
+                <entry key=".*Safari.*Pre.*" value="iphone" />
+                <entry key=".*Nokia.*AppleWebKit.*" value="iphone" />
+            </map>
         </property>
     </bean>
 

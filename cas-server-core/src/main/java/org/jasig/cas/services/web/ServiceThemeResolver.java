@@ -36,7 +36,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     private List<ArgumentExtractor> argumentExtractors;
 
-    private List<Pattern> overrides = new ArrayList<Pattern>();
+    private Map<Pattern,String> overrides = new HashMap<Pattern,String>();
 
     public String resolveThemeName(final HttpServletRequest request) {
         if (this.servicesManager == null) {
@@ -50,9 +50,10 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         // retrieve the user agent string from the request
         String userAgent = request.getHeader("User-Agent");
 
-        for (final Pattern pattern : this.overrides) {
-            if (pattern.matcher(userAgent).matches()) {
-                request.setAttribute("isMobile", "true");
+        for (final Map.Entry<Pattern,String> entry : this.overrides.entrySet()) {
+            if (entry.getKey().matcher(userAgent).matches()) {
+                request.setAttribute("isMobile","true");
+                request.setAttribute("browserType", entry.getValue());
                 break;
             }
         }
@@ -73,19 +74,19 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     }
 
     /**
-     * Sets the map of mobile browsers.  This sets a flag on the request called "isMobile".
+     * Sets the map of mobile browsers.  This sets a flag on the request called "isMobile" and also
+     * provides the custom flag called browserType which can be mapped into the theme.
      * <p>
      * Themes that understand isMobile should provide an alternative stylesheet.
      *
      * @param mobileOverrides the list of mobile browsers.
      */
-    public void setMobileBrowsers(final List<String> mobileOverrides) {
+    public void setMobileBrowsers(final Map<String,String> mobileOverrides) {
         // initialize the overrides variable to an empty map
-        this.overrides = new ArrayList<Pattern>();
+        this.overrides = new HashMap<Pattern,String>();
 
-        for (final String mobileOverride : mobileOverrides) {
-
-            this.overrides.add(Pattern.compile(mobileOverride));
+        for (final Map.Entry<String,String> entry : mobileOverrides.entrySet()) {
+            this.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());
         }
     }
 }

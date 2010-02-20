@@ -16,7 +16,7 @@
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
                 <link type="text/css" rel="stylesheet" media="screen" href="<c:url value="/css/fss-framework-1.1.2.css" />" />
-                <link type="text/css" rel="stylesheet" href="<c:url value="/css/fss-mobile-iphone-layout.css" />" />
+                <link type="text/css" rel="stylesheet" href="<c:url value="/css/fss-mobile-${requestScope['browserType']}-layout.css" />" />
                 <link type="text/css" rel="stylesheet" href="${mobileCss}" />
            </c:when>
            <c:otherwise>
