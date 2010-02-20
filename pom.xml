@@ -11,7 +11,7 @@
 	<artifactId>cas-server</artifactId>
 	<packaging>pom</packaging>
 	<name>Jasig Central Authentication Service</name>
-	<version>3.3.6-SNAPSHOT</version>
+	<version>3.4-SNAPSHOT</version>
 	<url>http://www.jasig.org/cas/</url>
 	<inceptionYear>2004</inceptionYear>
 
@@ -148,43 +148,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 	</build>
 
 	<dependencies>
-    <dependency>
-      <groupId>org.inspektr</groupId>
-      <artifactId>inspektr-common</artifactId>
-      <version>${inspektr.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.inspektr</groupId>
-      <artifactId>inspektr-audit</artifactId>
-      <version>${inspektr.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.inspektr</groupId>
-      <artifactId>inspektr-support-spring</artifactId>
-      <version>${inspektr.version}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-support</artifactId>
-        </exclusion>
-                <exclusion>
-                    <groupId>aspectj</groupId>
-                    <artifactId>aspectjweaver</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>aspectj</groupId>
-                    <artifactId>aspectjrt</artifactId>
-                </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-			</exclusions> 
-		</dependency>
-	
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -315,6 +278,25 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     
 	<dependencyManagement>
 		<dependencies>
+            <!-- Inspektr Dependencies -->
+            <dependency>
+                <groupId>org.inspektr</groupId>
+                <artifactId>inspektr-audit</artifactId>
+                <version>${inspektr.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.inspektr</groupId>
+                <artifactId>inspektr-common</artifactId>
+                <version>${inspektr.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.inspektr</groupId>
+                <artifactId>inspektr-support-spring</artifactId>
+                <version>${inspektr.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>commons-jexl</groupId>
                 <artifactId>commons-jexl</artifactId>
@@ -578,17 +560,16 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 	<properties>
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
-        <inspektr.version>1.0.0-RC1-SNAPSHOT</inspektr.version>
         <spring.webflow.version>2.0.8.RELEASE</spring.webflow.version>
-        <spring.version>3.0.1.BUILD-SNAPSHOT</spring.version>
-        <spring.security.version>3.0.0.RELEASE</spring.security.version>
-        <clover.version>2.6.0</clover.version>
+        <spring.version>3.0.1.RELEASE</spring.version>
+        <spring.security.version>3.0.1.RELEASE</spring.security.version>
+        <clover.version>2.6.3</clover.version>
         <aspectj.version>1.6.7</aspectj.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
         <perf4j.version>0.9.12</perf4j.version>
         <commons.jexl.version>1.1</commons.jexl.version>
         <hibernate.validator.version>4.0.1.GA</hibernate.validator.version>
-        <hibernate.core.version>3.5.0-Beta-2</hibernate.core.version>
+        <hibernate.core.version>3.5.0-CR-1</hibernate.core.version>
         <slf4j.version>1.5.8</slf4j.version>
         <person.directory.version>1.5.0-RC6</person.directory.version>
         <servlet.api.version>2.5</servlet.api.version>
@@ -597,5 +578,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <log4j.version>1.2.15</log4j.version>
         <junit.version>4.7</junit.version>
         <commons.lang.version>2.4</commons.lang.version>
+        <inspektr.version>1.0.0-RC1</inspektr.version>
 	</properties>
 </project>

@@ -3,7 +3,7 @@
   <parent>
     <artifactId>cas-server</artifactId>
     <groupId>org.jasig.cas</groupId>
-    <version>3.3.6-SNAPSHOT</version>
+    <version>3.4-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -12,6 +12,12 @@
   <description>CAS core</description>
 
     <dependencies>
+        <dependency>
+            <groupId>org.inspektr</groupId>
+            <artifactId>inspektr-audit</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.jasig.service</groupId>
             <artifactId>person-directory-impl</artifactId>
@@ -117,18 +123,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml</artifactId>
-      <version>1.1b</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml</groupId>
-      <artifactId>xmldsig</artifactId>
-      <version>1.0</version>
-      <scope>compile</scope>
-    </dependency>
+
+        <dependency>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml</artifactId>
+          <version>1.1b</version>
+          <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>javax.xml</groupId>
+          <artifactId>xmldsig</artifactId>
+          <version>1.0</version>
+          <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.perf4j</groupId>
