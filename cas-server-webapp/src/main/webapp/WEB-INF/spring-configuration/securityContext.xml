@@ -35,7 +35,7 @@
         </property>
         <property name="authenticationFailureHandler">
             <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
-                <constructor-arg index="0" value="/authorizationFailure.jsp" />
+                <constructor-arg index="0" value="/authorizationFailure.html" />
             </bean>
         </property>
 	</bean>
