@@ -11,7 +11,7 @@
 	<artifactId>cas-server</artifactId>
 	<packaging>pom</packaging>
 	<name>Jasig Central Authentication Service</name>
-	<version>3.4-SNAPSHOT</version>
+	<version>3.4-RC1</version>
 	<url>http://www.jasig.org/cas/</url>
 	<inceptionYear>2004</inceptionYear>
 
