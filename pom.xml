@@ -21,7 +21,7 @@
 			<url>
 				http://www.ja-sig.org/products/cas/overview/license/
 			</url>
-			<distribution>manual</distribution>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
 	<build>
