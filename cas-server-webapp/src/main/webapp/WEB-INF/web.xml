@@ -36,7 +36,7 @@
 	
 	<filter>
 		<filter-name>CAS Client Info Logging Filter</filter-name>
-		<filter-class>org.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
+		<filter-class>com.github.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
 	</filter>
 	
 	<filter>

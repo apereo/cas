@@ -7,7 +7,7 @@ package org.jasig.cas;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.inspektr.audit.annotation.Audit;
+import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.MutableAuthentication;

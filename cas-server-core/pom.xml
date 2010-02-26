@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.inspektr</groupId>
+            <groupId>com.github.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
         </dependency>
