@@ -12,7 +12,7 @@
     <name>JA-SIG CAS Web Application</name>
     <dependencies>
         <dependency>
-            <groupId>org.inspektr</groupId>
+            <groupId>com.github.inspektr</groupId>
             <artifactId>inspektr-support-spring</artifactId>
             <scope>runtime</scope>
         </dependency>

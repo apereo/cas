@@ -6,7 +6,7 @@
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
-import org.inspektr.common.spi.PrincipalResolver;
+import com.github.inspektr.common.spi.PrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;

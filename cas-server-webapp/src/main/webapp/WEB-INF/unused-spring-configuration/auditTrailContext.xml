@@ -15,7 +15,7 @@
 
   <aop:aspectj-autoproxy/> 
 
-  <bean id="auditTrailManagementAspect" class="org.inspektr.audit.AuditTrailManagementAspect">
+  <bean id="auditTrailManagementAspect" class="com.github.inspektr.audit.AuditTrailManagementAspect">
     <!-- String applicationCode -->
     <constructor-arg index="0" value="CAS" />
 
@@ -25,7 +25,7 @@
     <!-- List<AuditTrailManager> auditTrailManagers -->
     <constructor-arg index="2">
       <list>
-        <bean class="org.inspektr.audit.support.ConsoleAuditTrailManager" />
+        <bean class="com.github.inspektr.audit.support.ConsoleAuditTrailManager" />
       </list>
     </constructor-arg>
 
@@ -39,7 +39,7 @@
           <ref local="ticketCreationActionResolver" />
         </entry>
         <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
-          <bean class="org.inspektr.audit.spi.support.DefaultAuditActionResolver" />
+          <bean class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver" />
         </entry>
         <entry key="GRANT_SERVICE_TICKET_RESOLVER">
           <ref local="ticketCreationActionResolver" />
@@ -83,7 +83,7 @@
     p:ticketRegistry-ref="ticketRegistry" />
   
   <bean id="authenticationActionResolver"
-    class="org.inspektr.audit.spi.support.DefaultAuditActionResolver">
+    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->
     <constructor-arg index="0" value="_SUCCESS" />
     
@@ -92,7 +92,7 @@
   </bean>
   
   <bean id="ticketCreationActionResolver"
-    class="org.inspektr.audit.spi.support.DefaultAuditActionResolver">
+    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->
     <constructor-arg index="0" value="_CREATED" />
     
@@ -101,7 +101,7 @@
   </bean>
   
   <bean id="ticketValidationActionResolver"
-    class="org.inspektr.audit.spi.support.DefaultAuditActionResolver">
+    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->
     <constructor-arg index="0" value="D" />
     
@@ -110,7 +110,7 @@
   </bean>
   
   <bean id="returnValueResourceResolver"
-     class="org.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
+     class="com.github.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
      
   <bean id="ticketResourceResolver"
     class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver" />

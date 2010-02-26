@@ -5,10 +5,10 @@
  */
 package org.jasig.cas.web.support;
 
-import org.inspektr.audit.AuditTrailManager;
-import org.inspektr.audit.AuditActionContext;
-import org.inspektr.common.web.ClientInfo;
-import org.inspektr.common.web.ClientInfoHolder;
+import com.github.inspektr.audit.AuditTrailManager;
+import com.github.inspektr.audit.AuditActionContext;
+import com.github.inspektr.common.web.ClientInfo;
+import com.github.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
