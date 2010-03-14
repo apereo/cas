@@ -52,7 +52,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             }
             this.cache.put(FQN_TICKET, ticket.getId(), ticket);
         } catch (final CacheException e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -64,7 +64,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             }
             return this.cache.remove(FQN_TICKET, ticketId) != null;
         } catch (final CacheException e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
             return false;
         }
     }
@@ -81,7 +81,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             }
             return getProxiedTicketInstance(this.cache.get(FQN_TICKET, ticketId));
         } catch (final CacheException e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
             return null;
         }
     }

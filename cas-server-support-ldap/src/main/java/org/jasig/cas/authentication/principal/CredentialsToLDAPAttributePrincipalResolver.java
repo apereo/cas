@@ -97,7 +97,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
             return (String) principalList.get(0);
 
         } catch (final Exception e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
             return null;
         }
     } 

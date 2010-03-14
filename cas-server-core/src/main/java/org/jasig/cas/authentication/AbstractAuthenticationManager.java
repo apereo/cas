@@ -5,14 +5,14 @@
  */
 package org.jasig.cas.authentication;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import java.util.List;
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnings, etc. */
-    protected final Log log = LogFactory.getLog(AuthenticationManagerImpl.class);
+    protected final Logger log = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
 
 
     /** An array of AuthenticationAttributesPopulators. */

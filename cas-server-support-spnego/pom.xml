@@ -30,5 +30,12 @@
 			<artifactId>jcifs-ext</artifactId>
 			<version>0.9.4</version>
 		</dependency>
+
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
 	</dependencies>
 </project>

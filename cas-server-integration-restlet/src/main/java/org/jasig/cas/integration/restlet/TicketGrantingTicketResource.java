@@ -5,8 +5,6 @@
  */
 package org.jasig.cas.integration.restlet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -21,6 +19,8 @@ import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
 import org.restlet.resource.Variant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotNull;
@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
  */
 public final class TicketGrantingTicketResource extends Resource {
     
-    private final static Log log = LogFactory.getLog(TicketGrantingTicketResource.class);
+    private final static Logger log = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -78,10 +78,10 @@ public final class TicketGrantingTicketResource extends Resource {
             final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(this.ticketGrantingTicketId, new SimpleWebApplicationServiceImpl(serviceUrl, this.httpClient));
             getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
         } catch (final InvalidTicketException e) {
-            log.error(e,e);
+            log.error(e.getMessage(),e);
             getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");
         } catch (final Exception e) {
-            log.error(e,e);
+            log.error(e.getMessage(),e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         }
     }

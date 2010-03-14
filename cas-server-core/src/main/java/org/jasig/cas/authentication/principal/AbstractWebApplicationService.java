@@ -9,12 +9,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.SamlUtils;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of a WebApplicationService.
@@ -26,7 +26,7 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  */
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
-    protected static final Log LOG = LogFactory.getLog(SamlService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(SamlService.class);
     
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
     

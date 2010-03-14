@@ -8,8 +8,6 @@ package org.jasig.cas.ticket.registry;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicket;
@@ -17,6 +15,8 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Implementation that handles some of the commonalities between
@@ -35,7 +35,7 @@ public abstract class AbstractDistributedTicketRegistry extends
     
     protected static final Method ABSTRACT_GT_METHOD;
     
-    protected final Log log = LogFactory.getLog(this.getClass());
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
     
     static {
         try {

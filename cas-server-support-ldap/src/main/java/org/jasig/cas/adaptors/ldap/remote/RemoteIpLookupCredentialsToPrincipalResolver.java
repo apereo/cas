@@ -14,11 +14,11 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.AbstractLdapPersonDirectoryCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.util.LdapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.util.StringUtils;
 
@@ -38,7 +38,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver extends Abstract
     
     private static final String ADDR_EDIR87 = "edirectory87";
     
-    private final Log log = LogFactory.getLog(getClass()); 
+    private final Logger log = LoggerFactory.getLogger(getClass()); 
     
     /** The format that the IP address is stored in the LDAP source - 'standard' is default */
     @NotNull
@@ -89,7 +89,7 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver extends Abstract
 
     /**
      * Method to return the principal username of the trusted LDAP user. 
-     * @param ipAddress the remote unformatted IP address.
+     * @param remoteAddress the remote unformatted IP address.
      * @return the formatted IP address.
      */
     private String getFormattedIpAddress(final String remoteAddress) {
@@ -117,14 +117,14 @@ public final class RemoteIpLookupCredentialsToPrincipalResolver extends Abstract
             
             return formattedAddress;
         } catch (final UnknownHostException e) {
-            log.error(e,e);
+            log.error(e.toString(),e);
             return null;
         }
     }
     
     /**
      * Method to convert a byte into a two+ digit hex string.
-     * @param intValue the int value to convert to a hex string
+     * @param octet the int value to convert to a hex string
      * @return the maximum number of results.
      */
     private String getHexadecimal(final String octet) {        

@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.adaptors.ldap.services;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServiceRegistryDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.*;
 
 import javax.naming.directory.SearchControls;
@@ -26,7 +26,7 @@ import java.util.*;
  */
 public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
     private LdapTemplate ldapTemplate;

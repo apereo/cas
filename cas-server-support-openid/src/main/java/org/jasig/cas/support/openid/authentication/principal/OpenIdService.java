@@ -15,12 +15,12 @@ import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.DefaultPasswordEncoder;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -30,7 +30,7 @@ import org.springframework.util.StringUtils;
  */
 public final class OpenIdService extends AbstractWebApplicationService {
 
-    protected static final Log LOG = LogFactory.getLog(OpenIdService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(OpenIdService.class);
     
     /**
      * Unique Id for Serialization.
@@ -72,7 +72,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
             sha1.init(this.sharedSecret);
             return Base64.encodeBase64String(sha1.doFinal(value.getBytes()));
         } catch (final Exception e) {
-            LOG.error(e,e);
+            LOG.error(e.getMessage(),e);
             return Base64.encodeBase64String(ENCODER.encode(value).getBytes());
         }
     }

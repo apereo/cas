@@ -140,7 +140,7 @@ public final class BerkeleyDbTicketRegistry extends
         try {
             return this.ticketDb.delete(null, getKeyFromString(ticketId)) == OperationStatus.SUCCESS;
         } catch (final DatabaseException e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }

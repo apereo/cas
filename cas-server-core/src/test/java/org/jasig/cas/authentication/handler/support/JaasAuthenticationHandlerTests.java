@@ -5,15 +5,15 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.TestUtils;
 
 import junit.framework.TestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JaasAuthenticationHandlerTests extends TestCase {
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private JaasAuthenticationHandler handler;
 

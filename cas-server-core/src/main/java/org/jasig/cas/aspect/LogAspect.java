@@ -5,12 +5,12 @@
  */
 package org.jasig.cas.aspect;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -27,11 +27,11 @@ public class LogAspect {
     @Around("(execution (public * org.jasig.cas..*.*(..))) && !(execution( * org.jasig.cas..*.set*(..)))")
     public Object traceMethod(final ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object returnVal = null;
-        final Log log = getLog(proceedingJoinPoint);
+        final Logger log = getLog(proceedingJoinPoint);
         final String methodName = proceedingJoinPoint.getSignature().getName();
 
         try {
-            if (log != null && log.isTraceEnabled()) {
+            if (log.isTraceEnabled()) {
                 final Object[] args = proceedingJoinPoint.getArgs();
                 final String arguments;
                 if (args == null || args.length == 0) {
@@ -44,20 +44,20 @@ public class LogAspect {
             returnVal = proceedingJoinPoint.proceed();
             return returnVal;
         } finally {
-            if (log != null && log.isTraceEnabled()) {
+            if (log.isTraceEnabled()) {
                 log.trace("Leaving method [" + methodName + "] with return value [" + (returnVal != null ? returnVal.toString() : "null") + "].");
             }
         }
     }
 
-    protected Log getLog(final JoinPoint joinPoint) {
+    protected Logger getLog(final JoinPoint joinPoint) {
         final Object target = joinPoint.getTarget();
 
         if (target != null) {
-            return LogFactory.getLog(target.getClass());
+            return LoggerFactory.getLogger(target.getClass());
         }
 
-        return null;
+        return LoggerFactory.getLogger(getClass());
     }
 
 }

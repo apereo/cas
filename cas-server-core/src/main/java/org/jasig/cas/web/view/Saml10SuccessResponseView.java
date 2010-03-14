@@ -139,7 +139,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
             response.getWriter().print("</SOAP-ENV:Body></SOAP-ENV:Envelope>");
             response.flushBuffer();
         } catch (final Exception e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
             throw e;
         }
     }

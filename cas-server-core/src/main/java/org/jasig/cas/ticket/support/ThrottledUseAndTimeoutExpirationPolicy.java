@@ -5,10 +5,10 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -22,7 +22,7 @@ import org.jasig.cas.ticket.TicketState;
 public final class ThrottledUseAndTimeoutExpirationPolicy implements
     ExpirationPolicy {
 
-    private static final Log log = LogFactory.getLog(ThrottledUseAndTimeoutExpirationPolicy.class);
+    private static final Logger log = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
 
     /** Static ID for serialization. */
     private static final long serialVersionUID = -848036845536731268L;

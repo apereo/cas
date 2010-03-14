@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -40,7 +40,7 @@ public final class HttpClient implements Serializable, DisposableBean {
         HttpURLConnection.HTTP_MOVED_TEMP, HttpURLConnection.HTTP_MOVED_PERM,
         HttpURLConnection.HTTP_ACCEPTED};
 
-    private static final Log log = LogFactory.getLog(HttpClient.class);
+    private static final Logger log = LoggerFactory.getLogger(HttpClient.class);
 
     private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
 

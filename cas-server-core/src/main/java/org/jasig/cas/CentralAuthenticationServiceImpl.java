@@ -5,8 +5,6 @@
  */
 package org.jasig.cas;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
@@ -36,6 +34,8 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.perf4j.aop.Profiled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -78,7 +78,7 @@ import java.util.Map;
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 
     /** Log instance for logging events, info, warnings, errors, etc. */
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull

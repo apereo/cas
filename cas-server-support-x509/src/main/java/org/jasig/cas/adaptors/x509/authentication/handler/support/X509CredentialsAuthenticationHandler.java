@@ -12,12 +12,12 @@ import java.security.cert.X509Certificate;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 
@@ -56,7 +56,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
    private static final Pattern DEFAULT_SUBJECT_DN_PATTERN = Pattern.compile(".*");
 
    /** Instance of Logging. */
-   private final Log log = LogFactory.getLog(getClass());
+   private final Logger log = LoggerFactory.getLogger(getClass());
 
    /** The compiled pattern supplied by the deployer. */
    @NotNull

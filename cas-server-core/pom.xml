@@ -73,6 +73,16 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -139,12 +149,18 @@
             <scope>compile</scope>
         </dependency>
 
-      <dependency>
-          <groupId>commons-jexl</groupId>
-          <artifactId>commons-jexl</artifactId>
-          <version>${commons.jexl.version}</version>
-          <scope>runtime</scope>
-          <type>jar</type>
-      </dependency>
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-jexl</groupId>
+            <artifactId>commons-jexl</artifactId>
+            <version>${commons.jexl.version}</version>
+            <scope>runtime</scope>
+            <type>jar</type>
+        </dependency>
   </dependencies>
 </project>

@@ -18,9 +18,9 @@ import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -41,7 +41,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
 
-    private static final Log LOG = LogFactory.getLog(TicketGrantingTicketImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob

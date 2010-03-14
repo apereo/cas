@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 
@@ -26,7 +26,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     implements NamedAuthenticationHandler {
     
     /** Instance of logging for subclasses. */
-    protected Log log = LogFactory.getLog(this.getClass());
+    protected Logger log = LoggerFactory.getLogger(this.getClass());
     
     /** The name of the authentication handler. */
     @NotNull

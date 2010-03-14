@@ -18,35 +18,21 @@
 			<artifactId>cas-server-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <scope>compile</scope>
+        </dependency>
 		
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core</artifactId>
-			<version>1.3.0.RELEASE</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-tx</artifactId>
-                </exclusion>
-			</exclusions>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>
 			<artifactId>spring-ldap-core-tiger</artifactId>
-			<version>1.3.0.RELEASE</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
   

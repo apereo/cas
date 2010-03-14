@@ -5,10 +5,10 @@
  */
 package org.jasig.cas.web.support;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +30,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Min(0)
     private int failureThreshold = DEFAULT_FAILURE_THRESHOLD;
