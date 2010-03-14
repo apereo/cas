@@ -11,8 +11,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -25,6 +23,8 @@ import org.restlet.data.Status;
 import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.support.WebRequestDataBinder;
@@ -40,7 +40,7 @@ import org.springframework.web.context.request.WebRequest;
  */
 public class TicketResource extends Resource {
     
-    private static final Log log = LogFactory.getLog(TicketResource.class);
+    private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
@@ -68,7 +68,7 @@ public class TicketResource extends Resource {
             getResponse().setLocationRef(ticket_ref);
             getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>" + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription() + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticket_ref + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>", MediaType.TEXT_HTML);        
         } catch (final TicketException e) {
-            log.error(e,e);
+            log.error(e.getMessage(),e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         }
     }

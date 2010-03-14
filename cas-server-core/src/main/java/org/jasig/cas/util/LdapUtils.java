@@ -11,8 +11,8 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utilities related to LDAP functions.
@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class LdapUtils {
 
-    private static final Log logger = LogFactory.getLog(LdapUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(LdapUtils.class);
 
     private LdapUtils() {
         // private constructor so that no one can instantiate.

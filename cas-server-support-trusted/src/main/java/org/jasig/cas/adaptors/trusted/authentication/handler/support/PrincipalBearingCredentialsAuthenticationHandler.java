@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AuthenticationHandler which authenticates Principal-bearing credentials.
@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.Credentials;
 public final class PrincipalBearingCredentialsAuthenticationHandler implements
     AuthenticationHandler {
 
-    private Log log = LogFactory.getLog(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public boolean authenticate(final Credentials credentials) {
         if (log.isDebugEnabled()) {

@@ -14,8 +14,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -51,7 +51,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
     public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
 
     /** Instance of Commons Logging. */
-    private static final Log log = LogFactory.getLog(SafeDispatcherServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(SafeDispatcherServlet.class);
 
     /** The actual DispatcherServlet to which we will delegate to. */
     private DispatcherServlet delegate = new DispatcherServlet();
@@ -80,7 +80,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
                 + "But for our having caught this error, the servlet would not have initialized.";
 
             // log it via Commons Logging
-            log.fatal(message, t);
+            log.error(message, t);
 
             // log it to System.err
             System.err.println(message);

@@ -105,7 +105,7 @@ public class NtlmAuthenticationHandler extends
                     }
             }
         } catch (final Exception e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
             throw new BadCredentialsAuthenticationException(e);
         }
 

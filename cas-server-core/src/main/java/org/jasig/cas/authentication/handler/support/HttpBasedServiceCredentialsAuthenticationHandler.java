@@ -5,12 +5,12 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 
@@ -36,7 +36,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     private boolean requireSecure = true;
 
     /** Log instance. */
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Instance of Apache Commons HttpClient */
     @NotNull

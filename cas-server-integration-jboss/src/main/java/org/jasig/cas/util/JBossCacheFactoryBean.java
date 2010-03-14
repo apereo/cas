@@ -5,12 +5,12 @@
  */
 package org.jasig.cas.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
 import org.jboss.cache.Cache;
 import org.jboss.cache.CacheFactory;
 import org.jboss.cache.DefaultCacheFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,7 +26,7 @@ import org.springframework.core.io.Resource;
  */
 public final class JBossCacheFactoryBean implements FactoryBean, InitializingBean, DisposableBean {
     
-    private final Log log = LogFactory.getLog(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     private Cache<String, Ticket> cache;
     

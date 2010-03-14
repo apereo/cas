@@ -20,9 +20,9 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -34,7 +34,7 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  */
 public final class JRadiusServerImpl implements RadiusServer {
 
-    private static final Log LOG = LogFactory.getLog(JRadiusServerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JRadiusServerImpl.class);
 
     /** Default PAP Authenticator if no other one is specified. */
     private static final RadiusAuthenticator DEFAULT_RADIUS_AUTHENTICATOR = new PAPAuthenticator();

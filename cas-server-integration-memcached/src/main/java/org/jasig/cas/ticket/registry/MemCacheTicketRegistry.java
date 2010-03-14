@@ -112,7 +112,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 		try {
 			return f.get().booleanValue();
 		} catch (final Exception e) {
-			log.error(e,e);
+			log.error(e.getMessage(),e);
 			return false;
 		}
 	}

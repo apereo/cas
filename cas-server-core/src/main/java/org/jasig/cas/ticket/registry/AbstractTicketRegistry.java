@@ -5,9 +5,9 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.ticket.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     /** The Commons Logging log instance. */
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * @throws IllegalArgumentException if class is null.

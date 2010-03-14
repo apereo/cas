@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 
@@ -27,7 +27,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
 
     /** Log instance. */
-    protected final Log log = LogFactory.getLog(this.getClass());
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private boolean returnNullIfNoAttributes = false;
     

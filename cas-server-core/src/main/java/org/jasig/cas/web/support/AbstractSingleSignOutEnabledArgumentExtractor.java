@@ -8,10 +8,10 @@ package org.jasig.cas.web.support;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.util.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for handling the enabling and disabling of Single Sign Out features.
@@ -24,7 +24,7 @@ import org.jasig.cas.util.HttpClient;
 public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
     ArgumentExtractor {
     
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Whether single sign out is disabled or not. */
     private boolean disableSingleSignOut = false;

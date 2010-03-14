@@ -64,14 +64,14 @@ public class FileAuthenticationHandler extends
                 line = bufferedReader.readLine();
             }
         } catch (final Exception e) {
-            log.error(e, e);
+            log.error(e.getMessage(), e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                log.error(e,e);
+                log.error(e.getMessage(),e);
             }
         }
 
