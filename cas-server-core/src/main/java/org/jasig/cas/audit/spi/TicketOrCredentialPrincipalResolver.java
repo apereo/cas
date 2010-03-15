@@ -33,11 +33,11 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
         this.ticketRegistry = ticketRegistry;
     }
 
-    public String resolveFrom(final JoinPoint joinPoint, final Object retval) {
+    public String resolveFrom(final JoinPoint joinPoint, final Object retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
     }
 
-    public String resolveFrom(final JoinPoint joinPoint, Exception retval) {
+    public String resolveFrom(final JoinPoint joinPoint, final Exception retVal) {
         return resolveFromInternal(AopUtils.unWrapJoinPoint(joinPoint));
     }
 
