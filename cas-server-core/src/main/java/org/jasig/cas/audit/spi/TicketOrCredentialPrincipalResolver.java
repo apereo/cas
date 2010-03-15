@@ -46,20 +46,19 @@ public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
     }
     
     protected String resolveFromInternal(final JoinPoint joinPoint) {
-        String resource = "";
         final Object arg1 = joinPoint.getArgs()[0];
         if (arg1 instanceof Credentials) {
-            resource = arg1.toString();
+           return arg1.toString();
         } else if (arg1 instanceof String) {
             final Ticket ticket = this.ticketRegistry.getTicket((String) arg1);
             if (ticket instanceof ServiceTicket) {
                 final ServiceTicket serviceTicket = (ServiceTicket) ticket;
-                resource = serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId(); 
+                return serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId();
             } else if (ticket instanceof TicketGrantingTicket) {
                 final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-                resource = tgt.getAuthentication().getPrincipal().getId();
+                return tgt.getAuthentication().getPrincipal().getId();
             }
         }
-        return resource;
+        return UNKNOWN_USER;
     }
 }
