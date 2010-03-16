@@ -78,10 +78,10 @@
     </constructor-arg>
   </bean>
 
-  <bean id="auditablePrincipalResolver"
-    class="org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver"
-    p:ticketRegistry-ref="ticketRegistry" />
-  
+  <bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver">
+      <constructor-arg index="0" ref="ticketRegistry" />
+  </bean>
+
   <bean id="authenticationActionResolver"
     class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->

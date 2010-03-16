@@ -24,12 +24,12 @@ import javax.validation.constraints.NotNull;
  * @since 3.1.2
  *
  */
-public class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
+public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
     
     @NotNull
-    protected TicketRegistry ticketRegistry;
-    
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+    private final TicketRegistry ticketRegistry;
+
+    public TicketOrCredentialPrincipalResolver(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
 
