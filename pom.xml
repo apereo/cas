@@ -224,15 +224,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <layout>default</layout>
             <url>http://repository.jboss.com/maven2</url>
         </repository>
-<!--
-        <repository>
-            <id>Spring-Snapshot</id>
-            <name>Spring Snapshot</name>
-            <url>http://maven.springframework.org/snapshot</url>
-            <snapshots><enabled>true</enabled></snapshots>
-            <releases><enabled>false</enabled></releases>
-        </repository>
--->
     </repositories>
     
 	<dependencyManagement>
