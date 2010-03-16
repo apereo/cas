@@ -36,12 +36,14 @@
             <artifactId>jradius-dictionary</artifactId>
             <version>1.0.0</version>
         </dependency>
-
+<!--
         <dependency>
             <groupId>net.jradius</groupId>
             <artifactId>jradius-extended</artifactId>
             <version>1.0.0</version>
         </dependency>
+-->
+
 	</dependencies>
 
     <repositories>
