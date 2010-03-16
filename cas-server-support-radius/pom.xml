@@ -48,7 +48,7 @@
         <repository>
           <id>coova</id>
           <name>Coova Repository</name>
-          <url>http://dev.coova.org/mvn</url>
+          <url>http://coova-dev.s3.amazonaws.com/mvn</url>
         </repository>
   </repositories>
 </project>
