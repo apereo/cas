@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.jasig</groupId>
 		<artifactId>jasig-parent</artifactId>
@@ -12,7 +10,7 @@
 	<packaging>pom</packaging>
 	<name>Jasig Central Authentication Service</name>
     <description>Parent POM for Jasig CAS Project</description>
-	<version>3.4.1-SNAPSHOT</version>
+	<version>3.4.1</version>
 	<url>http://www.jasig.org/cas/</url>
 	<inceptionYear>2004</inceptionYear>
 
@@ -25,9 +23,9 @@
 	</licenses>
 
     <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/cas3/trunk</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/cas3/trunk</developerConnection>
-        <url>https://www.ja-sig.org/svn/cas3/trunk</url>
+        <connection>scm:svn:https://www.ja-sig.org/svn/cas3/tags/cas-server-3.4.1</connection>
+        <developerConnection>scm:svn:https://www.ja-sig.org/svn/cas3/tags/cas-server-3.4.1</developerConnection>
+        <url>https://www.ja-sig.org/svn/cas3/tags/cas-server-3.4.1</url>
     </scm>
     
 	<build>
