@@ -67,7 +67,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         }
 
         // this means that the authentication succeeded, I think
-        if (!"casLoginView".equals(modelAndView.getViewName())) {
+        if (modelAndView == null || !"casLoginView".equals(modelAndView.getViewName())) {
             return;
         }
 
