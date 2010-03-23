@@ -6,11 +6,11 @@
 package org.jasig.cas.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
@@ -44,7 +44,7 @@ public class RegisteredServiceImpl
     private long id = -1;
     
     
-    @CollectionOfElements(targetElement = String.class)
+    @CollectionOfElements(targetElement = String.class, fetch = FetchType.EAGER)
     @JoinTable(name = "rs_attributes")
     @Column(name = "a_name", nullable = false)
     @IndexColumn(name = "a_id")
