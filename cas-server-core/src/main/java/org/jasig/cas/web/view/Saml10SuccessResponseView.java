@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,6 +62,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
+    @Override
     protected void renderMergedOutputModel(final Map model,
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
@@ -104,22 +106,21 @@ public class Saml10SuccessResponseView extends AbstractCasView {
     
                 attributeStatement.setSubject(getSamlSubject(authentication));
                 samlAssertion.addStatement(attributeStatement);
-    
-                for (final String key : authentication.getPrincipal()
-                    .getAttributes().keySet()) {
-                    final Object value = authentication.getPrincipal()
-                        .getAttributes().get(key);
-    
+
+                for (final Entry<String, Object> e : authentication.getPrincipal().getAttributes().entrySet()) {
                     final SAMLAttribute attribute = new SAMLAttribute();
-                    attribute.setName(key);
+                    attribute.setName(e.getKey());
                     attribute.setNamespace(NAMESPACE);
-    
-                    if (value instanceof Collection) {
-                        attribute.setValues((Collection) value);
-                    } else {
-                        final Collection<Object> c = new ArrayList<Object>();
-                        c.add(value);
+
+                    if (e.getValue() instanceof Collection<?>) {
+                        final Collection<?> c = (Collection<?>) e.getValue();
+                        if (c.isEmpty()) {
+                            // 100323 bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
+                            continue;
+                        }
                         attribute.setValues(c);
+                    } else {
+                        attribute.addValue(e.getValue());
                     }
     
                     attributeStatement.addAttribute(attribute);
