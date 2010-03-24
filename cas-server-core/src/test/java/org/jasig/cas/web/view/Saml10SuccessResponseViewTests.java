@@ -7,9 +7,12 @@ package org.jasig.cas.web.view;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import junit.framework.TestCase;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
@@ -22,8 +25,6 @@ import org.jasig.cas.web.view.Cas10ResponseViewTests.MockWriterHttpMockHttpServl
 import org.opensaml.SAMLAuthenticationStatement;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -48,6 +49,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         
         final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("testAttribute", "testValue");
+        attributes.put("testEmptyCollection", Collections.emptyList());
         attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
         
@@ -70,6 +72,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         assertTrue(written.contains("testPrincipal"));
         assertTrue(written.contains("testAttribute"));
         assertTrue(written.contains("testValue"));
+        assertFalse(written.contains("testEmptyCollection"));
         assertTrue(written.contains("testAttributeCollection"));
         assertTrue(written.contains("tac1"));
         assertTrue(written.contains("tac2"));
