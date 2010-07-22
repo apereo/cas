@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.4.2</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-integration-jboss</artifactId>
+	<packaging>jar</packaging>
+	<name>JA-SIG CAS JBoss Cache Integration</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <systemPropertyVariables>
+            <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.cache</groupId>
+			<artifactId>jbosscache-core</artifactId>
+			<version>2.2.2.GA</version>
+			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>jboss-maven2</id>
+			<layout>default</layout>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.com/maven2</url>
+		</repository>
+	</repositories>
+</project>

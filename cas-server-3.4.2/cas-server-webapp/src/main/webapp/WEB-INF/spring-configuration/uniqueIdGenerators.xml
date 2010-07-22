@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+    <description>
+    Controls the generation of the unique identifiers for tickets.  You most likely do not need to modify these.  Though you may need to modify
+    the SAML ticket id generator.
+    </description>
+       
+	<!-- ID Generators -->
+	<bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+		<constructor-arg
+			index="0"
+			type="int"
+			value="50" />
+		<constructor-arg
+			index="1" value="${host.name}" />
+	</bean>
+
+	<bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+		<constructor-arg
+			index="0"
+			type="int"
+			value="20" />
+		<constructor-arg
+			index="1" value="${host.name}" />
+	</bean>
+	
+<bean
+      id="proxy20TicketUniqueIdGenerator"
+      class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+		<constructor-arg
+			index="0"
+			type="int"
+			value="20" />
+		<constructor-arg
+			index="1" value="${host.name}" />
+</bean>
+	 
+	<bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.util.SamlCompliantUniqueTicketIdGenerator">
+		<constructor-arg index="0" value="https://localhost:8443" />
+	</bean>
+	
+	<util:map id="uniqueIdGeneratorsMap">
+		<entry
+			key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+			value-ref="serviceTicketUniqueIdGenerator" />
+        <entry
+            key="org.jasig.cas.support.openid.authentication.principal.OpenIdService"
+            value-ref="serviceTicketUniqueIdGenerator" />
+		<entry
+			key="org.jasig.cas.authentication.principal.SamlService"
+			value-ref="samlServiceTicketUniqueIdGenerator" />
+		<entry
+			key="org.jasig.cas.authentication.principal.GoogleAccountsService"
+			value-ref="serviceTicketUniqueIdGenerator" />
+	</util:map>
+
+</beans>

@@ -1,0 +1,38 @@
+/* IE Pick-a-boo bug fix */
+form {height: expression('1%');}
+
+/* Fixes Display: Block issue in IE5.5 and 6x */
+div, 
+form,
+fieldset,
+#navlist li a,
+td a {height:1px;}
+
+/* Fixes IE problem with fieldset+legend boundaries */
+fieldset {position: expression('relative');} 
+legend {
+	position: expression('absolute'); 
+	top: expression('-9px'); /* Fixes IE problem with fieldset+legend boundaries */
+	}
+
+/* double float margin bug */
+form, 
+#navcontainer {display:inline;}
+
+/* button width fix */
+button {
+	overflow:visible;
+	width:1px;
+	padding-left:0.5em;
+	padding-right:0.5em;
+	font-size:1.1em;
+	}
+
+/* miscellaneous */
+input {margin-left:0;}
+ol li {line-height:1.0;}
+input.check {width:13px; height:13px;}
+span a {display:inline-block;}
+label.top {margin-left:0;}
+label.ieFix {margin-top:.5em;}
+fieldset fieldset {padding-bottom:0;}

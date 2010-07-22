@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+	<description>
+		This is the configuration file for the Spring Security configuration used with the services management tool.  You shouldn't
+		have to modify anything in this file directly.  The configuration options should all be in the cas.properties file.
+	</description>
+
+	<sec:http entry-point-ref="casProcessingFilterEntryPoint" auto-config="true">
+		<sec:intercept-url pattern="/services/loggedout.html" filters="none" /> 
+    	<sec:intercept-url pattern="/**" access="${cas.securityContext.serviceProperties.adminRoles}" />
+        <sec:logout logout-url="/services/logout.html" logout-success-url="/services/loggedOut.html" />
+        <sec:custom-filter ref="casProcessingFilter" after="CAS_FILTER" />
+    </sec:http>
+
+	<sec:authentication-manager alias="casAuthenticationManager">
+        <sec:authentication-provider ref="casAuthenticationProvider"  />
+    </sec:authentication-manager>
+	
+	<bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties"
+		p:service="${cas.securityContext.serviceProperties.service}"
+		p:sendRenew="false" />
+      
+	<bean id="casProcessingFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter"
+		p:authenticationManager-ref="casAuthenticationManager"
+		p:filterProcessesUrl="/services/j_acegi_cas_security_check">
+        <property name="authenticationSuccessHandler">
+            <bean class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"
+                p:alwaysUseDefaultTargetUrl="true"
+                p:defaultTargetUrl="/services/manage.html" />
+        </property>
+        <property name="authenticationFailureHandler">
+            <bean class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+                <constructor-arg index="0" value="/authorizationFailure.html" />
+            </bean>
+        </property>
+	</bean>
+
+	<bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint"
+		p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
+		p:serviceProperties-ref="serviceProperties" />
+
+	<bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider"
+		p:key="my_password_for_this_auth_provider_only"
+		p:serviceProperties-ref="serviceProperties"
+		p:userDetailsService-ref="userDetailsService">
+	    <property name="ticketValidator">
+	      <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+	        <constructor-arg index="0" value="${cas.securityContext.ticketValidator.casServerUrlPrefix}" />
+	        </bean>
+	    </property>
+	</bean>
+</beans>

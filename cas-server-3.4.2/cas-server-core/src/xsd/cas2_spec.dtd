@@ -1,0 +1,37 @@
+<!--
+	Copyright 2004 The JA-SIG Collaborative.  All rights reserved.
+	See license distributed with this file and
+	available online at http://www.uportal.org/license.html
+	
+	This document attempts to describe the current CAS 2.0 specification in order for 
+	clients to be able to validate the response returned via the CAS server.
+	
+	@author: Scott Battaglia
+	@author: Drew Mazurek
+	@version $Id$
+	
+	NOTE: This is a draft.
+-->
+<!ELEMENT serviceResponse ((authenticationFailure|authenticationSuccess|proxyFailure|proxySuccess))>
+
+<!ELEMENT authenticationSuccess (user, proxyGrantingTicket?, proxies?)>
+
+<!ELEMENT proxies (proxy+)>
+
+<!ELEMENT authenticationFailure (#PCDATA)>
+
+<!ELEMENT proxyFailure (#PCDATA)>
+
+<!ELEMENT proxySuccess (proxyTicket)>
+
+<!ELEMENT user (#PCDATA)>
+
+<!ELEMENT proxyGrantingTicket (#PCDATA)>
+
+<!ELEMENT proxy (#PCDATA)>
+
+<!ELEMENT proxyTicket (#PCDATA)>
+
+<!ATTLIST authenticationFailure code CDATA #REQUIRED>
+
+<!ATTLIST proxyFailure code CDATA #REQUIRED>

@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.4.2</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-support-ldap</artifactId>
+	<packaging>jar</packaging>
+	<name>JA-SIG CAS LDAP Support</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <scope>compile</scope>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core-tiger</artifactId>
+		</dependency>
+	</dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!--
+            If you enable the bind authentication handler unit tests,
+            you need an LDAP infrastructure to test against.
+            Create an ldap.properties file from the ldap.properties.sample
+            template suitable for your environment.
+            -->
+            <exclude>**/*Bind*Tests.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+</project>

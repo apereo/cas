@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans   
+					  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+					  http://www.springframework.org/schema/context 
+					  http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<context:annotation-config/>
+	
+	<bean id="root" class="org.restlet.ext.spring.SpringRouter">
+		<property name="attachments">
+			<map>
+				<entry key="/tickets">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="createResource" bean="ticketResource" />
+					</bean>
+				</entry>
+				<entry key="/tickets/{ticketGrantingTicketId}">
+					<bean class="org.restlet.ext.spring.SpringFinder">
+						<lookup-method name="createResource" bean="ticketGrantingTicketResource" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="ticketResource" class="org.jasig.cas.integration.restlet.TicketResource" scope="prototype" />
+	
+	<bean id="ticketGrantingTicketResource" class="org.jasig.cas.integration.restlet.TicketGrantingTicketResource" scope="prototype"
+            p:httpClient-ref="httpClient"/>
+	
+</beans>

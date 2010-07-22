@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.4.2</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-support-radius</artifactId>
+	<packaging>jar</packaging>
+	<name>JA-SIG CAS RADIUS Support</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>net.jradius</groupId>
+            <artifactId>jradius-core</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>net.jradius</groupId>
+            <artifactId>jradius-dictionary</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>net.jradius</groupId>
+            <artifactId>jradius-extended</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+-->
+
+	</dependencies>
+
+    <repositories>
+        <repository>
+          <id>coova</id>
+          <name>Coova Repository</name>
+          <url>http://coova-dev.s3.amazonaws.com/mvn</url>
+        </repository>
+  </repositories>
+</project>

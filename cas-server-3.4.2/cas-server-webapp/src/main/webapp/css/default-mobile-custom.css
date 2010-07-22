@@ -1,0 +1,287 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+•ÈÀ/***************************************/
+/* general styles */
+html {
+    background: -webkit-gradient(linear, left top, right top,
+        from(#c5ccd3),
+        to(#cfd5dd),
+        color-stop(0.80, #c5ccd3),
+        color-stop(0.80, #cfd5dd));
+}
+
+.fl-theme-uportal .fl-bevel-black {
+    text-shadow: rgba(0,0,0,0.35) 0px -1px 0px;
+}
+.fl-theme-uportal .fl-bevel-white {
+    text-shadow: rgba(255,255,255,1) 0px 1px 0px;
+}
+
+.fl-theme-uportal a {
+    -webkit-touch-callout:none; /* prevents iphone popup menu to copy / follow / bookmark a particular link */
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    text-decoration:none;
+    color:#000;
+}
+/***************************************/
+/* Navigation Bar */
+
+body::before {
+    border-top-color:#ccd6e2;
+    border-bottom-color:#000;
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(#B0BCCD),
+        color-stop(0.5, #889BB3),
+        color-stop(0.50, #6D84A2),
+        to(#6D84A2)
+    );
+}
+.fl-theme-uportal .fl-navbar {
+    color:#fff;
+    text-shadow: rgba(0,0,0,0.5) 0px -1px 0px;
+}
+
+.fl-theme-uportal .fl-navbar h1 {
+    color:#fff;
+}
+.fl-theme-uportal .fl-navbar a {
+	color: #fff;
+}
+.fl-theme-uportal .fl-navbar [class*=fl-button] {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(#9aafca),
+        color-stop(0.5, #6d8cb3),
+        color-stop(0.50, #4b6b90),
+        to(#4b6b90)
+    );
+    -webkit-border-image:none;
+}
+
+.fl-theme-uportal .fl-navbar [class*=fl-button]:active {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(rgba(149, 184, 239,1)),
+        to(rgba(35,109,229,1)),
+        color-stop(0.5, rgba(149, 184, 239,1)),
+        color-stop(0.50, rgba(75,148,244,1))
+    );
+}
+
+.fl-theme-uportal .fl-navbar .fl-backButton {
+    /* See mobile layout for details */
+    -webkit-border-image: url(images/iphone/navbar_back_button_insetShadow.png) 0 15 stretch;
+    -webkit-mask-box-image: url(images/iphone/backbutton_mask.png) 0 15 stretch;
+}
+
+.fl-theme-uportal .fl-navbar .fl-button-inner {
+    -webkit-border-image: url(images/iphone/navbar_normal_button_insetShadow.png) 5 5 5 5 stretch;
+}
+
+/***************************************/
+/* iPhone general purpose gel buttons */
+/* effect is applied anywhere but the navbar, which has its own button look */
+.fl-theme-uportal .fl-button {
+    text-decoration:none;
+    font-weight:bold;
+    -webkit-border-image: url(images/iphone/button_bg_insetShadow.png) 10 stretch;
+}
+.fl-theme-uportal .fl-button.fl-bevel-white {
+    color:#333333;
+}
+.fl-theme-uportal .fl-button.fl-bevel-black {
+    color:#FFFFFF;
+}
+.fl-theme-uportal .fl-button-white {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(rgba(240,240,240,0.25)),
+        to(rgba(220,220,220,0.75)),
+        color-stop(0.5, rgba(240,240,240,1)),
+        color-stop(0.50, rgba(200,200,200,0.8))
+    );
+}
+.fl-theme-uportal .fl-button-black {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(rgba(106,106,106,0.25)),
+        to(rgba(00,00,00,0.75)),
+        color-stop(0.5, rgba(130,130,130,1)),
+        color-stop(0.50, rgba(75,75,75,0.8))
+    );
+}
+.fl-theme-uportal .fl-button-green {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(rgba(120,190,130,0.2)),
+        to(rgba(50,170,60,0.75)),
+        color-stop(0.5, rgba(120,190,130,1)),
+        color-stop(0.50, rgba(0,150,10,0.8))
+    );
+}
+.fl-theme-uportal .fl-button-blue {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(rgba(149, 184, 239,0.2)),
+        to(rgba(35,109,229,0.75)),
+        color-stop(0.5, rgba(149, 184, 239,1)),
+        color-stop(0.50, rgba(75,148,244,0.8))
+    );
+}
+/***************************************/
+/* iPhone tabs 1: small general purpose content dividers */
+
+.fl-theme-uportal .fl-tabs li {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(#9aafca),
+        color-stop(0.5, #6d8cb3),
+        color-stop(0.50, #4b6b90),
+        to(#4b6b90)
+    );
+    -webkit-border-image: url(images/iphone/navbar_normal_button_insetShadow.png) 5 5 5 5 stretch;
+    -webkit-border-left-image: none;
+    -webkit-background-origin: border;
+    -webkit-background-clip: border;
+}
+.fl-theme-uportal .fl-tabs .fl-tabs-active {
+    background-image: -webkit-gradient(linear, left top, left bottom,
+        from(rgba(149, 184, 239,1)),
+        to(rgba(35,109,229,1)),
+        color-stop(0.5, rgba(149, 184, 239,1)),
+        color-stop(0.50, rgba(75,148,244,1))
+    );
+}
+
+.fl-theme-uportal .fl-tabs li a,
+.fl-theme-uportal .fl-tabs .fl-tabs-active a {
+	color:#fff;
+    border-right-color:rgba(255,255,255,0.35);
+    border-left-color:rgba(0,0,0,0.35);
+}
+
+/*************************************************/
+/* iPhone list menu styles: Ordered lists, Unordererd lists, Thumbnail lists, Icon lists, Definition lists */
+/*************************************************/
+/* Default list system setup */
+
+.fl-theme-uportal .fl-listmenu li a {
+    -webkit-tap-highlight-color: -webkit-gradient(linear, left top, left bottom, from(#4a94f4), to(#236de5));
+    background:#fff url(images/iphone/listmenu_arrow.png) no-repeat right 5px;
+
+}
+.fl-theme-uportal [class*=fl-list] > li {
+	color: #000;
+    border-color: rgb(169,173,176);
+	background-color:#fff;
+}
+
+/* A simulation for a:active on the device, requires JS */
+.fl-theme-uportal [class*=fl-list]:not(.fl-list) a:active,
+.fl-theme-uportal [class*=fl-list] .fl-link-hilight {
+	color: #fff;
+    background: url(images/iphone/listmenu_arrow.png) no-repeat right -25px,
+                -webkit-gradient(linear, left top, left bottom, from(#4a94f4), to(#236de5));
+}
+
+.fl-theme-uportal [class*=fl-list] .fl-link-loading {
+    color: #fff !important;
+    background: url(images/iphone/listmenu_loader.gif) no-repeat 97% center,
+		        -webkit-gradient(linear, left top, left bottom, from(#4a94f4), to(#236de5));
+}
+
+.fl-theme-uportal [class*=fl-list]:not(.fl-list) a:active,
+.fl-theme-uportal [class*=fl-list] a:active .fl-link-secondary,
+.fl-theme-uportal [class*=fl-list] a:active .fl-link-summary,
+.fl-theme-uportal [class*=fl-list] .fl-link-loading * {
+    color: #fff !important;
+}
+
+/* secondary link info behaviour */
+.fl-theme-uportal [class*=fl-list] > li .fl-link-secondary {
+    color: rgb(50, 79, 133);
+}
+
+ /* summary link info ehaviour */
+.fl-theme-uportal [class*=fl-list] > li .fl-link-summary {
+    color:#999;
+}
+
+.fl-theme-uportal .fl-list a {
+    color:#4a94f4;
+}
+
+/***************************************/
+/* instructional text (usually embossed too)*/
+.fl-theme-uportal .fl-note {
+    color:#4C566C;
+}
+
+/****************************/
+/* Collapsing and expanding panels */
+.fl-theme-uportal .fl-panel-autoHeading > *:first-child {
+    color:#fff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#999), to(#000));
+}
+.fl-theme-uportal .fl-panel-autoHeading > *:first-child:focus {
+    color:#000;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFF), to(#CCC));
+}
+
+/****************************/
+/* Gloss tint for glossy icons/thumbnails */
+
+.fl-theme-uportal .fl-list-glossy > li a::before {
+    background-image: -webkit-gradient(radial, 50% -15%, 10, 50% -50%, 45, from(rgba(255,255,255,1)), to(rgba(255,255,255,0)), color-stop(90%, rgba(255,255,255,.65)));
+}
+
+
+/*
+------------------------------------
+  Overrides to jqueryui css.
+------------------------------------
+*/
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button,
+.ui-widget {font-size: 1em; font-family:arial,helvetica,clean,sans-serif;}
+
+.ui-tabs .ui-tabs-nav li a {
+    font-size: 0.8em;
+    padding:0.2em 0.5em;
+}
+
+.ui-tabs .ui-tabs-nav {
+    padding:0.2em 0.1em 0;
+}
+
+/* jQuery tooltip */
+#tooltip {background-color: #fffbbf; color: #344461; border: thin solid #b1c6f2;}
+
+/*
+*/
+
+
+#portalWelcome { text-align: right; padding-right: 10px; }
+.portlet-content-container { background-color: #fff; padding: 5px; margin: 5px; }
+
+/* Fluid pager component styles */
+.fl-theme-uportal .fl-pager ul.fl-pager-ui {text-align:right}
+.fl-theme-uportal .fl-pager .fl-pager-ui li {list-style-type:none; display:inline; padding-left:5px}
+.fl-theme-uportal .fl-pager .fl-pager-ui a.fl-pager-disabled,
+.fl-theme-uportal .fl-pager .fl-pager-ui .fl-pager-disabled a { color: #777777; border: 0; text-decoration: none; cursor: default; }
+.fl-theme-uportal .fl-pager .fl-pager-ui a.fl-pager-currentPage,
+.fl-theme-uportal .fl-pager .fl-pager-ui .fl-pager-currentPage a { color: #000000; border: 0; text-decoration: none; cursor: default;}
+
+.fl-theme-uportal a { color:#4b6b90; }
+
+.up-mobile-navigation-container a { color:#000; }

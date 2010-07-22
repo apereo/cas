@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+<bean class="org.springframework.jdbc.datasource.SingleConnectionDataSource" id="dataSource"
+	p:driverClassName="org.hsqldb.jdbcDriver"
+	p:username="sa"
+	p:url="jdbc:hsqldb:mem:cas"
+	p:suppressClose="true"
+	p:autoCommit="true" />
+
+<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="factoryBean"
+	p:dataSource-ref="dataSource"
+	p:jpaVendorAdapter-ref="jpaVendorAdapter">
+	<property name="jpaProperties">
+		<props>
+			<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+			<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+		</props>
+	</property>
+</bean>
+
+
+<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" id="jpaVendorAdapter"
+	p:generateDdl="true"
+	p:showSql="true" />
+
+<bean class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"
+	id="dao"
+	p:entityManagerFactory-ref="factoryBean" />
+	
+<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
+	p:entityManagerFactory-ref="factoryBean" />
+</beans>
+
+
