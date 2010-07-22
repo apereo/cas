@@ -5,7 +5,7 @@
    <form name="acsForm" action="${originalUrl}" method="post">
      <div style="display: none">
        <c:forEach items="${parameters}" var="entry">
-         <textarea rows=10 cols=80 name="${entry.key}"><c:out value="${entry.value}" /></textarea>
+         <textarea rows=10 cols=80 name="${entry.key}"><c:out value="${entry.value}" escapeXml="true" /></textarea>
        </c:forEach>
      </div>
      <noscript>
