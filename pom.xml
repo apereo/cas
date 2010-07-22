@@ -23,9 +23,9 @@
 	</licenses>
 
     <scm>
-        <connection>scm:svn:https://www.ja-sig.org/svn/cas3/tags/cas-server-3.4.2.1</connection>
-        <developerConnection>scm:svn:https://www.ja-sig.org/svn/cas3/tags/cas-server-3.4.2.1</developerConnection>
-        <url>https://www.ja-sig.org/svn/cas3/tags/cas-server-3.4.2.1</url>
+        <connection>scm:svn:https://source.jasig.org/cas3/tags/cas-server-3.4.2.1</connection>
+        <developerConnection>scm:svn:https://sourcejasig.org/cas3/tags/cas-server-3.4.2.1</developerConnection>
+        <url>https://source.jasig.org/cas3/tags/cas-server-3.4.2.1</url>
     </scm>
     
 	<build>
