@@ -1,6 +1,6 @@
 <%@include file="includes/top.jsp"%>
 
-<form:form action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${param.id}" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
+<form:form action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${fn:escapeXml(param.id)}" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
 
 		<c:if test="${not empty successMessage}">
 			<div id="msg" class="info">${successMessage}</div>
