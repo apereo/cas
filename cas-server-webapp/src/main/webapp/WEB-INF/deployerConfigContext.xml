@@ -108,7 +108,6 @@
 	<bean id="userDetailsService" class="org.springframework.security.userdetails.memory.InMemoryDaoImpl">
 		<property name="userMap">
 			<value>
-			
 		    </value>
 		</property>
 	</bean> 
@@ -135,5 +134,37 @@
 	 -->
 	<bean
 		id="serviceRegistryDao"
-		class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl" />
+		class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+        <property name="registeredServices">
+            <list>
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="0" />
+                    <property name="name" value="HTTP" />
+                    <property name="description" value="Only Allows HTTP Urls" />
+                    <property name="serviceId" value="http://**" />
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="1" />
+                    <property name="name" value="HTTPS" />
+                    <property name="description" value="Only Allows HTTPS Urls" />
+                    <property name="serviceId" value="https://**" />
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="2" />
+                    <property name="name" value="IMAPS" />
+                    <property name="description" value="Only Allows HTTPS Urls" />
+                    <property name="serviceId" value="imaps://**" />
+                </bean>
+
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="3" />
+                    <property name="name" value="IMAP" />
+                    <property name="description" value="Only Allows IMAP Urls" />
+                    <property name="serviceId" value="imap://**" />
+                </bean>
+            </list>
+        </property>
+    </bean>
 </beans>
