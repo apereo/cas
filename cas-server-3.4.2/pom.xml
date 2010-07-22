@@ -10,7 +10,7 @@
 	<packaging>pom</packaging>
 	<name>Jasig Central Authentication Service</name>
     <description>Parent POM for Jasig CAS Project</description>
-	<version>3.4.2.1-SNAPSHOT</version>
+	<version>3.4.2.1</version>
 	<url>http://www.jasig.org/cas/</url>
 	<inceptionYear>2004</inceptionYear>
 
