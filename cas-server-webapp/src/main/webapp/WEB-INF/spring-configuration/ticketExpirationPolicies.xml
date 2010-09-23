@@ -18,7 +18,7 @@
 		<!-- This argument is the time a ticket can exist before its considered expired.  -->
 		<constructor-arg
 			index="1"
-			value="30000" />
+			value="10000" />
 	</bean>
 	
 	<bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy">
