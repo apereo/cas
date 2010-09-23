@@ -21,6 +21,7 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.Assert;
 import org.springframework.util.PathMatcher;
 
 /**
@@ -159,6 +160,7 @@ public class RegisteredServiceImpl
     }
 
     public void setAllowedAttributes(final List<String> allowedAttributes) {
+        Assert.notNull(allowedAttributes, "allowedAttributes cannot be null.");
         this.allowedAttributes = allowedAttributes;
     }
 
