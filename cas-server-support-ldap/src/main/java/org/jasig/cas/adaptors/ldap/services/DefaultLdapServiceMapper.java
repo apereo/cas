@@ -71,7 +71,12 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
         s.setDescription(ctx.getStringAttribute(this.serviceDescriptionAttribute));
         s.setSsoEnabled(SpringLdapUtils.getBoolean(ctx, this.serviceSsoEnabledAttribute));
         s.setTheme(ctx.getStringAttribute(this.serviceThemeAttribute));
-        s.setAllowedAttributes(Arrays.asList(ctx.getStringAttributes(this.serviceAllowedAttributesAttribute)));
+
+        final String[] attributes = ctx.getStringAttributes(this.serviceAllowedAttributesAttribute);
+
+        if (attributes != null) {
+ 	 	    s.setAllowedAttributes(Arrays.asList(attributes));
+        }
 
         return s;
     }
@@ -92,9 +97,9 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
         return ctx;
     }
 
-    protected DirContextAdapter createCtx(final String parentDn, final RegisteredService servivce) {
+    protected DirContextAdapter createCtx(final String parentDn, final RegisteredService service) {
         DistinguishedName dn = new DistinguishedName(parentDn);
-        dn.add(this.namingAttribute, servivce.getName());
+        dn.add(this.namingAttribute, service.getName());
         return new DirContextAdapter(dn);
     }
 
