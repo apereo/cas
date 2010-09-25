@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.util.HttpClient;
 import org.springframework.util.StringUtils;
 
@@ -25,6 +27,8 @@ import org.springframework.util.StringUtils;
  */
 public final class SamlService extends AbstractWebApplicationService {
 
+    private static final Log log = LogFactory.getLog(SamlService.class);
+
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
 
@@ -35,6 +39,8 @@ public final class SamlService extends AbstractWebApplicationService {
     
     private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
+    private String requestId;
+
     /**
      * Unique Id for serialization.
      */
@@ -44,9 +50,9 @@ public final class SamlService extends AbstractWebApplicationService {
         super(id, id, null, new HttpClient());
     }
 
-    protected SamlService(final String id, final String originalUrl,
-        final String artifactId, final HttpClient httpClient) {
+    protected SamlService(final String id, final String originalUrl, final String artifactId, final HttpClient httpClient, final String requestId) {
         super(id, originalUrl, artifactId, httpClient);
+        this.requestId = requestId;
     }
 
     /**
@@ -56,11 +62,16 @@ public final class SamlService extends AbstractWebApplicationService {
         return true;
     }
 
+    public String getRequestID() {
+        return this.requestId;
+    }
+
     public static SamlService createServiceFrom(
         final HttpServletRequest request, final HttpClient httpClient) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
         final String artifactId;
         final String requestBody = getRequestBody(request);
+        final String requestId;
         
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
             return null;
@@ -74,11 +85,15 @@ public final class SamlService extends AbstractWebApplicationService {
             final int endTagLocation = requestBody.indexOf(CONST_END_ARTIFACT_XML_TAG);
 
             artifactId = requestBody.substring(artifactStartLocation, endTagLocation).trim();
+
+            // is there a request id?
+            requestId = extractRequestId(requestBody);
         } else {
             artifactId = null;
+            requestId = null;
         }
 
-        return new SamlService(id, service, artifactId, httpClient);
+        return new SamlService(id, service, artifactId, httpClient, requestId);
     }
 
     public Response getResponse(final String ticketId) {
@@ -88,6 +103,22 @@ public final class SamlService extends AbstractWebApplicationService {
         parameters.put(CONST_PARAM_SERVICE, getOriginalUrl());
 
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
+    }
+
+    protected static String extractRequestId(final String requestBody) {
+        if (!requestBody.contains("RequestID")) {
+            return null;
+        }
+
+        try {
+            final int position = requestBody.indexOf("RequestID=\"") + 11;
+            final int nextPosition = requestBody.indexOf("\"", position);
+
+            return requestBody.substring(position,  nextPosition);
+        } catch (final Exception e) {
+            log.debug("Exception parsing RequestID from request." ,e);
+            return null;
+        }
     }
     
     protected static String getRequestBody(final HttpServletRequest request) {

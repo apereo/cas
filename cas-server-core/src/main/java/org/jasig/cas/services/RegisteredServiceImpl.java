@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.services;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class RegisteredServiceImpl
     }
 
     public List<String> getAllowedAttributes() {
-        return this.allowedAttributes != null ? this.allowedAttributes : new ArrayList<String>();
+        return this.allowedAttributes;
     }
 
     public long getId() {
@@ -160,8 +161,11 @@ public class RegisteredServiceImpl
     }
 
     public void setAllowedAttributes(final List<String> allowedAttributes) {
-        Assert.notNull(allowedAttributes, "allowedAttributes cannot be null.");
-        this.allowedAttributes = allowedAttributes;
+        if (allowedAttributes == null) {
+            this.allowedAttributes = new ArrayList<String>();
+        } else {
+            this.allowedAttributes = allowedAttributes;
+        }
     }
 
     public void setAllowedToProxy(final boolean allowedToProxy) {
