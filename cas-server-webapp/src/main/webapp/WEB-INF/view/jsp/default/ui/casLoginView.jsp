@@ -88,7 +88,8 @@
                                <option value="cs">Czech</option>
                                <option value="sl">Slovenian</option>
                                <option value="pl">Polish</option>
-                               <option value="ca_ES">Catalan</option>
+                               <option value="ca">Catalan</option>
+                               <option value="mk">Macedonian</option>
                            </select>
                            <input type="submit" value="Switch">
                         </form>
@@ -110,7 +111,8 @@
 							><li><a href="${loginUrl}hr">Croatian</a></li
 							><li><a href="${loginUrl}cs">Czech</a></li
 							><li><a href="${loginUrl}sl">Slovenian</a></li
-                            ><li><a href="${loginUrl}ca_ES">Catalan</a></li
+                            ><li><a href="${loginUrl}ca">Catalan</a></li
+                            ><li><a href="${loginUrl}mk">Macedonian</a></li
 							><li class="last"><a href="${loginUrl}pl">Polish</a></li
 						></ul>
                      </c:otherwise>
