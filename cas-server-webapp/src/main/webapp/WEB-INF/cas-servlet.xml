@@ -158,7 +158,9 @@
         <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
     </webflow:flow-registry>
 
-    <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" />
+    <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
+
+    <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser" />
 
     <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
         <property name="viewResolvers">
