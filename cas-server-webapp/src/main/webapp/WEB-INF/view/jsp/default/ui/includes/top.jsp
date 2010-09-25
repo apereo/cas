@@ -20,8 +20,9 @@
                 <link type="text/css" rel="stylesheet" href="${mobileCss}" />
            </c:when>
            <c:otherwise>
-                <link type="text/css" rel="stylesheet" href="<spring:theme code="standard.custom.css.file" />" />
-                <script type="text/javascript" src="js/common_rosters.js"></script>
+                <spring:theme code="standard.custom.css.file" var="customCssFile" />
+                <link type="text/css" rel="stylesheet" href="<c:url value="${customCssFile}" />" />
+                <script type="text/javascript" src="<c:url value="/js/common_rosters.js" />"></script>
            </c:otherwise>
         </c:choose>
 	    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
