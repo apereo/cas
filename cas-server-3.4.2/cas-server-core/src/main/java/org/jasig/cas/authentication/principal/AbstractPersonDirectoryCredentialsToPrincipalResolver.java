@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,13 +52,20 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
                 + principalId + "]");
         }
 
-        final Map<String, List<Object>> attributes = this.attributeRepository.getPerson(principalId).getAttributes();
+        final IPersonAttributes personAttributes = this.attributeRepository.getPerson(principalId);
+        final Map<String, List<Object>> attributes;
+
+        if (personAttributes == null) {
+            attributes = null;
+        } else {
+            attributes = personAttributes.getAttributes();
+        }
 
         if (attributes == null & !this.returnNullIfNoAttributes) {
             return new SimplePrincipal(principalId);
         }
 
-        if (attributes == null && this.returnNullIfNoAttributes) {
+        if (attributes == null) {
             return null;
         }
         
