@@ -70,7 +70,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     }
 
     public final void afterPropertiesSet() throws Exception {
-        Assert.isTrue(this.filter.contains("%u"), "filter must contain %u");
+        Assert.isTrue(this.filter.contains("%u") || this.filter.contains("%U"), "filter must contain %u or %U");
         this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
     }
 
