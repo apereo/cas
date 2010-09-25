@@ -56,5 +56,6 @@ public class SamlServiceTests extends TestCase {
         
         final SamlService impl = SamlService.createServiceFrom(request, null);
         assertEquals("artifact", impl.getArtifactId());
+        assertEquals("_192.168.16.51.1024506224022", impl.getRequestID());
     }
 }

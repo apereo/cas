@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.SamlAuthenticationMetaDataPopulator;
+import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
 import org.opensaml.SAMLAssertion;
@@ -64,21 +65,26 @@ public class Saml10SuccessResponseView extends AbstractCasView {
 
     @Override
     protected void renderMergedOutputModel(final Map model,
-        final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         try {
             final Assertion assertion = getAssertionFrom(model);
-            final Authentication authentication = assertion
-                .getChainedAuthentications().get(0);
+            final Authentication authentication = assertion.getChainedAuthentications().get(0);
             final Date currentDate = new Date();
-            final String authenticationMethod = (String) authentication
-                .getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
+            final String authenticationMethod = (String) authentication.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
             final Service service = assertion.getService();
-            final SAMLResponse samlResponse = new SAMLResponse(null, service
-                .getId(), new ArrayList<Object>(), null);
+            final SAMLResponse samlResponse = new SAMLResponse(null, service.getId(), new ArrayList<Object>(), null);
 
             samlResponse.setIssueInstant(currentDate);
+
+            // this should be true, but we never enforced it, so we need to check to be safe
+            if (service instanceof SamlService) {
+                final SamlService samlService = (SamlService) service;
+
+                if (samlService.getRequestID() != null) {
+                    samlResponse.setInResponseTo(samlService.getRequestID());
+                }
+            }
 
             final SAMLAssertion samlAssertion = new SAMLAssertion();
             samlAssertion.setIssueInstant(currentDate);
