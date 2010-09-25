@@ -558,8 +558,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 	<properties>
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
-        <spring.webflow.version>2.0.8.RELEASE</spring.webflow.version>
-        <spring.version>3.0.1.RELEASE</spring.version>
+        <spring.webflow.version>2.1.1.RELEASE</spring.webflow.version>
+        <spring.version>3.0.4.RELEASE</spring.version>
         <spring.security.version>3.0.1.RELEASE</spring.security.version>
         <clover.version>2.6.3</clover.version>
         <aspectj.version>1.6.7</aspectj.version>
