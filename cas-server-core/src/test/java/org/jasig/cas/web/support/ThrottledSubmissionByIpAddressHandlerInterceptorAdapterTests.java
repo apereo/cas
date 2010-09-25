@@ -8,7 +8,11 @@ package org.jasig.cas.web.support;
 import org.jasig.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.execution.Event;
+
+import com.sun.xml.internal.ws.client.RequestContext;
 
 import junit.framework.TestCase;
 
@@ -30,32 +34,40 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
     
     public void testOneFailure() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final ModelAndView modelAndView = new ModelAndView("casLoginView");
         request.setMethod("POST");
         request.setRemoteAddr("111.111.111.111");
-        this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
+        MockRequestContext context = new MockRequestContext();
+        context.setCurrentEvent(new Event("", "error"));
+        request.setAttribute("flowRequestContext", context);
+        this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), null);
         
-        assertEquals("casLoginView", modelAndView.getViewName());
+        assert 1 == this.adapter.findCount(request, null, 60);
+        assertTrue(this.adapter.preHandle(request, new MockHttpServletResponse(), new Object()));
     }
     
     public void testSuccess() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final ModelAndView modelAndView = new ModelAndView("redirect");
         request.setMethod("GET");
         request.setRemoteAddr("111.111.111.111");
+        MockRequestContext context = new MockRequestContext();
+        context.setCurrentEvent(new Event("", "success"));
+        request.setAttribute("flowRequestContext", context);
         
-        this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
+        this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), null);
         
-        assertEquals("redirect", modelAndView.getViewName());
+        assert 0 == this.adapter.findCount(request, null, 60);
+        assertTrue(this.adapter.preHandle(request, new MockHttpServletResponse(), new Object()));
     }
     
     public void testEnoughFailuresToCauseProblem() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final ModelAndView modelAndView = new ModelAndView("casLoginView");
         request.setMethod("POST");
         request.setRemoteAddr("111.111.111.111");
+        MockRequestContext context = new MockRequestContext();
+        context.setCurrentEvent(new Event("", "error"));
+        request.setAttribute("flowRequestContext", context);
        for (int i = 0; i < CONST_FAILURE_THRESHHOLD+1; i++) {
-           this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
+           this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), null);
        }
 
         assertFalse(this.adapter.preHandle(request,new MockHttpServletResponse(), new Object()));
@@ -63,11 +75,13 @@ public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extend
     
     public void testFailuresThenSuccess() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final ModelAndView modelAndView = new ModelAndView("casLoginView");
         request.setMethod("POST");
         request.setRemoteAddr("111.111.111.111");
+        MockRequestContext context = new MockRequestContext();
+        context.setCurrentEvent(new Event("", "error"));
+        request.setAttribute("flowRequestContext", context);
        for (int i = 0; i < CONST_FAILURE_THRESHHOLD+1; i++) {
-           this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), modelAndView);
+           this.adapter.postHandle(request, new MockHttpServletResponse(), new Object(), null);
        }
         
        assertFalse(this.adapter.preHandle(request,new MockHttpServletResponse(), new Object()));

@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
+    
+    private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -66,11 +70,18 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        // this means that the authentication succeeded, I think
-        if (modelAndView == null || !"casLoginView".equals(modelAndView.getViewName())) {
+        RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
+        
+        if (context == null || context.getCurrentEvent() == null) {
+            return;
+        }
+        
+        // User successfully authenticated
+        if (SUCCESSFUL_AUTHENTICATION_EVENT.equals(context.getCurrentEvent().getId())) {
             return;
         }
 
+        // User submitted invalid credentials, so we update the invalid login count
         updateCount(request, this.usernameParameter);
     }
 
