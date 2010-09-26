@@ -1,3 +1,7 @@
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%--
 
     Licensed to Jasig under one or more contributor license
@@ -68,10 +72,11 @@
                 <div id="list-languages" class="fl-panel">
                 <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
 					<c:set var='query' value='<%=queryString%>' />
+                    <c:set var="xquery" value="${fn:escapeXml(query)}" />
                   <h3>Languages:</h3>
                   <c:choose>
                      <c:when test="${not empty requestScope['isMobile'] and not empty mobileCss}">
-                        <form method="get" action="login?${query}">
+                        <form method="get" action="login?${xquery}">
                            <select name="locale">
                                <option value="en">English</option>
                                <option value="es">Spanish</option>
@@ -95,9 +100,9 @@
                         </form>
                      </c:when>
                      <c:otherwise>
-                        <c:set var="loginUrl" value="login?${query}${not empty query ? '&' : ''}locale=" />
+                        <c:set var="loginUrl" value="login?${xquery}${not empty xquery ? '&' : ''}locale=" />
 						<ul
-							><li class="first"><a href="login?${query}${not empty query ? '&' : ''}locale=en">English</a></li
+							><li class="first"><a href="${loginUrl}en">English</a></li
 							><li><a href="${loginUrl}es">Spanish</a></li
 							><li><a href="${loginUrl}fr">French</a></li
 							><li><a href="${loginUrl}ru">Russian</a></li
