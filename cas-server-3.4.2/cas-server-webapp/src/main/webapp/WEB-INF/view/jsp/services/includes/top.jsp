@@ -11,8 +11,10 @@
 <head>
   <title><spring:message code="${pageTitle}" text="Logged Out" /></title>
   <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
-  <link rel="stylesheet" href="../css/services/cas.css" type="text/css" media="screen" />
-  <script type="text/javascript" src="../js/common_rosters.js"></script>
+  <link rel="stylesheet" href="<c:url value="/css/services/cas.css" />" type="text/css" media="screen" />
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
 
   <style type="text/css">
   #nav-main #${pageTitle} span {
