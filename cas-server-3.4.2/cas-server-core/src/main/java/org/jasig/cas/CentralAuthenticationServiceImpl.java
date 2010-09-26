@@ -222,14 +222,21 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
         if (log.isInfoEnabled()) {
-            log.info("Granted service ticket ["
-                + serviceTicket.getId()
-                + "] for service ["
-                + service.getId()
-                + "] for user ["
-                + serviceTicket.getGrantingTicket().getAuthentication()
-                    .getPrincipal().getId() + "]");
+            final List<Authentication> authentications = serviceTicket.getGrantingTicket().getChainedAuthentications();
+            final String formatString = "Granted %s ticket [%s] for service [%s] for user [%s]";
+            final String type;
+            final String principalId = authentications.get(authentications.size()-1).getPrincipal().getId();
+
+            if (authentications.size() == 1) {
+                type = "service";
+
+            } else {
+                type = "proxy";
+            }
+
+            log.info(String.format(formatString, type, serviceTicket.getId(), service.getId(), principalId));
         }
+
         return serviceTicket.getId();
     }
 

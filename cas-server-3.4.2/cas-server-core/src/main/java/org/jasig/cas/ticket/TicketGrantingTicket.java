@@ -51,7 +51,7 @@ public interface TicketGrantingTicket extends Ticket {
 
     /**
      * Convenience method to determine if the TicketGrantingTicket is the root
-     * of the heirachy of tickets.
+     * of the hierarchy of tickets.
      * 
      * @return true if it has no parent, false otherwise.
      */
