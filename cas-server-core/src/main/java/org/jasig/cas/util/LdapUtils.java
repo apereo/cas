@@ -7,6 +7,7 @@ package org.jasig.cas.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -62,7 +63,7 @@ public final class LdapUtils {
 
         for (final String key : properties.keySet()) {
             final String value = properties.get(key);
-            newFilter = newFilter.replaceAll(key, value);
+            newFilter = newFilter.replaceAll(key, Matcher.quoteReplacement(value));
         }
 
         return newFilter;
