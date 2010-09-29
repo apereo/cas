@@ -100,14 +100,10 @@
                     viewStatisticsController
                 </prop>
 			
-				<prop
-					key="/services/*">
-					manageRegisteredServicesMultiActionController
-				</prop>
-				<prop
-					key="/openid/*">openIdProviderController</prop>
-                <prop
-                        key="/authorizationFailure.html">passThroughController</prop>
+				<prop key="/services/*">manageRegisteredServicesMultiActionController</prop>
+				<prop key="/openid/*">openIdProviderController</prop>
+                <prop key="/authorizationFailure.html">passThroughController</prop>
+                <prop key="/403.html">passThroughController</prop>
 			</props>
 		</property>
 		<property
