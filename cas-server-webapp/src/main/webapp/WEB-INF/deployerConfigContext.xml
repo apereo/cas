@@ -101,16 +101,11 @@
 	More robust deployments will want to use another option, such as the Jdbc version.
 	
 	The name of this should remain "userDetailsService" in order for Spring Security to find it.
-	
-	To use this, you should add an entry similar to the following between the two value tags:
-	battags=notused,ROLE_ADMIN
-	
-	where battags is the username you want to grant access to.  You can put one entry per line.
 	 -->
     <!-- <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />-->
 
     <sec:user-service id="userDetailsService">
-        <sec:user name="battags" password="notused" authorities="ROLE_ADMIN" />
+        <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />
     </sec:user-service>
 	
 	<!-- 
