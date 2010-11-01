@@ -39,9 +39,10 @@ public class Saml10FailureResponseView extends AbstractCasView {
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
+        final String artifactId = service != null ? service.getArtifactId() : null;
+        final String serviceId = service != null ? service.getId() : "UNKNOWN";
         final String errorMessage = (String) model.get("description");
-
-        final SAMLResponse samlResponse = new SAMLResponse(service.getArtifactId(), service.getId(), new ArrayList<Object>(), new SAMLException(errorMessage));
+        final SAMLResponse samlResponse = new SAMLResponse(artifactId, serviceId, new ArrayList<Object>(), new SAMLException(errorMessage));
         samlResponse.setIssueInstant(new Date());
 
         response.setContentType("text/xml; charset=" + this.encoding);
