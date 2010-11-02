@@ -10,7 +10,7 @@
 	<packaging>pom</packaging>
 	<name>Jasig Central Authentication Service</name>
     <description>Parent POM for Jasig CAS Project</description>
-	<version>3.4.4-SNAPSHOT</version>
+	<version>3.4.3.1-SNAPSHOT</version>
 	<url>http://www.jasig.org/cas/</url>
 	<inceptionYear>2004</inceptionYear>
 
@@ -559,8 +559,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<issues.projectKey>CAS</issues.projectKey>
 		<scm.path>/cas3</scm.path>
         <spring.webflow.version>2.1.1.RELEASE</spring.webflow.version>
-        <spring.version>3.0.4.RELEASE</spring.version>
-        <spring.security.version>3.0.1.RELEASE</spring.security.version>
+        <spring.version>3.0.5.RELEASE</spring.version>
+        <spring.security.version>3.0.4.RELEASE</spring.security.version>
         <clover.version>2.6.3</clover.version>
         <aspectj.version>1.6.7</aspectj.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
