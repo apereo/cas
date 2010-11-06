@@ -5,20 +5,15 @@
  */
 package org.jasig.cas.web.support;
 
-import org.jasig.cas.web.support.AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.test.MockRequestContext;
-import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;
-
-import com.sun.xml.internal.ws.client.RequestContext;
 
 import junit.framework.TestCase;
 
 
-public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extends
-    TestCase {
+public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests extends TestCase {
 
     private InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter adapter;
     
