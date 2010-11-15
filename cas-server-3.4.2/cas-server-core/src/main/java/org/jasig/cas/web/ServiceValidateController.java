@@ -102,17 +102,17 @@ public class ServiceValidateController extends AbstractController {
 
     protected void initBinder(final HttpServletRequest request,
         final ServletRequestDataBinder binder) {
-        binder.setRequiredFields(new String[] {"renew"});
+        binder.setRequiredFields("renew");
     }
 
-    protected final ModelAndView handleRequestInternal(
-        final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
-        if (service == null
-            || serviceTicketId == null) {
+        if (service == null || serviceTicketId == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Could not process request; Service: %s, Service Ticket Id: %s", service, serviceTicketId));
+            }
             return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
         }
 
@@ -152,6 +152,10 @@ public class ServiceValidateController extends AbstractController {
             if (serviceCredentials != null && proxyGrantingTicketId != null) {
                 final String proxyIou = this.proxyHandler.handle(serviceCredentials, proxyGrantingTicketId);
                 success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
+            }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug(String.format("Successfully validated service ticket: %s", serviceTicketId));
             }
 
             return success;
