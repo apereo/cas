@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.util;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -13,11 +14,7 @@ import org.springframework.beans.factory.DisposableBean;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
+import java.io.*;
 import java.net.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -103,6 +100,7 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     public boolean isValidEndPoint(final URL url) {
         HttpURLConnection connection = null;
+        InputStream is = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(this.connectionTimeout);
@@ -124,9 +122,17 @@ public final class HttpClient implements Serializable, DisposableBean {
             if (log.isDebugEnabled()) {
                 log.debug("Response Code did not match any of the acceptable response codes.  Code returned was " + responseCode);
             }
+
+            // if the response code is an error and we don't find that error acceptable above:
+            if (responseCode == 500) {
+                is = connection.getInputStream();
+                final String value = IOUtils.toString(is);
+                log.error(String.format("There was an error contacting the endpoint: %s; The error was:\n%s", url.toExternalForm(), value));
+            }
         } catch (final IOException e) {
             log.error(e.getMessage(),e);
         } finally {
+            IOUtils.closeQuietly(is);
             if (connection != null) {
                 connection.disconnect();
             }
