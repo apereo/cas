@@ -93,6 +93,13 @@ public final class SamlService extends AbstractWebApplicationService {
             requestId = null;
         }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Attempted to extract Request from HttpServletRequest.  Results:");
+            log.debug(String.format("Request Body: %s", requestBody));
+            log.debug(String.format("Extracted ArtifactId: %s", artifactId));
+            log.debug(String.format("Extracted Request Id: %s", requestId));
+        }
+
         return new SamlService(id, service, artifactId, httpClient, requestId);
     }
 
