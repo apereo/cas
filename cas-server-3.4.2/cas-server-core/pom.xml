@@ -188,5 +188,13 @@
             <scope>runtime</scope>
             <type>jar</type>
         </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
+            <scope>compile</scope>
+            <type>jar</type>
+        </dependency>
   </dependencies>
 </project>
