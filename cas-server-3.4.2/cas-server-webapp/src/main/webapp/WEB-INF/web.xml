@@ -3,7 +3,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
-	<display-name>Central Authentication System (CAS) 3.0</display-name>
+	<display-name>Central Authentication System (CAS) 3.4.4</display-name>
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -12,13 +13,6 @@
 		</param-value>
 	</context-param>
 
-	<!-- 
-		place this into the contextConfigLocation to enable remote services
-		/WEB-INF/remoteServices.xml,
-		classpath:org/codehaus/xfire/spring/xfire.xml
-		
-		place this into the contextConfigLocation to enable the event publishing
-	-->
 
 	<!--
 		- Location of the Log4J config file, for initialization and refresh checks.
@@ -33,6 +27,15 @@
 		<param-name>log4jExposeWebAppRoot</param-name>
 		<param-value>false</param-value>
 	</context-param>
+
+<!--
+    Specify that the log4j configuration should be reloaded periodically
+    to pick up changes
+  -->
+  <context-param>
+    <param-name>log4jRefreshInterval</param-name>
+    <param-value>60000</param-value>
+  </context-param>
 	
 	<filter>
 		<filter-name>CAS Client Info Logging Filter</filter-name>
