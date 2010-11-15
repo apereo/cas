@@ -577,5 +577,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <junit.version>4.7</junit.version>
         <commons.lang.version>2.4</commons.lang.version>
         <inspektr.version>1.0.0.GA</inspektr.version>
+        <commons.io.version>2.0</commons.io.version>
 	</properties>
 </project>
