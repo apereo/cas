@@ -94,6 +94,7 @@ public abstract class AbstractDistributedTicketRegistry extends
             final Object result = m.invoke(this.ticket, args);
             
             if (ABSTRACT_GT_METHOD.equals(m)) {
+                System.out.println("This was called.");
                 if (result == null) {
                     return null;
                 }

@@ -31,6 +31,8 @@ public interface RegisteredService extends Cloneable, Serializable {
      * Determines whether the service is allowed anonymous or priveleged access
      * to user information. Anonymous access should not return any identifying
      * information such as user id.
+     *
+     * @return if we should use a pseudo random identifier instead of their real id
      */
     boolean isAnonymousAccess();
     
