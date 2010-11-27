@@ -142,4 +142,9 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
 	public void setSynchronizeUpdatesToRegistry(final boolean b) {
 	    this.synchronizeUpdatesToRegistry = b;
 	}
+
+    @Override
+    protected boolean needsCallback() {
+        return true;
+    }
 }

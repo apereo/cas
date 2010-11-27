@@ -114,5 +114,10 @@ public class DistributedTicketRegistryTests extends TestCase {
         public Collection<Ticket> getTickets() {
             return this.tickets.values();
         }
+
+        @Override
+        protected boolean needsCallback() {
+            return true;
+        }
     }
 }
