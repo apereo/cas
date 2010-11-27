@@ -28,25 +28,22 @@ public final class Response {
 
     private final Map<String, String> attributes;
 
-    protected Response(ResponseType responseType, final String url,
-        final Map<String, String> attributes) {
+    protected Response(ResponseType responseType, final String url, final Map<String, String> attributes) {
         this.responseType = responseType;
         this.url = url;
         this.attributes = attributes;
     }
 
-    public static Response getPostResponse(final String url,
-        final Map<String, String> attributes) {
+    public static Response getPostResponse(final String url, final Map<String, String> attributes) {
         return new Response(ResponseType.POST, url, attributes);
     }
 
-    public static Response getRedirectResponse(final String url,
-        final Map<String, String> parameters) {
-        final StringBuilder builder = new StringBuilder(
-            parameters.size() * 40 + 100);
+    public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
+        final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
         boolean isFirst = true;
+        final String[] fragmentSplit = url.split("#");
         
-        builder.append(url);
+        builder.append(fragmentSplit[0]);
         
         for (final Map.Entry<String, String> entry : parameters.entrySet()) {
             if (entry.getValue() != null) {
@@ -65,6 +62,11 @@ public final class Response {
                     builder.append(entry.getValue());
                 }
             }
+        }
+
+        if (fragmentSplit.length > 1) {
+            builder.append("#");
+            builder.append(fragmentSplit[1]);
         }
 
         return new Response(ResponseType.REDIRECT, builder.toString(), parameters);
