@@ -75,7 +75,9 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
                 return this.ticket.isExpired();
             }
 
-            return this.ticket.isExpired() || (getGrantingTicket() != null && getGrantingTicket().isExpired());
+            final TicketGrantingTicket t = getGrantingTicket();
+
+            return this.ticket.isExpired() || (t != null && t.isExpired());
         }
 
         public final TicketGrantingTicket getGrantingTicket() {
