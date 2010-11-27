@@ -110,4 +110,9 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     public void setCache(final Cache<String, Ticket> cache) {
         this.cache = cache;
     }
+
+    @Override
+    protected boolean needsCallback() {
+        return true;
+    }
 }

@@ -127,4 +127,9 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
         this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
     }
+
+    @Override
+    protected boolean needsCallback() {
+        return false;
+    }
 }
