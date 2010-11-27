@@ -209,4 +209,9 @@ public final class BerkeleyDbTicketRegistry extends
 
         return de;
     }
+
+    @Override
+    protected boolean needsCallback() {
+        return false;
+    }
 }
