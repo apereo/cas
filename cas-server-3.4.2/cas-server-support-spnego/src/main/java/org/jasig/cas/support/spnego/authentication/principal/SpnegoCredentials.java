@@ -88,7 +88,7 @@ public final class SpnegoCredentials implements Credentials {
     }
     
     public String toString() {
-        return this.principal!=null?this.principal.getId():"Principal is null";
+        return this.principal !=null ? "name=" + this.principal.getId() :"name=null";
     }
 
     public boolean equals(final Object obj) {

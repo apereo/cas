@@ -42,4 +42,16 @@ public final class X509CertificateCredentials implements Credentials {
     public X509Certificate getCertificate() {
         return this.certificate;
     }
+
+    public String toString() {
+        if (getCertificate() != null) {
+            return getCertificate().getSubjectDN().getName();
+        }
+
+        if (getCertificates() != null && getCertificates().length > 1) {
+            return getCertificates()[0].getSubjectDN().getName();
+        }
+
+        return super.toString();
+    }
 }
