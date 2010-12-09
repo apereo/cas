@@ -141,6 +141,13 @@
         </dependency>
 
         <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <scope>test</scope>
+            <version>3.12.1.GA</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.santuario</groupId>
             <artifactId>xmlsec</artifactId>
             <version>1.4.3</version>
