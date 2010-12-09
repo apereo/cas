@@ -12,12 +12,16 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
+ * The following class is deprecated in favor of
+ * {@link X509CertificateCredentialsToSubjectPrinciplalResolver}.
+ *
  * @author Anders Svensson
  * @author Scott Battaglia
  * @author Barry Silk
  * @version $Revision$ $Date$
  * @since 3.0.4
  */
+@Deprecated
 public final class X509CertificateCredentialsToIdentifierPrincipalResolver extends
     AbstractX509CertificateCredentialsToPrincipalResolver {
 
