@@ -18,7 +18,7 @@ public class SpnegoCredentialsTests extends TestCase {
     public void testToStringWithNoPrincipal() {
         final SpnegoCredentials credentials = new SpnegoCredentials(new byte[] {});
         
-        assertTrue(credentials.toString().contains("null"));
+        assertTrue(credentials.toString().contains("unknown"));
     }
     
     public void testToStringWithPrincipal() {
