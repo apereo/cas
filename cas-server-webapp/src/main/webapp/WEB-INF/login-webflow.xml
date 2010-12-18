@@ -13,7 +13,7 @@
 	</decision-state>
     
 	<decision-state id="gatewayRequestCheck">
-		<if test="externalContext.requestParameterMap['gateway'] neq '' &amp;&amp; externalContext.requestParameterMap['gateway'] neq null &amp;&amp; flowScope.service neq null" then="redirect" else="viewLoginForm" />
+		<if test="externalContext.requestParameterMap['gateway'] neq '' &amp;&amp; externalContext.requestParameterMap['gateway'] neq null &amp;&amp; flowScope.service neq null" then="gatewayServicesManagementCheck" else="viewLoginForm" />
 	</decision-state>
 	
 	<decision-state id="hasServiceCheck">
@@ -54,7 +54,6 @@
             <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credentials)" />
         </transition>
 	</view-state>
-	
 
 	<action-state id="realSubmit">
         <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credentials, messageContext)" />
@@ -76,8 +75,13 @@
         <evaluate expression="generateServiceTicketAction" />
 		<transition on="success" to ="warn" />
 		<transition on="error" to="viewLoginForm" />
-		<transition on="gateway" to="redirect" />
+		<transition on="gateway" to="gatewayServicesManagementCheck" />
 	</action-state>
+
+    <action-state id="gatewayServicesManagementCheck">
+        <evaluate expression="gatewayServicesManagementCheck" />
+        <transition on="success" to="redirect" />
+    </action-state>
 
     <action-state id="redirect">
         <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)" result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response" />
