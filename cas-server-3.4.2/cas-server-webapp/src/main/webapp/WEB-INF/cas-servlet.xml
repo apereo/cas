@@ -221,6 +221,10 @@
 	<bean id="sendTicketGrantingTicketAction" class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction"
 		p:centralAuthenticationService-ref="centralAuthenticationService"
 		p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator" />
+
+    <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck">
+        <constructor-arg index="0" ref="servicesManager" />
+    </bean>
 	
 	<bean id="addRegisteredServiceSimpleFormController" class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
 		p:formView="addServiceView"
