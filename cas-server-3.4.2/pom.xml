@@ -10,7 +10,7 @@
 	<packaging>pom</packaging>
 	<name>Jasig Central Authentication Service</name>
     <description>Parent POM for Jasig CAS Project</description>
-	<version>3.4.5</version>
+	<version>3.4.6-SNAPSHOT</version>
 	<url>http://www.jasig.org/cas/</url>
 	<inceptionYear>2004</inceptionYear>
 
@@ -23,9 +23,9 @@
 	</licenses>
 
     <scm>
-        <connection>scm:svn:https://source.jasig.org/cas3/tags/cas-server-3.4.5</connection>
-        <developerConnection>scm:svn:https://source.jasig.org/cas3/tags/cas-server-3.4.5</developerConnection>
-        <url>https://source.jasig.org/cas3/tags/cas-server-3.4.5</url>
+        <connection>scm:svn:https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</connection>
+        <developerConnection>scm:svn:https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</developerConnection>
+        <url>https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</url>
     </scm>
     
 	<build>
