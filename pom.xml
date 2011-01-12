@@ -216,6 +216,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <version>${slf4j.version}</version>
             <scope>runtime</scope>
             <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -511,6 +517,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 
 	<modules>
 		<module>cas-server-core</module>
+        <module>cas-server-webapp</module>
 		<module>cas-server-support-generic</module>
 		<module>cas-server-support-jdbc</module>
 		<module>cas-server-support-ldap</module>
@@ -524,8 +531,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		<module>cas-server-integration-berkeleydb</module>
 		<module>cas-server-integration-memcached</module>
 		<module>cas-server-integration-restlet</module>
-		<module>cas-server-webapp</module>
-	</modules>
+        <module>cas-server-uber-webapp</module>
+    </modules>
 
 	<reporting>
 		<plugins>
