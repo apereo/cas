@@ -86,6 +86,11 @@
         <appender-ref ref="cas" />
     </logger>
 
+    <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
+        <level value="INFO" />
+        <appender-ref ref="cas" />
+    </logger>
+
     <!--
         WARNING: Setting the flow package to DEBUG will display
         the parameters posted to the login servlet including

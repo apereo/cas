@@ -163,4 +163,6 @@
                 </list>
             </property>
         </bean>
+
+    <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
 </beans>
