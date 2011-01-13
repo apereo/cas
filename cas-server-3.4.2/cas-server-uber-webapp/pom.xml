@@ -11,7 +11,7 @@
     <packaging>war</packaging>
     <name>Jasig CAS - Uber WAR</name>
 
-    <artifactId>cas-server-whole-webapp</artifactId>
+    <artifactId>cas-server-uber-webapp</artifactId>
 
     <build>
 		<plugins>
@@ -30,6 +30,20 @@
             <artifactId>cas-server-webapp</artifactId>
             <version>${project.version}</version>
             <type>war</type>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-jdbc</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-radius</artifactId>
+            <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
 
