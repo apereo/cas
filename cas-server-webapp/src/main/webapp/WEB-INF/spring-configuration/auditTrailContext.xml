@@ -25,7 +25,7 @@
     <!-- List<AuditTrailManager> auditTrailManagers -->
     <constructor-arg index="2">
       <list>
-        <bean class="com.github.inspektr.audit.support.ConsoleAuditTrailManager" />
+        <ref bean="auditTrailManager" />
       </list>
     </constructor-arg>
 
