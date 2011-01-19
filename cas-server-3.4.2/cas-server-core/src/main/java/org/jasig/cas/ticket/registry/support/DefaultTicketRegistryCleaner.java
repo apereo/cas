@@ -61,6 +61,8 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private LockingStrategy lock = new NoOpLockingStrategy();
 
+    private boolean logUserOutOfServices = true;
+
 
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
@@ -86,7 +88,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
             this.log.info(ticketsToRemove.size() + " tickets found to be removed.");
             for (final Ticket ticket : ticketsToRemove) {
                 // CAS-686: Expire TGT to trigger single sign-out
-                if (ticket instanceof TicketGrantingTicket) {
+                if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
                     ((TicketGrantingTicket) ticket).expire();
                 }
                 this.ticketRegistry.deleteTicket(ticket.getId());
@@ -117,5 +119,15 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      */
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;
+    }
+
+    /**
+     * Whether to log users out of services when we remove an expired ticket.  The default is true. Set this to
+     * false to disable.
+     *
+     * @param logUserOutOfServices whether to log the user out of services or not.
+     */
+    public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
+        this.logUserOutOfServices = logUserOutOfServices;
     }
 }
