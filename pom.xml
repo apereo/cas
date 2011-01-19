@@ -576,9 +576,9 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
         <spring.security.version>3.0.5.RELEASE</spring.security.version>
         <clover.version>2.6.3</clover.version>
-        <aspectj.version>1.6.7</aspectj.version>
+        <aspectj.version>1.6.10</aspectj.version>
         <javax.validation.version>1.0.0.GA</javax.validation.version>
-        <perf4j.version>0.9.12</perf4j.version>
+        <perf4j.version>0.9.14</perf4j.version>
         <commons.jexl.version>1.1</commons.jexl.version>
         <hibernate.validator.version>4.0.2.GA</hibernate.validator.version>
         <hibernate.core.version>3.5.0-CR-2</hibernate.core.version>
@@ -590,7 +590,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <log4j.version>1.2.15</log4j.version>
         <junit.version>4.7</junit.version>
         <commons.lang.version>2.5</commons.lang.version>
-        <inspektr.version>1.0.0.GA</inspektr.version>
+        <inspektr.version>1.0.1.GA</inspektr.version>
         <commons.io.version>2.0</commons.io.version>
 	</properties>
 </project>
