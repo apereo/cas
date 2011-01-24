@@ -65,7 +65,7 @@ public class AbstractX509CertificateTests extends TestCase {
             return new Principal(){
 
                 public String getName() {
-                    return "JA-SIG";
+                    return "CN=Jasig,DC=jasig,DC=org";
                 }
             };
         }
@@ -110,7 +110,7 @@ public class AbstractX509CertificateTests extends TestCase {
             return new Principal(){
 
                 public String getName() {
-                    return "subject";
+                    return "CN=CAS,DC=jasig,DC=org";
                 }
 
             };
@@ -153,7 +153,7 @@ public class AbstractX509CertificateTests extends TestCase {
         }
 
         public String toString() {
-            return "JA-SIG";
+            return "CasX509Certficate";
         }
 
         public void verify(PublicKey arg0, String arg1)

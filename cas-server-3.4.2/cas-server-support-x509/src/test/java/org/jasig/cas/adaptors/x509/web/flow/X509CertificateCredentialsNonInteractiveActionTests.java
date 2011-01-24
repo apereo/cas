@@ -46,7 +46,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();
 
         final X509CredentialsAuthenticationHandler a = new X509CredentialsAuthenticationHandler();
-        a.setTrustedIssuerDnPattern("JA-SIG");
+        a.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
         
         authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {a}));
         authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new X509CertificateCredentialsToSerialNumberPrincipalResolver()}));

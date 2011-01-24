@@ -24,7 +24,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
 
     protected void setUp() throws Exception {
         this.authenticationHandler = new X509CredentialsAuthenticationHandler();
-        this.authenticationHandler.setTrustedIssuerDnPattern("JA-SIG");       
+        this.authenticationHandler.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");       
     }
     
     public void testSupportsClass() {
@@ -61,7 +61,7 @@ public class X509CredentialsAuthenticationHandlerTests extends AbstractX509Certi
     }
     
     public void testValidCertificateWithCustomDistinguishedDn() throws Exception {
-        this.authenticationHandler.setSubjectDnPattern("s.*");
+        this.authenticationHandler.setSubjectDnPattern("CN=\\w+,DC=jasig,DC=org");
         final X509CertificateCredentials credentials = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
         
         assertTrue(this.authenticationHandler.authenticate(credentials));

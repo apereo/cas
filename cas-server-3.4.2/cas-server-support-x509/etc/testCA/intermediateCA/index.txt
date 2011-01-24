@@ -1,0 +1,1 @@
+V	321214182539Z		0CA5	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=CAS Test User CA
