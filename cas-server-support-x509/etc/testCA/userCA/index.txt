@@ -1,3 +1,5 @@
 V	321214182757Z		0CA5	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Alice
 V	100119190000Z		0CA6	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Handyman Bob
 R	321214184006Z	110119184136Z,keyTime,20100119190000Z	0CA7	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Mallory
+V	321219185645Z		0CA8	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Albert
+V	321219190010Z		0CA9	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Malificent

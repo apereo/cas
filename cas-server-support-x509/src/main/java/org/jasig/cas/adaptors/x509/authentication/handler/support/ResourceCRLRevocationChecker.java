@@ -56,6 +56,15 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
 
 
     /**
+     * Creates a new instance using the specified resource for CRL data.
+     *
+     * @param crl Resource containing CRL data.  MUST NOT be null.
+     */
+    public ResourceCRLRevocationChecker(final Resource crl) {
+        this(new Resource[] {crl});
+    }
+
+    /**
      * Creates a new instance using the specified resources for CRL data.
      *
      * @param crls Resources containing CRL data.  MUST NOT be null and MUST have
