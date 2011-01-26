@@ -5,7 +5,6 @@
  */
 package org.jasig.cas.adaptors.x509.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CRLException;
@@ -15,9 +14,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.springframework.core.io.Resource;
-
 
 
 /**
@@ -73,17 +70,8 @@ public final class CertUtils {
     public static X509CRL fetchCRL(final Resource resource) throws CRLException, IOException {
         // Always attempt to open a new stream on the URL underlying the resource
         final InputStream in = resource.getURL().openStream();
-        final ByteArrayOutputStream out = new ByteArrayOutputStream(2048);
-        final byte[] buffer = new byte[1024];
-        int count = 0;
-        while ((count = in.read(buffer)) > -1) {
-           out.write(buffer, 0, count); 
-        }
-        final byte[] data = out.toByteArray();
-        System.out.println(new String(data, "ASCII"));
-        final ByteArrayInputStream inMemory = new ByteArrayInputStream(out.toByteArray());
         try {
-            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(inMemory);
+            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(in);
         } finally {
             in.close();
         }
