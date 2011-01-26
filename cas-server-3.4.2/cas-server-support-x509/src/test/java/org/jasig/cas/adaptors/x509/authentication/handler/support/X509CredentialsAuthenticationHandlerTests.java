@@ -194,7 +194,7 @@ public class X509CredentialsAuthenticationHandlerTests {
       //===================================
       ResourceCRLRevocationChecker checker;
 
-      // Test case #6
+      // Test case #10
       // Valid certificate with CRL checking
       handler = new X509CredentialsAuthenticationHandler();
       checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
@@ -208,7 +208,7 @@ public class X509CredentialsAuthenticationHandlerTests {
           true,
       });
 
-      // Test case #7
+      // Test case #11
       // Revoked end user certificate
       handler = new X509CredentialsAuthenticationHandler();
       checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
@@ -222,11 +222,14 @@ public class X509CredentialsAuthenticationHandlerTests {
           false,
       });
       
-      // Test case #8
+      // Test case #12
       // Valid certificate on expired CRL data
+      final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy();
+      zeroThresholdPolicy.setThreshold(0);
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
       checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-expired.crl"));
+      checker.setExpiredCRLPolicy(zeroThresholdPolicy);
       checker.afterPropertiesSet();
       handler.setRevocationChecker(checker);
       params.add(new Object[] {

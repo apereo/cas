@@ -121,7 +121,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     }
 
     /**
-     * @see org.jasig.cas.adaptors.x509.authentication.handler.support.AbstractCRLRevocationChecker#getCRL(java.security.cert.X509Certificate)
+     * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
      */
     protected X509CRL getCRL(final X509Certificate cert) {
         return this.crlIssuerMap.get(cert.getIssuerX500Principal());
