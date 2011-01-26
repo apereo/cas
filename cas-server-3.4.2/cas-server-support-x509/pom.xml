@@ -1,31 +1,37 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>3.4.6-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-x509</artifactId>
-	<packaging>jar</packaging>
-	<name>JA-SIG CAS X.509 Client Certificate Support</name>
-	
-	<dependencies>
-		<dependency>
-			<artifactId>cas-server-core</artifactId>
-			<groupId>org.jasig.cas</groupId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<artifactId>vt-crypt</artifactId>
-			<groupId>edu.vt.middleware</groupId>
-			<version>2.1.2</version>
-		</dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server</artifactId>
+    <version>3.4.6-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-x509</artifactId>
+  <packaging>jar</packaging>
+  <name>JA-SIG CAS X.509 Client Certificate Support</name>
+
+  <dependencies>
     <dependency>
-        <groupId>org.springframework.webflow</groupId>
-        <artifactId>spring-webflow</artifactId>
-        <scope>compile</scope>
+      <artifactId>cas-server-core</artifactId>
+      <groupId>org.jasig.cas</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>vt-crypt</artifactId>
+      <groupId>edu.vt.middleware</groupId>
+      <version>2.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>spring-webflow</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
+      <version>2.3.1</version>
     </dependency>
 
-	</dependencies>
+  </dependencies>
 </project>

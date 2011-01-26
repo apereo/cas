@@ -5,24 +5,17 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.core.io.ClassPathResource;
-
-import edu.vt.middleware.crypt.util.CryptReader;
 
 
 /**
@@ -34,15 +27,10 @@ import edu.vt.middleware.crypt.util.CryptReader;
  *
  */
 @RunWith(Parameterized.class)
-public class ResourceCRLRevocationCheckerTests {
+public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
     /** Instance under test */
     private ResourceCRLRevocationChecker checker;
-    
-    /** Certificate to be tested */
-    private X509Certificate[] certificates;
 
-    /** Expected result of check; null for success */
-    private GeneralSecurityException expected;
 
     /**
      * Creates a new test instance with given parameters.
@@ -57,16 +45,10 @@ public class ResourceCRLRevocationCheckerTests {
         final RevocationPolicy<X509CRL> expiredCRLPolicy,
         final String[] certFiles,
         final GeneralSecurityException expected) {
+        
+        super(certFiles, expected);
 
         this.checker = checker;
-        this.expected = expected;
-       
-        this.certificates = new X509Certificate[certFiles.length];
-        int i = 0;
-        for (String file : certFiles) {
-            this.certificates[i++] = readCertificate(file);
-        }
-
         this.checker.setExpiredCRLPolicy(expiredCRLPolicy);
         try {
             this.checker.afterPropertiesSet();
@@ -137,51 +119,25 @@ public class ResourceCRLRevocationCheckerTests {
           new String[] {"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt" },
           new ExpiredCRLException("test", new Date()),
       });
+      
+      // Test case #5
+      // Valid certificate on expired CRL data with custom expiration
+      // policy to always allow expired CRL data
+      params.add(new Object[] {
+          new ResourceCRLRevocationChecker(new ClassPathResource[] {
+              new ClassPathResource("userCA-expired.crl"),
+          }),
+          new RevocationPolicy<X509CRL>() {
+              public void apply(X509CRL crl) {/* Do nothing to allow unconditionally */}
+          },
+          new String[] {"user-valid.crt"},
+          null,
+      });
 
       return params;
     }
 
-    /**
-     * Test method for {@link org.jasig.cas.adaptors.x509.authentication.handler.support.AbstractCRLRevocationChecker#check(java.security.cert.X509Certificate)}.
-     */
-    @Test
-    public void testCheck() {
-        try {
-            for (X509Certificate cert : this.certificates) {
-	            this.checker.check(cert);
-            }
-            if (this.expected != null) {
-                Assert.fail("Expected exception of type " + this.expected.getClass());
-            }
-        } catch (GeneralSecurityException e) {
-            if (this.expected == null) {
-                e.printStackTrace();
-                Assert.fail("Revocation check failed unexpectedly with exception: " + e);
-            } else {
-                final Class<?> expectedClass = this.expected.getClass();
-                final Class<?> actualClass = e.getClass();
-                Assert.assertTrue(
-                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
-                    expectedClass.isAssignableFrom(actualClass));
-            }
-        }
-    }
-
-    private X509Certificate readCertificate(final String file) {
-        InputStream in = null;
-        try {
-            in = new ClassPathResource(file).getInputStream();
-            return (X509Certificate) CryptReader.readCertificate(in);
-        } catch (Exception e) {
-            throw new RuntimeException("Error reading certificate " + file, e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
-        }
+    protected RevocationChecker getChecker() {
+        return this.checker;
     }
 }
