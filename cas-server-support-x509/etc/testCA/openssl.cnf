@@ -208,12 +208,10 @@ authorityKeyIdentifier=keyid,issuer
 # Copy subject details
 # issuerAltName=issuer:copy
 
-#nsCaRevocationUrl		= http://www.domain.dom/ca-crl.pem
-#nsBaseUrl
-#nsRevocationUrl
-#nsRenewalUrl
-#nsCaPolicyUrl
-#nsSslServerName
+crlDistributionPoints=URI:http://localhost:8085/ca.crl,URI:http://example.com/ca.crl
+
+# Use this to produce a list with just a single entry
+#crlDistributionPoints=URI:http://localhost:8085/ca.crl
 
 [ v3_req ]
 # Extensions to add to a certificate request
@@ -278,13 +276,6 @@ authorityKeyIdentifier=keyid,issuer:always
 
 # Copy subject details
 # issuerAltName=issuer:copy
-
-#nsCaRevocationUrl		= http://www.domain.dom/ca-crl.pem
-#nsBaseUrl
-#nsRevocationUrl
-#nsRenewalUrl
-#nsCaPolicyUrl
-#nsSslServerName
 
 # This really needs to be in place for it to be a proxy certificate.
 proxyCertInfo=critical,language:id-ppl-anyLanguage,pathlen:3,policy:foo
