@@ -6,3 +6,4 @@ V	321219190010Z		0CA9	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=
 V	321221160057Z		0CAA	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Anthony
 R	321221161023Z	110126161056Z,keyCompromise	0CAB	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Marauder
 R	321221162127Z	110126162153Z,keyCompromise	0CAC	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Marauder
+R	321226170329Z	110131170412Z,keyCompromise	0CAD	unknown	/C=US/ST=Colorado/L=Westminster/O=Jasig/OU=CAS/CN=Malverde

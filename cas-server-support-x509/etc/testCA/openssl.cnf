@@ -210,7 +210,11 @@ authorityKeyIdentifier=keyid,issuer
 
 crlDistributionPoints=URI:http://localhost:8085/ca.crl,URI:http://example.com/ca.crl
 
-# Use this to produce a list with just a single entry
+# Use following to produce CRL with querystring that needs to be encoded
+# i.e. the EJBCA use case
+#crlDistributionPoints = URI:http://localhost:8085/ca?issuer=CN=CAS Test User CA
+
+# Use following to produce a list with just a single entry
 #crlDistributionPoints=URI:http://localhost:8085/ca.crl
 
 [ v3_req ]

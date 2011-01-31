@@ -5,11 +5,12 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -68,8 +69,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     protected X509CRL getCRL(final X509Certificate cert) {
         final URL[] urls = getDistributionPoints(cert);
         if (this.logger.isDebugEnabled()) {
-            this.logger.debug(
-                String.format("Distribution points for %s: %s.", CertUtils.toString(cert), urls));
+            this.logger.debug(String.format(
+                "Distribution points for %s: %s.", CertUtils.toString(cert), Arrays.asList(urls)));
         }
         
         Object value;
@@ -126,11 +127,15 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         return urls.toArray(new URL[urls.size()]);
     }
     
-    private void addURL(final List<URL> list, final String url) {
+    private void addURL(final List<URL> list, final String uriString) {
         try {
-            list.add(new URL(url));
-        } catch (MalformedURLException e) {
-            this.logger.warn(url + " is not a valid distribution point URL.");
+            // Build URI by components to facilitate proper encoding of querystring
+            // e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
+            final URL url = new URL(uriString);
+            final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
+            list.add(uri.toURL());
+        } catch (Exception e) {
+            this.logger.warn(uriString + " is not a valid distribution point URI.");
         }
     }
 }
