@@ -73,14 +73,14 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                 "Distribution points for %s: %s.", CertUtils.toString(cert), Arrays.asList(urls)));
         }
         
-        Object value;
+        Element item;
         for (URL url : urls) {
-            value = this.crlCache.get(url);
-            if (value != null) {
+            item = this.crlCache.get(url);
+            if (item != null) {
                 if (this.logger.isDebugEnabled()) {
                     this.logger.debug("Found CRL in cache for " + CertUtils.toString(cert));
                 }
-                return (X509CRL) value;
+                return (X509CRL) item.getObjectValue();
             }
         }
 
