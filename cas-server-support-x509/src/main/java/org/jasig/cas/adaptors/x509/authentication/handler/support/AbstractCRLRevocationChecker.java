@@ -47,7 +47,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         }
         final X509CRL crl = getCRL(cert);
         if (crl == null) {
-            this.logger.warn("CRL data is not available for " + cert);
+            this.logger.warn("CRL data is not available for " + CertUtils.toString(cert));
             this.unavailableCRLPolicy.apply(null);
             return;
         }
