@@ -85,7 +85,7 @@ public final class CertUtils {
      * @return String representation of a certificate that includes the subject and serial number.
      */
     public static String toString(final X509Certificate cert) {
-        return String.format("X509Certificate(%s, %s)", cert.getSerialNumber(), cert.getSubjectDN());
+        return String.format("%s, SerialNumber=%s", cert.getSubjectDN(), cert.getSerialNumber());
     }
 
     /**

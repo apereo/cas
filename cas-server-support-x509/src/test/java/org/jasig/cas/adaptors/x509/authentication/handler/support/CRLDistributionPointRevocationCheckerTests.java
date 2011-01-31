@@ -144,6 +144,22 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
           null,
       });
       
+      // Test case #6
+      // EJBCA test case
+      // Revoked certificate with CRL distribution point URI that is technically
+      // not a valid URI since the issuer DN in the querystring is not encoded per
+      // the escaping of reserved characters in RFC 2396.
+      // Make sure we can convert given URI to valid URI and confirm it's revoked
+      cache = new Cache("crlCache-6", 100, false, false, 20, 10);
+      cache.initialise();
+      params.add(new Object[] {
+          new CRLDistributionPointRevocationChecker(cache),
+          defaultPolicy,
+          new String[] {"user-revoked-distcrl2.crt"},
+         "userCA-valid.crl",
+          new RevokedCertificateException(new Date(), new BigInteger("1")),
+      });
+      
       return params;
     }
 
