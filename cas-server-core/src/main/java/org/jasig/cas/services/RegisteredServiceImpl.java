@@ -18,6 +18,8 @@ import javax.persistence.JoinTable;
 
 import javax.persistence.GenerationType;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.cas.authentication.principal.Service;
@@ -244,4 +246,15 @@ public class RegisteredServiceImpl
         return result;
     }
 
+    @Override
+    public String toString() {
+        final ToStringBuilder toStringBuilder = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        toStringBuilder.append("id", this.id);
+        toStringBuilder.append("name", this.name);
+        toStringBuilder.append("description", this.description);
+        toStringBuilder.append("serviceId", this.serviceId);
+        toStringBuilder.append("attributes", this.allowedAttributes.toArray());
+
+        return toStringBuilder.toString();
+    }
 }

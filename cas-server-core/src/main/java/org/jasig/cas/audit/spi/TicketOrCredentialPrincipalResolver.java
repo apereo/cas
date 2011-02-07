@@ -13,6 +13,10 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.AopUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 import javax.validation.constraints.NotNull;
 
@@ -57,6 +61,15 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
             } else if (ticket instanceof TicketGrantingTicket) {
                 final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
                 return tgt.getAuthentication().getPrincipal().getId();
+            }
+        } else {
+            final SecurityContext securityContext = SecurityContextHolder.getContext();
+            if (securityContext != null) {
+                final Authentication authentication = securityContext.getAuthentication();
+
+                if (authentication != null) {
+                    return ((User) authentication.getPrincipal()).getUsername();
+                }
             }
         }
         return UNKNOWN_USER;
