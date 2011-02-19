@@ -28,7 +28,7 @@ import javax.security.auth.x500.X500Principal;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public class MockX509CRL extends X509CRL {

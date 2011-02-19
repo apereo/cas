@@ -116,7 +116,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      */
     protected void addCrl(final X509CRL crl) {
         final X500Principal issuer = crl.getIssuerX500Principal();
-        this.logger.debug("Adding CRL for issuer " + issuer);
+        this.log.debug("Adding CRL for issuer " + issuer);
         this.crlIssuerMap.put(issuer, crl);
     }
 

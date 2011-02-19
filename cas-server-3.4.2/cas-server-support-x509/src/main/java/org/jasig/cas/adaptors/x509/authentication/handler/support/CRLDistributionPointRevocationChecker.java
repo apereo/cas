@@ -39,14 +39,11 @@ import net.sf.ehcache.Element;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
-    
-    /** Logger instance. */
-    private final Log logger = LogFactory.getLog(getClass());
-   
+
     /** CRL cache. */
     private Cache crlCache;
     
@@ -68,8 +65,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     protected X509CRL getCRL(final X509Certificate cert) {
         final URL[] urls = getDistributionPoints(cert);
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug(String.format(
+        if (log.isDebugEnabled()) {
+            log.debug(String.format(
                 "Distribution points for %s: %s.", CertUtils.toString(cert), Arrays.asList(urls)));
         }
         
@@ -77,8 +74,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         for (URL url : urls) {
             item = this.crlCache.get(url);
             if (item != null) {
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug("Found CRL in cache for " + CertUtils.toString(cert));
+                if (log.isDebugEnabled()) {
+                    log.debug("Found CRL in cache for " + CertUtils.toString(cert));
                 }
                 return (X509CRL) item.getObjectValue();
             }
@@ -87,13 +84,13 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         // Try all distribution points and stop at first fetch that succeeds
         X509CRL crl = null;
         for (int i = 0; i < urls.length && crl == null; i++) {
-           this.logger.info("Attempting to fetch CRL at " + urls[i]);
+           this.log.info("Attempting to fetch CRL at " + urls[i]);
            try {
                crl = CertUtils.fetchCRL(new UrlResource(urls[i]));
-               this.logger.info("Success. Caching fetched CRL.");
+               this.log.info("Success. Caching fetched CRL.");
                this.crlCache.put(new Element(urls[i], crl));
            } catch (Exception e) {
-               this.logger.error("Error fetching CRL at " + urls[i], e);
+               this.log.error("Error fetching CRL at " + urls[i], e);
            }
         }
         
@@ -104,8 +101,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         final DistributionPointList points;
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
-        } catch (Exception e) {
-            this.logger.error(
+        } catch (final Exception e) {
+            log.error(
                 "Error reading CRLDistributionPoints extension field on " + CertUtils.toString(cert), e);
             return new URL[0];
         }
@@ -120,7 +117,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                     addURL(urls, gn.getName());
                 }
             } else {
-                this.logger.warn(location + " not supported.  String or GeneralNameList expected.");
+                log.warn(location + " not supported.  String or GeneralNameList expected.");
             }
         }
         
@@ -134,8 +131,8 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             final URL url = new URL(uriString);
             final URI uri = new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null);
             list.add(uri.toURL());
-        } catch (Exception e) {
-            this.logger.warn(uriString + " is not a valid distribution point URI.");
+        } catch (final Exception e) {
+            log.warn(uriString + " is not a valid distribution point URI.");
         }
     }
 }
