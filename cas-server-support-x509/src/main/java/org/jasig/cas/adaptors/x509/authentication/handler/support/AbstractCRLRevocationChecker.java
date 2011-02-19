@@ -21,12 +21,12 @@ import org.jasig.cas.adaptors.x509.util.CertUtils;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
     /** Logger instance */
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
 
     /** Policy to apply when CRL data is unavailable. */
     @NotNull
@@ -42,17 +42,17 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         if (cert == null) {
             throw new IllegalArgumentException("Certificate cannot be null.");
         }
-        if (this.logger.isDebugEnabled()) {
-	        this.logger.debug("Evaluating certificate revocation status for " + CertUtils.toString(cert));
+        if (log.isDebugEnabled()) {
+	        log.debug("Evaluating certificate revocation status for " + CertUtils.toString(cert));
         }
         final X509CRL crl = getCRL(cert);
         if (crl == null) {
-            this.logger.warn("CRL data is not available for " + CertUtils.toString(cert));
+            log.warn("CRL data is not available for " + CertUtils.toString(cert));
             this.unavailableCRLPolicy.apply(null);
             return;
         }
         if (CertUtils.isExpired(crl)) {
-            this.logger.warn("CRL data expired on " + crl.getNextUpdate());
+            log.warn("CRL data expired on " + crl.getNextUpdate());
             this.expiredCRLPolicy.apply(crl);
         }
         final X509CRLEntry entry = crl.getRevokedCertificate(cert);

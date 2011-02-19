@@ -14,7 +14,7 @@ import java.security.GeneralSecurityException;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public interface RevocationPolicy<T> {

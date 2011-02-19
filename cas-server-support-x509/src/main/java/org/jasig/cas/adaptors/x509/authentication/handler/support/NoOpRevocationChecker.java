@@ -14,10 +14,10 @@ import java.security.cert.X509Certificate;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
-public class NoOpRevocationChecker implements RevocationChecker {
+public final class NoOpRevocationChecker implements RevocationChecker {
 
     /**
      * NO-OP check implementation.

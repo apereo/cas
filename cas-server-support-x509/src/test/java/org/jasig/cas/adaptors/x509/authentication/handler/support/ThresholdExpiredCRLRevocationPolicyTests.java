@@ -47,7 +47,6 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      *
      * @param policy Policy to test.
      * @param crl CRL instance to apply policy to.
-     * @param certFiles File names of certificates to check.
      * @param expected Expected result of policy application; null to indicate expected success.
      */
     public ThresholdExpiredCRLRevocationPolicyTests(
@@ -64,6 +63,7 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      * Gets the unit test parameters.
      *
      * @return  Test parameter data.
+     * @throws Exception if there is an exception getting the test parameters.
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() throws Exception
