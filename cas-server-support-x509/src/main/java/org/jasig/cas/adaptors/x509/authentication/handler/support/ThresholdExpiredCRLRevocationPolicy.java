@@ -13,6 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 
+import javax.validation.constraints.Min;
+
 
 /**
  * Implements a policy to handle expired CRL data whereby expired data is permitted
@@ -20,17 +22,19 @@ import org.jasig.cas.adaptors.x509.util.CertUtils;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
-public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
+public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
+
     /** Logger instance */
-    private final Log logger = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     /** Default threshold is 48 hours. */
     private static final int DEFAULT_THRESHOLD = 172800;
 
     /** Expired threshold period in seconds. */
+    @Min(0)
     private int threshold = DEFAULT_THRESHOLD;
 
 
@@ -51,7 +55,7 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
             if (CertUtils.isExpired(crl, cutoff.getTime())) {
                 throw new ExpiredCRLException(crl.toString(), cutoff.getTime(), this.threshold);
             }
-            this.logger.info(
+            log.info(
                 String.format("CRL expired on %s but is within threshold period, %s seconds.",
                     crl.getNextUpdate(), this.threshold));
         }
@@ -63,11 +67,6 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
      * @param threshold Number of seconds; MUST be non-negative integer.
      */
     public void setThreshold(final int threshold) {
-        if (threshold < 0) {
-            throw new IllegalArgumentException("Threshold must be non-negative.");
-        }
         this.threshold = threshold;
     }
-
-    
 }

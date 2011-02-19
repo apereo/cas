@@ -13,10 +13,10 @@ import java.security.GeneralSecurityException;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
-public class DenyRevocationPolicy implements RevocationPolicy<Void> {
+public final class DenyRevocationPolicy implements RevocationPolicy<Void> {
 
     /**
      * Policy application throws GeneralSecurityException to stop execution of
@@ -28,7 +28,7 @@ public class DenyRevocationPolicy implements RevocationPolicy<Void> {
      *
      * @see org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy#apply(java.lang.Object)
      */
-    public void apply(Void nothing) throws GeneralSecurityException {
+    public void apply(final Void nothing) throws GeneralSecurityException {
         throw new GeneralSecurityException("Aborting since DenyRevocationPolicy is in effect.");
     }
 

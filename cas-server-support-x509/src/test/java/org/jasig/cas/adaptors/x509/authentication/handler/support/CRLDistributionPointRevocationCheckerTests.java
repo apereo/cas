@@ -28,7 +28,7 @@ import org.springframework.core.io.ClassPathResource;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.76
  *
  */
 @RunWith(Parameterized.class)
