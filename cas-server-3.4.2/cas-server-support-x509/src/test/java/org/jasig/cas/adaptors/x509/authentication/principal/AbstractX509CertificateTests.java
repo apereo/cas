@@ -24,13 +24,13 @@ import junit.framework.TestCase;
 
 public class AbstractX509CertificateTests extends TestCase {
 
-    public static final X509Certificate VALID_CERTIFICATE = new CasX509Certficate(
+    public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(
         true);
 
-    public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certficate(
+    public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certificate(
         false);
 
-    protected static class CasX509Certficate extends X509Certificate {
+    protected static class CasX509Certificate extends X509Certificate {
 
         /**
          * Comment for <code>serialVersionUID</code>
@@ -39,7 +39,7 @@ public class AbstractX509CertificateTests extends TestCase {
 
         private boolean valid;
 
-        protected CasX509Certficate(final boolean valid) {
+        protected CasX509Certificate(final boolean valid) {
             this.valid = valid;
         }
 

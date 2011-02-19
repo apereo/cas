@@ -22,7 +22,7 @@ import edu.vt.middleware.crypt.util.CryptReader;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public abstract class AbstractCRLRevocationCheckerTests {

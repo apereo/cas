@@ -13,7 +13,7 @@ import java.util.Date;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public class ExpiredCRLException extends GeneralSecurityException {

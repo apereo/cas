@@ -14,15 +14,15 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
-
 
 /**
  * Utility class with methods to support various operations on X.509 certs.
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public final class CertUtils {
@@ -73,7 +73,7 @@ public final class CertUtils {
         try {
             return (X509CRL) CertUtils.getCertificateFactory().generateCRL(in);
         } finally {
-            in.close();
+            IOUtils.closeQuietly(in);
         }
     }
 
@@ -96,7 +96,7 @@ public final class CertUtils {
     public static CertificateFactory getCertificateFactory() {
         try {
             return CertificateFactory.getInstance(X509_CERTIFICATE_TYPE);
-        } catch (CertificateException e) {
+        } catch (final CertificateException e) {
             throw new IllegalStateException("X509 certificate type not supported by default provider.");
         }
     }

@@ -16,7 +16,7 @@ import java.util.Date;
  *
  * @author Marvin S. Addison
  * @version $Revision$
- * @since 3.4.7
+ * @since 3.4.6
  *
  */
 public class RevokedCertificateException extends GeneralSecurityException {
@@ -76,7 +76,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
                 if (code < Reason.values().length) {
                     this.reason = Reason.fromCode(code);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // Ignore invalid reason codes
             }
         }
