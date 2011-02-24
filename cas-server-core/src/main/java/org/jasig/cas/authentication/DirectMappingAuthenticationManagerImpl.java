@@ -48,8 +48,11 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
             throw new BadCredentialsAuthenticationException();
         }
 
-        final Principal p = d.getCredentialsToPrincipalResolver()
-            .resolvePrincipal(credentials);
+        final Principal p = d.getCredentialsToPrincipalResolver().resolvePrincipal(credentials);
+        this.log.info("Resolved principal " + p);
+        if (this.log.isDebugEnabled()) {
+            this.log.debug(String.format("Attribute map for %s: %s", p, p.getAttributes()));
+        }
 
         return new Pair<AuthenticationHandler,Principal>(d.getAuthenticationHandler(), p);
     }
