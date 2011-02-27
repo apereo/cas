@@ -45,7 +45,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         log.info(String.format("Principal found: %s", p.getId()));
 
         if (log.isDebugEnabled()) {
-
             log.debug(String.format("Attribute map for %s: %s", p.getId(), p.getAttributes()));
         }
 
