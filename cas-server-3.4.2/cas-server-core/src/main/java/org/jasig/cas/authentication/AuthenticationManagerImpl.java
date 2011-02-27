@@ -76,17 +76,15 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
                 if (!authenticationHandler.authenticate(credentials)) {
-                    if (this.log.isInfoEnabled()) {
-                        this.log
-                            .info("AuthenticationHandler: "
+                    if (log.isInfoEnabled()) {
+                        log.info("AuthenticationHandler: "
                                 + authenticationHandler.getClass().getName()
                                 + " failed to authenticate the user which provided the following credentials: "
                                 + credentials.toString());
                     }
                 } else {
-                    if (this.log.isInfoEnabled()) {
-                        this.log
-                            .info("AuthenticationHandler: "
+                    if (log.isInfoEnabled()) {
+                        log.info("AuthenticationHandler: "
                                 + authenticationHandler.getClass().getName()
                                 + " successfully authenticated the user which provided the following credentials: "
                                 + credentials.toString());
@@ -111,10 +109,7 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver : this.credentialsToPrincipalResolvers) {
             if (credentialsToPrincipalResolver.supports(credentials)) {
                 final Principal principal = credentialsToPrincipalResolver.resolvePrincipal(credentials);
-                this.log.info("Resolved principal " + principal);
-                if (this.log.isDebugEnabled()) {
-                    this.log.debug(String.format("Attribute map for %s: %s", principal, principal.getAttributes()));
-                }
+                log.info("Resolved principal " + principal);
                 foundSupported = true;
                 if (principal != null) {
                     return new Pair<AuthenticationHandler,Principal>(authenticatedClass, principal);
@@ -123,14 +118,14 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         }
 
         if (foundSupported) {
-            if (this.log.isDebugEnabled()) {
-                this.log.debug("CredentialsToPrincipalResolver found but no principal returned.");
+            if (log.isDebugEnabled()) {
+                log.debug("CredentialsToPrincipalResolver found but no principal returned.");
             }
 
             throw BadCredentialsAuthenticationException.ERROR;
         }
 
-        this.log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
+        log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
         throw UnsupportedCredentialsException.ERROR;
     }
 
