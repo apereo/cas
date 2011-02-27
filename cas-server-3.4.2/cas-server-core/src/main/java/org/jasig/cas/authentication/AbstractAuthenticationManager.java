@@ -28,7 +28,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger log = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
 
-
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
     private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
@@ -41,7 +40,16 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         final Pair<AuthenticationHandler, Principal> pair = authenticateAndObtainPrincipal(credentials);
 
-        Authentication authentication = new MutableAuthentication(pair.getSecond());
+        // we can only get here if the above method doesn't throw an exception. And if it doesn't, then the pair must not be null.
+        final Principal p = pair.getSecond();
+        log.info(String.format("Principal found: %s", p.getId()));
+
+        if (log.isDebugEnabled()) {
+
+            log.debug(String.format("Attribute map for %s: %s", p.getId(), p.getAttributes()));
+        }
+
+        Authentication authentication = new MutableAuthentication(p);
 
         if (pair.getFirst()instanceof NamedAuthenticationHandler) {
             final NamedAuthenticationHandler a = (NamedAuthenticationHandler) pair.getFirst();
@@ -58,11 +66,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     }
 
     /**
-     * @param authenticationMetaDataPopulators the
-     * authenticationMetaDataPopulators to set.
+     * @param authenticationMetaDataPopulators the authenticationMetaDataPopulators to set.
      */
-    public final void setAuthenticationMetaDataPopulators(
-        final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators) {
+    public final void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators) {
         this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
     }
 

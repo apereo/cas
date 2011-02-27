@@ -39,8 +39,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
     @Override
     protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
         final Class< ? extends Credentials> credentialsClass = credentials.getClass();
-        final DirectAuthenticationHandlerMappingHolder d = this.credentialsMapping
-            .get(credentialsClass);
+        final DirectAuthenticationHandlerMappingHolder d = this.credentialsMapping.get(credentialsClass);
 
         Assert.notNull(d, "no mapping found for: " + credentialsClass.getName());
 
@@ -49,10 +48,6 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         }
 
         final Principal p = d.getCredentialsToPrincipalResolver().resolvePrincipal(credentials);
-        this.log.info("Resolved principal " + p);
-        if (this.log.isDebugEnabled()) {
-            this.log.debug(String.format("Attribute map for %s: %s", p, p.getAttributes()));
-        }
 
         return new Pair<AuthenticationHandler,Principal>(d.getAuthenticationHandler(), p);
     }
