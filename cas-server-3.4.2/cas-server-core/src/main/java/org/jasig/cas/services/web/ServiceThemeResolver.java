@@ -50,6 +50,10 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         // retrieve the user agent string from the request
         String userAgent = request.getHeader("User-Agent");
 
+        if (userAgent == null) {
+            return getDefaultThemeName();
+        }
+
         for (final Map.Entry<Pattern,String> entry : this.overrides.entrySet()) {
             if (entry.getKey().matcher(userAgent).matches()) {
                 request.setAttribute("isMobile","true");
