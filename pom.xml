@@ -149,7 +149,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
                     <target>1.5</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -592,5 +591,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <commons.lang.version>2.5</commons.lang.version>
         <inspektr.version>1.0.2.GA</inspektr.version>
         <commons.io.version>2.0</commons.io.version>
+        <mockito.version>1.8.5</mockito.version>
 	</properties>
 </project>

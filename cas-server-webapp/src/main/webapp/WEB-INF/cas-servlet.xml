@@ -5,10 +5,10 @@
        xmlns:p="http://www.springframework.org/schema/p"       
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd">
-       
-	<bean id="casPropertyPlaceholderConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+
+    <bean id="casPropertyPlaceholderConfigurer2" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
 		p:location="/WEB-INF/cas.properties" />
-       
+
 	<!-- Theme Resolver -->
 	<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
 		p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
@@ -144,11 +144,46 @@
 
     <bean id="flowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler" />
 
+    <bean id="flowExecutionFactory" class="org.springframework.webflow.engine.impl.FlowExecutionImplFactory">
+        <property name="executionKeyFactory" ref="flowExecutionRepository" />
+        <property name="executionAttributes">
+            <bean class="org.springframework.webflow.core.collection.LocalAttributeMap">
+                <constructor-arg index="0" value="alwaysRedirectOnPause" type="java.lang.String" />
+                <constructor-arg index="1" ref="alwaysRedirectOnPauseBoolean" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="alwaysRedirectOnPauseBoolean" class="java.lang.Boolean">
+        <constructor-arg index="0" value="false" />
+    </bean>
+
+    <bean id="snapshotFactory" class="org.springframework.webflow.execution.repository.snapshot.SerializedFlowExecutionSnapshotFactory">
+        <constructor-arg index="0" ref="flowExecutionFactory" />
+        <constructor-arg index="1" ref="flowRegistry" />
+    </bean>
+
+
+    <bean id="flowExecutionRepository" class="org.jasig.cas.web.flow.CasFlowExecutionKeyFactory">
+        <constructor-arg index="0" ref="conversationManager" />
+        <constructor-arg index="1" ref="snapshotFactory" />
+    </bean>
+
+    <bean id="conversationManager" class="org.springframework.webflow.conversation.impl.SessionBindingConversationManager" />
+
+    <bean id="flowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl">
+        <constructor-arg index="0" ref="flowRegistry" />
+        <constructor-arg index="1" ref="flowExecutionFactory" />
+        <constructor-arg index="2" ref="flowExecutionRepository" />
+    </bean>
+
+<!--
     <webflow:flow-executor id="flowExecutor" flow-registry="flowRegistry">
         <webflow:flow-execution-attributes>
             <webflow:always-redirect-on-pause value="false" />
         </webflow:flow-execution-attributes>
     </webflow:flow-executor>
+-->
 
     <webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
         <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
