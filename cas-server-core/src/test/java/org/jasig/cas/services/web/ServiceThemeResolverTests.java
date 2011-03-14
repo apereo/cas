@@ -6,6 +6,8 @@
 package org.jasig.cas.services.web;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -36,7 +38,10 @@ public class ServiceThemeResolverTests extends TestCase {
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");
         this.serviceThemeResolver.setServicesManager(this.servicesManager);
-        this.serviceThemeResolver.setArgumentExtractors(Arrays.asList(new ArgumentExtractor[] {new CasArgumentExtractor()}));
+        this.serviceThemeResolver.setArgumentExtractors(Arrays.asList((ArgumentExtractor) new CasArgumentExtractor()));
+        final Map<String, String> mobileBrowsers = new HashMap<String, String>();
+        mobileBrowsers.put("Mozilla", "theme");
+        this.serviceThemeResolver.setMobileBrowsers(mobileBrowsers);
     }
     
     public void testGetServiceTheme() {
@@ -49,12 +54,15 @@ public class ServiceThemeResolverTests extends TestCase {
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
+        request.addHeader("User-Agent", "Mozilla");
+        System.out.println("1");
         assertEquals("myTheme", this.serviceThemeResolver.resolveThemeName(request));
     }
     
     public void testGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
+        request.addHeader("User-Agent", "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
     
@@ -62,6 +70,7 @@ public class ServiceThemeResolverTests extends TestCase {
         this.serviceThemeResolver.setServicesManager(null);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
+        request.addHeader("User-Agent", "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
     
