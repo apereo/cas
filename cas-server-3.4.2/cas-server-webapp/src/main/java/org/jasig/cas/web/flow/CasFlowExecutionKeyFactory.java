@@ -41,8 +41,6 @@ import java.util.UUID;
  */
 public final class CasFlowExecutionKeyFactory extends DefaultFlowExecutionRepository {
 
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
     public static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
     public static final String DEFAULT_CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
@@ -146,7 +144,12 @@ public static String byteArrayToHexString(byte[] b){
 			return new CasFlowExecutionKey(executionId, nextSnapshotId, encryptedVersion);
 		} else {
 			if (getAlwaysGenerateNewNextKey()) {
-				return new CompositeFlowExecutionKey(key.getExecutionId(), nextSnapshotId(key.getExecutionId()));
+                final Serializable executionId = key.getExecutionId();
+                final Serializable snapshotId = nextSnapshotId(key.getExecutionId());
+                final String unencryptedVersion = UUID.randomUUID().toString() + CasFlowExecutionKey.KEY_SEPARATOR + "e" + executionId + "s" + snapshotId;
+                final String encryptedVersion = encrypt(unencryptedVersion);
+
+				return new CasFlowExecutionKey(executionId, snapshotId, encryptedVersion);
 			} else {
 				return execution.getKey();
 			}
@@ -166,7 +169,7 @@ public static String byteArrayToHexString(byte[] b){
 		String[] keyParts = CasFlowExecutionKey.keyParts(unencryptedVersion);
 		Serializable executionId = parseExecutionId(keyParts[0], encodedKey);
 		Serializable snapshotId = parseSnapshotId(keyParts[1], encodedKey);
-		return new CompositeFlowExecutionKey(executionId, snapshotId);
+        return new CasFlowExecutionKey(executionId, snapshotId, encodedKey);
 	}
 
 	private ConversationId parseExecutionId(final String encodedId, final String encodedKey) throws BadlyFormattedFlowExecutionKeyException {
