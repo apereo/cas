@@ -4,6 +4,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
+    <var name="credentials" class="org.jasig.cas.authentication.principal.UsernamePasswordCredentials" />
     <on-start>
         <evaluate expression="initialFlowSetupAction" />
     </on-start>
@@ -41,7 +42,6 @@
 	</action-state>
 	 -->
 	<view-state id="viewLoginForm" view="casLoginView" model="credentials">
-        <var name="credentials" class="org.jasig.cas.authentication.principal.UsernamePasswordCredentials" />
         <binder>
             <binding property="username" />
             <binding property="password" />
@@ -50,7 +50,6 @@
             <set name="viewScope.commandName" value="'credentials'" />
         </on-entry>
 		<transition on="submit" bind="true" validate="true" to="realSubmit">
-            <set name="flowScope.credentials" value="credentials" />
             <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credentials)" />
         </transition>
 	</view-state>
