@@ -42,6 +42,8 @@
                             <include>**/*.txt</include>
                             <include>**/*.js</include>
                             <include>**/*.conf</include>
+                            <include>**/*.crt</include>
+                            <include>**/*.crl</include>
                         </includes>
 					</fileSet>
 
