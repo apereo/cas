@@ -163,7 +163,8 @@
     </bean>
 
 
-    <bean id="flowExecutionRepository" class="org.jasig.cas.web.flow.CasFlowExecutionKeyFactory">
+    <bean id="flowExecutionRepository" class="org.jasig.cas.web.flow.CasFlowExecutionKeyFactory"
+      p:alwaysGenerateNewNextKey="true">
         <constructor-arg index="0" ref="conversationManager" />
         <constructor-arg index="1" ref="snapshotFactory" />
     </bean>
