@@ -8,8 +8,8 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 import javax.validation.constraints.NotNull;
 import java.security.cert.X509Certificate;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The following class is deprecated in favor of
@@ -22,45 +22,38 @@ import java.util.Comparator;
  * @since 3.0.4
  */
 @Deprecated
-public final class X509CertificateCredentialsToIdentifierPrincipalResolver extends
-    AbstractX509CertificateCredentialsToPrincipalResolver {
+public final class X509CertificateCredentialsToIdentifierPrincipalResolver extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
     private static final String DEFAULT_IDENTIFIER = "$OU $CN";
 
-    private static final String ENTRIES_DELIMITER = ",";
-
-    private static final String NAME_VALUE_PAIR_DELIMITER = "=";
+    private final Pattern subjectRegex = Pattern.compile("([A-Z]+)=(?:\"(.+)\"|([\\w ]+))", 74);
 
     /** The identifier meta data */
     @NotNull
     private String identifier = DEFAULT_IDENTIFIER;
 
-    protected String resolvePrincipalInternal(
-        final X509Certificate certificate) {
+    protected String resolvePrincipalInternal(final X509Certificate certificate) {
         String username = this.identifier;
         
         if (log.isInfoEnabled()) {
             log.info("Creating principal for: " + certificate.getSubjectDN().getName());
         }
 
-        final String[] entries = certificate.getSubjectDN().getName().split(ENTRIES_DELIMITER);
+        for (final Matcher regexMatcher = this.subjectRegex.matcher(certificate.getSubjectDN().getName()); regexMatcher.find();) {
+            final String name = regexMatcher.group(1).trim();
+            final String value;
 
-        //[fix by Barry Silk]
-        // Make sure entries are sorted by length, in descending order
-        // This is to prevent a substition of a shorter length descriptor
-        // e.g., $CN must get replaced prior to $C
-        Arrays.sort(entries, new LengthComparator());
-        
-        for (final String val : entries) {
-            final String[] nameValuePair = val.split(NAME_VALUE_PAIR_DELIMITER);
-            final String name = nameValuePair[0].trim();
-            final String value = nameValuePair[1];
-
-            if (log.isDebugEnabled()) {
-                log.debug("Parsed " + name + " - " + value);
+            if(regexMatcher.group(2) != null) {
+                value = regexMatcher.group(2);
+            } else {
+                value = regexMatcher.group(3);
             }
 
-            username = username.replaceAll("\\$" + name, value);
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("Parsed: %s - %s", name, value));
+	        }
+
+            username = username.replaceAll((new StringBuilder("\\$")).append(name).toString(), value);
         }
         
         if (this.identifier.equals(username)) {
@@ -73,24 +66,4 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
     public void setIdentifier(final String identifier) {
         this.identifier = identifier;
     }
-    
-    //[fix by Barry Silk, see above]
-    class LengthComparator implements Comparator<String> {
-        public int compare(final String s1, final String s2) {
-            final String[] nameValuePair1 = s1.split(NAME_VALUE_PAIR_DELIMITER);
-            final String name1 = nameValuePair1[0].trim();
-            final String[] nameValuePair2 = s2.split(NAME_VALUE_PAIR_DELIMITER);
-            final String name2 = nameValuePair2[0].trim();
-            final int len1 = name1.length();
-            final int len2 = name2.length();
-            if (len1 > len2) {
-                return -1;
-            }
-            if (len2 > len1) {
-                return 1;
-            }
-            return 0;
-        }
-    }
-
 }
