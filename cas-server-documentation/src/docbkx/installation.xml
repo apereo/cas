@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:lang="en" xml:id="installation" xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
+  version="5.0">
+
+  <title>Installation</title>
+
+  <para>This chapter provides instructions for installing a functional CAS
+    environment according to the simplest deployment scenario.</para>
+
+</chapter>
