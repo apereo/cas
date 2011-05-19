@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:lang="en" xml:id="architecture" xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
+  version="5.0">
+
+  <title>Architecture</title>
+
+  <para>The CAS architecture can be described in terms of system components
+    including the clients and server that communicate via supported protocols.
+    It would be helpful to keep the following diagram in mind for the discussion
+    of CAS architecture.</para>
+
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="media/architecture.png" format="PNG" />
+    </imageobject>
+  </mediaobject>
+
+  <section xml:id="system_components">
+    <title>System Components</title>
+    <para>The CAS server and clients comprise the two physical components of
+      the CAS system architecture that communicate by means of various protocols.
+    </para>
+
+    <section>
+      <title>CAS Server</title>
+      <para>The CAS server application is a Java servlet built on the Spring
+        Framework</para>
+    </section>
+
+    <section>
+      <title>CAS Clients</title>
+      <para>The term "CAS client" has two distinct meanings in its common use.
+      </para>
+    </section>
+  </section>
+
+  <section xml:id="protocols">
+    <title>Protocols</title>
+    <para>Clients communicate with the server by any one of several supported
+      protocols.</para>
+
+    <section xml:id="cas_protocol">
+      <title>CAS Protocol</title>
+      <para>The CAS protocol is a simple and powerful ticket-based protocol
+        developed exclusively for CAS.</para>
+    </section>
+
+    <section xml:id="saml11_protocol">
+      <title>SAML1.1 Protocol</title>
+      <para>CAS provides limited support for the SAML1.1 protocol.</para>
+    </section>
+
+    <section xml:id="saml2_protocol">
+      <title>SAML2 Protocol</title>
+      <para>CAS provides limited support for the SAML2 protocol.</para>
+    </section>
+
+    <section xml:id="openid_protocol">
+      <title>OpenID Protocol</title>
+      <para>The CAS server has limited support for the OpenID identity provider
+        functionality</para>
+    </section>
+  </section>
+</chapter>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book
+  xml:lang="en"
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
+  version="5.0">
+
+  <title>User&#xA0;Manual</title>
+
+  <info>
+    <productname>CAS</productname>
+    <orgname>Jasig</orgname>
+    <author>
+      <personname>Marvin S. Addison</personname>
+      <email>marvin.addison@gmail.com</email>
+    </author>
+    <author>
+      <personname>Scott Battaglia</personname>
+      <email>scott.battaglia@gmail.com</email>
+    </author>
+    <copyright>
+      <year>2011</year>
+      <holder>Jasig</holder>
+    </copyright>
+  </info>
+
+  <dedication>
+    <para>To supporters open source software, especially those who do the
+    thankless yet essential work of documentation.</para>
+  </dedication>
+  
+  <xi:include href="introduction.xml"/>
+  <xi:include href="architecture.xml"/>
+  <xi:include href="planning.xml"/>
+  <xi:include href="installation.xml"/>
+  <!--
+  <xi:include href="configuration.xml"/>
+  <xi:include href="client-integration.xml"/>
+  <xi:include href="monitoring-management.xml"/>
+  <xi:include href="troubleshooting.xml"/>
+  <xi:include href="upgrading.xml"/>
+  <xi:include href="extensions.xml"/>
+  --> 
+
+</book>

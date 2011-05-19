@@ -1,0 +1,24 @@
+#content {
+  margin:0 10%;
+}
+
+#page {
+  padding:0;
+}
+
+#footer {
+  margin:12px;
+}
+
+.navheader, .navfooter {
+  padding:10px 10% 0 10%;
+}
+
+.navheader hr, .navfooter hr {
+  visibility:hidden;
+}
+
+.navheader a, .navfooter a {
+  color:#00516d;
+  font-weight:bold;
+}
