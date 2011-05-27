@@ -9,7 +9,7 @@
   xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
   version="5.0">
 
-  <title>User&#xA0;Manual</title>
+  <title>Jasig CAS Documentation</title>
 
   <info>
     <productname>CAS</productname>
@@ -21,6 +21,10 @@
     <author>
       <personname>Scott Battaglia</personname>
       <email>scott.battaglia@gmail.com</email>
+    </author>
+    <author>
+      <personname>Andrew Petro</personname>
+      <email>apetro@unicon.net</email>
     </author>
     <copyright>
       <year>2011</year>
@@ -37,6 +41,11 @@
   <xi:include href="architecture.xml"/>
   <xi:include href="planning.xml"/>
   <xi:include href="installation.xml"/>
+
+  <!--
+  <xi:include href="services-management.xml" />
+  -->
+
   <!--
   <xi:include href="configuration.xml"/>
   <xi:include href="client-integration.xml"/>
@@ -44,6 +53,8 @@
   <xi:include href="troubleshooting.xml"/>
   <xi:include href="upgrading.xml"/>
   <xi:include href="extensions.xml"/>
-  --> 
+
+  -->
+  <xi:include href="acknowledgements.xml"/>
 
 </book>
