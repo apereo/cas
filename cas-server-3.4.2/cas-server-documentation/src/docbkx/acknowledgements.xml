@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:lang="en" xml:id="acknowledgements" xmlns="http://docbook.org/ns/docbook"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
+  version="5.0">
+
+  <title>Acknowledgements</title>
+
+  <para>It is the policy of the Jasig CAS developers to here acknowledge by name anyone who has contributed
+      in any way to this documentation.  If your contribution has not yet been acknowledged by inclusion of your
+      name below, please do speak up so this can be corrected.</para>
+
+  <para>The Jasig CAS project gratefully acknowledges the contributions of
+      Marvin Addison,
+      Scott Battaglia,
+      Harry Ng,
+      Andrew Petro,
+      Bill Thompson,
+      Adam Rybicki.</para>
+</chapter>
