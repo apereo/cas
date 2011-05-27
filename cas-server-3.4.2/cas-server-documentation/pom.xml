@@ -99,6 +99,23 @@
               <targetDirectory>${project.build.directory}/casum/html/single</targetDirectory>
             </configuration>
           </execution>
+          <execution>
+            <id>pdf</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>generate-pdf</goal>
+            </goals>
+            <configuration>
+              <customizationParameters>
+                <parameter>
+                  <name>cas.version</name>
+                  <value>${project.version}</value>
+                </parameter>
+              </customizationParameters>
+              <includes>manual.xml</includes>
+              <targetDirectory>${project.build.directory}/casum</targetDirectory>
+            </configuration>
+          </execution>
         </executions>
         <configuration>
           <xincludeSupported>true</xincludeSupported>
