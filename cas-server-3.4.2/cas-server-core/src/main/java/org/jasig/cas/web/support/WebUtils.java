@@ -94,4 +94,16 @@ public final class WebUtils {
         final RequestContext context) {
         return context.getRequestScope().getString("serviceTicketId");
     }
+    
+    public static void putLoginTicket(final RequestContext context, final String ticket) {
+        context.getFlowScope().put("loginTicket", ticket);
+    }
+    
+    public static String getLoginTicketFromFlowScope(final RequestContext context) {
+       return context.getFlowScope().getString("loginTicket");
+    }
+    
+    public static String getLoginTicketFromRequest(final RequestContext context) {
+       return context.getRequestParameters().get("lt");
+    }
 }

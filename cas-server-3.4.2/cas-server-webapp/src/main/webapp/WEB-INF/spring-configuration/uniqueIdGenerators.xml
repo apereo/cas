@@ -28,7 +28,14 @@
 		<constructor-arg
 			index="1" value="${host.name}" />
 	</bean>
-	
+
+    <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">
+        <constructor-arg
+            index="0"
+            type="int"
+            value="30" />
+    </bean>
+    	
 <bean
       id="proxy20TicketUniqueIdGenerator"
       class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator">

@@ -58,7 +58,8 @@
                         <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
                     </div>
                     <div class="row btn-row">
-						<input type="hidden" name="lt" value="${flowExecutionKey}" />
+						<input type="hidden" name="lt" value="${loginTicket}" />
+						<input type="hidden" name="execution" value="${flowExecutionKey}" />
 						<input type="hidden" name="_eventId" value="submit" />
 
                         <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" type="submit" />

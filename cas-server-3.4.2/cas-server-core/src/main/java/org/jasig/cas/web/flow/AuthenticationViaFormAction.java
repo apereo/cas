@@ -59,9 +59,19 @@ public class AuthenticationViaFormAction {
     }
     
     public final String submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
+        // Validate login ticket
+        final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
+        final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
+        if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
+            this.logger.warn("Invalid login ticket " + providedLoginTicket);
+            final String code = "INVALID_TICKET";
+            messageContext.addMessage(
+                new MessageBuilder().error().code(code).arg(providedLoginTicket).defaultText(code).build());
+            return "error";
+        }
+
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
-
         if (StringUtils.hasText(context.getRequestParameters().get("renew")) && ticketGrantingTicketId != null && service != null) {
 
             try {
