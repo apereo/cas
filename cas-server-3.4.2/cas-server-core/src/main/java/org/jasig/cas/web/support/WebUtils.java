@@ -100,7 +100,10 @@ public final class WebUtils {
     }
     
     public static String getLoginTicketFromFlowScope(final RequestContext context) {
-       return context.getFlowScope().getString("loginTicket");
+        // Getting the saved LT destroys it in support of one-time-use
+        // See section 3.5.1 of http://www.jasig.org/cas/protocol
+        final String lt = (String) context.getFlowScope().remove("loginTicket");
+        return lt != null ? lt : "";
     }
     
     public static String getLoginTicketFromRequest(final RequestContext context) {
