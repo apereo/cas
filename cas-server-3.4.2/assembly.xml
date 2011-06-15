@@ -1,4 +1,8 @@
-<assembly>
+<?xml version="1.0" encoding="utf-8"?>
+<assembly
+  xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
 	<id>release</id>
 	<formats>
 		<format>zip</format>
@@ -9,7 +13,6 @@
 		<fileSet>
 			<lineEnding>unix</lineEnding>
 			<useDefaultExcludes>true</useDefaultExcludes>
-			<useStrictFiltering>false</useStrictFiltering>
 			<directory>${basedir}</directory>
 			<outputDirectory></outputDirectory>
 			<includes>
@@ -83,7 +86,6 @@
 				<outputDirectory>modules</outputDirectory>
 				<includeDependencies>false</includeDependencies>
 				<unpack>false</unpack>
- 				<useDefaultExcludes>true</useDefaultExcludes>
 				<includes />
 			</binaries>
 		</moduleSet>
@@ -109,7 +111,6 @@
 				<outputDirectory>modules</outputDirectory>
 				<includeDependencies>false</includeDependencies>
 				<unpack>false</unpack>
- 				<useDefaultExcludes>true</useDefaultExcludes>
  				<outputFileNameMapping>cas.war</outputFileNameMapping>
 				<includes />
 			</binaries>
