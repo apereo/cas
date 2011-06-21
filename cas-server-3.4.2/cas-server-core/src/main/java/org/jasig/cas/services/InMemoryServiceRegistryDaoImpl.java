@@ -26,8 +26,6 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
     
-    private LongNumericGenerator generator = new DefaultLongNumericGenerator();
-
     public boolean delete(RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
     }
@@ -48,7 +46,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
     public RegisteredService save(final RegisteredService registeredService) {
         if (registeredService.getId() == -1) {
-            ((RegisteredServiceImpl) registeredService).setId(this.generator.getNextLong());
+            ((RegisteredServiceImpl) registeredService).setId(findHighestId()+1);
         }
 
         this.registeredServices.remove(registeredService);
@@ -59,5 +57,17 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
     public void setRegisteredServices(final List<RegisteredService> registeredServices) {
         this.registeredServices = registeredServices;
+    }
+
+    private long findHighestId() {
+        long id = 0;
+
+        for (final RegisteredService r : this.registeredServices) {
+            if (r.getId() > id) {
+                id = r.getId();
+            }
+        }
+
+        return id;
     }
 }
