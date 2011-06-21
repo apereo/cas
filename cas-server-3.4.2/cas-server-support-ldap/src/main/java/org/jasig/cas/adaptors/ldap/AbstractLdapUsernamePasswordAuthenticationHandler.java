@@ -72,6 +72,11 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     public final void afterPropertiesSet() throws Exception {
         Assert.isTrue(this.filter.contains("%u") || this.filter.contains("%U"), "filter must contain %u or %U");
         this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
+        afterPropertiesSetInternal();
+    }
+
+    protected void afterPropertiesSetInternal() throws Exception {
+        // template method with nothing to do for sub classes.
     }
 
     /**
