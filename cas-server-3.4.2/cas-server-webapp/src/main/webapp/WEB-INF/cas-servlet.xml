@@ -137,8 +137,11 @@
     </bean>
 
 
-    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter"
-        p:flowExecutor-ref="flowExecutor" />
+     <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter"
+        p:flowExecutor-ref="flowExecutor"
+        p:flowUrlHandler-ref="flowUrlHandler" />
+ 
+    <bean id="flowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler" />
 
     <webflow:flow-executor id="flowExecutor" flow-registry="flowRegistry">
         <webflow:flow-execution-attributes>
