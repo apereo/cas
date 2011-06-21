@@ -12,9 +12,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.support.LdapContextSource;
-
 
 /**
  * 
@@ -76,7 +75,7 @@ public abstract class AbstractLdapPersonDirectoryCredentialsToPrincipalResolver 
      * 
      * @param contextSource the datasource to use.
      */
-    public final void setContextSource(final LdapContextSource contextSource) {
+    public final void setContextSource(final ContextSource contextSource) {
         this.ldapTemplate = new LdapTemplate(contextSource);
 
         // Fix for http://www.ja-sig.org/issues/browse/CAS-663
