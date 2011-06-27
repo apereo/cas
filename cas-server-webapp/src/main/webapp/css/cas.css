@@ -57,8 +57,8 @@ http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com
 
 /* FOOTER --------------------------------- */
 #footer {clear:both; position:relative; margin:0 25px 1em; border-top:1px solid #ccc; padding:0 0 1px 0; background:transparent; color:#999;}
-    #footer img#logo {position:absolute; right:0; top:0; margin-top:10px;}
-    #footer div {clear:left; margin:1em 5px .5em; overflow:hidden;}
+    #footer div#copyright {position:relative ,display:block; float:left; margin:1em 5px .5em; overflow:hidden;}
+    #footer a#jasig {position:relative; float:right; clear:both; display: block; background-image: url(../images/ja-sig-logo.gif); width: 118px; height: 31px; margin:1em 5px .5em;}
 
 /* MESSAGES --------------------------------- */
 .info, .errors, .success {clear:both; margin:18px 0; padding:20px 20px 20px 100px; font-size:10px; line-height:1.5;}
@@ -92,3 +92,5 @@ http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com
     .required {background:#ffd;}
     .error {background:#ffefef;}
     input.required {border-width:1px;}
+    
+
