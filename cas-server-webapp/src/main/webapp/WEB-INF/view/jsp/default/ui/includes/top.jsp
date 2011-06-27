@@ -25,9 +25,6 @@
            </c:otherwise>
         </c:choose>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
 	    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
 	</head>
 	<body id="cas" class="fl-theme-iphone">
