@@ -34,6 +34,10 @@ public final class SamlService extends AbstractWebApplicationService {
 
     /** Constant representing artifact. */
     private static final String CONST_PARAM_TICKET = "SAMLart";
+
+    private static final String CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE = "<AssertionArtifact>";
+
+    private static final String CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE = "</AssertionArtifact>";
     
     private static final String CONST_START_ARTIFACT_XML_TAG = "<samlp:AssertionArtifact>";
     
@@ -80,9 +84,19 @@ public final class SamlService extends AbstractWebApplicationService {
         final String id = cleanupUrl(service);
         
         if (StringUtils.hasText(requestBody)) {
-            final int startTagLocation = requestBody.indexOf(CONST_START_ARTIFACT_XML_TAG);
-            final int artifactStartLocation = startTagLocation + CONST_START_ARTIFACT_XML_TAG.length();
-            final int endTagLocation = requestBody.indexOf(CONST_END_ARTIFACT_XML_TAG);
+
+            final String tagStart;
+            final String tagEnd;
+            if (requestBody.contains(CONST_START_ARTIFACT_XML_TAG)) {
+                tagStart = CONST_START_ARTIFACT_XML_TAG;
+                tagEnd = CONST_END_ARTIFACT_XML_TAG;
+            } else {
+                tagStart = CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE;
+                tagEnd = CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE;
+            }
+            final int startTagLocation = requestBody.indexOf(tagStart);
+            final int artifactStartLocation = startTagLocation + tagStart.length();
+            final int endTagLocation = requestBody.indexOf(tagEnd);
 
             artifactId = requestBody.substring(artifactStartLocation, endTagLocation).trim();
 
