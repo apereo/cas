@@ -8,8 +8,11 @@ package org.jasig.cas.adaptors.ldap;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.SearchExecutor;
+import org.springframework.ldap.pool.factory.PoolingContextSource;
 
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
@@ -53,6 +56,8 @@ public class BindLdapAuthenticationHandler extends
 
     /** Boolean of whether multiple accounts are allowed. */
     private boolean allowMultipleAccounts;
+
+    private PoolingContextSource poolingContextSource;
 
     protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
@@ -195,5 +200,22 @@ public class BindLdapAuthenticationHandler extends
      */
     public final void setTimeout(final int timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * Set this if you'd like the *look up* methods to use a pooled source.  This will NOT be used for the authentication
+     * requests.
+     *
+     * @param poolingContextSource the pooling source.
+     */
+    public final void setPoolingContextSource(final PoolingContextSource poolingContextSource) {
+        this.poolingContextSource = poolingContextSource;
+    }
+
+    @Override
+    protected final void afterPropertiesSetInternal() throws Exception {
+        if (this.poolingContextSource != null) {
+            setLdapTemplate(new LdapTemplate(this.poolingContextSource));
+        }
     }
 }
