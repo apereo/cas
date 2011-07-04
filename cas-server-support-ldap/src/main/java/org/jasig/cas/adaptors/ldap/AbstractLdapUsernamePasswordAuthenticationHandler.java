@@ -45,7 +45,6 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
      */
     public final void setContextSource(final ContextSource contextSource) {
         this.contextSource = contextSource;
-        this.ldapTemplate = new LdapTemplate(contextSource);
     }
     
     public final void setIgnorePartialResultException(final boolean ignorePartialResultException) {
@@ -70,9 +69,23 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     }
 
     public final void afterPropertiesSet() throws Exception {
-        Assert.isTrue(this.filter.contains("%u") || this.filter.contains("%U"), "filter must contain %u or %U");
-        this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
         afterPropertiesSetInternal();
+        Assert.isTrue(this.filter.contains("%u") || this.filter.contains("%U"), "filter must contain %u or %U");
+
+        if (this.ldapTemplate == null) {
+            this.ldapTemplate = new LdapTemplate(this.contextSource);
+        }
+
+        this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
+    }
+
+    /**
+     * Available ONLY for subclasses that are doing special things with the ContextSource.
+     *
+     * @param ldapTemplate the LDAPTemplate to use.
+     */
+    protected final void setLdapTemplate(final LdapTemplate ldapTemplate) {
+        this.ldapTemplate = ldapTemplate;
     }
 
     protected void afterPropertiesSetInternal() throws Exception {
