@@ -57,8 +57,6 @@ public class BindLdapAuthenticationHandler extends
     /** Boolean of whether multiple accounts are allowed. */
     private boolean allowMultipleAccounts;
 
-    private PoolingContextSource poolingContextSource;
-
     protected final boolean authenticateUsernamePasswordInternal(
         final UsernamePasswordCredentials credentials)
         throws AuthenticationException {
@@ -209,13 +207,6 @@ public class BindLdapAuthenticationHandler extends
      * @param poolingContextSource the pooling source.
      */
     public final void setPoolingContextSource(final PoolingContextSource poolingContextSource) {
-        this.poolingContextSource = poolingContextSource;
-    }
-
-    @Override
-    protected final void afterPropertiesSetInternal() throws Exception {
-        if (this.poolingContextSource != null) {
-            setLdapTemplate(new LdapTemplate(this.poolingContextSource));
-        }
+        setLdapTemplate(new LdapTemplate(poolingContextSource));
     }
 }
