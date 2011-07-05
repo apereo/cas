@@ -12,7 +12,6 @@ import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.SearchExecutor;
-import org.springframework.ldap.pool.factory.PoolingContextSource;
 
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
@@ -25,7 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handler to do LDAP bind.
+ * Performs LDAP authentication via two distinct steps:
+ *  <ol>
+ *  <li>Search for an LDAP DN using arbitrary search filter.</li>
+ *  <li>Bind using DN in first step with password provided by login Webflow.</li>
+ *  </ol>
+ *  <p>
+ *  The search step is typically performed anonymously or using a constant
+ *  authenticated context such as an administrator username/password or client
+ *  certificate.  This step is suitable for LDAP connection pooling to improve
+ *  efficiency and performance.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -201,12 +209,20 @@ public class BindLdapAuthenticationHandler extends
     }
 
     /**
-     * Set this if you'd like the *look up* methods to use a pooled source.  This will NOT be used for the authentication
-     * requests.
+     * Sets the context source for LDAP searches.  This method may be used to
+     * support use cases like the following:
+     * <ul>
+     * <li>Pooling of LDAP connections used for searching (e.g. via instance
+     * of {@link PoolingContextSource}).</li>
+     * <li>Searching with client certificate credentials.</li>
+     * </ul>
+     * <p>
+     * If this is not defined, the context source defined by
+     * {@link #setContextSource(ContextSource)} is used.
      *
-     * @param poolingContextSource the pooling source.
+     * @param contextSource LDAP context source.
      */
-    public final void setPoolingContextSource(final PoolingContextSource poolingContextSource) {
-        setLdapTemplate(new LdapTemplate(poolingContextSource));
+    public final void setSearchContextSource(final ContextSource contextSource) {
+        setLdapTemplate(new LdapTemplate(contextSource));
     }
 }
