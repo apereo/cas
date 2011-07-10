@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.SamlAuthenticationMetaDataPopulator;
+import org.jasig.cas.authentication.principal.RememberMeCredentials;
 import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
@@ -53,6 +54,8 @@ public class Saml10SuccessResponseView extends AbstractCasView {
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
+    private static final String REMEMBER_ME_ATTRIBUTE_NAME = "longTermAuthenticationRequestTokenUsed";
+
     /** The issuer, generally the hostname. */
     @NotNull
     private String issuer;
@@ -64,8 +67,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
     private String encoding = DEFAULT_ENCODING;
 
     @Override
-    protected void renderMergedOutputModel(final Map model,
-        final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected void renderMergedOutputModel(final Map model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         try {
             final Assertion assertion = getAssertionFrom(model);
@@ -74,6 +76,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
             final String authenticationMethod = (String) authentication.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
             final Service service = assertion.getService();
             final SAMLResponse samlResponse = new SAMLResponse(null, service.getId(), new ArrayList<Object>(), null);
+            final boolean isRemembered = (authentication.getAttributes() .get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME) == Boolean.TRUE && !assertion .isFromNewLogin());
 
             samlResponse.setIssueInstant(currentDate);
 
@@ -97,8 +100,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
             samlAudienceRestrictionCondition.addAudience(service.getId());
 
             final SAMLAuthenticationStatement samlAuthenticationStatement = new SAMLAuthenticationStatement();
-            samlAuthenticationStatement.setAuthInstant(authentication
-                .getAuthenticatedDate());
+            samlAuthenticationStatement.setAuthInstant(authentication.getAuthenticatedDate());
             samlAuthenticationStatement
                 .setAuthMethod(authenticationMethod != null
                     ? authenticationMethod
@@ -107,7 +109,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
             samlAuthenticationStatement
                 .setSubject(getSamlSubject(authentication));
 
-            if (!authentication.getPrincipal().getAttributes().isEmpty()) {
+            if (!authentication.getPrincipal().getAttributes().isEmpty() || isRemembered) {
                 final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
     
                 attributeStatement.setSubject(getSamlSubject(authentication));
@@ -129,6 +131,14 @@ public class Saml10SuccessResponseView extends AbstractCasView {
                         attribute.addValue(e.getValue());
                     }
     
+                    attributeStatement.addAttribute(attribute);
+                }
+
+                if (isRemembered) {
+                    final SAMLAttribute attribute = new SAMLAttribute();
+                    attribute.setName(REMEMBER_ME_ATTRIBUTE_NAME);
+                    attribute.setNamespace(NAMESPACE);
+                    attribute.addValue(true);
                     attributeStatement.addAttribute(attribute);
                 }
             }
