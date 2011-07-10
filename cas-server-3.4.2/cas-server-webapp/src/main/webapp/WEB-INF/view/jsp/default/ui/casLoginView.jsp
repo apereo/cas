@@ -25,6 +25,13 @@
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <jsp:directive.include file="includes/top.jsp" />
+
+<c:if test="${not pageContext.request.secure}">
+<div class="errors">
+<p>You are currently accessing CAS over a non-secure connection.  Single Sign on WILL NOT WORK.  In order to have single sign on work, you MUST log in over HTTPS.</p>
+</div>
+</c:if>
+
 			<form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true">
 			    <form:errors path="*" cssClass="errors" id="status" element="div" />
                 <div class="box fl-panel" id="login">
