@@ -16,7 +16,7 @@ import org.jasig.cas.util.AopUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.NotNull;
 
@@ -68,7 +68,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
                 final Authentication authentication = securityContext.getAuthentication();
 
                 if (authentication != null) {
-                    return ((User) authentication.getPrincipal()).getUsername();
+                    return ((UserDetails) authentication.getPrincipal()).getUsername();
                 }
             }
         }
