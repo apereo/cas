@@ -1,4 +1,4 @@
-#cas form {display:block; margin:18px 0 0; padding:0; width:100%; background:#fff;}
+#cas form {display:block; padding:0; width:100%; background:#eeeeee;}
     #cas fieldset {border:0; margin:0; padding:0; float:left; clear:none; width:auto;}
         #cas fieldset legend {display:none;}
 
@@ -11,7 +11,7 @@
             #cas #login input {letter-spacing:1px;}
             #cas #login .check input {position:relative; left:-4px; height:auto;}
             #cas #login .check label {float:none; xwidth:auto; line-height:1.8;}
-            #cas #login .btn-row {position:relative; top:15px; padding-top:10px; border-top:1px solid #ddd;}
+            #cas #login .btn-row {padding-top:10px; border-top:1px solid #ddd;}
             * html #cas #login .btn-row {top:5px;} /* IE6 */
             #cas #login .btn-submit {float:none; clear:none; display:inline; letter-spacing:0;}
             * html #cas #login .btn-submit {background:#ffd;}
@@ -80,7 +80,7 @@ http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com
     input.btn-submit {border-width:2px;}
 
 
-    .fm-v div.row {float:left; margin:0; padding:.5em 0; width:100%;}
+    .fm-v div.row {margin:0; padding:.5em 0; width:100%;}
     .fm-v div.row label {float:left; width:100%; line-height:1.5;}
     .fm-v div.row input.btn-submit {display:block; margin:0;}
 
