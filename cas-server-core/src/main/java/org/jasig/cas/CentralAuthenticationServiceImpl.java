@@ -210,7 +210,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
         }
 
-        // XXX fix this
+        // this code is a bit brittle by depending on the class name.  Future versions (i.e. CAS4 will know inherently how to identify themselves)
         final UniqueTicketIdGenerator serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService
             .get(service.getClass().getName());
 
