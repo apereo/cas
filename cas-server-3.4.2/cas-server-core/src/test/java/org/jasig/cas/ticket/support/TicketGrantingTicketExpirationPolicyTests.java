@@ -30,7 +30,7 @@ public class TicketGrantingTicketExpirationPolicyTests extends TestCase {
         expirationPolicy = new TicketGrantingTicketExpirationPolicy();
         expirationPolicy.setMaxTimeToLiveInMilliSeconds(HARD_TIMEOUT);
         expirationPolicy.setTimeToKillInMilliSeconds(SLIDING_TIMEOUT);
-        expirationPolicy.setTimeInBetweenUsesInMilliSeconds(COOL_DOWN);
+        expirationPolicy.setMinTimeInBetweenUsesInMilliSeconds(COOL_DOWN);
         ticketGrantingTicket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), expirationPolicy);
         super.setUp();
     }
@@ -78,9 +78,9 @@ public class TicketGrantingTicketExpirationPolicyTests extends TestCase {
         try {
             assertFalse(ticketGrantingTicket.isExpired());
             ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
-            assertTrue(ticketGrantingTicket.isExpired());
+            assertTrue(ticketGrantingTicket.isExpired());  // could be called by CASImpl or RegistryCleaner
             Thread.sleep(COOL_DOWN + 100);
-            assertFalse(ticketGrantingTicket.isExpired());
+            assertFalse(ticketGrantingTicket.isExpired()); // would have been deleted by CASImpl or RegistryCleaner
         } catch (InterruptedException e) {
             fail(e.getMessage());
         }
