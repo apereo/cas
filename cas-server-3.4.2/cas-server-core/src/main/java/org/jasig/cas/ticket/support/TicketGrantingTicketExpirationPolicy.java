@@ -9,6 +9,8 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets
@@ -16,8 +18,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author William G. Thompson, Jr.
  * @version $Revision$ $Date$
+ * @since 3.4.10
  */
-public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy {
+public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
@@ -30,9 +33,6 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
     /** Time to kill in milliseconds. */
     private long timeToKillInMilliSeconds;
 
-    /** Time between which a ticket must wait to be used again. */
-    private long minTimeInBetweenUsesInMilliSeconds;
-
     public void setMaxTimeToLiveInMilliSeconds(final long maxTimeToLiveInMilliSeconds){
         this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
     }
@@ -41,8 +41,8 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
-    public void setMinTimeInBetweenUsesInMilliSeconds(final long minTimeInBetweenUsesInMilliSeconds) {
-        this.minTimeInBetweenUsesInMilliSeconds = minTimeInBetweenUsesInMilliSeconds;
+    public void afterPropertiesSet() throws Exception {
+        Assert.isTrue((maxTimeToLiveInMilliSeconds >= timeToKillInMilliSeconds), "maxTimeToLiveInMilliSeconds must be greater than or equal to timeToKillInMilliSeconds.");
     }
 
     public boolean isExpired(final TicketState ticketState) {
@@ -73,12 +73,7 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
             return true;
         }
 
-        // Ticket is within timeouts, check cool down period.
-        if ((System.currentTimeMillis() - ticketState.getLastTimeUsed() <= minTimeInBetweenUsesInMilliSeconds)) {
-            log.warn("Ticket is expired (throttled, really) due to the time since last use being less than minTimeInBetweenUsesInMilliSeconds.");
-            return true;
-        }
-
         return false;
     }
+
 }
