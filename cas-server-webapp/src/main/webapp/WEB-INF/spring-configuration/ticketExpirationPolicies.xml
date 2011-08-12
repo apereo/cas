@@ -27,4 +27,12 @@
 			index="0"
 			value="7200000" />
 	</bean>
+
+    <!-- sample config for new TicketGrantingTicketExpirationPolicy -->
+    <!-- provides both idle and hard timeouts, for instance 2 hour sliding window with an 8 hour max lifetime
+	    <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy"
+              p:maxTimeToLiveInMilliSeconds="28800000"
+              p:timeToKillInMilliSeconds="7200000" />
+     -->
+
 </beans>
