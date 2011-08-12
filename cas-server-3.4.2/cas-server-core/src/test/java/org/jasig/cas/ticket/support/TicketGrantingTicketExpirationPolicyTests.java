@@ -33,7 +33,7 @@ public class TicketGrantingTicketExpirationPolicyTests extends TestCase {
         super.setUp();
     }
 
-    public void testTgtIsExpiredByHardTimeOut() {
+    public void testTgtIsExpiredByHardTimeOut() throws InterruptedException {
      try {
          // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
          while (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime() < (HARD_TIMEOUT - SLIDING_TIMEOUT / 2)) {
@@ -48,11 +48,11 @@ public class TicketGrantingTicketExpirationPolicyTests extends TestCase {
          assertTrue(ticketGrantingTicket.isExpired());
 
      } catch (InterruptedException e) {
-         fail(e.getMessage());
+         throw e;
      }
     }
 
-    public void testTgtIsExpiredBySlidingWindow() {
+    public void testTgtIsExpiredBySlidingWindow() throws InterruptedException {
         try {
             ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
             Thread.sleep(SLIDING_TIMEOUT - 100);
@@ -67,7 +67,7 @@ public class TicketGrantingTicketExpirationPolicyTests extends TestCase {
             assertTrue(ticketGrantingTicket.isExpired());
 
         } catch (InterruptedException e) {
-            fail(e.getMessage());
+            throw e;
         }
     }
 
