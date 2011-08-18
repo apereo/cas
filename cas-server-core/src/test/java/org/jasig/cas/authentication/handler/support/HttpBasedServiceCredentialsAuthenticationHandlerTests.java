@@ -54,7 +54,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
         this.authenticationHandler.setHttpClient(new HttpClient());
         this.authenticationHandler.setRequireSecure(false);
         assertTrue(this.authenticationHandler.authenticate(TestUtils
-            .getHttpBasedServiceCredentials("http://www.ja-sig.org")));
+            .getHttpBasedServiceCredentials("http://www.jasig.org")));
     }
 
     public void testNoAcceptableStatusCode() throws Exception {
