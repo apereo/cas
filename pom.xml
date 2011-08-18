@@ -11,7 +11,7 @@
   <packaging>pom</packaging>
   <name>Jasig Central Authentication Service</name>
   <description>Jasig CAS SSO server libraries and Web application.</description>
-  <version>3.4.10-SNAPSHOT</version>
+  <version>3.4.10</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
 
@@ -74,9 +74,9 @@
   </mailingLists>
 
   <scm>
-    <connection>scm:svn:https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</connection>
-    <developerConnection>scm:svn:https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</developerConnection>
-    <url>https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</url>
+    <connection>scm:svn:https://source.jasig.org/cas3/tags/cas-server-3.4.10</connection>
+    <developerConnection>scm:svn:https://source.jasig.org/cas3/tags/cas-server-3.4.10</developerConnection>
+    <url>https://source.jasig.org/cas3/tags/cas-server-3.4.10</url>
   </scm>
 
   <build>
