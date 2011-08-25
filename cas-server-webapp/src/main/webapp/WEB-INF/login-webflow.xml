@@ -28,9 +28,14 @@
 	<!-- 
 		The "warn" action makes the determination of whether to redirect directly to the requested
 		service or display the "confirmation" page to go back to the server.
-	-->
-	<decision-state id="warn">
-		<if test="flowScope.warnCookieValue" then="showWarningView" else="PasswordWarningCheck" />
+
+        To turn on LDAP Password Policy use this block instead of the one below.
+	       <decision-state id="warn">
+		       <if test="flowScope.warnCookieValue" then="showWarningView" else="PasswordWarningCheck" />
+	       </decision-state>
+      -->
+   	<decision-state id="warn">
+		<if test="flowScope.warnCookieValue" then="showWarningView" else="redirect" />
 	</decision-state>
 
 	<!--
