@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.4.10-LPPE-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-support-ldap-ppolicy</artifactId>
+	<packaging>jar</packaging>
+	<name>JA-SIG CAS LDAP Support Password Policy</name>
+    <dependencies>
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>	
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-ldap</artifactId>
+			<version>${project.version}</version>
+        </dependency>	
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-cas-client</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+        </dependency>
+	</dependencies>
+</project>

@@ -30,10 +30,10 @@
 		service or display the "confirmation" page to go back to the server.
 	-->
 	<decision-state id="warn">
-		<if test="flowScope.warnCookieValue" then="showWarningView" else="redirect" />
+		<if test="flowScope.warnCookieValue" then="showWarningView" else="PasswordWarningCheck" />
 	</decision-state>
-	
-	<!-- 
+
+	<!--
 	<action-state id="startAuthenticate">
 		<action bean="x509Check" />
 		<transition on="success" to="sendTicketGrantingTicket" />
@@ -41,12 +41,12 @@
 		<transition on="error" to="generateLoginTicket" />
 	</action-state>
 	 -->
-   
+
 	<action-state id="generateLoginTicket">
         <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
 		<transition on="success" to="viewLoginForm" />
 	</action-state>
-    
+
 	<view-state id="viewLoginForm" view="casLoginView" model="credentials">
         <binder>
             <binding property="username" />
@@ -88,6 +88,14 @@
         <transition on="success" to="redirect" />
     </action-state>
 
+	<!-- this checks the status of a password -->
+	<action-state id="PasswordWarningCheck">
+		<evaluate expression="PasswordWarningCheckAction" />
+		<transition on="showWarning" to="warnPassRedirect" />
+		<transition on="success" to="redirect" />
+		<transition on="error" to="viewLoginForm" />
+	</action-state>
+
     <action-state id="redirect">
         <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)" result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response" />
         <transition to="postRedirectDecision" />
@@ -97,14 +105,24 @@
         <if test="requestScope.response.responseType.name() eq 'POST'" then="postView" else="redirectView" />
     </decision-state>
 
-	<!-- 
+	<!--
+        The "warnPassRedirect" end state is the end state for when the user's password is close to expiring.  They are not required
+        to change their password to reach the requested service.
+        -->
+	<action-state id="warnPassRedirect" >
+        <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)" result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response" />
+        <transition on="requestScope.response" to="pwdPostView" />
+        <transition to="pwdRedirectView" />
+	</action-state>
+
+	<!--
 		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
 		They have only initialized their single-sign on session.
 	-->
 	<end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView" />
 
 	<!-- 
-		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a 
+		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a
 		view defines in default_views.properties that display the "Please click here to go to the service." message.
 	-->
 	<end-state id="showWarningView" view="casLoginConfirmView" />
@@ -116,12 +134,59 @@
         </on-entry>
     </end-state>
 
-	<!-- 
+    <end-state id="pwdPostView" view="postWarnPassResponseView">
+        <output name="viewScope.parameters" value="requestScope.response.attributes" />
+		<output name="viewScope.expireDays" value="flowScope.expireDays" />
+        <output name="viewScope.originalUrl" value="flowScope.service.id" />
+    </end-state>
+
+	<!--
+        The "showExpiredPassView" end state is the end state for when the user's password has expired and they must be sent
+        to the account management page to change their password.
+        -->
+	<end-state id="showExpiredPassView" view="casExpiredPassView" />
+
+        <!--
+        The "showAccountLockedView" end state is the end state for when the user's account has been locked out due to
+        password failures.  They are told to try again in 15 minutes.
+        -->
+	<end-state id="showAccountLockedView" view="casAccountLockedView" />
+
+	<!--
+        The "showAccountDisabledView" end state is the end state for when the user's account has been disabled.  They are not
+        allowed to reach any services and must call the Help Desk to re-enable service
+        -->
+	<end-state id="showAccountDisabledView" view="casAccountDisabledView" />
+
+	<!--
+        The "showMustChangePassView" end state is the end state for when the user must change his password and then must be sent
+        to the account management page.
+        -->
+	<end-state id="showMustChangePassView" view="casMustChangePassView" />
+
+        <!--
+        The "showBadHoursView" end state is the end state for when the user cannot log in at this time.
+        -->
+	<end-state id="showBadhoursView" view="casBadHoursView" />
+
+        <!--
+        The "showBadWorkstation" end state is the end state when the user cannot log in from this worstation (hum, the server indeed)
+        -->
+	<end-state id="showBadWorkstationView" view="casBadWorkstationView" />
+
+	<!--
 		The "redirect" end state allows CAS to properly end the workflow while still redirecting
 		the user back to the service required.
 	-->
 	<end-state id="redirectView" view="externalRedirect:${requestScope.response.url}" />
 	
+	<end-state id="pwdRedirectView" view="casWarnPassView">
+        <output name="viewScope.parameters" value="requestScope.response.attributes" />
+        <output name="viewScope.serviceTicketId" value="requestScope.serviceTicketId" />
+		<output name="viewScope.expireDays" value="flowScope.expireDays" />
+        <output name="viewScope.originalUrl" value="flowScope.service.id" />
+    </end-state>
+
 	<end-state id="viewServiceErrorView" view="viewServiceErrorView" />
     
     <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
