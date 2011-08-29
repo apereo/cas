@@ -9,11 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.LdapPwdCentralAuthenticationService;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -45,16 +48,18 @@ public class LdapPwdAuthenticationViaFormAction {
 
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull
-    private LdapPwdCentralAuthenticationService centralAuthenticationService;
+    private CentralAuthenticationService centralAuthenticationService;
+
+    /** Used to get Principal in the case of LDAP Authentication errors/messages */
+    @NotNull
+    private TicketRegistry ticketRegistry;
 
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    /**
-     * LDAP error details processor chain
-     */
+    /** LDAP error details processor chain */
     @NotNull
-    private AbstractLdapErrorDetailProcessor    errorProcessor = new NoOpErrorProcessor();
+    private AbstractLdapErrorDetailProcessor errorProcessor = new NoOpErrorProcessor();
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -102,22 +107,19 @@ public class LdapPwdAuthenticationViaFormAction {
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Attempting to get the user principal and put it into the scope of the WebFlow");
-                logger.debug("TGT: " + WebUtils.getTicketGrantingTicketId(context));
-                logger.debug("Principal: "
-                        + this.centralAuthenticationService.getPrincipal(WebUtils.getTicketGrantingTicketId(context)).toString());
+
+            // put the principal in flowscope so we can use it later to check for password warnings
+            final String id = WebUtils.getTicketGrantingTicketId(context);
+            final Principal principal = ((TicketGrantingTicket) ticketRegistry.getTicket(id)).getAuthentication().getPrincipal();
+            context.getFlowScope().put("principal", principal);
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Principal: " + principal.toString() + " from TGT: " + id + " was put in flowscope for LdapPasswordPolicy module.");
 			}
-			/* 
-             * Get the user principal and put it into the scope of the WebFlow so we can use it when we check for password warnings
-             */
-            context.getFlowScope().put("principal",
-                    this.centralAuthenticationService.getPrincipal(WebUtils.getTicketGrantingTicketId(context)));
+
             return "success";
         } catch (final TicketException e) {
-			/*
-			 *  Handle the password warning exceptions
-			 */
+			// Check for LDAP Password Policy warning exceptions
             String returnCode = errorProcessor.processTicketExceptionCode(e.getCode());
             if (logger.isDebugEnabled()) {
                 logger.debug("TicketException thrown, error processor returned " + returnCode == null ? "NULL" : returnCode);
@@ -152,9 +154,13 @@ public class LdapPwdAuthenticationViaFormAction {
         }
     }
 
-    public final void setCentralAuthenticationService(final LdapPwdCentralAuthenticationService centralAuthenticationService) {
+    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-    } 
+    }
+
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
 
     /**
      * Set a CredentialsBinder for additional binding of the HttpServletRequest
@@ -179,10 +185,6 @@ public class LdapPwdAuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    /**
-     * @param errorProcessor
-     *            the processor chain
-     */
     public final void setErrorProcessor(final AbstractLdapErrorDetailProcessor errorProcessor) {
         this.errorProcessor = errorProcessor;
     }
