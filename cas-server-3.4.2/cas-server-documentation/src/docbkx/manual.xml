@@ -6,7 +6,7 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
+  xsi:schemaLocation="http://docbook.org/ns/docbook ./schemata/docbook.xsd"
   version="5.0">
 
   <title>Jasig CAS Documentation</title>
@@ -39,7 +39,9 @@
   
   <xi:include href="introduction.xml"/>
   <xi:include href="architecture.xml"/>
+    <!--
   <xi:include href="planning.xml"/>
+  -->
   <xi:include href="installation.xml"/>
 
   <!--
@@ -57,6 +59,7 @@
 
 
   -->
+  <xi:include href="hardening.xml" />
   <xi:include href="acknowledgements.xml"/>
 
 </book>
