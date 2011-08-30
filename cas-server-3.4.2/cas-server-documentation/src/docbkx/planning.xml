@@ -192,8 +192,30 @@
 
     </section>
 
+    <section>
+        <title>Security Considerations</title>
+        <para>CAS deployment requires consideration of enterprise security concerns such as integration with IDM
+            software, PKI, and security policy.</para>
+        <para>
+            TODO: complete this Security Considerations section.
+        </para>
+    </section>
 
+    <section>
+        <title>Availability and Capacity Planning</title>
+        <para>Every enterprise deployment of CAS should be vitally concerned with availability and performance
+            obtained through careful capacity planning.</para>
+        <para>
+            TODO: complete this Availability and Capacity Planning section.
+        </para>
+    </section>
 
-
+     <section>
+        <title>Deployment Scenarios</title>
+        <para>We present some popular deployment scenarios for CAS with commentary on availability and performance characteristics.</para>
+        <para>
+            TODO: complete this Deployment Scenarios section.  E.g. &quot;Single Client/Single Server&quot;
+        </para>
+    </section>
 
 </chapter>
