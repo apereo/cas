@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xml:lang="en" xml:id="planning" xmlns="http://docbook.org/ns/docbook"
+<chapter xml:lang="en" xml:id="hardening" xmlns="http://docbook.org/ns/docbook"
          xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink"
          xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://docbook.org/ns/docbook ./schemata/docbook.xsd
