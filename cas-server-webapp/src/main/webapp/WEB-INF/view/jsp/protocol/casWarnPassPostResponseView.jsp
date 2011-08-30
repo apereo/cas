@@ -27,7 +27,7 @@
 <script type="text/javascript">
 <!--
 	
-			setTimeout(document.acsForm.submit(), 5000);
+			setTimeout(document.acsForm.submit(), 10000);
 
 //-->
 

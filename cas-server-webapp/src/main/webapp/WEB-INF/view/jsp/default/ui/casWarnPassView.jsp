@@ -27,7 +27,7 @@
 	}
 
 	
-			setTimeout("redirectTo('${param.service}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}ticket=${serviceTicketId}')", 5000);
+			setTimeout("redirectTo('${param.service}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}ticket=${serviceTicketId}')", 10000);
 	
 //-->
 
