@@ -39,9 +39,9 @@
   
   <xi:include href="introduction.xml"/>
   <xi:include href="architecture.xml"/>
-    <!--
+
   <xi:include href="planning.xml"/>
-  -->
+
   <xi:include href="installation.xml"/>
 
   <!--
