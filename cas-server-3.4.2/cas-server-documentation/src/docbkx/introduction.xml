@@ -24,7 +24,7 @@
     have enabled deployers to develop custom components to support novel use
     cases not supported by default.</para>
 
-  <section xml:id="features">
+  <section xml:id="introduction-features">
     <title>Features</title>
     <para>CAS has a number of features that distinguish it from other SSO
       products:</para>
