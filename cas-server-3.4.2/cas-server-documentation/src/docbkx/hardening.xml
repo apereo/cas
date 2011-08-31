@@ -12,6 +12,16 @@ http://www.w3.org/1999/xlink "
         proliferation of end user password exposures, improving both the reality and your confidence
         in the reality of security considerations in your environment.
     </para>
+
+    <section xml:id="must-use-ssl">
+        <title>Use SSL</title>
+        <para>This should probably go without saying, but: yes, you have to use SSL.  Really.  No, you can't just run
+        CAS over http:// .  It won't be okay.  And yes, your CAS-using service needs to use SSL too, or else
+        authenticated sessions with it can be hijacked.  Really.  You have to use SSL.  CAS ships not using SSL
+        for ease of getting started with and trying out CAS, but your real production CAS implementation must
+        use SSL.</para>
+    </section>
+
     <section xml:id="if-not-using-proxy-tickets">
             <title>If you aren't using Proxy Tickets</title>
         <para>Proxy Tickets are a powerful, important, and potentially security-improving feature of the CAS
