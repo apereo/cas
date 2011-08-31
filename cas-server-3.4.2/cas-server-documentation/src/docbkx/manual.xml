@@ -45,9 +45,8 @@
 
   <xi:include href="installation.xml"/>
   <xi:include href="configuration-management.xml"/>
-  <!--
+
   <xi:include href="services-management.xml" />
-  -->
 
 
   <!--
