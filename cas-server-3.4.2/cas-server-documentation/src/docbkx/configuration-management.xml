@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:lang="en" xml:id="configuration-management" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://docbook.org/ns/docbook ./schemata/docbook.xsd
+http://www.w3.org/1999/xlink "
+         version="5.0">
+
+    <title>Configuration Management</title>
+
+    <para>Configuration management is how you're going to manage your CAS implementation for real.
+    </para>
+    <section xml:id="maven-war-overlay">
+            <title>Maven War Overlay</title>
+        <para>TODO: Document Maven Overlay, inspired by and merging in the content of
+        <link xlink:href="https://wiki.jasig.org/display/CASUM/Best+Practice+-+Setting+Up+CAS+Locally+using+the+Maven2+WAR+Overlay+Method">
+            https://wiki.jasig.org/display/CASUM/Best+Practice+-+Setting+Up+CAS+Locally+using+the+Maven2+WAR+Overlay+Method</link>.
+        </para>
+    </section>
+
+</chapter>
