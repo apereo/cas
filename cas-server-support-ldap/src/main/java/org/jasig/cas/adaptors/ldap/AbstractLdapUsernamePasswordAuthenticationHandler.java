@@ -5,6 +5,8 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import org.jasig.cas.adaptors.ldappwd.util.AbstractLdapErrorDetailProcessor;
+import org.jasig.cas.adaptors.ldappwd.util.NoOpErrorProcessor;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.core.LdapTemplate;
@@ -37,6 +39,13 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     
     /** Whether the LdapTemplate should ignore partial results. */
     private boolean ignorePartialResultException = false;
+
+    /** LdapErrorDetailProcessor maps specific LDAP errors to more meaningful exceptions */
+    protected AbstractLdapErrorDetailProcessor errorProcessor = new NoOpErrorProcessor();
+
+    public final void setErrorProcessor(final AbstractLdapErrorDetailProcessor errorProcessor) {
+        this.errorProcessor = errorProcessor;
+    }
 
     /**
      * Method to set the datasource and generate a JdbcTemplate.

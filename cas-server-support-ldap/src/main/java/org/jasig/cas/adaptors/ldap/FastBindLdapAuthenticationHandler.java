@@ -32,6 +32,11 @@ public final class FastBindLdapAuthenticationHandler extends AbstractLdapUsernam
             dirContext = this.getContextSource().getContext(bindDn, credentials.getPassword());
             return true;
         } catch (final NamingException e) {
+            // see if we can match to a more specific exception and then throw that instead
+            // i.e. AccountLockedException, AccountDisabledException, ExpiredPasswordException,...
+            final String details = e.getMessage();
+            log.debug("LDAP server returned exception message: " + details);
+            this.errorProcessor.processErrorDetail(details);
             return false;
         } finally {
             if (dirContext != null) {
