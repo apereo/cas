@@ -3,20 +3,7 @@
  * distributed with this file and available online at
  * http://www.ja-sig.org/products/cas/overview/license/
  */
-package org.jasig.cas.adaptors.ldappwd;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.ArrayList;
-
-import javax.management.timer.Timer;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
+package org.jasig.cas.adaptors.ldap;
 
 import org.jasig.cas.authentication.AbstractPasswordWarningCheck;
 import org.jasig.cas.util.LdapUtils;
@@ -24,6 +11,18 @@ import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.util.Assert;
+
+import javax.management.timer.Timer;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Class that fetches an password expiration date from an LDAP database.
