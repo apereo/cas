@@ -5,9 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.AbstractPasswordWarningCheck;
 import org.jasig.cas.authentication.PasswordWarningCheck;
+import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.AbstractAction;

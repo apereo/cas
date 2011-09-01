@@ -1,4 +1,4 @@
-package org.jasig.cas.adaptors.ldappwd.util.exceptions;
+package org.jasig.cas.adaptors.ldap.util.exceptions;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 

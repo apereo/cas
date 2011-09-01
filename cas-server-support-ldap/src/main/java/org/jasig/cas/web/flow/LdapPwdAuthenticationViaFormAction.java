@@ -5,11 +5,9 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.adaptors.ldap.util.AbstractLdapErrorDetailProcessor;
+import org.jasig.cas.adaptors.ldap.util.NoOpErrorProcessor;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
@@ -26,8 +24,10 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
-import org.jasig.cas.adaptors.ldappwd.util.AbstractLdapErrorDetailProcessor;
-import org.jasig.cas.adaptors.ldappwd.util.NoOpErrorProcessor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action to authenticate credentials and retrieve a TicketGrantingTicket for

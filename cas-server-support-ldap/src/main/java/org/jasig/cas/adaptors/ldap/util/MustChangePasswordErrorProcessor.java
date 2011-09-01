@@ -1,10 +1,10 @@
-package org.jasig.cas.adaptors.ldappwd.util;
+package org.jasig.cas.adaptors.ldap.util;
+
+import org.jasig.cas.adaptors.ldap.util.exceptions.MustChangePasswordException;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.jasig.cas.adaptors.ldappwd.util.exceptions.MustChangePasswordException;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 
 /**
  * Ldap Error Code Processor : Password mus be changed processor
