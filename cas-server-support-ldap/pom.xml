@@ -18,12 +18,6 @@
 		</dependency>
 
         <dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-support-ldap-ppolicy</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-        <dependency>
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
             <scope>compile</scope>
