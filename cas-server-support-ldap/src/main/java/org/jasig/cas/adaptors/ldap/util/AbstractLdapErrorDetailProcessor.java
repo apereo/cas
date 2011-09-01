@@ -1,4 +1,4 @@
-package org.jasig.cas.adaptors.ldappwd.util;
+package org.jasig.cas.adaptors.ldap.util;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.slf4j.Logger;
