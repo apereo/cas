@@ -70,6 +70,13 @@
 		<transition on="warn" to="warn" />
 		<transition on="success" to="sendTicketGrantingTicket" />
 		<transition on="error" to="generateLoginTicket" />
+        <!-- transition-states for password policy -->
+        <transition on="showExpiredPassView" to="showExpiredPassView" />
+        <transition on="showAccountLockedView" to="showAccountLockedView" />
+        <transition on="showAccountDisabledView" to="showAccountDisabledView" />
+        <transition on="showMustChangePassView" to="showMustChangePassView" />
+        <transition on="showBadHoursView" to="showBadHoursView" />
+        <transition on="showBadWorkstationView" to="showBadWorkstationView" />
 	</action-state>
 	
 	<action-state id="sendTicketGrantingTicket">
@@ -172,7 +179,7 @@
         <!--
         The "showBadHoursView" end state is the end state for when the user cannot log in at this time.
         -->
-	<end-state id="showBadhoursView" view="casBadHoursView" />
+	<end-state id="showBadHoursView" view="casBadHoursView" />
 
         <!--
         The "showBadWorkstation" end state is the end state when the user cannot log in from this worstation (hum, the server indeed)
