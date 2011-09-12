@@ -18,7 +18,7 @@
   <licenses>
     <license>
       <name>Jasig License</name>
-      <url>https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2/license.txt</url>
+      <url>https://github.com/Jasig/cas/blob/master/license.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
