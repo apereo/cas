@@ -74,9 +74,9 @@
   </mailingLists>
 
   <scm>
-    <connection>scm:svn:https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</connection>
-    <developerConnection>scm:svn:https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</developerConnection>
-    <url>https://source.jasig.org/cas3/branches/cas-3_4_x_maintenance/cas-server-3.4.2</url>
+    <connection>scm:git:git@github.com:Jasig/cas.git</connection>
+    <developerConnection>scm:git:git@github.com:Jasig/cas.git</developerConnection>
+    <url>https://github.com/Jasig/cas</url>
   </scm>
 
   <build>
@@ -201,9 +201,10 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
-        <version>2.0</version>
+        <version>2.2.1</version>
         <configuration>
           <mavenExecutorId>forked-path</mavenExecutorId>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
         </configuration>
       </plugin>
       <!-- CAS-988 generate hashes for assembly artifacts -->
