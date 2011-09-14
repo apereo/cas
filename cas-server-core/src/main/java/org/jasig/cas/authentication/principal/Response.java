@@ -7,6 +7,8 @@ package org.jasig.cas.authentication.principal;
 
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Encapsulates a Response to send back for a particular service.
@@ -17,6 +19,8 @@ import java.util.Map;
  * @since 3.1
  */
 public final class Response {
+    /** Pattern to detect unprintable characters. */
+    private static final Pattern NON_PRINTABLE = Pattern.compile("\\P{Print}+");
 
     public static enum ResponseType {
         POST, REDIRECT
@@ -41,7 +45,7 @@ public final class Response {
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
         final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
         boolean isFirst = true;
-        final String[] fragmentSplit = url.split("#");
+        final String[] fragmentSplit = sanitizeUrl(url).split("#");
         
         builder.append(fragmentSplit[0]);
         
@@ -82,5 +86,15 @@ public final class Response {
 
     public String getUrl() {
         return this.url;
+    }
+    
+    private static String sanitizeUrl(final String url) {
+        final Matcher m = NON_PRINTABLE.matcher(url);
+        final StringBuffer sb = new StringBuffer(url.length());
+        while (m.find()) {
+            m.appendReplacement(sb, " ");
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 }
