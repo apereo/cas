@@ -19,8 +19,9 @@ import java.util.regex.Pattern;
  * @since 3.1
  */
 public final class Response {
-    /** Pattern to detect unprintable characters. */
-    private static final Pattern NON_PRINTABLE = Pattern.compile("\\P{Print}+");
+    /** Pattern to detect unprintable ASCII characters. */
+    private static final Pattern NON_PRINTABLE =
+        Pattern.compile("[\\x00-\\x19\\x7F]+");
 
     public static enum ResponseType {
         POST, REDIRECT
