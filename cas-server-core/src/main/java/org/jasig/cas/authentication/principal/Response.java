@@ -115,7 +115,7 @@ public final class Response {
         }
         m.appendTail(sb);
         if (hasNonPrintable) {
-            LOG.warn("Non-printable characters detected in redirect URL.  This may indicate a CRLF attack.");
+            LOG.warn("The following redirect URL has been sanitized and may be sign of attack:\n" + url);
         }
         return sb.toString();
     }
