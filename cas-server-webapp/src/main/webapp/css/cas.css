@@ -12,9 +12,7 @@
             #cas #login .check input {position:relative; left:-4px; height:auto;}
             #cas #login .check label {float:none; xwidth:auto; line-height:1.8;}
             #cas #login .btn-row {padding-top:10px; border-top:1px solid #ddd;}
-            * html #cas #login .btn-row {top:5px;} /* IE6 */
             #cas #login .btn-submit {float:none; clear:none; display:inline; letter-spacing:0;}
-            * html #cas #login .btn-submit {background:#ffd;}
             #cas #login .btn-reset {float:none; clear:none; margin-left:5px; border:0; border-left:1px solid #ddd; background:transparent; color:#777; text-transform:lowercase; letter-spacing:0;}
 
     #cas #sidebar {float:left; margin-left:296px; padding:18px 15px;}
