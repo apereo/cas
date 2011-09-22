@@ -39,8 +39,7 @@ import java.util.List;
  * @version $Revision$ $Date$
  * @since 3.0.3
  */
-public class BindLdapAuthenticationHandler extends
-    AbstractLdapUsernamePasswordAuthenticationHandler {
+public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
     /** The default maximum number of results to return. */
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
@@ -65,9 +64,7 @@ public class BindLdapAuthenticationHandler extends
     /** Boolean of whether multiple accounts are allowed. */
     private boolean allowMultipleAccounts;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
 
         final List<String> cns = new ArrayList<String>();
         
@@ -98,7 +95,7 @@ public class BindLdapAuthenticationHandler extends
             log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
             return false;
         }
-        
+
         for (final String dn : cns) {
             DirContext test = null;
             String finalDn = composeCompleteDnToCheck(dn, credentials);
@@ -112,7 +109,7 @@ public class BindLdapAuthenticationHandler extends
                     return true;
                 }
             } catch (final Exception e) {
-                // if we catch an exception, just try the next cn
+                log.debug(e.getMessage(), e);
             } finally {
                 LdapUtils.closeContext(test);
             }
@@ -213,7 +210,7 @@ public class BindLdapAuthenticationHandler extends
      * support use cases like the following:
      * <ul>
      * <li>Pooling of LDAP connections used for searching (e.g. via instance
-     * of {@link PoolingContextSource}).</li>
+     * of {@link org.springframework.ldap.pool.factory.PoolingContextSource}).</li>
      * <li>Searching with client certificate credentials.</li>
      * </ul>
      * <p>
