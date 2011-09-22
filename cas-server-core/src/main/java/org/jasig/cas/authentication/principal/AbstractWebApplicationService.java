@@ -94,6 +94,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         return this.originalUrl;
     }
 
+    protected final HttpClient getHttpClient() {
+        return this.httpClient;
+    }
+
     public boolean equals(final Object object) {
         if (object == null) {
             return false;

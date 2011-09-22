@@ -66,6 +66,9 @@ public class Saml10SuccessResponseView extends AbstractCasView {
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
+    @NotNull
+    private String rememberMeAttributeName = REMEMBER_ME_ATTRIBUTE_NAME;
+
     @Override
     protected void renderMergedOutputModel(final Map model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
@@ -136,7 +139,7 @@ public class Saml10SuccessResponseView extends AbstractCasView {
 
                 if (isRemembered) {
                     final SAMLAttribute attribute = new SAMLAttribute();
-                    attribute.setName(REMEMBER_ME_ATTRIBUTE_NAME);
+                    attribute.setName(this.rememberMeAttributeName);
                     attribute.setNamespace(NAMESPACE);
                     attribute.addValue(true);
                     attributeStatement.addAttribute(attribute);
@@ -183,5 +186,9 @@ public class Saml10SuccessResponseView extends AbstractCasView {
 
     public void setEncoding(final String encoding) {
         this.encoding = encoding;
+    }
+
+    public void setRememberMeAttributeName(final String rememberMeAttributeName) {
+        this.rememberMeAttributeName = rememberMeAttributeName;
     }
 }
