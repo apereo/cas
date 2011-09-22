@@ -32,6 +32,7 @@ public final class FastBindLdapAuthenticationHandler extends AbstractLdapUsernam
             dirContext = this.getContextSource().getContext(bindDn, credentials.getPassword());
             return true;
         } catch (final NamingException e) {
+            log.debug(e.getMessage(), e);
             return false;
         } finally {
             if (dirContext != null) {
