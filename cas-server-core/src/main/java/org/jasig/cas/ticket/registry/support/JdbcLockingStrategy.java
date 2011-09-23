@@ -161,6 +161,8 @@ public class JdbcLockingStrategy
     /**
      * @param  id  Application identifier that identifies a row in the lock
      *             table for which multiple clients vie to hold the lock.
+     *             This must be the same for all clients contending for a
+     *             particular lock.
      */
     public void setApplicationId(final String id) {
         this.applicationId = id;
