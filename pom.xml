@@ -151,6 +151,9 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           <excludes>
             <exclude>**/Abstract*.java</exclude>
           </excludes>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
+          </additionalClasspathElements>
         </configuration>
       </plugin>
       <plugin>
