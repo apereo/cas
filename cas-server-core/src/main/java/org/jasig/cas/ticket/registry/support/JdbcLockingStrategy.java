@@ -49,8 +49,11 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Marvin S. Addison
  * @version $Revision$
  * @since 3.3.6
+ * @deprecated Replaced by {@link JpaLockingStrategy} as of 3.4.11.
+ * @see JpaLockingStrategy
  *
  */
+@Deprecated
 public class JdbcLockingStrategy
     implements LockingStrategy, InitializingBean {
 
