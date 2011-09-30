@@ -50,6 +50,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     public static final int DEFAULT_LOCK_TIMEOUT = 3600;
 
     /** Transactional entity manager from Spring context. */
+    @NotNull
     @PersistenceContext
     protected EntityManager entityManager;
 
