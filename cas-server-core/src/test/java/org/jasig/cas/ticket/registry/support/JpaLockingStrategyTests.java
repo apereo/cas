@@ -105,7 +105,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
     public void testAcquireAndRelease() throws Exception {
         final String appId = "basic";
         final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId);
+        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
         try {
 	        assertTrue(lock.acquire());
 	        assertEquals(uniqueId, getOwner(appId));
@@ -118,13 +118,38 @@ public class JpaLockingStrategyTests implements InitializingBean {
     }
 
     /**
+     * Test lock expiration.
+     *
+     * @throws Exception On errors.
+     */
+    @Test
+    public void testLockExpiration() throws Exception {
+        final String appId = "expquick";
+        final String uniqueId = appId + "-1";
+        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
+        try {
+            assertTrue(lock.acquire());
+            assertEquals(uniqueId, getOwner(appId));
+            assertFalse(lock.acquire());
+            Thread.sleep(1500);
+            assertTrue(lock.acquire());
+            assertEquals(uniqueId, getOwner(appId));
+            lock.release();
+            assertNull(getOwner(appId));
+        } catch (Exception e) {
+            logger.debug("testLockExpiration produced an error", e);
+            fail("testLockExpiration failed");
+        }
+    }
+
+    /**
      * Verify non-reentrant behavior.
      */
     @Test
     public void testNonReentrantBehavior() {
         final String appId = "reentrant";
         final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId);
+        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
         try {
 	        assertTrue(lock.acquire());
 	        assertEquals(uniqueId, getOwner(appId));
@@ -177,16 +202,17 @@ public class JpaLockingStrategyTests implements InitializingBean {
     private LockingStrategy[] getConcurrentLocks(final String appId) {
         final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
         for (int i = 1; i <= locks.length; i++) {
-            locks[i - 1] = newLockTxProxy(appId, appId + "-" + i);
+            locks[i - 1] = newLockTxProxy(appId, appId + "-" + i, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
         }
         return locks;
     }
-    
-    private LockingStrategy newLockTxProxy(final String appId, final String uniqueId) {
+
+    private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final int ttl) {
         final JpaLockingStrategy lock = new JpaLockingStrategy();
         lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
         lock.setApplicationId(appId);
         lock.setUniqueId(uniqueId);
+        lock.setLockTimeout(ttl);
         return (LockingStrategy) Proxy.newProxyInstance(
                JpaLockingStrategy.class.getClassLoader(),
                new Class[] {LockingStrategy.class},
