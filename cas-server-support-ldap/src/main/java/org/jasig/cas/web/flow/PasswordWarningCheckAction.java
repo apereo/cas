@@ -7,9 +7,10 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.authentication.AbstractPasswordWarningCheck;
 import org.jasig.cas.authentication.PasswordWarningCheck;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,19 +44,20 @@ public final class PasswordWarningCheckAction extends AbstractAction implements 
         this.logger.debug("checking account status--");
         int status = AbstractPasswordWarningCheck.STATUS_ERROR;
 
-        Principal principal = (Principal)context.getFlowScope().get("principal");
         String ticket = context.getRequestScope().getString("serviceTicketId");
-        if ((principal == null)&&(ticket == null)){
+        if ((StringUtils.hasText(context.getRequestParameters().get("renew")) || StringUtils.hasText(context.getRequestParameters().get("gateway"))) && ticket == null){
         	this.logger.warn("No user principal or service ticket available!");
         	return error();
         }
         
-        if ((principal == null)&&(ticket != null)){
+        if ((StringUtils.hasText(context.getRequestParameters().get("renew")) || StringUtils.hasText(context.getRequestParameters().get("gateway"))) && (ticket != null)){
         	this.logger.info("Not a login attempt, skipping PasswordWarnCheck");
         	return success();
         }
         
-        String userID=principal.getId();
+        
+        UsernamePasswordCredentials credentials = (UsernamePasswordCredentials)context.getFlowScope().get("principal");
+        String userID=credentials.getUsername();
         this.logger.debug("userID='" + userID + "'");
         
         status = this.passwordWarningChecker.getPasswordWarning(userID);
