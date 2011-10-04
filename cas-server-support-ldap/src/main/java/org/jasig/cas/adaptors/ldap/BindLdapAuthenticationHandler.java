@@ -112,7 +112,13 @@ public class BindLdapAuthenticationHandler extends
                     return true;
                 }
             } catch (final Exception e) {
-                // if we catch an exception, just try the next cn
+                // see if we can match to a more specific exception and then throw that instead
+                // i.e. AccountLockedException, AccountDisabledException, ExpiredPasswordException,...
+                final String details = e.getMessage();
+                log.debug("LDAP server returned exception message: " + details);
+                handleLDAPError(details);
+
+                // otherwise, just try the next cn
             } finally {
                 LdapUtils.closeContext(test);
             }

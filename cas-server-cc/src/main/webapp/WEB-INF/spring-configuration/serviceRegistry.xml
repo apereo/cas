@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	   http://www.springframework.org/schema/security 
+	   http://www.springframework.org/schema/security/spring-security-3.0.xsd
+       http://www.springframework.org/schema/tx 
+	   http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+	   
+	<!-- 
+	Sample, in-memory data store for the ServiceRegistry. A real implementation
+	would probably want to replace this with the JPA-backed ServiceRegistry DAO
+	The name of this bean should remain "serviceRegistryDao".
+	 
+	<bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl" />
+	-->
+	
+	<sec:user-service id="userDetailsService">
+        <sec:user name="atilling" password="notused" authorities="ROLE_ADMIN" />
+        <sec:user name="tapal" password="notused" authorities="ROLE_ADMIN" />
+        <sec:user name="lbsch" password="notused" authorities="ROLE_ADMIN" />
+        <sec:user name="jsch" password="notused" authorities="ROLE_ADMIN" />
+        <sec:user name="briley" password="notused" authorities="ROLE_ADMIN" />
+    </sec:user-service>
+	
+	<!-- This is the serviceRegistry configuration for Hibernate  -->
+	<bean id="serviceRegistryDao" class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"
+   		p:entityManagerFactory-ref="entityManagerFactory" />
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSourceCAS"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="true"/>
+				<property name="showSql" value="false" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<bean id="dataSourceCAS"  class="org.apache.commons.dbcp.BasicDataSource"
+        p:driverClassName="com.mysql.jdbc.Driver"
+        p:url="jdbc:mysql://cas1.conncoll.edu:3306/cas?autoReconnect=true"
+        p:password="Camel09!"
+        p:username="cas" />
+	  
+</beans>

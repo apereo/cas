@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+	   
+	<bean id="authenticationManager" class="org.jasig.cas.authentication.LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager">
+       <constructor-arg index="0">
+	       <map>
+		       <entry key-ref="LdapAuthHandler" value-ref="LdapCredentialtoPrincipalResolver" />
+		       <entry key-ref="HTTPAuthHandler" value-ref="HTTPCredentialtoPrincipalResolver" />
+	       </map>
+       </constructor-arg>
+	</bean>
+	
+	<bean id="HTTPCredentialtoPrincipalResolver" class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+	
+	<bean  id="HTTPAuthHandler" class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
+		p:httpClient-ref="httpClient" />
+		   
+	<bean id="LdapAuthHandler" class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler" >
+	    <property name="filter" value="sAMAccountName=%u" />
+		<property name="searchBase" value="dc=conncoll,dc=edu" />
+	    <property name="contextSource" ref="contextSource" />
+	    <property name="ignorePartialResultException" value="yes" />
+		<property name="lDAPErrorDefs">
+			<list>
+				<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
+					<property name="lDAPPattern" value="\D532\D|expired" />
+					<property name="errMessage" value="Password Expired" />
+				</bean>
+				<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
+					<property name="lDAPPattern" value="\D773\D" />
+					<property name="errMessage" value="User Must Change Password" />
+				</bean>	
+			</list>
+		</property>		
+	</bean> 
+	
+	<bean id="LdapCredentialtoPrincipalResolver" class="org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver">
+		<property name="credentialsToPrincipalResolver">
+			<bean class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+		</property>
+		<property name="filter" value="(sAMAccountName=%u)" />
+		<property name="principalAttributeName" value="sAMAccountName" />
+		<property name="searchBase" value="dc=conncoll,dc=edu" />
+		<property name="contextSource" ref="contextSource" />
+		<property name="attributeRepository" ref="attributeRepository" />
+	</bean>
+   
+	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+	  <property name="pooled" value="false"/>
+	  <property name="url" value="ldaps://fir.conncoll.edu" />
+	  <property name="userDn" value="${ldap.username}"/>
+	  <property name="password" value="${ldap.password}"/>
+	  <property name="baseEnvironmentProperties">
+	    <map>
+	      <entry key="com.sun.jndi.ldap.connect.timeout" value="3000" />
+	      <entry key="com.sun.jndi.ldap.read.timeout" value="3000" />
+	      <entry key="java.naming.security.authentication" value="simple" />
+	    </map>
+	  </property>
+	</bean>
+	
+	<bean id="ldapTemplate" class="org.springframework.ldap.core.LdapTemplate">
+        <constructor-arg ref="contextSource" />
+        <property name="ignorePartialResultException" value="true" />
+    </bean> 
+   
+	<bean id="attributeRepository" class="org.jasig.services.persondir.support.ldap.LdapPersonAttributeDao">
+		<property name="ldapTemplate" ref="ldapTemplate" />
+		<property name="baseDN" value="dc=conncoll,dc=edu" />
+		<property name="requireAllQueryAttributes" value="false" />
+		<property name="queryAttributeMapping">
+			<map>
+				<entry key="username" value="sAMAccountName" /> 
+			</map>
+		</property>
+		<property name="resultAttributeMapping">
+			<map>
+				<!-- Mapping beetween LDAP entry attributes (key) and Principal's (value) -->
+				<entry value="bannerId" key="extensionAttribute15" />
+				<entry value="mailState" key="extensionAttribute14" />
+				<entry value="mail" key="userPrincipalName" />
+				<entry value="interrupts" key="extensionAttribute8" />
+			</map>
+		</property>	
+	</bean>
+	
+    <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
+</beans>

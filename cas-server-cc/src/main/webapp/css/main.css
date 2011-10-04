@@ -1,0 +1,78 @@
+@charset "UTF-8";
+/* CSS Document */
+html,body{font-size:100.01%;;height:100%;margin:0;padding:0; }
+
+body {
+background-image:url("../images/Bg.jpg");
+background-repeat:repeat-x;
+background-color:#c1d4e5;
+}
+#wave {
+position: absolute;
+left:0;
+top:0;
+background-image:url("../images/wave.png");
+background-repeat:repeat;
+height:100%;
+width:100%;
+}
+
+#Main {
+width:100%;
+}
+
+H1,H2,H3 {
+	margin:0px;
+}
+
+#login{
+position: absolute;
+left: 50%;
+top: 50%;
+background-image:url("../images/LoginBubble.png");
+background-repeat:no-repeat;
+height:435px;
+width:771px;
+padding-top:70px;
+padding-left:0px;
+margin-top:-217px;
+margin-left:-385px;
+}
+
+#status {
+margin-top:75px;
+margin-left:75px;
+margin-right:325px;
+text-align:center;
+}
+#msg {
+margin-top:75px;
+margin-left:75px;
+margin-right:325px;
+}
+
+TD.input{
+background-image:url("../images/InputBack.gif");
+width:230px;
+height:43px;
+text-align:left;
+vertical-align:middle;
+padding-left:15px;
+}
+
+Input{
+border:none;
+background:none;
+outline:none;
+width:160px;
+
+}
+/* highlight errors */
+    input.error {background:#FFEFEF; color:#b00;}
+
+/* mark as required */
+    .required {}
+    .error {background:#ffefef;}
+/* Messages */
+.success
+{background:#fff}	
