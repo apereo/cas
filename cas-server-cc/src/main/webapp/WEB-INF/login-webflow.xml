@@ -108,7 +108,7 @@
 	
 	<!-- Show custom view that interupts the login flow -->
 	<view-state id="showInterrupt" view="${flowScope.Flag}" model="IntData">
-		<var name="IntData" class="org.jasig.cas.web.flow.IntData" />
+		<var name="IntData" class="org.jasig.cas.web.support.IntData" />
 		<binder>
             <binding property="fields[1]" />
             <binding property="fields[2]" />
