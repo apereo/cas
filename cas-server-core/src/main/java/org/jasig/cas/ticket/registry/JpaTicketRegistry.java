@@ -8,23 +8,26 @@ package org.jasig.cas.ticket.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 
+ * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
+ * ticket registry is suitable for HA environments.
+ *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
+ *
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.2.1
  *
@@ -32,21 +35,20 @@ import org.springframework.transaction.annotation.Transactional;
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     
     @NotNull
-    private JpaTemplate jpaTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
         
     @NotNull
     private String ticketGrantingTicketPrefix = "TGT";
-    
-    public JpaTicketRegistry(final EntityManagerFactory factory) {
-        this.jpaTemplate = new JpaTemplate(factory);
-    }
+
 
     protected void updateTicket(final Ticket ticket) {
-        this.jpaTemplate.merge(ticket);
+        entityManager.merge(ticket);
     }
 
+    @Transactional(readOnly = false)
     public void addTicket(final Ticket ticket) {
-        this.jpaTemplate.persist(ticket);
+        entityManager.persist(ticket);
     }
 
     @Transactional(readOnly = false)
@@ -63,14 +65,19 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         }
         
         deleteTicketAndChildren(ticket);
-        return true;        
+        return true;
     }
     
     private void deleteTicketAndChildren(final Ticket ticket) {
-        final Map<String,Object> params = new HashMap<String,Object>();
-        params.put("id", ticket.getId());
-        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = this.jpaTemplate.findByNamedParams("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", params);
-        final List<ServiceTicketImpl> serviceTicketImpls = this.jpaTemplate.findByNamedParams("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", params);
+        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
+            .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class)
+            .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+            .setParameter("id", ticket.getId())
+            .getResultList();
+        final List<ServiceTicketImpl> serviceTicketImpls = entityManager
+	        .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class)
+	        .setParameter("id", ticket.getId())
+	        .getResultList();
         
         for (final ServiceTicketImpl s : serviceTicketImpls) {
             removeTicket(s);
@@ -89,12 +96,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
                 final Date creationDate = new Date(ticket.getCreationTime());
                 log.debug("Removing Ticket >" + ticket.getId() + "< created: " + creationDate.toString());
              }
-            this.jpaTemplate.remove(ticket);
+            entityManager.remove(ticket);
         } catch (final Exception e) {
             log.error("Error removing " + ticket + " from registry.", e);
         }
     }
     
+    @Transactional(readOnly=true)
     public Ticket getTicket(final String ticketId) {
         return getProxiedTicketInstance(getRawTicket(ticketId));
     }
@@ -102,10 +110,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     private Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-                return this.jpaTemplate.find(TicketGrantingTicketImpl.class, ticketId);
+                return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
             }
             
-            return this.jpaTemplate.find(ServiceTicketImpl.class, ticketId);
+            return entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
             log.error("Error getting ticket " + ticketId + " from registry.", e);
         }
@@ -114,8 +122,12 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Transactional(readOnly=true)
     public Collection<Ticket> getTickets() {
-        final List<TicketGrantingTicketImpl> tgts = this.jpaTemplate.find("select t from TicketGrantingTicketImpl t");
-        final List<ServiceTicketImpl> sts = this.jpaTemplate.find("select s from ServiceTicketImpl s");
+        final List<TicketGrantingTicketImpl> tgts = entityManager
+            .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
+            .getResultList();
+        final List<ServiceTicketImpl> sts = entityManager
+            .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
+            .getResultList();
         
         final List<Ticket> tickets = new ArrayList<Ticket>();
         tickets.addAll(tgts);
