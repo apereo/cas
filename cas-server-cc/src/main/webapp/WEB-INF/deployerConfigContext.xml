@@ -35,6 +35,22 @@
 					<property name="lDAPPattern" value="\D773\D" />
 					<property name="errMessage" value="User Must Change Password" />
 				</bean>	
+				<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
+					<property name="lDAPPattern" value="\D775\D|\D19\D|password retry" />
+					<property name="errMessage" value="User Account Locked" />
+				</bean>	
+				<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
+					<property name="lDAPPattern" value="\D533\D|\D701\D|\D53\D|Account inactivated|OperationNotSupportedException" />
+					<property name="errMessage" value="User Account Disabled" />
+				</bean>	
+				<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
+					<property name="lDAPPattern" value="\D530\D" />
+					<property name="errMessage" value="User not allowed to login at this time" />
+				</bean>	
+				<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
+					<property name="lDAPPattern" value="\D531\D" />
+					<property name="errMessage" value="User not allowed to login via CAS" />
+				</bean>	
 			</list>
 		</property>		
 	</bean> 

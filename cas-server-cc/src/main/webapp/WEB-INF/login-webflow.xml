@@ -65,7 +65,7 @@
 		<transition on="warn" to="warn" />
 		<transition on="success" to="CheckFlags" />
 		<transition on="error" to="generateLoginTicket" />
-		<transition on="showExpiredPassView" to="showExpiredPass" />
+		<transition on="showExpiredPassView" to="showExpiredPassView" />
 		<transition on="showMustChangePassView" to="showMustChangePassView" />
 		<transition on="showAccountLockedView" to="showAccountLockedView" />
 		<transition on="showAccountDisabledView" to="showAccountDisabledView" />
