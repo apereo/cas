@@ -43,7 +43,7 @@ public final class CheckFlags {
 		log.debug("CheckFlags searching " + searchFilter);
 		log.debug("CheckFlags searching for attribute " + ldapAttrib);
 		
-		List<String> DN = this.ldapTemplate.search(
+		List DN = this.ldapTemplate.search(
 			this.searchBase, searchFilter, 
 			new AbstractContextMapper(){
 				protected Object doMapFromContext(DirContextOperations ctx) {

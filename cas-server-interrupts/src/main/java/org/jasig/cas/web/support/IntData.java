@@ -1,6 +1,9 @@
 package org.jasig.cas.web.support;
 
-public class IntData {
+import java.io.Serializable;
+
+public class IntData implements Serializable {
+	
 	private String[] fields = new String[100];
 	
 	public void setFields(String[] fields) { this.fields = fields; }

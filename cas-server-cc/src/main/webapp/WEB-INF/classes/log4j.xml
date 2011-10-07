@@ -68,7 +68,7 @@
     </logger>
 
     <logger name="org.springframework.webflow">
-        <level value="WARN" />
+        <level value="DEBUG" />
     </logger>
 
     <logger name="org.jasig" additivity="true">

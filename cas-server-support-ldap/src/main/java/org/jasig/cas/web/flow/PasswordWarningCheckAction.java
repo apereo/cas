@@ -45,7 +45,7 @@ public final class PasswordWarningCheckAction extends AbstractAction implements 
         int status = AbstractPasswordWarningCheck.STATUS_ERROR;
 
         String ticket = context.getRequestScope().getString("serviceTicketId");
-        if ((StringUtils.hasText(context.getRequestParameters().get("renew")) || StringUtils.hasText(context.getRequestParameters().get("gateway"))) && ticket == null){
+        if (!(StringUtils.hasText(context.getRequestParameters().get("renew")) || StringUtils.hasText(context.getRequestParameters().get("gateway"))) && ticket == null){
         	this.logger.warn("No user principal or service ticket available!");
         	return error();
         }
