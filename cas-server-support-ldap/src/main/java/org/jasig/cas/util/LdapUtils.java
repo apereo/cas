@@ -14,6 +14,7 @@ import javax.naming.directory.DirContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ldap.core.LdapEncoder;
 
 /**
  * Utilities related to LDAP functions.
@@ -44,7 +45,7 @@ public final class LdapUtils {
         final String[] userDomain;
         String newFilter = filter;
 
-        properties.put("%u", userName.replace("\\", "\\\\"));
+        properties.put("%u", userName);
 
         userDomain = userName.split("@");
 
@@ -62,7 +63,7 @@ public final class LdapUtils {
         }
 
         for (final String key : properties.keySet()) {
-            final String value = properties.get(key);
+            final String value = LdapEncoder.nameEncode(properties.get(key));
             newFilter = newFilter.replaceAll(key, Matcher.quoteReplacement(value));
         }
 
