@@ -679,7 +679,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <log4j.version>1.2.15</log4j.version>
     <junit.version>4.7</junit.version>
     <commons.lang.version>2.5</commons.lang.version>
-    <inspektr.version>1.0.4.GA</inspektr.version>
+    <inspektr.version>1.0.5.GA</inspektr.version>
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.8.5</mockito.version>
   </properties>
