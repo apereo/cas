@@ -61,6 +61,8 @@
   <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
     p:entityManagerFactory-ref="factoryBean" />
     
+  <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
+    
 </beans>
 
 
