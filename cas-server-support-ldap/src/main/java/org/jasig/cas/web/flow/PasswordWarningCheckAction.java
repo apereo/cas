@@ -45,20 +45,19 @@ public final class PasswordWarningCheckAction extends AbstractAction implements 
         int status = AbstractPasswordWarningCheck.STATUS_ERROR;
 
         String ticket = context.getRequestScope().getString("serviceTicketId");
-        if (!(StringUtils.hasText(context.getRequestParameters().get("renew")) || StringUtils.hasText(context.getRequestParameters().get("gateway"))) && ticket == null){
+        UsernamePasswordCredentials credentials = (UsernamePasswordCredentials)context.getFlowScope().get("credentials"); 
+        String userID=credentials.getUsername();
+        this.logger.debug("userID='" + userID + "'");
+        
+        if ((userID == null)&&(ticket == null)){
         	this.logger.warn("No user principal or service ticket available!");
         	return error();
         }
         
-        if ((StringUtils.hasText(context.getRequestParameters().get("renew")) || StringUtils.hasText(context.getRequestParameters().get("gateway"))) && (ticket != null)){
+        if ((userID == null) && (ticket != null)){
         	this.logger.info("Not a login attempt, skipping PasswordWarnCheck");
         	return success();
         }
-        
-        
-        UsernamePasswordCredentials credentials = (UsernamePasswordCredentials)context.getFlowScope().get("principal");
-        String userID=credentials.getUsername();
-        this.logger.debug("userID='" + userID + "'");
         
         status = this.passwordWarningChecker.getPasswordWarning(userID);
         this.logger.debug("translating return code status='" + status + "'");
