@@ -7,7 +7,7 @@
 		</c:if>
 
 		<spring:hasBindErrors name="${commandName}">
-			<div id="status" class="errors">
+			<div id="msg" class="errors">
 			<spring:message code="application.errors.global" />
 		</div>
 		</spring:hasBindErrors>

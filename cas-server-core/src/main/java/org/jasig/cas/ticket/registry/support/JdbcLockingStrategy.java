@@ -49,8 +49,11 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Marvin S. Addison
  * @version $Revision$
  * @since 3.3.6
+ * @deprecated Replaced by {@link JpaLockingStrategy} as of 3.4.11.
+ * @see JpaLockingStrategy
  *
  */
+@Deprecated
 public class JdbcLockingStrategy
     implements LockingStrategy, InitializingBean {
 
@@ -161,6 +164,8 @@ public class JdbcLockingStrategy
     /**
      * @param  id  Application identifier that identifies a row in the lock
      *             table for which multiple clients vie to hold the lock.
+     *             This must be the same for all clients contending for a
+     *             particular lock.
      */
     public void setApplicationId(final String id) {
         this.applicationId = id;

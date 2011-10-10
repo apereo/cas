@@ -1,0 +1,8 @@
+.classpath
+!/.project
+.project
+.settings
+target
+*.ipr
+*.iml
+*.iws

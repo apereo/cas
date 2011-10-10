@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  * This dramatically reduces the potential for deadlocks in
  * {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}, for example.
  * By default this implementation uses {@link NoOpLockingStrategy} to preserve
- * the same semantics as previous versions, but {@link JdbcLockingStrategy}
+ * the same semantics as previous versions, but {@link JpaLockingStrategy}
  * should be used with {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}
  * in a clustered CAS environment.
  * </p>
@@ -45,8 +45,8 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @version $Revision$
  * @since 3.0
- * @see org.jasig.cas.ticket.registry.support.JdbcLockingStrategy
- * @see org.jasig.cas.ticket.registry.support.NoOpLockingStrategy
+ * @see JpaLockingStrategy
+ * @see NoOpLockingStrategy
  */
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
