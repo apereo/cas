@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
@@ -34,7 +35,9 @@ public interface AuthenticationMetaDataPopulator {
      * additional attributes.
      * @return the original Authentication object or a new Authentication
      * object.
+     * @throws AuthenticationException An AuthenticationException can contain
+     * details about why a particular meta data populator failed.
      */
     Authentication populateAttributes(Authentication authentication,
-        Credentials credentials);
+        Credentials credentials) throws AuthenticationException;
 }
