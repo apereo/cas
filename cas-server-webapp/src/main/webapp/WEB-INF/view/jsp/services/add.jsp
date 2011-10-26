@@ -70,7 +70,8 @@
     <!-- Attributes -->
 	<fieldset>
 	    <h2><spring:message code="management.services.fieldset.title.attributes" /></h2>
-		<div class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
+		<div class="oneField">
+		    <p>Allow access to the following attributes:</p>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</div>
 		<div class="oneField">
