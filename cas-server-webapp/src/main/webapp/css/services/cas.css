@@ -105,11 +105,6 @@ form {
     background: transparent;
     color: #eee;
 }
-/* Hide from IE5Mac only \*/
-#nav-main a span {
-	float: none;
-}
-/* End hack */
 #nav-main a:hover {
 	background: #eee;
 }
@@ -187,27 +182,6 @@ form {
     padding: 0;
     margin: 0;
     font: normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;
-}
-#footer #nav-campus-sites li:before {} /* content: " | " */
-#footer #nav-campus-sites li:first-child:before {}
-/* All IE browsers */
-* html #footer {
-	height: 1px;
-}
-* html #footer #nav-campus-sites {
-    padding: 0 0.4em 0 0;
-    margin: 0;
-}
-/* Win IE browsers - hide from Mac IE\*/
-* html #footer #nav-campus-sites {
-	height: 1px; }
-* html #footer #nav-campus-sites li {
-    display: block;
-    float: left;
-}
-/* End hide from Mac IE 5 */
-* html #footer #nav-campus-sites li:first-child {
-	border-left: 0px none;
 }
 
 /*

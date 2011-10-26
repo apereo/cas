@@ -16,6 +16,10 @@
     
     <link rel="stylesheet" href="<c:url value="/css/services/cas.css" />" type="text/css" media="screen" />
     
+    <!--[if IE]>
+        <link rel="stylesheet" href="<c:url value="/css/services/ieFix.css" />" type="text/css" media="screen" />
+    <![endif]-->
+    
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
     <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
@@ -51,21 +55,6 @@
 			#allowedAttributes {height:150px;}
         }
     </style>
-
-    <!--[if IE]>
-        <style type="text/css">
-            * html button {padding:0; width:0; overflow:visible;}
-            * html .fieldset-inner {padding:1em;}
-            * html fieldset {position:relative; padding:0; margin:4em 0 0;}
-
-            * html legend {margin:0; padding:0; position:relative; top:-0.5em; margin-bottom:-0.5em;}
-             td.td7 {width:85px; padding-right:22px !important;}
-             div.tableWrapper {xoverflow-y:scroll;}
-             * html td.td7 {width:102px; padding-right:5px !important; text-align:left !important;}
-             * html table#scrollTable {margin-right:-17px;}
-             * html div.tableWrapper {width:auto; height:250px;}
-        </style>
-    <![endif]-->
 </head>
 
 <body id="${pageTitle}-body">
