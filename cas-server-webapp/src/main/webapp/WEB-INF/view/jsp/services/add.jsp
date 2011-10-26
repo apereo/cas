@@ -37,7 +37,9 @@
 		</div>
 		<div class="oneField">
 			<label for="theme" class="preField"><spring:message code="management.services.add.property.themeName" /></label>
-			<form:input path="theme" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
+			<form:select path="theme" cssErrorClass="error">
+                <form:option label="default" value="default" />
+            </form:select>
 			<form:errors path="theme" cssClass="formError" />
 		</div>
     </fieldset>
