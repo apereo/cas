@@ -43,7 +43,9 @@
 			<form:input path="theme" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
 			<form:errors path="theme" cssClass="formError" />
 		</div>
+    </fieldset>
 
+    <fieldset>
 		<div class="oneField">
 			<span class="label preField"><spring:message code="management.services.add.property.status" /></span>
 			<span>
@@ -66,7 +68,9 @@
 				</span>
 			</span>
 		</div>
-		
+	</fieldset>
+	
+	<fieldset>
 		<div class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</div>
@@ -75,8 +79,10 @@
 			<form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
 			<label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
 		</div>
-
-        <div class="oneField">
+	</fieldset>
+	
+	<fieldset>
+	    <div class="oneField">
           <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
           <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
           <form:errors path="evaluationOrder" cssClass="formError" />
