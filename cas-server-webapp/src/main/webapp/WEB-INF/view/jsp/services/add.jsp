@@ -81,9 +81,9 @@
 	<fieldset>
 	    <h2><spring:message code="management.services.fieldset.title.advanced" /></h2>
 	    <div class="oneField">
-          <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
-          <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
-          <form:errors path="evaluationOrder" cssClass="formError" />
+            <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
+            <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
+            <form:errors path="evaluationOrder" cssClass="formError" />
         </div>
 	</fieldset>
 	
