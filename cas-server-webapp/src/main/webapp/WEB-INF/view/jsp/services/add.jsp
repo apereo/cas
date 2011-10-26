@@ -16,7 +16,7 @@
     </spring:hasBindErrors>
     
 	<fieldset>
-	    <h2><spring:message code="${pageTitle}" /></h2>
+	    <h2><spring:message code="management.services.fieldset.title.general" /></h2>
 		<p class="instructions"><spring:message code="management.services.add.instructions" /></p>
 
 		<div class="oneField">
@@ -46,6 +46,7 @@
     </fieldset>
 
     <fieldset>
+        <h2><spring:message code="management.services.fieldset.title.status" /></h2>
 		<div class="oneField">
 			<span class="label preField"><spring:message code="management.services.add.property.status" /></span>
 			<span>
@@ -71,6 +72,7 @@
 	</fieldset>
 	
 	<fieldset>
+	    <h2><spring:message code="management.services.fieldset.title.attributes" /></h2>
 		<div class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</div>
@@ -82,6 +84,7 @@
 	</fieldset>
 	
 	<fieldset>
+	    <h2><spring:message code="management.services.fieldset.title.advanced" /></h2>
 	    <div class="oneField">
           <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
           <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
