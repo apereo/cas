@@ -71,7 +71,7 @@
 	
     <div class="add">
         <a href="add.html">
-            <span style="text-transform: lowercase;"><spring:message code="addServiceView" /></span>
+            <span><spring:message code="addServiceView" /></span>
         </a>
     </div>
     

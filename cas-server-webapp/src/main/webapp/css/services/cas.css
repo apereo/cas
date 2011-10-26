@@ -340,7 +340,10 @@ td a {
 	padding-left: 35px;
 	padding-right: 0;
 	padding-top: 10px;
-	padding-bottom: 10px
+	padding-bottom: 10px;
+}
+.add a span {
+    text-transform: lowercase;
 }
 .add a:hover {
 	color: #b00;
