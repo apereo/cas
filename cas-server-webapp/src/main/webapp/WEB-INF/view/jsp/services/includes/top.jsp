@@ -33,23 +33,25 @@
 </head>
 
 <body id="${pageTitle}-body">
-    <div id="header">
-        <div id="nav-system">
-            <ul>
-                <li><a href="logout.html" title="logout of current session"><spring:message code="management.services.link.logout" /></a></li>
-            </ul>
-        </div>
-        <p id="tagline"><spring:message code="application.title" /></p>
-        <h1 id="app-name"><spring:message code="management.services.title" /></h1>
-    </div>
-    <div id="nav-main">
-        <ul>
-            <li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li>
-            <li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li>
-            <li><a id="viewStatisticsView" href="viewStatistics.html"><span><spring:message code="viewStatisticsView" /></span></a></li>
-        </ul>
-    </div>
+    <div id="container">
+          <div id="header">
+              <div id="nav-system">
+                  <ul>
+                      <li><a href="logout.html" title="logout of current session"><spring:message code="management.services.link.logout" /></a></li>
+                  </ul>
+              </div>
+              <p id="tagline"><spring:message code="application.title" /></p>
+              <h1 id="app-name"><spring:message code="management.services.title" /></h1>
+          </div>
+          <div id="nav-main">
+              <ul>
+                  <li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li>
+                  <li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li>
+                  <li><a id="viewStatisticsView" href="viewStatistics.html"><span><spring:message code="viewStatisticsView" /></span></a></li>
+              </ul>
+          </div>
 
-  <!-- CONTENT -->
-  <div id="content">
-    <h1><spring:message code="${pageTitle}" text="Logged Out" /></h1>
+        <!-- CONTENT -->
+        <div id="content">
+          <h1><spring:message code="${pageTitle}" text="Logged Out" /></h1>
+
