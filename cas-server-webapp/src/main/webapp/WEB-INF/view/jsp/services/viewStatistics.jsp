@@ -1,4 +1,5 @@
 <%@include file="includes/top.jsp"%>
+
 <h2>Runtime Statistics</h2>
 <table width="800">
     <thead>
@@ -44,9 +45,8 @@
     </tbody>
 </table>
 
-<br /><br />
-
 <h2>Ticket Registry Statistics</h2>
+
 <table width="800">
     <thead>
         <tr>

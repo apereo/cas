@@ -23,14 +23,12 @@
 			<label for="name" class="preField"><spring:message code="management.services.add.property.name" /> </label>
 			<form:input path="name" size="51" maxlength="50" cssClass="required" cssErrorClass="error" />
 			<form:errors path="name" cssClass="formError" />
-			<br />
 		</span>
 	
 		<span class="oneField">
 			<label for="serviceId" class="preField"><spring:message code="management.services.add.property.serviceUrl" /></label>
 			<form:input path="serviceId" size="51" maxlength="255" cssClass="required" cssErrorClass="error" />
 			<form:errors path="serviceId" cssClass="formError" />
-			<br />
 			<div class="hint"><spring:message code="management.services.add.property.serviceUrl.instructions" /></div>
 		</span>
 	
@@ -38,14 +36,12 @@
 			<label for="description" class="preField"><spring:message code="management.services.add.property.description" /></label>
 			<form:textarea path="description" cssClass="required" cssErrorClass="error" cols="49" rows="5" />
 			<form:errors path="description" cssClass="formError" />
-			<br />
 		</span>
 	
 		<span class="oneField">
 			<label for="theme" class="preField"><spring:message code="management.services.add.property.themeName" /></label>
 			<form:input path="theme" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
 			<form:errors path="theme" cssClass="formError" />
-			<br />
 		</span>
 
 		<span class="oneField">
@@ -69,7 +65,6 @@
 					<label for="anonymousAccess1" id="anonymousAccess-l" class="postField"><spring:message code="management.services.add.property.status.anonymousAccess" /></label>
 				</span>
 			</span>
-			<br/>
 		</span>
 		
 		<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
@@ -85,7 +80,6 @@
           <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
           <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
           <form:errors path="evaluationOrder" cssClass="formError" />
-          <br />
         </span>
 	</fieldset>
 	
