@@ -2,8 +2,7 @@
 
 <form:form 
     action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${fn:escapeXml(param.id)}" 
-    cssClass="v" 
-    cssStyle="width:75%;" 
+    cssClass="v"
     commandName="${commandName}">
 
     <c:if test="${not empty successMessage}">
@@ -16,12 +15,12 @@
         </div>
     </spring:hasBindErrors>
     
-	<fieldset class="repeat">
+	<fieldset>
 	    <legend><spring:message code="${pageTitle}" /></legend>
 	    <div class="fieldset-inner">
     		<p class="instructions"><spring:message code="management.services.add.instructions" /></p>
 
-    		<span class="oneField" style="display:block; margin:5px 0;">
+    		<span class="oneField">
     			<label for="name" class="preField"><spring:message code="management.services.add.property.name" /> </label>
     			<form:input path="name" size="51" maxlength="50" cssClass="required" cssErrorClass="error" />
     			<form:errors path="name" cssClass="formError" />
@@ -97,9 +96,7 @@
             <spring:message code="management.services.add.button.save" />
         </button> 
         or 
-        <a href="manage.html" style="color:#b00;">
-            <spring:message code="management.services.add.button.cancel" />
-        </a>
+        <a href="manage.html"><spring:message code="management.services.add.button.cancel" /></a>
 	</div>
 </form:form>
 
