@@ -221,134 +221,118 @@ _______________________________
     color: #e71708; /* bg */
     background: #fed url('../../images/services/error.gif') no-repeat 2em 50%;
 }
+.formError {
+	background: #fafafa url('../../images/services/alert2.gif') no-repeat 0 50%;
+	color: #b00;
+	margin-left: .5em;
+	font-size: 1.2em;
+	padding: 0 0 0 24px;
+	line-height: 20px; 
+}
 
 /* FORMS
  --------------------------------- */
 form {
-    float: left;
-    margin: 0 1%;
-    padding: 0;
-    width: 77%;
+	padding:0;
+	width: 75%;
+}
+form p {
+	margin: 0 0 10px 0 !important;
+	width: 100% !important;
 }
 fieldset {
-    border-left: 0px solid #ddd;
-	border-right: 0px solid #ddd;
+	border: 0px solid #ddd;
 	border-top: 1px solid #ddd;
-	border-bottom: 0px solid #ddd;
-	margin: 2em 0;
-	padding: 10px; 
+	padding: 20px 20px 0 20px;
+	margin-bottom: 20px;
+	background-color:#fafafa;
+	position:relative;
+	border:1px solid #ddd;
+}
+.oneField {
+	margin-bottom: 18px;
+}
+.oneField.textarea,
+.oneField.select {
+	position: relative;
+	padding-left: 103px;
+}
+.oneField.ignore {
+	margin-top: 10px;
+}
+.textarea label,
+.select label {
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 legend {
-    margin: 1em 5px;
-    color: #b00;
-    font-size: 1.1em;
-    font-weight: bold;
-    text-transform: uppercase;
+	position: absolute;
+	top: -25px;
+	left: 0;
 }
 label {
-    cursor: pointer;
-    font-size: 1em;
-    color: #666;
+	font-size: 1em;
+	color: #666;
+}
+.preField, .label {
+	display:inline-block;
+	width:100px;
+	font-size:1.1em;
+	line-height:20px; 
+	color:#666;
+}
+.hint {
+	margin-left:103px; 
+	line-height:1.5;
+	font-size: 0.9em;
+	font-style: italic;
+	color: #666;
+}
+input {
+	font-size:1.1em;
+	vertical-align:top;
+}
+input:focus, select:focus, textarea:focus,
+input.focus, select.focus, textarea.focus {
+	-webkit-box-shadow:0 0 3px #999; 
+	-moz-box-shadow: 0 0 3px #999; 
+	box-shadow:0 0 3px #999;
 }
 input, select, textarea, option {
 	font: normal 1.1em sans-serif;
 }
-input, textarea {
-	padding: 0px 2px;
+input, textarea, select {
+	border:1px solid #ccc;
+	border-color:#999 #eee #eee #999;
+	padding:4px;
+}
+
+/* vertically aligned form */
+.oneChoice input { 
+	margin: 0 0 0 .5em; 
+	width: 13px; 
+	height: 13px; 
+	vertical-align: middle;
+	border:0px none;
+}
+.oneChoice label {
+	margin-right:1em;
+	font-size:1.1em;
+	vertical-align:middle;  
+	line-height:20px; 
+}
+.oneChoice span label {
+	margin-left: 4px;
 }
 select option {
 	margin: auto .5em 0 0;
 }
-/* vertically aligned form*/
-input.check { margin: 0 0 0 .5em;
-	width: 13px;
-	height: 13px;
-	vertical-align: middle;
-} 
-/* highlight errors */
-.required {
-	background: #ff9;
-}
-.formError {
-    background: #fafafa url('../../images/services/alert2.gif') no-repeat 0 50%; /* bg */
-    color: #b00; /* bg */
-    margin-left: .5em; /* bg */
-    font-size: 1.4em;
-	line-height: 20px;
-	padding-left: 24px;
-	padding-right: 0;
-	padding-top: 0;
-	padding-bottom: 0
-}
-.hint {
-    margin-left: 9.5em;
-    margin-bottom: 1em;
-    line-height: 1.5;
-}
-.actions {
-    margin: 1.5em 0;
-}
-#allowedAttributes {
-    height: 150px;
-}
 
-p.instructions {
-    margin: 1em 0;
-    font-size: 1.2em;
-    background: url('../../images/services/info.gif') no-repeat left center;
-    padding-left: 2em;
-	padding-right: 0;
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
-fieldset {
-    padding: 15px 10px;
-    background-color: #fafafa;
-    margin: 20px 0;
-    position: relative;
-    border: 1px solid #ddd;
-}
-legend {
-    padding: 2px 5px;
-    color: #b00;
-    font-size: 1.3em;
-    font-weight: 900;
-    background: #fff;
-}
-label.preField, .label {
-    display: block;
-    width: 8em;
-    float: left;
-    font-size: 1.1em;
-    color: #666; /* + bg */
-    line-height: 20px; /* + bg */
-}
-label.postField {
-    margin-right: 1em;
-    font-size: 1.1em;
-    vertical-align: middle;  /*- bg */
-    line-height: 20px; /* + bg */
-}
-.check {
-	border: 0px none;
-}
-input,
-textarea,
-select {
-    border: 1px solid #ccc;
-    border-color: #999 #eee #eee #999;
-    padding: 2px;
-    margin-left: .5em; /* + bg */
-}
-input {
-    /* margin-left: .5em;  - bg */
-    font-size: 1.1em;
-    vertical-align: top;
-}
-span.oneField {
-    display: block;
-    margin: 1em 0; /* bg */
-    padding: 0;
+/* highlight errors */
+.error {
+	border: 1px dotted #BB0000;
+	background-color: #ffeedd;
 }
 .actions {
 	margin:1.5em 0;
