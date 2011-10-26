@@ -350,13 +350,23 @@ span.oneField {
     margin: 1em 0; /* bg */
     padding: 0;
 }
-button {
-	font-size: 1em;
+.actions {
+	margin:1.5em 0;
 }
-.primaryAction {
-    padding: .5em;
-    color: green;
-    font-weight: 900;
+.actions button {
+	font-size:1.1em;
+	font-weight: normal;
+	padding:1em;
+	margin-right: 15px;
+	background: none;
+	border: none;
+	color: #fafafa;
+	background-color: #999999;
+}
+.actions button:hover {
+	cursor: pointer;
+	color: #fff;
+	background-color: #666;
 }
 
 /* TABLES

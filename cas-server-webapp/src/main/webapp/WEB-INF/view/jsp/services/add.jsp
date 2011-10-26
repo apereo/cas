@@ -92,7 +92,6 @@
         <button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes">
             <spring:message code="management.services.add.button.save" />
         </button> 
-        or 
         <a href="manage.html"><spring:message code="management.services.add.button.cancel" /></a>
 	</div>
 </form:form>
