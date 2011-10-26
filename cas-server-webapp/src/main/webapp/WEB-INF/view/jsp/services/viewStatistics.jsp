@@ -45,6 +45,8 @@
     </tbody>
 </table>
 
+<br /><br />
+
 <h2>Ticket Registry Statistics</h2>
 
 <table width="800">
@@ -73,6 +75,8 @@
         </tr>
     </tbody>
 </table>
+
+<br /><br />
 
 <h2>Performance Statistics</h2>
 
