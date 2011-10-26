@@ -30,7 +30,7 @@
 			<form:errors path="serviceId" cssClass="formError" />
 			<div class="hint"><spring:message code="management.services.add.property.serviceUrl.instructions" /></div>
 		</div>
-		<div class="oneField">
+		<div class="oneField textarea">
 			<label for="description" class="preField"><spring:message code="management.services.add.property.description" /></label>
 			<form:textarea path="description" cssClass="required" cssErrorClass="error" cols="49" rows="5" />
 			<form:errors path="description" cssClass="formError" />
