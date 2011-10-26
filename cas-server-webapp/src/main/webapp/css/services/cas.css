@@ -37,48 +37,46 @@ h3 {
 
 /* HEADER
  --------------------------------- */
-#header #nav-system {
+#header {
+    padding: 20px 40px 20px 40px;
+    background: #323265;
+    color: #fff;
+}
+#header .nav {
     float: right;
     padding: 0;
 }
-#header #nav-system ul {
+#header .nav ul,
+#header .nav li {
+    margin: 0;
+    padding: 0;
+}
+#header .nav li {
     list-style: none;
-    margin: 0;
-    padding: 0;
 }
-#header #nav-system li {
-    float: left;
-    margin: 0;
-    padding: 0;
-}
-#header #nav-system li a {
-    float: left;
-    margin: 0 0 0 1px;
-    padding: 2px 10px;
-    font: normal 1.1em/1.5 Verdana,Arial,Helvetica,sans-serif;
+#header .nav li a {
+    display: block;
+    padding: 5px 10px;
+    font-size: 1.1em;
     text-decoration: none;
-    background-color: #323265;
     color: #fff;
     white-space: nowrap;
 }
-#header #nav-system li a:hover,
-#header #nav-system li a:focus {
+#header .nav li a:hover,
+#header .nav li a:focus {
     background-color: #fff;
     color: #323265;
 }
-#header p#tagline {
-    padding: 0 0 2px 3px;
-    background: #323265;
-    color: #fff;
-    font-size: 1.2em;
-    line-height: 1.6;
+#header h1 {
+    font-size: 2.4em !important;
+    line-height: 2em !important;
 }
-#header h1#app-name {
-    clear: both;
-    padding: 0 0 0 15px;
-    background: #323265;
-    color: #fff;
-    font: 2.4em/2em Arial,Helvetica,sans-serif;
+#header h2 {
+    font-size: 1.2em;
+    font-weight: normal;
+    line-height: 1.6;
+    margin: 0;
+    margin-bottom: -7px;
 }
 
 /* MAIN MENU
@@ -146,8 +144,7 @@ h3 {
 #content {
     clear: both;
     width: auto;
-    padding: 1px 0;
-    margin: 0 2% 2em;
+    padding: 15px 40px;
 }
 #content h1 {
     margin: 15px 0;
@@ -228,7 +225,7 @@ h3 {
 /* FORMS
  --------------------------------- */
 form {
-	padding:0;
+	padding: 0;
 	width: 75%;
 }
 form p {

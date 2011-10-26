@@ -35,13 +35,11 @@
 <body id="${pageTitle}-body">
     <div id="container">
           <div id="header">
-              <div id="nav-system">
-                  <ul>
-                      <li><a href="logout.html" title="logout of current session"><spring:message code="management.services.link.logout" /></a></li>
-                  </ul>
-              </div>
-              <p id="tagline"><spring:message code="application.title" /></p>
-              <h1 id="app-name"><spring:message code="management.services.title" /></h1>
+              <ul class="nav">
+                  <li><a href="logout.html" title="Log out of current session"><spring:message code="management.services.link.logout" /></a></li>
+              </ul>
+              <h2><spring:message code="application.title" /></h2>
+              <h1><spring:message code="management.services.title" /></h1>
           </div>
           <div id="nav-main">
               <ul>
