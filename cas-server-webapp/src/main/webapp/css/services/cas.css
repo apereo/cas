@@ -81,44 +81,44 @@ h3 {
 
 /* MAIN MENU
  --------------------------------- */
-#nav-main {
+#nav {
     float: left;
     width: 100%;
     background: #999;
     font-size: 1.1em;
     line-height: normal;
     padding: 0;
-    xmargin: 0 0 1.5em 0;
     color: #eee;
 }
-#nav-main ul {
+#nav ul {
     margin: 0;
+    margin-left: 40px;
     padding: 0;
     list-style: none;
     line-height: 1.4em;
 }
-#nav-main li {
+#nav li {
     display: inline;
     margin: 0;
     padding: 0;
 }
-#nav-main a {
+#nav a {
     float: left;
     margin: 0;
     padding: 0;
     text-decoration: none;
 }
-#nav-main a span {
+#nav a span {
     float: left;
     display: block;
-    padding: 5px 10px;
+    padding: 10px 12px;
     background: transparent;
     color: #eee;
 }
-#nav-main a:hover {
+#nav a:hover {
 	background: #eee;
 }
-#nav-main a:hover span {
+#nav a:hover span {
     background: #eee;
     color: #333;
 }

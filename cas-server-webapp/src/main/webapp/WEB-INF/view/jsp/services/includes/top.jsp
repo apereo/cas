@@ -25,7 +25,7 @@
     <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
 
     <style type="text/css">
-        #nav-main #${pageTitle} span {
+        #nav #${pageTitle} span {
             background:#fff;
             color: #000;
         }
@@ -41,7 +41,7 @@
               <h2><spring:message code="application.title" /></h2>
               <h1><spring:message code="management.services.title" /></h1>
           </div>
-          <div id="nav-main">
+          <div id="nav">
               <ul>
                   <li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li>
                   <li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li>
