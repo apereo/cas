@@ -196,16 +196,11 @@ h3 {
     font: normal 1em/1.2 Verdana,Arial,Helvetica,sans-serif;
 }
 
-/*
-_______________________________
----    CONTENT  FRAGMENTS    ---
-_______________________________
-*/
 /* MESSAGES
  --------------------------------- */
 .errors, .success {
     clear: both;
-    padding: 20px 20px 20px 85px; /* bg */
+    padding: 20px 20px 20px 85px;
     margin: 0 0 1em;
     font-weight: bold;
     font-size: 1.3em;
@@ -307,8 +302,6 @@ input, textarea, select {
 	border-color:#999 #eee #eee #999;
 	padding:4px;
 }
-
-/* vertically aligned form */
 .oneChoice input { 
 	margin: 0 0 0 .5em; 
 	width: 13px; 
@@ -328,8 +321,6 @@ input, textarea, select {
 select option {
 	margin: auto .5em 0 0;
 }
-
-/* highlight errors */
 .error {
 	border: 1px dotted #BB0000;
 	background-color: #ffeedd;
