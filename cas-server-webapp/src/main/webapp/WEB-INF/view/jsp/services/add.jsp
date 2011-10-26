@@ -17,8 +17,6 @@
     
 	<fieldset>
 	    <h2><spring:message code="management.services.fieldset.title.general" /></h2>
-		<p class="instructions"><spring:message code="management.services.add.instructions" /></p>
-
 		<div class="oneField">
 			<label for="name" class="preField"><spring:message code="management.services.add.property.name" /> </label>
 			<form:input path="name" size="51" maxlength="50" cssClass="required" cssErrorClass="error" />
@@ -48,7 +46,6 @@
     <fieldset>
         <h2><spring:message code="management.services.fieldset.title.status" /></h2>
 		<div class="oneField">
-			<span class="label preField"><spring:message code="management.services.add.property.status" /></span>
 			<span>
 				<span class="oneChoice">
 					<form:checkbox path="enabled" value="true" cssClass="check" />
