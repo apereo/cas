@@ -5,22 +5,29 @@
 * {
     margin: 0;
     padding: 0;
-    font-size: 1em;
 }
 /* browser default font-size is 16px which is too big so we make it 16px x 62.5% = 10px */
 body {
-    font: normal 62.5%/1 Verdana,Arial,Helvetica,sans-serif;
+    font: normal 62.5%/1.5 Verdana,Arial,Helvetica,sans-serif;
     min-width: 992px;
 }
-form {
-    float: left;
-    margin: 0 1%;
-    padding: 0;
-    width: 77%;
+a:link, a:visited {
+	color: #666;
 }
-/* general positioning styles */
-.ac {
-	text-align: center !important;
+a:hover {
+	color: #333;
+}
+h1, h2 {
+	line-height: 36px;
+}
+h2, legend {
+	font-size: 1.1em;
+	margin-top: -10px;
+	font-weight: bold;
+}
+h3 {
+	color: #666;
+	font-weight: normal;
 }
 
 /* HEADER
@@ -195,7 +202,7 @@ _______________________________
     clear: both;
     padding: 20px 20px 20px 85px; /* bg */
     margin: 0 0 1em;
-   font-weight: bold;
+    font-weight: bold;
     font-size: 1.3em;
     line-height: 1.5;
 }
@@ -212,6 +219,12 @@ _______________________________
 
 /* FORMS
  --------------------------------- */
+form {
+    float: left;
+    margin: 0 1%;
+    padding: 0;
+    width: 77%;
+}
 fieldset {
     border-left: 0px solid #ddd;
 	border-right: 0px solid #ddd;
