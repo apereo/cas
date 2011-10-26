@@ -19,32 +19,32 @@
 	    <h2><spring:message code="${pageTitle}" /></h2>
 		<p class="instructions"><spring:message code="management.services.add.instructions" /></p>
 
-		<span class="oneField">
+		<div class="oneField">
 			<label for="name" class="preField"><spring:message code="management.services.add.property.name" /> </label>
 			<form:input path="name" size="51" maxlength="50" cssClass="required" cssErrorClass="error" />
 			<form:errors path="name" cssClass="formError" />
-		</span>
+		</div>
 	
-		<span class="oneField">
+		<div class="oneField">
 			<label for="serviceId" class="preField"><spring:message code="management.services.add.property.serviceUrl" /></label>
 			<form:input path="serviceId" size="51" maxlength="255" cssClass="required" cssErrorClass="error" />
 			<form:errors path="serviceId" cssClass="formError" />
 			<div class="hint"><spring:message code="management.services.add.property.serviceUrl.instructions" /></div>
-		</span>
+		</div>
 	
-		<span class="oneField">
+		<div class="oneField">
 			<label for="description" class="preField"><spring:message code="management.services.add.property.description" /></label>
 			<form:textarea path="description" cssClass="required" cssErrorClass="error" cols="49" rows="5" />
 			<form:errors path="description" cssClass="formError" />
-		</span>
+		</div>
 	
-		<span class="oneField">
+		<div class="oneField">
 			<label for="theme" class="preField"><spring:message code="management.services.add.property.themeName" /></label>
 			<form:input path="theme" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
 			<form:errors path="theme" cssClass="formError" />
-		</span>
+		</div>
 
-		<span class="oneField">
+		<div class="oneField">
 			<span class="label preField"><spring:message code="management.services.add.property.status" /></span>
 			<span>
 				<span class="oneChoice">
@@ -65,22 +65,22 @@
 					<label for="anonymousAccess1" id="anonymousAccess-l" class="postField"><spring:message code="management.services.add.property.status.anonymousAccess" /></label>
 				</span>
 			</span>
-		</span>
+		</div>
 		
-		<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
+		<div class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
-		</span>
+		</div>
 	
-		<span class="oneChoice">
+		<div class="oneChoice">
 			<form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
 			<label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
-		</span>
+		</div>
 
-        <span class="oneField">
+        <div class="oneField">
           <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
           <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
           <form:errors path="evaluationOrder" cssClass="formError" />
-        </span>
+        </div>
 	</fieldset>
 	
 	<div class="actions">
