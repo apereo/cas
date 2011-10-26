@@ -29,6 +29,11 @@ h3 {
 	color: #666;
 	font-weight: normal;
 }
+#container {
+    width: 100%;
+    min-width: 952px;
+    padding-bottom: 40px;
+}
 
 /* HEADER
  --------------------------------- */
@@ -275,88 +280,18 @@ input.check { margin: 0 0 0 .5em;
 	padding-top: 0;
 	padding-bottom: 0
 }
+.hint {
+    margin-left: 9.5em;
+    margin-bottom: 1em;
+    line-height: 1.5;
+}
+.actions {
+    margin: 1.5em 0;
+}
+#allowedAttributes {
+    height: 150px;
+}
 
-/* TABLES
- --------------------------------- */
-/* table row highlighting (does not work in IE - JavaScript workaround) */
-table.highlight tr:hover td, table.highlight tr.over td {
-	background: #ffc !important;
-}
-table.highlight tr.highlightBottom:hover td {
-	background: #ffeff3 !important;
-}
-table {
-    border: 0px none;
-    border-collapse: collapse;
-    empty-cells: show;
-    background-color: #fff;
-    font-size: 1.1em
-}
-.large {
-	width: 100%;
-}
-th    {
-    background: #eee;
-    color: #666;
-    padding: 3px 5px;
-    text-align: left;
-    font-weight: normal;
-    line-height: 24px;
-}
-tr.added {
-    background-color: #ff3;
-}
-td    {
-    padding: 3px 5px;
-    border-bottom: 1px solid #eee;
-    height: 38px;
-}
-td a {
-    padding: 10px 0pt 10px 35px;
-    text-decoration: none;
-    display: inline;
-    line-height: 32px;
-    color: #c1c1c0;
-    font-weight: 400;
-}
-.add {
-    min-width: 952px;
-    line-height: 32px;
-    height: 32px;
-    border-top: 5px solid #eee;
-    color: #000;
-    width: 100%;
-    text-indent: 5px;
-    padding-top: 5px;
-    font-size: 1.1em;
-}
-.add a {
-	background: url('../../images/services/add_service.gif') no-repeat left center;
-    text-decoration: none;
-    display: inline;
-    line-height: 32px;
-    color: #c1c1c0;
-    font-weight: 900;
-	padding-left: 35px;
-	padding-right: 0;
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-.add a span {
-    text-transform: lowercase;
-}
-.add a:hover {
-	color: #b00;
-}
-td a.edit {
-	background: url('../../images/services/edit_service.gif') no-repeat left center;
-}
-td a.del {
-	background: url('../../images/services/delete_service.gif') no-repeat left center;
-}
-td a:hover {
-	color: #b00;
-}
 p.instructions {
     margin: 1em 0;
     font-size: 1.2em;
@@ -400,20 +335,20 @@ label.postField {
 input,
 textarea,
 select {
-  border: 1px solid #ccc;
-  border-color: #999 #eee #eee #999;
-  padding: 2px;
-  margin-left: .5em; /* + bg */
+    border: 1px solid #ccc;
+    border-color: #999 #eee #eee #999;
+    padding: 2px;
+    margin-left: .5em; /* + bg */
 }
 input {
-  /* margin-left: .5em;  - bg */
-  font-size: 1.1em;
-  vertical-align: top;
+    /* margin-left: .5em;  - bg */
+    font-size: 1.1em;
+    vertical-align: top;
 }
 span.oneField {
-  display: block;
-  margin: 1em 0; /* bg */
-  padding: 0;
+    display: block;
+    margin: 1em 0; /* bg */
+    padding: 0;
 }
 button {
 	font-size: 1em;
@@ -424,12 +359,59 @@ button {
     font-weight: 900;
 }
 
-/*---*/
+/* TABLES
+ --------------------------------- */
+/* table row highlighting (does not work in IE - JavaScript workaround) */
+table.highlight tr:hover td, table.highlight tr.over td {
+	background: #ffc !important;
+}
+table.highlight tr.highlightBottom:hover td {
+	background: #ffeff3 !important;
+}
+table {
+    border: 0px none;
+    border-collapse: collapse;
+    empty-cells: show;
+    background-color: #fff;
+    font-size: 1.1em
+}
+.large {
+	width: 100%;
+}
+.ac { 
+	text-align: center !important; 
+}
+th    {
+    background: #eee;
+    color: #666;
+    padding: 3px 5px;
+    text-align: left;
+    font-weight: normal;
+    line-height: 24px;
+}
+tr.added {
+    background-color: #ff3;
+}
+td    {
+    padding: 3px 5px;
+    border-bottom: 1px solid #eee;
+    height: 38px;
+}
+td a {
+    padding: 10px 0pt 10px 35px;
+    text-decoration: none;
+    display: inline;
+    line-height: 32px;
+    color: #c1c1c0;
+    font-weight: 400;
+}
 
-div#container {
+div.tableWrapper {
     width: 100%;
     min-width: 952px;
-    padding-bottom: 40px;
+    max-height: 250px;
+    overflow: auto;
+    overflow-x: hidden;
 }
 table#headerTable {
     width: 100%;
@@ -439,13 +421,6 @@ table#headerTable {
     padding: 0;
     border: 0;
     border-collapse: collapse;
-}
-div.tableWrapper {
-    width: 100%;
-    min-width: 952px;
-    max-height: 250px;
-    overflow: auto;
-    overflow-x: hidden;
 }
 table#scrollTable {
     width: 100%;
@@ -475,14 +450,41 @@ th.th5, td.td5 { width: 50px; }
 th.th6, td.td6 { width: 70px;  text-align: right !important; }
 th.th7, td.td7 { width: 85px; text-align: right !important; }
 
-.hint {
-    margin-left: 9.5em;
-    margin-bottom: 1em;
-    line-height: 1.5;
+.add {
+    min-width: 952px;
+    line-height: 32px;
+    height: 32px;
+    border-top: 5px solid #eee;
+    color: #000;
+    width: 100%;
+    text-indent: 5px;
+    padding-top: 5px;
+    font-size: 1.1em;
 }
-.actions {
-    margin: 1.5em 0;
+.add a {
+	background: url('../../images/services/add_service.gif') no-repeat left center;
+    text-decoration: none;
+    display: inline;
+    line-height: 32px;
+    color: #c1c1c0;
+    font-weight: 900;
+	padding-left: 35px;
+	padding-right: 0;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
-#allowedAttributes {
-    height: 150px;
+.add a span {
+    text-transform: lowercase;
+}
+.add a:hover {
+	color: #b00;
+}
+td a.edit {
+	background: url('../../images/services/edit_service.gif') no-repeat left center;
+}
+td a.del {
+	background: url('../../images/services/delete_service.gif') no-repeat left center;
+}
+td a:hover {
+	color: #b00;
 }
