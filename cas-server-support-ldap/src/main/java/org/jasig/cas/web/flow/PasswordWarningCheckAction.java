@@ -10,7 +10,6 @@ import org.jasig.cas.authentication.PasswordWarningCheck;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -55,19 +54,19 @@ public final class PasswordWarningCheckAction extends AbstractAction implements 
         }
         
         if ((userID == null) && (ticket != null)){
-        	this.logger.info("Not a login attempt, skipping PasswordWarnCheck");
+        	this.logger.debug("Not a login attempt, skipping PasswordWarnCheck");
         	return success();
         }
         
         status = this.passwordWarningChecker.getPasswordWarning(userID);
         this.logger.debug("translating return code status='" + status + "'");
         if (status >= 0) {
-            this.logger.debug("password for '" + userID + "' is expiring in "+ status + " days. Sending the warning page.");
+            this.logger.info("password for '" + userID + "' is expiring in "+ status + " days. Sending the warning page.");
             context.getFlowScope().put("expireDays", status);
             return Warning();
         }
         if (status == AbstractPasswordWarningCheck.STATUS_PASS) {
-            this.logger.debug("password for '" + userID + "' is NOT expiring soon.");
+            this.logger.info("password for '" + userID + "' is NOT expiring soon.");
         }
         if (status == AbstractPasswordWarningCheck.STATUS_ERROR) {
             this.logger.warn("Error getting expiration date for '" + userID + "'");
