@@ -137,8 +137,10 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
         String ValidDaysResult = ldapResult.getValidDaysResult();
         String WarnAttribute = ldapResult.getNoWarnAttributeResult();
         
+        this.logger.debug("No Warn flag is set to: " + WarnAttribute);
+        
         if (this.noWarnAttribute != null) {
-        	if (WarnAttribute.equals(noWarnValue)){
+        	if (WarnAttribute.equals(this.noWarnValue)){
         		 this.logger.info("No Warn flag is set, bypassing warning check");
         		 return STATUS_PASS;
         	}
@@ -346,7 +348,7 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
                     if (LdapPasswordWarningCheck.this.noWarnAttribute != null){
 	                    if (attrs.get(LdapPasswordWarningCheck.this.noWarnAttribute) != null) {
 	                        String Attrib = (String) attrs.get(LdapPasswordWarningCheck.this.noWarnAttribute).get();
-	                        result.setWarnDaysResult(Attrib);
+	                        result.setNoWarnAttributeResult(Attrib);
 	                    }
                     }
                     

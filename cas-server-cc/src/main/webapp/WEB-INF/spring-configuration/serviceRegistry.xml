@@ -56,7 +56,7 @@
 	<bean id="dataSourceCAS"  class="org.apache.commons.dbcp.BasicDataSource"
         p:driverClassName="com.mysql.jdbc.Driver"
         p:url="jdbc:mysql://cas1.conncoll.edu:3306/cas?autoReconnect=true"
-        p:password="Camel09!"
-        p:username="cas" />
+        p:password="${cas.db.password}"
+        p:username="${cas.db.username}" />
 	  
 </beans>
