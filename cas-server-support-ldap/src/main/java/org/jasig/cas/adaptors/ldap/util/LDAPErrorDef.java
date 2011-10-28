@@ -10,7 +10,7 @@ public class LDAPErrorDef {
 		this.errMessage=errMessage;
 	}
 	
-	public void setLdapPattern(String ldapPattern){
+	public void setLDAPPattern(String ldapPattern){
 		this.ldapPattern=ldapPattern;
 	}
 

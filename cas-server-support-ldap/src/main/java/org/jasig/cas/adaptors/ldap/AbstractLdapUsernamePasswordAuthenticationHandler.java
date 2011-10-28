@@ -125,7 +125,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
         this.filter = filter;
     }
     
-    public void setLapErrorDefs(List<LDAPErrorDef> ldapErrorDefs){
+    public void setLDAPErrorDefs(List<LDAPErrorDef> ldapErrorDefs){
     	this.ldapErrorDefs = ldapErrorDefs;
     }
 }

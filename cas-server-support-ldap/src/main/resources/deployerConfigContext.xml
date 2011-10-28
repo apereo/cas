@@ -90,19 +90,9 @@
 					class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler">
 					<property name="filter" value="uid=%u" />
 					<property name="searchBase" value="ou=people,dc=rutgers,dc=edu" /> 
-					<property name="contextSource" ref="contextSource" />
-					<property name="ldapErrorDefs">
-						<list>
-							<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
-								<property name="ldapPattern" value="\D532\D|expired" />
-								<property name="errMessage" value="Password Expired" />
-							</bean>
-							<bean class="org.jasig.cas.adaptors.ldap.util.LDAPErrorDef">
-								<property name="ldapPattern" value="\D773\D" />
-								<property name="errMessage" value="User Must Change Password" />
-							</bean>	
-						</list>
-					</property>	
+					<property
+						name="contextSource"
+						ref="contextSource" />
 				</bean>
 			</list>
 		</property>
