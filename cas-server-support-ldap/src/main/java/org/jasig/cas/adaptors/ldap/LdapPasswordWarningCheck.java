@@ -88,7 +88,7 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
     private String noWarnAttribute;
     
     /** The value that will cause password warning to be bypassed  */
-    private String noWarnValue;
+    private List<String> noWarnValues;
 
     /** The search base to find the user under. */
     private String searchBase;
@@ -140,7 +140,7 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
         this.logger.debug("No Warn flag is set to: " + WarnAttribute);
         
         if (this.noWarnAttribute != null) {
-        	if (WarnAttribute.equals(this.noWarnValue)){
+        	if (this.noWarnValues.contains(WarnAttribute)){
         		 this.logger.info("No Warn flag is set, bypassing warning check");
         		 return STATUS_PASS;
         	}
@@ -463,9 +463,9 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
     /**
      * @param noWarnAttribute The noWarnAttribute to set.
      */
-    public final void setNoWarnValue(final String noWarnValue) {
-        this.noWarnValue = noWarnValue;
-        this.logger.info("Value to flag warning bypass: '" + noWarnValue + "'");
+    public final void setNoWarnValues(final List<String> noWarnValues) {
+        this.noWarnValues = noWarnValues;
+        this.logger.info("Value to flag warning bypass: '" + noWarnValues.toString() + "'");
     }
 
     /**
