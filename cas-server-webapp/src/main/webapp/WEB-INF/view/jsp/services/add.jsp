@@ -71,7 +71,7 @@
 	<fieldset>
 	    <h2><spring:message code="management.services.fieldset.title.attributes" /></h2>
 		<div class="oneField">
-		    <p>Allow access to the following attributes:</p>
+		    <p><spring:message code="management.services.add.property.attributes" /></p>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</div>
 		<div class="oneField">
