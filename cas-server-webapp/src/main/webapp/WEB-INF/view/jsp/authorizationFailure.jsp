@@ -10,6 +10,5 @@
     request.setAttribute("e", e);%>
 <c:out value="${e.message}" escapeXml="true" />.
 	</p>
-	<p>
 </div>
 <jsp:directive.include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" />
