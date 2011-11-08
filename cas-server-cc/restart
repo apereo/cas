@@ -1,0 +1,17 @@
+#! /bin/bash
+service cas stop
+rm -rf ~/cas1/logs/*
+rm -rf ~/cas1/temp/*
+rm -rf ~/cas1/work/*
+rm -f ~/cas1/conf/Catalina/localhost/cas.xml
+echo -e "Start CAS? [Y]: \c"
+read ext
+if [ -z $ext ] || [ "$ext" == "Y" ] || [ "$ext" == "y" ]; then
+	service cas start
+fi
+echo -e "Start java Log Viewer? [N]: \c"
+read ext
+if [ "$ext" == "Y" ] || [ "$ext" == "y" ]; then
+        java  -jar ~/JLogTailer.jar &
+fi
+

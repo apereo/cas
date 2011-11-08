@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   	http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+   <description>
+      Configuration for the EH Cache TicketRegistry which stores the tickets in a distributed EH Cache and cleans them out as
+      specified intervals.
+   </description>
+
+   <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+      <property name="configLocation" value="/WEB-INF/spring-configuration/ehcache-replicated.xml" />
+      <property name="cacheManagerName" value="CAS.cacheManager" />
+   </bean>
+
+   <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry">
+      <property name="serviceTicketsCache" ref="serviceTicketsCache" />
+      <property name="ticketGrantingTicketsCache" ref="ticketGrantingTicketsCache" />
+   </bean>
+
+   <bean id="serviceTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+      <description>
+         Service Tickets (ST) are short lived objects (less than 5 seconds) that are mostly removed from the cache during the
+         service ticket validation operation.
+         The ST cache must be replicated very quickly because the ST validation is performed soon after
+         its creation (the time of a 302 redirect) and the ST validation server is very likely not to be the ST creation server because this
+         validation is performed via a server-to-server communication that is not aware of user session affinity.
+         To ensure a short replication delay, we use the synchronous mode
+     </description>
+      <property name="cacheManager" ref="cacheManager" />
+      <property name="cacheName" value="org.jasig.cas.ticket.ServiceTicket" />
+      <property name="diskExpiryThreadIntervalSeconds" value="0" />
+      <property name="diskPersistent" value="false" />
+      <property name="eternal" value="false" />
+      <property name="maxElementsInMemory" value="10000" />
+      <property name="maxElementsOnDisk" value="0" />
+      <property name="memoryStoreEvictionPolicy" value="LRU" />
+      <property name="overflowToDisk" value="false" />
+      <property name="timeToIdle" value="0" />
+      <property name="timeToLive" value="300" />    
+	  <property name="cacheEventListeners">
+	      <bean id="serviceTicketReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
+	        <constructor-arg index="0" value="true"/> <!-- replicatePuts -->
+	        <constructor-arg index="1" value="true"/> <!-- replicatePutsViaCopy -->
+	        <constructor-arg index="2" value="true"/> <!-- replicateUpdates -->
+	        <constructor-arg index="3" value="true"/> <!-- replicateUpdatesViaCopy -->
+	        <constructor-arg index="4" value="true"/> <!-- replicateRemovals -->
+	      </bean>
+	    </property>
+	    <property name="bootstrapCacheLoader">
+	      <bean id="serviceTicketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
+	        <constructor-arg index="0" value="false"/> <!-- asynchronous -->
+	        <constructor-arg index="1" value="5000000"/> <!-- maximumChunkSize -->
+	      </bean>
+	    </property>
+   </bean>
+   <bean id="ticketGrantingTicketsCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+      <description>
+         Ticket Granting Tickets (TGT) are long lived objects (more than 15 minutes) that are mostly removed from the cache by the cache evictor. Web
+         user explicit sign off is the only way to explicitly delete these TGT; this operation is unlikely.
+         The TGT cache can be replicated slowly because TGT are only manipulated via web user started operations (mostly grant service ticket) and
+         thus benefit of web session affinity.
+         </description>
+      <property name="cacheManager" ref="cacheManager" />
+      <property name="cacheName" value="org.jasig.cas.ticket.TicketGrantingTicket" />
+      <property name="diskExpiryThreadIntervalSeconds" value="0" />
+      <property name="diskPersistent" value="false" />
+      <property name="eternal" value="false" />
+      <property name="maxElementsInMemory" value="10000" />
+      <property name="maxElementsOnDisk" value="0" />
+      <property name="memoryStoreEvictionPolicy" value="LRU" />
+      <property name="overflowToDisk" value="false" />
+	  <!-- 2 hours of inactivity before ticket granting tickets are expired automatically -->
+      <property name="timeToIdle" value="7201" />
+      <property name="timeToLive" value="0" />
+		<property name="cacheEventListeners">
+		  <bean id="ticketGrantingTicketReplicator" class="net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator">
+		    <constructor-arg index="0" value="true"/> <!-- replicatePuts -->
+		    <constructor-arg index="1" value="true"/> <!-- replicatePutsViaCopy -->
+		    <constructor-arg index="2" value="true"/> <!-- replicateUpdates -->
+		    <constructor-arg index="3" value="true"/> <!-- replicateUpdatesViaCopy -->
+		    <constructor-arg index="4" value="true"/> <!-- replicateRemovals -->
+		    <constructor-arg index="5" value="1000"/> <!-- asynchronousReplicationInterval (default=1000)-->
+		  </bean>
+		</property>
+		<property name="bootstrapCacheLoader">
+		  <bean id="ticketGrantingTicketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
+		    <constructor-arg index="0" value="false"/> <!-- asynchronous -->
+		    <constructor-arg index="1" value="5000000"/> <!-- maximumChunkSize -->
+		  </bean>
+		</property>
+   </bean>
+</beans>
