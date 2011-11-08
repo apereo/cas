@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   					   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">					   
+						   
+   	<bean id="dataSourceCamel" class="com.microsoft.sqlserver.jdbc.SQLServerDataSource"
+		p:URL="jdbc:sqlserver://sumac.conncoll.edu:1433;SelectMethod=cursor;databaseName=camel2"
+		p:password="${datasource.password}"
+		p:user="${datasource.username}" />
+	
+	<bean id="jdbcCamel" class="edu.conncoll.cas.jdbc.jdbcCamel" 
+		p:dataSource-ref="dataSourceCamel"
+		p:filter="sAMAccountName=%u"
+		p:ldapTemplate-ref="ldapTemplate"
+		p:searchBase="dc=conncoll,dc=edu"
+		p:mainUsername="${main.gmail.username}"
+		p:mainPassword="${main.gmail.password}" />
+</beans>

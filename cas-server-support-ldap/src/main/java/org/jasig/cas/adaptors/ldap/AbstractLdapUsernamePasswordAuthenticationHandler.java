@@ -5,13 +5,19 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.adaptors.ldap.util.AbstractLdapErrorDetailProcessor;
-import org.jasig.cas.adaptors.ldap.util.NoOpErrorProcessor;
+
+import org.jasig.cas.adaptors.ldap.util.LDAPErrorDef;
+import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
@@ -39,12 +45,23 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     
     /** Whether the LdapTemplate should ignore partial results. */
     private boolean ignorePartialResultException = false;
-
-    /** LdapErrorDetailProcessor maps specific LDAP errors to more meaningful exceptions */
-    protected AbstractLdapErrorDetailProcessor errorProcessor = new NoOpErrorProcessor();
-
-    public final void setErrorProcessor(final AbstractLdapErrorDetailProcessor errorProcessor) {
-        this.errorProcessor = errorProcessor;
+    
+    private List<LDAPErrorDef> ldapErrorDefs;
+    
+    protected String handleLDAPError(String ldapMessage) throws BadCredentialsAuthenticationException {
+		log.debug("Handling LDAP error: " + ldapMessage );
+    	for (LDAPErrorDef ldapErrorDef : ldapErrorDefs){
+    		log.debug("Ldap Pattern: "+ldapErrorDef.ldapPattern);
+    		Pattern pattern = Pattern.compile(ldapErrorDef.ldapPattern);
+    		Matcher matcher = pattern.matcher(ldapMessage);
+    		if (matcher.find()){
+    			log.debug("Throwing error: " + ldapErrorDef.errMessage);
+    			throw new BadCredentialsAuthenticationException(ldapErrorDef.errMessage);
+    		}else{
+    			log.debug("Pattern did not match error");
+    		}
+    	}
+    	return "";
     }
 
     /**
@@ -106,5 +123,9 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
      */
     public final void setFilter(final String filter) {
         this.filter = filter;
+    }
+    
+    public void setLDAPErrorDefs(List<LDAPErrorDef> ldapErrorDefs){
+    	this.ldapErrorDefs = ldapErrorDefs;
     }
 }

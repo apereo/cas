@@ -83,6 +83,16 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
     
     /** default number of days a password is valid */
     private int validDays;
+    
+    /** The attribute that contains the data that will determine if password warning is skipped  */
+    private String noWarnAttribute;
+    
+    /** The value that will cause password warning to be bypassed  */
+<<<<<<< HEAD
+    private String noWarnValue;
+=======
+    private List<String> noWarnValues;
+>>>>>>> f38f3c603dbc05cf737db14cdb0835fbbafe1550
 
     /** The search base to find the user under. */
     private String searchBase;
@@ -112,6 +122,9 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
     	if (this.ValidDaysAttribute != null) {
     		attributeList.add(this.ValidDaysAttribute);
     	}
+    	if (this.noWarnAttribute != null) {
+    		attributeList.add(this.noWarnAttribute);
+    	}
     	
     	//Convert the list to a string array
     	this.attributeIds = new String[attributeList.size()];
@@ -126,9 +139,23 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
         
         String WarnDaysResult = ldapResult.getWarnDaysResult();
         String ValidDaysResult = ldapResult.getValidDaysResult();
+        String WarnAttribute = ldapResult.getNoWarnAttributeResult();
+        
+        this.logger.debug("No Warn flag is set to: " + WarnAttribute);
+        
+        if (this.noWarnAttribute != null) {
+<<<<<<< HEAD
+        	if (WarnAttribute.equals(this.noWarnValue)){
+=======
+        	if (this.noWarnValues.contains(WarnAttribute)){
+>>>>>>> f38f3c603dbc05cf737db14cdb0835fbbafe1550
+        		 this.logger.info("No Warn flag is set, bypassing warning check");
+        		 return STATUS_PASS;
+        	}
+        }
         
         if (WarnDaysResult == null) {
-            this.logger.info("No Warning Days found for " + userID + " using system default of " + warningDays);
+            this.logger.debug("No Warning Days found for " + userID + " using system default of " + warningDays);
         } else {
             warningDays = Integer.parseInt(WarnDaysResult);          
         }
@@ -162,7 +189,7 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
 	        }
             
             if (ValidDaysResult == null) {
-            	this.logger.info("No maximum password age found for " + userID + ".  Using system default of " + validDays + " days");
+            	this.logger.debug("No maximum password age found for " + userID + ".  Using system default of " + validDays + " days");
             } else {
                 validDays = Integer.parseInt(ValidDaysResult);
                 
@@ -296,12 +323,12 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
         final String searchFilter = LdapUtils.getFilterWithValues(this.filter,
             userID);
 
-        this.logger.info("LDAP: starting search with searchFilter '" + searchFilter + "'");
+        this.logger.debug("LDAP: starting search with searchFilter '" + searchFilter + "'");
         String attributeListLog = this.attributeIds[0];
         for(int i=1;i<this.attributeIds.length;i++) {
         	attributeListLog = attributeListLog.concat(":" + this.attributeIds[i]);	
     	}
-        this.logger.info("LDAP: Returning attributes '" + attributeListLog + "'");
+        this.logger.debug("LDAP: Returning attributes '" + attributeListLog + "'");
         
         try {
             // searching the directory
@@ -323,6 +350,13 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
 	                    if (attrs.get(LdapPasswordWarningCheck.this.WarningDaysAttribute) != null) {
 	                        String warn = (String) attrs.get(LdapPasswordWarningCheck.this.WarningDaysAttribute).get();
 	                        result.setWarnDaysResult(warn);
+	                    }
+                    }
+                    
+                    if (LdapPasswordWarningCheck.this.noWarnAttribute != null){
+	                    if (attrs.get(LdapPasswordWarningCheck.this.noWarnAttribute) != null) {
+	                        String Attrib = (String) attrs.get(LdapPasswordWarningCheck.this.noWarnAttribute).get();
+	                        result.setNoWarnAttributeResult(Attrib);
 	                    }
                     }
                     
@@ -427,6 +461,28 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
     }
 
     /**
+     * @param noWarnAttribute The noWarnAttribute to set.
+     */
+    public final void setNoWarnAttribute(final String noWarnAttribute) {
+        this.noWarnAttribute = noWarnAttribute;
+        this.logger.info("LDAP Attribute to flag warning bypass: '" + noWarnAttribute + "'");
+    }
+
+    /**
+     * @param noWarnAttribute The noWarnAttribute to set.
+     */
+<<<<<<< HEAD
+    public final void setNoWarnValue(final String noWarnValue) {
+        this.noWarnValue = noWarnValue;
+        this.logger.info("Value to flag warning bypass: '" + noWarnValue + "'");
+=======
+    public final void setNoWarnValues(final List<String> noWarnValues) {
+        this.noWarnValues = noWarnValues;
+        this.logger.info("Value to flag warning bypass: '" + noWarnValues.toString() + "'");
+>>>>>>> f38f3c603dbc05cf737db14cdb0835fbbafe1550
+    }
+
+    /**
      * @param timeout The timeout to set.
      */
     public final void setTimeout(final int timeout) {
@@ -474,6 +530,7 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
         String warnDaysResult;
         String validDaysResult;
         String DateResult;
+        String noWarnAttributeResult;
         
         public String getWarnDaysResult() {
             return warnDaysResult;
@@ -481,6 +538,14 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
 
         public void setWarnDaysResult(String warn) {
             this.warnDaysResult = warn;
+        }
+        
+        public String getNoWarnAttributeResult() {
+            return noWarnAttributeResult;
+        }
+
+        public void setNoWarnAttributeResult(String noWarnAttributeResult) {
+            this.noWarnAttributeResult = noWarnAttributeResult;
         }
 
         public String getValidDaysResult() {
