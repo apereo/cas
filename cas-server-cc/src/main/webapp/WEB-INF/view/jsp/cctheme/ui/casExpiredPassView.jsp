@@ -1,5 +1,0 @@
-<jsp:directive.include file="includes/top.jsp" />
-<div id="msg" class="errors">
-	<p><h2><spring:message code="screen.expiredpass.heading" /></h2></p>
-	<p><spring:message code="screen.expiredpass.message" /></p></div>
-<jsp:directive.include file="includes/bottom.jsp" />

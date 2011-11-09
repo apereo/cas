@@ -89,10 +89,14 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
     
     /** The value that will cause password warning to be bypassed  */
 <<<<<<< HEAD
+<<<<<<< HEAD
     private String noWarnValue;
 =======
     private List<String> noWarnValues;
 >>>>>>> f38f3c603dbc05cf737db14cdb0835fbbafe1550
+=======
+    private String noWarnValue;
+>>>>>>> parent of f38f3c6... Checked password check bypass value to an list of values
 
     /** The search base to find the user under. */
     private String searchBase;
@@ -145,10 +149,14 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
         
         if (this.noWarnAttribute != null) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         	if (WarnAttribute.equals(this.noWarnValue)){
 =======
         	if (this.noWarnValues.contains(WarnAttribute)){
 >>>>>>> f38f3c603dbc05cf737db14cdb0835fbbafe1550
+=======
+        	if (WarnAttribute.equals(this.noWarnValue)){
+>>>>>>> parent of f38f3c6... Checked password check bypass value to an list of values
         		 this.logger.info("No Warn flag is set, bypassing warning check");
         		 return STATUS_PASS;
         	}
@@ -472,6 +480,7 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
      * @param noWarnAttribute The noWarnAttribute to set.
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
     public final void setNoWarnValue(final String noWarnValue) {
         this.noWarnValue = noWarnValue;
         this.logger.info("Value to flag warning bypass: '" + noWarnValue + "'");
@@ -480,6 +489,11 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
         this.noWarnValues = noWarnValues;
         this.logger.info("Value to flag warning bypass: '" + noWarnValues.toString() + "'");
 >>>>>>> f38f3c603dbc05cf737db14cdb0835fbbafe1550
+=======
+    public final void setNoWarnValue(final String noWarnValue) {
+        this.noWarnValue = noWarnValue;
+        this.logger.info("Value to flag warning bypass: '" + noWarnValue + "'");
+>>>>>>> parent of f38f3c6... Checked password check bypass value to an list of values
     }
 
     /**
