@@ -7,7 +7,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.authentication.AbstractPasswordWarningCheck;
 import org.jasig.cas.authentication.PasswordWarningCheck;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.AbstractAction;
@@ -43,30 +43,30 @@ public final class PasswordWarningCheckAction extends AbstractAction implements 
         this.logger.debug("checking account status--");
         int status = AbstractPasswordWarningCheck.STATUS_ERROR;
 
-        Principal principal = (Principal)context.getFlowScope().get("principal");
         String ticket = context.getRequestScope().getString("serviceTicketId");
-        if ((principal == null)&&(ticket == null)){
+        UsernamePasswordCredentials credentials = (UsernamePasswordCredentials)context.getFlowScope().get("credentials"); 
+        String userID=credentials.getUsername();
+        this.logger.debug("userID='" + userID + "'");
+        
+        if ((userID == null)&&(ticket == null)){
         	this.logger.warn("No user principal or service ticket available!");
         	return error();
         }
         
-        if ((principal == null)&&(ticket != null)){
-        	this.logger.info("Not a login attempt, skipping PasswordWarnCheck");
+        if ((userID == null) && (ticket != null)){
+        	this.logger.debug("Not a login attempt, skipping PasswordWarnCheck");
         	return success();
         }
-        
-        String userID=principal.getId();
-        this.logger.debug("userID='" + userID + "'");
         
         status = this.passwordWarningChecker.getPasswordWarning(userID);
         this.logger.debug("translating return code status='" + status + "'");
         if (status >= 0) {
-            this.logger.debug("password for '" + userID + "' is expiring in "+ status + " days. Sending the warning page.");
+            this.logger.info("password for '" + userID + "' is expiring in "+ status + " days. Sending the warning page.");
             context.getFlowScope().put("expireDays", status);
             return Warning();
         }
         if (status == AbstractPasswordWarningCheck.STATUS_PASS) {
-            this.logger.debug("password for '" + userID + "' is NOT expiring soon.");
+            this.logger.info("password for '" + userID + "' is NOT expiring soon.");
         }
         if (status == AbstractPasswordWarningCheck.STATUS_ERROR) {
             this.logger.warn("Error getting expiration date for '" + userID + "'");

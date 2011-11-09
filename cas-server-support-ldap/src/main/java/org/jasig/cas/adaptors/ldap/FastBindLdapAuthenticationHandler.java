@@ -36,7 +36,7 @@ public final class FastBindLdapAuthenticationHandler extends AbstractLdapUsernam
             // i.e. AccountLockedException, AccountDisabledException, ExpiredPasswordException,...
             final String details = e.getMessage();
             log.debug("LDAP server returned exception message: " + details);
-            this.errorProcessor.processErrorDetail(details);
+            handleLDAPError(details);
             return false;
         } finally {
             if (dirContext != null) {
