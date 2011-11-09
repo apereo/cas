@@ -95,6 +95,7 @@
                                <option value="it">Italiano</option>
                                <option value="ur">Urdu</option>
                                <option value="zh_CN">Chinese (Simplified)</option>
+                               <option value="zh_TW">Chinese (Traditional)</option>
                                <option value="de">Deutsch</option>
                                <option value="ja">Japanese</option>
                                <option value="hr">Croatian</option>
