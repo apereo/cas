@@ -38,6 +38,22 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /** Default service to return if none have been registered. */
     private RegisteredService disabledRegisteredService;
+
+
+
+    /**
+     * The first matching service of these will be individually just-in-time registered when findServiceBy(Service)
+     * would otherwise return null and one of these matches.
+     *
+     * The intent of this feature is to prevent a failure of access to CAS-reliant services involved in managing
+     * CAS behaviors towards CAS-reliant services; i.e., the Services Management web application component of the
+     * CAS server.  By including a matching registration for that service in this List, CAS administrators are never
+     * prevented from CAS authenticating to that Services Management service for lack of that service having been
+     * already registered.
+     *
+     * When null, no services will be automatically registered.  Defaults to null.
+     */
+    private List<RegisteredService> automaticallyRegisteredServices = null;
     
     public DefaultServicesManagerImpl(
         final ServiceRegistryDao serviceRegistryDao) {
@@ -78,18 +94,43 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * This preserves default CAS behavior.
      */
     public RegisteredService findServiceBy(final Service service) {
+
+        // order is important; match the first registered service ordered by the order property
         final Collection<RegisteredService> c = convertToTreeSet();
         
         if (c.isEmpty()) {
+            // no services are registered.  Default to allowing all services to use CAS.
             return this.disabledRegisteredService;
         }
 
         for (final RegisteredService r : c) {
             if (r.matches(service)) {
+                // return the first matching service
                 return r;
             }
         }
 
+        // no registration matched.
+
+        // just-in-time register the first automatic service that matches, if any
+        if (this.automaticallyRegisteredServices != null) {
+            for (RegisteredService notYetRegistered : this.automaticallyRegisteredServices) {
+                if (notYetRegistered.matches(service)) {
+
+                    log.warn("Automatically registering " + notYetRegistered);
+
+                    save(notYetRegistered);
+
+                    // return result from find, rather than notYetRegistered, so that it includes an id
+                    return findServiceBy(service);
+                }
+            }
+        }
+
+        if (log.isTraceEnabled()) {
+            log.trace("No existing registration and no matching automatic registration for service ["
+              + service + "]");
+        }
         return null;
     }
 
@@ -152,5 +193,13 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
 
         return r;
+    }
+
+     public List<RegisteredService> getAutomaticallyRegisteredServices() {
+        return automaticallyRegisteredServices;
+    }
+
+    public void setAutomaticallyRegisteredServices(List<RegisteredService> automaticallyRegisteredServices) {
+        this.automaticallyRegisteredServices = automaticallyRegisteredServices;
     }
 }
