@@ -105,7 +105,7 @@
     <!-- <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />-->
 
     <sec:user-service id="userDetailsService">
-        <sec:user name="admin" password="notused" authorities="ROLE_ADMIN" />
+        <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />
     </sec:user-service>
 	
 	<!-- 
