@@ -117,7 +117,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
             for (RegisteredService notYetRegistered : this.automaticallyRegisteredServices) {
                 if (notYetRegistered.matches(service)) {
 
-                    log.warn("Automatically registering " + notYetRegistered);
+                    log.warn("Automatically registering [{}].", notYetRegistered);
 
                     save(notYetRegistered);
 
@@ -128,8 +128,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("No existing registration and no matching automatic registration for service ["
-              + service + "]");
+            log.trace("No existing registration and no matching automatic registration for service [{}].", service);
         }
         return null;
     }
@@ -172,7 +171,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         final ConcurrentHashMap<Long, RegisteredService> localServices = new ConcurrentHashMap<Long, RegisteredService>();
                 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            log.debug("Adding registered service " + r.getServiceId());
+            log.debug("Adding registered service [{}].", r.getServiceId());
             localServices.put(r.getId(), r);
         }
         
