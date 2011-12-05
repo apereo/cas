@@ -116,7 +116,7 @@ public class BindLdapAuthenticationHandler extends
                 // i.e. AccountLockedException, AccountDisabledException, ExpiredPasswordException,...
                 final String details = e.getMessage();
                 log.debug("LDAP server returned exception message: " + details);
-                this.errorProcessor.processErrorDetail(details);
+                handleLDAPError(details);
 
                 // otherwise, just try the next cn
             } finally {
