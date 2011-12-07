@@ -44,7 +44,7 @@
    
 	<action-state id="generateLoginTicket">
         <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
-		<transition on="success" to="viewLoginForm" />
+		<transition on="generated" to="viewLoginForm" />
 	</action-state>
     
 	<view-state id="viewLoginForm" view="casLoginView" model="credentials">
