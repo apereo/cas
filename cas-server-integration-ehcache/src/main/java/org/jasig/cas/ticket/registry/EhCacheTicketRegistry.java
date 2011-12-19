@@ -20,7 +20,7 @@ import org.springframework.core.style.ToStringCreator;
 
 /**
  * <p>
- * <a href="http://ehcache.sourceforge.net/">EHCache</a> based distributed ticket registry.
+ * <a href="http://ehcache.org/">EHCache</a> based distributed ticket registry.
  * </p>
  * <p>
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
