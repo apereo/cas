@@ -6,7 +6,6 @@
 		<version>3.4.10</version>
 	</parent>   
 	<modelVersion>4.0.0</modelVersion>      
-	<artifactId>cas-server-integration-ehcache</artifactId>   
 	<packaging>jar</packaging>   
 	<name>Jasig CAS EHCache Integration</name>   
 	<dependencies>    
