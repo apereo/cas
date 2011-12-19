@@ -70,7 +70,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         return result;
     }
     
-    public Ticket getTicket(String ticketId) {
+    public Ticket getTicket(final String ticketId) {
         if (ticketId == null) {
             return null;
         }
