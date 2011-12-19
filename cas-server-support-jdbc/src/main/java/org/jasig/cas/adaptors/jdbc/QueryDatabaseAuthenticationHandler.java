@@ -22,8 +22,7 @@ import javax.validation.constraints.NotNull;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class QueryDatabaseAuthenticationHandler extends
-    AbstractJdbcUsernamePasswordAuthenticationHandler {
+public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     @NotNull
     private String sql;
@@ -35,8 +34,7 @@ public final class QueryDatabaseAuthenticationHandler extends
             password);
         
         try {
-            final String dbPassword = getJdbcTemplate().queryForObject(
-                this.sql, String.class, username);
+            final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
             return dbPassword.equals(encryptedPassword);
         } catch (final IncorrectResultSizeDataAccessException e) {
             // this means the username was not found.
