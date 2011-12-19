@@ -52,7 +52,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         }
     }
     
-    public boolean deleteTicket(String ticketId) {
+    public boolean deleteTicket(final String ticketId) {
         if (ticketId == null) {
             return false;
         }
