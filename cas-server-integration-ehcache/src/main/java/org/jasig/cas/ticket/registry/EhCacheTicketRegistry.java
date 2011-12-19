@@ -32,6 +32,8 @@ import org.springframework.core.style.ToStringCreator;
  * </p>
  * 
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
+ * @author Adam Rybicki
+ * @author Andrew Tillinghast
  */
 public class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
     
