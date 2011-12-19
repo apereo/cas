@@ -35,7 +35,7 @@ import org.springframework.core.style.ToStringCreator;
  * @author Adam Rybicki
  * @author Andrew Tillinghast
  */
-public class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
+public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
     
     protected Cache serviceTicketsCache;
     
