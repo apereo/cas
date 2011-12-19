@@ -41,7 +41,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     
     private Cache ticketGrantingTicketsCache;
     
-    public void addTicket(Ticket ticket) {
+    public void addTicket(final Ticket ticket) {
         Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
             this.serviceTicketsCache.put(element);
