@@ -37,9 +37,9 @@ import org.springframework.core.style.ToStringCreator;
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
     
-    protected Cache serviceTicketsCache;
+    private Cache serviceTicketsCache;
     
-    protected Cache ticketGrantingTicketsCache;
+    private Cache ticketGrantingTicketsCache;
     
     public void addTicket(Ticket ticket) {
         Element element = new Element(ticket.getId(), ticket);
