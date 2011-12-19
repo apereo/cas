@@ -6,3 +6,4 @@ target
 *.ipr
 *.iml
 *.iws
+.idea
