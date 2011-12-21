@@ -200,8 +200,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final List<Authentication> authns = ticketGrantingTicket.getChainedAuthentications();
         if(authns.size() > 1) {
             if (!registeredService.isAllowedToProxy()) {
-                log.warn("ServiceManagement: Service Attempted to Proxy, but is not allowed.  Service: [" + service.getId() + "]");
-                throw new UnauthorizedProxyingException();
+                final String message = "ServiceManagement: Service Attempted to Proxy, but is not allowed.  Service: [" + service.getId() + "]";
+                log.warn(message);
+                throw new UnauthorizedProxyingException(message);
             }
         }
 
