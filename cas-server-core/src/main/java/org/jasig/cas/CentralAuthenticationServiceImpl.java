@@ -68,7 +68,7 @@ import java.util.Map;
  * <li> <code>serviceTicketExpirationPolicy</code> - The expiration policy for
  * ServiceTickets.</li>
  * </ul>
- * 
+ *
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
@@ -83,7 +83,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
     private TicketRegistry ticketRegistry;
-    
+
     /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
     @NotNull
     private TicketRegistry serviceTicketRegistry;
@@ -125,7 +125,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
      * and removes it from the TicketRegistry.
-     * 
+     *
      * @throws IllegalArgumentException if the TicketGrantingTicket ID is null.
      */
     @Audit(
@@ -194,6 +194,16 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             && ticketGrantingTicket.getCountOfUses() > 0) {
             log.warn("ServiceManagement: Service Not Allowed to use SSO.  Service [" + service.getId() + "]");
             throw new UnauthorizedSsoServiceException();
+        }
+
+        //CAS-1019
+        final List<Authentication> authns = ticketGrantingTicket.getChainedAuthentications();
+        if(authns.size() > 1) {
+            if (!registeredService.isAllowedToProxy()) {
+                final String message = "ServiceManagement: Service Attempted to Proxy, but is not allowed.  Service: [" + service.getId() + "]";
+                log.warn(message);
+                throw new UnauthorizedProxyingException(message);
+            }
         }
 
         if (credentials != null) {
@@ -351,17 +361,17 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final String principalId = registeredService.isAnonymousAccess()
                 ? this.persistentIdGenerator.generate(principal, serviceTicket
                     .getService()) : principal.getId();
-                
+
             final Authentication authToUse;
-            
+
             if (!registeredService.isIgnoreAttributes()) {
                 final Map<String, Object> attributes = new HashMap<String, Object>();
-    
+
                 for (final String attribute : registeredService
                     .getAllowedAttributes()) {
                     final Object value = principal.getAttributes().get(
                         attribute);
-    
+
                     if (value != null) {
                         attributes.put(attribute, value);
                     }
@@ -379,7 +389,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             } else {
                 authToUse = authentication;
             }
-            
+
 
             final List<Authentication> authentications = new ArrayList<Authentication>();
 
@@ -426,24 +436,24 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * Method to set the TicketRegistry.
-     * 
+     *
      * @param ticketRegistry the TicketRegistry to set.
      */
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
-        
+
         if (this.serviceTicketRegistry == null) {
             this.serviceTicketRegistry = ticketRegistry;
         }
     }
-    
+
     public void setServiceTicketRegistry(final TicketRegistry serviceTicketRegistry) {
         this.serviceTicketRegistry = serviceTicketRegistry;
     }
 
     /**
      * Method to inject the AuthenticationManager into the class.
-     * 
+     *
      * @param authenticationManager The authenticationManager to set.
      */
     public void setAuthenticationManager(
@@ -453,7 +463,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * Method to inject the TicketGrantingTicket Expiration Policy.
-     * 
+     *
      * @param ticketGrantingTicketExpirationPolicy The
      * ticketGrantingTicketExpirationPolicy to set.
      */
@@ -464,7 +474,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * Method to inject the Unique Ticket Id Generator into the class.
-     * 
+     *
      * @param uniqueTicketIdGenerator The uniqueTicketIdGenerator to use
      */
     public void setTicketGrantingTicketUniqueTicketIdGenerator(
@@ -474,7 +484,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * Method to inject the TicketGrantingTicket Expiration Policy.
-     * 
+     *
      * @param serviceTicketExpirationPolicy The serviceTicketExpirationPolicy to
      * set.
      */
