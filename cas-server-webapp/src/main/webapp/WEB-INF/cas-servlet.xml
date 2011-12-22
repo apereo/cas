@@ -47,6 +47,20 @@
 	
 	<bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver" />
 
+    <!-- CAS-1023: exception resolver for SSO exception thrown by CentralAuthenticationServiceImpl. That could happen when
+    the SSO option is turned off via the service management app for the service participating in SSO and have the rug pulled from
+    underneath by CAS administrator. This resolver will redirect to a login page. This improves user experience in this corner case
+    by not bubbling this exception as HTTP 500. By using the generic exception resolver here, it makes the strategy for
+    dealing with this situation flexible and customizable by CAS deployers -->
+    <bean id="ssoErrorHandlerResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.jasig.cas.services.UnauthorizedSsoServiceException">serviceErrorSsoView</prop>
+            </props>
+        </property>
+        <property name="defaultStatusCode" value="500"/>
+    </bean>
+
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 	
 	<bean
