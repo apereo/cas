@@ -15,8 +15,9 @@
 				<th class="th3 ac"><spring:message code="management.services.manage.label.enabled" /></th>
 				<th class="th4 ac"><spring:message code="management.services.manage.label.allowedToProxy" /></th>
 				<th class="th5 ac"><spring:message code="management.services.manage.label.ssoParticipant" /></th>
-				<th class="th6">&nbsp;</th>
+				<th class="th6 ac"><spring:message code="management.services.manage.label.evaluationOrder" /></th>
 				<th class="th7">&nbsp;</th>
+				<th class="th8">&nbsp;</th>
 			</tr>
 		</table>
 	
@@ -30,26 +31,80 @@
 				<th><spring:message code="management.services.manage.label.enabled" /></th>
 				<th><spring:message code="management.services.manage.label.allowedToProxy" /></th>
 				<th><spring:message code="management.services.manage.label.ssoParticipant" /></th>
+				<th><spring:message code="management.services.manage.label.evaluationOrder" /></th>
 				<th>&nbsp;</th>
 				<th>&nbsp;</th>
 			</tr>
 			</thead>
 			
 			<tbody>
-		<c:forEach items="${services}" var="service" varStatus="status">
-		<tr id="row${status.index}"${param.id eq service.id ? ' class="added"' : ''}>
-			<td id="${service.id}" class="td1">${service.name}</td>
-			<td class="td2">${fn:length(service.serviceId) < 50 ? service.serviceId : fn:substring(service.serviceId, 0, 50)}</td>
-			<td class="ac td3"><img src="../images/services/${service.enabled}.gif" alt="${service.enabled ? 'Enabled' : 'Disabled'}" /></td>
-			<td class="ac td4"><img src="../images/services/${service.allowedToProxy}.gif" alt="${service.allowedToProxy ? 'Allowed to Proxy' : 'Not Allowed to Proxy'}" /></td>
-			<td class="ac td5"><img src="../images/services/${service.ssoEnabled}.gif" alt="${service.ssoEnabled ? 'SSO Enabled' : 'SSO Disabled'}" /></td>
-
-			<td class="td6" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit"><spring:message code="management.services.manage.action.edit" /></a></td>
-			<td class="td7" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}'); return false;"><spring:message code="management.services.manage.action.delete" /></a></td>
-		</tr>
-		</c:forEach>
+				<c:forEach items="${services}" var="service" varStatus="status">
+				<tr id="row${status.index}"${param.id eq service.id ? ' class="added"' : ''}>
+					<td id="${service.id}" class="td1">${service.name}</td>
+					<td class="td2">${fn:length(service.serviceId) < 50 ? service.serviceId : fn:substring(service.serviceId, 0, 50)}</td>
+					<td class="ac td3"><img src="../images/services/${service.enabled}.gif" alt="${service.enabled ? 'Enabled' : 'Disabled'}" /></td>
+					<td class="ac td4"><img src="../images/services/${service.allowedToProxy}.gif" alt="${service.allowedToProxy ? 'Allowed to Proxy' : 'Not Allowed to Proxy'}" /></td>
+					<td class="ac td5"><img src="../images/services/${service.ssoEnabled}.gif" alt="${service.ssoEnabled ? 'SSO Enabled' : 'SSO Disabled'}" /></td>
+					<td class="ac td6">${service.evaluationOrder}</td>
+					
+					<td class="td7" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit"><spring:message code="management.services.manage.action.edit" /></a></td>
+					<td class="td8" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}'); return false;"><spring:message code="management.services.manage.action.delete" /></a></td>
+				</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 	</div>
 <div class="add"><a href="add.html"><span style="text-transform: lowercase;"><spring:message code="addServiceView" /></span></a></div>	  
+
+<script language="javascript">
+	
+	function updateRegisteredServiceOrder(movedService, pos, allServicedInNewOrder) {
+		var rowId = $(movedService).attr('id');		
+		var id = $('#' + rowId + ' td.td1').attr('id');
+		var evalOrder = $('#' + rowId + ' td.ac.td6').html();
+	
+		var targetRow = $(pos).attr('element');
+		var relPosition = $(pos).attr('position');
+		
+		var targetRowId = $(targetRow).attr('id');		
+		var targetRowEvalOrder = $('#' + targetRowId + ' td.ac.td6').html();
+		
+		switch (relPosition) {
+			case fluid.position.BEFORE:
+				/* Moving the service row higher on the list. Should decrease the evaluation order 
+				   relPosition = "Moved " + evalOrder + ". Dropped next to " + targetRowEvalOrder + 
+				                 ". New eval must be less than " + targetRowEvalOrder;
+				*/
+				evalOrder = eval(targetRowEvalOrder) - 1;
+				break;
+			case fluid.position.AFTER:
+				/* Moving the service row lower on the list. Should increase the evaluation order 
+				   relPosition = "Moved " + evalOrder + ". Dropped next to " + targetRowEvalOrder + 
+				                 ". New eval order must be more than " + targetRowEvalOrder;
+				*/
+				evalOrder = eval(targetRowEvalOrder) + 1;
+				break;
+		}
+		
+		$('#' + rowId + ' td.ac.td6').html(evalOrder);
+		
+		$.ajax({
+			type: "GET",
+			url: "updateRegisteredServiceEvaluationOrder.html?id=" + id + "&evaluationOrder=" + evalOrder 
+		});
+	}
+	
+	$(document).ready(function () {
+		var opts = {
+			selectors: {
+				movables: "tr"
+			},
+			listeners: {
+			   afterMove: updateRegisteredServiceOrder
+			}
+		};
+		fluid.defaults("fluid.reorderer.labeller",{strings:{overallTemplate:""}});
+		return fluid.reorderList("#tableWrapper #scrollTable tbody", opts);
+	});
+</script>
 <%@include file="includes/bottom.jsp" %>

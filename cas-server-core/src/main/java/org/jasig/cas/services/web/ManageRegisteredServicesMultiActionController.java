@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,7 +40,7 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
     private final ServicesManager servicesManager;
 
     /** Used to ensure services are sorted by name. */
-    private final PropertyComparator propertyComparator = new PropertyComparator("name", false, true);
+	private final PropertyComparator	propertyComparator	= new PropertyComparator("evaluationOrder", false, true);
 
     @NotNull
     private final String defaultServiceUrl;
@@ -105,4 +106,25 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
 
         return new ModelAndView(VIEW_NAME, model);
     }
+
+	/**
+	 * Method to update the evaluation order of a registered service
+	 * This method is executed using an ajax call from the service manegement UI
+	 * and will return a <code>null</code> view name once the update is done.
+	 * 
+	 * @param request the HttpServletRequest
+	 * @param response the HttpServletResponse
+	 * @return the Model and View to go to after the service is updated.
+	 */
+
+	public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
+		final long id = Long.parseLong(request.getParameter("id"));
+		final int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
+
+		final RegisteredServiceImpl svc = (RegisteredServiceImpl) servicesManager.findServiceBy(id);
+		svc.setEvaluationOrder(evaluationOrder);
+
+		servicesManager.save(svc);
+		return null;
+	}
 }
