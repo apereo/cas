@@ -8,3 +8,4 @@ target
 *.iws
 .idea/
 .DS_Store
+.idea
