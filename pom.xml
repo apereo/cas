@@ -610,6 +610,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-integration-jboss</module>
     <module>cas-server-integration-berkeleydb</module>
     <module>cas-server-integration-memcached</module>
+    <module>cas-server-integration-ehcache</module>
     <module>cas-server-integration-restlet</module>
     <module>cas-server-uber-webapp</module>
     <module>cas-server-documentation</module>
