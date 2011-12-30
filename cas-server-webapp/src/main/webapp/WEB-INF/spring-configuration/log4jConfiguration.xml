@@ -17,8 +17,8 @@
          <property name="targetMethod" value="initLogging"/>
          <property name="arguments">
              <list>
-                 <value>${log4j.config.location}</value>
-                 <value>${log4j.refresh.interval}</value>
+                 <value>${log4j.config.location:classpath:log4j.xml}</value>
+                 <value>${log4j.refresh.interval:60000}</value>
              </list>
          </property>
     </bean>
