@@ -12,12 +12,10 @@
 .fl-reorderer-movable-default{
 	cursor:move;
 }
-.fl-reorderer-movable-selected{
+.fl-reorderer-movable-selected, .fl-reorderer-movable-hover{
 	background-color:lightyellow;
 }
-.fl-reorderer-movable-hover{
-	background-color:lightyellow
-}
+
 
 .fl-reorderer-movable-dragging{
 	background:#ccc;

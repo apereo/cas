@@ -14,9 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
+import org.opensaml.artifact.InvalidArgumentException;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
@@ -32,80 +34,71 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public final class ManageRegisteredServicesMultiActionController extends MultiActionController {
 
-    /** View name for the Manage Services View. */
-    private static final String VIEW_NAME = "manageServiceView";
+	/** View name for the Manage Services View. */
+	private static final String			VIEW_NAME			= "manageServiceView";
 
-    /** Instance of ServicesManager. */
-    @NotNull
-    private final ServicesManager servicesManager;
+	/** Instance of ServicesManager. */
+	@NotNull
+	private final ServicesManager		servicesManager;
 
-    /** Used to ensure services are sorted by name. */
+	/** Used to ensure services are sorted by name. */
 	private final PropertyComparator	propertyComparator	= new PropertyComparator("evaluationOrder", false, true);
 
-    @NotNull
-    private final String defaultServiceUrl;
-    
+	@NotNull
+	private final String				defaultServiceUrl;
 
-    /**
-     * Constructor that takes the required {@link ServicesManager}.
-     * 
-     * @param servicesManager the Services Manager that manages the
-     * RegisteredServices.
-     * @param defaultServiceUrl the service management tool's url.
-     */
-    public ManageRegisteredServicesMultiActionController(
-        final ServicesManager servicesManager, final String defaultServiceUrl) {
-        super();
-        this.servicesManager = servicesManager;
-        this.defaultServiceUrl = defaultServiceUrl;
-    }
+	/**
+	 * Constructor that takes the required {@link ServicesManager}.
+	 * 
+	 * @param servicesManager the Services Manager that manages the
+	 * RegisteredServices.
+	 * @param defaultServiceUrl the service management tool's url.
+	 */
+	public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager, final String defaultServiceUrl) {
+		super();
+		this.servicesManager = servicesManager;
+		this.defaultServiceUrl = defaultServiceUrl;
+	}
 
-    /**
-     * Method to delete the RegisteredService by its ID.
-     * 
-     * @param request the HttpServletRequest
-     * @param response the HttpServletResponse
-     * @return the Model and View to go to after the service is deleted.
-     */
-    public ModelAndView deleteRegisteredService(
-        final HttpServletRequest request, final HttpServletResponse response) {
-        final String id = request.getParameter("id");
-        final long idAsLong = Long.parseLong(id);
+	/**
+	 * Method to delete the RegisteredService by its ID.
+	 * 
+	 * @param request the HttpServletRequest
+	 * @param response the HttpServletResponse
+	 * @return the Model and View to go to after the service is deleted.
+	 */
+	public ModelAndView deleteRegisteredService(final HttpServletRequest request, final HttpServletResponse response) {
+		final String id = request.getParameter("id");
+		final long idAsLong = NumberUtils.toLong(id);
 
-        final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-            "/services/manage.html", true), "status", "deleted");
+		final ModelAndView modelAndView = new ModelAndView(new RedirectView("/services/manage.html", true), "status", "deleted");
 
+		final RegisteredService r = this.servicesManager.delete(idAsLong);
 
-        final RegisteredService r = this.servicesManager.delete(idAsLong);
+		modelAndView.addObject("serviceName", r != null ? r.getName() : "");
 
-        modelAndView.addObject("serviceName", r != null
-            ? r.getName() : "");
+		return modelAndView;
+	}
 
-        return modelAndView;
-    }
+	/**
+	 * Method to show the RegisteredServices.
+	 * 
+	 * @param request the HttpServletRequest
+	 * @param response the HttpServletResponse
+	 * @return the Model and View to go to after the services are loaded.
+	 */
+	public ModelAndView manage(final HttpServletRequest request, final HttpServletResponse response) {
+		final Map<String, Object> model = new HashMap<String, Object>();
 
-    /**
-     * Method to show the RegisteredServices.
-     * 
-     * @param request the HttpServletRequest
-     * @param response the HttpServletResponse
-     * @return the Model and View to go to after the services are loaded.
-     */
-    public ModelAndView manage(final HttpServletRequest request,
-        final HttpServletResponse response) {
-        final Map<String, Object> model = new HashMap<String, Object>();
+		final List<RegisteredService> services = new ArrayList<RegisteredService>(this.servicesManager.getAllServices());
+		PropertyComparator.sort(services, this.propertyComparator.getSortDefinition());
 
-        final List<RegisteredService> services = new ArrayList<RegisteredService>(
-            this.servicesManager.getAllServices());
-        PropertyComparator.sort(services, this.propertyComparator
-            .getSortDefinition());
+		model.put("services", services);
+		model.put("pageTitle", VIEW_NAME);
+		model.put("defaultServiceUrl", this.defaultServiceUrl);
 
-        model.put("services", services);
-        model.put("pageTitle", VIEW_NAME);
-        model.put("defaultServiceUrl", this.defaultServiceUrl);
-
-        return new ModelAndView(VIEW_NAME, model);
-    }
+		return new ModelAndView(VIEW_NAME, model);
+	}
 
 	/**
 	 * Method to update the evaluation order of a registered service
@@ -118,13 +111,32 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
 	 */
 
 	public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
-		final long id = Long.parseLong(request.getParameter("id"));
-		final int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
 
-		final RegisteredServiceImpl svc = (RegisteredServiceImpl) servicesManager.findServiceBy(id);
-		svc.setEvaluationOrder(evaluationOrder);
+		ModelAndView mv = new ModelAndView("jsonView");
 
-		servicesManager.save(svc);
-		return null;
+		try {
+			String idAsString = request.getParameter("id");
+			final long id = NumberUtils.toLong(idAsString, -1);
+			if (id == -1)
+				throw new InvalidArgumentException("Invalid service id: " + idAsString);
+
+			final int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
+
+			final RegisteredServiceImpl svc = (RegisteredServiceImpl) this.servicesManager.findServiceBy(id);
+			if (svc != null) {
+				svc.setEvaluationOrder(evaluationOrder);
+				this.servicesManager.save(svc);
+				mv.addObject("removed", true);
+			} else
+				throw new InvalidArgumentException("Service id " + id + " cannot be found.");
+		} catch (NumberFormatException e) {
+			mv.addObject("error", "Invalid service evaluation order: " + e.getLocalizedMessage());
+		} catch (Exception e) {
+			mv.addObject("error", e.getLocalizedMessage());
+		} finally {
+			mv.addObject("removed", mv.getModelMap().get("error") == null);
+		}
+		return mv;
 	}
+
 }

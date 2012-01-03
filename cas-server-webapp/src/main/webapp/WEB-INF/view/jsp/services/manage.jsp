@@ -7,19 +7,21 @@
 	<c:if test="${not empty param.status}">
 		<div id="msg" class="success"><spring:message code="management.services.status.${param.status}" arguments="${param.serviceName}" /></div>
 	</c:if>
-
-      <table cellspacing="0" id="headerTable" class="headerTable">
-			<tr>
-				<th class="th1"><spring:message code="management.services.manage.label.name" /></th>
-				<th class="th2"><spring:message code="management.services.manage.label.serviceUrl" /></th>
-				<th class="th3 ac"><spring:message code="management.services.manage.label.enabled" /></th>
-				<th class="th4 ac"><spring:message code="management.services.manage.label.allowedToProxy" /></th>
-				<th class="th5 ac"><spring:message code="management.services.manage.label.ssoParticipant" /></th>
-				<th class="th6 ac"><spring:message code="management.services.manage.label.evaluationOrder" /></th>
-				<th class="th7">&nbsp;</th>
-				<th class="th8">&nbsp;</th>
-			</tr>
-		</table>
+	
+	<div class="errors" id="errorsDiv"></div>
+	
+	<table cellspacing="0" id="headerTable" class="headerTable">
+		<tr>
+			<th class="th1"><spring:message code="management.services.manage.label.name" /></th>
+			<th class="th2"><spring:message code="management.services.manage.label.serviceUrl" /></th>
+			<th class="th3 ac"><spring:message code="management.services.manage.label.enabled" /></th>
+			<th class="th4 ac"><spring:message code="management.services.manage.label.allowedToProxy" /></th>
+			<th class="th5 ac"><spring:message code="management.services.manage.label.ssoParticipant" /></th>
+			<th class="th6 ac"><spring:message code="management.services.manage.label.evaluationOrder" /></th>
+			<th class="th7">&nbsp;</th>
+			<th class="th8">&nbsp;</th>
+		</tr>
+	</table>
 	
 	
 	<div id="tableWrapper" class="tableWrapper">
@@ -54,57 +56,6 @@
 			</tbody>
 		</table>
 	</div>
-<div class="add"><a href="add.html"><span style="text-transform: lowercase;"><spring:message code="addServiceView" /></span></a></div>	  
-
-<script language="javascript">
+	<div class="add"><a href="add.html"><span style="text-transform: lowercase;"><spring:message code="addServiceView" /></span></a></div>	  
 	
-	function updateRegisteredServiceOrder(movedService, pos, allServicedInNewOrder) {
-		var rowId = $(movedService).attr('id');		
-		var id = $('#' + rowId + ' td.td1').attr('id');
-		var evalOrder = $('#' + rowId + ' td.ac.td6').html();
-	
-		var targetRow = $(pos).attr('element');
-		var relPosition = $(pos).attr('position');
-		
-		var targetRowId = $(targetRow).attr('id');		
-		var targetRowEvalOrder = $('#' + targetRowId + ' td.ac.td6').html();
-		
-		switch (relPosition) {
-			case fluid.position.BEFORE:
-				/* Moving the service row higher on the list. Should decrease the evaluation order 
-				   relPosition = "Moved " + evalOrder + ". Dropped next to " + targetRowEvalOrder + 
-				                 ". New eval must be less than " + targetRowEvalOrder;
-				*/
-				evalOrder = eval(targetRowEvalOrder) - 1;
-				break;
-			case fluid.position.AFTER:
-				/* Moving the service row lower on the list. Should increase the evaluation order 
-				   relPosition = "Moved " + evalOrder + ". Dropped next to " + targetRowEvalOrder + 
-				                 ". New eval order must be more than " + targetRowEvalOrder;
-				*/
-				evalOrder = eval(targetRowEvalOrder) + 1;
-				break;
-		}
-		
-		$('#' + rowId + ' td.ac.td6').html(evalOrder);
-		
-		$.ajax({
-			type: "GET",
-			url: "updateRegisteredServiceEvaluationOrder.html?id=" + id + "&evaluationOrder=" + evalOrder 
-		});
-	}
-	
-	$(document).ready(function () {
-		var opts = {
-			selectors: {
-				movables: "tr"
-			},
-			listeners: {
-			   afterMove: updateRegisteredServiceOrder
-			}
-		};
-		fluid.defaults("fluid.reorderer.labeller",{strings:{overallTemplate:""}});
-		return fluid.reorderList("#tableWrapper #scrollTable tbody", opts);
-	});
-</script>
 <%@include file="includes/bottom.jsp" %>
