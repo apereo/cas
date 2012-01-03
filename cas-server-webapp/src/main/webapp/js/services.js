@@ -17,19 +17,23 @@ function updateRegisteredServiceOrder(movedService, pos) {
 			evalOrder = eval(targetRowEvalOrder) + 1;
 			break;
 	}
-		
+	
+	var result = true;
 	$.ajax({
 		type: "GET",
+		async: false,
 		url: "updateRegisteredServiceEvaluationOrder.html?id=" + id + "&evaluationOrder=" + evalOrder,
 		success: function(data){
 			if (!data.removed) {
 				$("#errorsDiv").show();
 				$("#errorsDiv").html(data.error);
-				
+				result = false;
 			} else
 				$('#' + rowId + ' td.ac.td6').html(evalOrder);
 		}
 	});
+	
+	return result;
 }
 
 $(document).ready(function () {
