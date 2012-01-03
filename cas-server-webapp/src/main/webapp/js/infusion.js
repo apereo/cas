@@ -13746,9 +13746,24 @@ var fluid_1_4 = fluid_1_4 || {};
 		};
 		that.logicalFrom = function (element, direction, includeLocked, disableWrap) {
 			var orderables = that.getOwningSpan(element, fluid.position.INTERLEAVED, includeLocked);
+			
+			var pos;
+			switch (direction) {
+				case fluid.direction.UP:
+				case fluid.direction.LEFT:
+				case fluid.direction.PREVIOUS:
+					pos = fluid.position.BEFORE;
+					break;
+				case fluid.direction.DOWN:
+				case fluid.direction.RIGHT:
+				case fluid.direction.NEXT:
+					pos = fluid.position.AFTER;
+					break;
+			}
+		
 			return {
 				element : fluid.dropManager.getRelativeElement(element, direction, orderables, disableWrap),
-				position : fluid.position.REPLACE
+				position : pos
 			}
 		};
 		that.lockedWrapFrom = function (element, direction, includeLocked, disableWrap) {
@@ -13982,6 +13997,7 @@ var fluid_1_4 = fluid_1_4 || {};
 		thatReorderer.activeItem = undefined;
 		adaptKeysets(options);
 		var kbDropWarning = thatReorderer.locate("dropWarning");
+				
 		var mouseDropWarning;
 		if (kbDropWarning) {
 			mouseDropWarning = kbDropWarning.clone()
@@ -14023,11 +14039,14 @@ var fluid_1_4 = fluid_1_4 || {};
 				if (!relativeItem) {
 					continue
 				}
+				
+				
 				if (isMovement) {
 					var prevent = thatReorderer.events.onBeginMove.fire(item);
 					if (prevent === false) {
 						return false
 					}
+					
 					if (kbDropWarning.length > 0) {
 						if (relativeItem.clazz === "locked") {
 							thatReorderer.events.onShowKeyboardDropWarning.fire(item, kbDropWarning);
