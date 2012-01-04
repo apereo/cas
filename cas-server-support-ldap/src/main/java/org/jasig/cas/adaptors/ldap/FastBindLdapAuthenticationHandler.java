@@ -29,7 +29,7 @@ public final class FastBindLdapAuthenticationHandler extends AbstractLdapUsernam
             final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
             final String bindDn = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
             this.log.debug("Performing LDAP bind with credential: " + bindDn);
-            dirContext = this.getContextSource().getContext(bindDn, credentials.getPassword());
+            dirContext = this.getContextSource().getContext(bindDn, getPasswordEncoder().encode(credentials.getPassword()));
             return true;
         } catch (final NamingException e) {
             log.debug(e.getMessage(), e);
