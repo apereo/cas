@@ -103,7 +103,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
                 this.log.debug("Performing LDAP bind with credential: " + dn);
                 test = this.getContextSource().getContext(
                     finalDn,
-                    credentials.getPassword());
+                    getPasswordEncoder().encode(credentials.getPassword()));
 
                 if (test != null) {
                     return true;
