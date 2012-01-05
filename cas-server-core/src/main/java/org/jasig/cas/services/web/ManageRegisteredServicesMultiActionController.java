@@ -120,7 +120,12 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
 			if (id == -1)
 				throw new InvalidArgumentException("Invalid service id: " + idAsString);
 
-			final int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
+			int evaluationOrder = 0;
+			try {
+				evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
+			} catch (NumberFormatException e) {
+				throw new InvalidArgumentException("Invalid service evaluation order " + request.getParameter("evaluationOrder"));
+			}
 
 			final RegisteredServiceImpl svc = (RegisteredServiceImpl) this.servicesManager.findServiceBy(id);
 			if (svc != null) {
@@ -129,10 +134,10 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
 				mv.addObject("removed", true);
 			} else
 				throw new InvalidArgumentException("Service id " + id + " cannot be found.");
-		} catch (NumberFormatException e) {
-			mv.addObject("error", "Invalid service evaluation order: " + e.getLocalizedMessage());
 		} catch (Exception e) {
 			mv.addObject("error", e.getLocalizedMessage());
+			if (this.logger.isErrorEnabled())
+				this.logger.error(e.getLocalizedMessage(), e);
 		} finally {
 			mv.addObject("removed", mv.getModelMap().get("error") == null);
 		}

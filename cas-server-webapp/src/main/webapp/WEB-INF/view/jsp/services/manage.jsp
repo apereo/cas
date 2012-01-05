@@ -8,7 +8,9 @@
 		<div id="msg" class="success"><spring:message code="management.services.status.${param.status}" arguments="${param.serviceName}" /></div>
 	</c:if>
 	
-	<div class="errors" id="errorsDiv"></div>
+	<div class="errors" id="errorsDiv">
+		<spring:message code="management.services.status.notupdated" />
+	</div>
 	
 	<table cellspacing="0" id="headerTable" class="headerTable">
 		<tr>
