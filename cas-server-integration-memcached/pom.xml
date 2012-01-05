@@ -9,6 +9,14 @@
 	<artifactId>cas-server-integration-memcached</artifactId>
 	<packaging>jar</packaging>
 	<name>JA-SIG CAS Memcached Integration</name>
+
+  <repositories>
+    <repository>
+      <id>couchbase</id>
+      <name>Couchbase Maven Repository</name>
+      <url>http://files.couchbase.com/maven2</url>
+    </repository>
+  </repositories>
 	
 	<dependencies>
 		<dependency>
@@ -19,14 +27,9 @@
 		
 		<dependency>
 			<groupId>spy</groupId>
-			<artifactId>memcached</artifactId>
-			<version>2.3.1</version>
+			<artifactId>spymemcached</artifactId>
+			<version>2.7.3</version>
 		</dependency>
 		
-		<dependency>
-			<groupId>spy</groupId>
-			<artifactId>spy</artifactId>
-			<version>2.4</version>
-		</dependency>
 	</dependencies>
 </project>
