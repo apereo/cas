@@ -5,10 +5,10 @@
  */
 package org.jasig.cas.services;
 
-import junit.framework.TestCase;
-
 import java.util.Arrays;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 /**
  * 
@@ -62,7 +62,72 @@ public class RegisteredServiceImplTests extends TestCase {
         this.r.setAllowedAttributes(null);
         assertNotNull(this.r.getAllowedAttributes());
     }
-    
+
+	public void testServiceEvaluationOrder() {
+		RegisteredServiceImpl sv1 = new RegisteredServiceImpl();
+		sv1.setServiceId("http://**");
+
+		RegisteredServiceImpl sv2 = new RegisteredServiceImpl();
+		sv2.setServiceId("https://**");
+
+		RegisteredServiceImpl sv3 = new RegisteredServiceImpl();
+		sv3.setServiceId("imaps://**");
+
+		RegisteredServiceImpl sv4 = new RegisteredServiceImpl();
+		sv4.setServiceId("imap://**");
+
+		RegisteredServiceImpl sv5 = new RegisteredServiceImpl();
+		sv5.setServiceId("http://com/?test.jsp");
+
+		RegisteredServiceImpl sv6 = new RegisteredServiceImpl();
+		sv6.setServiceId("http://*.jsp");
+
+		RegisteredServiceImpl sv7 = new RegisteredServiceImpl();
+		sv7.setServiceId("com/**/test.jsp");
+
+		RegisteredServiceImpl sv8 = new RegisteredServiceImpl();
+		sv8.setServiceId("com/**/test?ng.jsp");
+
+		RegisteredServiceImpl sv9 = new RegisteredServiceImpl();
+		sv9.setServiceId("com/**/????.js*");
+
+		RegisteredServiceImpl sv10 = new RegisteredServiceImpl();
+		sv10.setServiceId("http://www.service.edu");
+
+		RegisteredServiceImpl sv11 = new RegisteredServiceImpl();
+		sv11.setServiceId("http://www.service.edu/some/test/page/test.jsp");
+
+		RegisteredServiceImpl sv12 = new RegisteredServiceImpl();
+		sv12.setServiceId("http://www.service.c?m/**");
+
+		RegisteredServiceImpl sv13 = new RegisteredServiceImpl();
+		sv13.setServiceId("http://www.service.com/test/page/**");
+
+		RegisteredServiceImpl sv14 = new RegisteredServiceImpl();
+		sv14.setServiceId("http://www.service.edu/some/test/page/test.asp?");
+
+		RegisteredServiceImpl sv15 = new RegisteredServiceImpl();
+		sv15.setServiceId("http?://**");
+
+		RegisteredServiceImpl sv16 = new RegisteredServiceImpl();
+		sv16.setServiceId("http://www.college.edu");
+
+		assertTrue(sv1.compareTo(sv1) == 0);
+		assertTrue(sv1.compareTo(sv2) > 0);
+		assertTrue(sv3.compareTo(sv4) < 0);
+		assertTrue(sv1.compareTo(sv4) == 0);
+		assertTrue(sv5.compareTo(sv6) < 0);
+		assertTrue(sv7.compareTo(sv6) > 0);
+		assertTrue(sv8.compareTo(sv6) > 0);
+		assertTrue(sv9.compareTo(sv8) > 0);
+		assertTrue(sv10.compareTo(sv11) > 0);
+		assertTrue(sv12.compareTo(sv10) > 0);
+		assertTrue(sv13.compareTo(sv12) < 0);
+		assertTrue(sv13.compareTo(sv14) > 0);
+		assertTrue(sv14.compareTo(sv11) < 0);
+		assertTrue(sv16.compareTo(sv10) == 0);
+	}
+
     public void testEquals() {
         assertTrue(new RegisteredServiceImpl().equals(new RegisteredServiceImpl()));
         assertFalse(new RegisteredServiceImpl().equals(null));

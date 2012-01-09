@@ -5,16 +5,23 @@
  */
 package org.jasig.cas.services;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.inspektr.audit.annotation.Audit;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
+import com.github.inspektr.audit.annotation.Audit;
 
 /**
  * Default implementation of the {@link ServicesManager} interface. If there are
@@ -38,9 +45,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /** Default service to return if none have been registered. */
     private RegisteredService disabledRegisteredService;
+
+	/** Array that holds all sorted services by the evaluation order and is auto-updated when services are added/removed **/
+	private RegisteredService[]							sortedServices	= new RegisteredService[0];
     
-    public DefaultServicesManagerImpl(
-        final ServiceRegistryDao serviceRegistryDao) {
+	public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
         this(serviceRegistryDao, new ArrayList<String>());
     }
     
@@ -69,6 +78,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         this.serviceRegistryDao.delete(r);
         this.services.remove(id);
         
+		sortRegisteredServices();
+
         return r;
     }
 
@@ -78,20 +89,18 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * This preserves default CAS behavior.
      */
     public RegisteredService findServiceBy(final Service service) {
-        final Collection<RegisteredService> c = convertToTreeSet();
-        
-        if (c.isEmpty()) {
+		if (this.sortedServices.length == 0)
             return this.disabledRegisteredService;
-        }
 
-        for (final RegisteredService r : c) {
-            if (r.matches(service)) {
+		for (final RegisteredService r : this.sortedServices) {
+			if (r.matches(service))
                 return r;
-            }
+
         }
 
         return null;
     }
+
 
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
@@ -103,12 +112,36 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
     }
     
-    protected TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<RegisteredService>(this.services.values());
-    }
+	/**
+	 * Sorts the registered services by the evaluation order. The {@link Comparator} for each service
+	 * is called when services are collected into the <code>Set</code> and determines the strictness of a service pattern.
+	 * Each registered service is designed to be a {@link Comparable}
+	 * 
+	 * @see RegisteredServiceImpl#compareTo()
+	 */
+	protected void sortRegisteredServices() {
 
-    public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(this.services.values());
+		if (log.isInfoEnabled())
+			log.info("Sorting " + this.services.size() + " registered services by evaluation order");
+
+		final Set<RegisteredService> set = new HashSet<RegisteredService>(this.services.values());
+		this.sortedServices = set.toArray(new RegisteredServiceImpl[0]);
+		Arrays.sort(this.sortedServices);
+
+	}
+
+	protected final List<RegisteredService> getSortedServies() {
+		return Arrays.asList(this.sortedServices);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *  
+	 * @see #getSortedServies()
+	 * @return The sorted list of all services, by the evaluation order.
+	 */
+	public final Collection<RegisteredService> getAllServices() {
+		return getSortedServies();
     }
 
     public boolean matchesExistingService(final Service service) {
@@ -120,6 +153,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     public synchronized void save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
+
+		sortRegisteredServices();
     }
     
     public void reload() {
@@ -136,6 +171,9 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
         
         this.services = localServices;
+
+		sortRegisteredServices();
+
         log.info(String.format("Loaded %s services.", this.services.size()));
     }
     

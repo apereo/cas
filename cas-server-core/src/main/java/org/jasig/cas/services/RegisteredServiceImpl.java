@@ -5,8 +5,8 @@
  */
 package org.jasig.cas.services;
 
-import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,17 +14,15 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
-
-import javax.persistence.GenerationType;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.Assert;
 import org.springframework.util.PathMatcher;
 
 /**
@@ -35,13 +33,13 @@ import org.springframework.util.PathMatcher;
  * @since 3.1
  */
 @Entity
-public class RegisteredServiceImpl
-    implements RegisteredService, Comparable<RegisteredService> {
+public class RegisteredServiceImpl implements RegisteredService, Comparable<RegisteredService>, Cloneable {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5136788302682868276L;
 
-    private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
+	private static final PathMatcher		PATH_MATCHER		= new AntPathMatcher();
+	private static final Comparator<String>	PATTERN_COMPARATOR	= PATH_MATCHER.getPatternComparator(null);
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -72,9 +70,6 @@ public class RegisteredServiceImpl
     
     private boolean ignoreAttributes = false;
    
-    @Column(name = "evaluation_order", nullable = false)
-    private int evaluationOrder;
-
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
     }
@@ -133,7 +128,6 @@ public class RegisteredServiceImpl
         if (allowedToProxy != that.allowedToProxy) return false;
         if (anonymousAccess != that.anonymousAccess) return false;
         if (enabled != that.enabled) return false;
-        if (evaluationOrder != that.evaluationOrder) return false;
         if (ignoreAttributes != that.ignoreAttributes) return false;
         if (ssoEnabled != that.ssoEnabled) return false;
         if (allowedAttributes != null ? !allowedAttributes.equals(that.allowedAttributes) : that.allowedAttributes != null)
@@ -158,7 +152,6 @@ public class RegisteredServiceImpl
         result = 31 * result + (ssoEnabled ? 1 : 0);
         result = 31 * result + (anonymousAccess ? 1 : 0);
         result = 31 * result + (ignoreAttributes ? 1 : 0);
-        result = 31 * result + evaluationOrder;
         return result;
     }
 
@@ -209,15 +202,8 @@ public class RegisteredServiceImpl
     public void setIgnoreAttributes(final boolean ignoreAttributes) {
         this.ignoreAttributes = ignoreAttributes;
     }
-    
-    public void setEvaluationOrder(final int evaluationOrder) {
-        this.evaluationOrder = evaluationOrder;
-    }
 
-    public int getEvaluationOrder() {
-        return this.evaluationOrder;
-    }
-
+	@Override
     public Object clone() throws CloneNotSupportedException {
         final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
 
@@ -232,18 +218,22 @@ public class RegisteredServiceImpl
         registeredServiceImpl.setTheme(this.theme);
         registeredServiceImpl.setAnonymousAccess(this.anonymousAccess);
         registeredServiceImpl.setIgnoreAttributes(this.ignoreAttributes);
-        registeredServiceImpl.setEvaluationOrder(this.evaluationOrder);
 
         return registeredServiceImpl;
     }
     
 
+	/**
+	 * Compares the strictness of two service urls so as to determine the evaluation order of the service
+	 * when it's loaded by CAS.
+	 * 
+	 *  @return
+	 *  	1 - Current service pattern is less strict than the <code>other</code> service pattern<br>
+	 *  	0 - Current service pattern is equivalent to the <code>other</code> service pattern<br>
+	 *		-1 - Current service pattern is more strict than the <code>other</code> service pattern<br>
+	 */
     public int compareTo(final RegisteredService other) {
-        final int result = this.evaluationOrder - other.getEvaluationOrder();
-        if (result == 0) {
-            return (int)(this.id - other.getId());
-        }
-        return result;
+		return PATTERN_COMPARATOR.compare(getServiceId(), other.getServiceId());
     }
 
     @Override

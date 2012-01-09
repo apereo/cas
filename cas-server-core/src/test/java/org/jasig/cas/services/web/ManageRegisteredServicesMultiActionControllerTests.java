@@ -7,6 +7,8 @@ package org.jasig.cas.services.web;
 
 import java.util.Collection;
 
+import junit.framework.TestCase;
+
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -14,8 +16,6 @@ import org.jasig.cas.services.ServicesManager;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -41,8 +41,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         r.setId(1200);
         r.setName("name");
         r.setServiceId("serviceId");
-        r.setEvaluationOrder(1);
-        
+
         this.servicesManager.save(r);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -73,8 +72,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
-        r.setEvaluationOrder(2);
-        
+
         this.servicesManager.save(r);
         
         final ModelAndView modelAndView = this.controller.manage(new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -82,7 +80,7 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         assertNotNull(modelAndView);
         assertEquals("manageServiceView", modelAndView.getViewName());
         
-        final Collection c = (Collection) modelAndView.getModel().get("services");
+		final Collection<?> c = (Collection<?>) modelAndView.getModel().get("services");
         assertTrue(c.contains(r));
     }
 }

@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredService;
@@ -21,8 +23,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
-
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
@@ -87,7 +87,6 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         request.addParameter("enabled", "true");
         request.addParameter("ssoEnabled", "true");
         request.addParameter("anonymousAccess", "false");
-        request.addParameter("evaluationOrder", "1");
 
         request.setMethod("POST");
 
@@ -118,7 +117,6 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         request.addParameter("enabled", "true");
         request.addParameter("ssoEnabled", "true");
         request.addParameter("anonymousAccess", "false");
-        request.addParameter("evaluationOrder", "2");
         request.addParameter("id", "1000");
 
         request.setMethod("POST");

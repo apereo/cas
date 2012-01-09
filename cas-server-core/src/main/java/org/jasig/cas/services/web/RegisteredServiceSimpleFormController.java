@@ -6,6 +6,13 @@
 package org.jasig.cas.services.web;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -17,12 +24,6 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * SimpleFormController to handle adding/editing of RegisteredServices.
@@ -58,8 +59,8 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     protected final void initBinder(final HttpServletRequest request,
         final ServletRequestDataBinder binder) throws Exception {
         binder.setRequiredFields(new String[] {"description", "serviceId",
-            "name", "allowedToProxy", "enabled", "ssoEnabled",
-            "anonymousAccess", "evaluationOrder"});
+                                               "name", "allowedToProxy", "enabled", 
+                                               "ssoEnabled", "anonymousAccess" });
         binder.setDisallowedFields(new String[] {"id"});
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
