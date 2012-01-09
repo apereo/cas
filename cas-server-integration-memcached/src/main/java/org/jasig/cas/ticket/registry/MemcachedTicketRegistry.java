@@ -23,7 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
- * Memcache (or Repcache) backed ticket registry.
+ * Ticket registry implementation that serializes tickets and stores them by
+ * ticket ID in a memcached store.
  * 
  * @author Scott Battaglia
  * @author Marvin S. Addison
@@ -64,26 +65,26 @@ public final class MemcachedTicketRegistry extends AbstractDistributedTicketRegi
 	protected void updateTicket(final Ticket ticket) {
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
-                logger.error("Failed to update " + ticket);
+                logger.error("Failed updating {}", ticket);
             }
         } catch (InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. " +
                     "Cannot determine whether update was successful.", ticket);
         } catch (Exception e) {
-            logger.error("Failed to update " + ticket, e);
+            logger.error("Failed updating {}", ticket, e);
         }
 	}
 
 	public void addTicket(final Ticket ticket) {
         try {
             if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
-                logger.error("Failed to update " + ticket);
+                logger.error("Failed adding {}", ticket);
             }
         } catch (InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async add operation for ticket {}. " +
                     "Cannot determine whether add was successful.", ticket);
         } catch (Exception e) {
-            logger.error("Failed to update " + ticket, e);
+            logger.error("Failed adding {}", ticket, e);
         }
 	}
 
@@ -91,17 +92,21 @@ public final class MemcachedTicketRegistry extends AbstractDistributedTicketRegi
 		try {
 			return this.client.delete(ticketId).get();
 		} catch (final Exception e) {
-            log.error("Failed deleting ticket {}", ticketId, e);
+            log.error("Failed deleting {}", ticketId, e);
 		}
         return false;
 	}
 
 	public Ticket getTicket(final String ticketId) {
-		final Ticket t = (Ticket) this.client.get(ticketId);
-		if (t == null) {
-			return null;
-		}
-		return getProxiedTicketInstance(t);
+        try {
+            final Ticket t = (Ticket) this.client.get(ticketId);
+            if (t != null) {
+                return getProxiedTicketInstance(t);
+            }
+        } catch (Exception e) {
+            log.error("Failed fetching {} ", ticketId, e);
+        }
+        return null;
 	}
 
 	/**

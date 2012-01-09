@@ -36,6 +36,7 @@ import org.springframework.util.Assert;
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
 public final class TicketGrantingTicketImpl extends AbstractTicket implements
+
     TicketGrantingTicket {
 
     /** Unique Id for serialization. */
