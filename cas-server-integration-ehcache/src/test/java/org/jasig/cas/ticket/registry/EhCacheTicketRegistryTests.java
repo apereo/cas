@@ -19,16 +19,8 @@ public final class EhCacheTicketRegistryTests extends AbstractTicketRegistryTest
 
     private ClassPathXmlApplicationContext applicationContext;
 
-    @Override
-    protected void setUp() throws Exception {
+    public EhCacheTicketRegistryTests() {
         applicationContext = new ClassPathXmlApplicationContext("classpath:ticketRegistry.xml");
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        applicationContext.destroy();
     }
 
     @Override
