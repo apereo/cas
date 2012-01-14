@@ -44,12 +44,4 @@ public final class EhCacheTicketRegistryTests extends AbstractTicketRegistryTest
     public void testGetTicketsFromRegistryEqualToTicketsAdded() {
     }
 
-    /**
-     * Disabled because {@link EhCacheTicketRegistry} relies on
-     * {@link TicketGrantingTicket#PREFIX} and {@link ServiceTicket#PREFIX} to
-     * route getTicket() search on the underlying cache.
-     */
-    @Override
-    public void testGetExistingTicketWithInproperClass() {
-    }
 }
