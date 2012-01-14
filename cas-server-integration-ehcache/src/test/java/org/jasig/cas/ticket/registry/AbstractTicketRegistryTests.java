@@ -30,8 +30,6 @@ import junit.framework.TestCase;
  * <li>Inline methods {@link org.jasig.cas.TestUtils#getAuthentication()} and 
  * {@link org.jasig.cas.TestUtils#getService()} as {@link #getAuthentication()} and 
  * {@link #getService()}</li>
- * <li>Prefix some tickets value with {@link TicketGrantingTicket#PREFIX} 
- * because {@link EhCacheTicketRegistry} relies on it</li>
  * </ul>
  * 
  * @author Scott Battaglia
@@ -155,11 +153,11 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
 
     public void testDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "TEST",
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
                 getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry
-                .deleteTicket(TicketGrantingTicket.PREFIX + "TEST"));
+                .deleteTicket("TEST"));
         } catch (Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
         }
