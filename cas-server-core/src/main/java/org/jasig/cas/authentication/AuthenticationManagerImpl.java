@@ -14,6 +14,7 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.perf4j.LoggingStopWatch;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -75,7 +76,17 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
-                if (!authenticationHandler.authenticate(credentials)) {
+
+                boolean auth = false;
+                final LoggingStopWatch stopWatch = new LoggingStopWatch(authenticationHandler.getClass().getSimpleName());
+
+                try {
+                    auth = authenticationHandler.authenticate(credentials);
+                } finally {
+                    stopWatch.stop();
+                }
+
+                if (!auth) {
                     if (log.isInfoEnabled()) {
                         log.info("AuthenticationHandler: "
                                 + authenticationHandler.getClass().getName()

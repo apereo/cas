@@ -12,9 +12,7 @@
             #cas #login .check input {position:relative; left:-4px; height:auto;}
             #cas #login .check label {float:none; xwidth:auto; line-height:1.8;}
             #cas #login .btn-row {padding-top:10px; border-top:1px solid #ddd;}
-            * html #cas #login .btn-row {top:5px;} /* IE6 */
             #cas #login .btn-submit {float:none; clear:none; display:inline; letter-spacing:0;}
-            * html #cas #login .btn-submit {background:#ffd;}
             #cas #login .btn-reset {float:none; clear:none; margin-left:5px; border:0; border-left:1px solid #ddd; background:transparent; color:#777; text-transform:lowercase; letter-spacing:0;}
 
     #cas #sidebar {float:left; margin-left:296px; padding:18px 15px;}
@@ -63,9 +61,9 @@ http://www.positioniseverything.net/easyclearing.html and http://www.ejeliot.com
 /* MESSAGES --------------------------------- */
 .info, .errors, .success {clear:both; margin:18px 0; padding:20px 20px 20px 100px; font-size:10px; line-height:1.5;}
 .info {border:1px dotted 008;    background:#eff url(../images/info.gif) no-repeat 20px 18px; color:#008;}
-.errors {border:1px dotted #d21033; background:#fed url(../images/error.gif) no-repeat 20px 18px; color:#d21033; padding-bottom: 40px;}
+.errors {border:1px dotted #d21033; background:#fed url(../images/error.gif) no-repeat 20px 18px; color:#d21033;}
 .success {border:1px dotted #390; background:#dfa url(../images/confirm.gif) no-repeat 20px 18px; color:#390;}
-    #content .errors h2, #content .success h2 {font-family:Georgia,"Times New Roman",Times,serif; font-size:18px; line-height:48px; font-weight:400; margin:0 18px 0 0; padding:0;}
+    #content .errors h2, #content .success h2 {font-family:Georgia,"Times New Roman",Times,serif; font-size:18px; font-weight:400; margin:0 18px 0 0; padding:0;}
     #content .success h2 {color: #008 !important;}
     #content .errors h2 {color:#b00 !important;}
     #content .success h2 {color:#060 !important;}

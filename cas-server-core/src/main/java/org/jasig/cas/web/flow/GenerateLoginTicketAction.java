@@ -38,7 +38,7 @@ public class GenerateLoginTicketAction {
         final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
         this.logger.debug("Generated login ticket " + loginTicket);
         WebUtils.putLoginTicket(context, loginTicket);
-        return "success";
+        return "generated";
     }
 
     public void setTicketIdGenerator(final UniqueTicketIdGenerator generator) {

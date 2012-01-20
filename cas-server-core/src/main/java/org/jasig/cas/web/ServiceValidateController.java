@@ -86,8 +86,7 @@ public class ServiceValidateController extends AbstractController {
      * @return the credentials or null if there was an error or no credentials
      * provided.
      */
-    protected Credentials getServiceCredentialsFromRequest(
-        final HttpServletRequest request) {
+    protected Credentials getServiceCredentialsFromRequest(final HttpServletRequest request) {
         final String pgtUrl = request.getParameter("pgtUrl");
         if (StringUtils.hasText(pgtUrl)) {
             try {
@@ -100,8 +99,7 @@ public class ServiceValidateController extends AbstractController {
         return null;
     }
 
-    protected void initBinder(final HttpServletRequest request,
-        final ServletRequestDataBinder binder) {
+    protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
         binder.setRequiredFields("renew");
     }
 
@@ -146,6 +144,8 @@ public class ServiceValidateController extends AbstractController {
                 return generateErrorView("INVALID_TICKET", "INVALID_TICKET_SPEC", null);
             }
 
+            onSuccessfulValidation(serviceTicketId, assertion);
+
             final ModelAndView success = new ModelAndView(this.successView);
             success.addObject(MODEL_ASSERTION, assertion);
 
@@ -169,6 +169,10 @@ public class ServiceValidateController extends AbstractController {
         }
     }
 
+    protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
+        // template method with nothing to do.
+    }
+
     private ModelAndView generateErrorView(final String code, final String description, final Object[] args) {
         final ModelAndView modelAndView = new ModelAndView(this.failureView);
         final String convertedDescription = getMessageSourceAccessor().getMessage(description, args, description);
@@ -190,13 +194,11 @@ public class ServiceValidateController extends AbstractController {
      * @param centralAuthenticationService The centralAuthenticationService to
      * set.
      */
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
+    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    public void setArgumentExtractor(
-        final ArgumentExtractor argumentExtractor) {
+    public final void setArgumentExtractor(final ArgumentExtractor argumentExtractor) {
         this.argumentExtractor = argumentExtractor;
     }
 
@@ -204,29 +206,28 @@ public class ServiceValidateController extends AbstractController {
      * @param validationSpecificationClass The authenticationSpecificationClass
      * to set.
      */
-    public void setValidationSpecificationClass(
-        final Class<?> validationSpecificationClass) {
+    public final void setValidationSpecificationClass(final Class<?> validationSpecificationClass) {
         this.validationSpecificationClass = validationSpecificationClass;
     }
 
     /**
      * @param failureView The failureView to set.
      */
-    public void setFailureView(final String failureView) {
+    public final void setFailureView(final String failureView) {
         this.failureView = failureView;
     }
 
     /**
      * @param successView The successView to set.
      */
-    public void setSuccessView(final String successView) {
+    public final void setSuccessView(final String successView) {
         this.successView = successView;
     }
 
     /**
      * @param proxyHandler The proxyHandler to set.
      */
-    public void setProxyHandler(final ProxyHandler proxyHandler) {
+    public final void setProxyHandler(final ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
     }
 }
