@@ -1,7 +1,6 @@
 package org.jasig.cas.authentication.principal;
 
 import junit.framework.TestCase;
-import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,5 +43,21 @@ public class ResponseTests extends TestCase {
         final Response response = Response.getRedirectResponse(url, attributes);
         assertEquals("http://localhost:8080/foo?ticket=foobar#hello", response.getUrl());
 
+    }
+
+    public void testUrlSanitization() {
+        final String url = "https://www.example.com\r\nLocation: javascript:\r\n\r\n<script>alert(document.cookie)</script>";
+        final Map<String, String> attributes = new HashMap<String,String>();
+        attributes.put("ticket", "ST-12345");
+        final Response response = Response.getRedirectResponse(url, attributes);
+        assertEquals("https://www.example.com Location: javascript: <script>alert(document.cookie)</script>?ticket=ST-12345", response.getUrl());
+    }
+
+    public void testUrlWithUnicode() {
+        final String url = "https://www.example.com/πολιτικῶν";
+        final Map<String, String> attributes = new HashMap<String,String>();
+        attributes.put("ticket", "ST-12345");
+        final Response response = Response.getRedirectResponse(url, attributes);
+        assertEquals("https://www.example.com/πολιτικῶν?ticket=ST-12345", response.getUrl());
     }
 }

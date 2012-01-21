@@ -41,3 +41,17 @@ bin
 ehthumbs.db
 Icon?
 Thumbs.db
+=======
+.classpath
+!/.project
+.project
+.settings
+target
+*.ipr
+*.iml
+*.iws
+*.class
+.idea/
+.DS_Store
+.idea
+overlays/

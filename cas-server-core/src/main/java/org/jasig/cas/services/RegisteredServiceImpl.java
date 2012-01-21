@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,6 @@ import javax.persistence.GenerationType;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.AntPathMatcher;
@@ -48,7 +48,7 @@ public class RegisteredServiceImpl
     private long id = -1;
     
     
-    @CollectionOfElements(targetElement = String.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @JoinTable(name = "rs_attributes")
     @Column(name = "a_name", nullable = false)
     @IndexColumn(name = "a_id")
