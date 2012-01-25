@@ -2,7 +2,7 @@
 <chapter xml:lang="en" xml:id="acknowledgements" xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
+  xsi:schemaLocation="http://docbook.org/ns/docbook ./schemata/docbook.xsd"
   version="5.0">
 
   <title>Acknowledgements</title>
@@ -14,8 +14,10 @@
   <para>The Jasig CAS project gratefully acknowledges the contributions of
       Marvin Addison,
       Scott Battaglia,
+      Patrick Berry,
       Harry Ng,
       Andrew Petro,
+      Mark Rogers,
       Bill Thompson,
       Adam Rybicki.</para>
 </chapter>

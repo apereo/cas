@@ -1,7 +1,7 @@
 <%@include file="includes/top.jsp"%>
 
     <c:if test="${fn:length(services) eq 0}">
-        <div id="status" class="errors"><p><spring:message code="management.services.service.warn" arguments="${defaultServiceUrl}" /></p></div>
+        <div id="msg" class="errors"><p><spring:message code="management.services.service.warn" arguments="${defaultServiceUrl}" /></p></div>
     </c:if>
 
 	<c:if test="${not empty param.status}">

@@ -13,6 +13,8 @@ import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationExceptio
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
+import org.perf4j.LoggingStopWatch;
+import org.perf4j.StopWatch;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
@@ -43,7 +45,16 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
 
         Assert.notNull(d, "no mapping found for: " + credentialsClass.getName());
 
-        if (!d.getAuthenticationHandler().authenticate(credentials)) {
+        boolean authenticated = false;
+        final LoggingStopWatch stopWatch = new LoggingStopWatch(d.getAuthenticationHandler().getClass().getSimpleName());
+
+        try {
+            authenticated = d.getAuthenticationHandler().authenticate(credentials);
+        } finally {
+            stopWatch.stop();
+        }
+
+        if (!authenticated) {
             throw new BadCredentialsAuthenticationException();
         }
 

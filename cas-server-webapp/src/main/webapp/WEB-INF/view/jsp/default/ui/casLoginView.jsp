@@ -27,14 +27,15 @@
 <jsp:directive.include file="includes/top.jsp" />
 
 <c:if test="${not pageContext.request.secure}">
-<div class="errors">
-<p>You are currently accessing CAS over a non-secure connection.  Single Sign on WILL NOT WORK.  In order to have single sign on work, you MUST log in over HTTPS.</p>
+<div id="msg" class="errors">
+    <h2>Non-secure Connection</h2>
+    <p>You are currently accessing CAS over a non-secure connection.  Single Sign On WILL NOT WORK.  In order to have single sign on work, you MUST log in over HTTPS.</p>
 </div>
 </c:if>
 
   <div class="box fl-panel" id="login">
 			<form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true">
-                  <form:errors path="*" cssClass="errors" id="status" element="div" />
+                  <form:errors path="*" id="msg" cssClass="errors" element="div" />
                 <!-- <spring:message code="screen.welcome.welcome" /> -->
                     <h2><spring:message code="screen.welcome.instructions" /></h2>
                     <div class="row fl-controls-left">
@@ -94,6 +95,7 @@
                                <option value="it">Italiano</option>
                                <option value="ur">Urdu</option>
                                <option value="zh_CN">Chinese (Simplified)</option>
+                               <option value="zh_TW">Chinese (Traditional)</option>
                                <option value="de">Deutsch</option>
                                <option value="ja">Japanese</option>
                                <option value="hr">Croatian</option>
@@ -118,6 +120,7 @@
 							><li><a href="${loginUrl}it">Italiano</a></li
 							><li><a href="${loginUrl}ur">Urdu</a></li
 							><li><a href="${loginUrl}zh_CN">Chinese (Simplified)</a></li
+                            ><li><a href="${loginUrl}zh_TW">Chinese (Traditional)</a></li
 							><li><a href="${loginUrl}de">Deutsch</a></li
 							><li><a href="${loginUrl}ja">Japanese</a></li
 							><li><a href="${loginUrl}hr">Croatian</a></li

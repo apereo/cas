@@ -6,5 +6,6 @@
         <class>org.jasig.cas.services.RegisteredServiceImpl</class>
         <class>org.jasig.cas.ticket.TicketGrantingTicketImpl</class>
         <class>org.jasig.cas.ticket.ServiceTicketImpl</class>
+        <class>org.jasig.cas.ticket.registry.support.JpaLockingStrategy$Lock</class>
 	</persistence-unit>
 </persistence>

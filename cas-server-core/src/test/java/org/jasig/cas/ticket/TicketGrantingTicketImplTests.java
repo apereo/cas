@@ -7,14 +7,10 @@ package org.jasig.cas.ticket;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -138,7 +134,7 @@ public class TicketGrantingTicketImplTests extends TestCase {
     }
     
     public void testWebApplicationSignOut() {
-        final TestService testService = new TestService();
+        final MockService testService = new MockService("test");
         TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
@@ -148,47 +144,5 @@ public class TicketGrantingTicketImplTests extends TestCase {
         t.expire();
         
         assertTrue(testService.isLoggedOut());
-    }
-    
-    protected static class TestService implements WebApplicationService {
-        
-        /**
-         * Comment for <code>serialVersionUID</code>
-         */
-        private static final long serialVersionUID = -8318147503545267651L;
-        private boolean loggedOut = false;
-
-        public String getArtifactId() {
-            return null;
-        }
-
-        public Response getResponse(String ticketId) {
-            return null;
-        }
-
-        public boolean logOutOfService(final String sessionIdentifier) {
-            this.loggedOut = true;
-            return false;
-        }
-        
-        public boolean isLoggedOut() {
-            return this.loggedOut;
-        }
-
-        public void setPrincipal(Principal principal) {
-            // nothing to do
-        }
-
-        public Map<String, Object> getAttributes() {
-            return null;
-        }
-
-        public String getId() {
-            return "test";
-        }
-        
-        public boolean matches(final Service service) {
-            return true;
-        }
     }
 }

@@ -7,6 +7,11 @@ package org.jasig.cas.authentication.principal;
 
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulates a Response to send back for a particular service.
@@ -17,6 +22,12 @@ import java.util.Map;
  * @since 3.1
  */
 public final class Response {
+    /** Pattern to detect unprintable ASCII characters. */
+    private static final Pattern NON_PRINTABLE =
+        Pattern.compile("[\\x00-\\x19\\x7F]+");
+    
+    /** Log instance. */
+    protected static final Logger LOG = LoggerFactory.getLogger(Response.class);
 
     public static enum ResponseType {
         POST, REDIRECT
@@ -41,7 +52,7 @@ public final class Response {
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
         final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
         boolean isFirst = true;
-        final String[] fragmentSplit = url.split("#");
+        final String[] fragmentSplit = sanitizeUrl(url).split("#");
         
         builder.append(fragmentSplit[0]);
         
@@ -82,5 +93,30 @@ public final class Response {
 
     public String getUrl() {
         return this.url;
+    }
+ 
+    /**
+     * Sanitize a URL provided by a relying party by normalizing non-printable
+     * ASCII character sequences into spaces.  This functionality protects
+     * against CRLF attacks and other similar attacks using invisible characters
+     * that could be abused to trick user agents.
+     * 
+     * @param  url  URL to sanitize.
+     * 
+     * @return  Sanitized URL string.
+     */
+    private static String sanitizeUrl(final String url) {
+        final Matcher m = NON_PRINTABLE.matcher(url);
+        final StringBuffer sb = new StringBuffer(url.length());
+        boolean hasNonPrintable = false;
+        while (m.find()) {
+            m.appendReplacement(sb, " ");
+            hasNonPrintable = true;
+        }
+        m.appendTail(sb);
+        if (hasNonPrintable) {
+            LOG.warn("The following redirect URL has been sanitized and may be sign of attack:\n" + url);
+        }
+        return sb.toString();
     }
 }
