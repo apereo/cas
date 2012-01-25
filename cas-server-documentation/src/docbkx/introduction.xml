@@ -2,14 +2,14 @@
 <chapter xml:lang="en" xml:id="introduction" xmlns="http://docbook.org/ns/docbook"
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://docbook.org/ns/docbook ../schemata/docbook.xsd"
+  xsi:schemaLocation="http://docbook.org/ns/docbook ./schemata/docbook.xsd"
   version="5.0">
 
   <title>Introduction</title>
 
   <mediaobject>
     <imageobject>
-      <imagedata fileref="media/sso-diagram.png" format="PNG" />
+      <imagedata fileref="media/sso-diagram.png" format="PNG" contentwidth="416pt" contentdepth="568pt" align="left" />
     </imageobject>
   </mediaobject>
 
@@ -24,7 +24,7 @@
     have enabled deployers to develop custom components to support novel use
     cases not supported by default.</para>
 
-  <section xml:id="features">
+  <section xml:id="introduction-features">
     <title>Features</title>
     <para>CAS has a number of features that distinguish it from other SSO
       products:</para>

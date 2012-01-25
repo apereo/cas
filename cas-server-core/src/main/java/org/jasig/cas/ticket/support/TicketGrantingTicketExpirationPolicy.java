@@ -46,17 +46,6 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
     }
 
     public boolean isExpired(final TicketState ticketState) {
-
-        // Ticket hasn't been used yet, check expiration timeout
-        if (ticketState.getCountOfUses() == 0) {
-            if ((System.currentTimeMillis() - ticketState.getCreationTime() < timeToKillInMilliSeconds)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Ticket is not expired due to a uses count of zero and the time since creation being within timeToKillInMilliseconds");
-                }
-                return false;
-            }
-        }
-
         // Ticket has been used, check maxTimeToLive (hard window)
         if ((System.currentTimeMillis() - ticketState.getCreationTime() >= maxTimeToLiveInMilliSeconds)) {
             if (log.isDebugEnabled()) {

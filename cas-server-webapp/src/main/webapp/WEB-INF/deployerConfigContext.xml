@@ -138,6 +138,7 @@
                         <property name="name" value="HTTP" />
                         <property name="description" value="Only Allows HTTP Urls" />
                         <property name="serviceId" value="http://**" />
+                        <property name="evaluationOrder" value="10000001" />
                     </bean>
 
                     <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -145,6 +146,7 @@
                         <property name="name" value="HTTPS" />
                         <property name="description" value="Only Allows HTTPS Urls" />
                         <property name="serviceId" value="https://**" />
+                        <property name="evaluationOrder" value="10000002" />
                     </bean>
 
                     <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -152,6 +154,7 @@
                         <property name="name" value="IMAPS" />
                         <property name="description" value="Only Allows HTTPS Urls" />
                         <property name="serviceId" value="imaps://**" />
+                        <property name="evaluationOrder" value="10000003" />
                     </bean>
 
                     <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -159,6 +162,7 @@
                         <property name="name" value="IMAP" />
                         <property name="description" value="Only Allows IMAP Urls" />
                         <property name="serviceId" value="imap://**" />
+                        <property name="evaluationOrder" value="10000004" />
                     </bean>
                 </list>
             </property>

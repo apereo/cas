@@ -1,6 +1,6 @@
 # Central Authentication Service (CAS)
 
-<http://www.ja-sig.org/products/cas/>
+<http://www.jasig.org/cas>
 
 ## Introduction
 
