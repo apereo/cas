@@ -70,8 +70,8 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
 
     public void write(final ByteBuffer buffer, final GoogleAccountsService service) {
         super.write(buffer, service);
-        kryo.writeObjectData(buffer, fieldHelper.getFieldValue(service, "requestId"));
-        kryo.writeObjectData(buffer, fieldHelper.getFieldValue(service, "relayState"));
+        kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "requestId"));
+        kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "relayState"));
     }
 
     protected GoogleAccountsService createService(
@@ -80,8 +80,8 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
             final String originalUrl,
             final String artifactId) {
 
-        final String requestId = kryo.readObjectData(buffer, String.class);
-        final String relayState = kryo.readObjectData(buffer, String.class);
+        final String requestId = kryo.readObject(buffer, String.class);
+        final String relayState = kryo.readObject(buffer, String.class);
         try {
             final GoogleAccountsService service = (GoogleAccountsService) CONSTRUCTOR.newInstance(
                     id,
