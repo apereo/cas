@@ -5,22 +5,17 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.Collection;
-import java.util.concurrent.Future;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import net.spy.memcached.MemcachedClient;
-
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.DisposableBean;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
 
 /**
  * Ticket registry implementation that serializes tickets and stores them by
@@ -63,6 +58,7 @@ public final class MemcachedTicketRegistry extends AbstractDistributedTicketRegi
 	}
 
 	protected void updateTicket(final Ticket ticket) {
+        logger.debug("Updating ticket {}", ticket);
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
                 logger.error("Failed updating {}", ticket);
@@ -76,6 +72,7 @@ public final class MemcachedTicketRegistry extends AbstractDistributedTicketRegi
 	}
 
 	public void addTicket(final Ticket ticket) {
+        logger.debug("Adding ticket {}", ticket);
         try {
             if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
                 logger.error("Failed adding {}", ticket);
@@ -89,6 +86,7 @@ public final class MemcachedTicketRegistry extends AbstractDistributedTicketRegi
 	}
 
 	public boolean deleteTicket(final String ticketId) {
+        logger.debug("Deleting ticket {}", ticketId);
 		try {
 			return this.client.delete(ticketId).get();
 		} catch (final Exception e) {
