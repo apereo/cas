@@ -19,8 +19,6 @@ import com.esotericsoftware.kryo.serialize.DateSerializer;
 import com.esotericsoftware.kryo.serialize.FieldSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
-import org.apache.commons.pool.BasePoolableObjectFactory;
-import org.apache.commons.pool.impl.StackObjectPool;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.SamlService;
@@ -58,9 +56,6 @@ public class KryoTranscoder implements Transcoder<Object> {
     /** Maximum size of single encoded object in bytes. */
     private final int maxSize;
 
-    /** Soft-limit pool to hold buffers that hold encoded data. */
-    private final StackObjectPool<ByteBuffer> bufferPool;
-
     /** Field reflection helper class. */
     private final FieldHelper fieldHelper = new FieldHelper();
 
@@ -72,11 +67,9 @@ public class KryoTranscoder implements Transcoder<Object> {
      * Creates a new Kryo-based transcoder for serializing/deserializing tickets.
      *
      * @param maxEncodableSize Maximum size of any one encoded object.
-     * @param bufferPoolSize Nominal size of pool that holds reusable buffers for storing temporary encoded data.
      */
-    public KryoTranscoder(final int maxEncodableSize, final int bufferPoolSize) {
+    public KryoTranscoder(final int maxEncodableSize) {
         maxSize = maxEncodableSize;
-        bufferPool = new StackObjectPool<ByteBuffer>(new ByteBufferFactory(), bufferPoolSize, bufferPoolSize);
     }
 
 
@@ -146,21 +139,8 @@ public class KryoTranscoder implements Transcoder<Object> {
     /** {@inheritDoc} */
     public CachedData encode(final Object o) {
         // Assume ticket to be encoded is never null
-        final ByteBuffer buffer;
-        try {
-            buffer = bufferPool.borrowObject();
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed borrowing byte buffer from pool.", e);
-        }
-        try {
-            kryo.writeObjectData(buffer, o);
-        } finally {
-            try {
-                bufferPool.returnObject(buffer);
-            } catch (Exception e) {
-                throw new IllegalStateException("Failed returning byte buffer to pool.", e);
-            }
-        }
+        final ByteBuffer buffer = Kryo.getContext().getBuffer(maxSize);
+        kryo.writeObjectData(buffer, o);
         final int flag;
         if (o instanceof TicketGrantingTicketImpl) {
             flag = TGT_TYPE;
@@ -194,18 +174,5 @@ public class KryoTranscoder implements Transcoder<Object> {
      */
     public int getMaxSize() {
         return maxSize;
-    }
-
-
-    class ByteBufferFactory extends BasePoolableObjectFactory<ByteBuffer> {
-
-        public ByteBuffer makeObject() throws Exception {
-            return ByteBuffer.allocate(maxSize);
-        }
-       
-        @Override
-        public void activateObject(final ByteBuffer buffer) {
-            buffer.clear();
-        }
     }
 }

@@ -56,12 +56,6 @@
       <version>1.04</version>
     </dependency>
 
-    <dependency>
-      <groupId>commons-pool</groupId>
-      <artifactId>commons-pool</artifactId>
-      <version>1.6</version>
-    </dependency>
-
     <!-- Test dependencies -->
 		<dependency>
 			<groupId>com.thimbleware.jmemcached</groupId>
