@@ -104,6 +104,8 @@
                                <option value="pl">Polish</option>
                                <option value="ca">Catalan</option>
                                <option value="mk">Macedonian</option>
+                               <option value="fa">Farsi</option>
+                               <option value="ar">Arabic</option>
                            </select>
                            <input type="submit" value="Switch">
                         </form>
@@ -128,6 +130,8 @@
 							><li><a href="${loginUrl}sl">Slovenian</a></li
                             ><li><a href="${loginUrl}ca">Catalan</a></li
                             ><li><a href="${loginUrl}mk">Macedonian</a></li
+                            ><li><a href="${loginUrl}fa">Farsi</a></li
+                            ><li><a href="${loginUrl}ar">Arabic</a></li
 							><li class="last"><a href="${loginUrl}pl">Polish</a></li
 						></ul>
                      </c:otherwise>
