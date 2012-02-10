@@ -38,7 +38,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicySerializer extends SimpleSeria
     }
 
     public void write(final ByteBuffer buffer, MultiTimeUseOrTimeoutExpirationPolicy policy) {
-        buffer.putLong((Integer) fieldHelper.getFieldValue(policy, "numberOfUses"));
+        buffer.putInt((Integer) fieldHelper.getFieldValue(policy, "numberOfUses"));
         buffer.putLong((Long) fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
     }
 
