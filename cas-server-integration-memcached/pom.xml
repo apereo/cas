@@ -31,17 +31,11 @@
 			<version>2.7.3</version>
 		</dependency>
 
-        <dependency>
-            <groupId>com.googlecode</groupId>
-            <artifactId>kryo</artifactId>
-            <version>1.04</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-            <version>1.6</version>
-        </dependency>
+    <dependency>
+      <groupId>com.googlecode</groupId>
+      <artifactId>kryo</artifactId>
+      <version>1.04</version>
+    </dependency>
 
     </dependencies>
 </project>
