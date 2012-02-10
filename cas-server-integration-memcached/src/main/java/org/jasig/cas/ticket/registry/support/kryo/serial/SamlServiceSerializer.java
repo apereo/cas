@@ -47,7 +47,7 @@ public class SamlServiceSerializer extends AbstractWebApplicationServiceSerializ
 
     public void write(final ByteBuffer buffer, final SamlService service) {
         super.write(buffer, service);
-        kryo.writeObjectData(buffer, service.getRequestID());
+        kryo.writeObject(buffer, service.getRequestID());
     }
 
     protected SamlService createService(
@@ -56,7 +56,7 @@ public class SamlServiceSerializer extends AbstractWebApplicationServiceSerializ
             final String originalUrl,
             final String artifactId) {
 
-        final String requestId = kryo.readObjectData(buffer, String.class);
+        final String requestId = kryo.readObject(buffer, String.class);
         try {
             return (SamlService) CONSTRUCTOR.newInstance(id, originalUrl, artifactId, new HttpClient(), requestId);
         } catch (Exception e) {
