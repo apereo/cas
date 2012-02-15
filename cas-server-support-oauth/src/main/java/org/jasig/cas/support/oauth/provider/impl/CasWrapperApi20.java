@@ -1,8 +1,8 @@
-package org.scribe.builder.api;
+package org.jasig.cas.support.oauth.provider.impl;
 
-import static org.scribe.utils.URLUtils.formURLEncode;
-
+import org.scribe.builder.api.DefaultApi20;
 import org.scribe.model.OAuthConfig;
+import org.scribe.utils.OAuthEncoder;
 
 /**
  * This class represents the OAuth API implementation for the CAS OAuth wrapper.
@@ -21,7 +21,7 @@ public class CasWrapperApi20 extends DefaultApi20 {
     @Override
     public String getAuthorizationUrl(OAuthConfig config) {
         return String.format(serverUrl + "/authorize?client_id=%s&redirect_uri=%s", config.getApiKey(),
-                             formURLEncode(config.getCallback()));
+                             OAuthEncoder.encode(config.getCallback()));
     }
     
     public static void setServerUrl(String url) {

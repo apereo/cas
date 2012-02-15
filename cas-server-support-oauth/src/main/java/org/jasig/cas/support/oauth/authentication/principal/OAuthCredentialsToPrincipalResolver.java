@@ -18,14 +18,10 @@ public class OAuthCredentialsToPrincipalResolver extends AbstractPersonDirectory
     
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
-        
         OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
-        
-        String uid = oauthCredentials.getProviderType() + "#" + oauthCredentials.getUserId();
-        
-        logger.debug("uid : {}", uid);
-        
-        return uid;
+        String principalId = oauthCredentials.getProviderType() + "#" + oauthCredentials.getUserId();
+        logger.debug("principalId : {}", principalId);
+        return principalId;
     }
     
     /**

@@ -2,32 +2,24 @@ package org.jasig.cas.support.oauth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * Some usefull methods.
+ * This class has some usefull methods to output data in plain text, handle redirects or add parameter in url.
  * 
  * @author Jerome Leleu
  */
 public class OAuthUtils {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthUtils.class);
-    
-    public static ModelAndView writeXmlError(HttpServletResponse response, String error) {
-        return writeXml(response, "<error>" + error + "</error>");
-    }
-    
-    public static ModelAndView writeXml(HttpServletResponse response, String xml) {
-        return writeText(response, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" + xml);
-    }
     
     public static ModelAndView writeTextError(HttpServletResponse response, String error) {
         return OAuthUtils.writeText(response, "error=" + error);
@@ -57,9 +49,9 @@ public class OAuthUtils {
     
     public static String addParameter(String url, String name, String value) {
         if (url.indexOf("?") >= 0) {
-            return url + "&" + name + "=" + URLEncoder.encode(value);
+            return url + "&" + name + "=" + OAuthEncoder.encode(value);
         } else {
-            return url + "?" + name + "=" + URLEncoder.encode(value);
+            return url + "?" + name + "=" + OAuthEncoder.encode(value);
         }
     }
 }
