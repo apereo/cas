@@ -16,6 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
+/**
+ * This controller is in charge of responding to the authorize call in OAuth protocol. It stores the callback url and redirects user to the
+ * login page with the callback service.
+ * 
+ * @author Jerome Leleu
+ */
 public class OAuth20AuthorizeController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
