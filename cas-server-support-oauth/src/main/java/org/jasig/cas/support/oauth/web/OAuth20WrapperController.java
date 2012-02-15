@@ -3,8 +3,10 @@ package org.jasig.cas.support.oauth.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.cas.support.oauth.OAuthUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * This controller is the main entry point for OAuth version 2.0 wrapping in CAS, should be mapped to something like /oauth2.0/*. Dispatch
@@ -14,8 +16,15 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class OAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
     
-    @Override
-    protected void initController() {
+    private AbstractController authorizeController;
+    
+    private AbstractController callbackAuthorizeController;
+    
+    private AbstractController accessTokenController;
+    
+    private AbstractController profileController;
+    
+    public void afterPropertiesSet() throws Exception {
         authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
         callbackAuthorizeController = new OAuth20CallbackAuthorizeController();
         accessTokenController = new OAuth20AccessTokenController(servicesManager, ticketRegistry, timeout);
@@ -50,8 +59,9 @@ public class OAuth20WrapperController extends BaseOAuthWrapperController impleme
             return profileController.handleRequest(request, response);
         }
         
-        // else
+        // else error
         logger.error("Unknown method : {}", method);
+        OAuthUtils.writeText(response, "Unknown method : " + method);
         return null;
     }
 }

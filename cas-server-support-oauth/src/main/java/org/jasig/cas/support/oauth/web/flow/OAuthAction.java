@@ -11,9 +11,13 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
-import org.jasig.cas.support.oauth.provider.OAuthProvider;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
+import org.scribe.up.credential.OAuthCredential;
+import org.scribe.up.provider.BaseOAuthProvider;
+import org.scribe.up.provider.OAuthProvider;
+import org.scribe.up.session.HttpUserSession;
+import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
@@ -22,14 +26,16 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This class represents an action in the webflow to retrieve OAuth information on the callback url which is the webflow url (/login). The
- * oauth_provider and the other parameters (code, oauth_token, oauth_verifier) are expected after OAuth authentication. Providers are
- * defined by configuration. The service is stored and retrieved from web session after OAuth authentication.
+ * oauth_provider and the other OAuth parameters are expected after OAuth authentication. Providers are defined by configuration. The
+ * service is stored and retrieved from web session after OAuth authentication.
  * 
  * @author Jerome Leleu
  */
 public class OAuthAction extends AbstractAction {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
+    
+    private static final String OAUTH_PROVIDER = "oauth_provider";
     
     @NotNull
     private List<OAuthProvider> providers;
@@ -42,33 +48,33 @@ public class OAuthAction extends AbstractAction {
         HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         HttpSession session = request.getSession();
         
-        // get provider name
-        String providerName = request.getParameter("oauth_provider");
-        logger.debug("providerName : {}", providerName);
+        // get provider type
+        String providerType = request.getParameter(OAUTH_PROVIDER);
+        logger.debug("providerType : {}", providerType);
         
         // it's an authentication
-        if (StringUtils.isNotBlank(providerName)) {
+        if (StringUtils.isNotBlank(providerType)) {
             // get provider
             OAuthProvider provider = null;
             for (OAuthProvider aProvider : providers) {
-                if (StringUtils.equals(providerName, aProvider.getName())) {
+                if (StringUtils.equals(providerType, aProvider.getType())) {
                     provider = aProvider;
                     break;
                 }
             }
+            logger.debug("provider : {}", provider);
             
-            // get token and verifier
-            String token = provider.extractTokenFromRequest(request);
-            String verifier = provider.extractVerifierFromRequest(request);
-            logger.debug("token : {}", token);
-            logger.debug("verifier : {}", verifier);
+            // get credential
+            @SuppressWarnings("unchecked")
+            OAuthCredential credential = provider.getCredentialFromParameters(request.getParameterMap());
+            logger.debug("credential : {}", credential);
             
             // retrieve service from session and put it into webflow
             Service service = (Service) session.getAttribute("service");
             context.getFlowScope().put("service", service);
             
             // create credentials
-            Credentials credentials = new OAuthCredentials(providerName, provider.getClass().getName(), token, verifier);
+            Credentials credentials = new OAuthCredentials(credential);
             
             try {
                 WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService
@@ -86,9 +92,9 @@ public class OAuthAction extends AbstractAction {
             
             // for all providers, generate authorization urls
             for (OAuthProvider provider : providers) {
-                String key = provider.getName() + "_authorizationUrl";
-                String authorizatonUrl = provider.getAuthorizationUrl(session);
-                logger.debug("key : {} -> authorizationUrl : {}", key, authorizatonUrl);
+                String key = provider.getType() + "Url";
+                String authorizatonUrl = provider.getAuthorizationUrl(new HttpUserSession(session));
+                logger.debug("{} -> {}", key, authorizatonUrl);
                 request.setAttribute(key, authorizatonUrl);
             }
         }
@@ -102,5 +108,14 @@ public class OAuthAction extends AbstractAction {
     
     public void setProviders(List<OAuthProvider> providers) {
         this.providers = providers;
+        // for all providers
+        for (OAuthProvider provider : providers) {
+            BaseOAuthProvider baseProvider = (BaseOAuthProvider) provider;
+            // calculate new callback url by adding the OAuth provider name
+            baseProvider.setCallbackUrl(baseProvider.getCallbackUrl() + "?" + OAUTH_PROVIDER + "="
+                                        + OAuthEncoder.encode(provider.getType()));
+            // and init the provider
+            provider.init();
+        }
     }
 }

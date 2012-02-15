@@ -10,15 +10,17 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
-import org.jasig.cas.support.oauth.provider.OAuthProvider;
 import org.scribe.model.Token;
+import org.scribe.up.profile.UserProfile;
+import org.scribe.up.provider.OAuthProvider;
+import org.scribe.up.session.HttpUserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.context.ExternalContextHolder;
 
 /**
- * This handler authenticates OAuth credentials : it uses the token and verifier to get an access token to get the user identifier returned
- * by the provider for an authenticated user.
+ * This handler authenticates OAuth credential : it uses them to get an access token to get the user profile returned by the provider for an
+ * authenticated user.
  * 
  * @author Jerome Leleu
  */
@@ -35,34 +37,34 @@ public class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     
     @Override
     protected boolean doAuthentication(Credentials credentials) throws AuthenticationException {
-        OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
+        OAuthCredentials credential = (OAuthCredentials) credentials;
+        logger.debug("credential : {}", credential);
         
-        String token = oauthCredentials.getToken();
-        logger.debug("token : {}", token);
-        String verifier = oauthCredentials.getVerifier();
-        logger.debug("verifier : {}", verifier);
-        
-        String providerName = oauthCredentials.getProviderName();
-        logger.debug("providerName : {}", providerName);
+        String providerType = credential.getProviderType();
+        logger.debug("providerType : {}", providerType);
         // get provider
         OAuthProvider provider = null;
         for (OAuthProvider aProvider : providers) {
-            if (StringUtils.equals(providerName, aProvider.getName())) {
+            if (StringUtils.equals(providerType, aProvider.getType())) {
                 provider = aProvider;
                 break;
             }
         }
+        logger.debug("provider : {}", provider);
         
+        // get access token
         HttpServletRequest request = (HttpServletRequest) ExternalContextHolder.getExternalContext().getNativeRequest();
-        Token accessToken = provider.getAccessToken(request.getSession(), token, verifier);
-        String userId = provider.getUserId(accessToken);
-        logger.debug("userId : {}", userId);
+        Token accessToken = provider.getAccessToken(new HttpUserSession(request.getSession()), credential);
+        logger.debug("accessToken : {}", accessToken);
+        // and user profile
+        UserProfile userProfile = provider.getUserProfile(accessToken);
+        logger.debug("userProfile : {}", userProfile);
         
-        if (StringUtils.isNotBlank(userId)) {
-            oauthCredentials.setUserId(userId);
+        if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
+            credential.setUserId(userProfile.getId());
+            credential.setUserAttributes(userProfile.getAttributes());
             return true;
         } else {
-            oauthCredentials.setUserId(null);
             return false;
         }
     }

@@ -1,7 +1,7 @@
 package org.jasig.cas.support.oauth;
 
 /**
- * Constants for the OAuth implementation.
+ * This class has the constants for the OAuth implementation.
  * 
  * @author Jerome Leleu
  */

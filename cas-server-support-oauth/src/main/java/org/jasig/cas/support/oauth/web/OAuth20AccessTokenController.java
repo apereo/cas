@@ -18,6 +18,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
+/**
+ * This controller returns an access token which is the CAS granting ticket according to the service and code (service ticket) given.
+ * 
+ * @author Jerome Leleu
+ */
 public class OAuth20AccessTokenController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20AccessTokenController.class);

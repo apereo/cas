@@ -11,6 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
+/**
+ * This controller is called after successful authentication and redirects user to the callback url of the OAuth application. A code is
+ * added which is the service ticket retrieved from previous authentication.
+ * 
+ * @author Jerome Leleu
+ */
 public class OAuth20CallbackAuthorizeController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);

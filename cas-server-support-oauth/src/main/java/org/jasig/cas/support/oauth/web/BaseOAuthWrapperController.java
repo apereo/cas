@@ -9,26 +9,18 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is the base controller for wrapping OAuth protocol in CAS.
+ * This controller is the base controller for wrapping OAuth protocol in CAS. It finds the right sub controller to call according to the
+ * url.
  * 
  * @author Jerome Leleu
  */
-public abstract class BaseOAuthWrapperController extends AbstractController implements InitializingBean {
+public abstract class BaseOAuthWrapperController extends AbstractController {
     
     protected static final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
-    
-    protected AbstractController authorizeController;
-    
-    protected AbstractController callbackAuthorizeController;
-    
-    protected AbstractController accessTokenController;
-    
-    protected AbstractController profileController;
     
     @NotNull
     protected String loginUrl;
@@ -41,12 +33,6 @@ public abstract class BaseOAuthWrapperController extends AbstractController impl
     
     @NotNull
     protected long timeout;
-    
-    public void afterPropertiesSet() throws Exception {
-        initController();
-    }
-    
-    protected abstract void initController();
     
     @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
