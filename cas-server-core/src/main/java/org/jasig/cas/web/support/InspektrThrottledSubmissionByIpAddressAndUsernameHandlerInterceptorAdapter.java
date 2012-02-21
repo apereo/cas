@@ -5,6 +5,7 @@
  */
 package org.jasig.cas.web.support;
 
+import com.github.inspektr.audit.AuditPointRuntimeInfo;
 import com.github.inspektr.audit.AuditTrailManager;
 import com.github.inspektr.audit.AuditActionContext;
 import com.github.inspektr.common.web.ClientInfo;
@@ -61,7 +62,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     protected final void updateCount(final HttpServletRequest request, final String usernameParameter) {
         final String userToUse = constructUsername(request, usernameParameter);
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final AuditActionContext context = new AuditActionContext(userToUse, userToUse, INSPEKTR_ACTION, this.applicationCode, new Date(), clientInfo.getClientIpAddress(), clientInfo.getServerIpAddress());
+        final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
+            public String asString() {
+                return String.format("%s.updateCount()", this.getClass().getName());
+            }
+        };
+        final AuditActionContext context = new AuditActionContext(userToUse, userToUse, INSPEKTR_ACTION, this.applicationCode, new Date(), clientInfo.getClientIpAddress(), clientInfo.getServerIpAddress(), auditPointRuntimeInfo);
         this.auditTrailManager.record(context);
     }
 
