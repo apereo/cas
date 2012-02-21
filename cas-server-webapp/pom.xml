@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-cas-client</artifactId>
+            <artifactId>spring-security-cas</artifactId>
             <scope>runtime</scope>
         </dependency>
 
