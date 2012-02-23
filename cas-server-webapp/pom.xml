@@ -95,6 +95,16 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warName>cas</warName>
+					<webResources>
+						<resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <filtering>true</filtering>
+                            <targetPath>WEB-INF</targetPath>
+                            <includes>
+                                <include>**/web.xml</include>                                
+                            </includes>
+                        </resource>
+					</webResources>
                 </configuration>
             </plugin>
         </plugins>
