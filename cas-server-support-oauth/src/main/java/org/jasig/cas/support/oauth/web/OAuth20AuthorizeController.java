@@ -1,3 +1,8 @@
+/*
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.support.oauth.web;
 
 import java.util.Collection;
@@ -21,8 +26,9 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * login page with the callback service.
  * 
  * @author Jerome Leleu
+ * @since 3.5.0
  */
-public class OAuth20AuthorizeController extends AbstractController {
+public final class OAuth20AuthorizeController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
     

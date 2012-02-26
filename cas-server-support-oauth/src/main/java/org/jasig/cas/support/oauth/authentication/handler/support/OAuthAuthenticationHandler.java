@@ -1,3 +1,8 @@
+/*
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.support.oauth.authentication.handler.support;
 
 import java.util.List;
@@ -19,14 +24,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.context.ExternalContextHolder;
 
 /**
- * This handler authenticates OAuth credential : it uses them to get an access token to get the user profile returned by the provider for an
- * authenticated user.
+ * This handler authenticates OAuth credentials : it uses them to get an access token to get the user profile returned by the provider for
+ * an authenticated user.
  * 
  * @author Jerome Leleu
+ * @since 3.5.0
  */
-public class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     
-    protected static final Logger logger = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
     
     @NotNull
     private List<OAuthProvider> providers;

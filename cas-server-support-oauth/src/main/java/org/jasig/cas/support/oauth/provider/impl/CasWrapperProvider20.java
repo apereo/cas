@@ -1,18 +1,26 @@
+/*
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.support.oauth.provider.impl;
 
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
 import org.scribe.builder.ServiceBuilder;
+import org.scribe.up.profile.JsonHelper;
 import org.scribe.up.profile.UserProfile;
+import org.scribe.up.profile.UserProfileHelper;
 import org.scribe.up.provider.BaseOAuth20Provider;
 
 /**
- * This class is the OAuth provider to authenticate user in CAS wrapping OAuth protocol.
+ * This class is the OAuth provider to authenticate user in CAS server wrapping OAuth protocol.
  * 
  * @author Jerome Leleu
+ * @since 3.5.0
  */
-public class CasWrapperProvider20 extends BaseOAuth20Provider {
+public final class CasWrapperProvider20 extends BaseOAuth20Provider {
     
     private String serverUrl;
     
@@ -31,15 +39,15 @@ public class CasWrapperProvider20 extends BaseOAuth20Provider {
     @Override
     protected UserProfile extractUserProfile(String body) {
         UserProfile userProfile = new UserProfile();
-        JsonNode json = profileHelper.getFirstJsonNode(body);
+        JsonNode json = JsonHelper.getFirstNode(body);
         if (json != null) {
-            profileHelper.addIdentifier(userProfile, json, "id");
+            UserProfileHelper.addIdentifier(userProfile, json, "id");
             json = json.get("attributes");
             if (json != null) {
                 Iterator<JsonNode> nodes = json.iterator();
                 while (nodes.hasNext()) {
                     json = nodes.next();
-                    profileHelper.addAttribute(userProfile, json, json.getFieldNames().next());
+                    UserProfileHelper.addAttribute(userProfile, json, json.getFieldNames().next());
                 }
             }
         }
