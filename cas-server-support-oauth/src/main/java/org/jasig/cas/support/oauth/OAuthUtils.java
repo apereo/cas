@@ -1,3 +1,8 @@
+/*
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.support.oauth;
 
 import java.io.IOException;
@@ -16,10 +21,14 @@ import org.springframework.web.servlet.view.RedirectView;
  * This class has some usefull methods to output data in plain text, handle redirects or add parameter in url.
  * 
  * @author Jerome Leleu
+ * @since 3.5.0
  */
-public class OAuthUtils {
+public final class OAuthUtils {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthUtils.class);
+    
+    private OAuthUtils() {
+    }
     
     public static ModelAndView writeTextError(HttpServletResponse response, String error) {
         return OAuthUtils.writeText(response, "error=" + error);
