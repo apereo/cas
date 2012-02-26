@@ -1,3 +1,8 @@
+/*
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.support.oauth.web;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +18,9 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * request to specific controllers : authorize, accessToken...
  * 
  * @author Jerome Leleu
+ * @since 3.5.0
  */
-public class OAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
+public final class OAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
     
     private AbstractController authorizeController;
     
@@ -40,19 +46,19 @@ public class OAuth20WrapperController extends BaseOAuthWrapperController impleme
             
             return authorizeController.handleRequest(request, response);
         }
-
+        
         // callback on authorize
         else if ("callbackAuthorize".equals(method)) {
             
             return callbackAuthorizeController.handleRequest(request, response);
         }
-
+        
         // get access token
         else if ("accessToken".equals(method)) {
             
             return accessTokenController.handleRequest(request, response);
         }
-
+        
         // get profile
         else if ("profile".equals(method)) {
             

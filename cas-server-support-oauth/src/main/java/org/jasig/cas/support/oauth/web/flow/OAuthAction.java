@@ -1,3 +1,8 @@
+/*
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.support.oauth.web.flow;
 
 import java.util.List;
@@ -30,8 +35,9 @@ import org.springframework.webflow.execution.RequestContext;
  * service is stored and retrieved from web session after OAuth authentication.
  * 
  * @author Jerome Leleu
+ * @since 3.5.0
  */
-public class OAuthAction extends AbstractAction {
+public final class OAuthAction extends AbstractAction {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
     
@@ -66,7 +72,7 @@ public class OAuthAction extends AbstractAction {
             
             // get credential
             @SuppressWarnings("unchecked")
-            OAuthCredential credential = provider.getCredentialFromParameters(request.getParameterMap());
+            OAuthCredential credential = provider.getCredential(request.getParameterMap());
             logger.debug("credential : {}", credential);
             
             // retrieve service from session and put it into webflow

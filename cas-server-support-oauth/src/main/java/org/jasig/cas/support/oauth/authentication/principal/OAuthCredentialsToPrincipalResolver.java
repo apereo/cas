@@ -1,3 +1,8 @@
+/*
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
+ */
 package org.jasig.cas.support.oauth.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
@@ -10,8 +15,9 @@ import org.slf4j.LoggerFactory;
  * This class resolves the principal id regarding the OAuth credentials : principal id is the type of the provider # the user identifier.
  * 
  * @author Jerome Leleu
+ * @since 3.5.0
  */
-public class OAuthCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
+public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthCredentialsToPrincipalResolver.class);
