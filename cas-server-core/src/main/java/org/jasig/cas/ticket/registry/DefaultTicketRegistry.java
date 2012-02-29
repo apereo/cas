@@ -5,13 +5,16 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.monitor.TicketRegistryState;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.springframework.util.Assert;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.jasig.cas.ticket.Ticket;
-import org.springframework.util.Assert;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
@@ -20,7 +23,7 @@ import org.springframework.util.Assert;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultTicketRegistry extends AbstractTicketRegistry {
+public final class DefaultTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
 
     /** A HashMap to contain the tickets. */
     private final Map<String, Ticket> cache;
@@ -88,5 +91,25 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
 
     public Collection<Ticket> getTickets() {
         return Collections.unmodifiableCollection(this.cache.values());
+    }
+
+    public int sessionCount() {
+        int count = 0;
+        for (Ticket t : this.cache.values()) {
+            if (t instanceof TicketGrantingTicket) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int serviceTicketCount() {
+        int count = 0;
+        for (Ticket t : this.cache.values()) {
+            if (t instanceof ServiceTicket) {
+                count++;
+            }
+        }
+        return count;
     }
 }
