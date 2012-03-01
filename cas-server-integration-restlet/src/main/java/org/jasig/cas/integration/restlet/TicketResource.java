@@ -110,6 +110,10 @@ public class TicketResource extends Resource {
             this.request = request;
         }
 
+        public boolean checkNotModified(String s) {
+            return false;
+        }
+
         public boolean checkNotModified(long lastModifiedTimestamp) {
             return false;
         }

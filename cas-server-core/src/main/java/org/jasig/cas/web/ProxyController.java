@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -74,6 +75,9 @@ public final class ProxyController extends AbstractController {
         } catch (TicketException e) {
             return generateErrorView(e.getCode(), e.getCode(),
                 new Object[] {ticket});
+        } catch (final UnauthorizedServiceException e) {
+            return generateErrorView("UNAUTHORIZED_SERVICE",
+                "UNAUTHORIZED_SERVICE_PROXY", new Object[] {targetService});
         }
     }
 
