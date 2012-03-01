@@ -1,7 +1,17 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ *  Copyright 2012 The JA-SIG Collaborative
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.jasig.cas.support.oauth.web;
 
@@ -46,19 +56,19 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
             
             return authorizeController.handleRequest(request, response);
         }
-        
+
         // callback on authorize
         else if ("callbackAuthorize".equals(method)) {
             
             return callbackAuthorizeController.handleRequest(request, response);
         }
-        
+
         // get access token
         else if ("accessToken".equals(method)) {
             
             return accessTokenController.handleRequest(request, response);
         }
-        
+
         // get profile
         else if ("profile".equals(method)) {
             
