@@ -1,16 +1,8 @@
 /*
-  $Id: $
-
-  Copyright (C) 2012 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
-*/
+ * Copyright 2012 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.jasig.org/cas/license.
+ */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -21,9 +13,9 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 import java.nio.ByteBuffer;
 
 /**
- * Description of TimeoutExpirationPolicySerializer.
+ * Serializer for {@link TimeoutExpirationPolicy} class.
  *
- * @author Middleware Services
+ * @author Marvin S. Addison
  * @version $Revision: $
  */
 public class TimeoutExpirationPolicySerializer extends SimpleSerializer<TimeoutExpirationPolicy> {
