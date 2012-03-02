@@ -14,6 +14,7 @@
 package org.jasig.cas.ticket.registry.support.kryo;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.SerializationException;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.DateSerializer;
 import com.esotericsoftware.kryo.serialize.FieldSerializer;
@@ -28,7 +29,10 @@ import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.support.kryo.serial.*;
 import org.jasig.cas.ticket.support.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,8 +57,11 @@ public class KryoTranscoder implements Transcoder<Object> {
     /** Kryo serializer */
     private final Kryo kryo = new Kryo();
 
+    /** Logging instance. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     /** Maximum size of single encoded object in bytes. */
-    private final int maxSize;
+    private final int bufferSize;
 
     /** Field reflection helper class. */
     private final FieldHelper fieldHelper = new FieldHelper();
@@ -64,12 +71,12 @@ public class KryoTranscoder implements Transcoder<Object> {
 
 
     /**
-     * Creates a new Kryo-based transcoder for serializing/deserializing tickets.
+     * Creates a Kryo-based transcoder.
      *
-     * @param maxEncodableSize Maximum size of any one encoded object.
+     * @param initialBufferSize Initial size for buffer holding encoded object data.
      */
-    public KryoTranscoder(final int maxEncodableSize) {
-        maxSize = maxEncodableSize;
+    public KryoTranscoder(final int initialBufferSize) {
+        bufferSize = initialBufferSize;
     }
 
 
@@ -138,41 +145,67 @@ public class KryoTranscoder implements Transcoder<Object> {
 
     /** {@inheritDoc} */
     public CachedData encode(final Object o) {
-        // Assume ticket to be encoded is never null
-        final ByteBuffer buffer = Kryo.getContext().getBuffer(maxSize);
-        kryo.writeObjectData(buffer, o);
-        final int flag;
-        if (o instanceof TicketGrantingTicketImpl) {
-            flag = TGT_TYPE;
-        } else if (o instanceof ServiceTicketImpl) {
-            flag = ST_TYPE;
-        } else {
-            throw new IllegalArgumentException("Unsupported object " + o);
-        }
-        return new CachedData(flag, buffer.array(), maxSize);
+        final byte[] bytes = encodeToBytes(o);
+        return new CachedData(0, bytes, bytes.length);
     }
 
 
     /** {@inheritDoc} */
     public Object decode(final CachedData d) {
-        final Class<?> clazz;
-        if (d.getFlags() == TGT_TYPE) {
-            clazz = TicketGrantingTicketImpl.class;
-        } else if (d.getFlags() == ST_TYPE) {
-            clazz = ServiceTicketImpl.class;
-        } else {
-            throw new IllegalArgumentException("Unsupported flags " + d.getFlags());
-        }
-        return kryo.readObjectData(ByteBuffer.wrap(d.getData()), clazz);
+        return kryo.readClassAndObject(ByteBuffer.wrap(d.getData()));
     }
 
 
     /**
      * Maximum size of encoded data supported by this transcoder.
      *
-     * @return  Maximum size specified at creation time.
+     * @return  {@link CachedData.MAX_SIZE}
      */
     public int getMaxSize() {
-        return maxSize;
+        return CachedData.MAX_SIZE;
+    }
+
+
+    /**
+     * Gets the kryo object that provides encoding and decoding services for this instance.
+     *
+     * @return Underlying Kryo instance.
+     */
+    public Kryo getKryo() {
+        return kryo;
+    }
+
+
+    /**
+     * Encodes the given object using registered Kryo serializers.  Provides explicit buffer overflow protection, but
+     * careful buffer sizing should be employed to reduce the need for this facility.
+     *
+     * @param o Object to encode.
+     *
+     * @return Encoded bytes.
+     */
+    private byte[] encodeToBytes(final Object o) {
+        int factor = 1;
+        byte[] result = null;
+        ByteBuffer buffer = Kryo.getContext().getBuffer(bufferSize * factor);
+        while (result == null) {
+            try {
+                kryo.writeClassAndObject(buffer, o);
+                result = new byte[buffer.flip().limit()];
+                buffer.get(result);
+            } catch (SerializationException e) {
+                Throwable rootCause = e;
+                while (rootCause.getCause() != null) {
+                    rootCause = rootCause.getCause();
+                }
+                if (rootCause instanceof BufferOverflowException) {
+                    buffer = ByteBuffer.allocate(bufferSize * ++factor);
+                    logger.warn("Buffer overflow while encoding " + o);
+                } else {
+                    throw e;
+                }
+            }
+        }
+        return result;
     }
 }
