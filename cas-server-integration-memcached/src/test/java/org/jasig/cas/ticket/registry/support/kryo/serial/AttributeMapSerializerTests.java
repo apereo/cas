@@ -1,16 +1,10 @@
-package org.jasig.cas.ticket.registry.support.kryo.serial;/*
-  $Id: $
+/*
+ * Copyright 2012 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.jasig.org/cas/license.
+ */
 
-  Copyright (C) 2012 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
-*/
+package org.jasig.cas.ticket.registry.support.kryo.serial;
 
 import com.esotericsoftware.kryo.Kryo;
 import org.apache.commons.logging.Log;
@@ -25,9 +19,9 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
- * Description of org.jasig.cas.ticket.registry.support.kryo.serial.AttributeMapSerializerTests.
+ * Unit test for {@link AttributeMapSerializer} class.
  *
- * @author Middleware Services
+ * @author Marvin S. Addison
  * @version $Revision: $
  */
 @RunWith(Parameterized.class)
