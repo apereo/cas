@@ -21,12 +21,12 @@ import org.junit.Test;
 import java.nio.ByteBuffer;
 
 /**
- * Description of MultiTimeUseOrTimeoutExpirationPolicySerializerTest.
+ * Description of MultiTimeUseOrTimeoutExpirationPolicySerializerTests.
  *
  * @author Middleware Services
  * @version $Revision: $
  */
-public class MultiTimeUseOrTimeoutExpirationPolicySerializerTest {
+public class MultiTimeUseOrTimeoutExpirationPolicySerializerTests {
     @Test
     public void testReadWrite() throws Exception {
         final MultiTimeUseOrTimeoutExpirationPolicy expected = new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000);

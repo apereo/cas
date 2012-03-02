@@ -25,18 +25,18 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
- * Description of org.jasig.cas.ticket.registry.support.kryo.serial.AttributeMapSerializerTest.
+ * Description of org.jasig.cas.ticket.registry.support.kryo.serial.AttributeMapSerializerTests.
  *
  * @author Middleware Services
  * @version $Revision: $
  */
 @RunWith(Parameterized.class)
-public class AttributeMapSerializerTest {
+public class AttributeMapSerializerTests {
     private final Log logger = LogFactory.getLog(getClass());
   
     private Map<String, Object> attributes;
     
-    public AttributeMapSerializerTest(final Map<String, Object> attributes) {
+    public AttributeMapSerializerTests(final Map<String, Object> attributes) {
         this.attributes = attributes;
     }
 
