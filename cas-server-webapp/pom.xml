@@ -47,6 +47,28 @@
             <version>${project.version}</version>
         </dependency>
 
+		<!-- Begin Clearpass extension -->
+		<!-- 
+		<dependency>
+            <groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-extensions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+			<groupId>org.jasig.cas.client</groupId>
+			<artifactId>cas-client-core</artifactId>
+			<version>3.2.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		-->
+		<!-- End Clearpass extension -->
+		
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>

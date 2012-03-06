@@ -52,6 +52,40 @@
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
+	<!-- Begin CAS Client Validation Filter for Clearpass -->
+	<!-- 
+	<filter>
+		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
+	</filter>
+	
+	<filter>
+		<filter-name>CAS Validation Filter</filter-name>
+		<filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+		<init-param>
+			<param-name>casServerUrlPrefix</param-name>
+			<param-value>https://mmoayyed-1933.unicon.net:8443/cas/</param-value>
+		</init-param>
+		<init-param>
+			<param-name>serverName</param-name>
+			<param-value>https://mmoayyed-1933.unicon.net:8443</param-value>
+		</init-param>
+		<init-param>
+			<param-name>exceptionOnValidationFailure</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>acceptAnyProxy</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>useSession</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	-->
+	<!-- End CAS Client Validation Filter for Clearpass -->
+	
     <filter-mapping>
         <filter-name>characterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -66,7 +100,19 @@
 		<filter-name>CAS Client Info Logging Filter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
+	
+	<!-- Begin Clearpass filter mappings
+	<filter-mapping>
+	    <filter-name>CAS Validation Filter</filter-name>
+	    <url-pattern>/clearPass</url-pattern>
+	</filter-mapping>
+	 
+	<filter-mapping>
+	    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+	    <url-pattern>/clearPass</url-pattern>
+	</filter-mapping>
+	End Clearpass filter mappings -->
+	 
 	<!--
 		- Configures Log4J for this web app.
 		- As this context specifies a context-param "log4jConfigLocation", its file path
@@ -131,6 +177,13 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
+	<!-- Clearpass Servlet mapping 
+	<servlet-mapping>
+	    <servlet-name>cas</servlet-name>
+	    <url-pattern>/clearPass</url-pattern>
+	</servlet-mapping>
+	 -->
+	 
 	<servlet-mapping>
 		<servlet-name>cas</servlet-name>
 		<url-pattern>/login</url-pattern>

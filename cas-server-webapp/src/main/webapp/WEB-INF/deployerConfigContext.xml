@@ -28,6 +28,19 @@
 		+-->
 	<bean id="authenticationManager"
 		class="org.jasig.cas.authentication.AuthenticationManagerImpl">
+		
+		<!-- Begin Clearpass configuration: 
+			 Add an AuthenticationMetaDataPopulator to the CAS AuthenticationManager to capture the password and cache it.
+		
+		<property name="authenticationMetaDataPopulators">
+		   <list>
+		      <bean class="org.jasig.cas.extensions.clearpass.CacheCredentialsMetaDataPopulator">
+		         <constructor-arg index="0" ref="credentialsCache" />
+		      </bean>
+		   </list>
+		</property>
+		-->
+		
 		<!--
 			| This is the List of CredentialToPrincipalResolvers that identify what Principal is trying to authenticate.
 			| The AuthenticationManagerImpl considers them in order, finding a CredentialToPrincipalResolver which 
