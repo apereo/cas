@@ -621,6 +621,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-integration-restlet</module>
     <module>cas-server-uber-webapp</module>
     <module>cas-server-documentation</module>
+    <module>cas-server-extensions</module>
   </modules>
 
   <reporting>
