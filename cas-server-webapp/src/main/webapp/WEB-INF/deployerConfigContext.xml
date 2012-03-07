@@ -168,5 +168,16 @@
             </property>
         </bean>
 
-    <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
+  <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
+  
+  <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor">
+    <property name="monitors">
+      <list>
+        <bean class="org.jasig.cas.monitor.MemoryMonitor" />
+        <bean class="org.jasig.cas.monitor.SessionMonitor"
+            p:serviceTicketCountWarnThreshold="5000"
+            p:sessionCountWarnThreshold="100000" />
+      </list>
+    </property>
+  </bean>
 </beans>
