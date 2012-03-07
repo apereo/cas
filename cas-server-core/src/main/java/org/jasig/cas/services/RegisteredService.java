@@ -96,21 +96,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     String getDescription();
    
-    /**
-     * Gets the relative evaluation order of this service when determining
-     * matches.
-     * @return Evaluation order relative to other registered services.
-     * Services with lower values will be evaluated for a match before others.
-     */
-    int getEvaluationOrder();
-
-    /**
-     * Returns whether the service matches the registered service.
-     * <p>Note, as of 3.1.2, matches are case insensitive.
-     * 
-     * @param service the service to match.
-     * @return true if they match, false otherwise.
-     */
+	/**
+	 * Returns whether the service matches the registered service.
+	 * <p>Note, as of 3.1.2, matches are case insensitive.
+	 * 
+	 * @param service the service to match.
+	 * @return true if they match, false otherwise.
+	 */
     boolean matches(final Service service);
     
     Object clone() throws CloneNotSupportedException;

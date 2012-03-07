@@ -5,9 +5,8 @@
  */
 package org.jasig.cas.services.web;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +15,6 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.springframework.beans.support.PropertyComparator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 import org.springframework.web.servlet.view.RedirectView;
@@ -37,9 +35,6 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
     /** Instance of ServicesManager. */
     @NotNull
     private final ServicesManager servicesManager;
-
-    /** Used to ensure services are sorted by name. */
-    private final PropertyComparator propertyComparator = new PropertyComparator("name", false, true);
 
     @NotNull
     private final String defaultServiceUrl;
@@ -94,11 +89,8 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
         final HttpServletResponse response) {
         final Map<String, Object> model = new HashMap<String, Object>();
 
-        final List<RegisteredService> services = new ArrayList<RegisteredService>(
-            this.servicesManager.getAllServices());
-        PropertyComparator.sort(services, this.propertyComparator
-            .getSortDefinition());
-
+		final Collection<RegisteredService> services = this.servicesManager.getAllServices();
+       
         model.put("services", services);
         model.put("pageTitle", VIEW_NAME);
         model.put("defaultServiceUrl", this.defaultServiceUrl);
