@@ -46,6 +46,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         final IPersonAttributeDao attributeRepository) {
         this.servicesManager = servicesManager;
         this.personAttributeDao = attributeRepository;
+        this.setCommandClass(RegisteredServiceImpl.class);
     }
 
     /**
@@ -93,7 +94,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
 
         if (!StringUtils.hasText(id)) {
             logger.debug("Created new service.");
-            return new RegisteredServiceImpl();
+            return this.createCommand();
         }
         
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));

@@ -6,7 +6,6 @@
 package org.jasig.cas.services.web.support;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -36,12 +35,12 @@ public final class RegisteredServiceValidator implements Validator {
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
     /**
-     * Supports the RegisteredServiceImpl.
+     * Supports RegisteredService objects.
      * 
      * @see org.springframework.validation.Validator#supports(java.lang.Class)
      */
     public boolean supports(final Class clazz) {
-        return RegisteredServiceImpl.class.equals(clazz);
+        return RegisteredService.class.isAssignableFrom(clazz);
     }
 
     public void validate(final Object o, final Errors errors) {
