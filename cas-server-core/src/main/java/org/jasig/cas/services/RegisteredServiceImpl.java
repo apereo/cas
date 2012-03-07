@@ -219,7 +219,12 @@ public class RegisteredServiceImpl
     }
 
     public Object clone() throws CloneNotSupportedException {
-        final RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
+        final RegisteredServiceImpl registeredServiceImpl;
+        try {
+            registeredServiceImpl = this.getClass().newInstance();
+        } catch (final Exception e) {
+            throw new CloneNotSupportedException("error creating new object");
+        }
 
         registeredServiceImpl.setAllowedAttributes(this.allowedAttributes);
         registeredServiceImpl.setAllowedToProxy(this.allowedToProxy);
