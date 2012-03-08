@@ -48,7 +48,7 @@ public class HealthCheckController extends AbstractController {
 
         final HealthStatus healthStatus = healthCheckMonitor.observe();
         final StringBuilder sb = new StringBuilder();
-        sb.append("Health: ").append(healthStatus.getCode()).append("\n\nDetails:");
+        sb.append("Health: ").append(healthStatus.getCode());
         String name;
         Status status;
         int i = 0;
@@ -57,8 +57,11 @@ public class HealthCheckController extends AbstractController {
             status = entry.getValue();
             response.addHeader("X-CAS-" + name, String.format("%s;%s", status.getCode(), status.getDescription()));
 
-            sb.append("\n\t").append(++i).append('.').append(name).append(": ");
-            sb.append(status.getCode()).append(", ").append(status.getDescription());
+            sb.append("\n\n\t").append(++i).append('.').append(name).append(": ");
+            sb.append(status.getCode());
+            if (status.getDescription() != null) {
+                sb.append(" - ").append(status.getDescription());
+            }
         }
         response.setStatus(healthStatus.getCode().value());
         response.setContentType("text/plain");
