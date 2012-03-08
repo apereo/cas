@@ -72,18 +72,18 @@ public class SessionMonitor implements Monitor<SessionStatus> {
             if (sessionCountWarnThreshold > -1 && sessionCount > sessionCountWarnThreshold) {
                 code = StatusCode.WARN;
                 msg.append(String.format(
-                        "Session count (%s) is above threshold %s.", sessionCount, sessionCountWarnThreshold));
+                        "Session count (%s) is above threshold %s. ", sessionCount, sessionCountWarnThreshold));
+            } else {
+                msg.append(sessionCount).append(" sessions. ");
             }
             if (serviceTicketCountWarnThreshold > -1 && ticketCount > serviceTicketCountWarnThreshold) {
-                if (code == StatusCode.WARN) {
-                    msg.append(' ');
-                } else {
-                    code = StatusCode.WARN;
-                }
+                code = StatusCode.WARN;
                 msg.append(String.format(
                         "Service ticket count (%s) is above threshold %s.",
                         ticketCount,
                         serviceTicketCountWarnThreshold));
+            } else {
+                msg.append(ticketCount).append(" service tickets.");
             }
             return new SessionStatus(code, msg.toString(), sessionCount, ticketCount);
         } catch (Exception e) {
