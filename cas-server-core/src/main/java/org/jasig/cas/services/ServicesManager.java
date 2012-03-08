@@ -23,8 +23,9 @@ public interface ServicesManager {
      * Register a service with CAS, or update an existing an entry.
      * 
      * @param registeredService the RegisteredService to update or add.
+     * @return newly persisted RegisteredService instance
      */
-    void save(RegisteredService registeredService);
+    RegisteredService save(RegisteredService registeredService);
 
     /**
      * Delete the entry for this RegisteredService.
