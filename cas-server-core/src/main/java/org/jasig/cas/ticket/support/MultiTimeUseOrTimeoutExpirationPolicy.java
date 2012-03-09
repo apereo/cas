@@ -40,6 +40,10 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
 
     }
 
+    public MultiTimeUseOrTimeoutExpirationPolicy(int numberOfUses, long timeToKill, TimeUnit timeUnit) {
+        this(numberOfUses, timeUnit.toMillis(timeToKill));
+    }
+
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null)
             || (ticketState.getCountOfUses() >= this.numberOfUses)
