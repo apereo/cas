@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The JA-SIG Collaborative. All rights reserved. See license
+ * Copyright 2009-2011 The JA-SIG Collaborative. All rights reserved. See license
  * distributed with this file and available online at
  * http://www.uportal.org/license.html
  */
@@ -20,26 +20,27 @@ import org.springframework.core.style.ToStringCreator;
 
 /**
  * <p>
- * <a href="http://ehcache.sourceforge.net/">EHCache</a> based distributed ticket registry.
+ * <a href="http://ehcache.org/">Ehcache</a> based distributed ticket registry.
  * </p>
  * <p>
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
  * <ul>
  * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
- * <li>Tuning : have different replication strategies for TGT and ST (ST should be synchronized more quickly).</li>
  * <li>Monitoring : follow separately the number of TGT and ST.</li>
  * <ul>
  * </p>
  * 
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
+ * @author Adam Rybicki
+ * @author Andrew Tillinghast
  */
-public class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
+public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
     
-    protected Cache serviceTicketsCache;
+    private Cache serviceTicketsCache;
     
-    protected Cache ticketGrantingTicketsCache;
+    private Cache ticketGrantingTicketsCache;
     
-    public void addTicket(Ticket ticket) {
+    public void addTicket(final Ticket ticket) {
         Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
             this.serviceTicketsCache.put(element);
@@ -50,39 +51,21 @@ public class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry imp
         }
     }
     
-    public boolean deleteTicket(String ticketId) {
+    public boolean deleteTicket(final String ticketId) {
         if (ticketId == null) {
             return false;
         }
-        boolean result;
-        if (ticketId.startsWith(TicketGrantingTicket.PREFIX)) {
-            result = this.ticketGrantingTicketsCache.remove(ticketId);
-        } else if (ticketId.startsWith(ServiceTicket.PREFIX)) {
-            result = this.serviceTicketsCache.remove(ticketId);
-        } else {
-            result = false;
-            if (log.isInfoEnabled()) {
-                log.info("Unsupported ticket prefix for ticketId '" + ticketId + "', return " + result);
-            }
-        }
-        return result;
+        return this.serviceTicketsCache.remove(ticketId) || this.ticketGrantingTicketsCache.remove(ticketId);
     }
     
-    public Ticket getTicket(String ticketId) {
+    public Ticket getTicket(final String ticketId) {
         if (ticketId == null) {
             return null;
         }
-        
-        Element element;
-        if (ticketId.startsWith(TicketGrantingTicket.PREFIX)) {
+
+        Element element = this.serviceTicketsCache.get(ticketId);
+        if (element == null) {
             element = this.ticketGrantingTicketsCache.get(ticketId);
-        } else if (ticketId.startsWith(ServiceTicket.PREFIX)) {
-            element = this.serviceTicketsCache.get(ticketId);
-        } else {
-            element = null;
-            if (log.isInfoEnabled()) {
-                log.info("Unsupported ticket prefix for ticketId '" + ticketId + "', return " + element);
-            }
         }
         return element == null ? null : getProxiedTicketInstance((Ticket)element.getValue());
     }

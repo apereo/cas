@@ -19,16 +19,8 @@ public final class EhCacheTicketRegistryTests extends AbstractTicketRegistryTest
 
     private ClassPathXmlApplicationContext applicationContext;
 
-    @Override
-    protected void setUp() throws Exception {
+    public EhCacheTicketRegistryTests() {
         applicationContext = new ClassPathXmlApplicationContext("classpath:ticketRegistry.xml");
-        super.setUp();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        applicationContext.destroy();
     }
 
     @Override
@@ -52,12 +44,4 @@ public final class EhCacheTicketRegistryTests extends AbstractTicketRegistryTest
     public void testGetTicketsFromRegistryEqualToTicketsAdded() {
     }
 
-    /**
-     * Disabled because {@link EhCacheTicketRegistry} relies on
-     * {@link TicketGrantingTicket#PREFIX} and {@link ServiceTicket#PREFIX} to
-     * route getTicket() search on the underlying cache.
-     */
-    @Override
-    public void testGetExistingTicketWithInproperClass() {
-    }
 }

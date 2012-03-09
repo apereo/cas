@@ -2,7 +2,7 @@
     <parent>
         <groupId>org.jasig.cas</groupId>
         <artifactId>cas-server</artifactId>
-        <version>3.4.12-SNAPSHOT</version>
+        <version>3.5.0-RC1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.cas</groupId>
@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-cas-client</artifactId>
+            <artifactId>spring-security-cas</artifactId>
             <scope>runtime</scope>
         </dependency>
 
@@ -95,6 +95,16 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <warName>cas</warName>
+					<webResources>
+						<resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <filtering>true</filtering>
+                            <targetPath>WEB-INF</targetPath>
+                            <includes>
+                                <include>**/web.xml</include>                                
+                            </includes>
+                        </resource>
+					</webResources>
                 </configuration>
             </plugin>
         </plugins>

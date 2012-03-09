@@ -8,3 +8,6 @@ target
 *.iws
 .idea/
 .DS_Store
+.idea
+overlays/
+pom.xml.versionsBackup
