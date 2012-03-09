@@ -15,10 +15,10 @@
 			index="0"
 			value="1" />
 		
-		<!-- This argument is the time (in seconds) a ticket can exist before its considered expired.  -->
+		<!-- This argument is the time (in milliseconds) a ticket can exist before its considered expired.  -->
 		<constructor-arg
 			index="1"
-			value="10" />
+			value="10000" />
 	</bean>
 	
     <!-- TicketGrantingTicketExpirationPolicy: Default as of 3.5 -->

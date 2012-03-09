@@ -32,8 +32,8 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
     private final int numberOfUses;
 
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
-        final long timeToKillInSeconds) {
-        this.timeToKillInMilliSeconds = TimeUnit.SECONDS.toMillis(timeToKillInSeconds);
+        final long timeToKillInMilliSeconds) {
+        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUsers must be greater than 0.");
         Assert.isTrue(this.timeToKillInMilliSeconds > 0, "timeToKillInMilliseconds must be greater than 0.");
