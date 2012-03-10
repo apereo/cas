@@ -52,6 +52,12 @@
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
   </filter>
 
+  <filter>
+	<filter-name>clearPassFilterChainProxy</filter-name>
+	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+
+	
   <filter-mapping>
     <filter-name>characterEncodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
@@ -62,6 +68,11 @@
     <url-pattern>/services/*</url-pattern>
   </filter-mapping>
 
+  <filter-mapping>
+    <filter-name>clearPassFilterChainProxy</filter-name>
+    <url-pattern>/clearPass</url-pattern>
+  </filter-mapping>
+	
   <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/status</url-pattern>
@@ -136,6 +147,11 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
+  <servlet-mapping>
+	<servlet-name>cas</servlet-name>
+	<url-pattern>/clearPass</url-pattern>
+  </servlet-mapping>
+		 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
     <url-pattern>/login</url-pattern>
