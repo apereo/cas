@@ -5,10 +5,16 @@
  */
 package org.jasig.cas.services;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.jasig.cas.mock.MockService;
+import org.junit.Test;
 
 /**
  * 
@@ -17,10 +23,42 @@ import java.util.List;
  * @since 3.1
  *
  */
-public class RegisteredServiceImplTests extends TestCase {
+public class RegisteredServiceImplTests {
 
-    private RegisteredServiceImpl r = new RegisteredServiceImpl();
-    
+	@Test
+	public void testRegexServiceIds() {
+		RegisteredServiceImpl svc = new RegisteredServiceImpl();
+		svc.setId(1000);
+		svc.setServiceId("http.?://\\w+\\.domain\\.\\w{3}$");
+
+		assertTrue(svc.matches(new MockService("https://www.domain.edu")));
+		assertTrue(svc.matches(new MockService("http://sub.domain.org")));
+
+		assertTrue(svc.matches(new MockService("http://veryLongSubDomainWorksToo1234.domain.com")));
+		assertFalse(svc.matches(new MockService("http://sub.domain.eu")));
+		assertFalse(svc.matches(null));
+
+		svc.setServiceId("\\w+://(\\w+\\.)*domain\\.\\w+");
+
+		assertTrue(svc.matches(new MockService("https://www.domain.edu")));
+		assertTrue(svc.matches(new MockService("http://anything.domain.education")));
+		assertTrue(svc.matches(new MockService("imaps://domain.organization")));
+		assertTrue(svc.matches(new MockService("whateverprotocol://test.domain.test")));
+		assertTrue(svc.matches(new MockService("http://domain.eu")));
+		assertTrue(svc.matches(new MockService("https://some.service.domain.edu?param1=value1")));
+		assertTrue(svc.matches(new MockService("imap://my.service.domain.edu/first/second/third?hello=world")));
+
+		svc.setServiceId("\\w+://(\\w+\\.)*mydomain.*");
+		assertFalse(svc.matches(new MockService("http://pirate.domain?something.mydomain/")));
+		assertFalse(svc.matches(new MockService("someStrangeProtocol://pirate.domain.edu/mydomain?myDomain=1")));
+		assertTrue(svc.matches(new MockService("anything://myown.mydomain.anythingelse/first/second?param=value")));
+
+		svc.setServiceId("*://www.invalid.edu");
+		assertFalse(svc.matches(new MockService("http://www.invalid.edu")));
+
+	}
+
+	@Test
     public void testSettersAndGetters() {
         final long ID = 1000;
         final String DESCRIPTION = "test";
@@ -33,36 +71,39 @@ public class RegisteredServiceImplTests extends TestCase {
         final boolean SSO_ENABLED = false;
         final List<String> ALLOWED_ATTRIBUTES = Arrays.asList("Test");
         
-        this.r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
-        this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
-        this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
-        this.r.setDescription(DESCRIPTION);
-        this.r.setEnabled(ENABLED);
-        this.r.setId(ID);
-        this.r.setName(NAME);
-        this.r.setServiceId(SERVICEID);
-        this.r.setSsoEnabled(SSO_ENABLED);
-        this.r.setTheme(THEME);
+		RegisteredServiceImpl r = new RegisteredServiceImpl();
+
+		r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
+		r.setAllowedToProxy(ALLOWED_TO_PROXY);
+		r.setAnonymousAccess(ANONYMOUS_ACCESS);
+		r.setDescription(DESCRIPTION);
+		r.setEnabled(ENABLED);
+		r.setId(ID);
+		r.setName(NAME);
+		r.setServiceId(SERVICEID);
+		r.setSsoEnabled(SSO_ENABLED);
+		r.setTheme(THEME);
         
-        assertEquals(ALLOWED_ATTRIBUTES, this.r.getAllowedAttributes());
-        assertEquals(ALLOWED_TO_PROXY, this.r.isAllowedToProxy());
-        assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
-        assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.isEnabled());
-        assertEquals(ID, this.r.getId());
-        assertEquals(NAME, this.r.getName());
-        assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.isSsoEnabled());
-        assertEquals(THEME, this.r.getTheme());
+		assertEquals(ALLOWED_ATTRIBUTES, r.getAllowedAttributes());
+		assertEquals(ALLOWED_TO_PROXY, r.isAllowedToProxy());
+		assertEquals(ANONYMOUS_ACCESS, r.isAnonymousAccess());
+		assertEquals(DESCRIPTION, r.getDescription());
+		assertEquals(ENABLED, r.isEnabled());
+		assertEquals(ID, r.getId());
+		assertEquals(NAME, r.getName());
+		assertEquals(SERVICEID, r.getServiceId());
+		assertEquals(SSO_ENABLED, r.isSsoEnabled());
+		assertEquals(THEME, r.getTheme());
         
-        assertFalse(this.r.equals(null));
-        assertFalse(this.r.equals(new Object()));
-        assertTrue(this.r.equals(this.r));
+		assertFalse(r.equals(null));
+		assertFalse(r.equals(new Object()));
+		assertTrue(r.equals(r));
         
-        this.r.setAllowedAttributes(null);
-        assertNotNull(this.r.getAllowedAttributes());
+		r.setAllowedAttributes(null);
+		assertNotNull(r.getAllowedAttributes());
     }
     
+	@Test
     public void testEquals() {
         assertTrue(new RegisteredServiceImpl().equals(new RegisteredServiceImpl()));
         assertFalse(new RegisteredServiceImpl().equals(null));
