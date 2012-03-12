@@ -20,6 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.IndexColumn;
@@ -40,9 +41,10 @@ public class RegisteredServiceImpl
 
 	private final Logger		log					= LoggerFactory.getLogger(getClass());
 
-    /** Unique Id for serialization. */
-    private static final long serialVersionUID = -5136788302682868276L;
+	/** Unique Id for serialization. */
+	private static final long	serialVersionUID	= -5136788302682868276L;
 
+	private Pattern				serviceRegexPattern	= null;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -123,20 +125,10 @@ public class RegisteredServiceImpl
 	public boolean matches(final Service service) {
 		boolean matched = false;
 
-		if (service != null) {
-			try {
-				Pattern pattern = Pattern.compile(this.getServiceId(), Pattern.CASE_INSENSITIVE);
-				Matcher matcher = pattern.matcher(service.getId());
-				matched = matcher.find();
-			} catch (PatternSyntaxException e) {
-				if (log.isErrorEnabled()) {
-					String msg = "Invalid service id regex pattern [" + this.getServiceId() + "]. ";
-					msg += "Incoming service id [" + service.getId() + "] will not be considered a match.";
-					log.error(msg, e);
-				}
-			}
+		if (service != null && serviceRegexPattern != null) {
+			Matcher matcher = serviceRegexPattern.matcher(service.getId());
+			matched = matcher.find();
 		}
-
 		return matched;
 	}
 
@@ -200,7 +192,19 @@ public class RegisteredServiceImpl
     }
 
     public void setServiceId(final String id) {
-        this.serviceId = id;
+		if (StringUtils.isBlank(id))
+			throw new IllegalArgumentException("Invalid service id [" + id + "] is specified.");
+
+		try {
+			serviceRegexPattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
+			this.serviceId = id;
+		} catch (PatternSyntaxException e) {
+			if (log.isErrorEnabled()) {
+				String msg = "Invalid service id regex pattern [" + id + "]. ";
+				log.error(msg, e);
+			}
+		}
+        
     }
 
     public void setId(final long id) {
