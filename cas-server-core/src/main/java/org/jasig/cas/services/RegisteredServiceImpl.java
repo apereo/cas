@@ -19,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -39,11 +40,13 @@ import org.slf4j.LoggerFactory;
 public class RegisteredServiceImpl
     implements RegisteredService, Comparable<RegisteredService> {
 
+	@Transient
 	private final Logger		log					= LoggerFactory.getLogger(getClass());
 
 	/** Unique Id for serialization. */
 	private static final long	serialVersionUID	= -5136788302682868276L;
 
+	@Transient
 	private Pattern				serviceRegexPattern	= null;
 
     @Id
@@ -192,6 +195,7 @@ public class RegisteredServiceImpl
     }
 
     public void setServiceId(final String id) {
+
 		if (StringUtils.isBlank(id))
 			throw new IllegalArgumentException("Invalid service id [" + id + "] is specified.");
 
@@ -199,10 +203,12 @@ public class RegisteredServiceImpl
 			serviceRegexPattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
 			this.serviceId = id;
 		} catch (PatternSyntaxException e) {
-			if (log.isErrorEnabled()) {
-				String msg = "Invalid service id regex pattern [" + id + "]. ";
+			String msg = "Invalid service id regex pattern [" + id + "]. ";
+
+			if (log.isErrorEnabled())
 				log.error(msg, e);
-			}
+
+			throw new IllegalArgumentException(msg, e);
 		}
         
     }

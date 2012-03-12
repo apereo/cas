@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,9 +54,11 @@ public class RegisteredServiceImplTests {
 		assertFalse(svc.matches(new MockService("someStrangeProtocol://pirate.domain.edu/mydomain?myDomain=1")));
 		assertTrue(svc.matches(new MockService("anything://myown.mydomain.anythingelse/first/second?param=value")));
 
-		svc.setServiceId("*://www.invalid.edu");
-		assertFalse(svc.matches(new MockService("http://www.invalid.edu")));
-
+		try {
+			svc.setServiceId("*://www.invalid.edu");
+			fail("Invalid service id is specified. Should always throw an exception");
+		} catch (IllegalArgumentException e) {
+		}
 	}
 
 	@Test
