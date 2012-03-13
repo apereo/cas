@@ -9,8 +9,8 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-extension-clearpass</artifactId>
 
-	<name>JA-SIG CAS Extensions</name>
-	<description>CAS Extensions</description>
+	<name>JA-SIG CAS ClearPass Extension</name>
+	<description>CAS ClearPass Extension</description>
 	<packaging>jar</packaging>
 
 	<properties>
