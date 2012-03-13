@@ -41,7 +41,7 @@ public class RegisteredServiceImpl
     implements RegisteredService, Comparable<RegisteredService> {
 
 	@Transient
-	private final Logger		log					= LoggerFactory.getLogger(getClass());
+	private final static Logger	log					= LoggerFactory.getLogger(RegisteredServiceImpl.class);
 
 	/** Unique Id for serialization. */
 	private static final long	serialVersionUID	= -5136788302682868276L;
