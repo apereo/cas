@@ -5,27 +5,29 @@
  */
 package org.jasig.cas.services;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
+import javax.persistence.Transient;
 
-import javax.persistence.GenerationType;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.IndexColumn;
 import org.jasig.cas.authentication.principal.Service;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.Assert;
-import org.springframework.util.PathMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Mutable implementation of a RegisteredService.
@@ -38,10 +40,14 @@ import org.springframework.util.PathMatcher;
 public class RegisteredServiceImpl
     implements RegisteredService, Comparable<RegisteredService> {
 
-    /** Unique Id for serialization. */
-    private static final long serialVersionUID = -5136788302682868276L;
+	@Transient
+	private final static Logger	log					= LoggerFactory.getLogger(RegisteredServiceImpl.class);
 
-    private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
+	/** Unique Id for serialization. */
+	private static final long	serialVersionUID	= -5136788302682868276L;
+
+	@Transient
+	private Pattern				serviceRegexPattern	= null;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -119,9 +125,15 @@ public class RegisteredServiceImpl
         return this.ssoEnabled;
     }
 
-    public boolean matches(final Service service) {
-        return service != null && PATH_MATCHER.match(this.serviceId.toLowerCase(), service.getId().toLowerCase());
-    }
+	public boolean matches(final Service service) {
+		boolean matched = false;
+
+		if (service != null && serviceRegexPattern != null) {
+			Matcher matcher = serviceRegexPattern.matcher(service.getId());
+			matched = matcher.find();
+		}
+		return matched;
+	}
 
     @Override
     public boolean equals(Object o) {
@@ -183,7 +195,22 @@ public class RegisteredServiceImpl
     }
 
     public void setServiceId(final String id) {
-        this.serviceId = id;
+
+		if (StringUtils.isBlank(id))
+			throw new IllegalArgumentException("Invalid service id [" + id + "] is specified.");
+
+		try {
+			serviceRegexPattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
+			this.serviceId = id;
+		} catch (PatternSyntaxException e) {
+			String msg = "Invalid service id regex pattern [" + id + "]. ";
+
+			if (log.isErrorEnabled())
+				log.error(msg, e);
+
+			throw new IllegalArgumentException(msg, e);
+		}
+        
     }
 
     public void setId(final long id) {
