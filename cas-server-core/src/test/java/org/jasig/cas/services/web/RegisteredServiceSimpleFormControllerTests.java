@@ -6,12 +6,16 @@
 package org.jasig.cas.services.web;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -21,8 +25,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
-
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
@@ -53,7 +55,6 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
         this.controller = new RegisteredServiceSimpleFormController(
             this.manager, this.repository);
-        this.controller.setCommandClass(RegisteredServiceImpl.class);
         this.controller.setCommandName("registeredService");
         this.controller.setValidator(validator);
     }
@@ -96,7 +97,11 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         this.controller.handleRequest(
             request, response);
 
-        assertFalse(this.manager.getAllServices().isEmpty());
+        final Collection<RegisteredService> services = this.manager.getAllServices();
+        assertEquals(1, services.size());
+        for(RegisteredService rs : this.manager.getAllServices()) {
+            assertTrue(rs instanceof RegisteredServiceImpl);
+        }
     }
     
     public void testEditRegisteredServiceWithValues() throws Exception {
@@ -130,5 +135,82 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         final RegisteredService r2 = this.manager.findServiceBy(1000);
         
         assertEquals("serviceId1", r2.getServiceId());
+    }
+
+    // CAS-1071 test
+    public void testAddRegexRegisteredService() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        request.addParameter("description", "description");
+        request.addParameter("serviceId", "^https://.*");
+        request.addParameter("name", "name");
+        request.addParameter("theme", "theme");
+        request.addParameter("allowedToProxy", "true");
+        request.addParameter("enabled", "true");
+        request.addParameter("ssoEnabled", "true");
+        request.addParameter("anonymousAccess", "false");
+        request.addParameter("evaluationOrder", "1");
+
+        request.setMethod("POST");
+
+        assertTrue(this.manager.getAllServices().isEmpty());
+
+        this.controller.handleRequest(
+            request, response);
+
+        final Collection<RegisteredService> services = this.manager.getAllServices();
+        assertEquals(1, services.size());
+        for(RegisteredService rs : this.manager.getAllServices()) {
+            assertTrue(rs instanceof RegexRegisteredService);
+        }
+    }
+
+    // CAS-1071 test
+    public void testAddMultipleRegisteredServiceTypes() throws Exception {
+        final MockHttpServletRequest request1 = new MockHttpServletRequest();
+        final MockHttpServletResponse response1 = new MockHttpServletResponse();
+
+        request1.addParameter("description", "description");
+        request1.addParameter("serviceId", "serviceId");
+        request1.addParameter("name", "ant");
+        request1.addParameter("theme", "theme");
+        request1.addParameter("allowedToProxy", "true");
+        request1.addParameter("enabled", "true");
+        request1.addParameter("ssoEnabled", "true");
+        request1.addParameter("anonymousAccess", "false");
+        request1.addParameter("evaluationOrder", "1");
+
+        request1.setMethod("POST");
+
+        final MockHttpServletRequest request2 = new MockHttpServletRequest();
+        final MockHttpServletResponse response2 = new MockHttpServletResponse();
+
+        request2.addParameter("description", "description");
+        request2.addParameter("serviceId", "^https://.*");
+        request2.addParameter("name", "regex");
+        request2.addParameter("theme", "theme");
+        request2.addParameter("allowedToProxy", "true");
+        request2.addParameter("enabled", "true");
+        request2.addParameter("ssoEnabled", "true");
+        request2.addParameter("anonymousAccess", "false");
+        request2.addParameter("evaluationOrder", "1");
+
+        request2.setMethod("POST");
+
+        assertTrue(this.manager.getAllServices().isEmpty());
+
+        this.controller.handleRequest(request1, response1);
+        this.controller.handleRequest(request2, response2);
+
+        final Collection<RegisteredService> services = this.manager.getAllServices();
+        assertEquals(2, services.size());
+        for(RegisteredService rs : this.manager.getAllServices()) {
+            if(rs.getName().equals("ant")) {
+                assertTrue(rs instanceof RegisteredServiceImpl);
+            }else if (rs.getName().equals("regex")) {
+                assertTrue(rs instanceof RegexRegisteredService);
+            }
+        }
     }
 }
