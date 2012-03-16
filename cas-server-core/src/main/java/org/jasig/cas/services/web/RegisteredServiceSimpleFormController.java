@@ -44,7 +44,6 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         final IPersonAttributeDao attributeRepository) {
         this.servicesManager = servicesManager;
         this.personAttributeDao = attributeRepository;
-        this.setCommandClass(AbstractRegisteredService.class);
     }
 
     /**
@@ -75,12 +74,15 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         final BindException errors) throws Exception {
         AbstractRegisteredService service = (AbstractRegisteredService) command;
 
-        // CAS-1071
-        // Treat _new_ patterns starting with ^ character as a regular expression
-        if (service.getId() < 0 && service.getServiceId().startsWith("^")) {
-            final RegexRegisteredService regexService = new RegexRegisteredService();
-            service.copyTo(regexService);
-            service = regexService;
+        // only change object class if there isn't an explicit RegisteredService class set
+        if (this.getCommandClass() == null) {
+            // CAS-1071
+            // Treat _new_ patterns starting with ^ character as a regular expression
+            if (service.getId() < 0 && service.getServiceId().startsWith("^")) {
+                final RegexRegisteredService regexService = new RegexRegisteredService();
+                service.copyTo(regexService);
+                service = regexService;
+            }
         }
         this.servicesManager.save(service);
         logger.info("Saved changes to service " + service.getId());
@@ -99,7 +101,11 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
 
         if (!StringUtils.hasText(id)) {
             logger.debug("Created new service.");
-            return new RegisteredServiceImpl();
+            // create a default RegisteredServiceImpl object if an explicit class isn't set
+            if (this.getCommandClass() == null) {
+                return new RegisteredServiceImpl();
+            }
+            return this.createCommand();
         }
         
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
