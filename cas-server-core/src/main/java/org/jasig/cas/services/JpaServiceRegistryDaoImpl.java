@@ -5,9 +5,9 @@
  */
 package org.jasig.cas.services;
 
-import java.util.List;
-
 import org.springframework.orm.jpa.support.JpaDaoSupport;
+
+import java.util.List;
 
 /**
  * Implementation of the ServiceRegistryDao based on JPA.
@@ -27,7 +27,7 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
     }
 
     public List<RegisteredService> load() {
-        return getJpaTemplate().find("select r from RegisteredServiceImpl r");
+        return getJpaTemplate().find("select r from AbstractRegisteredService r");
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
@@ -43,6 +43,6 @@ public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
     }
 
     public RegisteredService findServiceById(final long id) {
-        return getJpaTemplate().find(RegisteredServiceImpl.class, id);
+        return getJpaTemplate().find(AbstractRegisteredService.class, id);
     }
 }
