@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.MockRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -212,5 +213,67 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
                 assertTrue(rs instanceof RegexRegisteredService);
             }
         }
+    }
+
+    // test arbitrary RegisteredService subclass
+    public void testAddMockRegisteredService() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        request.addParameter("description", "description");
+        request.addParameter("serviceId", "serviceId");
+        request.addParameter("name", "name");
+        request.addParameter("theme", "theme");
+        request.addParameter("allowedToProxy", "true");
+        request.addParameter("enabled", "true");
+        request.addParameter("ssoEnabled", "true");
+        request.addParameter("anonymousAccess", "false");
+        request.addParameter("evaluationOrder", "1");
+
+        request.setMethod("POST");
+
+        assertTrue(this.manager.getAllServices().isEmpty());
+
+        this.controller.setCommandClass(MockRegisteredService.class);
+        this.controller.handleRequest(request, response);
+
+        final Collection<RegisteredService> services = this.manager.getAllServices();
+        assertEquals(1, services.size());
+        for(RegisteredService rs : this.manager.getAllServices()) {
+            assertTrue(rs instanceof MockRegisteredService);
+        }
+    }
+    
+    public void testEditMockRegisteredService() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        final MockRegisteredService r = new MockRegisteredService();
+        r.setId(1000);
+        r.setServiceId("test");
+        r.setDescription("description");
+
+        this.manager.save(r);
+
+        request.addParameter("description", "description");
+        request.addParameter("serviceId", "serviceId1");
+        request.addParameter("name", "name");
+        request.addParameter("theme", "theme");
+        request.addParameter("allowedToProxy", "true");
+        request.addParameter("enabled", "true");
+        request.addParameter("ssoEnabled", "true");
+        request.addParameter("anonymousAccess", "false");
+        request.addParameter("evaluationOrder", "2");
+        request.addParameter("id", "1000");
+
+        request.setMethod("POST");
+
+        this.controller.handleRequest(request, response);
+
+        assertFalse(this.manager.getAllServices().isEmpty());
+        final RegisteredService r2 = this.manager.findServiceBy(1000);
+
+        assertEquals("serviceId1", r2.getServiceId());
+        assertTrue(r2 instanceof MockRegisteredService);
     }
 }
