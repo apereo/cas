@@ -5,13 +5,9 @@
  */
 package org.jasig.cas.services;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jasig.cas.util.DefaultLongNumericGenerator;
-import org.jasig.cas.util.LongNumericGenerator;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -46,7 +42,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
     public RegisteredService save(final RegisteredService registeredService) {
         if (registeredService.getId() == -1) {
-            ((RegisteredServiceImpl) registeredService).setId(findHighestId()+1);
+            ((AbstractRegisteredService) registeredService).setId(findHighestId()+1);
         }
 
         this.registeredServices.remove(registeredService);

@@ -6,9 +6,7 @@
 package org.jasig.cas.services.web;
 
 
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.*;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.util.StringUtils;
@@ -46,7 +44,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         final IPersonAttributeDao attributeRepository) {
         this.servicesManager = servicesManager;
         this.personAttributeDao = attributeRepository;
-        this.setCommandClass(RegisteredServiceImpl.class);
+        this.setCommandClass(AbstractRegisteredService.class);
     }
 
     /**
@@ -75,8 +73,15 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     protected final ModelAndView onSubmit(final HttpServletRequest request,
         final HttpServletResponse response, final Object command,
         final BindException errors) throws Exception {
-        final RegisteredService service = (RegisteredService) command;
+        AbstractRegisteredService service = (AbstractRegisteredService) command;
 
+        // CAS-1071
+        // Treat _new_ patterns starting with ^ character as a regular expression
+        if (service.getId() < 0 && service.getServiceId().startsWith("^")) {
+            final RegexRegisteredService regexService = new RegexRegisteredService();
+            service.copyTo(regexService);
+            service = regexService;
+        }
         this.servicesManager.save(service);
         logger.info("Saved changes to service " + service.getId());
 
@@ -94,7 +99,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
 
         if (!StringUtils.hasText(id)) {
             logger.debug("Created new service.");
-            return this.createCommand();
+            return new RegisteredServiceImpl();
         }
         
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
