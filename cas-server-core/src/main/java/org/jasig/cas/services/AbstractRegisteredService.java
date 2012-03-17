@@ -36,7 +36,7 @@ public abstract class AbstractRegisteredService
     private long id = -1;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "rs_attributes")
+    @JoinTable(name = "rs_attributes", joinColumns = @JoinColumn(name = "RegisteredServiceImpl_id"))
     @Column(name = "a_name", nullable = false)
     @IndexColumn(name = "a_id")
     private List<String> allowedAttributes = new ArrayList<String>();
