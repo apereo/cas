@@ -1,7 +1,6 @@
 /*
  * Copyright 2012 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.jasig.org/cas/license.
+ * distributed with this file and available online at http://www.jasig.org/cas/license.
  */
 
 package org.jasig.cas.services;
@@ -24,7 +23,7 @@ import java.util.List;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "expression_type")
-@Table(name = "registeredserviceimpl")
+@Table(name = "RegisteredServiceImpl")
 public abstract class AbstractRegisteredService
         implements RegisteredService, Comparable<RegisteredService>, Serializable {
 
