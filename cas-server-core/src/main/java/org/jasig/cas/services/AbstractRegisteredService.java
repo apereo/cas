@@ -22,7 +22,11 @@ import java.util.List;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type")
+@DiscriminatorColumn(
+        name = "expression_type",
+        length = 15,
+        discriminatorType = DiscriminatorType.STRING,
+        columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegisteredServiceImpl")
 public abstract class AbstractRegisteredService
         implements RegisteredService, Comparable<RegisteredService>, Serializable {
@@ -201,29 +205,28 @@ public abstract class AbstractRegisteredService
 
     public Object clone() throws CloneNotSupportedException {
         final AbstractRegisteredService clone = newInstance();
-        copyTo(clone);
+        clone.copyFrom(this);
         return clone;
     }
 
     /**
-     * Copies the attributes of this instance onto the target service.
-     * Note the {@link #id} field is not copied.
+     * Copies the properties of the source service into this instance.
      *
-     * @param target Target service to copy properties to.
+     * @param source Source service from which to copy properties.
      */
-    public void copyTo(final AbstractRegisteredService target) {
-        target.setAllowedAttributes(this.allowedAttributes);
-        target.setAllowedToProxy(this.allowedToProxy);
-        target.setDescription(this.description);
-        target.setEnabled(this.enabled);
-        target.setId(this.id);
-        target.setName(this.name);
-        target.setServiceId(this.serviceId);
-        target.setSsoEnabled(this.ssoEnabled);
-        target.setTheme(this.theme);
-        target.setAnonymousAccess(this.anonymousAccess);
-        target.setIgnoreAttributes(this.ignoreAttributes);
-        target.setEvaluationOrder(this.evaluationOrder);
+    public void copyFrom(final RegisteredService source) {
+        this.setId(source.getId());
+        this.setAllowedAttributes(new ArrayList<String>(source.getAllowedAttributes()));
+        this.setAllowedToProxy(source.isAllowedToProxy());
+        this.setDescription(source.getDescription());
+        this.setEnabled(source.isEnabled());
+        this.setName(source.getName());
+        this.setServiceId(source.getServiceId());
+        this.setSsoEnabled(source.isSsoEnabled());
+        this.setTheme(source.getTheme());
+        this.setAnonymousAccess(source.isAnonymousAccess());
+        this.setIgnoreAttributes(source.isIgnoreAttributes());
+        this.setEvaluationOrder(source.getEvaluationOrder());
     }
 
     public int compareTo(final RegisteredService other) {
