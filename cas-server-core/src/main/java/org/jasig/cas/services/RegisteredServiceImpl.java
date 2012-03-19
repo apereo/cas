@@ -5,11 +5,11 @@
  */
 package org.jasig.cas.services;
 
-import org.hibernate.annotations.DiscriminatorFormula;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
@@ -21,7 +21,7 @@ import javax.persistence.Entity;
  * @since 3.1
  */
 @Entity
-@DiscriminatorFormula("expression_type is null")
+@DiscriminatorValue("ant")
 public class RegisteredServiceImpl extends AbstractRegisteredService {
 
     /** Unique Id for serialization. */
