@@ -148,7 +148,7 @@
                     <!--
                     <bean class="org.jasig.cas.services.RegexRegisteredService">
                         <property name="id" value="1" />
-                        <property name="name" value="HTTPS" />
+                        <property name="name" value="HTTP and IMAP on example.com" />
                         <property name="description" value="Allows HTTP(S) and IMAP(S) protocols on example.com" />
                         <property name="serviceId" value="^(https?|imaps?)://([A-Za-z0-9_-]+\.)*example\.com/.*" />
                         <property name="evaluationOrder" value="0" />
