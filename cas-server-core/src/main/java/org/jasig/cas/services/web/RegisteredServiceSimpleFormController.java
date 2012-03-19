@@ -72,15 +72,16 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     protected final ModelAndView onSubmit(final HttpServletRequest request,
         final HttpServletResponse response, final Object command,
         final BindException errors) throws Exception {
-        AbstractRegisteredService service = (AbstractRegisteredService) command;
+        RegisteredService service = (RegisteredService) command;
 
         // only change object class if there isn't an explicit RegisteredService class set
         if (this.getCommandClass() == null) {
             // CAS-1071
             // Treat _new_ patterns starting with ^ character as a regular expression
             if (service.getId() < 0 && service.getServiceId().startsWith("^")) {
+                logger.debug("Detected regular expression starting with ^");
                 final RegexRegisteredService regexService = new RegexRegisteredService();
-                service.copyTo(regexService);
+                regexService.copyFrom(service);
                 service = regexService;
             }
         }
@@ -100,12 +101,15 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         final String id = request.getParameter("id");
 
         if (!StringUtils.hasText(id)) {
-            logger.debug("Created new service.");
             // create a default RegisteredServiceImpl object if an explicit class isn't set
-            if (this.getCommandClass() == null) {
-                return new RegisteredServiceImpl();
+            final Object service;
+            if (this.getCommandClass() != null) {
+                service = this.createCommand();
+            } else {
+                service = new RegisteredServiceImpl();
             }
-            return this.createCommand();
+            logger.debug("Created new service of type " + service.getClass().getName());
+            return service;
         }
         
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
