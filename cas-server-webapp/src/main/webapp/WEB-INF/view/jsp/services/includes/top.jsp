@@ -12,10 +12,13 @@
   <title><spring:message code="${pageTitle}" text="Logged Out" /></title>
   <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
   <link rel="stylesheet" href="<c:url value="/css/services/cas.css" />" type="text/css" media="screen" />
+  <link rel="stylesheet" href="<c:url value="/css/services/fluid.css" />" type="text/css" media="screen" />
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
   <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
-
+  <script type="text/javascript" src="<c:url value="/js/infusion.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/js/services.js" />"></script>
+  
   <style type="text/css">
   #nav-main #${pageTitle} span {
       background:#fff;
@@ -40,9 +43,10 @@
                 th.th3, td.td3 {width:50px}
                 th.th4, td.td4 {width:70px}
                 th.th5, td.td5 {width:50px}
-                th.th6, td.td6 {width:70px; text-align:right !important;}
-                th.th7, td.td7 {width:102px; text-align:right !important;}
-                td.td7 {width:85px;}
+				th.th6, td.td6 {width:50px}
+                th.th7, td.td7 {width:70px; text-align:right !important;}
+                th.th8, td.td8 {width:102px; text-align:right !important;}
+                td.td9 {width:85px;}
 
 				.hint {margin-left:9.5em; margin-bottom:1em; line-height:1.5;}
 				.actions {margin:1.5em 0;}
