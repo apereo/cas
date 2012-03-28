@@ -15,29 +15,21 @@
  */
 package org.jasig.cas.support.janrain.authentication.handler.support;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-
 import com.googlecode.janrain4j.api.engage.EngageFailureException;
 import com.googlecode.janrain4j.api.engage.ErrorResponeException;
 import com.googlecode.janrain4j.api.engage.EngageService;
 import com.googlecode.janrain4j.api.engage.EngageServiceFactory;
 import com.googlecode.janrain4j.api.engage.response.UserDataResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.support.janrain.authentication.principal.JanrainCredentials;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.context.ExternalContextHolder;
 
 /**
- * This handler authenticates Janrain credentials : it submits the token to Janrain's user_info webservice using the
- * janrain4j library.
+ * This handler authenticates Janrain credentials : it submits the token to the Janrain auth_info webservice 
+ * using the janrain4j library.
  * 
  * @author Eric Pierce
  * @since 3.5.0
@@ -53,7 +45,7 @@ public final class JanrainAuthenticationHandler extends AbstractPreAndPostProces
     @Override
     protected boolean doAuthentication(Credentials credentials) throws AuthenticationException {
         JanrainCredentials credential = (JanrainCredentials) credentials;
-        log.debug("credential : {}", credential);
+        log.debug("Got Credential : {}", credential);
         
         try {
             UserDataResponse userDataResponse = engageService.authInfo(credential.getToken(), true);
@@ -61,7 +53,13 @@ public final class JanrainAuthenticationHandler extends AbstractPreAndPostProces
             if (userDataResponse.getProfile() != null ) {
                 log.debug("userDataResponse : {}", userDataResponse.getResponseAsJSON());
                 credential.setIdentifier(userDataResponse.getProfile().getIdentifier());
-                credential.setUserAttributes(userDataResponse.getProfile());
+                if(userDataResponse.getProfile() != null) {
+                    if(userDataResponse.getFriends() != null) {
+                        credential.setUserAttributes(userDataResponse.getProfile(), userDataResponse.getFriends());
+                    } else {
+                        credential.setUserAttributes(userDataResponse.getProfile());
+                    }
+                }
                 return true;
             } else {
                 return false;

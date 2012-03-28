@@ -18,8 +18,6 @@ package org.jasig.cas.support.janrain.authentication.principal;
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class resolves the principal (OpenID URL) from the Janrain credential (token that is passed to the auth_info webservice)
@@ -30,19 +28,13 @@ import org.slf4j.LoggerFactory;
 public final class JanrainCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
     
-    private static final Logger logger = LoggerFactory.getLogger(JanrainCredentialsToPrincipalResolver.class);
-    
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
         JanrainCredentials janrainCredentials = (JanrainCredentials) credentials;
         String principal = janrainCredentials.getIdentifier();
-        logger.debug("[Principal : {}", principal);
         return principal;
     }
-    
-    /**
-     * Return true if Credentials are OAuthCredentials, false otherwise.
-     */
+
     public boolean supports(final Credentials credentials) {
         return credentials != null && (JanrainCredentials.class.isAssignableFrom(credentials.getClass()));
     }

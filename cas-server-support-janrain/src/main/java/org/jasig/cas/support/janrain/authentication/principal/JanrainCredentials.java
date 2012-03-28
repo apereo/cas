@@ -17,17 +17,18 @@ package org.jasig.cas.support.janrain.authentication.principal;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.util.Assert;
 
 import org.apache.commons.lang.StringUtils;
 
-import javax.validation.constraints.NotNull;
 import org.jasig.cas.authentication.principal.Credentials;
 import com.googlecode.janrain4j.api.engage.response.profile.Profile;
 
 /**
- * This class converts a Janrain Engage profile into a CAS-compatible credential.
+ * This class creates a CAS-compatible credential using data from Janrain Engage
  * 
  * @author Eric Pierce
  * @since 3.5.0
@@ -42,8 +43,6 @@ public final class JanrainCredentials implements Credentials {
     private String identifier;
     
     private Map<String, Object> userAttributes;
-
-    private Profile userProfile;
 
     public JanrainCredentials(final String token) {
         Assert.notNull(token, "token cannot be null");
@@ -65,16 +64,14 @@ public final class JanrainCredentials implements Credentials {
     public final String getIdentifier() {
         return this.identifier;
     }
-
-    public final void setUserProfile(Profile userProfile) {
-        this.userProfile = userProfile;
-    }
-
-    public final Profile getUserProfile() {
-        return this.userProfile;
-    }
     
-    public void setUserAttributes(Profile userProfile) {
+    /**
+    * Create a map of the User's Attributes from a janrain4j Profile object
+    *
+    * @param userProfile
+    * @param friendList
+    */
+    public void setUserAttributes(Profile userProfile, List<String> friendList) {
      
         Map<String,Object> userAttributes = new HashMap<String,Object>();
 
@@ -87,11 +84,13 @@ public final class JanrainCredentials implements Credentials {
         if(userProfile.getDisplayName() != null){
             userAttributes.put("DisplayName", userProfile.getDisplayName());
         }
-        if(userProfile.getName().getFamilyName() != null){
-            userAttributes.put("FamilyName", userProfile.getName().getFamilyName());
-        }
-        if(userProfile.getName().getGivenName() != null){
-            userAttributes.put("GivenName", userProfile.getName().getGivenName());
+        if(userProfile.getName() != null) {
+            if(userProfile.getName().getFamilyName() != null){
+                userAttributes.put("FamilyName", userProfile.getName().getFamilyName());
+            }
+            if(userProfile.getName().getGivenName() != null){
+                userAttributes.put("GivenName", userProfile.getName().getGivenName());
+            }
         }
         if(userProfile.getBirthday() != null){
             userAttributes.put("Birthday", userProfile.getBirthday());
@@ -101,6 +100,9 @@ public final class JanrainCredentials implements Credentials {
         }
         if(userProfile.getProviderName() != null){
             userAttributes.put("PhoneNumber", userProfile.getPhoneNumber());
+        }
+        if(userProfile.getPreferredUsername() != null){
+            userAttributes.put("PreferredUsername", userProfile.getPreferredUsername());
         }
         if(userProfile.getPhoto() != null){
             userAttributes.put("PhotoURL", userProfile.getPhoto());
@@ -114,8 +116,36 @@ public final class JanrainCredentials implements Credentials {
         if(userProfile.getGender() != null){
             userAttributes.put("Gender", userProfile.getGender());
         }
+        if(userProfile.getAddress() != null) {
+            if(userProfile.getAddress().getCountry() != null){
+                userAttributes.put("Country", userProfile.getAddress().getCountry());
+            }
+            if(userProfile.getAddress().getLocality() != null){
+                userAttributes.put("Locality", userProfile.getAddress().getLocality());
+            }
+            if(userProfile.getAddress().getPostalCode() != null){
+                userAttributes.put("PostalCode", userProfile.getAddress().getPostalCode());
+            }
+            if(userProfile.getAddress().getStreetAddress() != null){
+                userAttributes.put("StreetAddress", userProfile.getAddress().getStreetAddress());
+            }
+        }
+        if(friendList.size() > 0){
+            userAttributes.put("FriendList", friendList);
+        }
         this.userAttributes = userAttributes;
     }
+
+    /**
+    * Alternate method used when the friend list is not available.
+    *
+    * @param userProfile
+    *
+    */
+    public void setUserAttributes(Profile userProfile) {
+        setUserAttributes(userProfile, new ArrayList<String>());
+    }
+
 
     public final Map<String, Object> getUserAttributes() {
         return this.userAttributes;
