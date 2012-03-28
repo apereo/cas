@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.5.0-RC1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-support-janrain</artifactId>
+	<packaging>jar</packaging>
+	<name>JA-SIG CAS Janrain Support</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.webflow</groupId>
+      <artifactId>spring-webflow</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>com.googlecode.janrain4j</groupId>
+        <artifactId>janrain4j</artifactId>
+        <version>1.1.0</version>
+    </dependency>
+
+  </dependencies>
+  
+  <build>
+    <plugins>
+      
+    </plugins>
+  </build>
+  
+</project>
