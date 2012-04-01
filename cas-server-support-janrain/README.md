@@ -14,12 +14,16 @@ __Janrain Engage is a commercial service, but the free "Basic" level allows upto
 * Profile data from the social network login are exposed as CAS user attributes
 
 ## What is the difference between this module and the OAuth module?
-This module is based on the client portion of the OAuth CAS module written by 
+This module is based on the client portion of the OAuth CAS module written by Jérôme Leleu (cas-server-support-oauth), so the configuration is very similar.  The main advantage of using Janrain Engage over configuring OAuth authentication directly are:
 
+* Janrain Engage integrates with over [20 identity providers](http://documentation.janrain.com/providerguide) using multiple protocols including OAuth and OpenID. 
+* The list of identity providers you allow users to select is held at Janrain and can be changed on the fly without modifying any CAS configuration.
+* Profile data from the identity providers is provided in a single, consistent format.
+* Multiple social network logins can be mapped to a local account using the [account mapping API](http://documentation.janrain.com/engage/api/account-mapping-integration-guide) 
 
 ## Attributes provided by this module
 * ProviderName 
-* PrimaryKey - for use with the [mapping API](http://documentation.janrain.com/map)
+* PrimaryKey - for use with the [mapping API](http://documentation.janrain.com/engage/api/account-mapping-integration-guide)
 * DisplayName
 * FamilyName
 * GivenName
