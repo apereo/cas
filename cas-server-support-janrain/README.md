@@ -41,33 +41,36 @@ See the [Janrain provider list](https://rpxnow.com/docs/providers) for details o
 ## Adding Janrain Engage support to CAS
 
 1. ### Register a Janrain "social sign-in" application
-Follow Janrain's [application](http://documentation.janrain.com/application-quick-start-guide) and [social sign-in](http://documentation.janrain.com/quick-start-guide) quickstart guides.  When following the social sign-in guide, you can stop after configuring the sign-in widget.
+Follow Janrain's [application](http://documentation.janrain.com/application-quick-start-guide) and [social sign-in](http://documentation.janrain.com/quick-start-guide) quickstart guides. **Important: You must add the domain of your cas server to the domain whitelist in the Janrain dashboard**
 
 2. ### Add the Maven dependency
 Add the following block to `$CAS_HOME/cas-server-webapp/pom.xml`:
 
-      <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>cas-server-support-janrain</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-
+           <dependency>
+             <groupId>${project.groupId}</groupId>
+             <artifactId>cas-server-support-janrain</artifactId>
+             <version>${project.version}</version>
+           </dependency>
+          
+           <module>cas-server-support-ldap</module>
 3. ### Configure Janrain4j
 Add this bean to `$CAS_HOME/cas-server-webapp/src/main/webapp/WEB-INF/deployerConfigContext.xml`:
         
-       <bean class="com.googlecode.janrain4j.springframework.Janrain4jConfigurer"
-         p:apiKey="JanrainAPIKey"
-         p:applicationID="JanrainApplicationID"
-         p:applicationDomain="https://example.rpxnow.com/"
-         p:tokenUrl="https://cas.example.edu:8443/cas/login" />
+           <bean class="com.googlecode.janrain4j.springframework.Janrain4jConfigurer"
+             p:apiKey="JanrainAPIKey"
+             p:applicationID="JanrainApplicationID"
+             p:applicationDomain="https://example.rpxnow.com/"
+             p:tokenUrl="https://cas.example.edu:8443/cas/login" />
 Configure `p:apiKey`, `p:applicationID` and `p:applicationDomain` with the values provided in the Janrain account dashboard and `tokenUrl` is the URL for your CAS login page.  See the Janrain4j [documentation](http://janrain4j.googlecode.com/svn/docs/current/apidocs/com/googlecode/janrain4j/springframework/Janrain4jConfigurer.html) for all of the available configuration options.
 
 4. ### Configure Authentication
-To authenticate using Janrain Engage, add the `JanrainAuthenticationHandler` bean the the list of authentication handlers in `$CAS_HOME/cas-server-webapp/src/main/webapp/WEB-INF/deployerConfigContext.xml`:
+To authenticate using Janrain Engage, add the `JanrainAuthenticationHandler` bean to the list of authentication handlers in `$CAS_HOME/cas-server-webapp/src/main/webapp/WEB-INF/deployerConfigContext.xml`:
 
 	    <property name="authenticationHandlers">
          <list>
-           <bean class="org.jasig.cas.support.janrain.authentication.handler.support.JanrainAuthenticationHandler" />
+                   <bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
+                                        p:httpClient-ref="httpClient" />
+                   <bean class="org.jasig.cas.support.janrain.authentication.handler.support.JanrainAuthenticationHandler" />
                </list>
              </property>
            </bean>
@@ -78,10 +81,12 @@ You'll also need to add `JanrainCredentialsToPrincipalResolver` to the list of p
         <property name="credentialsToPrincipalResolvers">
             <list>
              <bean class="org.jasig.cas.support.janrain.authentication.principal.JanrainCredentialsToPrincipalResolver" />
+             <bean class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
             </list>
         </property>
+        
 5. ### Configure Attribute Population and Repository
-To convert the profile data received from Janrain, configure the `authenticationMetaDataPopulators` property:
+To convert the profile data received from Janrain, configure the `authenticationMetaDataPopulators` property on the `authenticationManager` bean:
 
 			<property name="authenticationMetaDataPopulators">
 				<list>
@@ -132,19 +137,19 @@ To define the `janrainAuthAction` bean, add it to `$CAS_HOME/cas-server-webapp/s
 7. ### Modify the login page
 First, add the janrain4j taglib to the top of `$CAS_HOME/cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/default/ui/casLoginView.jsp`:
 
-      <%@ taglib prefix="janrain" uri="http://janrain4j.googlecode.com/tags" %>
+          <%@ taglib prefix="janrain" uri="http://janrain4j.googlecode.com/tags" %>
 Next, you'll need to replace the username and password for with this tag:
       
-      <janrain:signInEmbedded />	
-Here is a simple `casLoginView.jsp`:
-
-      <%@ taglib prefix="janrain" uri="http://janrain4j.googlecode.com/tags" %>
-
-        <%@ page contentType="text/html; charset=UTF-8" %>
-        <jsp:directive.include file="includes/top.jsp" />
-                <janrain:signInEmbedded />
-                <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">
-                        <spring:message code="screen.welcome.security" />
-                </p>
-        <jsp:directive.include file="includes/bottom.jsp" />
- 
+          <janrain:signInEmbedded />	
+    Here is a simple `casLoginView.jsp`:
+    
+          <%@ taglib prefix="janrain" uri="http://janrain4j.googlecode.com/tags" %>
+    
+            <%@ page contentType="text/html; charset=UTF-8" %>
+            <jsp:directive.include file="includes/top.jsp" />
+                    <janrain:signInEmbedded />
+                    <p class="fl-panel fl-note fl-bevel-white fl-font-size-80">
+                            <spring:message code="screen.welcome.security" />
+                    </p>
+            <jsp:directive.include file="includes/bottom.jsp" />
+     
