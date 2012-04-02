@@ -1,2 +1,1 @@
-openid.mode:id_res
-is_valid:false
+<%= "openid.mode:id_res\nis_valid:false\n" %>
