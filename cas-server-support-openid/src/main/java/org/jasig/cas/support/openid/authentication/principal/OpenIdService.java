@@ -29,6 +29,7 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  */
 public final class OpenIdService extends AbstractWebApplicationService {
+    private static final String CRLF = "\r\n";
 
     protected static final Logger LOG = LoggerFactory.getLogger(OpenIdService.class);
     
@@ -70,10 +71,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
         try {
             final Mac sha1 = Mac.getInstance("HmacSHA1");
             sha1.init(this.sharedSecret);
-            return Base64.encodeBase64String(sha1.doFinal(value.getBytes()));
+            return Base64.encodeBase64String(sha1.doFinal(value.getBytes())).replaceAll(CRLF, "");
         } catch (final Exception e) {
             LOG.error(e.getMessage(),e);
-            return Base64.encodeBase64String(ENCODER.encode(value).getBytes());
+            return Base64.encodeBase64String(ENCODER.encode(value).getBytes()).replaceAll(CRLF, "");
         }
     }
 
