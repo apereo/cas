@@ -10,7 +10,7 @@
 
 	<!-- Theme Resolver -->
 	<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
-		p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
+		p:defaultThemeName="${cas.themeResolver.defaultThemeName:cas-theme-default}"
         p:argumentExtractors-ref="argumentExtractors"
         p:servicesManager-ref="servicesManager">
         <property name="mobileBrowsers">
@@ -28,7 +28,7 @@
 		p:order="0">
 		<property name="basenames">
 			<list>
-				<value>${cas.viewResolver.basename}</value>
+				<value>${cas.viewResolver.basename:default_views}</value>
 				<value>protocol_views</value>
 			</list>
 		</property>
@@ -123,7 +123,7 @@
 	<bean
 		id="openIdProviderController"
 		class="org.jasig.cas.web.OpenIdProviderController"
-		p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}" />
+		p:loginUrl="${cas.url}/login" />
 	
 	<bean
 		id="serviceLogoutViewController"
@@ -253,7 +253,7 @@
 	
 	<bean id="manageRegisteredServicesMultiActionController" class="org.jasig.cas.services.web.ManageRegisteredServicesMultiActionController">
 		<constructor-arg index="0" ref="servicesManager" />
-        <constructor-arg index="1" value="${cas.securityContext.serviceProperties.service}" />
+        <constructor-arg index="1" value="${cas.url}/services/j_acegi_cas_security_check" />
 	</bean>
 
     <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator" />

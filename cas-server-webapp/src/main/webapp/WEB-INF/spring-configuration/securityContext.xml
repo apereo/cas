@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+git <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:sec="http://www.springframework.org/schema/security"
@@ -23,7 +23,7 @@
     </sec:authentication-manager>
 	
 	<bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties"
-		p:service="${cas.securityContext.serviceProperties.service}"
+		p:service="${cas.url}/services/j_acegi_cas_security_check"
 		p:sendRenew="false" />
       
 	<bean id="casProcessingFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter"
@@ -42,7 +42,7 @@
 	</bean>
 
 	<bean id="casProcessingFilterEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint"
-		p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
+		p:loginUrl="${cas.url}/login"
 		p:serviceProperties-ref="serviceProperties" />
 
 	<bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider"
@@ -51,7 +51,7 @@
 		p:userDetailsService-ref="userDetailsService">
 	    <property name="ticketValidator">
 	      <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
-	        <constructor-arg index="0" value="${cas.securityContext.ticketValidator.casServerUrlPrefix}" />
+	        <constructor-arg index="0" value="${cas.url}" />
 	        </bean>
 	    </property>
 	</bean>
