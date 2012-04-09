@@ -25,8 +25,10 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
 /**
@@ -36,19 +38,22 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @version $Revision$ $Date$
  * @since 1.0.7
  */
-public final class TicketRegistryDecorator implements TicketRegistry {
+public final class TicketRegistryDecorator extends AbstractTicketRegistry implements TicketRegistryState {
 
     private final Log log = LogFactory.getLog(getClass());
 
     @NotNull
     private final TicketRegistry ticketRegistry;
 
+    private final TicketRegistryState ticketRegistryState;
+
     @NotNull
     private Map<String,String> cache;
 
-    public TicketRegistryDecorator(final TicketRegistry ticketRegistry, final Map<String,String> cache) {
+    public TicketRegistryDecorator(final TicketRegistry ticketRegistry, final Map<String, String> cache) {
         this.ticketRegistry = ticketRegistry;
         this.cache = cache;
+        this.ticketRegistryState = (TicketRegistryState) ticketRegistry;
     }
 
     public void addTicket(final Ticket ticket) {
@@ -63,10 +68,6 @@ public final class TicketRegistryDecorator implements TicketRegistry {
         }
 
         this.ticketRegistry.addTicket(ticket);
-    }
-
-    public Ticket getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
-        return this.ticketRegistry.getTicket(ticketId, clazz);
     }
 
     public Ticket getTicket(final String ticketId) {
@@ -86,5 +87,13 @@ public final class TicketRegistryDecorator implements TicketRegistry {
 
     public Collection<Ticket> getTickets() {
         return this.ticketRegistry.getTickets();
+    }
+
+    public int sessionCount() {
+        return this.ticketRegistryState.sessionCount();
+    }
+
+    public int serviceTicketCount() {
+        return this.ticketRegistryState.serviceTicketCount();
     }
 }

@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -38,6 +40,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class ClearPassController extends AbstractController {
 
+    private final static Logger log = LoggerFactory.getLogger(ClearPassController.class);
+    
 	// view if clearpass request fails
     private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
 
@@ -66,6 +70,8 @@ public final class ClearPassController extends AbstractController {
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final String userName = request.getRemoteUser();
 
+        log.debug("Handling clearPass request for user " + userName);
+
         if (userName != null) {
             final String password = this.credentialsCache.get(userName);
             return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
@@ -76,7 +82,7 @@ public final class ClearPassController extends AbstractController {
     
     protected ModelAndView returnError(String description) {
         ModelAndView mv=new ModelAndView(this.failureView);
-        mv.addObject(MODEL_FAILURE_DESCRIPTION,description);
+        mv.addObject(MODEL_FAILURE_DESCRIPTION, description);
         return(mv);
     }
 
