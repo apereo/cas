@@ -5,21 +5,21 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
-
+import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 3.2.1
  *
  */
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
+public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements TicketRegistryState {
     
     @NotNull
     @PersistenceContext
@@ -143,5 +143,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @Override
     protected boolean needsCallback() {
         return false;
+    }
+
+    public int sessionCount() {
+        return (Integer) entityManager.createQuery("select count(t) from TicketGrantingTicketImpl t").getSingleResult();
+    }
+
+    public int serviceTicketCount() {
+        return (Integer) entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult();
     }
 }

@@ -16,8 +16,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:sec="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 	<!--
 		| This bean declares our AuthenticationManager.  The CentralAuthenticationService service bean
 		| declared in applicationContext.xml picks up this AuthenticationManager by reference to its id, 
@@ -28,6 +28,18 @@
 		+-->
 	<bean id="authenticationManager"
 		class="org.jasig.cas.authentication.AuthenticationManagerImpl">
+		
+		<!-- Uncomment the metadata populator to allow clearpass to capture and cache the password
+		     This switch effectively will turn on clearpass.
+		<property name="authenticationMetaDataPopulators">
+		   <list>
+		      <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator">
+		         <constructor-arg index="0" ref="credentialsCache" />
+		      </bean>
+		   </list>
+		</property>
+		 -->
+		
 		<!--
 			| This is the List of CredentialToPrincipalResolvers that identify what Principal is trying to authenticate.
 			| The AuthenticationManagerImpl considers them in order, finding a CredentialToPrincipalResolver which 
@@ -133,40 +145,43 @@
         class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
             <property name="registeredServices">
                 <list>
-                    <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <bean class="org.jasig.cas.services.RegexRegisteredService">
                         <property name="id" value="0" />
-                        <property name="name" value="HTTP" />
-                        <property name="description" value="Only Allows HTTP Urls" />
-                        <property name="serviceId" value="http://**" />
+                        <property name="name" value="HTTP and IMAP" />
+                        <property name="description" value="Allows HTTP(S) and IMAP(S) protocols" />
+                        <property name="serviceId" value="^(https?|imaps?)://.*" />
                         <property name="evaluationOrder" value="10000001" />
                     </bean>
-
-                    <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <!--
+                    Use the following definition instead of the above to further restrict access
+                    to services within your domain (including subdomains).
+                    Note that example.com must be replaced with the domain you wish to permit.
+                    -->
+                    <!--
+                    <bean class="org.jasig.cas.services.RegexRegisteredService">
                         <property name="id" value="1" />
-                        <property name="name" value="HTTPS" />
-                        <property name="description" value="Only Allows HTTPS Urls" />
-                        <property name="serviceId" value="https://**" />
-                        <property name="evaluationOrder" value="10000002" />
+                        <property name="name" value="HTTP and IMAP on example.com" />
+                        <property name="description" value="Allows HTTP(S) and IMAP(S) protocols on example.com" />
+                        <property name="serviceId" value="^(https?|imaps?)://([A-Za-z0-9_-]+\.)*example\.com/.*" />
+                        <property name="evaluationOrder" value="0" />
                     </bean>
-
-                    <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-                        <property name="id" value="2" />
-                        <property name="name" value="IMAPS" />
-                        <property name="description" value="Only Allows HTTPS Urls" />
-                        <property name="serviceId" value="imaps://**" />
-                        <property name="evaluationOrder" value="10000003" />
-                    </bean>
-
-                    <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-                        <property name="id" value="3" />
-                        <property name="name" value="IMAP" />
-                        <property name="description" value="Only Allows IMAP Urls" />
-                        <property name="serviceId" value="imap://**" />
-                        <property name="evaluationOrder" value="10000004" />
-                    </bean>
+                    -->
                 </list>
             </property>
         </bean>
 
-    <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
+  <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
+  
+  <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor">
+    <property name="monitors">
+      <list>
+        <bean class="org.jasig.cas.monitor.MemoryMonitor"
+            p:freeMemoryWarnThreshold="10" />
+        <bean class="org.jasig.cas.monitor.SessionMonitor"
+            p:ticketRegistry-ref="ticketRegistry"
+            p:serviceTicketCountWarnThreshold="5000"
+            p:sessionCountWarnThreshold="100000" />
+      </list>
+    </property>
+  </bean>
 </beans>

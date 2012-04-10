@@ -36,7 +36,7 @@ public final class OpenIdCredentialsAuthenticationHandler implements
             .getTicket(c.getTicketGrantingTicketId(),
                 TicketGrantingTicket.class);
 
-        if (t.isExpired()) {
+        if (t == null || t.isExpired()) {
             return false;
         }
 

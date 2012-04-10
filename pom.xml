@@ -232,6 +232,13 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <scope>test</scope>
     </dependency>
 
+	<dependency>
+		<groupId>org.mockito</groupId>
+	    <artifactId>mockito-core</artifactId>
+	    <version>${mockito.version}</version>
+	    <scope>test</scope>
+	</dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -429,6 +436,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 
       <dependency>
         <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-config</artifactId>
         <version>${spring.security.version}</version>
         <exclusions>
@@ -607,6 +620,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-support-spnego</module>
     <module>cas-server-support-trusted</module>
     <module>cas-server-support-x509</module>
+    <module>cas-server-support-oauth</module>
     <module>cas-server-integration-jboss</module>
     <module>cas-server-integration-berkeleydb</module>
     <module>cas-server-integration-memcached</module>
@@ -614,6 +628,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-integration-restlet</module>
     <module>cas-server-uber-webapp</module>
     <module>cas-server-documentation</module>
+    <module>cas-server-extension-clearpass</module>
   </modules>
 
   <reporting>

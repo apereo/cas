@@ -67,6 +67,9 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
                     this.ntlm ? SpnegoConstants.NTLM
                         : SpnegoConstants.NEGOTIATE);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                // The responseComplete flag tells the pausing view-state not to render the response
+                // because another object has taken care of it.
+                context.getExternalContext().recordResponseComplete();
             }
         }
         return success();

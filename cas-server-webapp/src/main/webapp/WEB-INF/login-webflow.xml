@@ -10,11 +10,11 @@
     </on-start>
 
 	<decision-state id="ticketGrantingTicketExistsCheck">
-		<if test="flowScope.ticketGrantingTicketId neq null" then="hasServiceCheck" else="gatewayRequestCheck" />
+		<if test="flowScope.ticketGrantingTicketId != null" then="hasServiceCheck" else="gatewayRequestCheck" />
 	</decision-state>
     
 	<decision-state id="gatewayRequestCheck">
-		<if test="externalContext.requestParameterMap['gateway'] neq '' &amp;&amp; externalContext.requestParameterMap['gateway'] neq null &amp;&amp; flowScope.service neq null" then="gatewayServicesManagementCheck" else="generateLoginTicket" />
+		<if test="requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null" then="gatewayServicesManagementCheck" else="generateLoginTicket" />
 	</decision-state>
 	
 	<decision-state id="hasServiceCheck">
@@ -22,7 +22,7 @@
 	</decision-state>
 	
 	<decision-state id="renewRequestCheck">
-		<if test="externalContext.requestParameterMap['renew'] neq '' &amp;&amp; externalContext.requestParameterMap['renew'] neq null" then="generateLoginTicket" else="generateServiceTicket" />
+		<if test="requestParameters.renew != '' and requestParameters.renew != null" then="generateLoginTicket" else="generateServiceTicket" />
 	</decision-state>
 	
 	<!-- 
@@ -87,7 +87,7 @@
 	</action-state>
 
 	<decision-state id="serviceCheck">
-		<if test="flowScope.service neq null" then="generateServiceTicket" else="viewGenericLoginSuccess" />
+		<if test="flowScope.service != null" then="generateServiceTicket" else="viewGenericLoginSuccess" />
 	</decision-state>
 	
 	<action-state id="generateServiceTicket">
@@ -116,7 +116,7 @@
     </action-state>
 
     <decision-state id="postRedirectDecision">
-        <if test="requestScope.response.responseType.name() eq 'POST'" then="postView" else="redirectView" />
+        <if test="requestScope.response.responseType.name() == 'POST'" then="postView" else="redirectView" />
     </decision-state>
 
 	<!--
@@ -201,8 +201,10 @@
     <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
 
 	<global-transitions>
-		<transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
-        <transition to="viewServiceSsoErrorView" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException" />
+        <!-- CAS-1023 This one is simple - redirects to a login page (same as renew) when 'ssoEnabled' flag is unchecked
+             instead of showing an intermediate unauthorized view with a link to login page -->
+        <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException"/>
+        <transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
 		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
 	</global-transitions>
 </flow>

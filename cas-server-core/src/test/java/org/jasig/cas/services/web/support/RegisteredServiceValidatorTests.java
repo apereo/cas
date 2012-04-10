@@ -120,8 +120,8 @@ public class RegisteredServiceValidatorTests extends TestCase {
             return this.returnValue;
         }
 
-        public void save(final RegisteredService registeredService) {
-            // nothing to do
+        public RegisteredService save(final RegisteredService registeredService) {
+            return null;
         }
     }
 }
