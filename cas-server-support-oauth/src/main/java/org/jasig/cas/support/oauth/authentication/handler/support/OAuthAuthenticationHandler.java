@@ -17,7 +17,6 @@ package org.jasig.cas.support.oauth.authentication.handler.support;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,10 +27,8 @@ import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
 import org.scribe.model.Token;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
-import org.scribe.up.session.HttpUserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.context.ExternalContextHolder;
 
 /**
  * This handler authenticates OAuth credentials : it uses them to get an access token to get the user profile returned by the provider for
@@ -69,8 +66,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         logger.debug("provider : {}", provider);
         
         // get access token
-        HttpServletRequest request = (HttpServletRequest) ExternalContextHolder.getExternalContext().getNativeRequest();
-        Token accessToken = provider.getAccessToken(new HttpUserSession(request.getSession()), credential);
+        Token accessToken = provider.getAccessToken(credential);
         logger.debug("accessToken : {}", accessToken);
         // and user profile
         UserProfile userProfile = provider.getUserProfile(accessToken);
