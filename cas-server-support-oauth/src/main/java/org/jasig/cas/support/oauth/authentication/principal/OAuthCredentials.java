@@ -35,7 +35,8 @@ public final class OAuthCredentials extends OAuthCredential implements Credentia
     private Map<String, Object> userAttributes;
     
     public OAuthCredentials(OAuthCredential credential) {
-        super(credential.getToken(), credential.getVerifier(), credential.getProviderType());
+        super(credential.getRequestToken(), credential.getToken(), credential.getVerifier(), credential
+            .getProviderType());
     }
     
     public String getUserId() {

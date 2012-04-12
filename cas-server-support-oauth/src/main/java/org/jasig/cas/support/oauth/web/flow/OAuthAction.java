@@ -82,7 +82,8 @@ public final class OAuthAction extends AbstractAction {
             
             // get credential
             @SuppressWarnings("unchecked")
-            OAuthCredential credential = provider.getCredential(request.getParameterMap());
+            OAuthCredential credential = provider
+                .getCredential(new HttpUserSession(request), request.getParameterMap());
             logger.debug("credential : {}", credential);
             
             // retrieve service from session and put it into webflow
