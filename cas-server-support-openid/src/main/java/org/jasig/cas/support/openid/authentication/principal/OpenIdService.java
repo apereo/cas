@@ -57,6 +57,16 @@ public final class OpenIdService extends AbstractWebApplicationService {
         this.requestParameters = parameterList;
     }
 
+    /**
+     * Generates an Openid response.
+     * If no ticketId is found, response is negative.
+     * If we have a ticket id, then we check if we have an association.
+     * If so, we ask OpenId server manager to generate the answer according with the existing association.
+     * If not, we send back an answer with the ticket id as association handle.
+     * This will force the consumer to ask a verification, which will validate the service ticket.
+     * @param ticketId the service ticket to provide to the service.
+     * @return the generated authentication answer
+     */
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<String, String>();
         if (ticketId != null) {
@@ -64,6 +74,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
             ServerManager manager = (ServerManager)ApplicationContextProvider.getApplicationContext().getBean("serverManager");
             CentralAuthenticationService cas = (CentralAuthenticationService)ApplicationContextProvider.getApplicationContext().getBean("centralAuthenticationService");
             boolean associated = false;
+            boolean associationValid = true;
             try {
                 AuthRequest authReq = AuthRequest.createAuthRequest(requestParameters, manager.getRealmVerifier());
                 Map parameterMap = authReq.getParameterMap();
@@ -71,8 +82,11 @@ public final class OpenIdService extends AbstractWebApplicationService {
                     String assocHandle = (String)parameterMap.get("openid.assoc_handle");
                     if (assocHandle != null) {
                         Association association = manager.getSharedAssociations().load(assocHandle);
-                        if (association != null && (!association.hasExpired())) {
+                        if (association != null) {
                             associated = true;
+                            if (association.hasExpired()) {
+                                associationValid = false;
+                            }
                         }
 
                     }
@@ -84,8 +98,12 @@ public final class OpenIdService extends AbstractWebApplicationService {
             boolean successFullAuthentication = true;
             try {
                 if (associated) {
-                    cas.validateServiceTicket(ticketId, this);
-                    LOG.info("Validated openid ticket");
+                    if (associationValid) {
+                        cas.validateServiceTicket(ticketId, this);
+                        LOG.info("Validated openid ticket");
+                    } else {
+                        successFullAuthentication = false;
+                    }
                 }
             } catch (TicketException te) {
                 LOG.error("Could not validate ticket : "+te.getMessage(), te);
