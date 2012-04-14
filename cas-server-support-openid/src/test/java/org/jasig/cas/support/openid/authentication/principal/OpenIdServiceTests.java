@@ -56,7 +56,10 @@ public class OpenIdServiceTests extends TestCase {
         when(context.getBean("serverManager")).thenReturn(manager);
         when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         final Response response = this.openIdService.getResponse("test");
-
+        try {
+            verify(cas, never()).validateServiceTicket("test", openIdService);
+        } catch (Exception e) {
+        }
         assertNotNull(response);
 
         assertEquals("test", response.getAttributes().get("openid.assoc_handle"));
@@ -80,6 +83,11 @@ public class OpenIdServiceTests extends TestCase {
         when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         when(sharedAssociations.load("test")).thenReturn(association);
         final Response response = this.openIdService.getResponse("test");
+        try {
+            verify(cas).validateServiceTicket("test", openIdService);
+        } catch (Exception e) {
+            fail("Error while validating ticket");
+        }
 
         request.removeParameter("openid.assoc_handle");
         assertNotNull(response);
@@ -87,6 +95,33 @@ public class OpenIdServiceTests extends TestCase {
         assertEquals("test", response.getAttributes().get("openid.assoc_handle"));
         assertEquals("http://www.ja-sig.org/?service=fa", response.getAttributes().get("openid.return_to"));
         assertEquals("http://openid.ja-sig.org/battags", response.getAttributes().get("openid.identity"));
+    }
+
+    public void testExpiredAssociationGetResponse() {
+        request.addParameter("openid.assoc_handle", "test");
+        openIdService = OpenIdService.createServiceFrom(request);
+        Association association = null;
+        try {
+            association = Association.generate(Association.TYPE_HMAC_SHA1,"test", 2) ;
+        } catch (Exception e) {
+            fail("Could not generate association");
+        }
+        when(context.getBean("serverManager")).thenReturn(manager);
+        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
+        when(sharedAssociations.load("test")).thenReturn(association);
+        synchronized (this) {
+            try {
+                this.wait(3000);
+            } catch (InterruptedException ie) {
+                fail("Could not wait long enough to check association expiry date");
+            }
+        }
+        final Response response = this.openIdService.getResponse("test");
+        request.removeParameter("openid.assoc_handle");
+        assertNotNull(response);
+
+        assertEquals(1, response.getAttributes().size());
+        assertEquals("cancel", response.getAttributes().get("openid.mode"));
     }
     
     public void testEquals() {

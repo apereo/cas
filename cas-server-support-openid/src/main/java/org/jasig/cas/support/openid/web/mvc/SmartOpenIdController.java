@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
+ * Generates an association to an openid association request.
  * @author Frederic Esnault
  * @version $Id$
  * @since 3.5
@@ -44,8 +45,6 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     /** Constant representing the Assertion in the model. */
     private static final String MODEL_ASSERTION = "assertion";
-
-    private CentralAuthenticationService centralAuthenticationService;
 
 
     public Map<String, String> getAssociationResponse(HttpServletRequest request) {
@@ -90,11 +89,6 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     public void setFailureView(String failureView) {
         this.failureView = failureView;
-    }
-
-    @NotNull
-    public void setCentralAuthenticationService(CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     @NotNull
