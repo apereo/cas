@@ -50,10 +50,10 @@ public final class TestUtils {
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
     
-    public static final String CONST_GOOD_URL = "https://wwws.mint.com/";
+    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {
-        // do not instanciate
+        // do not instantiate
     }
 
     public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword() {
