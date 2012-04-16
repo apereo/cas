@@ -5,19 +5,9 @@
  */
 package org.jasig.cas;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.*;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -26,6 +16,11 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Scott Battaglia
@@ -50,7 +45,7 @@ public final class TestUtils {
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
     
-    public static final String CONST_GOOD_URL = "https://wwws.mint.com/";
+    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {
         // do not instanciate
