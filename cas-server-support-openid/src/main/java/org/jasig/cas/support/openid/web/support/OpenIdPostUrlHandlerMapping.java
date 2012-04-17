@@ -21,7 +21,12 @@ public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
     @Override
     protected Object lookupHandler(final String urlPath, final HttpServletRequest request) throws Exception {
 
-        if ("POST".equals(request.getMethod()) && "check_authentication".equals(request.getParameter("openid.mode"))) {
+        if ("POST".equals(request.getMethod())
+                && (
+                    ("check_authentication".equals(request.getParameter("openid.mode")))
+                    || ("associate".equals(request.getParameter("openid.mode")))
+                   )
+          ) {
             return super.lookupHandler(urlPath, request);
         }
         
