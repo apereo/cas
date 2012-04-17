@@ -94,7 +94,11 @@ public class AuthenticationViaFormAction {
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
-            return "success";
+            
+            if (logger.isDebugEnabled()) {
+              logger.debug("Returning to the 'warn' decision state to check for password...");
+            }
+            return "warn";
         } catch (final TicketException e) {
             populateErrorsInstance(e, messageContext);
             return "error";

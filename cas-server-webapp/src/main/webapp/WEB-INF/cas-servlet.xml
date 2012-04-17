@@ -181,18 +181,10 @@
         p:warnCookieGenerator-ref="warnCookieGenerator"
         p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
 
-    <!-- use LdapPwdAuthenticationViaFormAction to enable enhanced LDAP exceptions to drive views -->
-    <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.LdapPwdAuthenticationViaFormAction"
-		p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:ticketRegistry-ref="ticketRegistry"
-		p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:errorProcessor-ref="firstErrorProcessor" />
-    <!--
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:warnCookieGenerator-ref="warnCookieGenerator"/>
-     -->
-
+    
   <bean id="generateServiceTicketAction" class="org.jasig.cas.web.flow.GenerateServiceTicketAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 

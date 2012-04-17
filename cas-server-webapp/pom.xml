@@ -63,10 +63,16 @@
 	
 	<dependency>
 	  <groupId>org.jasig.cas</groupId>
-	  <artifactId>cas-server-extension-clearpass</artifactId>
+	  <artifactId>cas-server-support-ldap</artifactId>
 	  <version>${project.version}</version>
 	</dependency>
 	
+  <dependency>
+	  <groupId>org.jasig.cas</groupId>
+	  <artifactId>cas-server-extension-clearpass</artifactId>
+	  <version>${project.version}</version>
+	</dependency>
+  
 	<dependency>
 	  <groupId>org.jasig.cas.client</groupId>
 	  <artifactId>cas-client-core</artifactId>
