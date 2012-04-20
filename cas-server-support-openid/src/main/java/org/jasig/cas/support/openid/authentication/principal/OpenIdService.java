@@ -31,8 +31,6 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  */
 public final class OpenIdService extends AbstractWebApplicationService {
-    private static final String CRLF = "\r\n";
-
     protected static final Logger LOG = LoggerFactory.getLogger(OpenIdService.class);
     
     /**

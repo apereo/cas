@@ -1,6 +1,5 @@
 package org.jasig.cas.support.openid.web.mvc;
 
-import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.DelegateController;
 import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
@@ -39,13 +38,9 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     @NotNull
     private String successView = DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME;
 
-    /** The view to redirect to on a validation failure. */
+    /** The view to redirect to on a validation failure. Not used for now, the succes view may return failed association attemps. No need for another view. */
     @NotNull
     private String failureView = DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME;
-
-    /** Constant representing the Assertion in the model. */
-    private static final String MODEL_ASSERTION = "assertion";
-
 
     public Map<String, String> getAssociationResponse(HttpServletRequest request) {
         ParameterList parameters = new ParameterList(request.getParameterMap());
