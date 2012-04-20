@@ -1,7 +1,6 @@
 package org.jasig.cas.support.openid.web.mvc;
 
 import junit.framework.TestCase;
-import org.openid4java.server.ServerAssociationStore;
 import org.openid4java.server.ServerManager;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -10,17 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-
 
 /**
  * Test case of the Smart OpenId Controller.
+ * @author Frederic Esnault
  */
 public class SmartOpenIdControllerTest extends TestCase {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
     private final HttpServletResponse response = new MockHttpServletResponse();
     private ServerManager manager;
-    private ServerAssociationStore sharedAssociations;
     private final SmartOpenIdController smartOpenIdController = new SmartOpenIdController();
 
     @Override
