@@ -18,6 +18,7 @@ package org.jasig.cas.support.oauth.provider.impl;
 import java.util.Iterator;
 
 import org.codehaus.jackson.JsonNode;
+import org.jasig.cas.support.oauth.profile.CasWrapperProfile;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.up.profile.JsonHelper;
 import org.scribe.up.profile.UserProfile;
@@ -30,6 +31,8 @@ import org.scribe.up.provider.BaseOAuth20Provider;
  * @since 3.5.0
  */
 public final class CasWrapperProvider20 extends BaseOAuth20Provider {
+    
+    public final static String TYPE = CasWrapperProvider20.class.getSimpleName();
     
     private String serverUrl;
     
@@ -47,7 +50,7 @@ public final class CasWrapperProvider20 extends BaseOAuth20Provider {
     
     @Override
     protected UserProfile extractUserProfile(String body) {
-        UserProfile userProfile = new UserProfile();
+        CasWrapperProfile userProfile = new CasWrapperProfile();
         JsonNode json = JsonHelper.getFirstNode(body);
         if (json != null) {
             userProfile.setId(JsonHelper.get(json, "id"));
