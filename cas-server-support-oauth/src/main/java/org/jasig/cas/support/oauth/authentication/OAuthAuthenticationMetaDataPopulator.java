@@ -24,8 +24,8 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
 
 /**
- * This class is a meta data populator for OAuth authentication. As attributes are stored in OAuthCredentials, they are added to the
- * returned principal.
+ * This class is a meta data populator for OAuth authentication. As attributes are stored in OAuthCredentials (through user profile), they
+ * are added to the returned principal. The provider type associated to the authentication is also added to the authentication attributes.
  * 
  * @author Jerome Leleu
  * @since 3.5.0
@@ -38,7 +38,7 @@ public final class OAuthAuthenticationMetaDataPopulator implements Authenticatio
         if (credentials instanceof OAuthCredentials) {
             OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
             final Principal simplePrincipal = new SimplePrincipal(authentication.getPrincipal().getId(),
-                                                                  oauthCredentials.getUserAttributes());
+                                                                  oauthCredentials.getUserProfile().getAttributes());
             final MutableAuthentication mutableAuthentication = new MutableAuthentication(simplePrincipal,
                                                                                           authentication
                                                                                               .getAuthenticatedDate());

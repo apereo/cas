@@ -73,8 +73,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         logger.debug("userProfile : {}", userProfile);
         
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
-            credential.setUserId(userProfile.getId());
-            credential.setUserAttributes(userProfile.getAttributes());
+            credential.setUserProfile(userProfile);
             return true;
         } else {
             return false;

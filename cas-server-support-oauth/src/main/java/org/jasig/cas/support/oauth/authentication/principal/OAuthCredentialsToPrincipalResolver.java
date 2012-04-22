@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class resolves the principal id regarding the OAuth credentials : principal id is the type of the provider # the user identifier.
+ * This class resolves the principal id regarding the OAuth credentials : it's the typed user identifier.
  * 
  * @author Jerome Leleu
  * @since 3.5.0
@@ -35,7 +35,7 @@ public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDir
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
         OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
-        String principalId = oauthCredentials.getProviderType() + "#" + oauthCredentials.getUserId();
+        String principalId = oauthCredentials.getUserProfile().getTypedId();
         logger.debug("principalId : {}", principalId);
         return principalId;
     }
