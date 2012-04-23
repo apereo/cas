@@ -41,47 +41,45 @@
     <filter-name>CAS Client Info Logging Filter</filter-name>
     <filter-class>com.github.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
   </filter>
+  <filter-mapping>
+    <filter-name>CAS Client Info Logging Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
   <filter>
     <filter-name>springSecurityFilterChain</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
   </filter>
-
-  <filter>
-    <filter-name>characterEncodingFilter</filter-name>
-    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-  </filter>
-
-  <filter>
-	<filter-name>clearPassFilterChainProxy</filter-name>
-	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-  </filter>
-  
   <filter-mapping>
-    <filter-name>characterEncodingFilter</filter-name>
-    <url-pattern>/*</url-pattern>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/status</url-pattern>
   </filter-mapping>
-
   <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/services/*</url-pattern>
   </filter-mapping>
 
+  <filter>
+    <filter-name>characterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
   <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/status</url-pattern>
+    <filter-name>characterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!-- Uncomment for ClearPass support -->
+  <!--
+  <filter>
+    <filter-name>clearPassFilterChainProxy</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
   <filter-mapping>
     <filter-name>clearPassFilterChainProxy</filter-name>
     <url-pattern>/clearPass</url-pattern>
   </filter-mapping>
+  -->
     
-    
-  <filter-mapping>
-    <filter-name>CAS Client Info Logging Filter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
 
   <!--
     - Configures Log4J for this web app.
@@ -147,10 +145,13 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
+  <!-- Uncomment to enable ClearPass support -->
+  <!--
   <servlet-mapping>
 	<servlet-name>cas</servlet-name>
 	<url-pattern>/clearPass</url-pattern>
   </servlet-mapping>
+  -->
 	
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
