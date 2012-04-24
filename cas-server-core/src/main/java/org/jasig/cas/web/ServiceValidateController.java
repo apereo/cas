@@ -40,7 +40,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ServiceValidateController extends AbstractController {
+public class ServiceValidateController extends DelegateController {
 
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "casServiceFailureView";
@@ -189,6 +189,14 @@ public class ServiceValidateController extends AbstractController {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean canHandle(HttpServletRequest request, HttpServletResponse response) {
+        return true;
+    }
     
     /**
      * @param centralAuthenticationService The centralAuthenticationService to
@@ -230,4 +238,5 @@ public class ServiceValidateController extends AbstractController {
     public final void setProxyHandler(final ProxyHandler proxyHandler) {
         this.proxyHandler = proxyHandler;
     }
+
 }
