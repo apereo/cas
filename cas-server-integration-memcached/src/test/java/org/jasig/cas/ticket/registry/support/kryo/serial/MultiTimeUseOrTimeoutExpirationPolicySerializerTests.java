@@ -3,14 +3,15 @@
  * distributed with this file and available online at
  * http://www.jasig.org/cas/license.
  */
+
 package org.jasig.cas.ticket.registry.support.kryo.serial;
+
+import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.junit.Test;
-
-import java.nio.ByteBuffer;
 
 /**
  * Unit test for {@link MultiTimeUseOrTimeoutExpirationPolicySerializer} class.

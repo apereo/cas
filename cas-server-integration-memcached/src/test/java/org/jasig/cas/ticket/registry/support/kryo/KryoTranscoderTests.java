@@ -6,6 +6,10 @@
 
 package org.jasig.cas.ticket.registry.support.kryo;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serialize.FieldSerializer;
 import org.jasig.cas.authentication.Authentication;
@@ -16,10 +20,6 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
