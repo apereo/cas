@@ -1,4 +1,5 @@
 <%@include file="includes/top.jsp"%>
+
 <h2>Runtime Statistics</h2>
 <table width="800">
     <thead>
@@ -26,7 +27,12 @@
         </tr>
         <tr>
             <td>Memory</td>
-            <td> ${freeMemory} MB free <img src="../images/green.gif" width="${freeMemory / (totalMemory) * 500}" height="30" /><img src="../images/red.gif" width="${(totalMemory - freeMemory) / totalMemory * 500}" height="30" /> ${totalMemory} MB total </td>
+            <td> 
+                ${freeMemory} MB free 
+                <img src="../images/green.gif" width="${freeMemory / (totalMemory) * 500}" height="30" />
+                <img src="../images/red.gif" width="${(totalMemory - freeMemory) / totalMemory * 500}" height="30" /> 
+                ${totalMemory} MB total 
+            </td>
         </tr>
         <tr>
             <td>Maximum Memory</td>
@@ -42,6 +48,7 @@
 <br /><br />
 
 <h2>Ticket Registry Statistics</h2>
+
 <table width="800">
     <thead>
         <tr>
@@ -69,13 +76,13 @@
     </tbody>
 </table>
 
+<br /><br />
+
 <h2>Performance Statistics</h2>
 
 <c:forEach items="${graphingStatisticAppenders}" var="appender">
-<h3>${appender.name}</h3>
-
-<img src="${appender.chartGenerator.chartUrl}" alt="${appender.name}" />
-
+    <h3>${appender.name}</h3>
+    <img src="${appender.chartGenerator.chartUrl}" alt="${appender.name}" />
 </c:forEach>
 
 <%@include file="includes/bottom.jsp" %>
