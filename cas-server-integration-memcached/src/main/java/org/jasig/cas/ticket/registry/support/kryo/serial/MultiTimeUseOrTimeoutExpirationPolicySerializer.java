@@ -5,12 +5,11 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
-import com.esotericsoftware.kryo.Kryo;
+import java.nio.ByteBuffer;
+
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
-
-import java.nio.ByteBuffer;
 
 /**
  * Serializer for {@link MultiTimeUseOrTimeoutExpirationPolicy}.
@@ -20,16 +19,13 @@ import java.nio.ByteBuffer;
  */
 public class MultiTimeUseOrTimeoutExpirationPolicySerializer extends SimpleSerializer<MultiTimeUseOrTimeoutExpirationPolicy> {
 
-    private final Kryo kryo;
-
     protected final FieldHelper fieldHelper;
 
-    public MultiTimeUseOrTimeoutExpirationPolicySerializer(final Kryo kryo, final FieldHelper helper) {
-        this.kryo = kryo;
+    public MultiTimeUseOrTimeoutExpirationPolicySerializer(final FieldHelper helper) {
         this.fieldHelper = helper;
     }
 
-    public void write(final ByteBuffer buffer, MultiTimeUseOrTimeoutExpirationPolicy policy) {
+    public void write(final ByteBuffer buffer, final MultiTimeUseOrTimeoutExpirationPolicy policy) {
         buffer.putInt((Integer) fieldHelper.getFieldValue(policy, "numberOfUses"));
         buffer.putLong((Long) fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
     }

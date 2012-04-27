@@ -6,6 +6,13 @@
 
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.esotericsoftware.kryo.Kryo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,9 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.nio.ByteBuffer;
-import java.util.*;
 
 /**
  * Unit test for {@link AttributeMapSerializer} class.
@@ -28,7 +32,7 @@ import java.util.*;
 public class AttributeMapSerializerTests {
     private final Log logger = LogFactory.getLog(getClass());
   
-    private Map<String, Object> attributes;
+    private final Map<String, Object> attributes;
     
     public AttributeMapSerializerTests(final Map<String, Object> attributes) {
         this.attributes = attributes;

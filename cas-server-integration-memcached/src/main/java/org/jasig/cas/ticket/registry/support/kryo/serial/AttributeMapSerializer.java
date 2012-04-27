@@ -5,15 +5,15 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Kryo.RegisteredClass;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Kryo.RegisteredClass;
+import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * Serializes the attribute map of a {@link org.jasig.cas.authentication.principal.SimplePrincipal}.
@@ -33,14 +33,14 @@ public class AttributeMapSerializer extends SimpleSerializer<Map<String, Object>
         buffer.putInt(map.size());
         Object value;
         Collection items;
-        for (String key : map.keySet()) {
+        for (final String key : map.keySet()) {
             kryo.writeObjectData(buffer, key);
             value = map.get(key);
             if (value instanceof Collection) {
                 items = (Collection) value;
                 kryo.writeClass(buffer, ArrayList.class);
                 buffer.putInt(items.size());
-                for (Object o : items) {
+                for (final Object o : items) {
                     kryo.writeClassAndObject(buffer, o);
                 }
             } else {

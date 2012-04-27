@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {
 
-    private KryoTranscoder transcoder;
+    private final KryoTranscoder transcoder;
     
     public KryoTranscoderTests(final int bufferSize) {
         transcoder = new KryoTranscoder(bufferSize);
