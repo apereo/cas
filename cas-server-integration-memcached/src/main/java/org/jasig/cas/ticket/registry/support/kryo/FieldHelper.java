@@ -22,7 +22,7 @@ public class FieldHelper {
         final Field f = getField(target, fieldName);
         try {
             return f.get(target);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalStateException("Error getting field value", e);
         }
     }
@@ -31,7 +31,7 @@ public class FieldHelper {
         final Field f = getField(target, fieldName);
         try {
             f.set(target, value);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalStateException("Error setting field value", e);
         }
     }
@@ -45,7 +45,7 @@ public class FieldHelper {
                 f = clazz.getDeclaredField(name);
                 f.setAccessible(true);
                 fieldCache.put(key, f);
-            } catch (NoSuchFieldException e) {
+            } catch (final NoSuchFieldException e) {
                 clazz = clazz.getSuperclass();
                 if (clazz == null) {
                     throw new IllegalStateException("No such field " + key);

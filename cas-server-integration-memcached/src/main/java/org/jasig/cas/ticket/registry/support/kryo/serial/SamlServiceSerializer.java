@@ -5,13 +5,13 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
+import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
+
 import com.esotericsoftware.kryo.Kryo;
 import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.util.HttpClient;
-
-import java.lang.reflect.Constructor;
-import java.nio.ByteBuffer;
 
 /**
  * Serializer for {@link SamlService} class.
@@ -28,7 +28,7 @@ public class SamlServiceSerializer extends AbstractWebApplicationServiceSerializ
             CONSTRUCTOR = SamlService.class.getDeclaredConstructor(
                     String.class, String.class, String.class, HttpClient.class, String.class);
             CONSTRUCTOR.setAccessible(true);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Expected constructor signature not found.", e);
         }
     }
@@ -51,7 +51,7 @@ public class SamlServiceSerializer extends AbstractWebApplicationServiceSerializ
         final String requestId = kryo.readObject(buffer, String.class);
         try {
             return (SamlService) CONSTRUCTOR.newInstance(id, originalUrl, artifactId, new HttpClient(), requestId);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Error creating SamlService", e);
         }
     }

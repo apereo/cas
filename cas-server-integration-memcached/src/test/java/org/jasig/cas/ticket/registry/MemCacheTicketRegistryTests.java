@@ -13,7 +13,6 @@ import com.thimbleware.jmemcached.CacheImpl;
 import com.thimbleware.jmemcached.Key;
 import com.thimbleware.jmemcached.LocalCacheElement;
 import com.thimbleware.jmemcached.MemCacheDaemon;
-import com.thimbleware.jmemcached.storage.CacheStorage;
 import com.thimbleware.jmemcached.storage.hash.ConcurrentLinkedHashMap;
 import junit.framework.Assert;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -55,20 +54,18 @@ public class MemCacheTicketRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object[]> getTestParameters() throws Exception {
-
-
-        return Arrays.asList(new Object[][] {
-            new Object[] {"testCase1", false},
-            new Object[] {"testCase2", true},
-        });
+        return Arrays.asList(
+          new Object[] {"testCase1", false},
+          new Object[] {"testCase2", true}
+        );
     }
 
     @Before
     public void setUp() {
         daemon = new MemCacheDaemon<LocalCacheElement>();
-        CacheStorage<Key, LocalCacheElement> storage = ConcurrentLinkedHashMap.create(
-                ConcurrentLinkedHashMap.EvictionPolicy.FIFO, 100, 1024);
-        daemon.setCache(new CacheImpl(storage));
+        daemon.setCache(new CacheImpl(
+                ConcurrentLinkedHashMap.<Key, LocalCacheElement>create(
+                        ConcurrentLinkedHashMap.EvictionPolicy.FIFO, 100, 1024)));
         daemon.setBinary(binaryProtocol);
         daemon.setAddr(new InetSocketAddress("127.0.0.1", 11211));
         daemon.setIdleTime(30);
@@ -84,7 +81,7 @@ public class MemCacheTicketRegistryTests {
     public void testWriteGetDelete() throws Exception {
         Assert.assertNotNull(registry);
         final String id = "ST-1234567890ABCDEFGHIJKL-node";
-        ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
+        final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
         final ServiceTicket ticketFromRegistry = (ServiceTicket) registry.getTicket(id);
@@ -97,9 +94,5 @@ public class MemCacheTicketRegistryTests {
     @After
     public void tearDown() {
         daemon.stop();
-    }
-
-    private void startMemcachedServer(final boolean binary) {
-
     }
 }

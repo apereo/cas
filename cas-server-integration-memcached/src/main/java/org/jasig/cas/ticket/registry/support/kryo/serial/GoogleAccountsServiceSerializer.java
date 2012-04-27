@@ -5,14 +5,14 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
-import com.esotericsoftware.kryo.Kryo;
-import org.jasig.cas.authentication.principal.GoogleAccountsService;
-import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
-
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+
+import com.esotericsoftware.kryo.Kryo;
+import org.jasig.cas.authentication.principal.GoogleAccountsService;
+import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
 /**
  * Serializer for {@link GoogleAccountsService}.
@@ -24,11 +24,11 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
 
     private static final Constructor CONSTRUCTOR;
 
-    private PrivateKey privateKey;
+    private final PrivateKey privateKey;
     
-    private PublicKey publicKey;
+    private final PublicKey publicKey;
     
-    private String alternateUsername;
+    private final String alternateUsername;
             
     static {
         try {
@@ -42,7 +42,7 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
                     PublicKey.class,
                     String.class);
             CONSTRUCTOR.setAccessible(true);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Expected constructor signature not found.", e);
         }
     }
@@ -85,7 +85,7 @@ public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServi
                     publicKey,
                     alternateUsername);
             return service;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Error creating SamlService", e);
         }
     }

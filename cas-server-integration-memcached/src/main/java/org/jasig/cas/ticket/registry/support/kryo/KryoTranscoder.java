@@ -53,12 +53,6 @@ import org.slf4j.LoggerFactory;
  */
 public class KryoTranscoder implements Transcoder<Object> {
 
-    /** Ticket granting ticket type flag. */
-    public static int TGT_TYPE = 314159265;
-
-    /** Service ticket type flag. */
-    public static int ST_TYPE = 271828183;
-
     /** Kryo serializer */
     private final Kryo kryo = new Kryo();
 
@@ -99,12 +93,12 @@ public class KryoTranscoder implements Transcoder<Object> {
         // Register types we know about and do not require external configuration
         kryo.register(ArrayList.class);
         kryo.register(Date.class, new DateSerializer());
-        kryo.register(HardTimeoutExpirationPolicy.class, new HardTimeoutExpirationPolicySerializer(kryo, fieldHelper));
+        kryo.register(HardTimeoutExpirationPolicy.class, new HardTimeoutExpirationPolicySerializer(fieldHelper));
         kryo.register(HashMap.class);
         kryo.register(ImmutableAuthentication.class, new ImmutableAuthenticationSerializer(kryo, fieldHelper));
         kryo.register(
                 MultiTimeUseOrTimeoutExpirationPolicy.class,
-                new MultiTimeUseOrTimeoutExpirationPolicySerializer(kryo, fieldHelper));
+                new MultiTimeUseOrTimeoutExpirationPolicySerializer(fieldHelper));
         kryo.register(MutableAuthentication.class, new MutableAuthenticationSerializer(kryo, fieldHelper));
         kryo.register(
                 NeverExpiresExpirationPolicy.class,
@@ -123,11 +117,11 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(
                 TicketGrantingTicketExpirationPolicy.class,
                 new FieldSerializer(kryo, TicketGrantingTicketExpirationPolicy.class));
-        kryo.register(TimeoutExpirationPolicy.class, new TimeoutExpirationPolicySerializer(kryo, fieldHelper));
+        kryo.register(TimeoutExpirationPolicy.class, new TimeoutExpirationPolicySerializer(fieldHelper));
 
         // Register other types
         if (serializerMap != null) {
-            for (Class<?> clazz : serializerMap.keySet()) {
+            for (final Class<?> clazz : serializerMap.keySet()) {
                 kryo.register(clazz, serializerMap.get(clazz));
             }
         }
@@ -143,7 +137,7 @@ public class KryoTranscoder implements Transcoder<Object> {
      * @param d Data to decode.
      * @return False.
      */
-    public boolean asyncDecode(CachedData d) {
+    public boolean asyncDecode(final CachedData d) {
         return false;
     }
 
@@ -164,7 +158,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Maximum size of encoded data supported by this transcoder.
      *
-     * @return  {@link CachedData.MAX_SIZE}
+     * @return  <code>net.spy.memcached.CachedData#MAX_SIZE</code>.
      */
     public int getMaxSize() {
         return CachedData.MAX_SIZE;
@@ -198,7 +192,7 @@ public class KryoTranscoder implements Transcoder<Object> {
                 kryo.writeClassAndObject(buffer, o);
                 result = new byte[buffer.flip().limit()];
                 buffer.get(result);
-            } catch (SerializationException e) {
+            } catch (final SerializationException e) {
                 Throwable rootCause = e;
                 while (rootCause.getCause() != null) {
                     rootCause = rootCause.getCause();
