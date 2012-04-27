@@ -43,7 +43,7 @@
       <groupId>commons-pool</groupId>
       <artifactId>commons-pool</artifactId>
       <version>1.6</version>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
 
   </dependencies>

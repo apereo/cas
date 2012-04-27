@@ -5,6 +5,9 @@
  */
 package org.jasig.cas.authentication.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The most generic type of authentication exception that one can catch if not
  * sure what specific implementation will be thrown. Top of the tree of all
@@ -19,8 +22,10 @@ public abstract class AuthenticationException extends Exception {
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
 
+    protected static Logger   logger           = LoggerFactory.getLogger(AuthenticationException.class);
+
     /** The code to return for resolving to a message description. */
-    private String code;
+    private final String code;
 
     /**
      * Constructor that takes a code description of the error. These codes
@@ -30,6 +35,19 @@ public abstract class AuthenticationException extends Exception {
      * @param code The short unique identifier for this error.
      */
     public AuthenticationException(final String code) {
+        this.code = code;
+    }
+
+    /**
+     * Constructor that takes a code description of the error. These codes
+     * normally have a corresponding entries in the messages file for the
+     * internationalization of error messages.
+     * 
+     * @param code The short unique identifier for this error.
+     * @param message The error message associated with this exception for additional logging purposes.
+     */
+    public AuthenticationException(final String code, final String msg) {
+        super(msg);
         this.code = code;
     }
 
@@ -55,6 +73,7 @@ public abstract class AuthenticationException extends Exception {
         return this.code;
     }
 
+    @Override
     public final String toString() {
         return getCode();
     }

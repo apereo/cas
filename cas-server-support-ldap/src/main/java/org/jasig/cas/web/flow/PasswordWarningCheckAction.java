@@ -5,19 +5,21 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.authentication.AbstractPasswordWarningCheck;
+import org.jasig.cas.authentication.LdapAuthenticationException;
+import org.jasig.cas.authentication.LdapPasswordEnforcementException;
 import org.jasig.cas.authentication.PasswordWarningCheck;
+import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.binding.message.MessageBuilder;
 import org.springframework.util.Assert;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-
 /**
- * This action checks the expiration time for a user and displays a warning page when the expiration date is near.  
- * Password Expiration and Account locking are NOT done here -- those are AuthenticationExceptions in 
+ * This action checks the expiration time for a user and displays a warning page when the expiration date is near.
+ * Password Expiration and Account locking are NOT done here -- those are AuthenticationExceptions in
  * org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler
  * 
  * This action should be run after the TGT and ST are created, but before the client is sent back to the service.
@@ -30,58 +32,83 @@ import org.springframework.webflow.execution.RequestContext;
 public final class PasswordWarningCheckAction extends AbstractAction implements InitializingBean {
 
     private PasswordWarningCheck passwordWarningChecker;
-    
+
     public final PasswordWarningCheck getPasswordWarningCheck() {
-        return this.passwordWarningChecker;
+        return passwordWarningChecker;
     }
-    
-    public final void setPasswordWarningCheck(final PasswordWarningCheck passwordWarningChecker) {
+
+    public void setPasswordWarningCheck(final PasswordWarningCheck passwordWarningChecker) {
         this.passwordWarningChecker = passwordWarningChecker;
     }
 
-    protected Event doExecute(final RequestContext context) throws Exception {
-        this.logger.debug("checking account status--");
-        int status = AbstractPasswordWarningCheck.STATUS_ERROR;
-
-        String ticket = context.getRequestScope().getString("serviceTicketId");
-        UsernamePasswordCredentials credentials = (UsernamePasswordCredentials)context.getFlowScope().get("credentials"); 
-        String userID=credentials.getUsername();
-        this.logger.debug("userID='" + userID + "'");
-        
-        if ((userID == null)&&(ticket == null)){
-        	this.logger.warn("No user principal or service ticket available!");
-        	return error();
+    private void populateErrorsInstance(final LdapAuthenticationException e, final RequestContext reqCtx) {
+        try {
+            final String code = e.getCode();
+            reqCtx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(code).build());
+        } catch (final Exception fe) {
+            logger.error(fe.getMessage(), fe);
         }
-        
-        if ((userID == null) && (ticket != null)){
-        	this.logger.debug("Not a login attempt, skipping PasswordWarnCheck");
-        	return success();
-        }
-        
-        status = this.passwordWarningChecker.getPasswordWarning(userID);
-        this.logger.debug("translating return code status='" + status + "'");
-        if (status >= 0) {
-            this.logger.info("password for '" + userID + "' is expiring in "+ status + " days. Sending the warning page.");
-            context.getFlowScope().put("expireDays", status);
-            return Warning();
-        }
-        if (status == AbstractPasswordWarningCheck.STATUS_PASS) {
-            this.logger.info("password for '" + userID + "' is NOT expiring soon.");
-        }
-        if (status == AbstractPasswordWarningCheck.STATUS_ERROR) {
-            this.logger.warn("Error getting expiration date for '" + userID + "'");
-        }
-        
-        return success();
     }
-    
-    private final Event Warning() {
+
+    private final Event warning() {
         return result("showWarning");
     }
 
-    protected void initAction() throws Exception {
-        Assert.notNull(this.passwordWarningChecker, "passwordWarningChecker cannot be null");
-        this.logger.debug("inited with passwordWarningChecker='"
-            + this.passwordWarningChecker.getClass().getName() + "'");
+    @Override
+    protected Event doExecute(final RequestContext context) throws Exception {
+
+        logger.debug("Checking account status for password...");
+
+        final String ticket = context.getRequestScope().getString("serviceTicketId");
+        final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) context.getFlowScope().get("credentials");
+        final String userId = credentials.getUsername();
+
+        Event returnedEvent = error();
+
+        String msgToLog = null;
+
+        try {
+
+            if (userId == null && ticket == null) {
+                msgToLog = "No user principal or service ticket available.";
+                logger.warn(msgToLog);
+                throw new LdapPasswordEnforcementException(BadCredentialsAuthenticationException.CODE, msgToLog);
+            }
+
+            if (userId == null && ticket != null) {
+                logger.debug("Received service ticket " + ticket
+                        + " but no user id. This is not a login attempt, so skip the password check...");
+                returnedEvent = success();
+            } else {
+                logger.debug("Retrieving number of days to password expiration date for user " + userId + "...");
+
+                final int daysToExpirationDate = passwordWarningChecker.getNumberOfDaysToPasswordExpirationDate(userId);
+
+                switch (daysToExpirationDate) {
+                case -1:
+                    logger.info("Password for " + userId + " is not expiring. Switching the flow to success");
+                    break;
+                default:
+                    logger.info("Password for " + userId + " is expiring in " + daysToExpirationDate + " days. Switching the flow to warn");
+                    context.getFlowScope().put("expireDays", daysToExpirationDate);
+                    returnedEvent = warning();
+                    break;
+                }
+
+            }
+        } catch (final LdapAuthenticationException e) {
+            logger.error("Switching the flow to error for " + userId + ". " + e.getMessage(), e);
+            populateErrorsInstance(e, context);
+            returnedEvent = error();
+        }
+
+        return returnedEvent;
     }
+
+    @Override
+    protected void initAction() throws Exception {
+        Assert.notNull(passwordWarningChecker, "passwordWarningChecker cannot be null");
+        logger.debug("Initialized the action with passwordWarningChecker='" + passwordWarningChecker.getClass().getName() + "'");
+    }
+
 }

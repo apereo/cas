@@ -19,11 +19,6 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  */
 public abstract class AbstractPasswordWarningCheck implements PasswordWarningCheck, InitializingBean {
+    protected static Logger logger = LoggerFactory.getLogger(AbstractPasswordWarningCheck.class);
 
-    /** Instance of logging for subclasses. */
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public static final int STATUS_PASS = -1;
-    public static final int STATUS_ERROR = -2;
-    
 }

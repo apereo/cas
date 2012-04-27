@@ -32,7 +32,7 @@
         To turn on PasswordWarningCheck is this block instead of the other one below.
 	-->
 	<decision-state id="warn">
-	    <if test="flowScope.warnCookieValue" then="showWarningView" else="PasswordWarningCheck" />
+	    <if test="flowScope.warnCookieValue" then="showWarningView" else="passwordWarningCheck" />
 	</decision-state>
     <!--
    	<decision-state id="warn">
@@ -103,7 +103,7 @@
     </action-state>
 
 	<!-- this checks the status of a password -->
-	<action-state id="PasswordWarningCheck">
+	<action-state id="passwordWarningCheck">
 		<evaluate expression="PasswordWarningCheckAction" />
 		<transition on="showWarning" to="warnPassRedirect" />
 		<transition on="success" to="redirect" />

@@ -17,6 +17,6 @@ public interface PasswordWarningCheck {
      * @param userID The unique ID of the user
      * @return Code for this status
      */
-    public int getPasswordWarning(String userID);
+    public int getNumberOfDaysToPasswordExpirationDate(String userID) throws LdapPasswordEnforcementException;
     
 }

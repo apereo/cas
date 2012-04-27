@@ -5,17 +5,6 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.authentication.AbstractPasswordWarningCheck;
-import org.jasig.cas.util.LdapUtils;
-import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.ContextSource;
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.util.Assert;
-
-import javax.management.timer.Timer;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +12,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import javax.management.timer.Timer;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+
+import org.jasig.cas.authentication.AbstractPasswordWarningCheck;
+import org.jasig.cas.authentication.LdapPasswordEnforcementException;
+import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
+import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.util.Assert;
 
 /**
  * Class that fetches an password expiration date from an LDAP database.
@@ -34,343 +37,286 @@ import java.util.List;
  */
 public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
 
-	private static final String CHECK_TYPE_PWDCHANGE = "change";
-	private static final String CHECK_TYPE_PWDEXPIRE = "expire";
-	
-	/** Time Segments for AD Password age **/
-	private long INTERVALS_PER_MILLISECOND = 10000;
-	
-	/** Number of milliseconds between 1/1/1601 and 1/1/1970 **/
-	private long MILLISECONDS_BETWEEN_1601_AND_1970 = Timer.ONE_DAY * 134775;  
-		
-	/** The default maximum number of results to return. */
-    private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 10;
+    private static class LdapResult {
+
+        private String DateResult;
+        private String noWarnAttributeResult;
+        private String validDaysResult;
+        private String warnDaysResult;
+
+        public String getDateResult() {
+            return DateResult;
+        }
+
+        public String getNoWarnAttributeResult() {
+            return noWarnAttributeResult;
+        }
+
+        public String getValidDaysResult() {
+            return validDaysResult;
+        }
+
+        public String getWarnDaysResult() {
+            return warnDaysResult;
+        }
+
+        public void setDateResult(final String date) {
+            DateResult = date;
+        }
+
+        public void setNoWarnAttributeResult(final String noWarnAttributeResult) {
+            this.noWarnAttributeResult = noWarnAttributeResult;
+        }
+
+        public void setValidDaysResult(final String valid) {
+            validDaysResult = valid;
+        }
+
+        public void setWarnDaysResult(final String warn) {
+            warnDaysResult = warn;
+        }
+    }
+
+    private static final String CHECK_TYPE_PWDCHANGE               = "change";
+
+    private static final String CHECK_TYPE_PWDEXPIRE               = "expire";
+
+    /** The default maximum number of results to return. */
+    private static final int    DEFAULT_MAX_NUMBER_OF_RESULTS      = 10;
 
     /** The default timeout. */
-    private static final int DEFAULT_TIMEOUT = 1000;
+    private static final int    DEFAULT_TIMEOUT                    = 1000;
 
     /** The list of valid scope values. */
-    private static final int[] VALID_SCOPE_VALUES = new int[] {
-        SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
-        SearchControls.SUBTREE_SCOPE};
+    private static final int[]  VALID_SCOPE_VALUES                 = new int[] { SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
+        SearchControls.SUBTREE_SCOPE                          };
 
-    /** LdapTemplate to execute ldap queries. */
-    private LdapTemplate ldapTemplate;
+    private String[]            attributeIds;
 
     /** The filter path to the lookup value of the user. */
-    private String filter;
+    private String              filter;
 
-    /** Disregard WarnPeriod and warn all users of password expiration */
-    protected Boolean WarnAll;
-    
-    /** Calculate password warning from last password change time or expiration date */
-    protected String WarningCheckType;
-
-    /** The attribute that contains the date the password will expire or last password change */
-    protected String DateAttribute;
-    
-    /** The attribute that contains the user's warning days */
-    protected String WarningDaysAttribute;
-
-    /** The attribute that contains the number of days the user's password is valid */
-    protected String ValidDaysAttribute;
-    
-    /** The format of the date in DateAttribute */
-    protected String dateFormat;
-
-    /** default number of days that a warning message will be displayed */
-    private int warningDays;
-    
-    /** default number of days a password is valid */
-    private int validDays;
-    
-    /** The attribute that contains the data that will determine if password warning is skipped  */
-    private String noWarnAttribute;
-    
-    /** The value that will cause password warning to be bypassed  */
-    private List<String> noWarnValues;
-
-    /** The search base to find the user under. */
-    private String searchBase;
-
-    /** The scope. */
-    private int scope = SearchControls.SUBTREE_SCOPE;
-    
     /** Whether the LdapTemplate should ignore partial results. */
-    private boolean ignorePartialResultException = false;
+    private boolean             ignorePartialResultException       = false;
+
+    /** Time Segments for AD Password age **/
+    private final long                INTERVALS_PER_MILLISECOND          = 10000;
+
+    /** LdapTemplate to execute ldap queries. */
+    private LdapTemplate        ldapTemplate;
 
     /** The maximum number of results to return. */
-    private int maxNumberResults = DEFAULT_MAX_NUMBER_OF_RESULTS;
+    private int                 maxNumberResults                   = DEFAULT_MAX_NUMBER_OF_RESULTS;
+
+    /** Number of milliseconds between 1/1/1601 and 1/1/1970 **/
+    private final long                MILLISECONDS_BETWEEN_1601_AND_1970 = Timer.ONE_DAY * 134775;
+
+    /** The attribute that contains the data that will determine if password warning is skipped  */
+    private String              noWarnAttribute;
+
+    /** The value that will cause password warning to be bypassed  */
+    private List<String>        noWarnValues;
+
+    /** The scope. */
+    private int                 scope                              = SearchControls.SUBTREE_SCOPE;
+
+    /** The search base to find the user under. */
+    private String              searchBase;
 
     /** The amount of time to wait. */
-    private int timeout = DEFAULT_TIMEOUT;
+    private int                 timeout                            = DEFAULT_TIMEOUT;
 
-    private String[] attributeIds;
-    
-    public int getPasswordWarning(String userID) {
+    /** default number of days a password is valid */
+    private int                 validDays;
 
-    	//Create a list of LDAP attributes we need to search for
-    	List<String> attributeList = new ArrayList<String>();
-    	attributeList.add(this.DateAttribute);
-    	if (this.WarningDaysAttribute != null) {
-    		attributeList.add(this.WarningDaysAttribute);
-    	}
-    	if (this.ValidDaysAttribute != null) {
-    		attributeList.add(this.ValidDaysAttribute);
-    	}
-    	if (this.noWarnAttribute != null) {
-    		attributeList.add(this.noWarnAttribute);
-    	}
-    	
-    	//Convert the list to a string array
-    	this.attributeIds = new String[attributeList.size()];
-    	attributeList.toArray(this.attributeIds);
-    	
-        LdapResult ldapResult = getResultsFromLDAP(userID);
+    /** default number of days that a warning message will be displayed */
+    private int                 warningDays;
 
-        if (ldapResult == null) {
-            this.logger.warn("No LDAP entry for " + userID);
-            return STATUS_ERROR;
-        }  
-        
-        String WarnDaysResult = ldapResult.getWarnDaysResult();
-        String ValidDaysResult = ldapResult.getValidDaysResult();
-        String WarnAttribute = ldapResult.getNoWarnAttributeResult();
-        
-        this.logger.debug("No Warn flag is set to: " + WarnAttribute);
-        
-        if (this.noWarnAttribute != null) {
-        	if (this.noWarnValues.contains(WarnAttribute)){
-        		 this.logger.info("No Warn flag is set, bypassing warning check");
-        		 return STATUS_PASS;
-        	}
-        }
-        
-        if (WarnDaysResult == null) {
-            this.logger.debug("No Warning Days found for " + userID + " using system default of " + warningDays);
-        } else {
-            warningDays = Integer.parseInt(WarnDaysResult);          
-        }
-        
-        //Convert number of days to number of seconds 
-        long CurrentTime = (new Date()).getTime();
-        long ExpireTime = CurrentTime;
-        
-        //Use the last password change date for expiration calculations
-        if (this.WarningCheckType.equals(CHECK_TYPE_PWDCHANGE)) {  
-        	String ChangeDateResult = ldapResult.getDateResult();
-        	this.logger.debug("Calculating warning period from last change date");
-        	this.logger.debug("WarnDays Result='" + WarnDaysResult + "'");
-        	this.logger.debug("ChangeDate Result='" + ChangeDateResult + "'");
-        	this.logger.debug("ValidDays Result='" + ValidDaysResult + "'");
-        	if (ChangeDateResult == null) {
-                this.logger.warn("No password change date for " + userID);
-                return STATUS_ERROR;
-            }
-        	
-        	
-        	GregorianCalendar ChangeDate = new GregorianCalendar();
-        	if (dateFormat.equals("ActiveDirectory")) {
-	        	ChangeDate = convertDateAD(ChangeDateResult);
-	        } else {
-	        	ChangeDate = convertDate(ChangeDateResult, dateFormat);
-	            if (ChangeDate == null) {
-	            	this.logger.warn("Returning error, last password change date is invalid");
-	            	return STATUS_ERROR;
-	            }
-	        }
-            
-            if (ValidDaysResult == null) {
-            	this.logger.debug("No maximum password age found for " + userID + ".  Using system default of " + validDays + " days");
-            } else {
-                validDays = Integer.parseInt(ValidDaysResult);
-                
-            }	
-            
-            //Password expiration is the time the password was last changed plus the maximum password age
-            long ValidPeriod = validDays * Timer.ONE_DAY;
-        	long ChangeTime = (ChangeDate.getTime()).getTime();
-        	ExpireTime = ChangeTime + ValidPeriod;
-        	
-        //The expiration date is stored in LDAP	
-        } else if (this.WarningCheckType.equals(CHECK_TYPE_PWDEXPIRE)) {
-        	String ExpireDateResult = ldapResult.getDateResult();
-        	this.logger.debug("Calculating warning period from expiration date");
-        	this.logger.debug("WarnDays Result='" + WarnDaysResult + "'");
-        	this.logger.debug("ExpireDate Result='" + ExpireDateResult + "'");
-        	if (ExpireDateResult == null) {
-                this.logger.warn("No Expiration date for " + userID);
-                return STATUS_ERROR;
-            }
-        	
-        	GregorianCalendar ExpireDate = convertDate(ExpireDateResult, dateFormat);
-            if (ExpireDate == null) {
-                this.logger.warn("Returning error, expiration date is invalid");
-                return STATUS_ERROR;
-            }
-            
-        	ExpireTime = (ExpireDate.getTime()).getTime();
-        	
-        } else {
-        	this.logger.warn("Invalid value for 'warningCheckType': " + this.WarningCheckType);
-            return STATUS_ERROR;
-        }
+    /** The attribute that contains the date the password will expire or last password change */
+    protected String            dateAttribute;
 
-        float DateDiff = ExpireTime - CurrentTime;
-        float WarnPeriod = warningDays * Timer.ONE_DAY;
+    /** The format of the date in DateAttribute */
+    protected String            dateFormat;
 
-        this.logger.debug("Current Time=" + CurrentTime / 1000);        
-        this.logger.debug("Expiration Time=" + ExpireTime / 1000);
-        this.logger.debug("Difference in seconds=" + DateDiff);
-        this.logger.debug("Warn Period in seconds=" + WarnPeriod);
- 
-        //The LDAP server should have thrown an error because the password has already expired
-        if (DateDiff < 0) {
-            this.logger.warn("Expiration Date has passed for " + userID + " but authentication succeeded!");
-            return STATUS_ERROR;
-        }
-      
-        //WarnAll is true -- warn everyone
-        if (WarnAll.equals(true)) {
-     	   this.logger.info("Show Warning (WarnALL is TRUE!) -- The password for " + userID + " will expire in " + Math.round(DateDiff / Timer.ONE_DAY) + " days");
-     	   return (int) Math.round(DateDiff / Timer.ONE_DAY);
-        }
-        
-       int comp = Float.compare(DateDiff, (float) WarnPeriod );
-       if (comp > 0) {
-    	   this.logger.debug("Skip Warning -- The password for " + userID + " will expire in " + Math.round(DateDiff / Timer.ONE_DAY) + " days");
-    	   return STATUS_PASS;
-       } else {
-    	   this.logger.info("Show Warning -- The password for " + userID + " will expire in " + Math.round(DateDiff / Timer.ONE_DAY) + " days");
-    	   return (int) Math.round(DateDiff / Timer.ONE_DAY);	   
-       }
+    /** The attribute that contains the number of days the user's password is valid */
+    protected String            validDaysAttribute;
 
-    }
-    
-    private GregorianCalendar convertDateAD(String pwdLastSet) {
-    	long l = Long.parseLong(pwdLastSet.trim());
-    	long t= l / INTERVALS_PER_MILLISECOND  ;
-        this.logger.debug("pwdLastSet= " + t + " millisec since 1601");
+    /** Disregard WarnPeriod and warn all users of password expiration */
+    protected Boolean           warnAll;
 
-        t-= MILLISECONDS_BETWEEN_1601_AND_1970;
-        this.logger.debug("pwdLastSet= " + t + " millisec since 1970");
-  
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTimeInMillis(t);
-        this.logger.debug("pwdLastSet= " + calendar.getTime().toString() );
-        return calendar;
-      }
+    /** Calculate password warning from last password change time or expiration date */
+    protected String            warningCheckType;
 
-    private GregorianCalendar convertDate(String ldapResult, String dateFormat) {
-        DateFormat format = new SimpleDateFormat(dateFormat);
-        format.setTimeZone(java.util.TimeZone.getTimeZone("Zulu"));
-        format.setLenient(false);
-        Date date = null;
-        try {
-            date = format.parse(ldapResult);
-        } catch (ParseException e) {
-            this.logger.warn("The attribute'" + DateAttribute
-                + "' with value '" + ldapResult
-                + "' should contain a date in the format " + dateFormat);
-            return null;
-        }
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-
-        return calendar;
-    }
-
-    private SearchControls getSearchControls(String[] attributeIds) {
-        final SearchControls constraints = new SearchControls();
-
-        constraints.setSearchScope(this.scope);
-        constraints.setReturningAttributes(this.attributeIds);
-        constraints.setTimeLimit(this.timeout);
-        constraints.setCountLimit(this.maxNumberResults);
-
-        return constraints;
-    }
+    /** The attribute that contains the user's warning days */
+    protected String            warningDaysAttribute;
 
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.ldapTemplate, "ldapTemplate cannot be null");
-        Assert.notNull(this.filter, "filter cannot be null");
-        Assert.notNull(this.searchBase, "searchBase cannot be null");
-        Assert.notNull(this.WarningCheckType, "warningCheckType cannot be null");
-        Assert.notNull(this.WarnAll, "warnAll cannot be null");
-        Assert.notNull(this.DateAttribute, "dateAttribute cannot be null");
-        Assert.notNull(this.dateFormat, "dateFormat cannot be null");
-        Assert.notNull(this.warningDays, "warningDays cannot be null");
-        Assert.isTrue(this.filter.contains("%u"), "filter must contain %u");
-        this.ldapTemplate.setIgnorePartialResultException(this.ignorePartialResultException);
+        Assert.notNull(ldapTemplate, "ldapTemplate cannot be null");
+        Assert.notNull(filter, "filter cannot be null");
+        Assert.notNull(searchBase, "searchBase cannot be null");
+        Assert.notNull(warningCheckType, "warningCheckType cannot be null");
+        Assert.notNull(warnAll, "warnAll cannot be null");
+        Assert.notNull(dateAttribute, "dateAttribute cannot be null");
+        Assert.notNull(dateFormat, "dateFormat cannot be null");
+        Assert.notNull(warningDays, "warningDays cannot be null");
+        Assert.isTrue(filter.contains("%u"), "filter must contain %u");
 
-        for (int i = 0; i < VALID_SCOPE_VALUES.length; i++) {
-            if (this.scope == VALID_SCOPE_VALUES[i]) {
+        ldapTemplate.setIgnorePartialResultException(ignorePartialResultException);
+
+        for (final int element : VALID_SCOPE_VALUES)
+            if (scope == element)
                 return;
-            }
-        }
         throw new IllegalStateException("You must set a valid scope.");
     }
 
-    private LdapResult getResultsFromLDAP(final String userID) {
-        final String searchFilter = LdapUtils.getFilterWithValues(this.filter,
-            userID);
+    public int getNumberOfDaysToPasswordExpirationDate(final String userId) throws LdapPasswordEnforcementException {
+        String msgToLog = null;
 
-        this.logger.debug("LDAP: starting search with searchFilter '" + searchFilter + "'");
-        String attributeListLog = this.attributeIds[0];
-        for(int i=1;i<this.attributeIds.length;i++) {
-        	attributeListLog = attributeListLog.concat(":" + this.attributeIds[i]);	
-    	}
-        this.logger.debug("LDAP: Returning attributes '" + attributeListLog + "'");
-        
-        try {
-            // searching the directory
+        final List<String> attributeList = new ArrayList<String>();
 
-            AttributesMapper mapper = new AttributesMapper(){
-
-                public Object mapFromAttributes(Attributes attrs)
-                    throws NamingException {
-                    LdapResult result = new LdapResult();
-
-                    if (LdapPasswordWarningCheck.this.DateAttribute != null){
-	                    if (attrs.get(LdapPasswordWarningCheck.this.DateAttribute) != null) {
-	                        String date = (String) attrs.get(LdapPasswordWarningCheck.this.DateAttribute).get();
-	                        result.setDateResult(date);
-	                    }
-                    }
-                    
-                    if (LdapPasswordWarningCheck.this.WarningDaysAttribute != null){
-	                    if (attrs.get(LdapPasswordWarningCheck.this.WarningDaysAttribute) != null) {
-	                        String warn = (String) attrs.get(LdapPasswordWarningCheck.this.WarningDaysAttribute).get();
-	                        result.setWarnDaysResult(warn);
-	                    }
-                    }
-                    
-                    if (LdapPasswordWarningCheck.this.noWarnAttribute != null){
-	                    if (attrs.get(LdapPasswordWarningCheck.this.noWarnAttribute) != null) {
-	                        String Attrib = (String) attrs.get(LdapPasswordWarningCheck.this.noWarnAttribute).get();
-	                        result.setNoWarnAttributeResult(Attrib);
-	                    }
-                    }
-                    
-                    if (WarningCheckType.equals(CHECK_TYPE_PWDCHANGE)) { 
-                    	if (attrs.get(LdapPasswordWarningCheck.this.ValidDaysAttribute) != null) {
-                    		String valid = (String) attrs.get(LdapPasswordWarningCheck.this.ValidDaysAttribute).get();
-                    		result.setValidDaysResult(valid);
-                    	}
-                    }
-
-                    return result;
-                }
-            };
-
-            List<?> LdapResultList = this.ldapTemplate.search(this.searchBase,searchFilter, getSearchControls(this.attributeIds), mapper);
-
-            return (LdapResult) LdapResultList.get(0);
-
-        } catch (Exception e) {
-            logger.error("Error searching the directory",e);
-            return null;
+        if (dateAttribute == null) {
+            msgToLog = "Date attribute is not configured.";
+            final LdapPasswordEnforcementException exc = new LdapPasswordEnforcementException("error.authentication.credentials.bad", msgToLog);
+            logger.error(msgToLog, exc);
+            throw exc;
         }
+
+        attributeList.add(dateAttribute);
+
+        if (warningDaysAttribute != null)
+            attributeList.add(warningDaysAttribute);
+
+        if (validDaysAttribute != null)
+            attributeList.add(validDaysAttribute);
+
+        if (noWarnAttribute != null)
+            attributeList.add(noWarnAttribute);
+
+        attributeIds = new String[attributeList.size()];
+        attributeList.toArray(attributeIds);
+
+        final LdapResult ldapResult = getResultsFromLDAP(userId);
+
+        if (ldapResult == null) {
+            msgToLog = "No LDAP entry was found for user " + userId;
+            logger.warn(msgToLog);
+            throw new LdapPasswordEnforcementException(BadCredentialsAuthenticationException.CODE, msgToLog);
+        }
+
+        final String warnDaysResult = ldapResult.getWarnDaysResult();
+        final String validDaysResult = ldapResult.getValidDaysResult();
+        final String warnAttribute = ldapResult.getNoWarnAttributeResult();
+
+        logger.debug("Warning flag is set to: " + warnAttribute);
+
+        if (noWarnAttribute != null)
+            if (noWarnValues.contains(warnAttribute)) {
+                logger.info("No warning flag is set. Skipping password warning check");
+                return -1;
+            }
+
+        if (warnDaysResult == null)
+            logger.debug("No warning days value is found for " + userId + ". Using system default of " + warningDays);
+        else
+            warningDays = Integer.parseInt(warnDaysResult);
+
+        final long currentTime = new Date().getTime();
+        long expireTime = currentTime;
+
+        if (warningCheckType.equalsIgnoreCase(CHECK_TYPE_PWDCHANGE)) {
+            final String changeDateResult = ldapResult.getDateResult();
+            logger.debug("Calculating warning period from last change date");
+            logger.debug("warnDays=" + warnDaysResult);
+            logger.debug("changeDate=" + changeDateResult);
+            logger.debug("validDays=" + validDaysResult);
+
+            if (changeDateResult == null) {
+                msgToLog = "No password change date for " + userId;
+                logger.warn(msgToLog);
+                throw new LdapPasswordEnforcementException(LdapPasswordEnforcementException.CODE_PASSWORD_CHANGE, msgToLog);
+            }
+
+            GregorianCalendar changeDate = new GregorianCalendar();
+            if (isUsingActiveDirectory())
+                changeDate = convertDateAD(changeDateResult);
+            else {
+                changeDate = convertDate(changeDateResult, dateFormat);
+                if (changeDate == null) {
+                    msgToLog = "Last password change date is invalid.";
+                    logger.warn(msgToLog);
+                    throw new LdapPasswordEnforcementException(LdapPasswordEnforcementException.CODE_PASSWORD_CHANGE, msgToLog);
+                }
+            }
+
+            if (validDaysResult == null)
+                logger.debug("No maximum password age found for " + userId + ". Using system default of " + validDays + " days");
+            else
+                validDays = Integer.parseInt(validDaysResult);
+
+            //Password expiration is the time the password was last changed plus the maximum password age
+            final long validPeriod = validDays * Timer.ONE_DAY;
+            final long changeTime = changeDate.getTime().getTime();
+            expireTime = changeTime + validPeriod;
+
+            //The expiration date is stored in LDAP
+        } else if (warningCheckType.equalsIgnoreCase(CHECK_TYPE_PWDEXPIRE)) {
+
+            final String expireDateResult = ldapResult.getDateResult();
+            logger.debug("Calculating warning period from expiration date...");
+            logger.debug("warnDays=" + warnDaysResult);
+            logger.debug("expireDate=" + expireDateResult);
+
+            if (expireDateResult == null) {
+                msgToLog = "LDAP expiration date value for " + userId + " is null.";
+                logger.warn(msgToLog);
+                throw new LdapPasswordEnforcementException(LdapPasswordEnforcementException.CODE_PASSWORD_CHANGE, msgToLog);
+            }
+
+            final GregorianCalendar expireDate = convertDate(expireDateResult, dateFormat);
+            if (expireDate == null) {
+                msgToLog = "The calculated expiration date to calendar time is null.";
+                logger.warn(msgToLog);
+                throw new LdapPasswordEnforcementException(LdapPasswordEnforcementException.CODE_PASSWORD_CHANGE, msgToLog);
+            }
+
+            expireTime = expireDate.getTime().getTime();
+
+        } else {
+            msgToLog = "Invalid value for 'warningCheckType': " + warningCheckType;
+            logger.warn(msgToLog);
+            throw new LdapPasswordEnforcementException(LdapPasswordEnforcementException.CODE_PASSWORD_CHANGE, msgToLog);
+        }
+
+        final float dateDiff = expireTime - currentTime;
+        final float warnPeriod = warningDays * Timer.ONE_DAY;
+
+        logger.debug("Current time=" + currentTime / 1000);
+        logger.debug("Expiration time=" + expireTime / 1000);
+        logger.debug("Difference in seconds=" + dateDiff);
+        logger.debug("Warn period in seconds=" + warnPeriod);
+
+        //The LDAP server should have thrown an error because the password has already expired
+        if (dateDiff < 0) {
+            msgToLog = "Expiration date has passed for " + userId + " but authentication succeeded.";
+            logger.warn(msgToLog);
+            throw new LdapPasswordEnforcementException(LdapPasswordEnforcementException.CODE_PASSWORD_EXPIRED, msgToLog);
+        }
+
+        final int daysToExpirationDate = Math.round(dateDiff / Timer.ONE_DAY);
+        if (warnAll) {
+            logger.info("The password for " + userId + " will expire in " + daysToExpirationDate + " days");
+            return daysToExpirationDate;
+        }
+
+        final int comp = Float.compare(dateDiff, warnPeriod);
+        if (comp > 0) {
+            logger.debug("Skip warning. The password for " + userId + " will expire in " + daysToExpirationDate + " days");
+            return -1;
+        } else {
+            logger.info("Show warning. The password for " + userId + " will expire in " + daysToExpirationDate + " days");
+            return daysToExpirationDate;
+        }
+
     }
 
     /**
@@ -378,8 +324,25 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
      * 
      * @param dataSource the datasource to use.
      */
-    public final void setContextSource(final ContextSource contextSource) {
-        this.ldapTemplate = new LdapTemplate(contextSource);
+    public void setContextSource(final ContextSource contextSource) {
+        ldapTemplate = new LdapTemplate(contextSource);
+    }
+
+    /**
+     * @param DateAttribute The DateAttribute to set.
+     */
+    public void setDateAttribute(final String DateAttribute) {
+        dateAttribute = DateAttribute;
+        logger.info("Date Attribute: '" + DateAttribute + "'");
+    }
+
+    /**
+     * @param dateFormat String to pass to SimpleDateFormat() that describes the
+     * date in the ExpireDateAttribute. This parameter is required.
+     */
+    public void setDateFormat(final String dateFormat) {
+        this.dateFormat = dateFormat;
+        logger.info("Date format: '" + dateFormat + "'");
     }
 
     /**
@@ -387,92 +350,89 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
      */
     public void setFilter(final String filter) {
         this.filter = filter;
-        this.logger.info("Search Filter: '" + filter + "'");
-    }
-    
-    /**
-     * @param warnAll Disregard warningPeriod and warn all users of password expiration.
-     */
-    public final void setWarnAll(Boolean warnAll) {
-        this.WarnAll = warnAll;
-        this.logger.info("warnAll: '" + warnAll + "'");
+        logger.info("Search Filter: '" + filter + "'");
     }
 
-    /**
-     * @param warningCheckType The warningCheckType to set.
-     */
-    public final void setWarningCheckType(String WarningCheckType) {
-        this.WarningCheckType = WarningCheckType;
-        this.logger.info("warningCheckType: '" + WarningCheckType + "'");
-    }
-    
-    /**
-     * @param DateAttribute The DateAttribute to set.
-     */
-    public final void setDateAttribute(String DateAttribute) {
-        this.DateAttribute = DateAttribute;
-        this.logger.info("Date Attribute: '" + DateAttribute + "'");
-    }
-	
-    /**
-     * @param WarningDaysAttribute The WarningDaysAttribute to set.
-     */
-    public final void setWarningDaysAttribute(String WarningDaysAttribute) {
-        this.WarningDaysAttribute = WarningDaysAttribute;
-        this.logger.info("Warning Days Attribute: '" + WarningDaysAttribute + "'");
-    }
-    
-    /**
-     * @param ValidDaysAttribute The ValidDaysAttribute to set.
-     */
-    public final void setValidDaysAttribute(String ValidDaysAttribute) {
-        this.ValidDaysAttribute = ValidDaysAttribute;
-        this.logger.info("Valid Days Attribute: '" + ValidDaysAttribute + "'");
-    }
-
-    /**
-     * @param filter The scope to set.
-     */
-    public final void setScope(final int scope) {
-        this.scope = scope;
+    public void setIgnorePartialResultException(final boolean ignorePartialResultException) {
+        this.ignorePartialResultException = ignorePartialResultException;
     }
 
     /**
      * @param maxNumberResults The maxNumberResults to set.
      */
-    public final void setMaxNumberResults(final int maxNumberResults) {
+    public void setMaxNumberResults(final int maxNumberResults) {
         this.maxNumberResults = maxNumberResults;
+    }
+
+    /**
+     * @param noWarnAttribute The noWarnAttribute to set.
+     */
+    public void setNoWarnAttribute(final String noWarnAttribute) {
+        this.noWarnAttribute = noWarnAttribute;
+        logger.info("LDAP Attribute to flag warning bypass: '" + noWarnAttribute + "'");
+    }
+
+    /**
+     * @param noWarnAttribute The noWarnAttribute to set.
+     */
+    public void setNoWarnValues(final List<String> noWarnValues) {
+        this.noWarnValues = noWarnValues;
+        logger.info("Value to flag warning bypass: '" + noWarnValues.toString() + "'");
+    }
+
+    /**
+     * @param filter The scope to set.
+     */
+    public void setScope(final int scope) {
+        this.scope = scope;
     }
 
     /**
      * @param searchBase The searchBase to set.
      */
-    public final void setSearchBase(final String searchBase) {
+    public void setSearchBase(final String searchBase) {
         this.searchBase = searchBase;
-        this.logger.info("LDAP Search Base: '" + searchBase + "'");
-    }
-
-    /**
-     * @param noWarnAttribute The noWarnAttribute to set.
-     */
-    public final void setNoWarnAttribute(final String noWarnAttribute) {
-        this.noWarnAttribute = noWarnAttribute;
-        this.logger.info("LDAP Attribute to flag warning bypass: '" + noWarnAttribute + "'");
-    }
-
-    /**
-     * @param noWarnAttribute The noWarnAttribute to set.
-     */
-    public final void setNoWarnValues(final List<String> noWarnValues) {
-        this.noWarnValues = noWarnValues;
-        this.logger.info("Value to flag warning bypass: '" + noWarnValues.toString() + "'");
+        logger.info("LDAP Search Base: '" + searchBase + "'");
     }
 
     /**
      * @param timeout The timeout to set.
      */
-    public final void setTimeout(final int timeout) {
+    public void setTimeout(final int timeout) {
         this.timeout = timeout;
+    }
+
+    /**
+     * @param validDays Number of days that a password is valid for.
+     * Used as a default if DateAttribute is not set or is not found in the LDAP results
+     */
+    public void setValidDays(final int validDays) {
+        this.validDays = validDays;
+        logger.info("Password max age in days: " + validDays);
+    }
+
+    /**
+     * @param ValidDaysAttribute The ValidDaysAttribute to set.
+     */
+    public void setValidDaysAttribute(final String ValidDaysAttribute) {
+        validDaysAttribute = ValidDaysAttribute;
+        logger.info("Valid Days Attribute: '" + ValidDaysAttribute + "'");
+    }
+
+    /**
+     * @param warnAll Disregard warningPeriod and warn all users of password expiration.
+     */
+    public void setWarnAll(final Boolean warnAll) {
+        this.warnAll = warnAll;
+        logger.info("warnAll: '" + warnAll + "'");
+    }
+
+    /**
+     * @param warningCheckType The warningCheckType to set.
+     */
+    public void setWarningCheckType(final String WarningCheckType) {
+        warningCheckType = WarningCheckType;
+        logger.info("warningCheckType: '" + WarningCheckType + "'");
     }
 
     /**
@@ -480,74 +440,122 @@ public class LdapPasswordWarningCheck extends AbstractPasswordWarningCheck {
      * message is displayed to set. Used as a default if warningDaysAttribute is
      * not set or is not found in the LDAP results. This parameter is required.
      */
-    public final void setWarningDays(final int warningDays) {
+    public void setWarningDays(final int warningDays) {
         this.warningDays = warningDays;
-        this.logger.info("Default Warning Days: '" + warningDays + "'");
-    }
-    
-    /**
-     * @param validDays Number of days that a password is valid for.
-     * Used as a default if DateAttribute is not set or is not found in the LDAP results
-     */
-    public final void setValidDays(final int validDays) {
-        this.validDays = validDays;
-        this.logger.info("Password Max Age (in days): '" + validDays + "'");
+        logger.info("Default warning days: " + warningDays);
     }
 
     /**
-     * @param dateFormat String to pass to SimpleDateFormat() that describes the
-     * date in the ExpireDateAttribute. This parameter is required.
+     * @param WarningDaysAttribute The WarningDaysAttribute to set.
      */
-    public final void setDateFormat(final String dateFormat) {
-        this.dateFormat = dateFormat;
-        this.logger.info("Date format: '" + dateFormat + "'");
-    }
-    
-    public final void setIgnorePartialResultException(final boolean ignorePartialResultException) {
-        this.ignorePartialResultException = ignorePartialResultException;
+    public void setWarningDaysAttribute(final String WarningDaysAttribute) {
+        warningDaysAttribute = WarningDaysAttribute;
+        logger.info("Warning Days Attribute: '" + WarningDaysAttribute + "'");
     }
 
-    /**
-     * Class to hold the data returned from LDAP
-     * 
-     */
-    public class LdapResult {
+    private GregorianCalendar convertDate(final String ldapResult, final String dateFormat) {
+        final DateFormat format = new SimpleDateFormat(dateFormat);
+        format.setTimeZone(java.util.TimeZone.getTimeZone("Zulu"));
+        format.setLenient(false);
+        Date date = null;
+        try {
+            date = format.parse(ldapResult);
+        } catch (final ParseException e) {
+            logger.warn("The attribute " + dateAttribute + " with value " + ldapResult + " should contain a date in the format " + dateFormat);
+            return null;
+        }
+        final GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
 
-        String warnDaysResult;
-        String validDaysResult;
-        String DateResult;
-        String noWarnAttributeResult;
-        
-        public String getWarnDaysResult() {
-            return warnDaysResult;
-        }
+        return calendar;
+    }
 
-        public void setWarnDaysResult(String warn) {
-            this.warnDaysResult = warn;
-        }
-        
-        public String getNoWarnAttributeResult() {
-            return noWarnAttributeResult;
-        }
+    private GregorianCalendar convertDateAD(final String pwdLastSet) {
+        final long l = Long.parseLong(pwdLastSet.trim());
+        long t = l / INTERVALS_PER_MILLISECOND;
+        logger.debug("pwdLastSet= " + t + " millisec since 1601");
 
-        public void setNoWarnAttributeResult(String noWarnAttributeResult) {
-            this.noWarnAttributeResult = noWarnAttributeResult;
-        }
+        t -= MILLISECONDS_BETWEEN_1601_AND_1970;
+        logger.debug("pwdLastSet= " + t + " millisec since 1970");
 
-        public String getValidDaysResult() {
-            return validDaysResult;
-        }
+        final GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(t);
+        logger.debug("pwdLastSet= " + calendar.getTime().toString());
+        return calendar;
+    }
 
-        public void setValidDaysResult(String valid) {
-            this.validDaysResult = valid;
+    private LdapResult getResultsFromLDAP(final String userID) {
+        final String searchFilter = LdapUtils.getFilterWithValues(filter, userID);
+
+        logger.debug("LDAP: starting search with searchFilter '" + searchFilter + "'");
+
+        String attributeListLog = attributeIds[0];
+
+        for (int i = 1; i < attributeIds.length; i++)
+            attributeListLog = attributeListLog.concat(":" + attributeIds[i]);
+
+        logger.debug("LDAP: Returning attributes '" + attributeListLog + "'");
+
+        try {
+            // searching the directory
+
+            final AttributesMapper mapper = new AttributesMapper() {
+
+                public Object mapFromAttributes(final Attributes attrs) throws NamingException {
+                    final LdapResult result = new LdapResult();
+
+                    if (dateAttribute != null)
+                        if (attrs.get(dateAttribute) != null) {
+                            final String date = (String) attrs.get(dateAttribute).get();
+                            result.setDateResult(date);
+                        }
+
+                    if (warningDaysAttribute != null)
+                        if (attrs.get(warningDaysAttribute) != null) {
+                            final String warn = (String) attrs.get(warningDaysAttribute).get();
+                            result.setWarnDaysResult(warn);
+                        }
+
+                    if (noWarnAttribute != null)
+                        if (attrs.get(noWarnAttribute) != null) {
+                            final String Attrib = (String) attrs.get(noWarnAttribute).get();
+                            result.setNoWarnAttributeResult(Attrib);
+                        }
+
+                    if (warningCheckType.equalsIgnoreCase(CHECK_TYPE_PWDCHANGE))
+                        if (attrs.get(validDaysAttribute) != null) {
+                            final String valid = (String) attrs.get(validDaysAttribute).get();
+                            result.setValidDaysResult(valid);
+                        }
+
+                    return result;
+                }
+            };
+
+            final List<?> LdapResultList = ldapTemplate.search(searchBase, searchFilter, getSearchControls(attributeIds), mapper);
+
+            if (LdapResultList.size() > 0)
+                return (LdapResult) LdapResultList.get(0);
+        } catch (final Exception e) {
+            logger.error("Error searching the directory", e);
+
         }
-        
-        public String getDateResult() {
-            return DateResult;
-        }
-        
-        public void setDateResult(String date) {
-            this.DateResult = date;
-        }
+        return null;
+
+    }
+
+    private SearchControls getSearchControls(final String[] attributeIds) {
+        final SearchControls constraints = new SearchControls();
+
+        constraints.setSearchScope(scope);
+        constraints.setReturningAttributes(this.attributeIds);
+        constraints.setTimeLimit(timeout);
+        constraints.setCountLimit(maxNumberResults);
+
+        return constraints;
+    }
+
+    private boolean isUsingActiveDirectory() {
+        return dateFormat.equalsIgnoreCase("ActiveDirectory") || dateFormat.equalsIgnoreCase("AD");
     }
 }

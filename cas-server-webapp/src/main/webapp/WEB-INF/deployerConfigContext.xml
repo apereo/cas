@@ -101,13 +101,91 @@
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
 					+-->
+                
+         		<bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+		                p:filter="${ldap.authentication.filter}"
+		                p:searchBase="${ldap.authentication.basedn}"
+		                p:contextSource-ref="contextSource"
+		                p:searchContextSource-ref="pooledContextSource"
+		                p:ignorePartialResultException="${ldap.authentication.ignorePartialResultException}"/>
+             
+             <!-- 
 				<bean
 					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+			  -->
+			  
 			</list>
 		</property>
 	</bean>
 
+  <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+    <!-- DO NOT enable JNDI pooling for context sources that perform LDAP bind operations. -->
+    <property name="pooled" value="false"/>
+    
+    <!--
+      Although multiple URLs may defined, it's strongly recommended to avoid this configuration
+      since the implementation attempts hosts in sequence and requires a connection timeout
+      prior to attempting the next host, which incurs unacceptable latency on node failure.
+      A proper HA setup for LDAP directories should use a single virtual host that maps to multiple
+      real hosts using a hardware load balancer.
+    -->
+    <property name="urls">
+	    <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+	        <constructor-arg type="java.lang.String" value="${ldap.authentication.server.urls}"/>
+	    </bean>
+	</property>
 
+     
+
+    <!--
+      Manager credentials are only required if your directory does not support anonymous searches.
+      Never provide these credentials for FastBindLdapAuthenticationHandler since the user's
+      credentials are used for the bind operation.
+    -->
+    <property name="userDn" value="${ldap.authentication.manager.userdn}"/>
+    <property name="password" value="${ldap.authentication.manager.password}"/>
+
+    <!-- Place JNDI environment properties here. -->
+    <property name="baseEnvironmentProperties">
+      <map>
+        <!-- Three seconds is an eternity to users. -->
+        <entry key="com.sun.jndi.ldap.connect.timeout" value="${ldap.authentication.jndi.connect.timeout}" />
+        <entry key="com.sun.jndi.ldap.read.timeout" value="${ldap.authentication.jndi.read.timeout}" />
+   
+        <!-- Explained at http://download.oracle.com/javase/1.3/docs/api/javax/naming/Context.html#SECURITY_AUTHENTICATION -->
+        <entry key="java.naming.security.authentication" value="${ldap.authentication.jndi.security.level}" />
+      </map>
+    </property>
+  </bean>
+    
+
+  <bean id="dirContextValidator"
+    class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"
+    p:base=""
+    p:filter="objectclass=*">
+    <property name="searchControls">
+      <bean class="javax.naming.directory.SearchControls"
+        p:timeLimit="1000"
+        p:countLimit="1"
+        p:searchScope="0"
+        p:returningAttributes="" />
+    </property>
+  </bean>
+
+
+  <bean id="pooledContextSource"
+    class="org.springframework.ldap.pool.factory.PoolingContextSource"
+    p:minIdle="${ldap.authentication.pool.minIdle}"
+    p:maxIdle="${ldap.authentication.pool.maxIdle}"
+    p:maxActive="${ldap.authentication.pool.maxSize}"
+    p:maxWait="${ldap.authentication.pool.maxWait}"
+    p:timeBetweenEvictionRunsMillis="${ldap.authentication.pool.evictionPeriod}"
+    p:minEvictableIdleTimeMillis="${ldap.authentication.pool.idleTime}"
+    p:testOnBorrow="${ldap.authentication.pool.testOnBorrow}"
+    p:testWhileIdle="${ldap.authentication.pool.testWhileIdle}"
+    p:dirContextValidator-ref="dirContextValidator"
+    p:contextSource-ref="contextSource" />
+   
 	<!--
 	This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
 	More robust deployments will want to use another option, such as the Jdbc version.

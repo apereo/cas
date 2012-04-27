@@ -5,13 +5,8 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.util.LdapUtils;
-import org.springframework.ldap.core.ContextSource;
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.NameClassPairCallbackHandler;
-import org.springframework.ldap.core.SearchExecutor;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
@@ -20,8 +15,15 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.NameClassPairCallbackHandler;
+import org.springframework.ldap.core.SearchExecutor;
+import org.springframework.ldap.pool.factory.PoolingContextSource;
 
 /**
  * Performs LDAP authentication via two distinct steps:
@@ -65,31 +67,28 @@ public class BindLdapAuthenticationHandler extends
     /** Boolean of whether multiple accounts are allowed. */
     private boolean allowMultipleAccounts;
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
 
         final List<String> cns = new ArrayList<String>();
-        
+
         final SearchControls searchControls = getSearchControls();
-        
+
         final String base = this.searchBase;
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String filter = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
-        this.getLdapTemplate().search(
-            new SearchExecutor() {
 
-                public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
-                    return context.search(base, filter, searchControls);
-                }
-            },
-            new NameClassPairCallbackHandler(){
+        log.debug("Executinng LDAP search on base " + base);
 
-                public void handleNameClassPair(final NameClassPair nameClassPair) {
-                    cns.add(nameClassPair.getNameInNamespace());
-                }
-            });
-        
+        this.getLdapTemplate().search(new SearchExecutor() {
+            public NamingEnumeration<?> executeSearch(final DirContext context) throws NamingException {
+                return context.search(base, filter, searchControls);
+            }
+        }, new NameClassPairCallbackHandler() {
+            public void handleNameClassPair(final NameClassPair nameClassPair) {
+                cns.add(nameClassPair.getNameInNamespace());
+            }
+        });
+
         if (cns.isEmpty()) {
             log.info("Search for " + filter + " returned 0 results.");
             return false;
@@ -98,15 +97,13 @@ public class BindLdapAuthenticationHandler extends
             log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
             return false;
         }
-        
+
         for (final String dn : cns) {
             DirContext test = null;
             String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
                 this.log.debug("Performing LDAP bind with credential: " + dn);
-                test = this.getContextSource().getContext(
-                    finalDn,
-                    getPasswordEncoder().encode(credentials.getPassword()));
+                test = this.getContextSource().getContext(finalDn, getPasswordEncoder().encode(credentials.getPassword()));
 
                 if (test != null) {
                     return true;
