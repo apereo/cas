@@ -676,7 +676,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <properties>
     <issues.projectKey>CAS</issues.projectKey>
     <scm.path>/cas3</scm.path>
-    <spring.webflow.version>2.3.0.RELEASE</spring.webflow.version>
+    <spring.webflow.version>2.3.1.RELEASE</spring.webflow.version>
     <spring.version>3.1.1.RELEASE</spring.version>
     <spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
     <spring.security.version>3.1.0.RELEASE</spring.security.version>
