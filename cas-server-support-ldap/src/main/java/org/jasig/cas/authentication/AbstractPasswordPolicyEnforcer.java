@@ -18,7 +18,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @version 1.1 3/30/2009 11:47:37
  * 
  */
-public abstract class AbstractPasswordWarningCheck implements PasswordWarningCheck, InitializingBean {
-    protected static Logger logger = LoggerFactory.getLogger(AbstractPasswordWarningCheck.class);
+public abstract class AbstractPasswordPolicyEnforcer implements PasswordPolicyEnforcer, InitializingBean {
+    protected static Logger logger = LoggerFactory.getLogger(AbstractPasswordPolicyEnforcer.class);
 
 }

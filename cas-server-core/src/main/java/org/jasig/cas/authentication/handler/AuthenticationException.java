@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * The most generic type of authentication exception that one can catch if not
  * sure what specific implementation will be thrown. Top of the tree of all
  * other AuthenticationExceptions.
- * 
+ *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
@@ -31,7 +31,7 @@ public abstract class AuthenticationException extends Exception {
      * Constructor that takes a code description of the error. These codes
      * normally have a corresponding entries in the messages file for the
      * internationalization of error messages.
-     * 
+     *
      * @param code The short unique identifier for this error.
      */
     public AuthenticationException(final String code) {
@@ -42,7 +42,7 @@ public abstract class AuthenticationException extends Exception {
      * Constructor that takes a code description of the error. These codes
      * normally have a corresponding entries in the messages file for the
      * internationalization of error messages.
-     * 
+     *
      * @param code The short unique identifier for this error.
      * @param message The error message associated with this exception for additional logging purposes.
      */
@@ -55,7 +55,7 @@ public abstract class AuthenticationException extends Exception {
      * Constructor that takes a code description of the error and the chained
      * exception. These codes normally have a corresponding entries in the
      * messages file for the internationalization of error messages.
-     * 
+     *
      * @param code The short unique identifier for this error.
      * @param throwable The chained exception for this AuthenticationException
      */
@@ -66,7 +66,7 @@ public abstract class AuthenticationException extends Exception {
 
     /**
      * Method to return the unique identifier for this error type.
-     * 
+     *
      * @return the String identifier for this error type.
      */
     public final String getCode() {
@@ -75,6 +75,9 @@ public abstract class AuthenticationException extends Exception {
 
     @Override
     public final String toString() {
-        return getCode();
+        String msg = getCode();
+        if (getMessage() != null && getMessage().trim().length() > 0)
+            msg = ": " + getMessage();
+        return msg;
     }
 }

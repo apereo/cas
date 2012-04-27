@@ -5,17 +5,16 @@
  */
 package org.jasig.cas.authentication;
 
-public class LdapPasswordEnforcementException extends LdapAuthenticationException {
+public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationException {
 
-    public static final String CODE_PASSWORD_CHANGE ="screen.accounterror.password.message";
+    public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.password.message";
 
     public static final String CODE_PASSWORD_EXPIRED = "screen.accounterror.passwordexpired.message";
 
     private static final long  serialVersionUID      = 4365292208441435202L;
 
-    public LdapPasswordEnforcementException(final String code, final String msg) {
+    public LdapPasswordPolicyEnforcementException(final String code, final String msg) {
         super(code, msg);
-
     }
 
 }

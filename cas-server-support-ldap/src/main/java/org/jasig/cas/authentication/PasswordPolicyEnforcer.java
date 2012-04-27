@@ -12,11 +12,11 @@ package org.jasig.cas.authentication;
  * @version $Revision: 1.0 $ $Date: 2006/12/13 14:28:05 $
  * @since 3.1
  */
-public interface PasswordWarningCheck {
+public interface PasswordPolicyEnforcer {
     /**
      * @param userID The unique ID of the user
      * @return Code for this status
      */
-    public int getNumberOfDaysToPasswordExpirationDate(String userID) throws LdapPasswordEnforcementException;
+    public int getNumberOfDaysToPasswordExpirationDate(String userID) throws LdapPasswordPolicyEnforcementException;
     
 }
