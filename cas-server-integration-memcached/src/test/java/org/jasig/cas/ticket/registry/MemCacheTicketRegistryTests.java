@@ -5,22 +5,20 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.net.InetSocketAddress;
+import java.io.IOException;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.thimbleware.jmemcached.CacheImpl;
-import com.thimbleware.jmemcached.Key;
-import com.thimbleware.jmemcached.LocalCacheElement;
-import com.thimbleware.jmemcached.MemCacheDaemon;
-import com.thimbleware.jmemcached.storage.hash.ConcurrentLinkedHashMap;
-import junit.framework.Assert;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.junit.After;
+import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -39,13 +37,13 @@ public class MemCacheTicketRegistryTests {
 
     private ApplicationContext context;
 
-    private MemCacheDaemon<LocalCacheElement> daemon;
-
     private MemCacheTicketRegistry registry;
 
     private final String registryBean;
 
     private final boolean binaryProtocol;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
         registryBean = beanName;
@@ -62,25 +60,21 @@ public class MemCacheTicketRegistryTests {
 
     @Before
     public void setUp() {
-        daemon = new MemCacheDaemon<LocalCacheElement>();
-        daemon.setCache(new CacheImpl(
-                ConcurrentLinkedHashMap.<Key, LocalCacheElement>create(
-                        ConcurrentLinkedHashMap.EvictionPolicy.FIFO, 100, 1024)));
-        daemon.setBinary(binaryProtocol);
-        daemon.setAddr(new InetSocketAddress("127.0.0.1", 11211));
-        daemon.setIdleTime(30);
-        daemon.setVerbose(true);
-        daemon.start();
+        // Memcached is a required external test fixture.
+        // Abort tests if there is no memcached server available on localhost:11211.
+        final boolean environmentOk = isMemcachedListening();
+        if (!environmentOk) {
+            logger.warn("Aborting test since no memcached server is available on localhost.");
+        }
+        Assume.assumeTrue(environmentOk);
 
-        // Have to start memcached listener before starting Spring context since memcached beans need it
         context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
         registry = context.getBean(registryBean, MemCacheTicketRegistry.class);
     }
 
     @Test
     public void testWriteGetDelete() throws Exception {
-        Assert.assertNotNull(registry);
-        final String id = "ST-1234567890ABCDEFGHIJKL-node";
+        final String id = "ST-1234567890ABCDEFGHIJKL-crud";
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
         when(ticket.getId()).thenReturn(id);
         registry.addTicket(ticket);
@@ -91,8 +85,33 @@ public class MemCacheTicketRegistryTests {
         Assert.assertNull(registry.getTicket(id));
     }
 
-    @After
-    public void tearDown() {
-        daemon.stop();
+    @Test
+    public void testExpiration() throws Exception {
+        final String id = "ST-1234567890ABCDEFGHIJKL-exp";
+        final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
+        when(ticket.getId()).thenReturn(id);
+        registry.addTicket(ticket);
+        Assert.assertNotNull((ServiceTicket) registry.getTicket(id));
+        // Sleep a little longer than service ticket expiry defined in Spring context
+        Thread.sleep(2100);
+        Assert.assertNull((ServiceTicket) registry.getTicket(id));
+    }
+
+    private boolean isMemcachedListening() {
+        Socket socket = null;
+        try {
+            socket = new Socket("127.0.0.1", 11211);
+            return true;
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (socket != null) {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    // Ignore errors on close
+                }
+            }
+        }
     }
 }

@@ -46,13 +46,13 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
     private final MemcachedClient client;
 
     /**
-     * TGT cache entry timeout in ms
+     * TGT cache entry timeout in seconds.
      */
     @Min(0)
     private final int tgtTimeout;
 
     /**
-     * ST cache entry timeout in ms
+     * ST cache entry timeout in seconds.
      */
     @Min(0)
     private final int stTimeout;
@@ -71,8 +71,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
         } catch (final IOException e) {
             throw new IllegalArgumentException("Invalid memcached host specification.", e);
         }
-        this.tgtTimeout = ticketGrantingTicketTimeOut * 1000;
-        this.stTimeout = serviceTicketTimeOut * 1000;
+        this.tgtTimeout = ticketGrantingTicketTimeOut;
+        this.stTimeout = serviceTicketTimeOut;
     }
 
     /**
@@ -86,7 +86,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      */
     @Deprecated
     public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut, final String[] hostnames) {
-        this(hostnames, (int) ticketGrantingTicketTimeOut, (int) serviceTicketTimeOut);
+        this(hostnames, (int) (ticketGrantingTicketTimeOut / 1000), (int) (serviceTicketTimeOut / 1000));
     }
 
     /**
@@ -98,8 +98,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
     public MemCacheTicketRegistry(final MemcachedClient client, final int ticketGrantingTicketTimeOut, final int serviceTicketTimeOut) {
-        this.tgtTimeout = ticketGrantingTicketTimeOut * 1000;
-        this.stTimeout = serviceTicketTimeOut * 1000;
+        this.tgtTimeout = ticketGrantingTicketTimeOut;
+        this.stTimeout = serviceTicketTimeOut;
         this.client = client;
     }
 
