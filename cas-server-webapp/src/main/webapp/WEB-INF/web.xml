@@ -68,19 +68,6 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <!-- Uncomment for ClearPass support -->
-  <!--
-  <filter>
-    <filter-name>clearPassFilterChainProxy</filter-name>
-    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>clearPassFilterChainProxy</filter-name>
-    <url-pattern>/clearPass</url-pattern>
-  </filter-mapping>
-  -->
-    
-
   <!--
     - Configures Log4J for this web app.
     - As this context specifies a context-param "log4jConfigLocation", its file path
@@ -144,14 +131,6 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-
-  <!-- Uncomment to enable ClearPass support -->
-  <!--
-  <servlet-mapping>
-	<servlet-name>cas</servlet-name>
-	<url-pattern>/clearPass</url-pattern>
-  </servlet-mapping>
-  -->
 	
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
