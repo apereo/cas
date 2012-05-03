@@ -33,12 +33,22 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
 
     private PasswordPolicyEnforcer passwordPolicyEnforcer;
 
+    private String                 passwordPolicyUrl;
+
     public final PasswordPolicyEnforcer getPasswordPolicyEnforcer() {
         return this.passwordPolicyEnforcer;
     }
 
+    public String getPasswordPolicyUrl() {
+        return this.passwordPolicyUrl;
+    }
+
     public void setPasswordPolicyEnforcer(final PasswordPolicyEnforcer enforcer) {
         this.passwordPolicyEnforcer = enforcer;
+    }
+
+    public void setPasswordPolicyUrl(final String passwordPolicyUrl) {
+        this.passwordPolicyUrl = passwordPolicyUrl;
     }
 
     private void populateErrorsInstance(final LdapAuthenticationException e, final RequestContext reqCtx) {
@@ -68,7 +78,6 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
         final String userId = credentials.getUsername();
 
         Event returnedEvent = error();
-
         String msgToLog = null;
 
         try {
@@ -120,6 +129,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
             populateErrorsInstance(e, context);
             returnedEvent = error();
         } finally {
+
 
             if (this.logger.isDebugEnabled())
                 this.logger.debug("Switching to flow event id " + returnedEvent.getId() + " for user " + userId);

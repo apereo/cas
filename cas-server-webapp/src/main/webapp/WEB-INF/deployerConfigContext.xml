@@ -104,6 +104,14 @@
           | edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
           +-->
 
+      <!--
+      | Sample LPPE-enabled Ldap authentication handler with errors codes defined as a regex pattern.
+      | Each error type will redirect the user to a particular view state defined in the flow.
+      | Unhandled error codes/types will prevent authentication.
+      |
+      | To disable LPPE error handling, simply reove the entire ldapErrorDefinitions block.
+      -->
+      <!--
        <bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
           p:filter="${ldap.authentication.filter}"
           p:searchBase="${ldap.authentication.basedn}"
@@ -139,11 +147,10 @@
             </list>
           </property>
        </bean>
+       -->
 
-       <!--
        <bean
           class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
-         -->
 
       </list>
     </property>

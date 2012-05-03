@@ -51,21 +51,32 @@
     <transition on="gateway" to="gatewayServicesManagementCheck" />
   </action-state>
 
-  <end-state id="pwdWarningPostView" view="casWarnPassView" />
-  <end-state id="casExpiredPassView" view="casExpiredPassView" />
+  <end-state id="pwdWarningAbstractView">
+    <on-entry>
+      <set name="flowScope.passwordPolicyUrl" value="passwordPolicyAction.getPasswordPolicyUrl()" />
+    </on-entry>
+  </end-state>
+  <end-state id="pwdWarningPostView" view="casWarnPassView" parent="#pwdWarningAbstractView" />
+  <end-state id="casExpiredPassView" view="casExpiredPassView" parent="#pwdWarningAbstractView" />
+  <end-state id="casMustChangePassView" view="casMustChangePassView" parent="#pwdWarningAbstractView" />
   <end-state id="casAccountDisabledView" view="casAccountDisabledView" />
-  <end-state id="casMustChangePassView" view="casMustChangePassView" />
   <end-state id="casAccountLockedView" view="casAccountLockedView" />
   <end-state id="casBadHoursView" view="casBadHoursView" />
   <end-state id="casBadWorkstationView" view="casBadWorkstationView" />
-  <!-- LPPE block ends here... -->
+  <!-- LPPE transitions ends here... -->
 
   <decision-state id="warn">
     <if test="flowScope.warnCookieValue" then="showWarningView" else="redirect" />
   </decision-state>
 
-  <!-- <action-state id="startAuthenticate"> <action bean="x509Check" /> <transition on="success" to="sendTicketGrantingTicket"
-    /> <transition on="warn" to="warn" /> <transition on="error" to="generateLoginTicket" /> </action-state> -->
+  <!--
+  <action-state id="startAuthenticate">
+    <action bean="x509Check" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+    <transition on="warn" to="warn" />
+    <transition on="error" to="generateLoginTicket" />
+  </action-state>
+  -->
 
   <action-state id="generateLoginTicket">
     <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
@@ -85,18 +96,11 @@
     </transition>
   </view-state>
 
-
   <action-state id="realSubmit">
     <evaluate
       expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credentials, messageContext)" />
 
-    <!-- To turn on LPPE, change the value to 'passwordPolicyCheck' -->
     <transition on="warn" to="passwordPolicyCheck" />
-
-    <!--
-      <transition on="warn" to="passwordPolicyCheck" />
-     -->
-
     <transition on="success" to="sendTicketGrantingTicket" />
     <transition on="error" to="generateLoginTicket" />
 

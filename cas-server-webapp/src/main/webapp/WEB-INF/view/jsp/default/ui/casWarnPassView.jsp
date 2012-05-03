@@ -18,7 +18,7 @@
   </p>
 
   <p>
-  <spring:message code="screen.warnpass.message.line1" />
+  <spring:message code="screen.warnpass.message.line1" arguments="${passwordPolicyUrl}"  />
   </p>
   <p>
   <spring:message code="screen.warnpass.message.line2" arguments="${fn:escapeXml(param.service)}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}${ticketArg}" />
