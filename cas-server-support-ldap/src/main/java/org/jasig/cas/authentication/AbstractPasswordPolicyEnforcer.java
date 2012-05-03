@@ -12,13 +12,13 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * Abstract class providing common functionality for checking the account's
  * expiration time.
- * 
+ *
  * @author Eric Pierce
  * @author Jan Van der Velpen
  * @version 1.1 3/30/2009 11:47:37
- * 
+ *
  */
 public abstract class AbstractPasswordPolicyEnforcer implements PasswordPolicyEnforcer, InitializingBean {
-    protected static Logger logger = LoggerFactory.getLogger(AbstractPasswordPolicyEnforcer.class);
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
 }
