@@ -25,7 +25,9 @@ public abstract class AuthenticationException extends Exception {
     protected static Logger   logger           = LoggerFactory.getLogger(AuthenticationException.class);
 
     /** The code to return for resolving to a message description. */
-    private final String code;
+    private final String      code;
+
+    private String            type             = "error";
 
     /**
      * Constructor that takes a code description of the error. These codes
@@ -51,6 +53,12 @@ public abstract class AuthenticationException extends Exception {
         this.code = code;
     }
 
+    public AuthenticationException(final String code, final String msg, final String type) {
+        super(msg);
+        this.code = code;
+        this.type = type;
+    }
+
     /**
      * Constructor that takes a code description of the error and the chained
      * exception. These codes normally have a corresponding entries in the
@@ -71,6 +79,10 @@ public abstract class AuthenticationException extends Exception {
      */
     public final String getCode() {
         return this.code;
+    }
+
+    public final String getType() {
+        return this.type;
     }
 
     @Override

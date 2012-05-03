@@ -9,9 +9,11 @@ public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationEx
 
     public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.password.message";
 
-    public static final String CODE_PASSWORD_EXPIRED = "screen.accounterror.passwordexpired.message";
-
     private static final long  serialVersionUID      = 4365292208441435202L;
+
+    public LdapPasswordPolicyEnforcementException(final String msg) {
+        this(CODE_PASSWORD_CHANGE, msg);
+    }
 
     public LdapPasswordPolicyEnforcementException(final String code, final String msg) {
         super(code, msg);

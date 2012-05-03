@@ -34,11 +34,11 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     private PasswordPolicyEnforcer passwordPolicyEnforcer;
 
     public final PasswordPolicyEnforcer getPasswordPolicyEnforcer() {
-        return passwordPolicyEnforcer;
+        return this.passwordPolicyEnforcer;
     }
 
     public void setPasswordPolicyEnforcer(final PasswordPolicyEnforcer enforcer) {
-        passwordPolicyEnforcer = enforcer;
+        this.passwordPolicyEnforcer = enforcer;
     }
 
     private void populateErrorsInstance(final LdapAuthenticationException e, final RequestContext reqCtx) {
@@ -47,8 +47,8 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
             reqCtx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(code).build());
         } catch (final Exception fe) {
 
-            if (logger.isErrorEnabled())
-                logger.error(fe.getMessage(), fe);
+            if (this.logger.isErrorEnabled())
+                this.logger.error(fe.getMessage(), fe);
 
         }
     }
@@ -60,8 +60,8 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
 
-        if (logger.isDebugEnabled())
-            logger.debug("Checking account status for password...");
+        if (this.logger.isDebugEnabled())
+            this.logger.debug("Checking account status for password...");
 
         final String ticket = context.getRequestScope().getString("serviceTicketId");
         final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) context.getFlowScope().get("credentials");
@@ -76,8 +76,8 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
             if (userId == null && ticket == null) {
                 msgToLog = "No user principal or service ticket available.";
 
-                if (logger.isErrorEnabled())
-                    logger.error(msgToLog);
+                if (this.logger.isErrorEnabled())
+                    this.logger.error(msgToLog);
 
                 throw new LdapPasswordPolicyEnforcementException(BadCredentialsAuthenticationException.CODE, msgToLog);
             }
@@ -86,47 +86,43 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
 
                 returnedEvent = success();
 
-                if (logger.isDebugEnabled())
-                    logger.debug("Received service ticket " + ticket + " but no user id. This is not a login attempt, so skip password enforcement.");
+                if (this.logger.isDebugEnabled())
+                    this.logger.debug("Received service ticket " + ticket
+                            + " but no user id. This is not a login attempt, so skip password enforcement.");
 
             } else {
 
-                if (logger.isDebugEnabled())
-                    logger.debug("Retrieving number of days to password expiration date for user " + userId);
+                if (this.logger.isDebugEnabled())
+                    this.logger.debug("Retrieving number of days to password expiration date for user " + userId);
 
-                final int daysToExpirationDate = getPasswordPolicyEnforcer().getNumberOfDaysToPasswordExpirationDate(userId);
+                final long daysToExpirationDate = getPasswordPolicyEnforcer().getNumberOfDaysToPasswordExpirationDate(userId);
 
-                switch (daysToExpirationDate) {
-                case -1:
+                if (daysToExpirationDate == -1) {
 
                     returnedEvent = success();
 
-                    if (logger.isDebugEnabled())
-                        logger.debug("Password for " + userId + " is not expiring");
-
-                    break;
-                default:
+                    if (this.logger.isDebugEnabled())
+                        this.logger.debug("Password for " + userId + " is not expiring");
+                } else {
                     returnedEvent = warning();
 
-                    if (logger.isDebugEnabled())
-                        logger.debug("Password for " + userId + " is expiring in " + daysToExpirationDate + " days");
+                    if (this.logger.isDebugEnabled())
+                        this.logger.debug("Password for " + userId + " is expiring in " + daysToExpirationDate + " days");
 
                     context.getFlowScope().put("expireDays", daysToExpirationDate);
-
-                    break;
                 }
 
             }
         } catch (final LdapAuthenticationException e) {
-            if (logger.isErrorEnabled())
-                logger.error(e.getMessage(), e);
+            if (this.logger.isErrorEnabled())
+                this.logger.error(e.getMessage(), e);
 
             populateErrorsInstance(e, context);
             returnedEvent = error();
         } finally {
 
-            if (logger.isDebugEnabled())
-                logger.debug("Switching to flow event id " + returnedEvent.getId() + " for user " + userId);
+            if (this.logger.isDebugEnabled())
+                this.logger.debug("Switching to flow event id " + returnedEvent.getId() + " for user " + userId);
         }
 
         return returnedEvent;
@@ -136,7 +132,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     protected void initAction() throws Exception {
         Assert.notNull(getPasswordPolicyEnforcer(), "password policy enforcer cannot be null");
 
-        if (logger.isDebugEnabled())
-            logger.debug("Initialized the action with password policy enforcer " + getPasswordPolicyEnforcer().getClass().getName());
+        if (this.logger.isDebugEnabled())
+            this.logger.debug("Initialized the action with password policy enforcer " + getPasswordPolicyEnforcer().getClass().getName());
     }
 }

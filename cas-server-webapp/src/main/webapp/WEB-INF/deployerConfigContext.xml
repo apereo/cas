@@ -15,8 +15,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
   <!--
     | This bean declares our AuthenticationManager.  The CentralAuthenticationService service bean
@@ -103,11 +105,40 @@
           +-->
 
        <bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
-              p:filter="${ldap.authentication.filter}"
-              p:searchBase="${ldap.authentication.basedn}"
-              p:contextSource-ref="contextSource"
-              p:searchContextSource-ref="pooledContextSource"
-              p:ignorePartialResultException="${ldap.authentication.ignorePartialResultException}"/>
+          p:filter="${ldap.authentication.filter}"
+          p:searchBase="${ldap.authentication.basedn}"
+          p:contextSource-ref="contextSource"
+          p:searchContextSource-ref="pooledContextSource"
+          p:ignorePartialResultException="${ldap.authentication.ignorePartialResultException}">
+
+          <property name="ldapErrorDefinitions">
+            <list>
+               <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+                  p:ldapPattern="data 530"
+                  p:type="badHours" />
+
+                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+                    p:ldapPattern="data 533"
+                    p:type="accountDisabled" />
+
+                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+                   p:ldapPattern="data 773"
+                    p:type="mustChangePassword" />
+
+                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+                    p:ldapPattern="data 775"
+                    p:type="accountLocked" />
+
+                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+                  p:ldapPattern="data 531"
+                  p:type="badWorkstation" />
+
+                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+                    p:ldapPattern="data (701|532)"
+                    p:type="passwordExpired" />
+            </list>
+          </property>
+       </bean>
 
        <!--
        <bean
@@ -117,6 +148,8 @@
       </list>
     </property>
   </bean>
+
+
 
   <bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
     <!-- DO NOT enable JNDI pooling for context sources that perform LDAP bind operations. -->

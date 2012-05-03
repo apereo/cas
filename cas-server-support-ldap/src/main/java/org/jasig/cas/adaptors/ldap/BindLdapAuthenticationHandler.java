@@ -36,13 +36,12 @@ import org.springframework.ldap.pool.factory.PoolingContextSource;
  *  authenticated context such as an administrator username/password or client
  *  certificate.  This step is suitable for LDAP connection pooling to improve
  *  efficiency and performance.
- * 
+ *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.3
  */
-public class BindLdapAuthenticationHandler extends
-    AbstractLdapUsernamePasswordAuthenticationHandler {
+public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
     /** The default maximum number of results to return. */
     private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
@@ -50,83 +49,71 @@ public class BindLdapAuthenticationHandler extends
     /** The default timeout. */
     private static final int DEFAULT_TIMEOUT = 1000;
 
-    /** The search base to find the user under. */
-    private String searchBase;
+    /** Boolean of whether multiple accounts are allowed. */
+    private boolean allowMultipleAccounts;
+
+    /** The maximum number of results to return. */
+    private int maxNumberResults = DEFAULT_MAX_NUMBER_OF_RESULTS;
 
     /** The scope. */
     @Min(0)
     @Max(2)
     private int scope = SearchControls.SUBTREE_SCOPE;
 
-    /** The maximum number of results to return. */
-    private int maxNumberResults = DEFAULT_MAX_NUMBER_OF_RESULTS;
+    /** The search base to find the user under. */
+    private String searchBase;
 
     /** The amount of time to wait. */
     private int timeout = DEFAULT_TIMEOUT;
 
-    /** Boolean of whether multiple accounts are allowed. */
-    private boolean allowMultipleAccounts;
-
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
-
-        final List<String> cns = new ArrayList<String>();
-
-        final SearchControls searchControls = getSearchControls();
-
-        final String base = this.searchBase;
-        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
-        final String filter = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
-
-        log.debug("Executinng LDAP search on base " + base);
-
-        this.getLdapTemplate().search(new SearchExecutor() {
-            public NamingEnumeration<?> executeSearch(final DirContext context) throws NamingException {
-                return context.search(base, filter, searchControls);
-            }
-        }, new NameClassPairCallbackHandler() {
-            public void handleNameClassPair(final NameClassPair nameClassPair) {
-                cns.add(nameClassPair.getNameInNamespace());
-            }
-        });
-
-        if (cns.isEmpty()) {
-            log.info("Search for " + filter + " returned 0 results.");
-            return false;
-        }
-        if (cns.size() > 1 && !this.allowMultipleAccounts) {
-            log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
-            return false;
-        }
-
-        for (final String dn : cns) {
-            DirContext test = null;
-            String finalDn = composeCompleteDnToCheck(dn, credentials);
-            try {
-                this.log.debug("Performing LDAP bind with credential: " + dn);
-                test = this.getContextSource().getContext(finalDn, getPasswordEncoder().encode(credentials.getPassword()));
-
-                if (test != null) {
-                    return true;
-                }
-            } catch (final Exception e) {
-                // see if we can match to a more specific exception and then throw that instead
-                // i.e. AccountLockedException, AccountDisabledException, ExpiredPasswordException,...
-                final String details = e.getMessage();
-                log.debug("LDAP server returned exception message: " + details);
-                handleLDAPError(details);
-
-                // otherwise, just try the next cn
-            } finally {
-                LdapUtils.closeContext(test);
-            }
-        }
-
-        return false;
+    /**
+     * @param allowMultipleAccounts The allowMultipleAccounts to set.
+     */
+    public void setAllowMultipleAccounts(final boolean allowMultipleAccounts) {
+        this.allowMultipleAccounts = allowMultipleAccounts;
     }
 
-    protected String composeCompleteDnToCheck(final String dn,
-        final UsernamePasswordCredentials credentials) {
-        return dn;
+    /**
+     * @param maxNumberResults The maxNumberResults to set.
+     */
+    public final void setMaxNumberResults(final int maxNumberResults) {
+        this.maxNumberResults = maxNumberResults;
+    }
+
+    public final void setScope(final int scope) {
+        this.scope = scope;
+    }
+
+    /**
+     * @param searchBase The searchBase to set.
+     */
+    public final void setSearchBase(final String searchBase) {
+        this.searchBase = searchBase;
+    }
+
+    /**
+     * Sets the context source for LDAP searches.  This method may be used to
+     * support use cases like the following:
+     * <ul>
+     * <li>Pooling of LDAP connections used for searching (e.g. via instance
+     * of {@link PoolingContextSource}).</li>
+     * <li>Searching with client certificate credentials.</li>
+     * </ul>
+     * <p>
+     * If this is not defined, the context source defined by
+     * {@link #setContextSource(ContextSource)} is used.
+     *
+     * @param contextSource LDAP context source.
+     */
+    public final void setSearchContextSource(final ContextSource contextSource) {
+        setLdapTemplate(new LdapTemplate(contextSource));
+    }
+
+    /**
+     * @param timeout The timeout to set.
+     */
+    public final void setTimeout(final int timeout) {
+        this.timeout = timeout;
     }
 
     private SearchControls getSearchControls() {
@@ -139,12 +126,67 @@ public class BindLdapAuthenticationHandler extends
         return constraints;
     }
 
-    /**
-     * Method to return whether multiple accounts are allowed.
-     * @return true if multiple accounts are allowed, false otherwise.
-     */
-    protected boolean isAllowMultipleAccounts() {
-        return this.allowMultipleAccounts;
+    @Override
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+
+        final List<String> cns = new ArrayList<String>();
+
+        final SearchControls searchControls = getSearchControls();
+
+        final String base = this.searchBase;
+        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
+        final String filter = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
+
+        this.log.debug("Executinng LDAP search on base " + base);
+
+        getLdapTemplate().search(new SearchExecutor() {
+            public NamingEnumeration<?> executeSearch(final DirContext context) throws NamingException {
+                return context.search(base, filter, searchControls);
+            }
+        }, new NameClassPairCallbackHandler() {
+            public void handleNameClassPair(final NameClassPair nameClassPair) {
+                cns.add(nameClassPair.getNameInNamespace());
+            }
+        });
+
+        if (cns.isEmpty()) {
+            this.log.info("Search for " + filter + " returned 0 results.");
+            return false;
+        }
+        if (cns.size() > 1 && !this.allowMultipleAccounts) {
+            this.log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
+            return false;
+        }
+
+        for (final String dn : cns) {
+            DirContext test = null;
+            final String finalDn = composeCompleteDnToCheck(dn, credentials);
+            try {
+
+                if (this.log.isDebugEnabled())
+                    this.log.debug("Performing LDAP bind with credential: " + dn);
+
+                test = getContextSource().getContext(finalDn, getPasswordEncoder().encode(credentials.getPassword()));
+
+                if (test != null)
+                    return true;
+            } catch (final Exception e) {
+
+                if (this.log.isErrorEnabled())
+                    this.log.error(e.getMessage(), e);
+
+                throw handleLdapError(e);
+            } finally {
+                LdapUtils.closeContext(test);
+            }
+        }
+
+        return false;
+    }
+
+    protected String composeCompleteDnToCheck(final String dn,
+            final UsernamePasswordCredentials credentials) {
+        return dn;
     }
 
     /**
@@ -172,60 +214,18 @@ public class BindLdapAuthenticationHandler extends
     }
 
     /**
-     * Method to return the timeout. 
+     * Method to return the timeout.
      * @return the timeout.
      */
     protected int getTimeout() {
         return this.timeout;
     }
 
-    public final void setScope(final int scope) {
-        this.scope = scope;
-    }
-
     /**
-     * @param allowMultipleAccounts The allowMultipleAccounts to set.
+     * Method to return whether multiple accounts are allowed.
+     * @return true if multiple accounts are allowed, false otherwise.
      */
-    public void setAllowMultipleAccounts(final boolean allowMultipleAccounts) {
-        this.allowMultipleAccounts = allowMultipleAccounts;
-    }
-
-    /**
-     * @param maxNumberResults The maxNumberResults to set.
-     */
-    public final void setMaxNumberResults(final int maxNumberResults) {
-        this.maxNumberResults = maxNumberResults;
-    }
-
-    /**
-     * @param searchBase The searchBase to set.
-     */
-    public final void setSearchBase(final String searchBase) {
-        this.searchBase = searchBase;
-    }
-
-    /**
-     * @param timeout The timeout to set.
-     */
-    public final void setTimeout(final int timeout) {
-        this.timeout = timeout;
-    }
-
-    /**
-     * Sets the context source for LDAP searches.  This method may be used to
-     * support use cases like the following:
-     * <ul>
-     * <li>Pooling of LDAP connections used for searching (e.g. via instance
-     * of {@link PoolingContextSource}).</li>
-     * <li>Searching with client certificate credentials.</li>
-     * </ul>
-     * <p>
-     * If this is not defined, the context source defined by
-     * {@link #setContextSource(ContextSource)} is used.
-     *
-     * @param contextSource LDAP context source.
-     */
-    public final void setSearchContextSource(final ContextSource contextSource) {
-        setLdapTemplate(new LdapTemplate(contextSource));
+    protected boolean isAllowMultipleAccounts() {
+        return this.allowMultipleAccounts;
     }
 }
