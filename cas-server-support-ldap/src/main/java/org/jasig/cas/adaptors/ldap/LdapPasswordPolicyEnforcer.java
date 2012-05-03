@@ -15,7 +15,6 @@ import javax.naming.directory.SearchControls;
 
 import org.jasig.cas.authentication.AbstractPasswordPolicyEnforcer;
 import org.jasig.cas.authentication.LdapPasswordPolicyEnforcementException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.util.LdapUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -109,7 +108,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
     /** The list of valid scope values. */
     private static final int[]        VALID_SCOPE_VALUES            = new int[] { SearchControls.OBJECT_SCOPE, SearchControls.ONELEVEL_SCOPE,
-            SearchControls.SUBTREE_SCOPE                           };
+        SearchControls.SUBTREE_SCOPE                           };
 
     /** The filter path to the lookup value of the user. */
     private String                    filter;
@@ -191,12 +190,15 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         final LdapResult ldapResult = getResultsFromLDAP(userId);
 
         if (ldapResult == null) {
-            msgToLog = "No entry was found for user " + userId;
+            msgToLog = "No entry was found for user " + userId + ". Verify your LPPE settings. ";
+            msgToLog += "If you are not using LPPE, set the 'enabled' property to false. ";
+            msgToLog += "Password policy enforcement is currently turned on but not configured. Skipping all checks...";
 
-            if (logger.isErrorEnabled())
-                logger.error(msgToLog);
+            if (logger.isWarnEnabled())
+                logger.warn(msgToLog);
 
-            throw new LdapPasswordPolicyEnforcementException(BadCredentialsAuthenticationException.CODE, msgToLog);
+            return PASSWORD_STATUS_PASS;
+
         }
 
         if (this.noWarnAttribute != null)
