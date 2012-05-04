@@ -65,31 +65,5 @@
       </bean>
     </property>
   </bean>
-  
-  <!--  ClearPass -->
-  <bean id="clearPassFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
-	<sec:filter-chain-map request-matcher="ant">
-	   <sec:filter-chain pattern="/clearPass" filters="casAuthenticationFilter,casValidationFilter,httpServletRequestWrappingFilter" />
-	</sec:filter-chain-map>
-  </bean>
-	
-  <bean id="casAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">
-    <property name="casServerLoginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}" />
-    <property name="serverName" value="${server.name}" />
-  </bean>
-    
-  <bean id="casValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
-    <property name="serverName" value="${server.name}" />
-    <property name="exceptionOnValidationFailure" value="false" />
-    <property name="useSession" value="true" />
-	<property name="ticketValidator">
-	  <bean class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
-	    <constructor-arg index="0" value="${server.prefix}" />
-		  <property name="acceptAnyProxy" value="true" />
-	  </bean>
-	</property>	 
-  </bean>
-     
-  <bean id="httpServletRequestWrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter" />
-   
+
 </beans>
