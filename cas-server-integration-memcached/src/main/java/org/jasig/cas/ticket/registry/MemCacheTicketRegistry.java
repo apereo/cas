@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2008 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.ticket.registry;
 
@@ -24,14 +11,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
-import javax.validation.constraints.Min;
 
 import net.spy.memcached.MemcachedClient;
+
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.beans.factory.DisposableBean;
 
+import javax.validation.constraints.Min;
+
+/**
+ * Memcache (or Repcache) backed ticket registry.
+ * 
+ * @author Scott Battaglia
+ * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
+ * @since 3.3
+ *
+ */
 public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegistry implements DisposableBean {
 	
 	private final MemcachedClient client;

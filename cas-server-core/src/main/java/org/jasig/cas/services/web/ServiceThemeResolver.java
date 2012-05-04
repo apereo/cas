@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.services.web;
 
@@ -31,6 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/**
+ * ThemeResolver to determine the theme for CAS based on the service provided.
+ * The theme resolver will extract the service parameter from the Request object
+ * and attempt to match the URL provided to a Service Id. If the service is
+ * found, the theme associated with it will be used. If not, these is associated
+ * with the service or the service was not found, a default theme will be used.
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ */
 public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     /** The ServiceRegistry to look up the service. */

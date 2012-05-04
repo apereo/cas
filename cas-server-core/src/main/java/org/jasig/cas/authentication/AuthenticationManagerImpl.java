@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.authentication;
 
@@ -31,6 +18,42 @@ import org.perf4j.LoggingStopWatch;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+/**
+ * <p>
+ * Default implementation of the AuthenticationManager. The
+ * AuthenticationManager follows the following algorithm. The manager loops
+ * through the array of AuthenticationHandlers searching for one that can
+ * attempt to determine the validity of the credentials. If it finds one, it
+ * tries that one. If that handler returns true, it continues on. If it returns
+ * false, it looks for another handler. If it throws an exception, it aborts the
+ * whole process and rethrows the exception. Next, it looks for a
+ * CredentialsToPrincipalResolver that can handle the credentials in order to
+ * create a Principal. Finally, it attempts to populate the Authentication
+ * object's attributes map using AuthenticationAttributesPopulators
+ * <p>
+ * Behavior is determined by external beans attached through three configuration
+ * properties. The Credentials are opaque to the manager. They are passed to the
+ * external beans to see if any can process the actual type represented by the
+ * Credentials marker.
+ * <p>
+ * AuthenticationManagerImpl requires the following properties to be set:
+ * </p>
+ * <ul>
+ * <li> <code>authenticationHandlers</code> - The array of
+ * AuthenticationHandlers that know how to process the credentials provided.
+ * <li> <code>credentialsToPrincipalResolvers</code> - The array of
+ * CredentialsToPrincipal resolvers that know how to process the credentials
+ * provided.
+ * </ul>
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0
+ * @see org.jasig.cas.authentication.handler.AuthenticationHandler
+ * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver
+ * @see org.jasig.cas.authentication.AuthenticationMetaDataPopulator
+ */
 
 public final class AuthenticationManagerImpl extends AbstractAuthenticationManager {
 
