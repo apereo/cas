@@ -1,7 +1,20 @@
 /*
- * Copyright 2009 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.ticket.registry.support;
 
@@ -17,42 +30,6 @@ import org.springframework.jdbc.core.SqlRowSetResultSetExtractor;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Locking strategy that uses database storage for lock state that has the
- * following properties:
- * <ul>
- * <li><strong>Exclusivity</strong> - Only only client at a time may acquire the lock.</li>
- * <li><strong>Non-reentrant</strong> - An attempt to re-acquire the lock by the current
- * holder will fail.</li>
- * <li><strong>Lock expiration</strong> - Locks are acquired with an expiration such that
- * a request to acquire the lock after the expiration date will succeed even
- * if it is currently held by another client.</li>
- * </ul>
- * <p>
- * This class requires a backing database table to exist based on the
- * following template:
- * <pre>
- * CREATE TABLE LOCKS (
- *   APPLICATION_ID VARCHAR(50) NOT NULL,
- *   UNIQUE_ID VARCHAR(50) NULL,
- *   EXPIRATION_DATE TIMESTAMP NULL
- * );
- * ALTER TABLE LOCKS ADD CONSTRAINT LOCKS_PK
- * PRIMARY KEY (APPLICATION_ID);
- * </pre>
- * </p>
- * <p>
- * Note that table and column names can be controlled through instance
- * properties, but the create table script above is consistent with defaults.
- * </p>
- *
- * @author Marvin S. Addison
- * @version $Revision$
- * @since 3.3.6
- * @deprecated Replaced by {@link JpaLockingStrategy} as of 3.4.11.
- * @see JpaLockingStrategy
- *
- */
 @Deprecated
 public class JdbcLockingStrategy
     implements LockingStrategy, InitializingBean {

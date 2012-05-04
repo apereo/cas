@@ -1,7 +1,20 @@
 /*
- * Copyright 2009-2011 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.ticket.registry;
 
@@ -18,22 +31,6 @@ import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.ToStringCreator;
 
-/**
- * <p>
- * <a href="http://ehcache.org/">Ehcache</a> based distributed ticket registry.
- * </p>
- * <p>
- * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
- * <ul>
- * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
- * <li>Monitoring : follow separately the number of TGT and ST.</li>
- * <ul>
- * </p>
- * 
- * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
- * @author Adam Rybicki
- * @author Andrew Tillinghast
- */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
     
     private Cache serviceTicketsCache;
