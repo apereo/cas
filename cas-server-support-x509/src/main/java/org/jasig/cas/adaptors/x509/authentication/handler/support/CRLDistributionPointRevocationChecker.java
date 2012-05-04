@@ -1,7 +1,20 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
@@ -28,20 +41,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 
-/**
- * Performs CRL-based revocation checking by consulting resources defined in
- * the CRLDistributionPoints extension field on the certificate.  Although RFC
- * 2459 allows the distribution point name to have arbitrary meaning, this class
- * expects the name to define an absolute URL, which is the most common
- * implementation.  This implementation caches CRL resources fetched from remote
- * URLs to improve performance by avoiding CRL fetching on every revocation
- * check.
- *
- * @author Marvin S. Addison
- * @version $Revision$
- * @since 3.4.6
- *
- */
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
     /** CRL cache. */

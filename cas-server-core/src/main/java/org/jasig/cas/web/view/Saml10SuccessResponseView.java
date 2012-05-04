@@ -1,7 +1,20 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.web.view;
 
@@ -31,22 +44,6 @@ import org.opensaml.SAMLNameIdentifier;
 import org.opensaml.SAMLResponse;
 import org.opensaml.SAMLSubject;
 
-/**
- * Implementation of a view to return a SAML response and assertion, based on
- * the SAML 1.1 specification.
- * <p>
- * If an AttributePrincipal is supplied, then the assertion will include the
- * attributes from it (assuming a String key/Object value pair). The only
- * Authentication attribute it will look at is the authMethod (if supplied).
- * <p>
- * Note that this class will currently not handle proxy authentication.
- * <p>
- * Note: This class currently expects a bean called "ServiceRegistry" to exist.
- * 
- * @author Scott Battaglia
- * @version $Revision$ $Date$
- * @since 3.1
- */
 public class Saml10SuccessResponseView extends AbstractCasView {
 
     /** Namespace for custom attributes. */
