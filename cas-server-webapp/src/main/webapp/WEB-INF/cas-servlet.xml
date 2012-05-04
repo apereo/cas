@@ -124,8 +124,7 @@
 
 
   <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter"
-        p:flowExecutor-ref="flowExecutor"
-        p:flowUrlHandler-ref="flowUrlHandler"/>
+        p:flowExecutor-ref="flowExecutor"/>
 
   <bean id="flowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler"/>
 
