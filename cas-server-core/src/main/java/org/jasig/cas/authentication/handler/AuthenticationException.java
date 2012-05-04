@@ -5,11 +5,14 @@
  */
 package org.jasig.cas.authentication.handler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The most generic type of authentication exception that one can catch if not
  * sure what specific implementation will be thrown. Top of the tree of all
  * other AuthenticationExceptions.
- * 
+ *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0
@@ -19,14 +22,18 @@ public abstract class AuthenticationException extends Exception {
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
 
+    protected static Logger   logger           = LoggerFactory.getLogger(AuthenticationException.class);
+
     /** The code to return for resolving to a message description. */
-    private String code;
+    private final String      code;
+
+    private String            type             = "error";
 
     /**
      * Constructor that takes a code description of the error. These codes
      * normally have a corresponding entries in the messages file for the
      * internationalization of error messages.
-     * 
+     *
      * @param code The short unique identifier for this error.
      */
     public AuthenticationException(final String code) {
@@ -34,10 +41,29 @@ public abstract class AuthenticationException extends Exception {
     }
 
     /**
+     * Constructor that takes a code description of the error. These codes
+     * normally have a corresponding entries in the messages file for the
+     * internationalization of error messages.
+     *
+     * @param code The short unique identifier for this error.
+     * @param message The error message associated with this exception for additional logging purposes.
+     */
+    public AuthenticationException(final String code, final String msg) {
+        super(msg);
+        this.code = code;
+    }
+
+    public AuthenticationException(final String code, final String msg, final String type) {
+        super(msg);
+        this.code = code;
+        this.type = type;
+    }
+
+    /**
      * Constructor that takes a code description of the error and the chained
      * exception. These codes normally have a corresponding entries in the
      * messages file for the internationalization of error messages.
-     * 
+     *
      * @param code The short unique identifier for this error.
      * @param throwable The chained exception for this AuthenticationException
      */
@@ -48,14 +74,22 @@ public abstract class AuthenticationException extends Exception {
 
     /**
      * Method to return the unique identifier for this error type.
-     * 
+     *
      * @return the String identifier for this error type.
      */
     public final String getCode() {
         return this.code;
     }
 
+    public final String getType() {
+        return this.type;
+    }
+
+    @Override
     public final String toString() {
-        return getCode();
+        String msg = getCode();
+        if (getMessage() != null && getMessage().trim().length() > 0)
+            msg = ": " + getMessage();
+        return msg;
     }
 }

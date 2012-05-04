@@ -28,7 +28,30 @@
       </map>
     </property>
   </bean>
-      
+  
+  <bean id="poolingContextSoure"
+        class="org.springframework.ldap.pool.factory.PoolingContextSource"
+        p:minIdle="1"
+        p:maxIdle="1"
+        p:maxActive="1"
+        p:maxWait="3000"
+        p:dirContextValidator-ref="dirContextValidator"
+        p:contextSource-ref="contextSource" />
+
+  <!-- Query RootDSE for no attributes at suggestion of dhawes -->
+  <bean id="dirContextValidator"
+        class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"
+        p:base=""
+        p:filter="objectclass=*">
+    <property name="searchControls">
+      <bean class="javax.naming.directory.SearchControls"
+            p:timeLimit="1000"
+            p:countLimit="1"
+            p:searchScope="0"
+            p:returningAttributes="" />
+    </property>
+  </bean>
+
   <bean id="saslMd5ContextSource"
     class="org.springframework.ldap.core.support.LdapContextSource"
     p:url="ldap://ldap1.rutgers.edu"

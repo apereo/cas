@@ -50,6 +50,17 @@ public class DefaultServicesManagerImplTests extends TestCase {
         this.defaultServicesManagerImpl.save(r);
         assertNotNull(this.defaultServicesManagerImpl.findServiceBy(1000));
     }
+
+    public void testSaveWithReturnedPersistedInstance() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(1000L);
+        r.setName("test");
+        r.setServiceId("test");
+
+        final RegisteredService persistedRs = this.defaultServicesManagerImpl.save(r);
+        assertNotNull(persistedRs);
+        assertEquals(1000L, persistedRs.getId());
+    }
     
     public void testDeleteAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();

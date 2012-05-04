@@ -31,7 +31,7 @@ public class BadCredentialsAuthenticationException extends
      * Default constructor that does not allow the chaining of exceptions and
      * uses the default code as the error code for this exception.
      */
-    private static final String CODE = "error.authentication.credentials.bad";
+    public static final String CODE = "error.authentication.credentials.bad";
 
     /**
      * Default constructor that does not allow the chaining of exceptions and

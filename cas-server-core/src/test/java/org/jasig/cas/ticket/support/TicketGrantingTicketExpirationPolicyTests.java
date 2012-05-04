@@ -17,20 +17,23 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
  */
 public class TicketGrantingTicketExpirationPolicyTests extends TestCase {
 
-    private static final long HARD_TIMEOUT = 10000; // 10s
+    private static final long HARD_TIMEOUT = 10000L; // 10s
 
-    private static final long SLIDING_TIMEOUT = 2000; // 2s
+    private static final long SLIDING_TIMEOUT = 2000L; // 2s
+
+    private static final long HARD_TIMEOUT_SECONDS = 10L;
+
+    private static final long SLIDING_TIMEOUT_SECONDS = 2L;
 
     private TicketGrantingTicketExpirationPolicy expirationPolicy;
 
     private TicketGrantingTicket ticketGrantingTicket;
 
     protected void setUp() throws Exception {
-        expirationPolicy = new TicketGrantingTicketExpirationPolicy();
-        expirationPolicy.setMaxTimeToLiveInMilliSeconds(HARD_TIMEOUT);
-        expirationPolicy.setTimeToKillInMilliSeconds(SLIDING_TIMEOUT);
-        ticketGrantingTicket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), expirationPolicy);
-        super.setUp();
+        this.expirationPolicy = new TicketGrantingTicketExpirationPolicy();
+        this.expirationPolicy.setMaxTimeToLiveInSeconds(HARD_TIMEOUT_SECONDS);
+        this.expirationPolicy.setTimeToKillInSeconds(SLIDING_TIMEOUT_SECONDS);
+        this.ticketGrantingTicket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), this.expirationPolicy);
     }
 
     public void testTgtIsExpiredByHardTimeOut() throws InterruptedException {

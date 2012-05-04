@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server</artifactId>
+		<version>3.5.0-RC1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jasig.cas</groupId>
+	<artifactId>cas-server-support-oauth</artifactId>
+	<packaging>jar</packaging>
+	<name>JA-SIG CAS OAuth Support</name>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.scribe</groupId>
+			<artifactId>scribe-up</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+    </dependencies>
+</project>

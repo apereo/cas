@@ -6,9 +6,7 @@
 package org.jasig.cas.services.web;
 
 
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.*;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.util.StringUtils;
@@ -74,8 +72,19 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
     protected final ModelAndView onSubmit(final HttpServletRequest request,
         final HttpServletResponse response, final Object command,
         final BindException errors) throws Exception {
-        final RegisteredService service = (RegisteredService) command;
+        RegisteredService service = (RegisteredService) command;
 
+        // only change object class if there isn't an explicit RegisteredService class set
+        if (this.getCommandClass() == null) {
+            // CAS-1071
+            // Treat _new_ patterns starting with ^ character as a regular expression
+            if (service.getId() < 0 && service.getServiceId().startsWith("^")) {
+                logger.debug("Detected regular expression starting with ^");
+                final RegexRegisteredService regexService = new RegexRegisteredService();
+                regexService.copyFrom(service);
+                service = regexService;
+            }
+        }
         this.servicesManager.save(service);
         logger.info("Saved changes to service " + service.getId());
 
@@ -92,8 +101,15 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         final String id = request.getParameter("id");
 
         if (!StringUtils.hasText(id)) {
-            logger.debug("Created new service.");
-            return new RegisteredServiceImpl();
+            // create a default RegisteredServiceImpl object if an explicit class isn't set
+            final Object service;
+            if (this.getCommandClass() != null) {
+                service = this.createCommand();
+            } else {
+                service = new RegisteredServiceImpl();
+            }
+            logger.debug("Created new service of type " + service.getClass().getName());
+            return service;
         }
         
         final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));

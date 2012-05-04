@@ -117,9 +117,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     @Transactional(readOnly = false)
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER", resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
-    public synchronized void save(final RegisteredService registeredService) {
+    public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
+        return r;
     }
     
     public void reload() {

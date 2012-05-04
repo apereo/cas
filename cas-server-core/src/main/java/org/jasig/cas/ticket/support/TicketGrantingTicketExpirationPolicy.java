@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets
  * can be used any number of times, have a fixed lifetime, and an idle timeout.
@@ -39,6 +41,20 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
 
     public void setTimeToKillInMilliSeconds(final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+    }
+
+    /** Convenient virtual property setter to set time in seconds */
+    public void setMaxTimeToLiveInSeconds(final long maxTimeToLiveInSeconds){
+        if(this.maxTimeToLiveInMilliSeconds == 0L) {
+            this.maxTimeToLiveInMilliSeconds = TimeUnit.SECONDS.toMillis(maxTimeToLiveInSeconds);
+        }
+    }
+
+    /** Convenient virtual property setter to set time in seconds */
+    public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
+        if(this.timeToKillInMilliSeconds == 0L) {
+            this.timeToKillInMilliSeconds = TimeUnit.SECONDS.toMillis(timeToKillInSeconds);
+        }
     }
 
     public void afterPropertiesSet() throws Exception {

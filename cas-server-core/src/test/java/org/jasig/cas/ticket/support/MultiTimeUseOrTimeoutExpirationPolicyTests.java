@@ -12,6 +12,8 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 
 import junit.framework.TestCase;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -19,7 +21,9 @@ import junit.framework.TestCase;
  */
 public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
 
-    private static final long TIMEOUT = 5000;
+    private static final long TIMEOUT_SECONDS = 5L;
+
+    private static final long TIMEOUT_MILLISECONDS = 5000L;
 
     private static final int NUMBER_OF_USES = 5;
     
@@ -31,7 +35,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
 
     protected void setUp() throws Exception {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(
-            NUMBER_OF_USES, TIMEOUT);
+            NUMBER_OF_USES, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         this.ticket = new TicketGrantingTicketImpl("test", TestUtils
             .getAuthentication(), this.expirationPolicy);
@@ -49,7 +53,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
 
     public void testTicketIsExpiredByTime() {
         try {
-            Thread.sleep(TIMEOUT + TIMEOUT_BUFFER);
+            Thread.sleep(TIMEOUT_MILLISECONDS + TIMEOUT_BUFFER);
             assertTrue(this.ticket.isExpired());
         } catch (InterruptedException e) {
             fail(e.getMessage());

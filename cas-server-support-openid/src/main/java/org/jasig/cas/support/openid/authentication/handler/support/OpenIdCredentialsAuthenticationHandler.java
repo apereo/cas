@@ -28,20 +28,24 @@ public final class OpenIdCredentialsAuthenticationHandler implements
     @NotNull
     private TicketRegistry ticketRegistry;
 
+
+
     public boolean authenticate(final Credentials credentials)
         throws AuthenticationException {
         final OpenIdCredentials c = (OpenIdCredentials) credentials;
 
+        boolean result = false;
         final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry
-            .getTicket(c.getTicketGrantingTicketId(),
-                TicketGrantingTicket.class);
+                .getTicket(c.getTicketGrantingTicketId(),
+                        TicketGrantingTicket.class);
 
-        if (t.isExpired()) {
-            return false;
+        if (t == null || t.isExpired()) {
+            result = false;
+        } else {
+            result = t.getAuthentication().getPrincipal().getId().equals(
+                    c.getUsername());
         }
-
-        return t.getAuthentication().getPrincipal().getId().equals(
-            c.getUsername());
+        return result;
     }
 
     public boolean supports(final Credentials credentials) {

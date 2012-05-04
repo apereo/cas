@@ -1,208 +1,177 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flow xmlns="http://www.springframework.org/schema/webflow"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <var name="credentials" class="org.jasig.cas.authentication.principal.UsernamePasswordCredentials" />
-    <on-start>
-        <evaluate expression="initialFlowSetupAction" />
-    </on-start>
+  <var name="credentials" class="org.jasig.cas.authentication.principal.UsernamePasswordCredentials" />
+  <on-start>
+    <evaluate expression="initialFlowSetupAction" />
+  </on-start>
 
-	<decision-state id="ticketGrantingTicketExistsCheck">
-		<if test="flowScope.ticketGrantingTicketId neq null" then="hasServiceCheck" else="gatewayRequestCheck" />
-	</decision-state>
-    
-	<decision-state id="gatewayRequestCheck">
-		<if test="externalContext.requestParameterMap['gateway'] neq '' &amp;&amp; externalContext.requestParameterMap['gateway'] neq null &amp;&amp; flowScope.service neq null" then="gatewayServicesManagementCheck" else="generateLoginTicket" />
-	</decision-state>
-	
-	<decision-state id="hasServiceCheck">
-		<if test="flowScope.service != null" then="renewRequestCheck" else="viewGenericLoginSuccess" />
-	</decision-state>
-	
-	<decision-state id="renewRequestCheck">
-		<if test="externalContext.requestParameterMap['renew'] neq '' &amp;&amp; externalContext.requestParameterMap['renew'] neq null" then="generateLoginTicket" else="generateServiceTicket" />
-	</decision-state>
-	
-	<!-- 
-		The "warn" action makes the determination of whether to redirect directly to the requested
-		service or display the "confirmation" page to go back to the server.
+  <decision-state id="ticketGrantingTicketExistsCheck">
+    <if test="flowScope.ticketGrantingTicketId != null" then="hasServiceCheck" else="gatewayRequestCheck" />
+  </decision-state>
 
-        To turn on PasswordWarningCheck is this block instead of the other one below.
-	-->
-	<decision-state id="warn">
-	    <if test="flowScope.warnCookieValue" then="showWarningView" else="PasswordWarningCheck" />
-	</decision-state>
-    <!--
-   	<decision-state id="warn">
-		<if test="flowScope.warnCookieValue" then="showWarningView" else="redirect" />
-	</decision-state>
-    -->
+  <decision-state id="gatewayRequestCheck">
+    <if
+      test="requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null"
+      then="gatewayServicesManagementCheck" else="generateLoginTicket" />
+  </decision-state>
 
-	<!--
-	<action-state id="startAuthenticate">
-		<action bean="x509Check" />
-		<transition on="success" to="sendTicketGrantingTicket" />
-		<transition on="warn" to="warn" />
-		<transition on="error" to="generateLoginTicket" />
-	</action-state>
-	 -->
+  <decision-state id="hasServiceCheck">
+    <if test="flowScope.service != null" then="renewRequestCheck" else="viewGenericLoginSuccess" />
+  </decision-state>
 
-	<action-state id="generateLoginTicket">
-        <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
-		<transition on="success" to="viewLoginForm" />
-	</action-state>
+  <decision-state id="renewRequestCheck">
+    <if test="requestParameters.renew != '' and requestParameters.renew != null" then="generateLoginTicket"
+      else="generateServiceTicket" />
+  </decision-state>
 
-	<view-state id="viewLoginForm" view="casLoginView" model="credentials">
-        <binder>
-            <binding property="username" />
-            <binding property="password" />
-        </binder>
-        <on-entry>
-            <set name="viewScope.commandName" value="'credentials'" />
-        </on-entry>
-		<transition on="submit" bind="true" validate="true" to="realSubmit">
-            <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credentials)" />
-        </transition>
-	</view-state>
+  <!-- LPPE transitions begins here... -->
+  <action-state id="passwordPolicyCheck">
+    <evaluate expression="passwordPolicyAction" />
+    <transition on="showWarning" to="passwordServiceCheck" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+    <transition on="error" to="viewLoginForm" />
+  </action-state>
 
-	<action-state id="realSubmit">
-        <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credentials, messageContext)" />
-		<transition on="warn" to="warn" />
-		<transition on="success" to="sendTicketGrantingTicket" />
-		<transition on="error" to="generateLoginTicket" />
-        <!-- transition-states for password policy -->
-        <transition on="showExpiredPassView" to="showExpiredPassView" />
-        <transition on="showAccountLockedView" to="showAccountLockedView" />
-        <transition on="showAccountDisabledView" to="showAccountDisabledView" />
-        <transition on="showMustChangePassView" to="showMustChangePassView" />
-        <transition on="showBadHoursView" to="showBadHoursView" />
-        <transition on="showBadWorkstationView" to="showBadWorkstationView" />
-	</action-state>
-	
-	<action-state id="sendTicketGrantingTicket">
-        <evaluate expression="sendTicketGrantingTicketAction" />
-		<transition to="serviceCheck" />
-	</action-state>
+  <action-state id="passwordServiceCheck">
+    <evaluate expression="sendTicketGrantingTicketAction" />
+    <transition to="passwordPostCheck" />
+  </action-state>
 
-	<decision-state id="serviceCheck">
-		<if test="flowScope.service neq null" then="generateServiceTicket" else="viewGenericLoginSuccess" />
-	</decision-state>
-	
-	<action-state id="generateServiceTicket">
-        <evaluate expression="generateServiceTicketAction" />
-		<transition on="success" to ="warn" />
-		<transition on="error" to="generateLoginTicket" />
-		<transition on="gateway" to="gatewayServicesManagementCheck" />
-	</action-state>
+  <decision-state id="passwordPostCheck">
+    <if test="flowScope.service != null" then="warnPassRedirect" else="pwdWarningPostView" />
+  </decision-state>
 
-    <action-state id="gatewayServicesManagementCheck">
-        <evaluate expression="gatewayServicesManagementCheck" />
-        <transition on="success" to="redirect" />
-    </action-state>
+  <action-state id="warnPassRedirect">
+    <evaluate expression="generateServiceTicketAction" />
+    <transition on="success" to="pwdWarningPostView" />
+    <transition on="error" to="generateLoginTicket" />
+    <transition on="gateway" to="gatewayServicesManagementCheck" />
+  </action-state>
 
-	<!-- this checks the status of a password -->
-	<action-state id="PasswordWarningCheck">
-		<evaluate expression="PasswordWarningCheckAction" />
-		<transition on="showWarning" to="warnPassRedirect" />
-		<transition on="success" to="redirect" />
-		<transition on="error" to="viewLoginForm" />
-	</action-state>
+  <end-state id="pwdWarningAbstractView">
+    <on-entry>
+      <set name="flowScope.passwordPolicyUrl" value="passwordPolicyAction.getPasswordPolicyUrl()" />
+    </on-entry>
+  </end-state>
+  <end-state id="pwdWarningPostView" view="casWarnPassView" parent="#pwdWarningAbstractView" />
+  <end-state id="casExpiredPassView" view="casExpiredPassView" parent="#pwdWarningAbstractView" />
+  <end-state id="casMustChangePassView" view="casMustChangePassView" parent="#pwdWarningAbstractView" />
+  <end-state id="casAccountDisabledView" view="casAccountDisabledView" />
+  <end-state id="casAccountLockedView" view="casAccountLockedView" />
+  <end-state id="casBadHoursView" view="casBadHoursView" />
+  <end-state id="casBadWorkstationView" view="casBadWorkstationView" />
+  <!-- LPPE transitions ends here... -->
 
-    <action-state id="redirect">
-        <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)" result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response" />
-        <transition to="postRedirectDecision" />
-    </action-state>
+  <decision-state id="warn">
+    <if test="flowScope.warnCookieValue" then="showWarningView" else="redirect" />
+  </decision-state>
 
-    <decision-state id="postRedirectDecision">
-        <if test="requestScope.response.responseType.name() eq 'POST'" then="postView" else="redirectView" />
-    </decision-state>
+  <!--
+  <action-state id="startAuthenticate">
+    <action bean="x509Check" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+    <transition on="warn" to="warn" />
+    <transition on="error" to="generateLoginTicket" />
+  </action-state>
+  -->
 
-	<!--
-        The "warnPassRedirect" end state is the end state for when the user's password is close to expiring.  They are not required
-        to change their password to reach the requested service.
-        -->
-	<action-state id="warnPassRedirect" >
-        <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)" result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response" />
-        <transition on="requestScope.response" to="pwdPostView" />
-        <transition to="pwdRedirectView" />
-	</action-state>
+  <action-state id="generateLoginTicket">
+    <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
+    <transition on="generated" to="viewLoginForm" />
+  </action-state>
 
-	<!--
-		the "viewGenericLogin" is the end state for when a user attempts to login without coming directly from a service.
-		They have only initialized their single-sign on session.
-	-->
-	<end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView" />
+  <view-state id="viewLoginForm" view="casLoginView" model="credentials">
+    <binder>
+      <binding property="username" />
+      <binding property="password" />
+    </binder>
+    <on-entry>
+      <set name="viewScope.commandName" value="'credentials'" />
+    </on-entry>
+    <transition on="submit" bind="true" validate="true" to="realSubmit">
+      <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credentials)" />
+    </transition>
+  </view-state>
 
-	<!-- 
-		The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a
-		view defines in default_views.properties that display the "Please click here to go to the service." message.
-	-->
-	<end-state id="showWarningView" view="casLoginConfirmView" />
+  <action-state id="realSubmit">
+    <evaluate
+      expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credentials, messageContext)" />
 
-    <end-state id="postView" view="postResponseView">
-        <on-entry>
-            <set name="requestScope.parameters" value="requestScope.response.attributes" />
-            <set name="requestScope.originalUrl" value="flowScope.service.id" />
-        </on-entry>
-    </end-state>
+    <transition on="warn" to="passwordPolicyCheck" />
+    <transition on="success" to="sendTicketGrantingTicket" />
+    <transition on="error" to="generateLoginTicket" />
 
-    <end-state id="pwdPostView" view="postWarnPassResponseView">
-        <output name="viewScope.parameters" value="requestScope.response.attributes" />
-		<output name="viewScope.expireDays" value="flowScope.expireDays" />
-        <output name="viewScope.originalUrl" value="flowScope.service.id" />
-    </end-state>
+    <transition on="accountDisabled" to="casAccountDisabledView" />
+    <transition on="mustChangePassword" to="casMustChangePassView" />
+    <transition on="accountLocked" to="casAccountLockedView" />
+    <transition on="badHours" to="casBadHoursView" />
+    <transition on="badWorkstation" to="casBadWorkstationView" />
+    <transition on="passwordExpired" to="casExpiredPassView" />
+  </action-state>
 
-	<!--
-        The "showExpiredPassView" end state is the end state for when the user's password has expired and they must be sent
-        to the account management page to change their password.
-        -->
-	<end-state id="showExpiredPassView" view="casExpiredPassView" />
+  <action-state id="sendTicketGrantingTicket">
+    <evaluate expression="sendTicketGrantingTicketAction" />
+    <transition to="serviceCheck" />
+  </action-state>
 
-        <!--
-        The "showAccountLockedView" end state is the end state for when the user's account has been locked out due to
-        password failures.  They are told to try again in 15 minutes.
-        -->
-	<end-state id="showAccountLockedView" view="casAccountLockedView" />
+  <decision-state id="serviceCheck">
+    <if test="flowScope.service != null" then="generateServiceTicket" else="viewGenericLoginSuccess" />
+  </decision-state>
 
-	<!--
-        The "showAccountDisabledView" end state is the end state for when the user's account has been disabled.  They are not
-        allowed to reach any services and must call the Help Desk to re-enable service
-        -->
-	<end-state id="showAccountDisabledView" view="casAccountDisabledView" />
+  <action-state id="generateServiceTicket">
+    <evaluate expression="generateServiceTicketAction" />
+    <transition on="success" to="warn" />
+    <transition on="error" to="generateLoginTicket" />
+    <transition on="gateway" to="gatewayServicesManagementCheck" />
+  </action-state>
 
-	<!--
-        The "showMustChangePassView" end state is the end state for when the user must change his password and then must be sent
-        to the account management page.
-        -->
-	<end-state id="showMustChangePassView" view="casMustChangePassView" />
+  <action-state id="gatewayServicesManagementCheck">
+    <evaluate expression="gatewayServicesManagementCheck" />
+    <transition on="success" to="redirect" />
+  </action-state>
 
-        <!--
-        The "showBadHoursView" end state is the end state for when the user cannot log in at this time.
-        -->
-	<end-state id="showBadHoursView" view="casBadHoursView" />
+  <action-state id="redirect">
+    <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)"
+      result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response" />
+    <transition to="postRedirectDecision" />
+  </action-state>
 
-        <!--
-        The "showBadWorkstation" end state is the end state when the user cannot log in from this worstation (hum, the server indeed)
-        -->
-	<end-state id="showBadWorkstationView" view="casBadWorkstationView" />
+  <decision-state id="postRedirectDecision">
+    <if test="requestScope.response.responseType.name() == 'POST'" then="postView" else="redirectView" />
+  </decision-state>
 
-	<!--
-		The "redirect" end state allows CAS to properly end the workflow while still redirecting
-		the user back to the service required.
-	-->
-	<end-state id="redirectView" view="externalRedirect:${requestScope.response.url}" />
-	
-	<end-state id="pwdRedirectView" view="casWarnPassView" />
 
-	<end-state id="viewServiceErrorView" view="viewServiceErrorView" />
-    
-    <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
+  <!-- the "viewGenericLogin" is the end state for when a user attempts to login without coming directly
+    from a service. They have only initialized their single-sign on session. -->
+  <end-state id="viewGenericLoginSuccess" view="casLoginGenericSuccessView" />
 
-	<global-transitions>
-		<transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
-        <transition to="viewServiceSsoErrorView" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException" />
-		<transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
-	</global-transitions>
+  <!-- The "showWarningView" end state is the end state for when the user has requested privacy settings
+    (to be "warned") to be turned on. It delegates to a view defines in default_views.properties that display
+    the "Please click here to go to the service." message. -->
+  <end-state id="showWarningView" view="casLoginConfirmView" />
+
+  <end-state id="postView" view="postResponseView">
+    <on-entry>
+      <set name="requestScope.parameters" value="requestScope.response.attributes" />
+      <set name="requestScope.originalUrl" value="flowScope.service.id" />
+    </on-entry>
+  </end-state>
+
+  <!-- The "redirect" end state allows CAS to properly end the workflow while still redirecting the user
+    back to the service required. -->
+  <end-state id="redirectView" view="externalRedirect:${requestScope.response.url}" />
+
+  <end-state id="viewServiceErrorView" view="viewServiceErrorView" />
+
+  <end-state id="viewServiceSsoErrorView" view="viewServiceSsoErrorView" />
+
+  <global-transitions>
+    <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException" />
+    <transition to="viewServiceErrorView"
+      on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
+    <transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
+  </global-transitions>
 </flow>
