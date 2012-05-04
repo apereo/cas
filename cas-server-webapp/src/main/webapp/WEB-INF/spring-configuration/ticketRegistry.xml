@@ -7,12 +7,8 @@
     	Configuration for the default TicketRegistry which stores the tickets in-memory and cleans them out as specified intervals.
     </description>
        
-    <!-- Ticket Registry -->
-	<bean id="ticketRegistry" class="org.jasig.cas.extension.clearpass.TicketRegistryDecorator">
-        <constructor-arg index="0" ref="ticketRegistryValue" />
-        <constructor-arg index="1" ref="credentialsCache" />
-    </bean>
-    <bean id="ticketRegistryValue" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+  <!-- Ticket Registry -->
+  <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
 	
 	<!--Quartz -->
 	<!-- TICKET REGISTRY CLEANER -->
