@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.web.init;
 
@@ -26,6 +13,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 
+/**
+ * A {@link ServletContextListener} which wraps Spring's
+ * {@link ContextLoaderListener} and catches anything that delegate throws so as
+ * to prevent its having thrown a Throwable from aborting the initialization of
+ * our entire web application context. Use of this ContextListener will not be
+ * appropriate for all deployments of a web application. Sometimes, a context
+ * listener's aborting context initialization is exactly the desired behavior.
+ * This might be because the resulting application inavailability is acceptable
+ * or because another layer (Apache, a proxy, a balancer, etc.) detects the
+ * inavailability of the context and provides an appropriate user experience. Or
+ * because a root context handles all requests that aren't otherwise handled.
+ * There are many fine alternatives to this approach. However, when using the
+ * bare Tomcat container with CAS as the root context, if your desired behavior
+ * is that a failure at context initialization results in a dummy CAS context
+ * that presents a user-friendly "CAS is unavailable at this time" message,
+ * using this ContextListener in place of Spring's {@link ContextLoaderListener}
+ * should do the trick. The error page associated with this deployment failure
+ * is configured in the web.xml via the standard error handling mechanism.
+ * Rather than being a generic ContextListener wrapper that will make safe any
+ * ContextListener, instead this implementation specifically wraps and delegates
+ * to a Spring {@link ContextLoaderListener}. As such, mapping this listener in
+ * web.xml is a one for one replacement for {@link ContextLoaderListener}.
+ * <p>
+ * The exception thrown is exposed in the Servlet Context under the key
+ * "exceptionCaughtByListener".
+ * 
+ * @author Andrew Petro
+ * @version $Revision$ $Date$
+ * @see ContextLoaderListener
+ */
 public final class SafeContextLoaderListener implements ServletContextListener {
 
     /** Instance of Commons Logging. */
