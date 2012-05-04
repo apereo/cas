@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas;
 
@@ -58,6 +45,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Concrete implementation of a CentralAuthenticationService, and also the
+ * central, organizing component of CAS's internal implementation.
+ * <p>
+ * This class is threadsafe.
+ * <p>
+ * This class has the following properties that must be set:
+ * <ul>
+ * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
+ * of available tickets.</li>
+ * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for TGTs and ST in order to store them
+ * in different locations (i.e. long term memory or short-term)</li>
+ * <li> <code>authenticationManager</code> - The service that will handle
+ * authentication.</li>
+ * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
+ * generate unique secure ids for TicketGrantingTickets.</li>
+ * <li> <code>serviceTicketUniqueTicketIdGenerator</code> - Plug in to
+ * generate unique secure ids for ServiceTickets.</li>
+ * <li> <code>ticketGrantingTicketExpirationPolicy</code> - The expiration
+ * policy for TicketGrantingTickets.</li>
+ * <li> <code>serviceTicketExpirationPolicy</code> - The expiration policy for
+ * ServiceTickets.</li>
+ * </ul>
+ *
+ * @author William G. Thompson, Jr.
+ * @author Scott Battaglia
+ * @author Dmitry Kopylenko
+ * @version $Revision: 1.16 $ $Date: 2007/04/24 18:11:36 $
+ * @since 3.0
+ */
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 
     /** Log instance for logging events, info, warnings, errors, etc. */

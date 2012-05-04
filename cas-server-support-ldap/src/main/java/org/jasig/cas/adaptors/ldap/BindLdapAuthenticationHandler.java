@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.adaptors.ldap;
 
@@ -36,6 +23,22 @@ import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Performs LDAP authentication via two distinct steps:
+ *  <ol>
+ *  <li>Search for an LDAP DN using arbitrary search filter.</li>
+ *  <li>Bind using DN in first step with password provided by login Webflow.</li>
+ *  </ol>
+ *  <p>
+ *  The search step is typically performed anonymously or using a constant
+ *  authenticated context such as an administrator username/password or client
+ *  certificate.  This step is suitable for LDAP connection pooling to improve
+ *  efficiency and performance.
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0.3
+ */
 public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
     /** The default maximum number of results to return. */

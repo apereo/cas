@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
@@ -34,6 +21,23 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Authentication Handler that accepts X509 Certificiates, determines their
+ * validity and ensures that they were issued by a trusted issuer. (targeted at
+ * X509v3) Optionally checks KeyUsage extension in the user certificate
+ * (container should do that too). Note that this handler trusts the servlet
+ * container to do some initial checks like path validation. Deployers can
+ * supply an optional pattern to match subject dns against to further restrict
+ * certificates in case they are not using their own issuer. It's also possible
+ * to specify a maximum pathLength for the SUPPLIED certificates. (note that
+ * this does not include a pathLength check for the root certificate)
+ * [PathLength is 0 for the CA certficate that issues the end-user certificate]
+ *
+ * @author Scott Battaglia
+ * @author Jan Van der Velpen
+ * @version $Revision$ $Date$
+ * @since 3.0.4
+ */
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
    /** Default setting to limit the number of intermediate certificates. */

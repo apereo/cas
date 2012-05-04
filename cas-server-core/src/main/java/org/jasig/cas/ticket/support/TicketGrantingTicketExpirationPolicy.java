@@ -1,20 +1,7 @@
 /*
- * Licensed to Jasig under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
+ * distributed with this file and available online at
+ * http://www.ja-sig.org/products/cas/overview/license/
  */
 package org.jasig.cas.ticket.support;
 
@@ -27,6 +14,14 @@ import org.springframework.util.Assert;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets
+ * can be used any number of times, have a fixed lifetime, and an idle timeout.
+ *
+ * @author William G. Thompson, Jr.
+ * @version $Revision$ $Date$
+ * @since 3.4.10
+ */
 public final class TicketGrantingTicketExpirationPolicy implements ExpirationPolicy, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
