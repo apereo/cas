@@ -67,7 +67,7 @@
     <system>Jira</system>
     <url>https://issues.jasig.org/browse/CAS</url>
   </issueManagement>
-  
+
   <mailingLists>
     <mailingList>
       <name>cas-user</name>
@@ -251,12 +251,19 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <scope>test</scope>
     </dependency>
 
-	<dependency>
-		<groupId>org.mockito</groupId>
-	    <artifactId>mockito-core</artifactId>
-	    <version>${mockito.version}</version>
-	    <scope>test</scope>
-	</dependency>
+  <dependency>
+    <groupId>joda-time</groupId>
+    <artifactId>joda-time</artifactId>
+    <version>${jodatime.version}</version>
+  </dependency>
+
+
+  <dependency>
+    <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+  </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -675,11 +682,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId> 
+        <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <minmemory>128m</minmemory>
           <maxmemory>512</maxmemory>
-        </configuration> 
+        </configuration>
       </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -717,5 +724,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.9.0</mockito.version>
+    <jodatime.version>2.1</jodatime.version>
   </properties>
 </project>

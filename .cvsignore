@@ -1,0 +1,11 @@
+build
+dist
+target
+bin
+*.jpage
+build.properties
+velocity.log
+.clover
+user.properties
+.DS_Store
+bin
