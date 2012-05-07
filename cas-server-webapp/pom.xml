@@ -38,12 +38,12 @@
       <scope>test</scope>
       <type>jar</type>
     </dependency>
+
     <dependency>
       <groupId>com.github.inspektr</groupId>
       <artifactId>inspektr-support-spring</artifactId>
       <scope>runtime</scope>
     </dependency>
-
 
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -81,12 +81,12 @@
     </dependency>
 
     <dependency>
-	  <artifactId>cas-server-support-ldap</artifactId>
-	  <version>${project.version}</version>
-	</dependency>
-	
-  <dependency>
-	  <groupId>org.jasig.cas</groupId>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-ldap</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jasig.cas.client</groupId>
       <artifactId>cas-client-core</artifactId>
       <version>3.2.1</version>
