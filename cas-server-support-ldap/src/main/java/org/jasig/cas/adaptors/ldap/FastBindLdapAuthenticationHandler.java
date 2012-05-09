@@ -15,7 +15,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */                                     
+ */
 package org.jasig.cas.adaptors.ldap;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
@@ -29,7 +29,7 @@ import javax.naming.directory.DirContext;
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
  * normal two step binding process to determine validity by providing before
  * hand the path to the uid.
- * 
+ *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
  * @since 3.0.3
@@ -45,8 +45,9 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePassw
             dirContext = this.getContextSource().getContext(bindDn, getPasswordEncoder().encode(credentials.getPassword()));
             return true;
         } catch (final NamingException e) {
-            log.debug(e.getMessage(), e);
-            return false;
+            if (this.log.isErrorEnabled())
+                this.log.error(e.getMessage(), e);
+                return false;
         } finally {
             if (dirContext != null) {
                 LdapUtils.closeContext(dirContext);
