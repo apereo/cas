@@ -52,7 +52,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
     private static final class LdapPasswordPolicyResult {
 
-        private String DateResult            = null;
+        private String dateResult            = null;
         private String noWarnAttributeResult = null;
         private String userId                = null;
         private String validDaysResult       = null;
@@ -63,7 +63,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         }
 
         public String getDateResult() {
-            return this.DateResult;
+            return this.dateResult;
         }
 
         public String getNoWarnAttributeResult() {
@@ -83,7 +83,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         }
 
         public void setDateResult(final String date) {
-            this.DateResult = date;
+            this.dateResult = date;
         }
 
         public void setNoWarnAttributeResult(final String noWarnAttributeResult) {
