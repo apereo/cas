@@ -123,6 +123,51 @@
 					+-->
 				<bean
 					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+					
+			  <!--
+		      | Sample LPPE-enabled Ldap authentication handler with errors codes defined as a regex pattern.
+		      | Each error type will redirect the user to a particular view state defined in the flow.
+		      | Unhandled error codes/types will prevent authentication.
+		      |
+		      | To disable LPPE error handling, simply reove the entire ldapErrorDefinitions block.
+		      -->
+		      <!--
+		       <bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+		          p:filter="${ldap.authentication.filter}"
+		          p:searchBase="${ldap.authentication.basedn}"
+		          p:contextSource-ref="contextSource"
+		          p:searchContextSource-ref="pooledContextSource"
+		          p:ignorePartialResultException="${ldap.authentication.ignorePartialResultException}">
+		
+		          <property name="ldapErrorDefinitions">
+		            <list>
+		               <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                  p:ldapPattern="data 530"
+		                  p:type="badHours" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                    p:ldapPattern="data 533"
+		                    p:type="accountDisabled" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                   p:ldapPattern="data 773"
+		                    p:type="mustChangePassword" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                    p:ldapPattern="data 775"
+		                    p:type="accountLocked" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                  p:ldapPattern="data 531"
+		                  p:type="badWorkstation" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                    p:ldapPattern="data (701|532)"
+		                    p:type="passwordExpired" />
+		            </list>
+		          </property>
+		       </bean>
+		       -->
 			</list>
 		</property>
 	</bean>
