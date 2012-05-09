@@ -141,27 +141,27 @@
 		
 		          <property name="ldapErrorDefinitions">
 		            <list>
-		               <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		               <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
 		                  p:ldapPattern="data 530"
 		                  p:type="badHours" />
 		
-		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
 		                    p:ldapPattern="data 533"
 		                    p:type="accountDisabled" />
 		
-		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
 		                   p:ldapPattern="data 773"
 		                    p:type="mustChangePassword" />
 		
-		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
 		                    p:ldapPattern="data 775"
 		                    p:type="accountLocked" />
 		
-		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
 		                  p:ldapPattern="data 531"
 		                  p:type="badWorkstation" />
 		
-		                <bean class="org.jasig.cas.adaptors.ldap.util.LdapErrorDefinition"
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
 		                    p:ldapPattern="data (701|532)"
 		                    p:type="passwordExpired" />
 		            </list>
