@@ -47,7 +47,8 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePassw
         } catch (final NamingException e) {
             if (this.log.isErrorEnabled())
                 this.log.error(e.getMessage(), e);
-                return false;
+            
+            throw handleLdapError(e);
         } finally {
             if (dirContext != null) {
                 LdapUtils.closeContext(dirContext);
