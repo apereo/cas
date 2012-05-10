@@ -30,7 +30,7 @@ import org.jasig.cas.authentication.principal.SimplePrincipal;
  * @author Marvin S. Addison
  * @version $Revision: $
  */
-public class SimplePrincipalSerializer extends SimpleSerializer<SimplePrincipal> {
+public final class SimplePrincipalSerializer extends SimpleSerializer<SimplePrincipal> {
     private final Kryo kryo;
 
     private final AttributeMapSerializer attrSerializer;

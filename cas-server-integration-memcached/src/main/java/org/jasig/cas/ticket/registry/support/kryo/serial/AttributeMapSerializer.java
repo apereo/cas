@@ -34,7 +34,7 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
  * @author Middleware Services
  * @version $Revision: $
  */
-public class AttributeMapSerializer extends SimpleSerializer<Map<String, Object>> {
+public final class AttributeMapSerializer extends SimpleSerializer<Map<String, Object>> {
 
     private final Kryo kryo;
 

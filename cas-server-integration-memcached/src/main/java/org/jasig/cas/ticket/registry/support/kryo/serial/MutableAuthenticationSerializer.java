@@ -32,7 +32,7 @@ import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
  * @author Marvin S. Addison
  * @version $Revision: $
  */
-public class MutableAuthenticationSerializer extends AbstractAuthenticationSerializer<MutableAuthentication> {
+public final class MutableAuthenticationSerializer extends AbstractAuthenticationSerializer<MutableAuthentication> {
 
     private final FieldHelper fieldHelper;
 
