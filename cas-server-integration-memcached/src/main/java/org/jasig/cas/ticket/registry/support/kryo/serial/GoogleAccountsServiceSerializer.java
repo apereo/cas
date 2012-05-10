@@ -33,7 +33,7 @@ import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
  * @author Marvin S. Addison
  * @version $Revision: $
  */
-public class GoogleAccountsServiceSerializer extends AbstractWebApplicationServiceSerializer<GoogleAccountsService> {
+public final class GoogleAccountsServiceSerializer extends AbstractWebApplicationServiceSerializer<GoogleAccountsService> {
 
     private static final Constructor CONSTRUCTOR;
 

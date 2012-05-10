@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @version $Revision: $
  */
-public class FieldHelper {
+public final class FieldHelper {
     private final Map<String, Field> fieldCache = new HashMap<String, Field>();
 
     public Object getFieldValue(final Object target, final String fieldName) {
