@@ -25,12 +25,12 @@ import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 
 /**
- * Unit test for {@link HardTimeoutExpirationPolicy}.
+ * Serializer for {@link HardTimeoutExpirationPolicy}.
  *
  * @author Marvin S. Addison
  * @version $Revision: $
  */
-public class HardTimeoutExpirationPolicySerializer extends SimpleSerializer<HardTimeoutExpirationPolicy> {
+public final class HardTimeoutExpirationPolicySerializer extends SimpleSerializer<HardTimeoutExpirationPolicy> {
 
     protected final FieldHelper fieldHelper;
 

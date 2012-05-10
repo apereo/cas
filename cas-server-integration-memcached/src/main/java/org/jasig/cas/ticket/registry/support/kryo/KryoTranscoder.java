@@ -155,14 +155,12 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
 
-    /** {@inheritDoc} */
     public CachedData encode(final Object o) {
         final byte[] bytes = encodeToBytes(o);
         return new CachedData(0, bytes, bytes.length);
     }
 
 
-    /** {@inheritDoc} */
     public Object decode(final CachedData d) {
         return kryo.readClassAndObject(ByteBuffer.wrap(d.getData()));
     }

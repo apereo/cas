@@ -30,7 +30,7 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
  * @author Marvin S. Addison
  * @version $Revision: $
  */
-public class TimeoutExpirationPolicySerializer extends SimpleSerializer<TimeoutExpirationPolicy> {
+public final class TimeoutExpirationPolicySerializer extends SimpleSerializer<TimeoutExpirationPolicy> {
 
     protected final FieldHelper fieldHelper;
 
