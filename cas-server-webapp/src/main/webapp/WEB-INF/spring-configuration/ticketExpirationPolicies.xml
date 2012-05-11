@@ -36,11 +36,11 @@
     <!-- Expiration policies -->
     <util:constant id="SECONDS" static-field="java.util.concurrent.TimeUnit.SECONDS"/>
     <bean id="serviceTicketExpirationPolicy" class="org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy"
-          c:numberOfUses="1" c:timeToKill="10" c:timeUnit-ref="SECONDS"/>
+          c:numberOfUses="1" c:timeToKill="${st.timeToKillInSeconds:10}" c:timeUnit-ref="SECONDS"/>
 
     <!-- TicketGrantingTicketExpirationPolicy: Default as of 3.5 -->
     <!-- Provides both idle and hard timeouts, for instance 2 hour sliding window with an 8 hour max lifetime -->
     <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy"
-          p:maxTimeToLiveInSeconds="28800"
-          p:timeToKillInSeconds="7200"/>
+          p:maxTimeToLiveInSeconds="${tgt.maxTimeToLiveInSeconds:28800}"
+          p:timeToKillInSeconds="${tgt.timeToKillInSeconds:7200}"/>
 </beans>
