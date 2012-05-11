@@ -93,10 +93,11 @@ public class AuthenticationViaFormAction {
                 putWarnCookieIfRequestParameterPresent(context);
                 return "warn";
             } catch (final TicketException e) {
-                if (e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass())) {
+                if (isCauseAuthenticationException(e)) {
                     populateErrorsInstance(e, messageContext);
-                    return "error";
+                    return getAuthenticationExceptionEventId(e);
                 }
+                
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 if (logger.isDebugEnabled()) {
                     logger.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
@@ -110,6 +111,8 @@ public class AuthenticationViaFormAction {
             return "success";
         } catch (final TicketException e) {
             populateErrorsInstance(e, messageContext);
+            if (isCauseAuthenticationException(e))
+                return getAuthenticationExceptionEventId(e);
             return "error";
         }
     }
@@ -132,6 +135,23 @@ public class AuthenticationViaFormAction {
         } else {
             this.warnCookieGenerator.removeCookie(response);
         }
+    }
+    
+    private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
+        return (AuthenticationException) e.getCause();
+    }
+
+    private String getAuthenticationExceptionEventId(final TicketException e) {
+        final AuthenticationException authEx = getAuthenticationExceptionAsCause(e);
+
+        if (this.logger.isDebugEnabled())
+            this.logger.debug("An authentication error has occurred. Returning the event id " + authEx.getType());
+
+        return authEx.getType();
+    }
+
+    private boolean isCauseAuthenticationException(final TicketException e) {
+        return e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass());
     }
 
     public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
