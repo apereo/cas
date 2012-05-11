@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+	<bean id="passwordPolicyAction" class="org.jasig.cas.web.flow.PasswordPolicyEnforcementAction">
+	  	<property name="passwordPolicyEnforcer" ref="ldapPasswordPolicyEnforcer" />
+	  	<property name="passwordPolicyUrl" value="${ldap.authentication.lppe.password.url}" />
+	</bean>
+
+	<!--
+		This bean defines the current implementation of the password policy enforcer for ldap.
+		The properties defined below would possibly exist inside the local 'cas.properties' file
+	-->
+	<bean id="ldapPasswordPolicyEnforcer" class="org.jasig.cas.adaptors.ldap.LdapPasswordPolicyEnforcer">
+	  <property name="searchBase" value="${ldap.authentication.basedn}" />
+	  <property name="contextSource" ref="contextSource" />
+	  <property name="filter" value="${ldap.authentication.filter}" />
+	  <property name="ignorePartialResultException" value="${ldap.authentication.ignorePartialResultException}" />
+	  <property name="warnAll" value="${ldap.authentication.lppe.warnAll}" />
+	  <property name="dateFormat" value="${ldap.authentication.lppe.dateFormat}" />
+	  <property name="dateAttribute" value="${ldap.authentication.lppe.dateAttribute}" />
+	  <property name="warningDaysAttribute" value="${ldap.authentication.lppe.warningDaysAttribute}" />
+	  <property name="validDaysAttribute" value="${ldap.authentication.lppe.validDaysAttribute}" />
+	  <property name="warningDays" value="${ldap.authentication.lppe.warningDays}" />
+	  <property name="validDays" value="${ldap.authentication.lppe.validDays}" />
+	  <property name="noWarnAttribute" value="${ldap.authentication.lppe.noWarnAttribute}" />
+	  <property name="noWarnValues" value="${ldap.authentication.lppe.noWarnValues}" />
+	</bean>
+</beans>
