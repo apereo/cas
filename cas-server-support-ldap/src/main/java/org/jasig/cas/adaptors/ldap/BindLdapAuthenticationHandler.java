@@ -122,7 +122,10 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
                     return true;
                 }
             } catch (final Exception e) {
-                log.debug(e.getMessage(), e);
+                if (this.log.isErrorEnabled())
+                    this.log.error(e.getMessage(), e);
+
+                throw handleLdapError(e);
             } finally {
                 LdapUtils.closeContext(test);
             }
