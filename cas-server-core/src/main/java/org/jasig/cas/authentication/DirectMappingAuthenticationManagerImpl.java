@@ -19,6 +19,8 @@
 package org.jasig.cas.authentication;
 
 import java.util.Map;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
@@ -26,12 +28,7 @@ import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationExceptio
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.perf4j.LoggingStopWatch;
-import org.perf4j.StopWatch;
 import org.springframework.util.Assert;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Authentication Manager that provides a direct mapping between credentials
@@ -58,18 +55,19 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
 
         Assert.notNull(d, "no mapping found for: " + credentialsClass.getName());
 
+        final String handlerName = d.getAuthenticationHandler().getClass().getSimpleName();
         boolean authenticated = false;
-        final LoggingStopWatch stopWatch = new LoggingStopWatch(d.getAuthenticationHandler().getClass().getSimpleName());
-
         try {
             authenticated = d.getAuthenticationHandler().authenticate(credentials);
-        } finally {
-            stopWatch.stop();
+        } catch (Exception e) {
+            log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
         }
 
         if (!authenticated) {
+            log.info("{} failed to authenticate {}", handlerName, credentials);
             throw new BadCredentialsAuthenticationException();
         }
+        log.info("{} successfully authenticated {}", handlerName, credentials);
 
         final Principal p = d.getCredentialsToPrincipalResolver().resolvePrincipal(credentials);
 
