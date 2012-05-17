@@ -39,10 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
 
-    /** Describes a credential that is not resolved to a principal. */
-    protected static Pair<AuthenticationHandler, Principal> VOID_PRINCIPAL =
-            new Pair<AuthenticationHandler, Principal>(null, null);
-
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger log = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
 
