@@ -18,18 +18,19 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.constraints.NotNull;
+
 import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
+import org.perf4j.aop.Profiled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Scott Battaglia
@@ -37,6 +38,10 @@ import java.util.List;
  * @since 3.3.5
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
+
+    /** Describes a credential that is not resolved to a principal. */
+    protected static Pair<AuthenticationHandler, Principal> VOID_PRINCIPAL =
+            new Pair<AuthenticationHandler, Principal>(null, null);
 
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger log = LoggerFactory.getLogger(AuthenticationManagerImpl.class);
@@ -49,6 +54,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         action="AUTHENTICATION",
         actionResolverName="AUTHENTICATION_RESOLVER",
         resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
+    @Profiled(tag = "AUTHENTICATE", logFailuresSeparately = false)
     public final Authentication authenticate(final Credentials credentials) throws AuthenticationException {
 
         final Pair<AuthenticationHandler, Principal> pair = authenticateAndObtainPrincipal(credentials);
@@ -94,7 +100,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     protected abstract Pair<AuthenticationHandler,Principal> authenticateAndObtainPrincipal(Credentials credentials) throws AuthenticationException;
 
 
-    protected class Pair<A,B> {
+    protected static class Pair<A,B> {
 
         private final A first;
 
