@@ -19,6 +19,8 @@
 package org.jasig.cas.authentication;
 
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
@@ -27,10 +29,6 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.perf4j.LoggingStopWatch;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * <p>
@@ -85,37 +83,22 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         boolean foundSupported = false;
         boolean authenticated = false;
         AuthenticationHandler authenticatedClass = null;
-        
+        String handlerName;
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
-
-                boolean auth = false;
-                final LoggingStopWatch stopWatch = new LoggingStopWatch(authenticationHandler.getClass().getSimpleName());
-
+                handlerName = authenticationHandler.getClass().getName();
                 try {
-                    auth = authenticationHandler.authenticate(credentials);
-                } finally {
-                    stopWatch.stop();
-                }
-
-                if (!auth) {
-                    if (log.isInfoEnabled()) {
-                        log.info("AuthenticationHandler: "
-                                + authenticationHandler.getClass().getName()
-                                + " failed to authenticate the user which provided the following credentials: "
-                                + credentials.toString());
+                    if (!authenticationHandler.authenticate(credentials)) {
+                        log.info("{} failed to authenticate {}", handlerName, credentials);
+                    } else {
+                        log.info("{} successfully authenticated {}", handlerName, credentials);
+                        authenticatedClass = authenticationHandler;
+                        authenticated = true;
+                        break;
                     }
-                } else {
-                    if (log.isInfoEnabled()) {
-                        log.info("AuthenticationHandler: "
-                                + authenticationHandler.getClass().getName()
-                                + " successfully authenticated the user which provided the following credentials: "
-                                + credentials.toString());
-                    }
-                    authenticatedClass = authenticationHandler;
-                    authenticated = true;
-                    break;
+                } catch (Exception e) {
+                    log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
                 }
             }
         }
