@@ -97,8 +97,9 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
                         authenticated = true;
                         break;
                     }
-                } catch (Exception e) {
+                } catch (AuthenticationException e) {
                     log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
+                    throw e;
                 }
             }
         }
