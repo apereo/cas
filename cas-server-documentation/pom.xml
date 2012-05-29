@@ -23,11 +23,11 @@
   <parent>
     <artifactId>cas-server</artifactId>
     <groupId>org.jasig.cas</groupId>
-    <version>3.5.0-RC2-SNAPSHOT</version>
+    <version>3.5.0-RC2</version>
   </parent>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-documentation</artifactId>
-  <version>3.5.0-RC2-SNAPSHOT</version>
+  <version>3.5.0-RC2</version>
   <packaging>pom</packaging>
   <name>CAS Documentation</name>
   <build>
