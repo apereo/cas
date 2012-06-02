@@ -84,6 +84,13 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         boolean authenticated = false;
         AuthenticationHandler authenticatedClass = null;
         String handlerName;
+        
+        /*
+         * Default AuthenticationException to throw, in case an error should occur.
+         * Will be reset to an instance of AuthenticationException thrown, if any, during the authentication attempt.
+         */
+        AuthenticationException unAuthSupportedHandlerException = BadCredentialsAuthenticationException.ERROR;
+        
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
@@ -97,15 +104,18 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
                         authenticated = true;
                         break;
                     }
+                } catch (AuthenticationException e) {
+                    unAuthSupportedHandlerException = e;
+                    logAuthenticationHandlerError(handlerName, credentials, e);
                 } catch (Exception e) {
-                    log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
+                    logAuthenticationHandlerError(handlerName, credentials, e);
                 }
             }
         }
 
         if (!authenticated) {
             if (foundSupported) {
-                throw BadCredentialsAuthenticationException.ERROR;
+                throw unAuthSupportedHandlerException;
             }
 
             throw UnsupportedCredentialsException.ERROR;
@@ -151,5 +161,17 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
     public void setCredentialsToPrincipalResolvers(
         final List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers) {
         this.credentialsToPrincipalResolvers = credentialsToPrincipalResolvers;
+    }
+    
+    /**
+     * Logs the exception occurred as an error.
+     * 
+     * @param handlerName The class name of the authentication handler.
+     * @param credentials Client credentials subject to authentication. 
+     * @param e The exception that has occurred during authentication attempt.
+     */
+    private void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
+        if (log.isErrorEnabled())
+            log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
     }
 }
