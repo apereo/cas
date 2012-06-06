@@ -57,15 +57,21 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
 
         final String handlerName = d.getAuthenticationHandler().getClass().getSimpleName();
         boolean authenticated = false;
+        
+        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR; 
+        
         try {
             authenticated = d.getAuthenticationHandler().authenticate(credentials);
+        } catch (AuthenticationException e) {
+            authException = e;
+            logAuthenticationHandlerError(handlerName, credentials, e);
         } catch (Exception e) {
-            log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
-        }
+            logAuthenticationHandlerError(handlerName, credentials, e);
+        } 
 
         if (!authenticated) {
             log.info("{} failed to authenticate {}", handlerName, credentials);
-            throw new BadCredentialsAuthenticationException();
+            throw authException;
         }
         log.info("{} successfully authenticated {}", handlerName, credentials);
 
@@ -77,6 +83,18 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
     public final void setCredentialsMapping(
         final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
+    }
+    
+    /**
+     * Logs the exception occurred as an error.
+     * 
+     * @param handlerName The class name of the authentication handler.
+     * @param credentials Client credentials subject to authentication. 
+     * @param e The exception that has occurred during authentication attempt.
+     */
+    private void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
+        if (this.log.isErrorEnabled())
+            this.log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
     }
 
     public static final class DirectAuthenticationHandlerMappingHolder {
