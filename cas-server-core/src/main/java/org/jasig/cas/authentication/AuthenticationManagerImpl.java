@@ -158,16 +158,4 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         final List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers) {
         this.credentialsToPrincipalResolvers = credentialsToPrincipalResolvers;
     }
-    
-    /**
-     * Logs the exception occurred as an error.
-     * 
-     * @param handlerName The class name of the authentication handler.
-     * @param credentials Client credentials subject to authentication. 
-     * @param e The exception that has occurred during authentication attempt.
-     */
-    private void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
-        if (this.log.isErrorEnabled())
-            this.log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
-    }
 }
