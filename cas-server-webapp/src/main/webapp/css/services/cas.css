@@ -179,6 +179,18 @@ form {
     padding:0;
     float:left;
 }
+
+#footer a#jasig {
+    position:relative;
+    float:right;
+    clear:both;
+    display: block;
+    background-image: url(../../images/ja-sig-logo.gif);
+    width: 118px;
+    height: 31px;
+    margin:1em 5px .5em;
+}
+
 #footer #nav-campus-sites {
     list-style:none;
     float:left;
