@@ -49,7 +49,6 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         if (last == null) {
             return false;
         }
-        System.out.println("Threshold=" + getThresholdRate());
         return submissionRate(new Date(), last) > getThresholdRate();
     }
 
@@ -81,7 +80,6 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     
     private double submissionRate(final Date current, final Date last) {
         double rate = 1000.0 / (current.getTime() - last.getTime());
-        System.out.println("Rate=" + rate);
         return rate;
     }
 }
