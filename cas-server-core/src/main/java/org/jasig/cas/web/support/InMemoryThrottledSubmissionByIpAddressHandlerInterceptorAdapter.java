@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 public final class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
     @Override
-    protected String constructKey(final HttpServletRequest request, final String usernameParameter) {
+    protected String constructKey(final HttpServletRequest request) {
         return request.getRemoteAddr();
     }
 }

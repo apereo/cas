@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,25 +41,24 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
-    private final ConcurrentMap<String, AtomicInteger> ipMap = new ConcurrentHashMap<String, AtomicInteger>();
+    private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<String, Date>();
 
     @Override
-    protected final int findCount(final HttpServletRequest request, final String usernameParameter, final int failureRangeInSeconds) {
-        final AtomicInteger existingValue = this.ipMap.get(constructKey(request, usernameParameter));
-        return existingValue == null ? 0 : existingValue.get();
-    }
-
-    @Override
-    protected final void updateCount(final HttpServletRequest request, final String usernameParameter) {
-        final AtomicInteger newAtomicInteger = new AtomicInteger(1);
-        final AtomicInteger oldAtomicInteger = this.ipMap.putIfAbsent(constructKey(request, usernameParameter), newAtomicInteger);
-
-        if (oldAtomicInteger != null) {
-            oldAtomicInteger.incrementAndGet();
+    protected final boolean exceedsThreshold(final HttpServletRequest request) {
+        final Date last = this.ipMap.get(constructKey(request));
+        if (last == null) {
+            return false;
         }
+        System.out.println("Threshold=" + getThresholdRate());
+        return submissionRate(new Date(), last) > getThresholdRate();
     }
 
-    protected abstract String constructKey(HttpServletRequest request, String usernameParameter);
+    @Override
+    protected final void recordSubmissionFailure(final HttpServletRequest request) {
+        this.ipMap.put(constructKey(request), new Date());
+    }
+
+    protected abstract String constructKey(HttpServletRequest request);
 
     /**
      * This class relies on an external configuration to clean it up. It ignores the threshold data in the parent class.
@@ -67,17 +67,21 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         final Set<String> keys = this.ipMap.keySet();
         log.debug("Decrementing counts for throttler.  Starting key count: " + keys.size());
 
-        for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-            final String key = iter.next();
-            final AtomicInteger integer = this.ipMap.get(key);
-            final int  newValue = integer.decrementAndGet();
-
-            log.trace("Decrementing count for key [" + key + "]; starting count [" + integer + "]; ending count [" + newValue + "]");
-
-            if (newValue == 0) {
+        final Date now = new Date();
+        String key;
+        for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) { 
+            key = iter.next();
+            if (submissionRate(now, this.ipMap.get(key)) < getThresholdRate()) {
+                log.trace("Removing entry for key {}", key);
                 iter.remove();
             }
         }
         log.debug("Done decrementing count for throttler.");
+    }
+    
+    private double submissionRate(final Date current, final Date last) {
+        double rate = 1000.0 / (current.getTime() - last.getTime());
+        System.out.println("Rate=" + rate);
+        return rate;
     }
 }

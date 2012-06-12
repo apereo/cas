@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,88 +30,79 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.quartz.SimpleTriggerBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.servlet.HandlerAdapter;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.webflow.test.MockRequestContext;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.*;
 
 /**
- * Test cases for various submission throttle components.
+ * Unit test for {@link InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests}.
  *
- * @author Scott Battaglia
  * @author Marvin S. Addison
+ * @version $Revision$ $Date$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:/throttledSubmissionContext.xml"})
-public class ThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests {
+public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests {
 
     private static final int FAILURE_RANGE = 5;
 
-    private static final int FAILURE_THRESHOLD = 10;
+    private static final int FAILURE_THRESHOLD = 100;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter memoryAddressThrottle;
+    private InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
 
     @Autowired
-    private InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter memoryAddressUserThrottle;
+    @Qualifier("memoryThrottleIpAndUsernameTrigger")
+    private SimpleTriggerBean trigger;
 
 
-    @Test
-    public void testInMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter() throws Exception {
-        testThrottle(memoryAddressThrottle);
-    }
-
-
-    @Test
-    public void testInMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter() throws Exception {
-        testThrottle(memoryAddressUserThrottle);
-    }
-
-    
-    private void testThrottle(final AbstractThrottledSubmissionHandlerInterceptorAdapter throttle) throws Exception
-    {
-        final double rate = (double) FAILURE_THRESHOLD / (double) FAILURE_RANGE;
+    @Before
+    public void setUp() throws Exception {
         throttle.setFailureRangeInSeconds(FAILURE_RANGE);
         throttle.setFailureThreshold(FAILURE_THRESHOLD);
         throttle.afterPropertiesSet();
+    }
+
+
+    @Test
+    public void testThrottle() throws Exception {
+        final double rate = (double) FAILURE_THRESHOLD / (double) FAILURE_RANGE;
 
         // Ensure that repeated logins BELOW threshold rate are allowed
-        assertEquals(200, loginUnsuccessfully(throttle, "mog", "1.2.3.4").getStatus());
+        assertEquals(200, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
         int wait;
         for (int i = 0; i < 5; i++) {
             // Wait 5% more than threshold period (rate slightly below threshold)
             wait = (int)(1000.0 * 1.05 / rate);
             logger.debug("Waiting for {} ms", wait);
             Thread.sleep(wait);
-            assertEquals(200, loginUnsuccessfully(throttle, "mog", "1.2.3.4").getStatus());
+            assertEquals(200, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
         }
 
         // Ensure that repeated logins ABOVE threshold are throttled
         // The following attempt follows immediately after last one in above loop, which is effectively
         // instantaneous, and is expected to be throttled.
-        assertEquals(403, loginUnsuccessfully(throttle, "mog", "1.2.3.4").getStatus());
+        assertEquals(403, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
         for (int i = 1; i < 5; i++) {
             // Wait 5% less than threshold period (rate slightly above threshold)
             wait = (int)(1000.0 * 0.95 / rate);
             logger.debug("Waiting for {} ms", wait);
             Thread.sleep(wait);
-            assertEquals(403, loginUnsuccessfully(throttle, "mog", "1.2.3.4").getStatus());
+            assertEquals(403, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
         }
 
         // Ensure that slowing down relieves throttle
         // Wait 5% more than threshold period (rate slightly below threshold)
         wait = (int)(1000.0 * 1.05 / rate);
         Thread.sleep(wait);
-        assertEquals(200, loginUnsuccessfully(throttle, "mog", "1.2.3.4").getStatus());
+        assertEquals(200, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
     }
 
 
-    private MockHttpServletResponse loginUnsuccessfully(final HandlerInterceptorAdapter throttle, final String username, final String fromAddress) throws Exception {
+    private MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("POST");

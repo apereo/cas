@@ -223,5 +223,13 @@
             <scope>compile</scope>
             <type>jar</type>
         </dependency>
+
+        <dependency>
+          <groupId>org.opensymphony.quartz</groupId>
+          <artifactId>quartz</artifactId>
+          <version>1.6.1</version>
+          <scope>test</scope>
+          <type>jar</type>
+        </dependency>
   </dependencies>
 </project>

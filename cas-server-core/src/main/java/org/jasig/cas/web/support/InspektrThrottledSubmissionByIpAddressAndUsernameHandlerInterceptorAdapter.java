@@ -62,22 +62,32 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     }
 
     @Override
-    protected final int findCount(final HttpServletRequest request, final String usernameParameter, final int failureRangeInSeconds) {
-        final String SQL = "Select count(*) from COM_AUDIT_TRAIL where AUD_CLIENT_IP = ? and AUD_USER = ? AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ?";
-        final String userToUse = constructUsername(request, usernameParameter);
-        final Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, -1 * failureRangeInSeconds);
-        final Date oldestDate = calendar.getTime();
-        return this.jdbcTemplate.queryForInt(SQL, new Object[] {request.getRemoteAddr(), userToUse, INSPEKTR_ACTION, this.applicationCode, oldestDate}, new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP});
+    protected boolean exceedsThreshold(final HttpServletRequest request) {
+        final String query = "SELECT COUNT(*) FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? " +
+                "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ?";
+        final String userToUse = constructUsername(request, getUsernameParameter());
+        final Calendar cutoff = Calendar.getInstance();
+        cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
+        final int count = this.jdbcTemplate.queryForInt(
+                query,
+                new Object[] {request.getRemoteAddr(), userToUse, INSPEKTR_ACTION, this.applicationCode, cutoff.getTime()},
+                new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP});
+        return count > getFailureThreshold();
     }
 
     @Override
-    protected final void updateCount(final HttpServletRequest request, final String usernameParameter) {
-        final String userToUse = constructUsername(request, usernameParameter);
+    protected void recordSubmissionFailure(final HttpServletRequest request) {
+        // No internal counters to update
+    }
+
+    @Override
+    protected void recordThrottle(final HttpServletRequest request) {
+        super.recordThrottle(request);
+        final String userToUse = constructUsername(request, getUsernameParameter());
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
             public String asString() {
-                return String.format("%s.updateCount()", this.getClass().getName());
+                return String.format("%s.recordThrottle()", this.getClass().getName());
             }
         };
         final AuditActionContext context = new AuditActionContext(userToUse, userToUse, INSPEKTR_ACTION, this.applicationCode, new Date(), clientInfo.getClientIpAddress(), clientInfo.getServerIpAddress(), auditPointRuntimeInfo);
