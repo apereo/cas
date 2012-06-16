@@ -77,9 +77,16 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         }
         log.debug("Done decrementing count for throttler.");
     }
-    
-    private double submissionRate(final Date current, final Date last) {
-        double rate = 1000.0 / (current.getTime() - last.getTime());
-        return rate;
+
+    /**
+     * Computes the instantaneous rate in between two given dates corresponding to two submissions.
+     *
+     * @param a First date.
+     * @param b Second date.
+     *
+     * @return  Instantaneous submission rate in submissions/sec, e.g. <code>a - b</code>.
+     */
+    private double submissionRate(final Date a, final Date b) {
+        return 1000.0 / (a.getTime() - b.getTime());
     }
 }

@@ -231,5 +231,12 @@
           <scope>test</scope>
           <type>jar</type>
         </dependency>
+
+        <dependency>
+          <groupId>com.github.inspektr</groupId>
+          <artifactId>inspektr-support-spring</artifactId>
+          <version>1.0.7.GA</version>
+          <scope>test</scope>
+        </dependency>
   </dependencies>
 </project>
