@@ -41,7 +41,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
         throws Exception {
         // get CAS ticket
-        String ticket = request.getParameter("ticket");
+        String ticket = request.getParameter(OAuthConstants.TICKET);
         logger.debug("ticket : {}", ticket);
         
         // retrieve callback url from session
@@ -51,7 +51,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
         
         // return to callback with code
-        String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, "code", ticket);
+        String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
         logger.debug("callbackUrlWithCode : {}", callbackUrlWithCode);
         return OAuthUtils.redirectTo(callbackUrlWithCode);
     }

@@ -12,6 +12,26 @@
 	| declaration to replace the default SimpleTestUsernamePasswordAuthenticationHandler with
 	| one implementing your approach for authenticating usernames and passwords.
 	+-->
+
+<!--
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
@@ -103,6 +123,51 @@
 					+-->
 				<bean
 					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+					
+			  <!--
+		      | Sample LPPE-enabled Ldap authentication handler with errors codes defined as a regex pattern.
+		      | Each error type will redirect the user to a particular view state defined in the flow.
+		      | Unhandled error codes/types will prevent authentication.
+		      |
+		      | To disable LPPE error handling, simply reove the entire ldapErrorDefinitions block.
+		      -->
+		      <!--
+		       <bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+		          p:filter="${ldap.authentication.filter}"
+		          p:searchBase="${ldap.authentication.basedn}"
+		          p:contextSource-ref="contextSource"
+		          p:searchContextSource-ref="pooledContextSource"
+		          p:ignorePartialResultException="${ldap.authentication.ignorePartialResultException}">
+		
+		          <property name="ldapErrorDefinitions">
+		            <list>
+		               <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+		                  p:ldapPattern="data 530"
+		                  p:type="badHours" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+		                    p:ldapPattern="data 533"
+		                    p:type="accountDisabled" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+		                   p:ldapPattern="data 773"
+		                    p:type="mustChangePassword" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+		                    p:ldapPattern="data 775"
+		                    p:type="accountLocked" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+		                  p:ldapPattern="data 531"
+		                  p:type="badWorkstation" />
+		
+		                <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+		                    p:ldapPattern="data (701|532)"
+		                    p:type="passwordExpired" />
+		            </list>
+		          </property>
+		       </bean>
+		       -->
 			</list>
 		</property>
 	</bean>

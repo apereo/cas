@@ -62,6 +62,12 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected abstract ModelAndView internalHandleRequest(String method, HttpServletRequest request,
                                                           HttpServletResponse response) throws Exception;
     
+    /**
+     * Return the method to call according to the url.
+     * 
+     * @param request
+     * @return the method to call according to the url
+     */
     private String getMethod(HttpServletRequest request) {
         String method = request.getRequestURI();
         if (method.indexOf("?") >= 0) {

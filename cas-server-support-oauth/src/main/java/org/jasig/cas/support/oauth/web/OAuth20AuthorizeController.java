@@ -65,12 +65,12 @@ public final class OAuth20AuthorizeController extends AbstractController {
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
             logger.error("missing clientId");
-            return OAuthUtils.redirectToError(redirectUri, "missing_clientId");
+            return OAuthUtils.redirectToError(redirectUri, OAuthConstants.MISSING_CLIENT_ID);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
             logger.error("missing redirectUri");
-            return OAuthUtils.redirectToError(redirectUri, "missing_redirectUri");
+            return OAuthUtils.redirectToError(redirectUri, OAuthConstants.MISSING_REDIRECT_URI);
         }
         
         // name of the CAS service
@@ -84,21 +84,22 @@ public final class OAuth20AuthorizeController extends AbstractController {
         }
         if (service == null) {
             logger.error("Unknown clientId : {}", clientId);
-            return OAuthUtils.redirectToError(redirectUri, "unknow_clientId");
+            return OAuthUtils.redirectToError(redirectUri, OAuthConstants.UNKNOWN_CLIENT_ID);
         }
         
         String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
             logger.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
-            return OAuthUtils.redirectToError(redirectUri, "unsupported_redirectUri");
+            return OAuthUtils.redirectToError(redirectUri, OAuthConstants.UNSUPPORTED_REDIRECT_URI);
         }
         
         // keep redirectUri in session
         HttpSession session = request.getSession();
         session.setAttribute(OAuthConstants.OAUTH20_CALLBACKURL, redirectUri);
         
-        String callbackAuthorizeUrl = request.getRequestURL().toString().replace("/authorize", "/callbackAuthorize");
+        String callbackAuthorizeUrl = request.getRequestURL().toString()
+            .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         logger.debug("callbackAuthorizeUrl : {}", callbackAuthorizeUrl);
         
         String loginUrlWithService = OAuthUtils.addParameter(loginUrl, "service", callbackAuthorizeUrl);

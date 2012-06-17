@@ -71,22 +71,22 @@ public final class OAuth20AccessTokenController extends AbstractController {
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
             logger.error("missing clientId");
-            return OAuthUtils.writeTextError(response, "missing_clientId");
+            return OAuthUtils.writeTextError(response, OAuthConstants.MISSING_CLIENT_ID);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
             logger.error("missing redirectUri");
-            return OAuthUtils.writeTextError(response, "missing_redirectUri");
+            return OAuthUtils.writeTextError(response, OAuthConstants.MISSING_REDIRECT_URI);
         }
         // clientSecret is required
         if (StringUtils.isBlank(clientSecret)) {
             logger.error("missing clientSecret");
-            return OAuthUtils.writeTextError(response, "missing_clientSecret");
+            return OAuthUtils.writeTextError(response, OAuthConstants.MISSING_CLIENT_SECRET);
         }
         // code is required
         if (StringUtils.isBlank(code)) {
             logger.error("missing code");
-            return OAuthUtils.writeTextError(response, "missing_code");
+            return OAuthUtils.writeTextError(response, OAuthConstants.MISSING_CODE);
         }
         
         // name of the CAS service
@@ -100,28 +100,28 @@ public final class OAuth20AccessTokenController extends AbstractController {
         }
         if (service == null) {
             logger.error("Unknown clientId : {}", clientId);
-            return OAuthUtils.writeTextError(response, "unknow_clientId");
+            return OAuthUtils.writeTextError(response, OAuthConstants.UNKNOWN_CLIENT_ID);
         }
         
         String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
             logger.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
-            return OAuthUtils.writeTextError(response, "unsupported_redirectUri");
+            return OAuthUtils.writeTextError(response, OAuthConstants.UNSUPPORTED_REDIRECT_URI);
         }
         
         // description of the service should be the secret
         String serviceDescription = service.getDescription();
         if (!StringUtils.equals(serviceDescription, clientSecret)) {
             logger.error("Wrong client secret : {} for service description : {}", clientSecret, serviceDescription);
-            return OAuthUtils.writeTextError(response, "unknown_clientId");
+            return OAuthUtils.writeTextError(response, OAuthConstants.UNKNOWN_CLIENT_ID);
         }
         
         ServiceTicketImpl serviceTicket = (ServiceTicketImpl) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
             logger.error("Code expired : {}", code);
-            return OAuthUtils.writeTextError(response, "code_expired");
+            return OAuthUtils.writeTextError(response, OAuthConstants.CODE_EXPIRED);
         }
         TicketGrantingTicketImpl ticketGrantingTicketImpl = (TicketGrantingTicketImpl) serviceTicket
             .getGrantingTicket();

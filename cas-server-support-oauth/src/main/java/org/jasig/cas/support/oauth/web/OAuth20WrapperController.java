@@ -18,6 +18,7 @@ package org.jasig.cas.support.oauth.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
@@ -52,25 +53,25 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
         throws Exception {
         
         // authorize
-        if ("authorize".equals(method)) {
+        if (OAuthConstants.AUTHORIZE_URL.equals(method)) {
             
             return authorizeController.handleRequest(request, response);
         }
 
         // callback on authorize
-        else if ("callbackAuthorize".equals(method)) {
+        else if (OAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
             
             return callbackAuthorizeController.handleRequest(request, response);
         }
 
         // get access token
-        else if ("accessToken".equals(method)) {
+        else if (OAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
             
             return accessTokenController.handleRequest(request, response);
         }
 
         // get profile
-        else if ("profile".equals(method)) {
+        else if (OAuthConstants.PROFILE_URL.equals(method)) {
             
             return profileController.handleRequest(request, response);
         }
