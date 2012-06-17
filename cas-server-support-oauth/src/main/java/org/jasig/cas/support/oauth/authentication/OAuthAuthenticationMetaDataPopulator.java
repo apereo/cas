@@ -21,6 +21,7 @@ import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
 
 /**
@@ -32,8 +33,6 @@ import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
  */
 public final class OAuthAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
     
-    public final static String PROVIDER_TYPE = "providerType";
-    
     public Authentication populateAttributes(Authentication authentication, Credentials credentials) {
         if (credentials instanceof OAuthCredentials) {
             OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
@@ -43,7 +42,7 @@ public final class OAuthAuthenticationMetaDataPopulator implements Authenticatio
                                                                                           authentication
                                                                                               .getAuthenticatedDate());
             mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
-            mutableAuthentication.getAttributes().put(PROVIDER_TYPE, oauthCredentials.getProviderType());
+            mutableAuthentication.getAttributes().put(OAuthConstants.PROVIDER_TYPE, oauthCredentials.getProviderType());
             return mutableAuthentication;
         }
         return authentication;

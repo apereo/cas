@@ -16,12 +16,16 @@
 package org.jasig.cas.support.oauth;
 
 /**
- * This class has the constants for the OAuth implementation.
+ * This class has the main constants for the OAuth implementation.
  * 
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public interface OAuthConstants {
+    
+    public final static String OAUTH_PROVIDER = "oauth_provider";
+    
+    public final static String PROVIDER_TYPE = "providerType";
     
     public final static String REDIRECT_URI = "redirect_uri";
     
@@ -31,7 +35,37 @@ public interface OAuthConstants {
     
     public final static String CODE = "code";
     
+    public final static String TICKET = "ticket";
+    
     public final static String ACCESS_TOKEN = "access_token";
     
     public final static String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
+    
+    public final static String MISSING_CLIENT_ID = "missing_clientId";
+    
+    public final static String MISSING_REDIRECT_URI = "missing_redirectUri";
+    
+    public final static String MISSING_CLIENT_SECRET = "missing_clientSecret";
+    
+    public final static String MISSING_CODE = "missing_code";
+    
+    public final static String UNKNOWN_CLIENT_ID = "unknown_clientId";
+    
+    public final static String UNSUPPORTED_REDIRECT_URI = "unsupported_redirectUri";
+    
+    public final static String CODE_EXPIRED = "code_expired";
+    
+    public final static String MISSING_ACCESS_TOKEN = "missing_accessToken";
+    
+    public final static String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
+    
+    public final static String AUTHORIZE_URL = "authorize";
+    
+    public final static String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
+    
+    public final static String ACCESS_TOKEN_URL = "accessToken";
+    
+    public final static String PROFILE_URL = "profile";
+    
+    public final static String OAUTH10_LOGIN_URL = "oauth10login";
 }

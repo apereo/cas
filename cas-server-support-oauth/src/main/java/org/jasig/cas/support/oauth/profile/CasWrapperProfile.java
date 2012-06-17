@@ -17,18 +17,20 @@ package org.jasig.cas.support.oauth.profile;
 
 import java.util.Map;
 
-import org.jasig.cas.support.oauth.provider.impl.CasWrapperProvider20;
 import org.scribe.up.profile.UserProfile;
 
 /**
  * This class is a specific profile after OAuth authentication in CAS server wrapping OAuth protocol.
  * 
  * @author Jerome Leleu
- * @since 3.5.1
+ * @since X
  */
 public class CasWrapperProfile extends UserProfile {
     
-    private static final long serialVersionUID = 4123272060735126175L;
+    private static final long serialVersionUID = -8560514893286331540L;
+    
+    public final static String ID = "id";
+    public final static String ATTRIBUTES = "attributes";
     
     public CasWrapperProfile() {
         super();
@@ -40,9 +42,5 @@ public class CasWrapperProfile extends UserProfile {
     
     public CasWrapperProfile(Object id, Map<String, Object> attributes) {
         super(id, attributes);
-    }
-    
-    protected String getProviderType() {
-        return CasWrapperProvider20.TYPE;
     }
 }

@@ -15,8 +15,6 @@
  */
 package org.jasig.cas.support.oauth.web.flow;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
@@ -25,14 +23,17 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
+import org.jasig.cas.support.oauth.provider.OAuthProviders;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.scribe.up.credential.OAuthCredential;
+import org.scribe.up.provider.BaseOAuth10Provider;
 import org.scribe.up.provider.BaseOAuthProvider;
 import org.scribe.up.provider.OAuthProvider;
 import org.scribe.up.session.HttpUserSession;
-import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
@@ -51,13 +52,13 @@ public final class OAuthAction extends AbstractAction {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
     
-    private static final String OAUTH_PROVIDER = "oauth_provider";
-    
     @NotNull
-    private List<OAuthProvider> providers;
+    private OAuthProviders providers;
     
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
+    
+    private String oauth10loginUrl = "/" + OAuthConstants.OAUTH10_LOGIN_URL;
     
     @Override
     protected Event doExecute(RequestContext context) throws Exception {
@@ -65,19 +66,13 @@ public final class OAuthAction extends AbstractAction {
         HttpSession session = request.getSession();
         
         // get provider type
-        String providerType = request.getParameter(OAUTH_PROVIDER);
+        String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
         logger.debug("providerType : {}", providerType);
         
         // it's an authentication
         if (StringUtils.isNotBlank(providerType)) {
             // get provider
-            OAuthProvider provider = null;
-            for (OAuthProvider aProvider : providers) {
-                if (StringUtils.equals(providerType, aProvider.getType())) {
-                    provider = aProvider;
-                    break;
-                }
-            }
+            OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
             logger.debug("provider : {}", provider);
             
             // get credential
@@ -108,11 +103,18 @@ public final class OAuthAction extends AbstractAction {
             session.setAttribute("service", service);
             
             // for all providers, generate authorization urls
-            for (OAuthProvider provider : providers) {
+            for (OAuthProvider provider : providers.getProviders()) {
                 String key = provider.getType() + "Url";
-                String authorizatonUrl = provider.getAuthorizationUrl(new HttpUserSession(session));
-                logger.debug("{} -> {}", key, authorizatonUrl);
-                request.setAttribute(key, authorizatonUrl);
+                String authorizationUrl = null;
+                // for OAuth 1.0 protocol, delay request_token request by pointing to an intermediate url
+                if (provider instanceof BaseOAuth10Provider) {
+                    authorizationUrl = OAuthUtils.addParameter(request.getContextPath() + oauth10loginUrl,
+                                                               OAuthConstants.OAUTH_PROVIDER, provider.getType());
+                } else {
+                    authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(session));
+                }
+                logger.debug("{} -> {}", key, authorizationUrl);
+                request.setAttribute(key, authorizationUrl);
             }
         }
         
@@ -123,14 +125,18 @@ public final class OAuthAction extends AbstractAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
     
-    public void setProviders(List<OAuthProvider> providers) {
+    public void setOauth10loginUrl(String oauth10loginUrl) {
+        this.oauth10loginUrl = oauth10loginUrl;
+    }
+    
+    public void setProviders(OAuthProviders providers) {
         this.providers = providers;
         // for all providers
-        for (OAuthProvider provider : providers) {
+        for (OAuthProvider provider : providers.getProviders()) {
             BaseOAuthProvider baseProvider = (BaseOAuthProvider) provider;
-            // calculate new callback url by adding the OAuth provider name
-            baseProvider.setCallbackUrl(baseProvider.getCallbackUrl() + "?" + OAUTH_PROVIDER + "="
-                                        + OAuthEncoder.encode(provider.getType()));
+            // calculate new callback url by adding the OAuth provider type
+            baseProvider.setCallbackUrl(OAuthUtils.addParameter(baseProvider.getCallbackUrl(),
+                                                                OAuthConstants.OAUTH_PROVIDER, provider.getType()));
             // and init the provider
             provider.init();
         }
