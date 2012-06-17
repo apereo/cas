@@ -42,7 +42,8 @@ public final class OAuthAuthenticationMetaDataPopulator implements Authenticatio
                                                                                           authentication
                                                                                               .getAuthenticatedDate());
             mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
-            mutableAuthentication.getAttributes().put(OAuthConstants.PROVIDER_TYPE, oauthCredentials.getProviderType());
+            mutableAuthentication.getAttributes().put(OAuthConstants.PROVIDER_TYPE,
+                                                      oauthCredentials.getCredential().getProviderType());
             return mutableAuthentication;
         }
         return authentication;

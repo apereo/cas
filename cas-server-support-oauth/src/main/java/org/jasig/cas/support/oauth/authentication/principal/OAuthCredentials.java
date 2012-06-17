@@ -25,15 +25,20 @@ import org.scribe.up.profile.UserProfile;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuthCredentials extends OAuthCredential implements Credentials {
+public final class OAuthCredentials implements Credentials {
     
-    private static final long serialVersionUID = -7637593072235628426L;
+    private static final long serialVersionUID = -5154254291704475264L;
     
     private UserProfile userProfile;
     
+    private OAuthCredential credential;
+    
     public OAuthCredentials(OAuthCredential credential) {
-        super(credential.getRequestToken(), credential.getToken(), credential.getVerifier(), credential
-            .getProviderType());
+        this.credential = credential;
+    }
+    
+    public OAuthCredential getCredential() {
+        return credential;
     }
     
     public UserProfile getUserProfile() {
