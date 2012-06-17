@@ -18,21 +18,21 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -57,11 +57,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
 
     protected void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
+        log.debug("Updated ticket [{}].", ticket);
     }
 
     @Transactional(readOnly = false)
     public void addTicket(final Ticket ticket) {
         entityManager.persist(ticket);
+        log.debug("Added ticket [{}] to registry.", ticket);
     }
 
     @Transactional(readOnly = false)
@@ -74,10 +76,12 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         
         if (ticket instanceof ServiceTicket) {
             removeTicket(ticket);
+            log.debug("Deleted ticket [{}] from the registry.", ticket);
             return true;
         }
         
         deleteTicketAndChildren(ticket);
+        log.debug("Deleted ticket [{}] and its children from the registry.", ticket);
         return true;
     }
     
@@ -107,11 +111,11 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         try {
             if (log.isDebugEnabled()) {
                 final Date creationDate = new Date(ticket.getCreationTime());
-                log.debug("Removing Ticket >" + ticket.getId() + "< created: " + creationDate.toString());
+                log.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
              }
             entityManager.remove(ticket);
         } catch (final Exception e) {
-            log.error("Error removing " + ticket + " from registry.", e);
+            log.error("Error removing {} from registry.", ticket, e);
         }
     }
     
@@ -128,7 +132,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
             
             return entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
-            log.error("Error getting ticket " + ticketId + " from registry.", e);
+            log.error("Error getting ticket {} from registry.", ticketId, e);
         }
         return null;
     }
@@ -158,11 +162,26 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         return false;
     }
 
+    @Transactional(readOnly=true)
     public int sessionCount() {
-        return (Integer) entityManager.createQuery("select count(t) from TicketGrantingTicketImpl t").getSingleResult();
+        return countToInt(entityManager.createQuery("select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
+    @Transactional(readOnly=true)
     public int serviceTicketCount() {
-        return (Integer) entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult();
+        return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+    }
+
+    private int countToInt(final Object result) {
+        final int intval;
+        if (result instanceof Long) {
+            intval = ((Long) result).intValue();
+        } else if (result instanceof Integer) {
+            intval = (Integer) result;
+        } else {
+            // Must be a Number of some kind
+            intval = ((Number) result).intValue();
+        }
+        return intval;
     }
 }
