@@ -81,6 +81,12 @@
     p:entityManagerFactory-ref="factoryBean" />
     
   <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
+
+  <!--
+    Injects EntityManager/Factory instances into beans with
+    @PersistenceUnit and @PersistenceContext
+  -->
+  <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
     
 </beans>
 
