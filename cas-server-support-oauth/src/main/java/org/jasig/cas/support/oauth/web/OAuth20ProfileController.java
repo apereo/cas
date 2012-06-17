@@ -25,6 +25,7 @@ import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.profile.CasWrapperProfile;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public final class OAuth20ProfileController extends AbstractController {
         if (StringUtils.isBlank(accessToken)) {
             logger.error("missing accessToken");
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField("error", "missing_accessToken");
+            jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
             jsonGenerator.writeEndObject();
             jsonGenerator.close();
             response.flushBuffer();
@@ -75,7 +76,7 @@ public final class OAuth20ProfileController extends AbstractController {
         if (ticketGrantingTicketImpl == null || ticketGrantingTicketImpl.isExpired()) {
             logger.error("expired accessToken : {}", accessToken);
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField("error", "expired_accessToken");
+            jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
             jsonGenerator.writeEndObject();
             jsonGenerator.close();
             response.flushBuffer();
@@ -85,8 +86,8 @@ public final class OAuth20ProfileController extends AbstractController {
         // generate profile : identifier + attributes
         Principal principal = ticketGrantingTicketImpl.getAuthentication().getPrincipal();
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField("id", principal.getId());
-        jsonGenerator.writeArrayFieldStart("attributes");
+        jsonGenerator.writeStringField(CasWrapperProfile.ID, principal.getId());
+        jsonGenerator.writeArrayFieldStart(CasWrapperProfile.ATTRIBUTES);
         Map<String, Object> attributes = principal.getAttributes();
         for (String key : attributes.keySet()) {
             jsonGenerator.writeStartObject();

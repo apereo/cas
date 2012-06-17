@@ -15,6 +15,7 @@
  */
 package org.jasig.cas.support.oauth.provider.impl;
 
+import org.jasig.cas.support.oauth.OAuthConstants;
 import org.scribe.builder.api.DefaultApi20;
 import org.scribe.model.OAuthConfig;
 import org.scribe.utils.OAuthEncoder;
@@ -31,13 +32,13 @@ public final class CasWrapperApi20 extends DefaultApi20 {
     
     @Override
     public String getAccessTokenEndpoint() {
-        return serverUrl + "/accessToken?";
+        return serverUrl + "/" + OAuthConstants.ACCESS_TOKEN_URL + "?";
     }
     
     @Override
     public String getAuthorizationUrl(OAuthConfig config) {
-        return String.format(serverUrl + "/authorize?client_id=%s&redirect_uri=%s", config.getApiKey(),
-                             OAuthEncoder.encode(config.getCallback()));
+        return String.format(serverUrl + "/" + OAuthConstants.AUTHORIZE_URL + "?client_id=%s&redirect_uri=%s",
+                             config.getApiKey(), OAuthEncoder.encode(config.getCallback()));
     }
     
     public static void setServerUrl(String url) {

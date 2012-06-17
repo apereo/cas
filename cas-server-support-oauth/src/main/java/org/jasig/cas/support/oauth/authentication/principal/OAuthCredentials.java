@@ -27,7 +27,7 @@ import org.scribe.up.profile.UserProfile;
  */
 public final class OAuthCredentials extends OAuthCredential implements Credentials {
     
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7637593072235628426L;
     
     private UserProfile userProfile;
     

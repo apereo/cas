@@ -1,9 +1,26 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.authentication;
+
+import java.util.Map;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
@@ -12,11 +29,6 @@ import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.perf4j.LoggingStopWatch;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Map;
 
 /**
  * Ensures that all authentication handlers are tried, but if one is tried, the associated CredentialsToPrincipalResolver is used.
@@ -38,6 +50,7 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
     @Override
     protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
         boolean foundOneThatWorks = false;
+        String handlerName;
         for (final AuthenticationHandler authenticationHandler : this.linkedHandlers.keySet()) {
             if (!authenticationHandler.supports(credentials)) {
                 continue;
@@ -45,18 +58,19 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
 
             foundOneThatWorks = true;
             boolean authenticated = false;
-            final LoggingStopWatch stopWatch = new LoggingStopWatch(authenticationHandler.getClass().getSimpleName());
-
-
+            handlerName = authenticationHandler.getClass().getName();
             try {
                 authenticated = authenticationHandler.authenticate(credentials);
-            } finally {
-                stopWatch.stop();
+            } catch (Exception e) {
+                log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
             }
+
             if (authenticated) {
+                log.info("{} successfully authenticated {}", handlerName, credentials);
                 final Principal p = this.linkedHandlers.get(authenticationHandler).resolvePrincipal(credentials);
                 return new Pair<AuthenticationHandler,Principal>(authenticationHandler, p);
             }
+            log.info("{} failed to authenticate {}", handlerName, credentials);
         }
 
         if (foundOneThatWorks) {

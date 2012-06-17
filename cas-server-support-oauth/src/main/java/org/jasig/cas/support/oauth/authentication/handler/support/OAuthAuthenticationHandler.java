@@ -15,15 +15,13 @@
  */
 package org.jasig.cas.support.oauth.authentication.handler.support;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
+import org.jasig.cas.support.oauth.provider.OAuthProviders;
 import org.scribe.model.Token;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
@@ -41,8 +39,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
     
-    @NotNull
-    private List<OAuthProvider> providers;
+    private OAuthProviders providers;
     
     public boolean supports(Credentials credentials) {
         return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
@@ -55,14 +52,9 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         
         String providerType = credential.getProviderType();
         logger.debug("providerType : {}", providerType);
+        
         // get provider
-        OAuthProvider provider = null;
-        for (OAuthProvider aProvider : providers) {
-            if (StringUtils.equals(providerType, aProvider.getType())) {
-                provider = aProvider;
-                break;
-            }
-        }
+        OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
         logger.debug("provider : {}", provider);
         
         // get access token
@@ -80,7 +72,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         }
     }
     
-    public void setProviders(List<OAuthProvider> providers) {
+    public void setProviders(OAuthProviders providers) {
         this.providers = providers;
     }
 }
