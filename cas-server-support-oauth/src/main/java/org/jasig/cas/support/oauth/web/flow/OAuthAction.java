@@ -137,8 +137,6 @@ public final class OAuthAction extends AbstractAction {
             // calculate new callback url by adding the OAuth provider type
             baseProvider.setCallbackUrl(OAuthUtils.addParameter(baseProvider.getCallbackUrl(),
                                                                 OAuthConstants.OAUTH_PROVIDER, provider.getType()));
-            // and init the provider
-            provider.init();
         }
     }
 }

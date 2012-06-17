@@ -22,15 +22,13 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
 import org.jasig.cas.support.oauth.provider.OAuthProviders;
-import org.scribe.model.Token;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This handler authenticates OAuth credentials : it uses them to get an access token to get the user profile returned by the provider for
- * an authenticated user.
+ * This handler authenticates OAuth credentials : it uses them to get the user profile returned by the provider for an authenticated user.
  * 
  * @author Jerome Leleu
  * @since 3.5.0
@@ -47,25 +45,22 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     
     @Override
     protected boolean doAuthentication(Credentials credentials) throws AuthenticationException {
-        OAuthCredentials credential = (OAuthCredentials) credentials;
-        logger.debug("credential : {}", credential);
+        OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
+        logger.debug("credential : {}", oauthCredentials);
         
-        String providerType = credential.getProviderType();
+        String providerType = oauthCredentials.getCredential().getProviderType();
         logger.debug("providerType : {}", providerType);
         
         // get provider
         OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
         logger.debug("provider : {}", provider);
         
-        // get access token
-        Token accessToken = provider.getAccessToken(credential);
-        logger.debug("accessToken : {}", accessToken);
-        // and user profile
-        UserProfile userProfile = provider.getUserProfile(accessToken);
+        // get user profile
+        UserProfile userProfile = provider.getUserProfile(oauthCredentials.getCredential());
         logger.debug("userProfile : {}", userProfile);
         
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
-            credential.setUserProfile(userProfile);
+            oauthCredentials.setUserProfile(userProfile);
             return true;
         } else {
             return false;
