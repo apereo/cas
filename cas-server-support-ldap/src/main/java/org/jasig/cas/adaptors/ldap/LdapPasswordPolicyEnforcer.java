@@ -203,7 +203,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
             return PASSWORD_STATUS_PASS;
         }
 
-        if (this.noWarnAttribute != null)
+        if (!StringUtils.isEmpty(this.noWarnAttribute))
             logDebug("No warning attribute value for " + this.noWarnAttribute + " is set to: " + ldapResult.getNoWarnAttributeResult());
 
         if (isPasswordSetToNeverExpire(ldapResult.getNoWarnAttributeResult())) {
@@ -212,17 +212,17 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
             return PASSWORD_STATUS_PASS;
         }
 
-        if (ldapResult.getWarnDaysResult() == null)
+        if (StringUtils.isEmpty(ldapResult.getWarnDaysResult()))
             logDebug("No warning days value is found for " + userId + ". Using system default of " + this.warningDays);
         else
             this.warningDays = Integer.parseInt(ldapResult.getWarnDaysResult());
 
-        if (ldapResult.getValidDaysResult() == null)
+        if (StringUtils.isEmpty(ldapResult.getValidDaysResult()))
             logDebug("No maximum password valid days found for " + ldapResult.getUserId() + ". Using system default of " + this.validDays + " days");
         else
             this.validDays = Integer.parseInt(ldapResult.getValidDaysResult());
 
-        final DateTime expireTime = getDateToUse(ldapResult.getDateResult());
+        final DateTime expireTime = getExpirationDateToUse(ldapResult.getDateResult());
 
         if (expireTime == null) {
             msgToLog = "Expiration date cannot be determined for date " + ldapResult.getDateResult();
@@ -248,9 +248,9 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param DateAttribute The DateAttribute to set.
      */
-    public void setDateAttribute(final String DateAttribute) {
-        this.dateAttribute = DateAttribute;
-        logDebug("Date attribute: " + DateAttribute);
+    public void setDateAttribute(final String dateAttribute) {
+        this.dateAttribute = dateAttribute;
+        logDebug("Date attribute: " + dateAttribute);
     }
 
     /**
@@ -312,7 +312,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setSearchBase(final String searchBase) {
         this.searchBase = searchBase;
-        logDebug("Search Base: " + searchBase);
+        logDebug("Search base: " + searchBase);
     }
 
     /**
@@ -335,9 +335,9 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     /**
      * @param ValidDaysAttribute The ValidDaysAttribute to set.
      */
-    public void setValidDaysAttribute(final String ValidDaysAttribute) {
-        this.validDaysAttribute = ValidDaysAttribute;
-        logDebug("Valid days attribute: " + ValidDaysAttribute);
+    public void setValidDaysAttribute(final String validDaysAttribute) {
+        this.validDaysAttribute = validDaysAttribute;
+        logDebug("Valid days attribute: " + validDaysAttribute);
     }
 
     /**
@@ -363,7 +363,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     public void setWarningDaysAttribute(final String warnDays) {
         this.warningDaysAttribute = warnDays;
-        logDebug("Warning days Attribute: " + warnDays);
+        logDebug("Warning days attribute: " + warnDays);
     }
 
     /***
@@ -379,7 +379,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
         final DateTime dt = new DateTime(totalSecondsSince1970 * 1000, DEFAULT_TIME_ZONE);
 
-        logInfo("Recalculated AD " + this.dateAttribute + " attribute to " + dt.toString());
+        logInfo("Recalculated " + this.dateFormat + " " + this.dateAttribute + " attribute to " + dt.toString());
 
         return dt;
     }
@@ -400,12 +400,17 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * @param ldapDateResult
      * @return Constructed the {@link #org.joda.time.DateTime DateTime}  object which indicates the expiration date
      */
-    private DateTime getDateToUse(final String ldapDateResult) {
-        DateTime expireDate = null;
+    private DateTime getExpirationDateToUse(final String ldapDateResult) {
+        DateTime dateValue = null;
         if (isUsingActiveDirectory())
-            expireDate = convertDateToActiveDirectoryFormat(ldapDateResult);
+            dateValue = convertDateToActiveDirectoryFormat(ldapDateResult);
         else
-            expireDate = formatDateByPattern(ldapDateResult);
+            dateValue = formatDateByPattern(ldapDateResult);
+              
+        DateTime expireDate = dateValue.plusDays(this.validDays);
+        logDebug("Retrieved date value " + dateValue.toString() + " for date attribute " + this.dateAttribute + " and added " + this.validDays
+                + " days. The final expiration date is " + expireDate.toString());
+
         return expireDate;
     }
 
