@@ -15,9 +15,7 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  --%>
-
-<%
+  --%><%
     Map parameters = (Map)request.getAttribute("parameters");
     Iterator iterator = parameters.keySet().iterator();
     while (iterator.hasNext()) {
