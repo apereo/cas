@@ -15,6 +15,4 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  --%>
-
-<%= "openid.mode:id_res\nis_valid:false\n" %>
+  --%><%= "openid.mode:id_res\nis_valid:false\n" %>
