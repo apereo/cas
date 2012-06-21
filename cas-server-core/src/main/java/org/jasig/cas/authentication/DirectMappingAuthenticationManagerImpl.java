@@ -57,15 +57,21 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
 
         final String handlerName = d.getAuthenticationHandler().getClass().getSimpleName();
         boolean authenticated = false;
+        
+        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR; 
+        
         try {
             authenticated = d.getAuthenticationHandler().authenticate(credentials);
+        } catch (AuthenticationException e) {
+            authException = e;
+            logAuthenticationHandlerError(handlerName, credentials, e);
         } catch (Exception e) {
-            log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
-        }
+            logAuthenticationHandlerError(handlerName, credentials, e);
+        } 
 
         if (!authenticated) {
             log.info("{} failed to authenticate {}", handlerName, credentials);
-            throw new BadCredentialsAuthenticationException();
+            throw authException;
         }
         log.info("{} successfully authenticated {}", handlerName, credentials);
 
@@ -78,7 +84,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
     }
-
+    
     public static final class DirectAuthenticationHandlerMappingHolder {
 
         private AuthenticationHandler authenticationHandler;
