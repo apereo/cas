@@ -53,6 +53,15 @@
     <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/services/*</url-pattern>
   </filter-mapping>
+ 
+  <filter>
+  	<filter-name>clearPassFilterChainProxy</filter-name>
+  	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>clearPassFilterChainProxy</filter-name>
+    <url-pattern>/clearPass</url-pattern>
+  </filter-mapping>
 
   <filter>
     <filter-name>characterEncodingFilter</filter-name>
@@ -146,6 +155,11 @@
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
     <url-pattern>/CentralAuthenticationService</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>cas</servlet-name>
+    <url-pattern>/clearPass</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
