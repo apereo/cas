@@ -223,5 +223,20 @@
             <scope>compile</scope>
             <type>jar</type>
         </dependency>
+
+        <dependency>
+          <groupId>org.opensymphony.quartz</groupId>
+          <artifactId>quartz</artifactId>
+          <version>1.6.1</version>
+          <scope>test</scope>
+          <type>jar</type>
+        </dependency>
+
+        <dependency>
+          <groupId>com.github.inspektr</groupId>
+          <artifactId>inspektr-support-spring</artifactId>
+          <version>1.0.7.GA</version>
+          <scope>test</scope>
+        </dependency>
   </dependencies>
 </project>
