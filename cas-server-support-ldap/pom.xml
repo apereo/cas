@@ -29,6 +29,19 @@
 	<packaging>jar</packaging>
 	<name>JA-SIG CAS LDAP Support</name>
 
+  <developers>
+    <developer>
+      <id>serac</id>
+      <name>Marvin S. Addison</name>
+      <email>marvin.addison@gmail.com</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+        <role>maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
   <dependencies>
     <dependency>
       <groupId>org.jasig.cas</groupId>
