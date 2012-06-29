@@ -28,6 +28,19 @@
 	<artifactId>cas-server-support-oauth</artifactId>
 	<packaging>jar</packaging>
 	<name>JA-SIG CAS OAuth Support</name>
+
+  <developers>
+    <developer>
+      <id>leleuj</id>
+      <name>Jérôme Leleu</name>
+      <email>leleuj@gmail.com</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+        <role>maintainer</role>
+      </roles>
+    </developer>
+  </developers>
 	
 	<dependencies>
 		<dependency>

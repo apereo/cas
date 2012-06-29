@@ -43,29 +43,6 @@
 
   <developers>
     <developer>
-      <id>arybicki</id>
-      <name>Adam Rybicki</name>
-      <email>arybicki@unicon.net</email>
-      <url>http://www.unicon.net</url>
-      <organization>Unicon, Inc.</organization>
-      <organizationUrl>http://www.unicon.net/</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-    </developer>
-    <developer>
-      <id>atilling</id>
-      <name>Andrew Tillinghast</name>
-      <email>atilling@conncoll.edu</email>
-      <url>https://github.com/atilling</url>
-      <organization>Connecticut College</organization>
-      <organizationUrl>http://conncoll.edu/</organizationUrl>
-      <roles>
-        <role>developer</role>
-        <role>maintainer</role>
-      </roles>
-    </developer>
-    <developer>
       <id>wgthom</id>
       <name>Bill Thompson</name>
       <email>wgthom@unicon.net</email>
@@ -79,6 +56,27 @@
     </developer>
   </developers>
   <contributors>
+    <contributor>
+      <name>Adam Rybicki</name>
+      <email>arybicki@unicon.net</email>
+      <url>http://www.unicon.net</url>
+      <organization>Unicon, Inc.</organization>
+      <organizationUrl>http://www.unicon.net/</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Andrew Tillinghast</name>
+      <email>atilling@conncoll.edu</email>
+      <url>https://github.com/atilling</url>
+      <organization>Connecticut College</organization>
+      <organizationUrl>http://conncoll.edu/</organizationUrl>
+      <roles>
+        <role>developer</role>
+        <role>maintainer</role>
+      </roles>
+    </contributor>
     <contributor>
       <name>Andrew Petro</name>
       <email>apetro@unicon.net</email>

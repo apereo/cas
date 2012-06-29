@@ -29,6 +29,19 @@
   <packaging>jar</packaging>
   <name>JA-SIG CAS X.509 Client Certificate Support</name>
 
+  <developers>
+    <developer>
+      <id>serac</id>
+      <name>Marvin S. Addison</name>
+      <email>marvin.addison@gmail.com</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+        <role>maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
   <dependencies>
     <dependency>
       <artifactId>cas-server-core</artifactId>
