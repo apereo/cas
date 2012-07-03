@@ -197,6 +197,13 @@
       <list>
         <bean class="org.jasig.cas.monitor.MemoryMonitor"
             p:freeMemoryWarnThreshold="10" />
+        <!--
+          NOTE
+          The following ticket registries support SessionMonitor:
+            * DefaultTicketRegistry
+            * JpaTicketRegistry
+          Remove this monitor if you use an unsupported registry.
+        -->
         <bean class="org.jasig.cas.monitor.SessionMonitor"
             p:ticketRegistry-ref="ticketRegistry"
             p:serviceTicketCountWarnThreshold="5000"
