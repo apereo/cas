@@ -22,6 +22,102 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
+	<!--
+     Sample LPPE-enabled Ldap authentication handler with errors codes defined as a regex pattern.
+     Each error type will redirect the user to a particular view state defined in the flow.
+     Unhandled error codes/types will prevent authentication.
+     
+     Use the bean id below in the main configuration file when you reference the authentication handler bean.
+     -->
+    <bean id="lppeEnabledLdapAuthenticationHandler" class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+       p:filter="${ldap.authentication.filter}"
+       p:searchBase="${ldap.authentication.basedn}"
+       p:contextSource-ref="contextSource"
+       p:searchContextSource-ref="pooledContextSource"
+       p:ignorePartialResultException="${ldap.authentication.ignorePartialResultException}">
+
+       <property name="ldapErrorDefinitions">
+         <list>
+            <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+	             p:ldapPattern="data 530"
+	             p:type="badHours" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 533"
+                 p:type="accountDisabled" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 773"
+                 p:type="mustChangePassword" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 775"
+                 p:type="accountLocked" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data 531"
+                 p:type="badWorkstation" />
+
+             <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+                 p:ldapPattern="data (701|532)"
+                 p:type="passwordExpired" />
+         </list>
+       </property>
+    </bean>
+	
+	<!--
+    Configuration beans that are required for LDAP authentication. 
+    LDAP settings may be defined inside the 'cas.properties' file.
+    In addition to the CAS LDAP module, Apache Common Pool may also be declared as a 
+    dependency inside the pom.
+    
+    See here for additional information: https://wiki.jasig.org/display/CASUM/LDAP 
+    -->
+	<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+	    <property name="pooled" value="false"/>
+	    <property name="urls">
+	      <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+	          <constructor-arg type="java.lang.String" value="${ldap.authentication.server.urls}"/>
+	      </bean>
+	  	</property>
+	    <property name="userDn" value="${ldap.authentication.manager.userdn}"/>
+	    <property name="password" value="${ldap.authentication.manager.password}"/>
+	
+	    <property name="baseEnvironmentProperties">
+	      <map>
+	        <entry key="com.sun.jndi.ldap.connect.timeout" value="${ldap.authentication.jndi.connect.timeout}" />
+	        <entry key="com.sun.jndi.ldap.read.timeout" value="${ldap.authentication.jndi.read.timeout}" />
+	        <entry key="java.naming.security.authentication" value="${ldap.authentication.jndi.security.level}" />
+	      </map>
+	    </property>
+	</bean>
+
+	<bean id="dirContextValidator"
+	  class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"
+	  p:base=""
+	  p:filter="objectclass=*">
+	  <property name="searchControls">
+	    <bean class="javax.naming.directory.SearchControls"
+		      p:timeLimit="1000"
+		      p:countLimit="1"
+		      p:searchScope="0"
+		      p:returningAttributes="" />
+	  </property>
+	</bean>
+
+  	<bean id="pooledContextSource"
+		class="org.springframework.ldap.pool.factory.PoolingContextSource"
+		p:minIdle="${ldap.authentication.pool.minIdle}"
+		p:maxIdle="${ldap.authentication.pool.maxIdle}"
+		p:maxActive="${ldap.authentication.pool.maxSize}"
+		p:maxWait="${ldap.authentication.pool.maxWait}"
+		p:timeBetweenEvictionRunsMillis="${ldap.authentication.pool.evictionPeriod}"
+		p:minEvictableIdleTimeMillis="${ldap.authentication.pool.idleTime}"
+		p:testOnBorrow="${ldap.authentication.pool.testOnBorrow}"
+		p:testWhileIdle="${ldap.authentication.pool.testWhileIdle}"
+		p:dirContextValidator-ref="dirContextValidator"
+		p:contextSource-ref="contextSource" />
+	    	       
 	<bean id="passwordPolicyAction" class="org.jasig.cas.web.flow.PasswordPolicyEnforcementAction">
 	  	<property name="passwordPolicyEnforcer" ref="ldapPasswordPolicyEnforcer" />
 	  	<property name="passwordPolicyUrl" value="${ldap.authentication.lppe.password.url}" />

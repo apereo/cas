@@ -20,10 +20,10 @@ package org.jasig.cas.web.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
  * @version $Revision$ $Date$
  * @since 3.3.5
  */
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
+public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
 
     private static final int DEFAULT_FAILURE_THRESHOLD = 100;
 
@@ -58,6 +58,14 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     @NotNull
     private String usernameParameter = DEFAULT_USERNAME_PARAMETER;
 
+    private double thresholdRate;
+
+
+    public void afterPropertiesSet() throws Exception {
+        this.thresholdRate = (double) failureThreshold / (double) failureRangeInSeconds;
+    }
+
+
     @Override
     public final boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
         // we only care about post because that's the only instance where we can get anything useful besides IP address.
@@ -65,11 +73,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return true;
         }
 
-        final int count = findCount(request, this.usernameParameter, this.failureRangeInSeconds);
-
-        if (count >= this.failureThreshold) {
-            updateCount(request, this.usernameParameter);
-            log.warn("*** Possible Hacking Attempt from [" + request.getRemoteAddr() + "].  More than " + this.failureThreshold + " failed login attempts within " + this.failureRangeInSeconds + " seconds.");
+        if (exceedsThreshold(request)) {
+            recordThrottle(request);
             response.sendError(403, "Access Denied for user [" + request.getParameter(usernameParameter) + " from IP Address [" + request.getRemoteAddr() + "]");
             return false;
         }
@@ -95,12 +100,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         }
 
         // User submitted invalid credentials, so we update the invalid login count
-        updateCount(request, this.usernameParameter);
+        recordSubmissionFailure(request);
     }
-
-    protected abstract int findCount(HttpServletRequest request, final String usernameParameter, int failureRangeInSeconds);
-
-    protected abstract void updateCount(HttpServletRequest request, String usernameParameter);
 
     public final void setFailureThreshold(final int failureThreshold) {
         this.failureThreshold = failureThreshold;
@@ -113,4 +114,29 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     public final void setUsernameParameter(final String usernameParameter) {
         this.usernameParameter = usernameParameter;
     }
+
+    protected double getThresholdRate() {
+        return this.thresholdRate;
+    }
+
+    protected int getFailureThreshold() {
+        return this.failureThreshold;
+    }
+
+    protected int getFailureRangeInSeconds() {
+        return this.failureRangeInSeconds;
+    }
+
+    protected String getUsernameParameter() {
+        return this.usernameParameter;
+    }
+
+    protected void recordThrottle(final HttpServletRequest request) {
+        log.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
+                new Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
+    }
+
+    protected abstract void recordSubmissionFailure(HttpServletRequest request);
+
+    protected abstract boolean exceedsThreshold(HttpServletRequest request);
 }

@@ -22,7 +22,7 @@
   <parent>
     <artifactId>cas-server</artifactId>
     <groupId>org.jasig.cas</groupId>
-    <version>3.5.0-RC3-SNAPSHOT</version>
+    <version>3.5.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
@@ -222,6 +222,20 @@
             <version>${commons.io.version}</version>
             <scope>compile</scope>
             <type>jar</type>
+        </dependency>
+
+        <dependency>
+          <groupId>org.opensymphony.quartz</groupId>
+          <artifactId>quartz</artifactId>
+          <version>1.6.1</version>
+          <scope>test</scope>
+          <type>jar</type>
+        </dependency>
+
+        <dependency>
+          <groupId>com.github.inspektr</groupId>
+          <artifactId>inspektr-support-spring</artifactId>
+          <scope>test</scope>
         </dependency>
   </dependencies>
 </project>
