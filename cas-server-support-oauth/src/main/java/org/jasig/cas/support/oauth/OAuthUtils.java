@@ -45,10 +45,11 @@ public final class OAuthUtils {
      * 
      * @param response
      * @param error
+     * @param status
      * @return a null view
      */
-    public static ModelAndView writeTextError(HttpServletResponse response, String error) {
-        return OAuthUtils.writeText(response, "error=" + error);
+    public static ModelAndView writeTextError(HttpServletResponse response, String error, int status) {
+        return OAuthUtils.writeText(response, "error=" + error, status);
     }
     
     /**
@@ -56,12 +57,14 @@ public final class OAuthUtils {
      * 
      * @param response
      * @param text
+     * @param status
      * @return a null view
      */
-    public static ModelAndView writeText(HttpServletResponse response, String text) {
+    public static ModelAndView writeText(HttpServletResponse response, String text, int status) {
         PrintWriter printWriter;
         try {
             printWriter = response.getWriter();
+            response.setStatus(status);
             printWriter.print(text);
         } catch (IOException e) {
             logger.warn("Failed to write to response", e);

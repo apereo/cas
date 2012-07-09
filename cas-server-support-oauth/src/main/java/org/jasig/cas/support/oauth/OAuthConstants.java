@@ -41,23 +41,13 @@ public interface OAuthConstants {
     
     public final static String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
     
-    public final static String MISSING_CLIENT_ID = "missing_clientId";
-    
-    public final static String MISSING_REDIRECT_URI = "missing_redirectUri";
-    
-    public final static String MISSING_CLIENT_SECRET = "missing_clientSecret";
-    
-    public final static String MISSING_CODE = "missing_code";
-    
-    public final static String UNKNOWN_CLIENT_ID = "unknown_clientId";
-    
-    public final static String UNSUPPORTED_REDIRECT_URI = "unsupported_redirectUri";
-    
-    public final static String CODE_EXPIRED = "code_expired";
-    
     public final static String MISSING_ACCESS_TOKEN = "missing_accessToken";
     
     public final static String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
+    
+    public final static String INVALID_REQUEST = "invalid_request";
+    
+    public final static String INVALID_GRANT = "invalid_grant";
     
     public final static String AUTHORIZE_URL = "authorize";
     
