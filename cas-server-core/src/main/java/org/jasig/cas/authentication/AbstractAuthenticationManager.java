@@ -96,6 +96,19 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     protected abstract Pair<AuthenticationHandler,Principal> authenticateAndObtainPrincipal(Credentials credentials) throws AuthenticationException;
 
 
+    /**
+     * Logs the exception occurred as an error.
+     * 
+     * @param handlerName The class name of the authentication handler.
+     * @param credentials Client credentials subject to authentication. 
+     * @param e The exception that has occurred during authentication attempt.
+     */
+    protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
+        if (this.log.isErrorEnabled())
+            this.log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
+    }
+
+
     protected static class Pair<A,B> {
 
         private final A first;
