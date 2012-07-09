@@ -57,19 +57,19 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
             
             return authorizeController.handleRequest(request, response);
         }
-
+        
         // callback on authorize
         else if (OAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
             
             return callbackAuthorizeController.handleRequest(request, response);
         }
-
+        
         // get access token
         else if (OAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
             
             return accessTokenController.handleRequest(request, response);
         }
-
+        
         // get profile
         else if (OAuthConstants.PROFILE_URL.equals(method)) {
             
@@ -78,7 +78,7 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
         
         // else error
         logger.error("Unknown method : {}", method);
-        OAuthUtils.writeText(response, "Unknown method : " + method);
+        OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
         return null;
     }
 }

@@ -25,7 +25,7 @@ import org.scribe.up.provider.OAuthProvider;
  * This class gathers all the OAuth providers.
  * 
  * @author Jerome Leleu
- * @since X
+ * @since 3.5.1
  */
 public final class OAuthProviders {
     

@@ -23,7 +23,7 @@ import org.scribe.up.profile.UserProfile;
  * This class is a specific profile after OAuth authentication in CAS server wrapping OAuth protocol.
  * 
  * @author Jerome Leleu
- * @since X
+ * @since 3.5.1
  */
 public class CasWrapperProfile extends UserProfile {
     
