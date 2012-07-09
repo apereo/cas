@@ -32,7 +32,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * procotol v1.0. At this step, the authorization url is computed and the user is redirected to it.
  * 
  * @author Jerome Leleu
- * @since X
+ * @since 3.5.1
  */
 public final class OAuth10LoginController extends AbstractController {
     
