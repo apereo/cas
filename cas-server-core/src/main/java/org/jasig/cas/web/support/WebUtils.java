@@ -37,6 +37,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class WebUtils {
 
+    /** Request attribute that contains message key describing details of authorization failure.*/
+    public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
+
     public static HttpServletRequest getHttpServletRequest(
         final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context

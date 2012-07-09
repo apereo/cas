@@ -34,8 +34,7 @@
   <!-- As of Spring SEC 3.1 -->
   <sec:http pattern="/services/loggedout.html" security="none"/>
 
-  <!-- NOTE: Only use PassThroughAuthenticationEntryPoint for securing resources based solely on IP address -->
-  <sec:http pattern="/status/**" entry-point-ref="passThroughEntryPoint" use-expressions="true" auto-config="true">
+  <sec:http pattern="/status/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
     <sec:intercept-url pattern="/status" access="hasIpAddress('${cas.securityContext.status.allowedSubnet}')" />
   </sec:http>
 
@@ -72,7 +71,7 @@
         p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"
         p:serviceProperties-ref="serviceProperties"/>
 
-  <bean id="passThroughEntryPoint" class="org.jasig.cas.security.web.PassThroughAuthenticationEntryPoint" />
+  <bean id="notAuthorizedEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
 
   <bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider"
         p:key="my_password_for_this_auth_provider_only"
