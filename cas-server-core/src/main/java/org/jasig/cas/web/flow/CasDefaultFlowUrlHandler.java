@@ -18,16 +18,18 @@
  */
 package org.jasig.cas.web.flow;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
- * Provides special handling for parameters in requests made to the CAS login
- * webflow.
+ * Provides special handling for parameters in requests made to the CAS login webflow.
+ * In particular, it drops the execution parameter from the flow execution URL and always
+ * appends query string parameters to flow URLs.
  *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @version $Revision$ $Date$
  * @since 3.4
  */
@@ -35,17 +37,28 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final StringBuffer builder = new StringBuffer();
-        builder.append(request.getRequestURI());
-        builder.append("?");
-        appendQueryParameters(builder, request.getParameterMap(), getEncodingScheme(request));
-        return builder.toString();
+        final String url = request.getRequestURI();
+        // Append querystring parameters from original request if present
+        final String qs = request.getQueryString();
+        if (qs != null) {
+            final StringBuilder builder = new StringBuilder(url);
+            builder.append('?');
+            builder.append(request.getQueryString());
+            return builder.toString();
+        }
+        return url;
     }
 
     @Override
     public String createFlowDefinitionUrl(final String flowId, final AttributeMap input, final HttpServletRequest request) {
-        return request.getRequestURI()
-            + (request.getQueryString() != null ? "?"
-            + request.getQueryString() : "");
+        final String url = super.createFlowDefinitionUrl(flowId, input, request);
+        // Append querystring parameters from original request if present
+        final String qs = request.getQueryString();
+        if (qs != null) {
+            final StringBuilder builder = new StringBuilder(request.getRequestURI());
+            builder.append('?').append(qs);
+            return builder.toString();
+        }
+        return url;
     }
 }
