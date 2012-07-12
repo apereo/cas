@@ -191,7 +191,8 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:logoutView="casLogoutView"
         p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
 
   <bean id="healthCheckController" class="org.jasig.cas.web.HealthCheckController"
         p:healthCheckMonitor-ref="healthCheckMonitor"/>
