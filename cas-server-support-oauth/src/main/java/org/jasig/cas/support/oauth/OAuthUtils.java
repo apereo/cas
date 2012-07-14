@@ -70,7 +70,7 @@ public final class OAuthUtils {
             response.setStatus(status);
             printWriter.print(text);
         } catch (IOException e) {
-            logger.warn("Failed to write to response", e);
+            logger.error("Failed to write to response", e);
         }
         return null;
     }
