@@ -105,7 +105,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
             .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         logger.debug("callbackAuthorizeUrl : {}", callbackAuthorizeUrl);
         
-        String loginUrlWithService = OAuthUtils.addParameter(loginUrl, "service", callbackAuthorizeUrl);
+        String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE, callbackAuthorizeUrl);
         logger.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
     }
