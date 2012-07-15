@@ -29,6 +29,8 @@
         know what you're doing!
     </description>
 
+        <import resource="propertyFileConfigurer.xml" />
+    
     <!--
       Including this aspectj-autoproxy element will cause spring to automatically
       create proxies around any beans defined in this file that match the pointcuts
@@ -51,6 +53,18 @@
             id="servicesManager"
             class="org.jasig.cas.services.DefaultServicesManagerImpl">
         <constructor-arg index="0" ref="serviceRegistryDao"/>
+        <property name="automaticallyRegisteredServices">
+
+          <list>
+            <bean class="org.jasig.cas.services.RegisteredServiceImpl"
+              p:name="CAS Services Management Web UI"
+              p:serviceId="${cas.securityContext.serviceProperties.service}"
+              p:description="This registration was automatically registered to allow authentication via CAS to the CAS Services Management application."
+              p:allowedToProxy="false"
+              p:ignoreAttributes="true"
+           />
+          </list>
+        </property>
     </bean>
 
     <!--

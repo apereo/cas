@@ -120,6 +120,57 @@ public class DefaultServicesManagerImplTests extends TestCase {
         assertEquals(2, this.defaultServicesManagerImpl.getAllServices().size());
         assertTrue(this.defaultServicesManagerImpl.getAllServices().contains(r));
     }
+
+
+    /**
+     * Test that when findByService() does not find a service that is available for automatic registration, that
+     * service is automatically registered and is found.
+     */
+    public void testFindByServiceNotFoundAutomaticallyRegistered() {
+        final RegisteredServiceImpl registeredService = new RegisteredServiceImpl();
+        registeredService.setId(1000);
+        registeredService.setName("registered");
+        registeredService.setServiceId("registered");
+
+        this.defaultServicesManagerImpl.save(registeredService);
+
+        final RegisteredServiceImpl serviceThatWillBeAutomaticallyRegistered = new RegisteredServiceImpl();
+        serviceThatWillBeAutomaticallyRegistered.setName("notYetRegistered");
+        serviceThatWillBeAutomaticallyRegistered.setServiceId("notYetRegistered");
+
+        List<RegisteredService> servicesThatWillBeAutomaticallyRegistered = new ArrayList<RegisteredService>();
+        servicesThatWillBeAutomaticallyRegistered.add(serviceThatWillBeAutomaticallyRegistered);
+
+        this.defaultServicesManagerImpl.setAutomaticallyRegisteredServices(servicesThatWillBeAutomaticallyRegistered);
+
+        Service matchingService = new SimpleService("notYetRegistered");
+
+        assertEquals(serviceThatWillBeAutomaticallyRegistered,
+                defaultServicesManagerImpl.findServiceBy(matchingService));
+
+    }
+
+    /**
+     * Test that when findServiceBy() does not find a service that is *not* available for automatic registration, that
+     * service is *not* automatically registered and is *not* found, with findServiceBy() returning null.
+     */
+    public void testFindByServiceNotFoundNotAutomaticallyRegistered() {
+        final RegisteredServiceImpl registeredService = new RegisteredServiceImpl();
+        registeredService.setId(1000);
+        registeredService.setName("registered");
+        registeredService.setServiceId("registered");
+
+        this.defaultServicesManagerImpl.save(registeredService);
+
+
+        List<RegisteredService> servicesThatWillBeAutomaticallyRegistered = new ArrayList<RegisteredService>();
+
+
+        Service matchingService = new SimpleService("notYetRegistered");
+
+        assertNull(defaultServicesManagerImpl.findServiceBy(matchingService));
+
+    }
     
     protected class SimpleService implements Service {
         
