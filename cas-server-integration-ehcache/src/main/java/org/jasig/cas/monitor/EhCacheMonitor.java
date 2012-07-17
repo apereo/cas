@@ -18,34 +18,29 @@
  */
 package org.jasig.cas.monitor;
 
+import javax.validation.constraints.NotNull;
+
+import net.sf.ehcache.Cache;
+
 /**
- * Description of AbstractNamedMonitor.
+ * Monitors a {@link net.sf.ehcache.Cache} instance.
+ * The accuracy of statistics is governed by the value of {@link Cache#getStatisticsAccuracy()}.
+ *
+ * <p>NOTE: computation of highly accurate statistics is expensive.</p>
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.1
  */
-public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
-    /** Monitor name. */
-    protected String name;
+public class EhCacheMonitor extends AbstractCacheMonitor {
 
+    @NotNull
+    private final Cache cache;
 
-    /**
-     * @return Monitor name.
-     */
-    public String getName() {
-        if (name != null) {
-            return name;
-        }
-        return getClass().getSimpleName();
+    public EhCacheMonitor(final Cache cache) {
+        this.cache = cache;
     }
 
-    /**
-     * @param n Monitor name.
-     */
-    public void setName(final String n) {
-        if (n == null || n.trim().length() == 0) {
-            throw new IllegalArgumentException("Monitor name cannot be null or empty.");
-        }
-        this.name = n;
+    protected CacheStatistics[] getStatistics() {
+        return new EhCacheStatistics[] { new EhCacheStatistics(cache) };
     }
 }

@@ -18,8 +18,12 @@
  */
 package org.jasig.cas.monitor;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javax.validation.constraints.NotNull;
-import java.util.concurrent.*;
 
 /**
  * Describes a monitor that observes a pool of resources.
@@ -29,9 +33,11 @@ import java.util.concurrent.*;
  */
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
+    /** Default maximum wait time for asynchronous pool validation. */
+    public static final int DEFAULT_MAX_WAIT = 3000;
 
     /** Maximum amount of time in ms to wait while validating pool resources. */
-    private int maxWait;
+    private int maxWait = DEFAULT_MAX_WAIT;
 
     /** Executor that performs pool resource validation. */
     @NotNull
