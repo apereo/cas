@@ -25,6 +25,12 @@ package org.jasig.cas.monitor;
  * @version $Revision: $
  */
 public class PoolStatus extends Status {
+    /**
+     * Return value for {@link #getActiveCount()} and {@link #getIdleCount()}
+     * when pool metrics are unknown or unknowable.
+     */
+    public static final int UNKNOWN_COUNT = -1;
+
     /** Number of idle pool resources. */
     private final int idleCount;
 
@@ -76,7 +82,15 @@ public class PoolStatus extends Status {
             }
             sb.append(' ');
         }
-        sb.append(active).append(" active, ").append(idle).append(" idle.");
-        return sb.toString();
+        if (active != UNKNOWN_COUNT) {
+            sb.append(active).append(" active");
+        }
+        if (idle != UNKNOWN_COUNT) {
+            sb.append(", ").append(idle).append(" idle.");
+        }
+        if (sb.length() > 0) {
+            return sb.toString();
+        }
+        return null;
     }
 }
