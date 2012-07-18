@@ -39,18 +39,21 @@ public class ContextSourceMonitor extends AbstractNamedMonitor<Status> {
     private final DirContextValidator dirContextValidator;
 
 
+    /**
+     * Creates a new monitor that observes the given LDAP context source.
+     *
+     * @param source LDAP context source to observe.
+     * @param validator LDAP context validator.
+     */
     public ContextSourceMonitor(final LdapContextSource source, final DirContextValidator validator) {
         this.contextSource = source;
         this.dirContextValidator = validator;
     }
 
     public Status observe() {
-        final StatusCode code;
         if (dirContextValidator.validateDirContext(DirContextType.READ_ONLY, contextSource.getReadOnlyContext())) {
-            code = StatusCode.OK;
-        } else {
-            code = StatusCode.ERROR;
+            return Status.OK;
         }
-        return new Status(code);
+        return Status.ERROR;
     }
 }

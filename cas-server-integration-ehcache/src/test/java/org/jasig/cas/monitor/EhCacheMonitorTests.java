@@ -32,6 +32,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link EhCacheMonitor} class.
  *
  * @author Marvin S. Addison
+ * @since 3.5.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/ehcacheMonitor-test.xml")

@@ -27,13 +27,13 @@ package org.jasig.cas.monitor;
  */
 public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheStatus> {
 
-    /** Default warning free threshold is 10%. */
+    /** Default free capacity threshold is 10%. */
     public static final int DEFAULT_WARN_FREE_THRESHOLD = 10;
 
     /** Default eviction threshold is 0. */
     public static final long DEFAULT_EVICTION_THRESHOLD = 0;
 
-    /** Free capacity threshold below which a warning is issued.*/
+    /** Percent free capacity threshold below which a warning is issued.*/
     private int warnFreeThreshold = DEFAULT_WARN_FREE_THRESHOLD;
 
     /** Threshold for number of acceptable evictions above which an error is issued. */
@@ -41,22 +41,22 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
 
 
     /**
-     * Sets the free capacity threshold below which a warning is issued.
+     * Sets the percent free capacity threshold below which a warning is issued.
      *
-     * @param threshold Warning threshold.
+     * @param percent Warning threshold percent.
      */
-    public void setWarnFreeThreshold(final int threshold) {
-        this.warnFreeThreshold = threshold;
+    public void setWarnFreeThreshold(final int percent) {
+        this.warnFreeThreshold = percent;
     }
 
 
     /**
-     * Sets the eviction threshold above which an error is issued.
+     * Sets the eviction threshold count above which an error is issued.
      *
-     * @param threshold Threshold for number of cache evictions.
+     * @param count Threshold for number of cache evictions.
      */
-    public void setEvictionThreshold(final long threshold) {
-        this.evictionThreshold = threshold;
+    public void setEvictionThreshold(final long count) {
+        this.evictionThreshold = count;
     }
 
 
@@ -65,11 +65,11 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
         try {
             final CacheStatistics[] statistics = getStatistics();
             if (statistics == null || statistics.length == 0) {
-                return new CacheStatus(new RuntimeException("Cache statistics not available."));
+                return new CacheStatus(StatusCode.ERROR, "Cache statistics not available.");
             }
             StatusCode overall = StatusCode.OK;
             StatusCode code;
-            for (CacheStatistics stats : statistics) {
+            for (final CacheStatistics stats : statistics) {
                 code = status(stats);
                 // Record highest status which is equivalent to worst case
                 if (code.value() > overall.value()) {
@@ -77,7 +77,7 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
                 }
             }
             status = new CacheStatus(overall, null, statistics);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             status = new CacheStatus(e);
         }
         return status;

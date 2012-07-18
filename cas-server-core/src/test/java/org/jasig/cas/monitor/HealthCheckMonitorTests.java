@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.monitor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link HealthCheckMonitor} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class HealthCheckMonitorTests {
 
