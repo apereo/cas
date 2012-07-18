@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.monitor;
 
-import org.junit.Test;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link AbstractPoolMonitor} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class AbstractPoolMonitorTests {
     

@@ -22,7 +22,7 @@ package org.jasig.cas.monitor;
  * Describes the memory status of the JVM.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class MemoryStatus extends Status {
     /** JVM free memory. */

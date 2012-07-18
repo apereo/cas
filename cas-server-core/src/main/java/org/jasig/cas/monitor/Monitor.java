@@ -22,7 +22,7 @@ package org.jasig.cas.monitor;
  * A monitor observes a resource and reports its status.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public interface Monitor<S extends Status> {
 

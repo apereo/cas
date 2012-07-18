@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
  * Describes a monitor that observes a pool of resources.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
@@ -73,13 +73,13 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
         String description = null;
         try {
             code = result.get(maxWait, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             code = StatusCode.UNKNOWN;
             description = "Validator thread interrupted during pool validation.";
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             code = StatusCode.WARN;
             description = String.format("Pool validation timed out.  Max wait is %s ms.", maxWait);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             code = StatusCode.ERROR;
             description = e.getMessage();
         }

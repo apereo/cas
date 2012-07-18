@@ -22,7 +22,7 @@ package org.jasig.cas.monitor;
  * Monitors JVM memory usage.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class MemoryMonitor implements Monitor<MemoryStatus> {
    

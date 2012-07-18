@@ -22,9 +22,25 @@ package org.jasig.cas.monitor;
  * Describes a generic status condition.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class Status {
+
+    /** Generic UNKNOWN status. */
+    public static final Status UNKNOWN = new Status(StatusCode.UNKNOWN);
+
+    /** Generic OK status. */
+    public static final Status OK = new Status(StatusCode.OK);
+
+    /** Generic INFO status. */
+    public static final Status INFO = new Status(StatusCode.INFO);
+
+    /** Generic WARN status. */
+    public static final Status WARN = new Status(StatusCode.WARN);
+
+    /** Generic ERROR status. */
+    public static final Status ERROR = new Status(StatusCode.ERROR);
+
     /** Status code. */
     private final StatusCode code;
 

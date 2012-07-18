@@ -27,8 +27,8 @@ import javax.validation.constraints.NotNull;
 /**
  * Monitors a data source that describes a single connection or connection pool to a database.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author Marvin S. Addison
+ * @since 3.5.1
  */
 public class DataSourceMonitor extends AbstractPoolMonitor {
 

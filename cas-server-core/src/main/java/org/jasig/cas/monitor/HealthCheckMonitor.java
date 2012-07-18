@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
  * {@link StatusCode} of an arbitrary number of individual checks.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class HealthCheckMonitor implements Monitor<HealthStatus> {
     /** Invidual monitors that comprise health check. */
@@ -58,7 +58,7 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
         final Map<String, Status> results = new LinkedHashMap<String, Status>(monitors.size());
         StatusCode code = StatusCode.UNKNOWN;
         Status result;
-        for (Monitor monitor : monitors) {
+        for (final Monitor monitor : monitors) {
             result = monitor.observe();
             if (result.getCode().value() > code.value()) {
                 code = result.getCode();
