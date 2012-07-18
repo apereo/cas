@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.monitor;
 
+import java.util.Formatter;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.statistics.LiveCacheStatistics;
@@ -108,14 +110,18 @@ public class EhCacheStatistics implements CacheStatistics {
             builder.append(getName()).append(':');
         }
         final int free = getPercentFree();
+        final Formatter formatter = new Formatter(builder);
         if (useBytes) {
-            builder.append(heapSize / 1024 / 1024).append("MB heap, ");
-            builder.append(diskSize / 1024 / 1024).append("MB disk, ");
+            formatter.format("%.2f", heapSize / 1048510.0);
+            builder.append("MB heap, ");
+            formatter.format("%.2f", diskSize / 1048510.0);
+            builder.append("MB disk, ");
         } else {
-            builder.append(heapSize).append("items in heap, ");
-            builder.append(diskSize).append("items on disk, ");
+            builder.append(heapSize).append(" items in heap, ");
+            builder.append(diskSize).append(" items on disk, ");
         }
-        builder.append(offHeapSize / 1024 / 1024).append("MB off-heap, ");
+        formatter.format("%.2f", offHeapSize / 1048510.0);
+        builder.append("MB off-heap, ");
         builder.append(free).append("% free, ");
         builder.append(getEvictions()).append(" evictions");
     }

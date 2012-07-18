@@ -19,6 +19,8 @@
 
 package org.jasig.cas.monitor;
 
+import java.util.Formatter;
+
 /**
  * Simple implementation of cache statistics.
  *
@@ -78,7 +80,9 @@ public class SimpleCacheStatistics implements CacheStatistics {
         if (name != null) {
             builder.append(name).append(':');
         }
-        builder.append(size / 1024 / 1024).append("MB, ");
+        final Formatter formatter = new Formatter(builder);
+        formatter.format("%.2f", size / 1048510.0);
+        builder.append("MB used, ");
         builder.append(getPercentFree()).append("% free, ");
         builder.append(evictions).append(" evictions");
     }
