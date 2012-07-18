@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
  * Unit test for {@link SessionMonitor} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:/jpaTestApplicationContext.xml"})

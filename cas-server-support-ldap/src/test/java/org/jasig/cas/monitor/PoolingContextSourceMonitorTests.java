@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link PoolingContextSourceMonitor} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/ldapContext-test.xml")

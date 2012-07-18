@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
  * state information used in status reports.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class SessionMonitor implements Monitor<SessionStatus> {
     /** Ticket registry instance that exposes state info. */
@@ -99,7 +99,7 @@ public class SessionMonitor implements Monitor<SessionStatus> {
                 msg.append(ticketCount).append(" service tickets.");
             }
             return new SessionStatus(code, msg.toString(), sessionCount, ticketCount);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new SessionStatus(StatusCode.ERROR, e.getMessage());
         }
     }

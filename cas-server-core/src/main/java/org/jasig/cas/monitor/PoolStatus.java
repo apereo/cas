@@ -22,7 +22,7 @@ package org.jasig.cas.monitor;
  * Describes the status of a resource pool.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class PoolStatus extends Status {
     /**

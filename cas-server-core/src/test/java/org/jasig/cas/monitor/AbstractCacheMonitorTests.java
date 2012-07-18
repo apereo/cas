@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
  * Unit test for {@link AbstractCacheMonitor}.
  *
  * @author Marvin S. Addison
+ * @since 3.5.1
  */
 public class AbstractCacheMonitorTests {
     @Test

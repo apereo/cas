@@ -57,7 +57,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      */
     public CacheStatus observe() {
         if (memcachedClient.getAvailableServers().size() == 0) {
-            return new CacheStatus(new RuntimeException("No memcached servers available."));
+            return new CacheStatus(StatusCode.ERROR, "No memcached servers available.");
         }
         final Collection<SocketAddress> unavailableList = memcachedClient.getUnavailableServers();
         final CacheStatus status;
@@ -84,7 +84,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
         int i = 0;
         final Map<SocketAddress, Map<String, String>> allStats = memcachedClient.getStats();
         final SimpleCacheStatistics[] statistics = new SimpleCacheStatistics[allStats.size()];
-        for (Map.Entry<SocketAddress, Map<String, String>> entry : allStats.entrySet()) {
+        for (final Map.Entry<SocketAddress, Map<String, String>> entry : allStats.entrySet()) {
             size = Long.parseLong(entry.getValue().get("bytes"));
             capacity = Long.parseLong(entry.getValue().get("limit_maxbytes"));
             evictions = Long.parseLong(entry.getValue().get("evictions"));

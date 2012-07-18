@@ -30,10 +30,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Description of DataSourceMonitorTests.
+ * Unit test for {@link DataSourceMonitor}.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author Marvin S. Addison
+ * @since 3.5.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/jpaTestApplicationContext.xml")

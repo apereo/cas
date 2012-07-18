@@ -18,11 +18,14 @@
  */
 package org.jasig.cas.monitor;
 
+import org.apache.commons.lang.StringUtils;
+import org.springframework.util.Assert;
+
 /**
- * Description of AbstractNamedMonitor.
+ * Base class for all monitors that support configurable naming.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
     /** Monitor name. */
@@ -33,19 +36,14 @@ public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<
      * @return Monitor name.
      */
     public String getName() {
-        if (name != null) {
-            return name;
-        }
-        return getClass().getSimpleName();
+        return StringUtils.defaultIfEmpty(name, getClass().getSimpleName());
     }
 
     /**
      * @param n Monitor name.
      */
     public void setName(final String n) {
-        if (n == null || n.trim().length() == 0) {
-            throw new IllegalArgumentException("Monitor name cannot be null or empty.");
-        }
+        Assert.hasText(n, "Monitor name cannot be null or empty.");
         this.name = n;
     }
 }

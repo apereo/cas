@@ -25,7 +25,7 @@ import java.util.Map;
  * Describes the overall health status of the CAS server as determined by composite status values.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class HealthStatus extends Status {
     /** Map of names (e.g. monitor that produced it) to status information. */

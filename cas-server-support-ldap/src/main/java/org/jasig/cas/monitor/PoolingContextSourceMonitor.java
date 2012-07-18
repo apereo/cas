@@ -30,7 +30,7 @@ import org.springframework.ldap.pool.factory.PoolingContextSource;
  * LDAP pool monitor that observes a pool of LDAP connections provided by {@link PoolingContextSource}.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
     /** Logger instance. */
