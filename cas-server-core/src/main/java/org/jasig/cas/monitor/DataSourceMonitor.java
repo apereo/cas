@@ -18,11 +18,14 @@
  */
 package org.jasig.cas.monitor;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 
 /**
  * Monitors a data source that describes a single connection or connection pool to a database.
@@ -33,7 +36,7 @@ import javax.validation.constraints.NotNull;
 public class DataSourceMonitor extends AbstractPoolMonitor {
 
     @NotNull
-    private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
 
     @NotNull
     private String validationQuery;
@@ -45,7 +48,7 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
      * @param dataSource Data source to monitor.
      */
     public DataSourceMonitor(final DataSource dataSource) {
-        this.dataSource = dataSource;
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
 
@@ -62,32 +65,22 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
 
     @Override
     protected StatusCode checkPool() throws Exception {
-        final Connection connection = dataSource.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        StatusCode result = StatusCode.WARN;
-        try {
-            ps = dataSource.getConnection().prepareStatement(validationQuery);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                result = StatusCode.OK;
+        return this.jdbcTemplate.query(this.validationQuery, new ResultSetExtractor<StatusCode>() {
+            public StatusCode extractData(final ResultSet rs) throws SQLException, DataAccessException {
+                if (rs.next()) {
+                    return StatusCode.OK;
+                }
+                return StatusCode.WARN;
             }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (ps != null) {
-                ps.close();
-            }
-            connection.close();
-        }
-        return result;
+        });
     }
+
 
     @Override
     protected int getIdleCount() {
         return PoolStatus.UNKNOWN_COUNT;
     }
+
 
     @Override
     protected int getActiveCount() {
