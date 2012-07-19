@@ -59,7 +59,7 @@ public class PoolStatus extends Status {
      * @return Number of idle pool members.
      */
     public int getIdleCount() {
-        return idleCount;
+        return this.idleCount;
     }
 
 
@@ -69,7 +69,7 @@ public class PoolStatus extends Status {
      * @return Number of active pool members.
      */
     public int getActiveCount() {
-        return activeCount;
+        return this.activeCount;
     }
     
     

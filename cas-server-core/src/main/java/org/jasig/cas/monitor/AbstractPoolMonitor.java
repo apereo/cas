@@ -68,17 +68,17 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
 
     /** {@inheritDoc} */
     public PoolStatus observe() {
-        final Future<StatusCode> result = executor.submit(new Validator());
+        final Future<StatusCode> result = this.executor.submit(new Validator());
         StatusCode code;
         String description = null;
         try {
-            code = result.get(maxWait, TimeUnit.MILLISECONDS);
+            code = result.get(this.maxWait, TimeUnit.MILLISECONDS);
         } catch (final InterruptedException e) {
             code = StatusCode.UNKNOWN;
             description = "Validator thread interrupted during pool validation.";
         } catch (final TimeoutException e) {
             code = StatusCode.WARN;
-            description = String.format("Pool validation timed out.  Max wait is %s ms.", maxWait);
+            description = String.format("Pool validation timed out.  Max wait is %s ms.", this.maxWait);
         } catch (final Exception e) {
             code = StatusCode.ERROR;
             description = e.getMessage();

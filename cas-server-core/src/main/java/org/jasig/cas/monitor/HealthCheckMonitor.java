@@ -55,10 +55,10 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
 
     /** {@inheritDoc} */
     public HealthStatus observe() {
-        final Map<String, Status> results = new LinkedHashMap<String, Status>(monitors.size());
+        final Map<String, Status> results = new LinkedHashMap<String, Status>(this.monitors.size());
         StatusCode code = StatusCode.UNKNOWN;
         Status result;
-        for (final Monitor monitor : monitors) {
+        for (final Monitor monitor : this.monitors) {
             result = monitor.observe();
             if (result.getCode().value() > code.value()) {
                 code = result.getCode();

@@ -67,7 +67,7 @@ public class SessionStatus extends Status {
      * @return Total number of SSO sessions.
      */
     public int getSessionCount() {
-        return sessionCount;
+        return this.sessionCount;
     }
 
 
@@ -77,6 +77,6 @@ public class SessionStatus extends Status {
      * @return Total number of service tickets.
      */
     public int getServiceTicketCount() {
-        return serviceTicketCount;
+        return this.serviceTicketCount;
     }
 }
