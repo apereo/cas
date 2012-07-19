@@ -47,14 +47,14 @@ public final class OAuth20ProfileController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20ProfileController.class);
     
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
     
-    public OAuth20ProfileController(TicketRegistry ticketRegistry) {
+    public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
     
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         logger.debug("accessToken : {}", accessToken);

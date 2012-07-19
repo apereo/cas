@@ -39,7 +39,7 @@ public final class OAuthProviders {
         return providers;
     }
     
-    public void setProviders(List<OAuthProvider> providers) {
+    public void setProviders(final List<OAuthProvider> providers) {
         this.providers = providers;
     }
 }

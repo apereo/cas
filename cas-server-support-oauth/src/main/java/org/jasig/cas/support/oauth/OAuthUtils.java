@@ -51,7 +51,7 @@ public final class OAuthUtils {
      * @param status
      * @return a null view
      */
-    public static ModelAndView writeTextError(HttpServletResponse response, String error, int status) {
+    public static ModelAndView writeTextError(final HttpServletResponse response, final String error, final int status) {
         return OAuthUtils.writeText(response, "error=" + error, status);
     }
     
@@ -63,7 +63,7 @@ public final class OAuthUtils {
      * @param status
      * @return a null view
      */
-    public static ModelAndView writeText(HttpServletResponse response, String text, int status) {
+    public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
         PrintWriter printWriter;
         try {
             printWriter = response.getWriter();
@@ -82,7 +82,7 @@ public final class OAuthUtils {
      * @param error
      * @return A view which is a redirection to an url with an error parameter
      */
-    public static ModelAndView redirectToError(String url, String error) {
+    public static ModelAndView redirectToError(String url, final String error) {
         if (StringUtils.isBlank(url)) {
             url = "/";
         }
@@ -95,7 +95,7 @@ public final class OAuthUtils {
      * @param url
      * @return A view which is a redirection to an url
      */
-    public static ModelAndView redirectTo(String url) {
+    public static ModelAndView redirectTo(final String url) {
         return new ModelAndView(new RedirectView(url));
     }
     
@@ -107,12 +107,18 @@ public final class OAuthUtils {
      * @param value
      * @return the url with the parameter
      */
-    public static String addParameter(String url, String name, String value) {
+    public static String addParameter(final String url, final String name, final String value) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(url);
         if (url.indexOf("?") >= 0) {
-            return url + "&" + name + "=" + OAuthEncoder.encode(value);
+            sb.append("&");
         } else {
-            return url + "?" + name + "=" + OAuthEncoder.encode(value);
+            sb.append("?");
         }
+        sb.append(name);
+        sb.append("=");
+        sb.append(OAuthEncoder.encode(value));
+        return sb.toString();
     }
     
     /**
@@ -122,7 +128,7 @@ public final class OAuthUtils {
      * @param type
      * @return the provider for the given type or null if no provider was found
      */
-    public static OAuthProvider getProviderByType(OAuthProviders providers, String type) {
+    public static OAuthProvider getProviderByType(final OAuthProviders providers, final String type) {
         List<OAuthProvider> listProviders = providers.getProviders();
         if (listProviders != null && type != null) {
             for (OAuthProvider provider : listProviders) {

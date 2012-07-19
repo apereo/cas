@@ -43,7 +43,7 @@ public final class OAuth10LoginController extends AbstractController {
     private OAuthProviders providers;
     
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
         // get provider type
@@ -57,7 +57,7 @@ public final class OAuth10LoginController extends AbstractController {
         return OAuthUtils.redirectTo(authorizationUrl);
     }
     
-    public void setProviders(OAuthProviders providers) {
+    public void setProviders(final OAuthProviders providers) {
         this.providers = providers;
     }
 }
