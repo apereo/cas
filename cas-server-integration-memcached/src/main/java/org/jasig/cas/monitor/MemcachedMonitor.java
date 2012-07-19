@@ -20,7 +20,9 @@ package org.jasig.cas.monitor;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
@@ -81,22 +83,23 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
         long size;
         long capacity;
         String name;
-        int i = 0;
+        Map<String, String> statsMap;
         final Map<SocketAddress, Map<String, String>> allStats = memcachedClient.getStats();
-        final SimpleCacheStatistics[] statistics = new SimpleCacheStatistics[allStats.size()];
-        for (final Map.Entry<SocketAddress, Map<String, String>> entry : allStats.entrySet()) {
-            size = Long.parseLong(entry.getValue().get("bytes"));
-            capacity = Long.parseLong(entry.getValue().get("limit_maxbytes"));
-            evictions = Long.parseLong(entry.getValue().get("evictions"));
-            statistics[i] = new SimpleCacheStatistics(size, capacity, evictions);
-            if (entry.getKey() instanceof InetSocketAddress) {
-                name = ((InetSocketAddress) entry.getKey()).getHostName();
-            } else {
-                name = entry.getKey().toString();
+        final List<CacheStatistics> statsList = new ArrayList<CacheStatistics>();
+        for (final SocketAddress address : allStats.keySet()) {
+            statsMap = allStats.get(address);
+            if (statsMap.size() > 0) {
+                size = Long.parseLong(statsMap.get("bytes"));
+                capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
+                evictions = Long.parseLong(statsMap.get("evictions"));
+                if (address instanceof InetSocketAddress) {
+                    name = ((InetSocketAddress) address).getHostName();
+                } else {
+                    name = address.toString();
+                }
+                statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
             }
-            statistics[i].setName(name);
-            i++;
         }
-        return statistics;
+        return statsList.toArray(new CacheStatistics[statsList.size()]);
     }
 }
