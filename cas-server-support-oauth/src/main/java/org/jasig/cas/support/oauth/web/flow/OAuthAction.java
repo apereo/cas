@@ -64,7 +64,7 @@ public final class OAuthAction extends AbstractAction {
     private String oauth10loginUrl = "/" + OAuthConstants.OAUTH10_LOGIN_URL;
     
     @Override
-    protected Event doExecute(RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) throws Exception {
         HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         HttpSession session = request.getSession();
         
@@ -124,15 +124,15 @@ public final class OAuthAction extends AbstractAction {
         return error();
     }
     
-    public void setCentralAuthenticationService(CentralAuthenticationService centralAuthenticationService) {
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
     
-    public void setOauth10loginUrl(String oauth10loginUrl) {
+    public void setOauth10loginUrl(final String oauth10loginUrl) {
         this.oauth10loginUrl = oauth10loginUrl;
     }
     
-    public void setProviders(OAuthProviders providers) {
+    public void setProviders(final OAuthProviders providers) {
         this.providers = providers;
         // for all providers
         for (OAuthProvider provider : providers.getProviders()) {

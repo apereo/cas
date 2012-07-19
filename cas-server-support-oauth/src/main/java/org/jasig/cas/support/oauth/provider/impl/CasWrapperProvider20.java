@@ -51,7 +51,7 @@ public final class CasWrapperProvider20 extends BaseOAuth20Provider {
     }
     
     @Override
-    protected UserProfile extractUserProfile(String body) {
+    protected UserProfile extractUserProfile(final String body) {
         CasWrapperProfile userProfile = new CasWrapperProfile();
         JsonNode json = JsonHelper.getFirstNode(body);
         if (json != null) {
@@ -69,7 +69,7 @@ public final class CasWrapperProvider20 extends BaseOAuth20Provider {
         return userProfile;
     }
     
-    public void setServerUrl(String serverUrl) {
+    public void setServerUrl(final String serverUrl) {
         this.serverUrl = serverUrl;
     }
 }

@@ -52,8 +52,8 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
     }
     
     @Override
-    protected ModelAndView internalHandleRequest(String method, HttpServletRequest request, HttpServletResponse response)
-        throws Exception {
+    protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
         
         // authorize
         if (OAuthConstants.AUTHORIZE_URL.equals(method)) {

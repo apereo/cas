@@ -39,12 +39,12 @@ public final class CasWrapperApi20 extends DefaultApi20 {
     }
     
     @Override
-    public String getAuthorizationUrl(OAuthConfig config) {
+    public String getAuthorizationUrl(final OAuthConfig config) {
         return String.format(serverUrl + "/" + OAuthConstants.AUTHORIZE_URL + "?client_id=%s&redirect_uri=%s",
                              config.getApiKey(), OAuthEncoder.encode(config.getCallback()));
     }
     
-    public static void setServerUrl(String url) {
+    public static void setServerUrl(final String url) {
         serverUrl = url;
     }
 }

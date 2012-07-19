@@ -42,12 +42,12 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     
     private OAuthProviders providers;
     
-    public boolean supports(Credentials credentials) {
+    public boolean supports(final Credentials credentials) {
         return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
     }
     
     @Override
-    protected boolean doAuthentication(Credentials credentials) throws AuthenticationException {
+    protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
         OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
         logger.debug("credential : {}", oauthCredentials);
         
@@ -70,7 +70,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         }
     }
     
-    public void setProviders(OAuthProviders providers) {
+    public void setProviders(final OAuthProviders providers) {
         this.providers = providers;
     }
 }
