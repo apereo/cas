@@ -46,20 +46,21 @@ public final class OAuth20AccessTokenController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
     
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
     
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
     
-    private long timeout;
+    private final long timeout;
     
-    public OAuth20AccessTokenController(ServicesManager servicesManager, TicketRegistry ticketRegistry, long timeout) {
+    public OAuth20AccessTokenController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
+                                        final long timeout) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
         this.timeout = timeout;
     }
     
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
         String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);

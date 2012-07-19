@@ -36,7 +36,7 @@ import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
  */
 public final class OAuthAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
     
-    public Authentication populateAttributes(Authentication authentication, Credentials credentials) {
+    public Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
         if (credentials instanceof OAuthCredentials) {
             OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
             final Principal simplePrincipal = new SimplePrincipal(authentication.getPrincipal().getId(),

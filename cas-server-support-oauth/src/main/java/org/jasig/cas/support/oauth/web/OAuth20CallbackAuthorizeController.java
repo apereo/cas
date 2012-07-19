@@ -41,7 +41,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
     private static final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
     
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         // get CAS ticket
         String ticket = request.getParameter(OAuthConstants.TICKET);

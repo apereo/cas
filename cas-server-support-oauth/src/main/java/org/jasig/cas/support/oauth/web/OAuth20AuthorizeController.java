@@ -45,17 +45,17 @@ public final class OAuth20AuthorizeController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
     
-    private String loginUrl;
+    private final String loginUrl;
     
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
     
-    public OAuth20AuthorizeController(ServicesManager servicesManager, String loginUrl) {
+    public OAuth20AuthorizeController(final ServicesManager servicesManager, final String loginUrl) {
         this.servicesManager = servicesManager;
         this.loginUrl = loginUrl;
     }
     
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
         String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);

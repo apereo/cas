@@ -34,9 +34,9 @@ public final class OAuthCredentials implements Credentials {
     
     private UserProfile userProfile;
     
-    private OAuthCredential credential;
+    private final OAuthCredential credential;
     
-    public OAuthCredentials(OAuthCredential credential) {
+    public OAuthCredentials(final OAuthCredential credential) {
         this.credential = credential;
     }
     
@@ -48,7 +48,7 @@ public final class OAuthCredentials implements Credentials {
         return userProfile;
     }
     
-    public void setUserProfile(UserProfile userProfile) {
+    public void setUserProfile(final UserProfile userProfile) {
         this.userProfile = userProfile;
     }
 }

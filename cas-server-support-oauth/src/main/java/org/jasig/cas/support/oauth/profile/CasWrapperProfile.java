@@ -39,11 +39,11 @@ public class CasWrapperProfile extends UserProfile {
         super();
     }
     
-    public CasWrapperProfile(Object id) {
+    public CasWrapperProfile(final Object id) {
         super(id);
     }
     
-    public CasWrapperProfile(Object id, Map<String, Object> attributes) {
+    public CasWrapperProfile(final Object id, final Map<String, Object> attributes) {
         super(id, attributes);
     }
 }
