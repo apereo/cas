@@ -44,7 +44,7 @@ public class DataSourceMonitorTests {
 
     @Test
     public void testObserve() throws Exception {
-        final DataSourceMonitor monitor = new DataSourceMonitor(dataSource);
+        final DataSourceMonitor monitor = new DataSourceMonitor(this.dataSource);
         monitor.setExecutor(Executors.newSingleThreadExecutor());
         monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
         final PoolStatus status = monitor.observe();

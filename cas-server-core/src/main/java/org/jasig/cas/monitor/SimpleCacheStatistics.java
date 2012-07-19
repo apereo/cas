@@ -54,37 +54,37 @@ public class SimpleCacheStatistics implements CacheStatistics {
 
 
     public long getSize() {
-        return size;
+        return this.size;
     }
 
 
     public long getCapacity() {
-        return capacity;
+        return this.capacity;
     }
 
 
     public long getEvictions() {
-        return evictions;
+        return this.evictions;
     }
 
 
     public int getPercentFree() {
-        if (capacity == 0) {
+        if (this.capacity == 0) {
             return 0;
         }
-        return (int) ((capacity - size) * 100 / capacity);
+        return (int) ((this.capacity - this.size) * 100 / this.capacity);
     }
 
 
     public void toString(final StringBuilder builder) {
-        if (name != null) {
-            builder.append(name).append(':');
+        if (this.name != null) {
+            builder.append(this.name).append(':');
         }
         final Formatter formatter = new Formatter(builder);
-        formatter.format("%.2f", size / 1048510.0);
+        formatter.format("%.2f", this.size / 1048510.0);
         builder.append("MB used, ");
         builder.append(getPercentFree()).append("% free, ");
-        builder.append(evictions).append(" evictions");
+        builder.append(this.evictions).append(" evictions");
     }
 
 
@@ -94,7 +94,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
      * @return Name of cache instance/host to which statistics apply.
      */
     public String getName() {
-        return name;
+        return this.name;
     }
 
 

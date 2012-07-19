@@ -75,7 +75,7 @@ public class CacheStatus extends Status {
         }
         sb.append("Cache statistics: [");
         int i = 0;
-        for (CacheStatistics stats : statistics) {
+        for (final CacheStatistics stats : statistics) {
             if (i++ > 0) {
                 sb.append('|');
             }

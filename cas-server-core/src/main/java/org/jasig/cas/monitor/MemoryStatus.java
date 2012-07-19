@@ -53,7 +53,7 @@ public class MemoryStatus extends Status {
      * @return Free memory in bytes.
      */
     public long getFreeMemory() {
-        return freeMemory;
+        return this.freeMemory;
     }
 
 
@@ -63,6 +63,6 @@ public class MemoryStatus extends Status {
      * @return Max memory in bytes.
      */
     public long getTotalMemory() {
-        return totalMemory;
+        return this.totalMemory;
     }
 }
