@@ -53,6 +53,22 @@ public class SimpleCacheStatistics implements CacheStatistics {
     }
 
 
+    /**
+     * Creates a new named instance with given parameters.
+     *
+     * @param size Current cache size (e.g. items, bytes, etc).
+     * @param capacity Current cache capacity (e.g. items, bytes, etc).  The units of capacity must be equal to size
+     *                 in order to produce a meaningful value for {@link #getPercentFree}.
+     * @param evictions Number of evictions reported by cache.
+     * @param name Name of cache instance to which statistics apply.
+     */
+    public SimpleCacheStatistics(final long size, final long capacity, final long evictions, final String name) {
+        this.size = size;
+        this.capacity = capacity;
+        this.evictions = evictions;
+        this.name = name;
+    }
+
     public long getSize() {
         return this.size;
     }
@@ -95,15 +111,5 @@ public class SimpleCacheStatistics implements CacheStatistics {
      */
     public String getName() {
         return this.name;
-    }
-
-
-    /**
-     * Sets a descriptive name of the cache instance for which statistics apply.
-     *
-     * @param name Name of cache instance/host to which statistics apply.
-     */
-    public void setName(final String name) {
-        this.name = name;
     }
 }
