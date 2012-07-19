@@ -217,6 +217,10 @@
     <constructor-arg index="0" ref="servicesManager"/>
   </bean>
 
+  <bean id="serviceAuthorizationCheck" class="org.jasig.cas.web.flow.ServiceAuthorizationCheck">
+        <constructor-arg index="0" ref="servicesManager"/>
+  </bean>
+
   <bean id="generateLoginTicketAction" class="org.jasig.cas.web.flow.GenerateLoginTicketAction"
         p:ticketIdGenerator-ref="loginTicketUniqueIdGenerator"/>
 
