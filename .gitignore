@@ -11,3 +11,4 @@ target
 .idea
 overlays/
 pom.xml.versionsBackup
+*.log
