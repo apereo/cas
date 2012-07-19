@@ -36,7 +36,7 @@ public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<
      * @return Monitor name.
      */
     public String getName() {
-        return StringUtils.defaultIfEmpty(name, getClass().getSimpleName());
+        return StringUtils.defaultIfEmpty(this.name, getClass().getSimpleName());
     }
 
     /**

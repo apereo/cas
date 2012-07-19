@@ -87,6 +87,6 @@ public class Status {
      * @return Human-readable description of status.
      */
     public String getDescription() {
-        return description;
+        return this.description;
     }
 }

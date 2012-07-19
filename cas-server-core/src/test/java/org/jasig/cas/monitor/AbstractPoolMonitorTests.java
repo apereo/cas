@@ -50,7 +50,7 @@ public class AbstractPoolMonitorTests {
                 return 2;
             }
         };
-        monitor.setExecutor(executor);
+        monitor.setExecutor(this.executor);
         monitor.setMaxWait(1000);
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.OK, status.getCode());
@@ -75,7 +75,7 @@ public class AbstractPoolMonitorTests {
                 return 1;
             }
         };
-        monitor.setExecutor(executor);
+        monitor.setExecutor(this.executor);
         monitor.setMaxWait(500);
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.WARN, status.getCode());
@@ -99,7 +99,7 @@ public class AbstractPoolMonitorTests {
                 return 1;
             }
         };
-        monitor.setExecutor(executor);
+        monitor.setExecutor(this.executor);
         monitor.setMaxWait(500);
         final PoolStatus status = monitor.observe();
         assertEquals(StatusCode.ERROR, status.getCode());
