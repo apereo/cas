@@ -18,26 +18,29 @@
  */
 package org.jasig.cas.monitor;
 
+import javax.validation.constraints.NotNull;
+
+import net.sf.ehcache.Cache;
+
 /**
- * A monitor observes a resource and reports its status.
+ * Monitors a {@link net.sf.ehcache.Cache} instance.
+ * The accuracy of statistics is governed by the value of {@link Cache#getStatisticsAccuracy()}.
+ *
+ * <p>NOTE: computation of highly accurate statistics is expensive.</p>
  *
  * @author Marvin S. Addison
- * @since 3.5.0
+ * @since 3.5.1
  */
-public interface Monitor<S extends Status> {
+public class EhCacheMonitor extends AbstractCacheMonitor {
 
-    /**
-     * Gets the name of the monitor.
-     *
-     * @return Monitor name.
-     */
-    String getName();
+    @NotNull
+    private final Cache cache;
 
+    public EhCacheMonitor(final Cache cache) {
+        this.cache = cache;
+    }
 
-    /**
-     * Observes the monitored resource and reports the status.
-     *
-     * @return Status of monitored resource.
-     */
-    S observe();
+    protected CacheStatistics[] getStatistics() {
+        return new EhCacheStatistics[] { new EhCacheStatistics(cache) };
+    }
 }
