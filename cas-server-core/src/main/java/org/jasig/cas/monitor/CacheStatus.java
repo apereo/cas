@@ -37,7 +37,7 @@ public class CacheStatus extends Status {
      * @param statistics One or more sets of cache statistics.
      */
     public CacheStatus(final StatusCode code, final String description, final CacheStatistics... statistics) {
-        super(code, statistics != null && statistics.length > 0 ? buildDescription(description, statistics) : description);
+        super(code, buildDescription(description, statistics));
         this.statistics = statistics;
     }
 
@@ -65,6 +65,9 @@ public class CacheStatus extends Status {
 
 
     private static String buildDescription(final String desc, final CacheStatistics... statistics) {
+        if (statistics == null || statistics.length == 0) {
+            return desc;
+        }
         final StringBuilder sb = new StringBuilder();
         if (desc != null) {
             sb.append(desc);

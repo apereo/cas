@@ -29,6 +29,8 @@ import java.util.Formatter;
  */
 public class SimpleCacheStatistics implements CacheStatistics {
 
+    private static final double BYTES_PER_MB = 1048510.0;
+
     private final long size;
 
     private final long capacity;
@@ -97,7 +99,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
             builder.append(this.name).append(':');
         }
         final Formatter formatter = new Formatter(builder);
-        formatter.format("%.2f", this.size / 1048510.0);
+        formatter.format("%.2f", this.size / BYTES_PER_MB);
         builder.append("MB used, ");
         builder.append(getPercentFree()).append("% free, ");
         builder.append(this.evictions).append(" evictions");
