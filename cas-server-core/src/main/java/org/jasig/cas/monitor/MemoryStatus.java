@@ -25,6 +25,9 @@ package org.jasig.cas.monitor;
  * @since 3.5.0
  */
 public class MemoryStatus extends Status {
+
+    private static final double BYTES_PER_MB = 1048510.0;
+
     /** JVM free memory. */
     private final long freeMemory;
     
@@ -42,7 +45,7 @@ public class MemoryStatus extends Status {
      * @see #getCode()
      */
     public MemoryStatus(final StatusCode code, final long free, final long total) {
-        super(code, String.format("%.2fMB free, %.2fMB total.", free / 1048576.0, total / 1048576.0));
+        super(code, String.format("%.2fMB free, %.2fMB total.", free / BYTES_PER_MB, total / BYTES_PER_MB));
         this.freeMemory = free;
         this.totalMemory = total;
     }
