@@ -22,7 +22,7 @@ package org.jasig.cas.monitor;
  * Monitor status code inspired by HTTP status codes.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public enum StatusCode {
     ERROR(500),
@@ -32,7 +32,7 @@ public enum StatusCode {
     UNKNOWN(100);
 
     /** Status code numerical value */
-    private int value;
+    private final int value;
 
 
     /**
