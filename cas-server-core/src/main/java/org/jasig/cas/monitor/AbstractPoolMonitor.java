@@ -18,20 +18,26 @@
  */
 package org.jasig.cas.monitor;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javax.validation.constraints.NotNull;
-import java.util.concurrent.*;
 
 /**
  * Describes a monitor that observes a pool of resources.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
+    /** Default maximum wait time for asynchronous pool validation. */
+    public static final int DEFAULT_MAX_WAIT = 3000;
 
     /** Maximum amount of time in ms to wait while validating pool resources. */
-    private int maxWait;
+    private int maxWait = DEFAULT_MAX_WAIT;
 
     /** Executor that performs pool resource validation. */
     @NotNull
@@ -62,18 +68,18 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
 
     /** {@inheritDoc} */
     public PoolStatus observe() {
-        final Future<StatusCode> result = executor.submit(new Validator());
+        final Future<StatusCode> result = this.executor.submit(new Validator());
         StatusCode code;
         String description = null;
         try {
-            code = result.get(maxWait, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
+            code = result.get(this.maxWait, TimeUnit.MILLISECONDS);
+        } catch (final InterruptedException e) {
             code = StatusCode.UNKNOWN;
             description = "Validator thread interrupted during pool validation.";
-        } catch (TimeoutException e) {
+        } catch (final TimeoutException e) {
             code = StatusCode.WARN;
-            description = String.format("Pool validation timed out.  Max wait is %s ms.", maxWait);
-        } catch (Exception e) {
+            description = String.format("Pool validation timed out.  Max wait is %s ms.", this.maxWait);
+        } catch (final Exception e) {
             code = StatusCode.ERROR;
             description = e.getMessage();
         }
