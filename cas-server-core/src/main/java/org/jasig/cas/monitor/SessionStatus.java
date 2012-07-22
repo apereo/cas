@@ -22,7 +22,7 @@ package org.jasig.cas.monitor;
  * Provides status information about the number of SSO sessions established in CAS.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class SessionStatus extends Status {
     /** Total number of SSO sessions maintained by CAS. */
@@ -67,7 +67,7 @@ public class SessionStatus extends Status {
      * @return Total number of SSO sessions.
      */
     public int getSessionCount() {
-        return sessionCount;
+        return this.sessionCount;
     }
 
 
@@ -77,6 +77,6 @@ public class SessionStatus extends Status {
      * @return Total number of service tickets.
      */
     public int getServiceTicketCount() {
-        return serviceTicketCount;
+        return this.serviceTicketCount;
     }
 }

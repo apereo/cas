@@ -18,19 +18,19 @@
  */
 package org.jasig.cas.monitor;
 
+import javax.naming.directory.DirContext;
+import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.pool.DirContextType;
 import org.springframework.ldap.pool.factory.PoolingContextSource;
 
-import javax.naming.directory.DirContext;
-import javax.validation.constraints.NotNull;
-
 /**
  * LDAP pool monitor that observes a pool of LDAP connections provided by {@link PoolingContextSource}.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
     /** Logger instance. */
@@ -38,15 +38,10 @@ public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
 
     /** Pool to observe. */
     @NotNull
-    private PoolingContextSource poolingContextSource;
+    private final PoolingContextSource poolingContextSource;
 
 
-    /**
-     * Sets the pool to observe.
-     *
-     * @param pool Pool to observe.
-     */
-    public void setPoolingContextSource(final PoolingContextSource pool) {
+    public PoolingContextSourceMonitor(final PoolingContextSource pool) {
         this.poolingContextSource = pool;
     }
 
