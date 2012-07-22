@@ -16,39 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.oauth.authentication.principal;
+package org.jasig.cas.support.oauth.profile;
 
-import org.jasig.cas.authentication.principal.Credentials;
-import org.scribe.up.credential.OAuthCredential;
+import java.util.Map;
+
 import org.scribe.up.profile.UserProfile;
 
 /**
- * This class represents an OAuth credential and (after authentication) a user profile.
+ * This class is a specific profile after OAuth authentication in CAS server wrapping OAuth protocol.
  * 
  * @author Jerome Leleu
- * @since 3.5.0
+ * @since 3.5.1
  */
-public final class OAuthCredentials implements Credentials {
+public class CasWrapperProfile extends UserProfile {
     
-    private static final long serialVersionUID = -5154254291704475264L;
+    private static final long serialVersionUID = -8560514893286331540L;
     
-    private UserProfile userProfile;
+    public final static String ID = "id";
+    public final static String ATTRIBUTES = "attributes";
     
-    private final OAuthCredential credential;
-    
-    public OAuthCredentials(final OAuthCredential credential) {
-        this.credential = credential;
+    public CasWrapperProfile() {
+        super();
     }
     
-    public OAuthCredential getCredential() {
-        return credential;
+    public CasWrapperProfile(final Object id) {
+        super(id);
     }
     
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-    
-    public void setUserProfile(final UserProfile userProfile) {
-        this.userProfile = userProfile;
+    public CasWrapperProfile(final Object id, final Map<String, Object> attributes) {
+        super(id, attributes);
     }
 }
