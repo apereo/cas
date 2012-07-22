@@ -45,17 +45,17 @@ public final class OAuth20AuthorizeController extends AbstractController {
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
     
-    private String loginUrl;
+    private final String loginUrl;
     
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
     
-    public OAuth20AuthorizeController(ServicesManager servicesManager, String loginUrl) {
+    public OAuth20AuthorizeController(final ServicesManager servicesManager, final String loginUrl) {
         this.servicesManager = servicesManager;
         this.loginUrl = loginUrl;
     }
     
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
         String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
@@ -68,12 +68,12 @@ public final class OAuth20AuthorizeController extends AbstractController {
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
             logger.error("missing clientId");
-            return OAuthUtils.redirectToError(redirectUri, "missing_clientId");
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
             logger.error("missing redirectUri");
-            return OAuthUtils.redirectToError(redirectUri, "missing_redirectUri");
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
         }
         
         // name of the CAS service
@@ -87,24 +87,25 @@ public final class OAuth20AuthorizeController extends AbstractController {
         }
         if (service == null) {
             logger.error("Unknown clientId : {}", clientId);
-            return OAuthUtils.redirectToError(redirectUri, "unknow_clientId");
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
         }
         
         String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
             logger.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
-            return OAuthUtils.redirectToError(redirectUri, "unsupported_redirectUri");
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
         }
         
         // keep redirectUri in session
         HttpSession session = request.getSession();
         session.setAttribute(OAuthConstants.OAUTH20_CALLBACKURL, redirectUri);
         
-        String callbackAuthorizeUrl = request.getRequestURL().toString().replace("/authorize", "/callbackAuthorize");
+        String callbackAuthorizeUrl = request.getRequestURL().toString()
+            .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         logger.debug("callbackAuthorizeUrl : {}", callbackAuthorizeUrl);
         
-        String loginUrlWithService = OAuthUtils.addParameter(loginUrl, "service", callbackAuthorizeUrl);
+        String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE, callbackAuthorizeUrl);
         logger.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
     }

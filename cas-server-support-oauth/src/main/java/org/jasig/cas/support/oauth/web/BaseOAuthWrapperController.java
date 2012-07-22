@@ -54,7 +54,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected long timeout;
     
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
         String method = getMethod(request);
@@ -65,7 +65,13 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected abstract ModelAndView internalHandleRequest(String method, HttpServletRequest request,
                                                           HttpServletResponse response) throws Exception;
     
-    private String getMethod(HttpServletRequest request) {
+    /**
+     * Return the method to call according to the url.
+     * 
+     * @param request
+     * @return the method to call according to the url
+     */
+    private String getMethod(final HttpServletRequest request) {
         String method = request.getRequestURI();
         if (method.indexOf("?") >= 0) {
             method = StringUtils.substringBefore(method, "?");
@@ -77,19 +83,19 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         return method;
     }
     
-    public void setServicesManager(ServicesManager servicesManager) {
+    public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
     
-    public void setTicketRegistry(TicketRegistry ticketRegistry) {
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
     
-    public void setLoginUrl(String loginUrl) {
+    public void setLoginUrl(final String loginUrl) {
         this.loginUrl = loginUrl;
     }
     
-    public void setTimeout(long timeout) {
+    public void setTimeout(final long timeout) {
         this.timeout = timeout;
     }
 }
