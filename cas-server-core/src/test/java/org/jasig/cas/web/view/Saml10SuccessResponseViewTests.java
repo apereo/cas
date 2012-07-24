@@ -90,6 +90,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         assertTrue(written.contains("tac2"));
         assertTrue(written.contains(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
         assertTrue(written.contains("AuthenticationMethod"));
+        assertTrue(written.contains("AssertionID"));
     }
     
     public void testResponseWithNoAttributes() throws Exception {
