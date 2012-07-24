@@ -98,6 +98,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
         // Build up the SAML assertion containing AuthenticationStatement and AttributeStatement
         final Assertion assertion = newSamlObject(Assertion.class);
+        assertion.setID(generateId());
         assertion.setIssueInstant(issuedAt);
         assertion.setIssuer(this.issuer);
         assertion.setConditions(newConditions(issuedAt, service.getId()));
@@ -151,7 +152,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     }
 
     private AttributeStatement newAttributeStatement(
-            final Subject subject, final Map<String, Object> attributes, boolean isRemembered) {
+            final Subject subject, final Map<String, Object> attributes, final boolean isRemembered) {
 
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
@@ -166,7 +167,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
                     // 100323 bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
                     continue;
                 }
-                for (Object value : c) {
+                for (final Object value : c) {
                     attribute.getAttributeValues().add(newAttributeValue(value));
                 }
             } else {
@@ -186,7 +187,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     }
 
     private XSString newAttributeValue(final Object value) {
-        final XSString stringValue = attrValueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+        final XSString stringValue = this.attrValueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
         if (value instanceof String) {
             stringValue.setValue((String) value);
         } else {
