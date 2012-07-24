@@ -81,12 +81,6 @@
         <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
           <ref local="ticketResourceResolver" />
         </entry>
-        <entry key="DELETE_SERVICE_ACTION_RESOLVER">
-          <ref local="returnValueResourceResolver" />
-        </entry>
-        <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
-          <ref local="returnValueResourceResolver" />
-        </entry>
         <entry key="DELETE_SERVICE_RESOURCE_RESOLVER">
           <ref local="deleteServiceResourceResolver" />
         </entry>

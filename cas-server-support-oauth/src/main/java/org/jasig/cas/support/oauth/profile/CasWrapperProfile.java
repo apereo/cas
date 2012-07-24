@@ -16,28 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.monitor;
+package org.jasig.cas.support.oauth.profile;
+
+import java.util.Map;
+
+import org.scribe.up.profile.UserProfile;
 
 /**
- * A monitor observes a resource and reports its status.
- *
- * @author Marvin S. Addison
- * @since 3.5.0
+ * This class is a specific profile after OAuth authentication in CAS server wrapping OAuth protocol.
+ * 
+ * @author Jerome Leleu
+ * @since 3.5.1
  */
-public interface Monitor<S extends Status> {
-
-    /**
-     * Gets the name of the monitor.
-     *
-     * @return Monitor name.
-     */
-    String getName();
-
-
-    /**
-     * Observes the monitored resource and reports the status.
-     *
-     * @return Status of monitored resource.
-     */
-    S observe();
+public class CasWrapperProfile extends UserProfile {
+    
+    private static final long serialVersionUID = -8560514893286331540L;
+    
+    public final static String ID = "id";
+    public final static String ATTRIBUTES = "attributes";
+    
+    public CasWrapperProfile() {
+        super();
+    }
+    
+    public CasWrapperProfile(final Object id) {
+        super(id);
+    }
+    
+    public CasWrapperProfile(final Object id, final Map<String, Object> attributes) {
+        super(id, attributes);
+    }
 }

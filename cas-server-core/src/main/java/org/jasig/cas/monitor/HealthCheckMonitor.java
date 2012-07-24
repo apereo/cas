@@ -18,18 +18,18 @@
  */
 package org.jasig.cas.monitor;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 
 /**
  * Simple health check monitor that reports the overall health as the greatest reported
  * {@link StatusCode} of an arbitrary number of individual checks.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class HealthCheckMonitor implements Monitor<HealthStatus> {
     /** Invidual monitors that comprise health check. */
@@ -55,10 +55,10 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
 
     /** {@inheritDoc} */
     public HealthStatus observe() {
-        final Map<String, Status> results = new HashMap<String, Status>(monitors.size());
+        final Map<String, Status> results = new LinkedHashMap<String, Status>(this.monitors.size());
         StatusCode code = StatusCode.UNKNOWN;
         Status result;
-        for (Monitor monitor : monitors) {
+        for (final Monitor monitor : this.monitors) {
             result = monitor.observe();
             if (result.getCode().value() > code.value()) {
                 code = result.getCode();

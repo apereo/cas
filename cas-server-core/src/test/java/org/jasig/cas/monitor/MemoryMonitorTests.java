@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link MemoryMonitor} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class MemoryMonitorTests {
 
