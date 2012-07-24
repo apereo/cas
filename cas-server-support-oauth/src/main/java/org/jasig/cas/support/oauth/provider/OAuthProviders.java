@@ -16,28 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.monitor;
+package org.jasig.cas.support.oauth.provider;
+
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import org.scribe.up.provider.OAuthProvider;
 
 /**
- * A monitor observes a resource and reports its status.
- *
- * @author Marvin S. Addison
- * @since 3.5.0
+ * This class gathers all the OAuth providers.
+ * 
+ * @author Jerome Leleu
+ * @since 3.5.1
  */
-public interface Monitor<S extends Status> {
-
-    /**
-     * Gets the name of the monitor.
-     *
-     * @return Monitor name.
-     */
-    String getName();
-
-
-    /**
-     * Observes the monitored resource and reports the status.
-     *
-     * @return Status of monitored resource.
-     */
-    S observe();
+public final class OAuthProviders {
+    
+    @NotNull
+    private List<OAuthProvider> providers;
+    
+    public List<OAuthProvider> getProviders() {
+        return providers;
+    }
+    
+    public void setProviders(final List<OAuthProvider> providers) {
+        this.providers = providers;
+    }
 }

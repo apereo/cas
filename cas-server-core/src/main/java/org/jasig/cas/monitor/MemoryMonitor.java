@@ -22,7 +22,7 @@ package org.jasig.cas.monitor;
  * Monitors JVM memory usage.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class MemoryMonitor implements Monitor<MemoryStatus> {
    
@@ -57,7 +57,7 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
         final StatusCode code;
         final long free = Runtime.getRuntime().freeMemory();
         final long total = Runtime.getRuntime().totalMemory();
-        if (free * 100 / total < freeMemoryWarnThreshold) {
+        if (free * 100 / total < this.freeMemoryWarnThreshold) {
             code = StatusCode.WARN;
         } else {
             code = StatusCode.OK;
