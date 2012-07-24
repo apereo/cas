@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
  * state information used in status reports.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class SessionMonitor implements Monitor<SessionStatus> {
     /** Ticket registry instance that exposes state info. */
@@ -78,28 +78,28 @@ public class SessionMonitor implements Monitor<SessionStatus> {
     /** {@inheritDoc} */
     public SessionStatus observe() {
         try {
-            final int sessionCount = registryState.sessionCount();
-            final int ticketCount = registryState.serviceTicketCount();
+            final int sessionCount = this.registryState.sessionCount();
+            final int ticketCount = this.registryState.serviceTicketCount();
             final StringBuilder msg = new StringBuilder();
             StatusCode code = StatusCode.OK;
-            if (sessionCountWarnThreshold > -1 && sessionCount > sessionCountWarnThreshold) {
+            if (this.sessionCountWarnThreshold > -1 && sessionCount > this.sessionCountWarnThreshold) {
                 code = StatusCode.WARN;
                 msg.append(String.format(
-                        "Session count (%s) is above threshold %s. ", sessionCount, sessionCountWarnThreshold));
+                        "Session count (%s) is above threshold %s. ", sessionCount, this.sessionCountWarnThreshold));
             } else {
                 msg.append(sessionCount).append(" sessions. ");
             }
-            if (serviceTicketCountWarnThreshold > -1 && ticketCount > serviceTicketCountWarnThreshold) {
+            if (this.serviceTicketCountWarnThreshold > -1 && ticketCount > this.serviceTicketCountWarnThreshold) {
                 code = StatusCode.WARN;
                 msg.append(String.format(
                         "Service ticket count (%s) is above threshold %s.",
                         ticketCount,
-                        serviceTicketCountWarnThreshold));
+                        this.serviceTicketCountWarnThreshold));
             } else {
                 msg.append(ticketCount).append(" service tickets.");
             }
             return new SessionStatus(code, msg.toString(), sessionCount, ticketCount);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return new SessionStatus(StatusCode.ERROR, e.getMessage());
         }
     }

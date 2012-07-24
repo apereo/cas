@@ -22,9 +22,15 @@ package org.jasig.cas.monitor;
  * Describes the status of a resource pool.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class PoolStatus extends Status {
+    /**
+     * Return value for {@link #getActiveCount()} and {@link #getIdleCount()}
+     * when pool metrics are unknown or unknowable.
+     */
+    public static final int UNKNOWN_COUNT = -1;
+
     /** Number of idle pool resources. */
     private final int idleCount;
 
@@ -53,7 +59,7 @@ public class PoolStatus extends Status {
      * @return Number of idle pool members.
      */
     public int getIdleCount() {
-        return idleCount;
+        return this.idleCount;
     }
 
 
@@ -63,7 +69,7 @@ public class PoolStatus extends Status {
      * @return Number of active pool members.
      */
     public int getActiveCount() {
-        return activeCount;
+        return this.activeCount;
     }
     
     
@@ -76,7 +82,15 @@ public class PoolStatus extends Status {
             }
             sb.append(' ');
         }
-        sb.append(active).append(" active, ").append(idle).append(" idle.");
-        return sb.toString();
+        if (active != UNKNOWN_COUNT) {
+            sb.append(active).append(" active");
+        }
+        if (idle != UNKNOWN_COUNT) {
+            sb.append(", ").append(idle).append(" idle.");
+        }
+        if (sb.length() > 0) {
+            return sb.toString();
+        }
+        return null;
     }
 }

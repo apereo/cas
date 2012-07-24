@@ -24,7 +24,7 @@ package org.jasig.cas.monitor;
  * be of interest to monitors.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public interface TicketRegistryState {
     /**

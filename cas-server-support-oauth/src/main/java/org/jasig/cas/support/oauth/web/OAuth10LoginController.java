@@ -20,42 +20,44 @@ package org.jasig.cas.support.oauth.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jasig.cas.support.oauth.provider.OAuthProviders;
+import org.scribe.up.provider.OAuthProvider;
+import org.scribe.up.session.HttpUserSession;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is called after successful authentication and redirects user to the callback url of the OAuth application. A code is
- * added which is the service ticket retrieved from previous authentication.
+ * This class is an intermediate controller called when the user wants to delegate authentication to an OAuth provider implementing OAuth
+ * procotol v1.0. At this step, the authorization url is computed and the user is redirected to it.
  * 
  * @author Jerome Leleu
- * @since 3.5.0
+ * @since 3.5.1
  */
-public final class OAuth20CallbackAuthorizeController extends AbstractController {
+public final class OAuth10LoginController extends AbstractController {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
+    @NotNull
+    private OAuthProviders providers;
     
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        // get CAS ticket
-        String ticket = request.getParameter(OAuthConstants.TICKET);
-        logger.debug("ticket : {}", ticket);
         
-        // retrieve callback url from session
-        HttpSession session = request.getSession();
-        String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
-        logger.debug("callbackUrl : {}", callbackUrl);
-        session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
+        // get provider type
+        String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
+        // get provider
+        OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
         
-        // return to callback with code
-        String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
-        logger.debug("callbackUrlWithCode : {}", callbackUrlWithCode);
-        return OAuthUtils.redirectTo(callbackUrlWithCode);
+        // authorization url
+        String authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(request));
+        
+        return OAuthUtils.redirectTo(authorizationUrl);
+    }
+    
+    public void setProviders(final OAuthProviders providers) {
+        this.providers = providers;
     }
 }

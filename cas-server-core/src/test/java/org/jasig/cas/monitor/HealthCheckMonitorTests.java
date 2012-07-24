@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.monitor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link HealthCheckMonitor} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
+ * @since 3.5.0
  */
 public class HealthCheckMonitorTests {
 
@@ -39,12 +39,12 @@ public class HealthCheckMonitorTests {
 
     @Before
     public void setUp() throws Exception {
-        monitor = new HealthCheckMonitor();
+        this.monitor = new HealthCheckMonitor();
     }
 
     @Test
     public void testObserveUnknown() throws Exception {
-        assertEquals(StatusCode.UNKNOWN, monitor.observe().getCode());
+        assertEquals(StatusCode.UNKNOWN, this.monitor.observe().getCode());
     }
 
     @Test
@@ -52,8 +52,8 @@ public class HealthCheckMonitorTests {
         final Set<Monitor> monitors = new HashSet<Monitor>();
         monitors.add(new MemoryMonitor());
         monitors.add(newSessionMonitor());
-        monitor.setMonitors(monitors);
-        assertEquals(StatusCode.OK, monitor.observe().getCode());
+        this.monitor.setMonitors(monitors);
+        assertEquals(StatusCode.OK, this.monitor.observe().getCode());
     }
 
     @Test
@@ -63,8 +63,8 @@ public class HealthCheckMonitorTests {
         memoryMonitor.setFreeMemoryWarnThreshold(100);
         monitors.add(memoryMonitor);
         monitors.add(newSessionMonitor());
-        monitor.setMonitors(monitors);
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
+        this.monitor.setMonitors(monitors);
+        assertEquals(StatusCode.WARN, this.monitor.observe().getCode());
     }
     
     private SessionMonitor newSessionMonitor() {

@@ -18,51 +18,36 @@
  */
 package org.jasig.cas.monitor;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.sql.DataSource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.pool.factory.PoolingContextSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Unit test for {@link PoolingContextSourceMonitor} class.
+ * Unit test for {@link DataSourceMonitor}.
  *
  * @author Marvin S. Addison
- * @since 3.5.0
+ * @since 3.5.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/ldapContext-test.xml")
-public class PoolingContextSourceMonitorTests {
+@ContextConfiguration("/jpaTestApplicationContext.xml")
+public class DataSourceMonitorTests {
 
     @Autowired
-    private PoolingContextSource poolingContextSource;
-    
-    private PoolingContextSourceMonitor monitor;
-
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    @Before
-    public void setUp() throws Exception {
-        monitor = new PoolingContextSourceMonitor(poolingContextSource);
-        monitor.setExecutor(executor);
-    }
+    private DataSource dataSource;
 
     @Test
-    public void testObserveOK() throws Exception {
-        monitor.setMaxWait(5000);
-        assertEquals(StatusCode.OK, monitor.observe().getCode());
-    }
-
-    @Test
-    public void testObserveWarn() throws Exception {
-        monitor.setMaxWait(5);
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
+    public void testObserve() throws Exception {
+        final DataSourceMonitor monitor = new DataSourceMonitor(this.dataSource);
+        monitor.setExecutor(Executors.newSingleThreadExecutor());
+        monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        final PoolStatus status = monitor.observe();
+        assertEquals(StatusCode.OK, status.getCode());
     }
 }
