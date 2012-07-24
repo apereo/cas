@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Credentials;
-import org.opensaml.SAMLAuthenticationStatement;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -40,25 +39,29 @@ public class SamlAuthenticationMetaDataPopulator implements
 
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
 
+    public static final String AUTHN_METHOD_PASSWORD = "urn:oasis:names:tc:SAML:1.0:am:password";
+
+    public static final String AUTHN_METHOD_SSL_TLS_CLIENT = "urn:ietf:rfc:2246";
+
+    public static final String AUTHN_METHOD_X509_PUBLICKEY = "urn:oasis:names:tc:SAML:1.0:am:X509-PKI";
+
+    public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
+
     private Map<String, String> authenticationMethods = new HashMap<String, String>();
 
     public SamlAuthenticationMetaDataPopulator() {
-        this.authenticationMethods
-            .put(
+        this.authenticationMethods.put(
                 "org.jasig.cas.authentication.principal.HttpBasedServiceCredentials",
-                SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client);
-        this.authenticationMethods
-            .put(
+                AUTHN_METHOD_SSL_TLS_CLIENT);
+        this.authenticationMethods.put(
                 "org.jasig.cas.authentication.principal.UsernamePasswordCredentials",
-                SAMLAuthenticationStatement.AuthenticationMethod_Password);
-        this.authenticationMethods
-            .put(
+                AUTHN_METHOD_PASSWORD);
+        this.authenticationMethods.put(
                 "org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials",
-                SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
-        this.authenticationMethods
-            .put(
+                AUTHN_METHOD_UNSPECIFIED);
+        this.authenticationMethods.put(
                 "org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials",
-                SAMLAuthenticationStatement.AuthenticationMethod_X509_PublicKey);
+                AUTHN_METHOD_X509_PUBLICKEY);
     }
 
     public final Authentication populateAttributes(

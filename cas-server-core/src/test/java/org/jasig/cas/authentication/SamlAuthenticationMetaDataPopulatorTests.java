@@ -21,12 +21,10 @@ package org.jasig.cas.authentication;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.opensaml.SAMLAuthenticationStatement;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -50,7 +48,7 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
         
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
-        assertEquals(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"), SAMLAuthenticationStatement.AuthenticationMethod_Password);
+        assertEquals(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"), SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD);
     }
     
     public void testAuthenticationTypeNotFound() {
