@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.util.CasHTTPSOAP11Encoder;
 import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.joda.time.DateTime;
 import org.opensaml.Configuration;
@@ -118,7 +119,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             messageContext.setOutboundMessageTransport(new HttpServletResponseAdapter(response, false));
             messageContext.setOutboundSAMLMessage(samlResponse);
 
-            final HTTPSOAP11Encoder encoder = new HTTPSOAP11Encoder();
+            final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
             encoder.encode(messageContext);
         } catch (final Exception e) {
             log.error("{}::{}", e.getClass().getSimpleName(), e.getMessage());
