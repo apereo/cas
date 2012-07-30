@@ -31,16 +31,7 @@ import org.jasig.cas.authentication.principal.Service;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public interface RegisteredService extends Cloneable, Serializable {
-
-    /**
-     * Has the special meaning of releasing no user attribute and CAS instead 
-     * generating a persistent per-user-per-service unique identifier.  Such identifiers may provide some measure of
-     * anonymity in that while they uniquely identify the user over multiple sessions with the service, they are not 
-     * naively cross-referenceable across services.
-     */
-    public final String DEFAULT_OPAQUE_USERNAME_ATTRIBUTE = "(opaque)";
-    
+public interface RegisteredService extends Cloneable, Serializable {    
     /**
      * Default username attribute to release for a given service.
      */
