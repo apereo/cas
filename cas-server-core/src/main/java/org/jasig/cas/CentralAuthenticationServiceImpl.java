@@ -365,33 +365,48 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 }
             }
 
-            final int authenticationChainSize = serviceTicket
-                .getGrantingTicket().getChainedAuthentications().size();
-            final Authentication authentication = serviceTicket
-                .getGrantingTicket().getChainedAuthentications().get(
-                    authenticationChainSize - 1);
+            List<Authentication> chainedAuthenticationsList = serviceTicket.getGrantingTicket().getChainedAuthentications();
+            final Authentication authentication = chainedAuthenticationsList.get(chainedAuthenticationsList.size() - 1);
             final Principal principal = authentication.getPrincipal();
-            final String principalId = registeredService.isAnonymousAccess()
-                ? this.persistentIdGenerator.generate(principal, serviceTicket
-                    .getService()) : principal.getId();
-
+           
+            String principalId = principal.getId();
+            
+            if (registeredService.isAnonymousAccess()) {
+                principalId = this.persistentIdGenerator.generate(principal, serviceTicket.getService());
+            } else {
+                if (registeredService.getUsernameAttribute() == null || 
+                    registeredService.getAllowedAttributes().equals(RegisteredService.DEFAULT_USERNAME_ATTRIBUTE)) {
+                    principalId = principal.getId();
+                }  else {
+                    if (registeredService.isIgnoreAttributes() ||
+                        registeredService.getAllowedAttributes().contains(registeredService.getUsernameAttribute())) {
+                        principalId = principal.getAttributes().get(registeredService.getUsernameAttribute()).toString();
+                    } else {
+                        final Object[] errorLogParameters = new Object[] {principalId, registeredService.getUsernameAttribute(), 
+                                                                          principal.getAttributes(), 
+                                                                          registeredService.getServiceId(), 
+                                                                          principalId};
+                        log.warn("Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot " +
+                                 "provide on the validation response the user attribute the registered service [{}] expects. " + 
+                                 "CAS will instead return the default username attribute [{}]", errorLogParameters);
+                    }
+                }
+            }
+            
             final Authentication authToUse;
 
             if (!registeredService.isIgnoreAttributes()) {
                 final Map<String, Object> attributes = new HashMap<String, Object>();
 
-                for (final String attribute : registeredService
-                    .getAllowedAttributes()) {
-                    final Object value = principal.getAttributes().get(
-                        attribute);
+                for (final String attribute : registeredService.getAllowedAttributes()) {
+                    final Object value = principal.getAttributes().get(attribute);
 
                     if (value != null) {
                         attributes.put(attribute, value);
                     }
                 }
 
-                final Principal modifiedPrincipal = new SimplePrincipal(
-                    principalId, attributes);
+                final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributes);
                 final MutableAuthentication mutableAuthentication = new MutableAuthentication(
                     modifiedPrincipal, authentication.getAuthenticatedDate());
                 mutableAuthentication.getAttributes().putAll(
@@ -400,13 +415,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     authentication.getAuthenticatedDate().getTime());
                 authToUse = mutableAuthentication;
             } else {
-                authToUse = authentication;
+                final Principal modifiedPrincipal = new SimplePrincipal(principalId, principal.getAttributes());
+                authToUse = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate());
             }
-
-
+           
             final List<Authentication> authentications = new ArrayList<Authentication>();
 
-            for (int i = 0; i < authenticationChainSize - 1; i++) {
+            for (int i = 0; i < chainedAuthenticationsList.size() - 1; i++) {
                 authentications.add(serviceTicket.getGrantingTicket().getChainedAuthentications().get(i));
             }
             authentications.add(authToUse);
