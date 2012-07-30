@@ -60,9 +60,10 @@
                 th.th3, td.td3 {width:50px}
                 th.th4, td.td4 {width:70px}
                 th.th5, td.td5 {width:50px}
-                th.th6, td.td6 {width:70px; text-align:right !important;}
-                th.th7, td.td7 {width:102px; text-align:right !important;}
-                td.td7 {width:85px;}
+                th.th6, td.td6 {width:102px;}
+                th.th7, td.td7 {width:70px; text-align:right !important;}
+                th.th8, td.td8 {width:102px; text-align:right !important;}
+                
 
 				.hint {margin-left:9.5em; margin-bottom:1em; line-height:1.5;}
 				.actions {margin:1.5em 0;}

@@ -34,6 +34,19 @@ import org.jasig.cas.authentication.principal.Service;
 public interface RegisteredService extends Cloneable, Serializable {
 
     /**
+     * Has the special meaning of releasing no user attribute and CAS instead 
+     * generating a persistent per-user-per-service unique identifier.  Such identifiers may provide some measure of
+     * anonymity in that while they uniquely identify the user over multiple sessions with the service, they are not 
+     * naively cross-referenceable across services.
+     */
+    public final String DEFAULT_OPAQUE_USERNAME_ATTRIBUTE = "(opaque)";
+    
+    /**
+     * Default username attribute to release for a given service.
+     */
+    public final String DEFAULT_USERNAME_ATTRIBUTE = "(default)";
+    
+    /**
      * Is this application currently allowed to use CAS?
      * 
      * @return true if it can use CAS, false otherwise.
@@ -41,7 +54,7 @@ public interface RegisteredService extends Cloneable, Serializable {
     boolean isEnabled();
 
     /**
-     * Determines whether the service is allowed anonymous or priveleged access
+     * Determines whether the service is allowed anonymous or privileged access
      * to user information. Anonymous access should not return any identifying
      * information such as user id.
      *
@@ -78,6 +91,11 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     String getServiceId();
 
+    /**
+     * The numeric identifier for this service.
+     * 
+     * @return the numeric identifier for this service.
+     */
     long getId();
 
     /**
@@ -117,6 +135,18 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     int getEvaluationOrder();
 
+    /**
+     * Get the name of the attribute this service prefers to consume as username.
+     * 
+     * @return Either of the following values:
+     * <ul>
+     *  <li><code>String</code> representing the name of the attribute to consume as username</li>
+     *  <li>{@link #DEFAULT_OPAQUE_USERNAME_ATTRIBUTE} for anonymous services</li>
+     *  <li>{@link #DEFAULT_USERNAME_ATTRIBUTE} or <code>null</code> indicating the default username</li>
+     * </ul>
+     */
+    public String getUsernameAttribute();
+    
     /**
      * Returns whether the service matches the registered service.
      * <p>Note, as of 3.1.2, matches are case insensitive.

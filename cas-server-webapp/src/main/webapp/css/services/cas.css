@@ -294,7 +294,9 @@ table {
     border-collapse:collapse;
     empty-cells:show;
     background-color:#fff;
-    font-size:1.1em
+    font-size:1.1em;
+    border-collapse:separate; 
+    border-spacing: 0px;
     }
 
 .large {width:100%;}
