@@ -154,12 +154,8 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         Collections.sort(possibleAttributeNames);
         model.put("availableAttributes", possibleAttributeNames);
         
-        final List<String> possibleUsernameAttributeNames = new ArrayList<String>();
-        possibleUsernameAttributeNames.addAll(possibleAttributeNames);     
-        possibleUsernameAttributeNames.add(RegisteredService.DEFAULT_OPAQUE_USERNAME_ATTRIBUTE);
-        possibleUsernameAttributeNames.add(RegisteredService.DEFAULT_USERNAME_ATTRIBUTE);
-        Collections.sort(possibleUsernameAttributeNames);
-        model.put("availableUsernameAttributes", possibleUsernameAttributeNames);
+        possibleAttributeNames.add(0, RegisteredService.DEFAULT_USERNAME_ATTRIBUTE);
+        model.put("availableUsernameAttributes", possibleAttributeNames);
         
         model.put("pageTitle", getFormView());
         model.put("commandName", getCommandName());

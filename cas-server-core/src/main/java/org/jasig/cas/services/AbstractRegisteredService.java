@@ -19,6 +19,7 @@
 
 package org.jasig.cas.services;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -251,28 +252,21 @@ public abstract class AbstractRegisteredService
 
     /**
      * Sets the name of the user attribute to use as the username when providing usernames to this registered service.
+     * The username attribute will have no affect on services that are marked for anonymous access.
      * 
-     * @param username username attribute to release for this service that may be one of the following values: 
+     * @param username attribute to release for this service that may be one of the following values: 
      * <ul>
      *  <li>name of the attribute this service prefers to consume as username</li>
      *  <li>{@link RegisteredService#DEFAULT_USERNAME_ATTRIBUTE} or <code>null</code> to enforce default CAS behavior</li>
-     *  <li>{@link RegisteredService#DEFAULT_OPAQUE_USERNAME_ATTRIBUTE} to enforce anonymous access</li>
      * </ul>
-     * The selected attribute <code>username</code> must already be available as part of the allowed attributes for 
-     * this service, unless this service is configured to ignore the attribute release tool. 
-     * 
-     * @see #isIgnoreAttributes()
-     * @see #getAllowedAttributes()
+     * @see #isAnonymousAccess()
      */
-    public void setUsernameAttribute(String username) {
-        if (username != null) {
-            if (username.trim().length() == 0) {
-                username = null;
-            } else {
-                this.setAnonymousAccess(username.equals(DEFAULT_OPAQUE_USERNAME_ATTRIBUTE));
-            }
-        }
-        this.usernameAttribute = username;
+    public void setUsernameAttribute(final String username) {
+        if (StringUtils.isBlank(username)) {
+            this.usernameAttribute = DEFAULT_USERNAME_ATTRIBUTE;
+        } else {
+            this.usernameAttribute = username;
+        }        
     }
     
     public Object clone() throws CloneNotSupportedException {
