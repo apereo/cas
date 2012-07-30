@@ -29,13 +29,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
 public class Saml10FailureResponseViewTests extends TestCase {
 
-    private Saml10FailureResponseView view = new Saml10FailureResponseView();
+    private final Saml10FailureResponseView view = new Saml10FailureResponseView();
     
     public void testResponse() throws Exception {
         final MockHttpServletRequest request =  new MockHttpServletRequest();
@@ -44,7 +43,7 @@ public class Saml10FailureResponseViewTests extends TestCase {
         
         final String description = "Validation failed";
         this.view.renderMergedOutputModel(
-            Collections.singletonMap("description", description), request, response);
+            Collections.<String, Object>singletonMap("description", description), request, response);
 
         final String responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));

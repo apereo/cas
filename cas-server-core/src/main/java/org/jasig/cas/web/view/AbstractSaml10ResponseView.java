@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.web.view;
 
 import java.lang.reflect.Field;
@@ -60,6 +61,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
 
+    private final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
+
     private final SecureRandomIdentifierGenerator idGenerator;
 
     @NotNull
@@ -79,21 +82,21 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             // Initialize OpenSAML default configuration
             // (only needed once per classloader)
             DefaultBootstrap.bootstrap();
-        } catch (ConfigurationException e) {
+        } catch (final ConfigurationException e) {
             throw new IllegalStateException("Error initializing OpenSAML library.", e);
         }
     }
 
     protected AbstractSaml10ResponseView() {
         try {
-            idGenerator = new SecureRandomIdentifierGenerator();
-        } catch (NoSuchAlgorithmException e) {
+            this.idGenerator = new SecureRandomIdentifierGenerator();
+        } catch (final NoSuchAlgorithmException e) {
             throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.");
         }
     }
 
     protected void renderMergedOutputModel(
-            final Map model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         response.setCharacterEncoding(this.encoding);
 
@@ -116,13 +119,11 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             prepareResponse(samlResponse, model);
 
             final BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
-            messageContext.setOutboundMessageTransport(new HttpServletResponseAdapter(response, false));
+            messageContext.setOutboundMessageTransport(new HttpServletResponseAdapter(response, request.isSecure()));
             messageContext.setOutboundSAMLMessage(samlResponse);
-
-            final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
-            encoder.encode(messageContext);
+            this.encoder.encode(messageContext);
         } catch (final Exception e) {
-            log.error("{}::{}", e.getClass().getSimpleName(), e.getMessage());
+            this.log.error("Error generating SAML response for service {}.", serviceId);
             throw e;
         }
     }
@@ -134,11 +135,11 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      * @param response SAML 1 response message to be filled.
      * @param model Spring MVC model map containing data needed to prepare response.
      */
-    protected abstract void prepareResponse(Response response, Map model);
+    protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
 
     protected final String generateId() {
-        return idGenerator.generateIdentifier();
+        return this.idGenerator.generateIdentifier();
     }
 
     protected final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
@@ -146,9 +147,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
             qName = (QName) f.get(null);
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             throw new IllegalStateException("Cannot find field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalStateException("Cannot access field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
         }
         final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) Configuration.getBuilderFactory().getBuilder(qName);

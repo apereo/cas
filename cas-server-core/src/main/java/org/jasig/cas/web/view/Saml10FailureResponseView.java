@@ -28,13 +28,12 @@ import org.opensaml.saml1.core.StatusCode;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  * @since 3.1
  */
-public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
+public final class Saml10FailureResponseView extends AbstractSaml10ResponseView {
 
     @Override
-    protected void prepareResponse(final Response response, final Map model) {
+    protected void prepareResponse(final Response response, final Map<String, Object> model) {
         response.setStatus(newStatus(StatusCode.REQUEST_DENIED, (String) model.get("description")));
     }
 }
