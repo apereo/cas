@@ -60,10 +60,9 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
  * 
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  * @since 3.1
  */
-public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
+public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
     /** Namespace for custom attributes. */
     private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
@@ -88,7 +87,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
     private String rememberMeAttributeName = REMEMBER_ME_ATTRIBUTE_NAME;
 
     @Override
-    protected void prepareResponse(final Response response, final Map model) {
+    protected void prepareResponse(final Response response, final Map<String, Object> model) {
         final Authentication authentication = getAssertionFrom(model).getChainedAuthentications().get(0);
         final DateTime issuedAt = response.getIssueInstant();
         final Service service = getAssertionFrom(model).getService();
@@ -157,16 +156,16 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
         for (final Entry<String, Object> e : attributes.entrySet()) {
+            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
+                // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
+                log.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                continue;
+            }
             final Attribute attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
             attribute.setAttributeNamespace(NAMESPACE);
-
             if (e.getValue() instanceof Collection<?>) {
                 final Collection<?> c = (Collection<?>) e.getValue();
-                if (c.isEmpty()) {
-                    // 100323 bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
-                    continue;
-                }
                 for (final Object value : c) {
                     attribute.getAttributeValues().add(newAttributeValue(value));
                 }
