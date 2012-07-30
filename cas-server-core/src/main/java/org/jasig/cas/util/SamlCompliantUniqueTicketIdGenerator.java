@@ -63,12 +63,12 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
         }
         try {
             this.random = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
+        } catch (final NoSuchAlgorithmException e) {
             throw new IllegalStateException("Cannot get SHA1PRNG secure random instance.");
         }
     }
 
-        /**
+    /**
      * We ignore prefixes for SAML compliance.
      */
     public String getNewTicketId(final String prefix) {

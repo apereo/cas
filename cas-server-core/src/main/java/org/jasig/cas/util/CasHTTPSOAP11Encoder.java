@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.util;
 
 import org.opensaml.Configuration;
@@ -34,7 +35,7 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-public class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
+public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
     public static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 
     @Override

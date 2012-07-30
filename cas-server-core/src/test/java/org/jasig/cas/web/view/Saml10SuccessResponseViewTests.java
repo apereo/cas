@@ -41,7 +41,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */

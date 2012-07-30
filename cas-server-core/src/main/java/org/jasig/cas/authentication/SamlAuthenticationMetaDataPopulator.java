@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
@@ -47,15 +49,17 @@ public class SamlAuthenticationMetaDataPopulator implements
 
     public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
 
-    private Map<String, String> authenticationMethods = new HashMap<String, String>();
+    private final Map<String, String> authenticationMethods = new HashMap<String, String>();
 
     public SamlAuthenticationMetaDataPopulator() {
         this.authenticationMethods.put(
-                "org.jasig.cas.authentication.principal.HttpBasedServiceCredentials",
+                HttpBasedServiceCredentials.class.getName(),
                 AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(
-                "org.jasig.cas.authentication.principal.UsernamePasswordCredentials",
+                UsernamePasswordCredentials.class.getName(),
                 AUTHN_METHOD_PASSWORD);
+
+        // Next two classes are in other modules, so avoid using Class#getName() to prevent circular dependency
         this.authenticationMethods.put(
                 "org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials",
                 AUTHN_METHOD_UNSPECIFIED);
