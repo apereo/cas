@@ -19,14 +19,29 @@
 
 package org.jasig.cas.services;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.IndexColumn;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.Table;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.Column;
+import javax.persistence.FetchType;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -79,7 +94,12 @@ public abstract class AbstractRegisteredService
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
-
+    /**
+     * Name of the user attribute that this service expects as the value of the username payload in the
+     * validate responses.
+     */
+    private String usernameAttribute = DEFAULT_USERNAME_ATTRIBUTE;
+      
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
     }
@@ -124,43 +144,51 @@ public abstract class AbstractRegisteredService
         return this.ssoEnabled;
     }
 
-    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AbstractRegisteredService)) return false;
+        if (o == null) { 
+            return false; 
+        }
+        
+        if (this == o)  {
+            return true;
+        }
+        
+        if (!(o instanceof AbstractRegisteredService)) {
+            return false;
+        }
 
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
 
-        if (allowedToProxy != that.allowedToProxy) return false;
-        if (anonymousAccess != that.anonymousAccess) return false;
-        if (enabled != that.enabled) return false;
-        if (evaluationOrder != that.evaluationOrder) return false;
-        if (ignoreAttributes != that.ignoreAttributes) return false;
-        if (ssoEnabled != that.ssoEnabled) return false;
-        if (allowedAttributes != null ? !allowedAttributes.equals(that.allowedAttributes) : that.allowedAttributes != null)
-            return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (serviceId != null ? !serviceId.equals(that.serviceId) : that.serviceId != null) return false;
-        if (theme != null ? !theme.equals(that.theme) : that.theme != null) return false;
-
-        return true;
+        return new EqualsBuilder()
+                  .append(this.allowedToProxy, that.allowedToProxy)
+                  .append(this.anonymousAccess, that.anonymousAccess)
+                  .append(this.enabled, that.enabled)
+                  .append(this.evaluationOrder, that.evaluationOrder)
+                  .append(this.ignoreAttributes, that.ignoreAttributes)
+                  .append(this.ssoEnabled, that.ssoEnabled)
+                  .append(this.allowedAttributes, that.allowedAttributes)
+                  .append(this.description, that.description)
+                  .append(this.name, that.name)
+                  .append(this.serviceId, that.serviceId)
+                  .append(this.theme, that.theme)
+                  .append(this.usernameAttribute, that.usernameAttribute)
+                  .isEquals();
     }
 
-    @Override
     public int hashCode() {
-        int result = allowedAttributes != null ? allowedAttributes.hashCode() : 0;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (serviceId != null ? serviceId.hashCode() : 0);
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (theme != null ? theme.hashCode() : 0);
-        result = 31 * result + (allowedToProxy ? 1 : 0);
-        result = 31 * result + (enabled ? 1 : 0);
-        result = 31 * result + (ssoEnabled ? 1 : 0);
-        result = 31 * result + (anonymousAccess ? 1 : 0);
-        result = 31 * result + (ignoreAttributes ? 1 : 0);
-        result = 31 * result + evaluationOrder;
-        return result;
+        return new HashCodeBuilder(7, 31)
+                  .append(this.allowedAttributes)
+                  .append(this.description)
+                  .append(this.serviceId)
+                  .append(this.name)
+                  .append(this.theme)
+                  .append(this.enabled)
+                  .append(this.ssoEnabled)
+                  .append(this.anonymousAccess)
+                  .append(this.ignoreAttributes)
+                  .append(this.evaluationOrder)
+                  .append(this.usernameAttribute)
+                  .toHashCode();
     }
 
     public void setAllowedAttributes(final List<String> allowedAttributes) {
@@ -217,6 +245,36 @@ public abstract class AbstractRegisteredService
         return this.evaluationOrder;
     }
 
+    public String getUsernameAttribute() {
+        return this.usernameAttribute;
+    }
+
+    /**
+     * Sets the name of the user attribute to use as the username when providing usernames to this registered service.
+     * 
+     * @param username username attribute to release for this service that may be one of the following values: 
+     * <ul>
+     *  <li>name of the attribute this service prefers to consume as username</li>
+     *  <li>{@link RegisteredService#DEFAULT_USERNAME_ATTRIBUTE} or <code>null</code> to enforce default CAS behavior</li>
+     *  <li>{@link RegisteredService#DEFAULT_OPAQUE_USERNAME_ATTRIBUTE} to enforce anonymous access</li>
+     * </ul>
+     * The selected attribute <code>username</code> must already be available as part of the allowed attributes for 
+     * this service, unless this service is configured to ignore the attribute release tool. 
+     * 
+     * @see #isIgnoreAttributes()
+     * @see #getAllowedAttributes()
+     */
+    public void setUsernameAttribute(String username) {
+        if (username != null) {
+            if (username.trim().length() == 0) {
+                username = null;
+            } else {
+                this.setAnonymousAccess(username.equals(DEFAULT_OPAQUE_USERNAME_ATTRIBUTE));
+            }
+        }
+        this.usernameAttribute = username;
+    }
+    
     public Object clone() throws CloneNotSupportedException {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
@@ -241,6 +299,7 @@ public abstract class AbstractRegisteredService
         this.setAnonymousAccess(source.isAnonymousAccess());
         this.setIgnoreAttributes(source.isIgnoreAttributes());
         this.setEvaluationOrder(source.getEvaluationOrder());
+        this.setUsernameAttribute(source.getUsernameAttribute());
     }
 
     public int compareTo(final RegisteredService other) {
@@ -251,13 +310,13 @@ public abstract class AbstractRegisteredService
         return result;
     }
 
-    @Override
     public String toString() {
         final ToStringBuilder toStringBuilder = new ToStringBuilder(null, ToStringStyle.SHORT_PREFIX_STYLE);
         toStringBuilder.append("id", this.id);
         toStringBuilder.append("name", this.name);
         toStringBuilder.append("description", this.description);
         toStringBuilder.append("serviceId", this.serviceId);
+        toStringBuilder.append("usernameAttribute", this.usernameAttribute);
         toStringBuilder.append("attributes", this.allowedAttributes.toArray());
 
         return toStringBuilder.toString();
