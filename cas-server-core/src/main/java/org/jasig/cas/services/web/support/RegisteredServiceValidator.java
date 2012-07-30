@@ -82,11 +82,8 @@ public final class RegisteredServiceValidator implements Validator {
             errors.rejectValue("description",
                 "registeredService.description.length", null);
         }
-         
-        if (r.getUsernameAttribute() != null
-            && !r.getUsernameAttribute().equals(RegisteredService.DEFAULT_OPAQUE_USERNAME_ATTRIBUTE)
-            && !r.getUsernameAttribute().equals(RegisteredService.DEFAULT_USERNAME_ATTRIBUTE)) {
-
+        
+        if (!r.getUsernameAttribute().equals(RegisteredService.DEFAULT_USERNAME_ATTRIBUTE) && !r.isAnonymousAccess()) {
             if (!r.isIgnoreAttributes() && !r.getAllowedAttributes().contains(r.getUsernameAttribute())) {
                 errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
                         "This attribute is not available for this service.");
@@ -100,6 +97,8 @@ public final class RegisteredServiceValidator implements Validator {
                 }
             }
         }
+        
+        
     }
     
     public void setServicesManager(final ServicesManager serviceRegistry) {
