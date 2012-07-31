@@ -217,6 +217,9 @@
     <constructor-arg index="0" ref="servicesManager"/>
   </bean>
 
+  <bean id="deleteSessionAction" class="org.jasig.cas.web.DeleteSessionAction"
+        p:deleteSession="${cas.deleteSessionOnRedirect:false}"/>
+
   <bean id="serviceAuthorizationCheck" class="org.jasig.cas.web.flow.ServiceAuthorizationCheck">
         <constructor-arg index="0" ref="servicesManager"/>
   </bean>
