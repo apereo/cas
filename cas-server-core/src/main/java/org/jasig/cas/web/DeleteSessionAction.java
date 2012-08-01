@@ -27,17 +27,15 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action to delete web sessions on redirect stage : the goal is to decrease memory consumption by deleting as soon as possible the web
- * sessions created mainly for login process.
+ * Action to expire web sessions in some seconds. The goal is to decrease memory consumption by deleting as soon as possible the web
+ * sessions created mainly for login process. This action is triggered on redirect step in webflow.
  * 
  * @author Jerome Leleu
  * @since 3.5.1
  */
-public class DeleteSessionAction extends AbstractAction {
+public final class DeleteSessionAction extends AbstractAction {
     
-    protected boolean deleteSession = false;
-    
-    protected int timeToDieInSeconds = 2;
+    private int timeToDieInSeconds = 2;
     
     @Override
     protected Event doExecute(RequestContext context) throws Exception {
@@ -46,24 +44,17 @@ public class DeleteSessionAction extends AbstractAction {
         // get session but don't create it if it doesn't already exist
         HttpSession session = request.getSession(false);
         
-        if (session != null && deleteSession) {
+        if (session != null) {
             // set the session to die in timeToDieInSeconds
-            session.setMaxInactiveInterval(timeToDieInSeconds);
+            session.setMaxInactiveInterval(this.timeToDieInSeconds);
         }
         
+        // return null event not to trigger transition in webflow
         return null;
     }
     
-    public boolean isDeleteSession() {
-        return deleteSession;
-    }
-    
-    public void setDeleteSession(boolean deleteSession) {
-        this.deleteSession = deleteSession;
-    }
-    
     public int getTimeToDieInSeconds() {
-        return timeToDieInSeconds;
+        return this.timeToDieInSeconds;
     }
     
     public void setTimeToDieInSeconds(int timeToDieInSeconds) {
