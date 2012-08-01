@@ -18,11 +18,17 @@
  */
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.validation.Assertion;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -269,7 +275,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             getCentralAuthenticationService().validateServiceTicket(
                 serviceTicket, TestUtils.getService("test2"));
             fail(TestUtils.CONST_EXCEPTION_EXPECTED);
-        } catch (TicketException e) {
+        } catch (UnauthorizedServiceException e) {
             // nothing to do here, exception is expected.
         }
     }
@@ -303,5 +309,60 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         } catch (TicketException e) {
             // nothing to do here, exception is expected.
         }
+    }
+    
+    @Test
+    public void testValidateServiceTicketWithoutUsernameAttribute() throws TicketException {
+        UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, TestUtils.getService());
+            
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, TestUtils.getService());
+        final Authentication auth = assertion.getChainedAuthentications().get(0);
+        assertEquals(auth.getPrincipal().getId(), cred.getUsername());
+    }
+    
+    @Test
+    public void testValidateServiceTicketWithDefaultUsernameAttribute() throws TicketException {
+        UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        
+        Service svc = TestUtils.getService("testDefault");
+        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
+            
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
+        final Authentication auth = assertion.getChainedAuthentications().get(0);
+        assertEquals(auth.getPrincipal().getId(), cred.getUsername());
+    }
+    
+    @Test
+    public void testValidateServiceTicketWithUsernameAttribute() throws TicketException {
+        UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        
+        Service svc = TestUtils.getService("eduPersonTest");
+        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
+            
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
+        final Authentication auth = assertion.getChainedAuthentications().get(0);
+        assertEquals(auth.getPrincipal().getId(), "developer");
+    }
+    
+    @Test
+    public void testValidateServiceTicketWithInvalidUsernameAttribute() throws TicketException {
+        UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
+        
+        Service svc = TestUtils.getService("eduPersonTestInvalid");
+        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
+            
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
+        final Authentication auth = assertion.getChainedAuthentications().get(0);
+        
+        /*
+         * The attribute specified for this service is not allows in the list of returned attributes.
+         * Therefore, we expect the default to be returned. 
+         */
+        assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
 }
