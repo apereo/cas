@@ -132,7 +132,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return Either of the following values:
      * <ul>
      *  <li><code>String</code> representing the name of the attribute to consume as username</li>
-     *  <li>{@link #DEFAULT_USERNAME_ATTRIBUTE} or <code>null</code> indicating the default username</li>
+     *  <li>{@link #DEFAULT_USERNAME_ATTRIBUTE} indicating the default username</li>
      * </ul>
      */
     public String getUsernameAttribute();
