@@ -68,12 +68,12 @@ public final class OAuth20AuthorizeController extends AbstractController {
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
             logger.error("missing clientId");
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
             logger.error("missing redirectUri");
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         
         // name of the CAS service
@@ -87,19 +87,20 @@ public final class OAuth20AuthorizeController extends AbstractController {
         }
         if (service == null) {
             logger.error("Unknown clientId : {}", clientId);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         
         String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
             logger.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
+            return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         
         // keep redirectUri in session
         HttpSession session = request.getSession();
         session.setAttribute(OAuthConstants.OAUTH20_CALLBACKURL, redirectUri);
+        session.setAttribute(OAuthConstants.OAUTH20_SERVICE_NAME, service.getTheme());
         
         String callbackAuthorizeUrl = request.getRequestURL().toString()
             .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
