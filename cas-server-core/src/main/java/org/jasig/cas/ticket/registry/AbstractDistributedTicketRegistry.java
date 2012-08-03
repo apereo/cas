@@ -26,8 +26,6 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Implementation that handles some of the commonalities between
@@ -39,9 +37,17 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRegistry {
     
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
-
     protected abstract void updateTicket(final Ticket ticket);
+
+    public int sessionCount() {
+      log.warn("Counting sessions is not implemented. Returning 0");
+      return 0;
+    }
+
+    public int serviceTicketCount() {
+      log.warn("Counting service tickets is not implemented. Returning 0");
+      return 0;
+    }
 
     protected abstract boolean needsCallback();
 
@@ -58,6 +64,8 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
     }
 
     private static class TicketDelegator<T extends Ticket> implements Ticket {
+
+        private static final long serialVersionUID = 1780193477774123440L;
 
         private final AbstractDistributedTicketRegistry ticketRegistry;
 
@@ -124,6 +132,8 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
     private static final class ServiceTicketDelegator extends TicketDelegator<ServiceTicket> implements ServiceTicket {
 
+        private static final long serialVersionUID = 8160636219307822967L;
+
         protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, final ServiceTicket serviceTicket, final boolean callback) {
             super(ticketRegistry, serviceTicket, callback);
         }
@@ -151,6 +161,8 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
     }
 
     private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket> implements TicketGrantingTicket {
+
+        private static final long serialVersionUID = 3946038899057626741L;
 
         protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
             super(ticketRegistry, ticketGrantingTicket, callback);

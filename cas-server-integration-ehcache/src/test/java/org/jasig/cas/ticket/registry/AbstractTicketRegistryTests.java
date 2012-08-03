@@ -51,10 +51,10 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractTicketRegistryTests extends TestCase {
 
-    private static final int TICKETS_IN_REGISTRY = 10;
-
-    private TicketRegistry ticketRegistry;
-
+    private static final int        TICKETS_IN_REGISTRY = 10;
+  
+    private TicketRegistry          ticketRegistry      = null;
+  
     protected void setUp() throws Exception {
         super.setUp();
         this.ticketRegistry = this.getNewTicketRegistry();
@@ -105,8 +105,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
 
     public void testGetNonExistingTicket() {
         try {
-            this.ticketRegistry.getTicket("FALALALALALAL",
-                TicketGrantingTicket.class);
+            this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
         } catch (Exception e) {
             fail("Exception caught.  None expected.");
         }
@@ -125,15 +124,13 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
     }
 
     public void testGetExistingTicketWithInproperClass() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(),
-                new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
-        } catch (ClassCastException e) {
-            return;
-        }
-        fail("ClassCastException expected.");
+      try {
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(), new NeverExpiresExpirationPolicy()));
+        this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
+      } catch (ClassCastException e) {
+        return;
+      }
+      fail("ClassCastException expected.");
     }
 
     public void testGetNullTicketWithoutClass() {
@@ -148,6 +145,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Exception caught.  None expected.");
         }
     }
@@ -166,12 +164,10 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
 
     public void testDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(),
-                new NeverExpiresExpirationPolicy()));
-            assertTrue("Ticket was not deleted.", this.ticketRegistry
-                .deleteTicket("TEST"));
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(), new NeverExpiresExpirationPolicy()));
+            assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -184,6 +180,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
             assertFalse("Ticket was deleted.", this.ticketRegistry
                 .deleteTicket("TEST1"));
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -237,6 +234,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }

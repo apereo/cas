@@ -49,12 +49,13 @@ import org.springframework.core.style.ToStringCreator;
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
     
-    private Cache serviceTicketsCache;
-    
-    private Cache ticketGrantingTicketsCache;
+    private Cache   serviceTicketsCache          = null;
+    private Cache   ticketGrantingTicketsCache   = null;
+  
+    private boolean supportRegistryState         = true;
     
     public void addTicket(final Ticket ticket) {
-        Element element = new Element(ticket.getId(), ticket);
+        final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
             this.serviceTicketsCache.put(element);
         } else if (ticket instanceof TicketGrantingTicket) {
@@ -87,11 +88,11 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         throw new UnsupportedOperationException("GetTickets not supported.");
     }
     
-    public void setServiceTicketsCache(Cache serviceTicketsCache) {
+    public void setServiceTicketsCache(final Cache serviceTicketsCache) {
         this.serviceTicketsCache = serviceTicketsCache;
     }
     
-    public void setTicketGrantingTicketsCache(Cache ticketGrantingTicketsCache) {
+    public void setTicketGrantingTicketsCache(final Cache ticketGrantingTicketsCache) {
         this.ticketGrantingTicketsCache = ticketGrantingTicketsCache;
     }
     
@@ -102,7 +103,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
     
     @Override
-    protected void updateTicket(Ticket ticket) {
+    protected void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
     
@@ -111,25 +112,47 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     	return false;
     }
 
+    public void setSupportRegistryState(boolean supportRegistryState) {
+      this.supportRegistryState = supportRegistryState;
+    }
+    
     public void afterPropertiesSet() throws Exception {
       if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
-        String message = "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties. serviceTicketsCache=" + this.serviceTicketsCache + ", ticketGrantingTicketsCache=" + this.ticketGrantingTicketsCache;
-        log.error(message);
+        final String message = "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties. serviceTicketsCache={}, ticketGrantingTicketsCache= {}";
+        log.error(message, this.serviceTicketsCache, this.ticketGrantingTicketsCache);
         throw new BeanInstantiationException(this.getClass(), message);
       }
-      if(log.isDebugEnabled()) {
+      
+      if (log.isDebugEnabled()) {
         CacheConfiguration config = this.serviceTicketsCache.getCacheConfiguration();
-        log.debug("serviceTicketsCache.maxElementsInMemory=" + config.getMaxElementsInMemory());
-        log.debug("serviceTicketsCache.maxElementsOnDisk=" + config.getMaxElementsOnDisk());
-        log.debug("serviceTicketsCache.overflowToDisk=" + config.isOverflowToDisk());
-        log.debug("serviceTicketsCache.timeToLive=" + config.getTimeToLiveSeconds());
-        log.debug("serviceTicketsCache.timeToIdle=" + config.getTimeToIdleSeconds());
+        log.debug("serviceTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+        log.debug("serviceTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+        log.debug("serviceTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        log.debug("serviceTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+        log.debug("serviceTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
+  
         config = this.ticketGrantingTicketsCache.getCacheConfiguration();
-        log.debug("ticketGrantingTicketsCache.maxElementsInMemory=" + config.getMaxElementsInMemory());
-        log.debug("ticketGrantingTicketsCache.maxElementsOnDisk=" + config.getMaxElementsOnDisk());
-        log.debug("ticketGrantingTicketsCache.overflowToDisk=" + config.isOverflowToDisk());
-        log.debug("ticketGrantingTicketsCache.timeToLive=" + config.getTimeToLiveSeconds());
-        log.debug("ticketGrantingTicketsCache.timeToIdle=" + config.getTimeToIdleSeconds());
+        log.debug("ticketGrantingTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+        log.debug("ticketGrantingTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+        log.debug("ticketGrantingTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+        log.debug("ticketGrantingTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
       }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Cache#getKeysNoDuplicateCheck()
+     */
+    public int sessionCount() {
+        return this.supportRegistryState ? this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() : 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see Cache#getKeysNoDuplicateCheck()
+     */
+    public int serviceTicketCount() {
+        return this.supportRegistryState ? this.serviceTicketsCache.getKeysWithExpiryCheck().size() : 0;
     }
 }

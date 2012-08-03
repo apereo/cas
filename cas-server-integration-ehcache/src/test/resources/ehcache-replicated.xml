@@ -21,10 +21,18 @@
 
    <diskStore path="java.io.tmpdir/cas"/>
 
+
    <cacheManagerPeerProviderFactory 
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
             properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1, multicastGroupPort=4446, timeToLive=32" />
-      
+
+   <!-- Manual Peer Discovery
+   <cacheManagerPeerProviderFactory 
+	            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+	            properties="peerDiscovery=manual,
+				rmiUrls=//localhost:40001/org.jasig.cas.ticket.ServiceTicket|//localhost:40001/org.jasig.cas.ticket.TicketGrantingTicket" />
+   -->
+               
    <cacheManagerPeerListenerFactory 
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
             properties="port=40001" />
