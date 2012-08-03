@@ -46,9 +46,15 @@ public interface OAuthConstants {
     
     public final static String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
     
+    public final static String OAUTH20_SERVICE_NAME = "oauth20_service_name";
+        
     public final static String MISSING_ACCESS_TOKEN = "missing_accessToken";
     
     public final static String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
+
+    public final static String CONFIRM_VIEW = "oauthConfirmView";
+
+    public final static String ERROR_VIEW = "viewServiceErrorView";
     
     public final static String INVALID_REQUEST = "invalid_request";
     
