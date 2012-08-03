@@ -97,7 +97,7 @@
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="3" />
                     <property name="serviceId" value="eduPersonTestInvalid" />
-                    <property name="evaluationOrder" value="3" />
+                    <property name="evaluationOrder" value="4" />
                     <property name="usernameAttribute" value="eduPersonAffiliation" />
                     <property name="allowedAttributes">
                     	<list>
