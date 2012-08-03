@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -40,6 +43,9 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
     
+    @SuppressWarnings({
+        "rawtypes", "unchecked"
+    })
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
@@ -56,6 +62,12 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         // return to callback with code
         String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
         logger.debug("callbackUrlWithCode : {}", callbackUrlWithCode);
-        return OAuthUtils.redirectTo(callbackUrlWithCode);
+        
+        Map model = new HashMap();
+        model.put("callbackUrlWithCode", callbackUrlWithCode);
+        // retrieve service name from session
+        String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
+        model.put("serviceName", serviceName);
+        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
     }
 }
