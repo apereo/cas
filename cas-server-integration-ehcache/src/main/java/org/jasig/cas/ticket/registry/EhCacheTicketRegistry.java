@@ -24,6 +24,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -49,10 +50,25 @@ import org.springframework.core.style.ToStringCreator;
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
     
+    /** cache to manager service tickets */
     private Cache   serviceTicketsCache          = null;
+    
+    /** cache instance to manager ticket granting tickets */
     private Cache   ticketGrantingTicketsCache   = null;
   
+    /** @see #setSupportRegistryState(boolean)*/
     private boolean supportRegistryState         = true;
+    
+    public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
+      super();
+      setServiceTicketsCache(serviceTicketsCache);
+      setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
+    }
+    
+    public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache, final boolean supportRegistryState) {
+      this(serviceTicketsCache, ticketGrantingTicketsCache);
+      setSupportRegistryState(supportRegistryState);
+    }
     
     public void addTicket(final Ticket ticket) {
         final Element element = new Element(ticket.getId(), ticket);
@@ -66,7 +82,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
     
     public boolean deleteTicket(final String ticketId) {
-        if (ticketId == null) {
+        if (StringUtils.isBlank(ticketId)) {
             return false;
         }
         return this.serviceTicketsCache.remove(ticketId) || this.ticketGrantingTicketsCache.remove(ticketId);
@@ -112,7 +128,19 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     	return false;
     }
 
-    public void setSupportRegistryState(boolean supportRegistryState) {
+    /** 
+     * Flag to indicate whether this registry instance should participate in reporting its state with default value set to <code>true</code>.
+     * Based on the <a href="http://ehcache.org/apidocs/net/sf/ehcache/Ehcache.html#getKeysWithExpiryCheck()">EhCache documentation</a>, 
+     * determining the number of service tickets and the total session count from the cache can be considered an expensive operation with the 
+     * time taken as O(n), where n is the number of elements in the cache. 
+     * 
+     * <p>Therefore, the flag provides a level of flexibility such that depending on the cache and environment settings, reporting statistics
+     * can be set to false and disabled.</p>
+     *  
+     * @see #sessionCount()
+     * @see #serviceTicketCount()
+     */
+    public void setSupportRegistryState(final boolean supportRegistryState) {
       this.supportRegistryState = supportRegistryState;
     }
     

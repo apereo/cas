@@ -23,9 +23,11 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
+import org.jasig.cas.ticket.registry.TicketRegistry;
 
 /**
  * Decorator that captures tickets and attempts to map them.
@@ -38,7 +40,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
     /** The real instance of the ticket registry that is to be decorated */
     @NotNull
-    private final AbstractTicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
 
     /** Map instance where credentials are stored. */
     @NotNull
@@ -52,7 +54,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
      * 
      * @see EhcacheBackedMap
      */
-    public TicketRegistryDecorator(final AbstractTicketRegistry actualTicketRegistry, final Map<String, String> cache) {
+    public TicketRegistryDecorator(final TicketRegistry actualTicketRegistry, final Map<String, String> cache) {
         this.ticketRegistry = actualTicketRegistry;
         this.cache = cache;
     }
@@ -91,10 +93,18 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
     }
 
     public int sessionCount() {
-        return this.ticketRegistry.sessionCount();
+        if (this.ticketRegistry instanceof TicketRegistryState) {
+          return ((TicketRegistryState)this.ticketRegistry).sessionCount();
+        }
+        this.log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        return 0;
     }
 
     public int serviceTicketCount() {
-        return this.ticketRegistry.serviceTicketCount();
+        if (this.ticketRegistry instanceof TicketRegistryState) {
+          return ((TicketRegistryState)this.ticketRegistry).serviceTicketCount();
+        }
+        this.log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        return 0;
     }
 }

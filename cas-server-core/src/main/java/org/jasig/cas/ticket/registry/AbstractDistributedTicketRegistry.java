@@ -40,12 +40,12 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
     protected abstract void updateTicket(final Ticket ticket);
 
     public int sessionCount() {
-      log.warn("Counting sessions is not implemented. Returning 0");
+      this.log.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning 0", this.getClass().getName());
       return 0;
     }
 
     public int serviceTicketCount() {
-      log.warn("Counting service tickets is not implemented. Returning 0");
+      this.log.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning 0", this.getClass().getName());
       return 0;
     }
 
