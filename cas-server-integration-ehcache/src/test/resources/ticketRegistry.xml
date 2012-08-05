@@ -48,9 +48,6 @@
         <property name="maxElementsOnDisk" value="0" />
         <property name="memoryStoreEvictionPolicy" value="LRU" />
         <property name="overflowToDisk" value="false" />
-        <property name="cacheEventListeners">
-        	<ref local="ticketRMIAsynchronousCacheReplicator"/>
-        </property>
         <property name="bootstrapCacheLoader">
             <ref local="ticketCacheBootstrapCacheLoader"/>
         </property>
@@ -65,7 +62,23 @@
             user session affinity.  Synchronous mode is used to ensure all CAS nodes can validate the ST.
         </description>
         <property name="cacheName" value="org.jasig.cas.ticket.ServiceTicket" />
+             
+        <property name="cacheEventListeners">
+        	<ref local="ticketRMISynchronousCacheReplicator"/>
+        </property>
+        
+        <!-- 
+        	The maximum number of seconds an element can exist in the cache without being accessed. 
+        	The element expires at this limit and will no longer be returned from the cache. 
+        	The default value is 0, which means no TTI eviction takes place (infinite lifetime).
+         -->
         <property name="timeToIdle" value="0" />
+        
+        <!-- 
+        	The maximum number of seconds an element can exist in the cache regardless of use. 
+        	The element expires at this limit and will no longer be returned from the cache. 
+        	The default value is 0, which means no TTL eviction takes place (infinite lifetime).
+        -->
         <property name="timeToLive" value="300" />
     </bean>
     
@@ -78,26 +91,46 @@
         </description>
         
         <property name="cacheName" value="org.jasig.cas.ticket.TicketGrantingTicket" />
-        <!-- 2 hours of inactivity before ticket granting tickets are expired automatically -->
+              
+        <property name="cacheEventListeners">
+        	<ref local="ticketRMIAsynchronousCacheReplicator"/>
+        </property>
+        
+        <!-- 
+        	The maximum number of seconds an element can exist in the cache regardless of use. 
+        	The element expires at this limit and will no longer be returned from the cache. 
+        	The default value is 0, which means no TTL eviction takes place (infinite lifetime).
+        	
+        	For this sample configuration, 2 hours of inactivity before ticket granting tickets 
+        	are expired automatically
+        -->
+         
         <property name="timeToIdle" value="7201" />
+        
+        <!-- 
+        	The maximum number of seconds an element can exist in the cache without being accessed. 
+        	The element expires at this limit and will no longer be returned from the cache. 
+        	The default value is 0, which means no TTI eviction takes place (infinite lifetime).
+         -->
         <property name="timeToLive" value="0" />
     </bean>
-
-	<bean id="ticketRMIAsynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator">
+	
+	<bean id="ticketRMISynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
 	    <constructor-arg name="replicatePuts" value="true"/> 
 	    <constructor-arg name="replicatePutsViaCopy" value="true"/> 
 	    <constructor-arg name="replicateUpdates" value="true"/>  
 	    <constructor-arg name="replicateUpdatesViaCopy" value="true"/>  
-	    <constructor-arg name="replicateRemovals" value="true"/> 
+	    <constructor-arg name="replicateRemovals" value="false"/>       
+	</bean>
+	
+	<bean id="ticketRMIAsynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator" parent="ticketRMISynchronousCacheReplicator">
 	    <constructor-arg name="replicationInterval" value="10000"/>  
 	    <constructor-arg name="maximumBatchSize" value="100"/>       
 	</bean>
 	
 	<bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
-        <constructor-arg name="asynchronous" value="false"/> <!--  -->
+        <constructor-arg name="asynchronous" value="false"/>  
         <constructor-arg name="maximumChunkSize" value="5000000"/>  
     </bean>
             
 </beans>
-
-

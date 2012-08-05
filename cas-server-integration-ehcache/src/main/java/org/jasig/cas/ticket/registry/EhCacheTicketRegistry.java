@@ -59,6 +59,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     /** @see #setSupportRegistryState(boolean)*/
     private boolean supportRegistryState         = true;
     
+    public EhCacheTicketRegistry() {}
+    
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
       super();
       setServiceTicketsCache(serviceTicketsCache);
@@ -73,8 +75,10 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     public void addTicket(final Ticket ticket) {
         final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
+            this.log.debug("Adding service ticket {} to the cache", ticket.getId(), this.serviceTicketsCache.getName());
             this.serviceTicketsCache.put(element);
         } else if (ticket instanceof TicketGrantingTicket) {
+            this.log.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(), this.ticketGrantingTicketsCache.getName());
             this.ticketGrantingTicketsCache.put(element);
         } else {
             throw new IllegalArgumentException("Invalid ticket type " + ticket);
@@ -147,25 +151,25 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     public void afterPropertiesSet() throws Exception {
       if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
         final String message = "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties. serviceTicketsCache={}, ticketGrantingTicketsCache= {}";
-        log.error(message, this.serviceTicketsCache, this.ticketGrantingTicketsCache);
+        this.log.error(message, this.serviceTicketsCache, this.ticketGrantingTicketsCache);
         throw new BeanInstantiationException(this.getClass(), message);
       }
       
-      if (log.isDebugEnabled()) {
+      if (this.log.isDebugEnabled()) {
         CacheConfiguration config = this.serviceTicketsCache.getCacheConfiguration();
-        log.debug("serviceTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
-        log.debug("serviceTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
-        log.debug("serviceTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
-        log.debug("serviceTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
-        log.debug("serviceTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
+        this.log.debug("serviceTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+        this.log.debug("serviceTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+        this.log.debug("serviceTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        this.log.debug("serviceTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+        this.log.debug("serviceTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
   
         config = this.ticketGrantingTicketsCache.getCacheConfiguration();
-        log.debug("ticketGrantingTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
-        log.debug("ticketGrantingTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
-        log.debug("ticketGrantingTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
-        log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+        this.log.debug("ticketGrantingTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+        this.log.debug("ticketGrantingTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+        this.log.debug("ticketGrantingTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        this.log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
         log.debug("ticketGrantingTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
-      }
+      } 
     }
 
     /**

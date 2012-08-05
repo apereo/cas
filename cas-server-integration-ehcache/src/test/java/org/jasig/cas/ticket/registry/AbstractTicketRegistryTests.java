@@ -174,11 +174,8 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
 
     public void testDeleteNonExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(),
-                new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry
-                .deleteTicket("TEST1"));
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(), new NeverExpiresExpirationPolicy()));
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
         } catch (Exception e) {
             e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
