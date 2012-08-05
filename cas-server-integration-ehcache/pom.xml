@@ -26,13 +26,13 @@
   <modelVersion>4.0.0</modelVersion>      
   <artifactId>cas-server-integration-ehcache</artifactId>   
   <packaging>jar</packaging>   
-  <name>Jasig CAS Ehcache Integration</name>
+  <name>JA-SIG CAS Ehcache Integration</name>
 
   <dependencies>    
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-core</artifactId>
-      <version>2.5.0</version>
+      <version>2.6.0</version>
     </dependency>   
     <dependency>         
       <groupId>org.jasig.cas</groupId>         
@@ -88,4 +88,17 @@
       </roles>
     </contributor>
   </contributors>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>         
+          <forkMode>perthread</forkMode>
+          <threadCount>10</threadCount>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

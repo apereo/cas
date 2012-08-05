@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +26,12 @@ import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  * <p>
  * This is a published and supported CAS Server 3 API.
  * </p>
  */
-public abstract class AbstractTicketRegistry implements TicketRegistry {
+public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState {
 
     /** The Commons Logging log instance. */
     protected final Logger log = LoggerFactory.getLogger(getClass());
