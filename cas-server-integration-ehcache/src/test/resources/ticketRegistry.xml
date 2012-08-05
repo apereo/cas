@@ -120,7 +120,7 @@
 	    <constructor-arg name="replicatePutsViaCopy" value="true"/> 
 	    <constructor-arg name="replicateUpdates" value="true"/>  
 	    <constructor-arg name="replicateUpdatesViaCopy" value="true"/>  
-	    <constructor-arg name="replicateRemovals" value="false"/>       
+	    <constructor-arg name="replicateRemovals" value="true"/>       
 	</bean>
 	
 	<bean id="ticketRMIAsynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator" parent="ticketRMISynchronousCacheReplicator">
