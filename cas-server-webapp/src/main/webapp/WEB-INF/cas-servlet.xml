@@ -134,6 +134,9 @@
       <webflow:always-redirect-on-pause value="false"/>
       <webflow:redirect-in-same-state value="false" />
     </webflow:flow-execution-attributes>
+    <webflow:flow-execution-listeners>
+      <webflow:listener ref="terminateWebSessionListener" />
+    </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
   <webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
@@ -142,6 +145,8 @@
 
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
                                  expression-parser="expressionParser"/>
+
+  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser"/>
 
@@ -216,8 +221,6 @@
   <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck">
     <constructor-arg index="0" ref="servicesManager"/>
   </bean>
-
-  <bean id="deleteSessionAction" class="org.jasig.cas.web.DeleteSessionAction" />
 
   <bean id="serviceAuthorizationCheck" class="org.jasig.cas.web.flow.ServiceAuthorizationCheck">
         <constructor-arg index="0" ref="servicesManager"/>
