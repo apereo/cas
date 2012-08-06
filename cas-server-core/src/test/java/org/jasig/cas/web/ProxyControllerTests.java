@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web;
 
+import java.util.Map;
+
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -62,7 +64,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     public void testNonExistentPGT() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("pgt", "TestService");
-        request.addParameter("targetService", "service");
+        request.addParameter("targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(
@@ -79,10 +81,23 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         request
             .addParameter("pgt", ticket.getId());
         request.addParameter(
-            "targetService", "service");
+            "targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(
             "ticket"));
+    }
+    
+    @Test
+    public void testNotAuthorizedPGT() throws Exception {
+      final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId", TestUtils.getAuthentication(),
+          new NeverExpiresExpirationPolicy());
+      getTicketRegistry().addTicket(ticket);
+      final MockHttpServletRequest request = new MockHttpServletRequest();
+      request.addParameter("pgt", ticket.getId());
+      request.addParameter("targetService", "service");
+  
+      final Map<String, Object> map = this.proxyController.handleRequestInternal(request,  new MockHttpServletResponse()).getModel();
+      assertTrue(!map.containsKey("ticket"));
     }
 }
