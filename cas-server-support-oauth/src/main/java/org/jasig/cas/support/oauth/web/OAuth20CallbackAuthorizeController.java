@@ -43,9 +43,6 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
     
     private static final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
     
-    @SuppressWarnings({
-        "rawtypes", "unchecked"
-    })
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
@@ -63,7 +60,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
         logger.debug("callbackUrlWithCode : {}", callbackUrlWithCode);
         
-        Map model = new HashMap();
+        Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrlWithCode", callbackUrlWithCode);
         // retrieve service name from session
         String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
