@@ -174,7 +174,6 @@
     </action-state>
 
     <action-state id="redirect">
-        <evaluate expression="deleteSessionAction" />
         <evaluate expression="flowScope.service.getResponse(requestScope.serviceTicketId)" result-type="org.jasig.cas.authentication.principal.Response" result="requestScope.response" />
         <transition to="postRedirectDecision" />
     </action-state>
