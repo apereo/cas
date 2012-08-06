@@ -53,15 +53,62 @@
         ref="servicesManager" />
 	</bean>
     
+    <bean id="attributeRepository"
+		class="org.jasig.services.persondir.support.StubPersonAttributeDao">
+		<property name="backingMap">
+			<map>
+				<entry key="uid" value="uid" />
+				<entry key="eduPersonAffiliation" value="developer" /> 
+				<entry key="groupMembership" value="adopters" />
+			</map>
+		</property>
+	</bean>
+	
     <bean
     	id="servicesManager"
     	class="org.jasig.cas.services.DefaultServicesManagerImpl">
     	<constructor-arg index="0" ref="serviceRegistryDao" />
     </bean>
     
-    <bean
-    	id="serviceRegistryDao"
-    	class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl" />
+    <bean id="serviceRegistryDao" 	class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+    	<property name="registeredServices">
+            <list>
+                <bean class="org.jasig.cas.services.RegexRegisteredService">
+                    <property name="id" value="0" />
+                    <property name="serviceId" value="test$" />
+                    <property name="evaluationOrder" value="1" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="1" />
+                    <property name="serviceId" value="testDefault" />
+                    <property name="evaluationOrder" value="2" />
+                    <property name="usernameAttribute" value="(default)" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="2" />
+                    <property name="serviceId" value="eduPersonTest" />
+                    <property name="evaluationOrder" value="3" />
+                    <property name="usernameAttribute" value="eduPersonAffiliation" />
+                    <property name="ignoreAttributes" value="true" />
+                </bean>
+                
+                <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+                    <property name="id" value="3" />
+                    <property name="serviceId" value="eduPersonTestInvalid" />
+                    <property name="evaluationOrder" value="4" />
+                    <property name="usernameAttribute" value="eduPersonAffiliation" />
+                    <property name="allowedAttributes">
+                    	<list>
+                    		<value>groupMembership</value>
+                    	</list>
+                    </property>
+                </bean>
+            </list>
+            
+        </property>
+    </bean>
 	
 	<bean
 		id="authenticationManager"
@@ -112,9 +159,10 @@
 		id="uniqueTicketIdGenerator" 
 		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 
-	<bean
-		id="usernamePasswordCredentialsToPrincipalResolver"
-		class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+	<bean id="usernamePasswordCredentialsToPrincipalResolver"
+		class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" >
+		<property name="attributeRepository" ref="attributeRepository" />
+	</bean>
 		
 	<bean
 		id="httpBasedServiceCredentialsToPrincipalResolver"

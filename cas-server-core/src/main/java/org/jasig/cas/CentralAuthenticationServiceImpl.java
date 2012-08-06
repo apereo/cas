@@ -19,6 +19,8 @@
 package org.jasig.cas;
 
 import com.github.inspektr.audit.annotation.Audit;
+
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.MutableAuthentication;
@@ -365,33 +367,25 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 }
             }
 
-            final int authenticationChainSize = serviceTicket
-                .getGrantingTicket().getChainedAuthentications().size();
-            final Authentication authentication = serviceTicket
-                .getGrantingTicket().getChainedAuthentications().get(
-                    authenticationChainSize - 1);
+            final List<Authentication> chainedAuthenticationsList = serviceTicket.getGrantingTicket().getChainedAuthentications();
+            final Authentication authentication = chainedAuthenticationsList.get(chainedAuthenticationsList.size() - 1);
             final Principal principal = authentication.getPrincipal();
-            final String principalId = registeredService.isAnonymousAccess()
-                ? this.persistentIdGenerator.generate(principal, serviceTicket
-                    .getService()) : principal.getId();
-
+           
+            final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Authentication authToUse;
 
             if (!registeredService.isIgnoreAttributes()) {
                 final Map<String, Object> attributes = new HashMap<String, Object>();
 
-                for (final String attribute : registeredService
-                    .getAllowedAttributes()) {
-                    final Object value = principal.getAttributes().get(
-                        attribute);
+                for (final String attribute : registeredService.getAllowedAttributes()) {
+                    final Object value = principal.getAttributes().get(attribute);
 
                     if (value != null) {
                         attributes.put(attribute, value);
                     }
                 }
 
-                final Principal modifiedPrincipal = new SimplePrincipal(
-                    principalId, attributes);
+                final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributes);
                 final MutableAuthentication mutableAuthentication = new MutableAuthentication(
                     modifiedPrincipal, authentication.getAuthenticatedDate());
                 mutableAuthentication.getAttributes().putAll(
@@ -400,13 +394,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     authentication.getAuthenticatedDate().getTime());
                 authToUse = mutableAuthentication;
             } else {
-                authToUse = authentication;
+                final Principal modifiedPrincipal = new SimplePrincipal(principalId, principal.getAttributes());
+                authToUse = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate());
             }
-
-
+           
             final List<Authentication> authentications = new ArrayList<Authentication>();
 
-            for (int i = 0; i < authenticationChainSize - 1; i++) {
+            for (int i = 0; i < chainedAuthenticationsList.size() - 1; i++) {
                 authentications.add(serviceTicket.getGrantingTicket().getChainedAuthentications().get(i));
             }
             authentications.add(authToUse);
@@ -417,6 +411,49 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 this.serviceTicketRegistry.deleteTicket(serviceTicketId);
             }
         }
+    }
+
+    /**
+     * Determines the principal id to use for a {@link RegisteredService} using the following rules: 
+     * 
+     * <ul>
+     *  <li> If the service is marked to allow anonymous access, a persistent id is returned. </li>
+     *  <li> If the attribute name matches {@link RegisteredService#DEFAULT_USERNAME_ATTRIBUTE}, then the default principal id is returned.</li>
+     *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed attributes for the service, 
+     *      the corresponding attribute value will be returned.
+     *  </li>
+     *   <li>Otherwise, the default principal's id is returned as the username attribute with an additional warning.</li>
+     * </ul>
+     * 
+     * @param principal The principal object to be validated and constructed
+     * @param registeredService Requesting service for which a principal is being validated. 
+     * @param serviceTicket An instance of the service ticket used for validation
+     * 
+     * @return The principal id to use for the requesting registered service
+     */
+    private String determinePrincipalIdForRegisteredService(final Principal principal, final RegisteredService registeredService, 
+                                                            final ServiceTicket serviceTicket) {
+        String principalId = null;
+        final String serviceUsernameAttribute = registeredService.getUsernameAttribute();
+
+        if (registeredService.isAnonymousAccess()) {
+            principalId = this.persistentIdGenerator.generate(principal, serviceTicket.getService());
+        } else if (serviceUsernameAttribute.equals(RegisteredService.DEFAULT_USERNAME_ATTRIBUTE)) {
+            principalId = principal.getId();
+        } else {
+            if (registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) {
+                principalId = principal.getAttributes().get(registeredService.getUsernameAttribute()).toString();
+            } else {
+                principalId = principal.getId();
+                final Object[] errorLogParameters = new Object[] { principalId, registeredService.getUsernameAttribute(),
+                        principal.getAttributes(), registeredService.getServiceId(), principalId };
+                log.warn("Principal [{}] did not have attribute [{}] among attributes [{}] so CAS cannot "
+                        + "provide on the validation response the user attribute the registered service [{}] expects. "
+                        + "CAS will instead return the default username attribute [{}]", errorLogParameters);
+            }
+
+        }
+        return principalId;
     }
 
     /**

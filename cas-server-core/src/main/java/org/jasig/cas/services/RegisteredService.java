@@ -31,8 +31,12 @@ import org.jasig.cas.authentication.principal.Service;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public interface RegisteredService extends Cloneable, Serializable {
-
+public interface RegisteredService extends Cloneable, Serializable {    
+    /**
+     * Default username attribute to release for a given service.
+     */
+    public final String DEFAULT_USERNAME_ATTRIBUTE = "(default)";
+    
     /**
      * Is this application currently allowed to use CAS?
      * 
@@ -41,7 +45,7 @@ public interface RegisteredService extends Cloneable, Serializable {
     boolean isEnabled();
 
     /**
-     * Determines whether the service is allowed anonymous or priveleged access
+     * Determines whether the service is allowed anonymous or privileged access
      * to user information. Anonymous access should not return any identifying
      * information such as user id.
      *
@@ -78,6 +82,11 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     String getServiceId();
 
+    /**
+     * The numeric identifier for this service.
+     * 
+     * @return the numeric identifier for this service.
+     */
     long getId();
 
     /**
@@ -117,6 +126,17 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     int getEvaluationOrder();
 
+    /**
+     * Get the name of the attribute this service prefers to consume as username.
+     * 
+     * @return Either of the following values:
+     * <ul>
+     *  <li><code>String</code> representing the name of the attribute to consume as username</li>
+     *  <li>{@link #DEFAULT_USERNAME_ATTRIBUTE} indicating the default username</li>
+     * </ul>
+     */
+    public String getUsernameAttribute();
+    
     /**
      * Returns whether the service matches the registered service.
      * <p>Note, as of 3.1.2, matches are case insensitive.
