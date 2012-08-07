@@ -20,17 +20,10 @@ package org.jasig.cas.support.oauth.web;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.util.logging.Logger;
 
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * This controller is called after successful authentication and redirects user to the callback url of the OAuth application. A code is
@@ -47,23 +40,23 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         // get CAS ticket
-        String ticket = request.getParameter(OAuthConstants.TICKET);
+        final String ticket = request.getParameter(OAuthConstants.TICKET);
         logger.debug("ticket : {}", ticket);
         
         // retrieve callback url from session
-        HttpSession session = request.getSession();
-        String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
+        final HttpSession session = request.getSession();
+        final String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
         logger.debug("callbackUrl : {}", callbackUrl);
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
         
         // return to callback with code
-        String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
+        final String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
         logger.debug("callbackUrlWithCode : {}", callbackUrlWithCode);
         
-        Map<String, Object> model = new HashMap<String, Object>();
+        final Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrlWithCode", callbackUrlWithCode);
         // retrieve service name from session
-        String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
+        final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
         model.put("serviceName", serviceName);
         return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
     }
