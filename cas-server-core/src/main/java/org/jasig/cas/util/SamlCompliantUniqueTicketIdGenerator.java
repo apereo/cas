@@ -39,10 +39,10 @@ import org.opensaml.saml2.binding.artifact.SAML2ArtifactType0004;
 public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /** Assertion handles are randomly-generated 20-byte identifiers. */
-    public static final int ASSERTION_HANDLE_SIZE = 20;
+    private static final int ASSERTION_HANDLE_SIZE = 20;
 
     /** SAML 2 Type 0004 endpoint ID is 0x0001. */
-    public static final byte[] ENDPOINT_ID = { 0, 1 };
+    private static final byte[] ENDPOINT_ID = { 0, 1 };
 
     /** SAML defines the source id as the server name. */
     private final byte[] sourceIdDigest;
