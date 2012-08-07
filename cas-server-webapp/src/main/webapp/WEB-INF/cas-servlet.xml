@@ -252,7 +252,8 @@
   </bean>
 
   <bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
-        p:servicesManager-ref="servicesManager"/>
+        p:servicesManager-ref="servicesManager" 
+        p:personAttributeDao-ref="attributeRepository" />
 
   <bean id="manageRegisteredServicesMultiActionController"
         class="org.jasig.cas.services.web.ManageRegisteredServicesMultiActionController">
