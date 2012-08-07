@@ -20,32 +20,32 @@ package org.jasig.cas.web.view;
 
 import java.util.Collections;
 
-import org.jasig.cas.web.view.Cas10ResponseViewTests.MockWriterHttpMockHttpServletResponse;
-import org.springframework.mock.web.MockHttpServletRequest;
-
 import junit.framework.TestCase;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
- * 
+ * Unit test for {@link Saml10FailureResponseView} class
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
+ * @author Marvin S. Addison
  * @since 3.1
  *
  */
 public class Saml10FailureResponseViewTests extends TestCase {
 
-    private Saml10FailureResponseView view = new Saml10FailureResponseView();
+    private final Saml10FailureResponseView view = new Saml10FailureResponseView();
     
     public void testResponse() throws Exception {
         final MockHttpServletRequest request =  new MockHttpServletRequest();
-        final MockWriterHttpMockHttpServletResponse response = new MockWriterHttpMockHttpServletResponse();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addParameter("TARGET", "service");
         
         final String description = "Validation failed";
         this.view.renderMergedOutputModel(
-            Collections.singletonMap("description", description), request, response);
-        
-        final String responseText = response.getWrittenValue();
+            Collections.<String, Object>singletonMap("description", description), request, response);
+
+        final String responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));
         assertTrue(responseText.contains(description));
     }
