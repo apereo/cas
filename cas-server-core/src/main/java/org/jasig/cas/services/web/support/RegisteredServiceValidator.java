@@ -20,6 +20,7 @@ package org.jasig.cas.services.web.support;
 
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -83,7 +84,7 @@ public final class RegisteredServiceValidator implements Validator {
                 "registeredService.description.length", null);
         }
         
-        if (!r.getUsernameAttribute().equals(RegisteredService.DEFAULT_USERNAME_ATTRIBUTE) && !r.isAnonymousAccess()) {
+        if (!StringUtils.isBlank(r.getUsernameAttribute()) && !r.isAnonymousAccess()) {
             if (!r.isIgnoreAttributes() && !r.getAllowedAttributes().contains(r.getUsernameAttribute())) {
                 errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
                         "This attribute is not available for this service.");
@@ -97,8 +98,6 @@ public final class RegisteredServiceValidator implements Validator {
                 }
             }
         }
-        
-        
     }
     
     public void setServicesManager(final ServicesManager serviceRegistry) {

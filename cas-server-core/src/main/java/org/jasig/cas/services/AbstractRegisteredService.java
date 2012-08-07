@@ -99,7 +99,8 @@ public abstract class AbstractRegisteredService
      * Name of the user attribute that this service expects as the value of the username payload in the
      * validate responses.
      */
-    private String usernameAttribute = DEFAULT_USERNAME_ATTRIBUTE;
+    @Column(name = "usernameAttribute")
+    private String usernameAttribute = null;
       
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
@@ -252,21 +253,22 @@ public abstract class AbstractRegisteredService
 
     /**
      * Sets the name of the user attribute to use as the username when providing usernames to this registered service.
-     * The username attribute will have no affect on services that are marked for anonymous access.
+     * 
+     * <p>Note: The username attribute will have no affect on services that are marked for anonymous access.
      * 
      * @param username attribute to release for this service that may be one of the following values: 
      * <ul>
-     *  <li>name of the attribute this service prefers to consume as username</li>
-     *  <li>{@link RegisteredService#DEFAULT_USERNAME_ATTRIBUTE} or <code>null</code> to enforce default CAS behavior</li>
+     *  <li>name of the attribute this service prefers to consume as username</li>. 
+     *  <li><code>null</code> to enforce default CAS behavior</li>
      * </ul>
      * @see #isAnonymousAccess()
      */
     public void setUsernameAttribute(final String username) {
         if (StringUtils.isBlank(username)) {
-            this.usernameAttribute = DEFAULT_USERNAME_ATTRIBUTE;
+          this.usernameAttribute = null;
         } else {
-            this.usernameAttribute = username;
-        }        
+          this.usernameAttribute = username;
+        }
     }
     
     public Object clone() throws CloneNotSupportedException {
