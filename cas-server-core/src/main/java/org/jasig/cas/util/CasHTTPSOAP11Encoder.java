@@ -36,7 +36,7 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
  * @since 3.5.1
  */
 public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
-    public static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
+    private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 
     @Override
     protected Envelope buildSOAPMessage(final SAMLObject samlMessage) {
