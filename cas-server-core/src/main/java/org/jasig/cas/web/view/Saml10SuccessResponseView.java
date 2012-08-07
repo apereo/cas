@@ -18,34 +18,36 @@
  */
 package org.jasig.cas.web.view;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.RememberMeCredentials;
-import org.jasig.cas.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.validation.Assertion;
-import org.opensaml.SAMLAssertion;
-import org.opensaml.SAMLAttribute;
-import org.opensaml.SAMLAttributeStatement;
-import org.opensaml.SAMLAudienceRestrictionCondition;
-import org.opensaml.SAMLAuthenticationStatement;
-import org.opensaml.SAMLException;
-import org.opensaml.SAMLNameIdentifier;
-import org.opensaml.SAMLResponse;
-import org.opensaml.SAMLSubject;
+import org.joda.time.DateTime;
+import org.opensaml.saml1.core.Assertion;
+import org.opensaml.saml1.core.Attribute;
+import org.opensaml.saml1.core.AttributeStatement;
+import org.opensaml.saml1.core.AttributeValue;
+import org.opensaml.saml1.core.Audience;
+import org.opensaml.saml1.core.AudienceRestrictionCondition;
+import org.opensaml.saml1.core.AuthenticationStatement;
+import org.opensaml.saml1.core.Conditions;
+import org.opensaml.saml1.core.ConfirmationMethod;
+import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml1.core.Response;
+import org.opensaml.saml1.core.StatusCode;
+import org.opensaml.saml1.core.Subject;
+import org.opensaml.saml1.core.SubjectConfirmation;
+import org.opensaml.xml.schema.XSString;
+import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 /**
- * Implementation of a view to return a SAML response and assertion, based on
+ * Implementation of a view to return a SAML SOAP response and assertion, based on
  * the SAML 1.1 specification.
  * <p>
  * If an AttributePrincipal is supplied, then the assertion will include the
@@ -57,136 +59,140 @@ import org.opensaml.SAMLSubject;
  * Note: This class currently expects a bean called "ServiceRegistry" to exist.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.1
  */
-public class Saml10SuccessResponseView extends AbstractCasView {
+public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
 
     /** Namespace for custom attributes. */
     private static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
 
-    private static final String DEFAULT_ENCODING = "UTF-8";
-
     private static final String REMEMBER_ME_ATTRIBUTE_NAME = "longTermAuthenticationRequestTokenUsed";
+
+    private static final String REMEMBER_ME_ATTRIBUTE_VALUE = "true";
+
+    private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
+
+    private final XSStringBuilder attrValueBuilder = new XSStringBuilder();
 
     /** The issuer, generally the hostname. */
     @NotNull
     private String issuer;
 
     /** The amount of time in milliseconds this is valid for. */
+    @Min(1000)
     private long issueLength = 30000;
-
-    @NotNull
-    private String encoding = DEFAULT_ENCODING;
 
     @NotNull
     private String rememberMeAttributeName = REMEMBER_ME_ATTRIBUTE_NAME;
 
     @Override
-    protected void renderMergedOutputModel(final Map model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected void prepareResponse(final Response response, final Map<String, Object> model) {
+        final Authentication authentication = getAssertionFrom(model).getChainedAuthentications().get(0);
+        final DateTime issuedAt = response.getIssueInstant();
+        final Service service = getAssertionFrom(model).getService();
+        final boolean isRemembered = (
+                authentication.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME) == Boolean.TRUE
+                        && !getAssertionFrom(model).isFromNewLogin());
 
-        try {
-            final Assertion assertion = getAssertionFrom(model);
-            final Authentication authentication = assertion.getChainedAuthentications().get(0);
-            final Date currentDate = new Date();
-            final String authenticationMethod = (String) authentication.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
-            final Service service = assertion.getService();
-            final SAMLResponse samlResponse = new SAMLResponse(null, service.getId(), new ArrayList<Object>(), null);
-            final boolean isRemembered = (authentication.getAttributes() .get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME) == Boolean.TRUE && !assertion .isFromNewLogin());
-
-            samlResponse.setIssueInstant(currentDate);
-
-            // this should be true, but we never enforced it, so we need to check to be safe
-            if (service instanceof SamlService) {
-                final SamlService samlService = (SamlService) service;
-
-                if (samlService.getRequestID() != null) {
-                    samlResponse.setInResponseTo(samlService.getRequestID());
-                }
-            }
-
-            final SAMLAssertion samlAssertion = new SAMLAssertion();
-            samlAssertion.setIssueInstant(currentDate);
-            samlAssertion.setIssuer(this.issuer);
-            samlAssertion.setNotBefore(currentDate);
-            samlAssertion.setNotOnOrAfter(new Date(currentDate.getTime()
-                + this.issueLength));
-
-            final SAMLAudienceRestrictionCondition samlAudienceRestrictionCondition = new SAMLAudienceRestrictionCondition();
-            samlAudienceRestrictionCondition.addAudience(service.getId());
-
-            final SAMLAuthenticationStatement samlAuthenticationStatement = new SAMLAuthenticationStatement();
-            samlAuthenticationStatement.setAuthInstant(authentication.getAuthenticatedDate());
-            samlAuthenticationStatement
-                .setAuthMethod(authenticationMethod != null
-                    ? authenticationMethod
-                    : SAMLAuthenticationStatement.AuthenticationMethod_Unspecified);
-
-            samlAuthenticationStatement
-                .setSubject(getSamlSubject(authentication));
-
-            if (!authentication.getPrincipal().getAttributes().isEmpty() || isRemembered) {
-                final SAMLAttributeStatement attributeStatement = new SAMLAttributeStatement();
-    
-                attributeStatement.setSubject(getSamlSubject(authentication));
-                samlAssertion.addStatement(attributeStatement);
-
-                for (final Entry<String, Object> e : authentication.getPrincipal().getAttributes().entrySet()) {
-                    final SAMLAttribute attribute = new SAMLAttribute();
-                    attribute.setName(e.getKey());
-                    attribute.setNamespace(NAMESPACE);
-
-                    if (e.getValue() instanceof Collection<?>) {
-                        final Collection<?> c = (Collection<?>) e.getValue();
-                        if (c.isEmpty()) {
-                            // 100323 bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
-                            continue;
-                        }
-                        attribute.setValues(c);
-                    } else {
-                        attribute.addValue(e.getValue());
-                    }
-    
-                    attributeStatement.addAttribute(attribute);
-                }
-
-                if (isRemembered) {
-                    final SAMLAttribute attribute = new SAMLAttribute();
-                    attribute.setName(this.rememberMeAttributeName);
-                    attribute.setNamespace(NAMESPACE);
-                    attribute.addValue(true);
-                    attributeStatement.addAttribute(attribute);
-                }
-            }
-
-            samlAssertion.addStatement(samlAuthenticationStatement);
-            samlAssertion.addCondition(samlAudienceRestrictionCondition);
-            samlResponse.addAssertion(samlAssertion);
-
-            final String xmlResponse = samlResponse.toString();
-
-            response.setContentType("text/xml; charset=" + this.encoding);
-            response.getWriter().print("<?xml version=\"1.0\" encoding=\"" + this.encoding + "\"?>");
-            response.getWriter().print("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header/><SOAP-ENV:Body>");
-            response.getWriter().print(xmlResponse);
-            response.getWriter().print("</SOAP-ENV:Body></SOAP-ENV:Envelope>");
-            response.flushBuffer();
-        } catch (final Exception e) {
-            log.error(e.getMessage(), e);
-            throw e;
+        // Build up the SAML assertion containing AuthenticationStatement and AttributeStatement
+        final Assertion assertion = newSamlObject(Assertion.class);
+        assertion.setID(generateId());
+        assertion.setIssueInstant(issuedAt);
+        assertion.setIssuer(this.issuer);
+        assertion.setConditions(newConditions(issuedAt, service.getId()));
+        final AuthenticationStatement authnStatement = newAuthenticationStatement(authentication);
+        assertion.getAuthenticationStatements().add(authnStatement);
+        final Map<String, Object> attributes = authentication.getPrincipal().getAttributes();
+        if (!attributes.isEmpty() || isRemembered) {
+            assertion.getAttributeStatements().add(
+                    newAttributeStatement(newSubject(authentication.getPrincipal().getId()), attributes, isRemembered));
         }
+        response.setStatus(newStatus(StatusCode.SUCCESS, null));
+        response.getAssertions().add(assertion);
     }
 
-    protected SAMLSubject getSamlSubject(final Authentication authentication)
-        throws SAMLException {
-        final SAMLSubject samlSubject = new SAMLSubject();
-        samlSubject.addConfirmationMethod(SAMLSubject.CONF_ARTIFACT);
-        final SAMLNameIdentifier samlNameIdentifier = new SAMLNameIdentifier();
-        samlNameIdentifier.setName(authentication.getPrincipal().getId());
+    private Conditions newConditions(final DateTime issuedAt, final String serviceId) {
+        final Conditions conditions = newSamlObject(Conditions.class);
+        conditions.setNotBefore(issuedAt);
+        conditions.setNotOnOrAfter(issuedAt.plus(this.issueLength));
+        final AudienceRestrictionCondition audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
+        final Audience audience = newSamlObject(Audience.class);
+        audience.setUri(serviceId);
+        audienceRestriction.getAudiences().add(audience);
+        conditions.getAudienceRestrictionConditions().add(audienceRestriction);
+        return conditions;
+    }
 
-        samlSubject.setNameIdentifier(samlNameIdentifier);
+    private Subject newSubject(final String identifier) {
+        final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
+        final ConfirmationMethod method = newSamlObject(ConfirmationMethod.class);
+        method.setConfirmationMethod(CONFIRMATION_METHOD);
+        confirmation.getConfirmationMethods().add(method);
+        final NameIdentifier nameIdentifier = newSamlObject(NameIdentifier.class);
+        nameIdentifier.setNameIdentifier(identifier);
+        final Subject subject = newSamlObject(Subject.class);
+        subject.setNameIdentifier(nameIdentifier);
+        subject.setSubjectConfirmation(confirmation);
+        return subject;
+    }
 
-        return samlSubject;
+    private AuthenticationStatement newAuthenticationStatement(final Authentication authentication) {
+        final String authenticationMethod = (String) authentication.getAttributes().get(
+                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
+        final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
+        authnStatement.setAuthenticationInstant(new DateTime(authentication.getAuthenticatedDate()));
+        authnStatement.setAuthenticationMethod(
+                authenticationMethod != null
+                        ? authenticationMethod
+                        : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
+        authnStatement.setSubject(newSubject(authentication.getPrincipal().getId()));
+        return authnStatement;
+    }
+
+    private AttributeStatement newAttributeStatement(
+            final Subject subject, final Map<String, Object> attributes, final boolean isRemembered) {
+
+        final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
+        attrStatement.setSubject(subject);
+        for (final Entry<String, Object> e : attributes.entrySet()) {
+            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
+                // bnoordhuis: don't add the attribute, it causes a org.opensaml.MalformedException
+                log.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                continue;
+            }
+            final Attribute attribute = newSamlObject(Attribute.class);
+            attribute.setAttributeName(e.getKey());
+            attribute.setAttributeNamespace(NAMESPACE);
+            if (e.getValue() instanceof Collection<?>) {
+                final Collection<?> c = (Collection<?>) e.getValue();
+                for (final Object value : c) {
+                    attribute.getAttributeValues().add(newAttributeValue(value));
+                }
+            } else {
+                attribute.getAttributeValues().add(newAttributeValue(e.getValue()));
+            }
+            attrStatement.getAttributes().add(attribute);
+        }
+
+        if (isRemembered) {
+            final Attribute attribute = newSamlObject(Attribute.class);
+            attribute.setAttributeName(this.rememberMeAttributeName);
+            attribute.setAttributeNamespace(NAMESPACE);
+            attribute.getAttributeValues().add(newAttributeValue(REMEMBER_ME_ATTRIBUTE_VALUE));
+            attrStatement.getAttributes().add(attribute);
+        }
+        return attrStatement;
+    }
+
+    private XSString newAttributeValue(final Object value) {
+        final XSString stringValue = this.attrValueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+        if (value instanceof String) {
+            stringValue.setValue((String) value);
+        } else {
+            stringValue.setValue(value.toString());
+        }
+        return stringValue;
     }
 
     public void setIssueLength(final long issueLength) {
@@ -195,10 +201,6 @@ public class Saml10SuccessResponseView extends AbstractCasView {
 
     public void setIssuer(final String issuer) {
         this.issuer = issuer;
-    }
-
-    public void setEncoding(final String encoding) {
-        this.encoding = encoding;
     }
 
     public void setRememberMeAttributeName(final String rememberMeAttributeName) {
