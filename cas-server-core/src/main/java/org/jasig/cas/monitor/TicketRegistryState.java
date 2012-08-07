@@ -30,7 +30,8 @@ public interface TicketRegistryState {
     /**
      * Computes the number of SSO sessions stored in the ticket registry.
      *
-     * @return Number of ticket-granting tickets in the registry at time of invocation.
+     * @return Number of ticket-granting tickets in the registry at time of invocation
+     *         or {@link Integer#MIN_VALUE} if unknown.
      */
     int sessionCount();
 
@@ -38,7 +39,8 @@ public interface TicketRegistryState {
      /**
      * Computes the number of service tickets stored in the ticket registry.
      *
-     * @return Number of service tickets in the registry at time of invocation.
+     * @return Number of service tickets in the registry at time of invocation
+     *         or {@link Integer#MIN_VALUE} if unknown.
      */
     int serviceTicketCount();
 }

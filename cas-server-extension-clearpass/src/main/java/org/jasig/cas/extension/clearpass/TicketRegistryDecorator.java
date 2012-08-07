@@ -23,8 +23,6 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -38,22 +36,27 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * @version $Revision$ $Date$
  * @since 1.0.7
  */
-public final class TicketRegistryDecorator extends AbstractTicketRegistry implements TicketRegistryState {
+public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
-    private final Log log = LogFactory.getLog(getClass());
-
+    /** The real instance of the ticket registry that is to be decorated */
     @NotNull
     private final TicketRegistry ticketRegistry;
 
-    private final TicketRegistryState ticketRegistryState;
-
+    /** Map instance where credentials are stored. */
     @NotNull
-    private Map<String,String> cache;
+    private final Map<String,String> cache;
 
-    public TicketRegistryDecorator(final TicketRegistry ticketRegistry, final Map<String, String> cache) {
-        this.ticketRegistry = ticketRegistry;
+    /**
+     * Constructs an instance of the decorator wrapping the real ticket registry instance inside.
+     * 
+     * @param actualTicketRegistry The real instance of the ticket registry that is to be decorated
+     * @param cache Map instance where credentials are stored.
+     * 
+     * @see EhcacheBackedMap
+     */
+    public TicketRegistryDecorator(final TicketRegistry actualTicketRegistry, final Map<String, String> cache) {
+        this.ticketRegistry = actualTicketRegistry;
         this.cache = cache;
-        this.ticketRegistryState = (TicketRegistryState) ticketRegistry;
     }
 
     public void addTicket(final Ticket ticket) {
@@ -62,7 +65,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry implem
             final String ticketId = ticketGrantingTicket.getId();
             final String userName = ticketGrantingTicket.getAuthentication().getPrincipal().getId();
 
-            log.debug(String.format("Creating mapping ticket [%s] to user name [%s]", ticketId, userName));
+            log.debug("Creating mapping ticket {} to user name {}", ticketId, userName);
 
             this.cache.put(ticketId, userName);
         }
@@ -78,7 +81,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry implem
         final String userName = this.cache.get(ticketId);
 
         if (userName != null) {
-            log.debug(String.format("Removing mapping ticket [%s] to user name [%s]", ticketId, userName));
+            log.debug("Removing mapping ticket {} for user name {}", ticketId, userName);
             this.cache.remove(userName);
         }
 
@@ -90,10 +93,18 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry implem
     }
 
     public int sessionCount() {
-        return this.ticketRegistryState.sessionCount();
+        if (this.ticketRegistry instanceof TicketRegistryState) {
+          return ((TicketRegistryState)this.ticketRegistry).sessionCount();
+        }
+        this.log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        return 0;
     }
 
     public int serviceTicketCount() {
-        return this.ticketRegistryState.serviceTicketCount();
+        if (this.ticketRegistry instanceof TicketRegistryState) {
+          return ((TicketRegistryState)this.ticketRegistry).serviceTicketCount();
+        }
+        this.log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        return 0;
     }
 }

@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
