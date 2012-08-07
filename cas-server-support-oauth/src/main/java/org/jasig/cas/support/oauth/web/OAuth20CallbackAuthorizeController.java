@@ -20,10 +20,17 @@ package org.jasig.cas.support.oauth.web;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * This controller is called after successful authentication and redirects user to the callback url of the OAuth application. A code is
