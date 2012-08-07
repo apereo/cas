@@ -32,7 +32,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -141,11 +145,19 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
      * 
      * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
      */
-    protected final Map referenceData(final HttpServletRequest request)
-        throws Exception {
+    protected final Map referenceData(final HttpServletRequest request) throws Exception {
+        
         final Map<String, Object> model = new HashMap<String, Object>();
-        model
-            .put("availableAttributes", this.personAttributeDao.getPossibleUserAttributeNames());
+
+        final List<String> possibleAttributeNames = new ArrayList<String>();
+        possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());        
+        Collections.sort(possibleAttributeNames);
+        model.put("availableAttributes", possibleAttributeNames);
+        
+        final List<String> availableUsernameAttributes = new ArrayList<String>(possibleAttributeNames);
+        availableUsernameAttributes.add(0, RegisteredService.DEFAULT_USERNAME_ATTRIBUTE);
+        model.put("availableUsernameAttributes", availableUsernameAttributes);
+        
         model.put("pageTitle", getFormView());
         model.put("commandName", getCommandName());
         return model;
