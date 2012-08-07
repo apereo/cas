@@ -90,15 +90,12 @@
 		<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</span>
-
-	    <span class="oneField">
-	      	<span class="label preField"><spring:message code="management.services.manage.label.usernameAttribute" /></span>
-			<span class="oneChoice">
-				<form:radiobuttons path="usernameAttribute" items="${availableUsernameAttributes}"  />
-	          	<form:errors path="usernameAttribute" cssClass="formError" />
-			</span>
-	    </span>
-	            
+	     
+    	<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.manage.label.usernameAttribute" /></label>
+    		<form:select path="usernameAttribute" items="${availableUsernameAttributes}" />
+    		<form:errors path="usernameAttribute" cssClass="formError" />
+    	</span>
+      		            
 	    <span class="oneChoice">
 	      <form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
 	      <label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
@@ -114,7 +111,9 @@
 	</div>
 	</fieldset>
 	<div class="actions">
-		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes"><spring:message code="management.services.add.button.save" /></button> or <a href="manage.html" style="color:#b00;"><spring:message code="management.services.add.button.cancel" /></a>
+		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="<spring:message code="management.services.add.button.save" />">
+		<spring:message code="management.services.add.button.save" /></button> 
+		or <a href="manage.html" style="color:#b00;"><spring:message code="management.services.add.button.cancel" /></a>
 	</div>
 </form:form>
 <%@include file="includes/bottom.jsp" %>
