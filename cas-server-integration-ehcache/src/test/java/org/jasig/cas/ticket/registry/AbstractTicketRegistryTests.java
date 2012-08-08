@@ -42,8 +42,8 @@ import static org.junit.Assert.*;
  * cas-server-core module.</p>
  * <p> Modifications :</p>
  * <ul>
- * <li>Inline methods {@link org.jasig.cas.TestUtils#getAuthentication()} and 
- * {@link org.jasig.cas.TestUtils#getService()} as {@link #getAuthentication()} and 
+ * <li>Inline methods {@link #getAuthentication()} and 
+ * {@link #getService()} as {@link #getAuthentication()} and 
  * {@link #getService()}</li>
  * </ul>
  * 
@@ -53,9 +53,9 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractTicketRegistryTests  {
 
-    private static final int        TICKETS_IN_REGISTRY = 10;
-  
-    private TicketRegistry          ticketRegistry      = null;
+    private static final int TICKETS_IN_REGISTRY = 10;
+
+    private TicketRegistry ticketRegistry;
   
     @Before
     public void setUp() throws Exception {   
