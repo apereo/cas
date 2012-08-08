@@ -52,7 +52,7 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
     private final ServicesManager servicesManager;
 
     /** Used to ensure services are sorted by name. */
-    private final PropertyComparator propertyComparator = new PropertyComparator("name", false, true);
+    private final PropertyComparator propertyComparator = new PropertyComparator("evaluationOrder", false, true);
 
     @NotNull
     private final String defaultServiceUrl;
