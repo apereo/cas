@@ -96,7 +96,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
           return ((TicketRegistryState)this.ticketRegistry).sessionCount();
         }
-        this.log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
         return 0;
     }
 
@@ -104,7 +104,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
           return ((TicketRegistryState)this.ticketRegistry).serviceTicketCount();
         }
-        this.log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
         return 0;
     }
 }
