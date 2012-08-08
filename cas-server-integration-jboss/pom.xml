@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-integration-jboss</artifactId>
 	<packaging>jar</packaging>
-	<name>JA-SIG CAS JBoss Cache Integration</name>
+	<name>Jasig CAS JBoss Cache Integration</name>
 
   <build>
     <plugins>

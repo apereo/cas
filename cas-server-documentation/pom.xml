@@ -29,7 +29,7 @@
   <artifactId>cas-server-documentation</artifactId>
   <version>3.5.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>CAS Documentation</name>
+  <name>Jasig CAS Documentation</name>
   <build>
     <plugins>
       <plugin>
