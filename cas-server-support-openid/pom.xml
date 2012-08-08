@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-openid</artifactId>
 	<packaging>jar</packaging>
-	<name>JA-SIG CAS OpenId Support</name>
+	<name>Jasig CAS OpenId Support</name>
 
 	<dependencies>
 		<dependency>
