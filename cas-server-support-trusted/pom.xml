@@ -27,7 +27,7 @@
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-trusted</artifactId>
   <packaging>jar</packaging>
-  <name>JA-SIG CAS Trusted User Support</name>
+  <name>Jasig CAS Trusted User Support</name>
   
   <dependencies>
 		<dependency>
