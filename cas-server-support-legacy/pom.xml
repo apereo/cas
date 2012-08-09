@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-legacy</artifactId>
 	<packaging>jar</packaging>
-	<name>JA-SIG CAS Legacy Support</name>
+	<name>Jasig CAS Legacy Support</name>
 
 	<dependencies>
 		<dependency>
