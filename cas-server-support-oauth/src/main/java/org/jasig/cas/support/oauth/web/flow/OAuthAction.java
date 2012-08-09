@@ -117,7 +117,7 @@ public final class OAuthAction extends AbstractAction {
                     authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(session));
                 }
                 logger.debug("{} -> {}", key, authorizationUrl);
-                request.setAttribute(key, authorizationUrl);
+                context.getFlowScope().put(key, authorizatonUrl);
             }
         }
         
