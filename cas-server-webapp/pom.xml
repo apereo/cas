@@ -27,7 +27,7 @@
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-webapp</artifactId>
   <packaging>war</packaging>
-  <name>JA-SIG CAS Web Application</name>
+  <name>Jasig CAS Web Application</name>
   <dependencies>
 
     <dependency>

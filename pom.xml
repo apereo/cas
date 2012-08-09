@@ -420,7 +420,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <repositories>
     <repository>
       <id>jasig-repository</id>
-      <name>JA-SIG Maven2 Repository</name>
+      <name>Jasig Maven2 Repository</name>
       <url>http://developer.ja-sig.org/maven2</url>
     </repository>
 
