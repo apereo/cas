@@ -51,45 +51,47 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuthAction extends AbstractAction {
+public class OAuthAction extends AbstractAction {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
-    
-    @NotNull
-    private OAuthProviders providers;
+    protected static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
     
     @NotNull
-    private CentralAuthenticationService centralAuthenticationService;
+    protected OAuthProviders providers;
     
-    private String oauth10loginUrl = "/" + OAuthConstants.OAUTH10_LOGIN_URL;
+    @NotNull
+    protected CentralAuthenticationService centralAuthenticationService;
+    
+    protected String oauth10loginUrl = "/" + OAuthConstants.OAUTH10_LOGIN_URL;
     
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
-        HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        HttpSession session = request.getSession();
+    protected final Event doExecute(final RequestContext context) throws Exception {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpSession session = request.getSession();
         
         // get provider type
-        String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
+        final String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
         logger.debug("providerType : {}", providerType);
         
         // it's an authentication
         if (StringUtils.isNotBlank(providerType)) {
             // get provider
-            OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
+            final OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
             logger.debug("provider : {}", provider);
             
             // get credential
             @SuppressWarnings("unchecked")
-            OAuthCredential credential = provider
-                .getCredential(new HttpUserSession(request), request.getParameterMap());
+            final OAuthCredential credential = provider.getCredential(new HttpUserSession(request),
+                                                                      request.getParameterMap());
             logger.debug("credential : {}", credential);
             
             // retrieve service from session and put it into webflow
-            Service service = (Service) session.getAttribute("service");
+            final Service service = (Service) session.getAttribute("service");
             context.getFlowScope().put("service", service);
+            // restore state
+            restoreState(context);
             
             // create credentials
-            Credentials credentials = new OAuthCredentials(credential);
+            final Credentials credentials = new OAuthCredentials(credential);
             
             try {
                 WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService
@@ -102,12 +104,14 @@ public final class OAuthAction extends AbstractAction {
             // no authentication : go to login page
             
             // put service in session from flow scope
-            Service service = (Service) context.getFlowScope().get("service");
+            final Service service = (Service) context.getFlowScope().get("service");
             session.setAttribute("service", service);
+            // save state
+            saveState(context);
             
             // for all providers, generate authorization urls
-            for (OAuthProvider provider : providers.getProviders()) {
-                String key = provider.getType() + "Url";
+            for (final OAuthProvider provider : providers.getProviders()) {
+                final String key = provider.getType() + "Url";
                 String authorizationUrl = null;
                 // for OAuth 1.0 protocol, delay request_token request by pointing to an intermediate url
                 if (provider instanceof BaseOAuth10Provider) {
@@ -124,6 +128,22 @@ public final class OAuthAction extends AbstractAction {
         return error();
     }
     
+    /**
+     * Restore state from web session using context. It happens after OAuth authentication.
+     * 
+     * @param context
+     */
+    protected void restoreState(final RequestContext context) {
+    }
+    
+    /**
+     * Save state in web session using context. It happens before the user is redirected to OAuth provider for authentication.
+     * 
+     * @param context
+     */
+    protected void saveState(final RequestContext context) {
+    }
+    
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
@@ -135,8 +155,8 @@ public final class OAuthAction extends AbstractAction {
     public void setProviders(final OAuthProviders providers) {
         this.providers = providers;
         // for all providers
-        for (OAuthProvider provider : providers.getProviders()) {
-            BaseOAuthProvider baseProvider = (BaseOAuthProvider) provider;
+        for (final OAuthProvider provider : providers.getProviders()) {
+            final BaseOAuthProvider baseProvider = (BaseOAuthProvider) provider;
             // calculate new callback url by adding the OAuth provider type
             baseProvider.setCallbackUrl(OAuthUtils.addParameter(baseProvider.getCallbackUrl(),
                                                                 OAuthConstants.OAUTH_PROVIDER, provider.getType()));
