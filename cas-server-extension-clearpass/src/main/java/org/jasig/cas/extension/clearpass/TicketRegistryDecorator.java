@@ -97,7 +97,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
           return ((TicketRegistryState)this.ticketRegistry).sessionCount();
         }
         log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
-        return 0;
+        return super.sessionCount();
     }
 
     public int serviceTicketCount() {
@@ -105,6 +105,6 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
           return ((TicketRegistryState)this.ticketRegistry).serviceTicketCount();
         }
         log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
-        return 0;
+        return super.serviceTicketCount();
     }
 }
