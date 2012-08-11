@@ -150,9 +150,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     
     public void afterPropertiesSet() throws Exception {
       if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
-        final String message = "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties. serviceTicketsCache={}, ticketGrantingTicketsCache= {}";
-        log.error(message, this.serviceTicketsCache, this.ticketGrantingTicketsCache);
-        throw new BeanInstantiationException(this.getClass(), message);
+        throw new BeanInstantiationException(this.getClass(), "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties.");
       }
       
       if (this.log.isDebugEnabled()) {
@@ -176,13 +174,13 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
      * @see Cache#getKeysNoDuplicateCheck()
      */
     public int sessionCount() {
-        return this.supportRegistryState ? this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() : 0;
+        return this.supportRegistryState ? this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() : super.sessionCount();
     }
 
     /**
      * @see Cache#getKeysNoDuplicateCheck()
      */
     public int serviceTicketCount() {
-        return this.supportRegistryState ? this.serviceTicketsCache.getKeysWithExpiryCheck().size() : 0;
+        return this.supportRegistryState ? this.serviceTicketsCache.getKeysWithExpiryCheck().size() : super.serviceTicketCount();
     }
 }
