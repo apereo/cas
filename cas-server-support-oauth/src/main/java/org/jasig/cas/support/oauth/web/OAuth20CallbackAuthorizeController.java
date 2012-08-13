@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,18 +47,24 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         // get CAS ticket
-        String ticket = request.getParameter(OAuthConstants.TICKET);
+        final String ticket = request.getParameter(OAuthConstants.TICKET);
         logger.debug("ticket : {}", ticket);
         
         // retrieve callback url from session
-        HttpSession session = request.getSession();
-        String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
+        final HttpSession session = request.getSession();
+        final String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
         logger.debug("callbackUrl : {}", callbackUrl);
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
         
         // return to callback with code
-        String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
+        final String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
         logger.debug("callbackUrlWithCode : {}", callbackUrlWithCode);
-        return OAuthUtils.redirectTo(callbackUrlWithCode);
+        
+        final Map<String, Object> model = new HashMap<String, Object>();
+        model.put("callbackUrlWithCode", callbackUrlWithCode);
+        // retrieve service name from session
+        final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
+        model.put("serviceName", serviceName);
+        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
     }
 }
