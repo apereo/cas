@@ -46,25 +46,25 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * This class represents an action in the webflow to retrieve OAuth information on the callback url which is the webflow url (/login). The
  * oauth_provider and the other OAuth parameters are expected after OAuth authentication. Providers are defined by configuration. The
- * service is stored and retrieved from web session after OAuth authentication.
+ * service, theme, locale and method are saved and restored from web session after OAuth authentication.
  * 
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuthAction extends AbstractAction {
+public final class OAuthAction extends AbstractAction {
     
-    protected static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
-    
-    @NotNull
-    protected OAuthProviders providers;
+    private static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
     
     @NotNull
-    protected CentralAuthenticationService centralAuthenticationService;
+    private OAuthProviders providers;
     
-    protected String oauth10loginUrl = "/" + OAuthConstants.OAUTH10_LOGIN_URL;
+    @NotNull
+    private CentralAuthenticationService centralAuthenticationService;
+    
+    private String oauth10loginUrl = "/" + OAuthConstants.OAUTH10_LOGIN_URL;
     
     @Override
-    protected final Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final HttpSession session = request.getSession();
         
@@ -84,11 +84,12 @@ public class OAuthAction extends AbstractAction {
                                                                       request.getParameterMap());
             logger.debug("credential : {}", credential);
             
-            // retrieve service from session and put it into webflow
-            final Service service = (Service) session.getAttribute("service");
-            context.getFlowScope().put("service", service);
-            // restore state
-            restoreState(context);
+            // retrieve parameters from web session
+            final Service service = (Service) session.getAttribute(OAuthConstants.SERVICE);
+            context.getFlowScope().put(OAuthConstants.SERVICE, service);
+            restoreRequestAttribute(request, session, OAuthConstants.THEME);
+            restoreRequestAttribute(request, session, OAuthConstants.LOCALE);
+            restoreRequestAttribute(request, session, OAuthConstants.METHOD);
             
             // create credentials
             final Credentials credentials = new OAuthCredentials(credential);
@@ -103,11 +104,14 @@ public class OAuthAction extends AbstractAction {
         } else {
             // no authentication : go to login page
             
-            // put service in session from flow scope
-            final Service service = (Service) context.getFlowScope().get("service");
-            session.setAttribute("service", service);
-            // save state
-            saveState(context);
+            // save parameters in web session
+            final Service service = (Service) context.getFlowScope().get(OAuthConstants.SERVICE);
+            if (service != null) {
+                session.setAttribute(OAuthConstants.SERVICE, service);
+            }
+            saveRequestParameter(request, session, OAuthConstants.THEME);
+            saveRequestParameter(request, session, OAuthConstants.LOCALE);
+            saveRequestParameter(request, session, OAuthConstants.METHOD);
             
             // for all providers, generate authorization urls
             for (final OAuthProvider provider : providers.getProviders()) {
@@ -129,19 +133,29 @@ public class OAuthAction extends AbstractAction {
     }
     
     /**
-     * Restore state from web session using context. It happens after OAuth authentication.
+     * Restore an attribute in web session as an attribute in request.
      * 
-     * @param context
+     * @param request
+     * @param session
+     * @param name
      */
-    protected void restoreState(final RequestContext context) {
+    private void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
+        final String value = (String) session.getAttribute(name);
+        request.setAttribute(name, value);
     }
     
     /**
-     * Save state in web session using context. It happens before the user is redirected to OAuth provider for authentication.
+     * Save a request parameter in the web session.
      * 
-     * @param context
+     * @param request
+     * @param session
+     * @param name
      */
-    protected void saveState(final RequestContext context) {
+    private void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
+        final String value = request.getParameter(name);
+        if (value != null) {
+            session.setAttribute(name, value);
+        }
     }
     
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
