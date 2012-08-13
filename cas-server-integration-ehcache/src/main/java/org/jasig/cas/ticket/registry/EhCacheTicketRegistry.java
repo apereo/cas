@@ -24,6 +24,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.monitor.SessionMonitor;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -174,13 +175,13 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
      * @see Cache#getKeysNoDuplicateCheck()
      */
     public int sessionCount() {
-        return this.supportRegistryState ? this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() : super.sessionCount();
+        return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() , super.sessionCount());
     }
 
     /**
      * @see Cache#getKeysNoDuplicateCheck()
      */
     public int serviceTicketCount() {
-        return this.supportRegistryState ? this.serviceTicketsCache.getKeysWithExpiryCheck().size() : super.serviceTicketCount();
+        return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck().size() , super.serviceTicketCount());
     }
 }
