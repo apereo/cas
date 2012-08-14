@@ -29,7 +29,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-compatibility</artifactId>
 	<packaging>jar</packaging>
-	<name>JA-SIG CAS Compatibility Tests</name>
+	<name>Jasig CAS Compatibility Tests</name>
 	<build>
 		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<testResources>

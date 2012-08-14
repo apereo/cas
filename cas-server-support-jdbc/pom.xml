@@ -27,7 +27,7 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-jdbc</artifactId>
 	<packaging>jar</packaging>
-	<name>JA-SIG CAS JDBC Support</name>
+	<name>Jasig CAS JDBC Support</name>
 
 	<dependencies>
 		<dependency>
