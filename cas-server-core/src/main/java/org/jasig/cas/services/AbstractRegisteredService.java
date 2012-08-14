@@ -99,7 +99,7 @@ public abstract class AbstractRegisteredService
      * Name of the user attribute that this service expects as the value of the username payload in the
      * validate responses.
      */
-    @Column(name = "usernameAttribute")
+    @Column(name = "usernameAttribute", nullable = true, length = 256)
     private String usernameAttribute = null;
       
     public boolean isAnonymousAccess() {
