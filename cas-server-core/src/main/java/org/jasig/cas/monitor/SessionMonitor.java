@@ -80,6 +80,14 @@ public class SessionMonitor implements Monitor<SessionStatus> {
         try {
             final int sessionCount = this.registryState.sessionCount();
             final int ticketCount = this.registryState.serviceTicketCount();
+            
+            if (sessionCount == Integer.MIN_VALUE || ticketCount == Integer.MIN_VALUE) {
+                return new SessionStatus(StatusCode.UNKNOWN, 
+                                         String.format("Ticket registry %s reports unknown session and/or ticket counts.", 
+                                         this.registryState.getClass().getName()),
+                                         sessionCount, ticketCount);
+            }
+            
             final StringBuilder msg = new StringBuilder();
             StatusCode code = StatusCode.OK;
             if (this.sessionCountWarnThreshold > -1 && sessionCount > this.sessionCountWarnThreshold) {
