@@ -27,7 +27,6 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
@@ -41,11 +40,10 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.2.1
  *
  */
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements TicketRegistryState {
+public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     
     @NotNull
     @PersistenceContext
