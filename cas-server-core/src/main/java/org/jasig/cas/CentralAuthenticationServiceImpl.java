@@ -438,10 +438,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         if (registeredService.isAnonymousAccess()) {
             principalId = this.persistentIdGenerator.generate(principal, serviceTicket.getService());
-        } else if (serviceUsernameAttribute.equals(RegisteredService.DEFAULT_USERNAME_ATTRIBUTE)) {
+        } else if (StringUtils.isBlank(serviceUsernameAttribute)) {
             principalId = principal.getId();
         } else {
-            if (registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) {
+            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) &&
+                 principal.getAttributes().containsKey(serviceUsernameAttribute)) {
                 principalId = principal.getAttributes().get(registeredService.getUsernameAttribute()).toString();
             } else {
                 principalId = principal.getId();
