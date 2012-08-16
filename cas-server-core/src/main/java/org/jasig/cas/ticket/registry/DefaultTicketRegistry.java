@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -36,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class DefaultTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
+public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 
     /** A HashMap to contain the tickets. */
     private final Map<String, Ticket> cache;
