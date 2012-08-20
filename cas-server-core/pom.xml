@@ -131,7 +131,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>${spring.security.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -211,7 +210,6 @@
         <dependency>
             <groupId>commons-jexl</groupId>
             <artifactId>commons-jexl</artifactId>
-            <version>${commons.jexl.version}</version>
             <scope>runtime</scope>
             <type>jar</type>
         </dependency>
@@ -223,7 +221,14 @@
             <scope>compile</scope>
             <type>jar</type>
         </dependency>
-
+        
+        <dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.4.0</version>
+			<scope>compile</scope>
+		</dependency>
+            
         <dependency>
           <groupId>org.opensymphony.quartz</groupId>
           <artifactId>quartz</artifactId>

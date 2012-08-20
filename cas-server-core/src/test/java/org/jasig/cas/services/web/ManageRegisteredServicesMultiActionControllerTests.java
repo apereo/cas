@@ -22,13 +22,16 @@ import java.util.Collection;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -37,18 +40,19 @@ import junit.framework.TestCase;
  * @since 3.1
  *
  */
-public class ManageRegisteredServicesMultiActionControllerTests extends
-    TestCase {
+public class ManageRegisteredServicesMultiActionControllerTests {
     
     private ManageRegisteredServicesMultiActionController controller;
     
     private ServicesManager servicesManager;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, "foo");
     }
     
+    @Test
     public void testDeleteService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
@@ -95,7 +99,92 @@ public class ManageRegisteredServicesMultiActionControllerTests extends
         assertNotNull(modelAndView);
         assertEquals("manageServiceView", modelAndView.getViewName());
         
-        final Collection c = (Collection) modelAndView.getModel().get("services");
+        final Collection<?> c = (Collection<?>) modelAndView.getModel().get("services");
         assertTrue(c.contains(r));
+    }
+    
+    @Test
+    public void updateEvaluationOrderOK() {
+        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(1200);
+        r.setName("name");
+        r.setServiceId("test");
+        r.setEvaluationOrder(2);
+        
+        this.servicesManager.save(r);
+        
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("id", String.valueOf(r.getId()));
+        request.addParameter("evaluationOrder", "100");
+        
+        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
+        
+        assertNotNull(modelAndView);
+        assertEquals("jsonView", modelAndView.getViewName());
+        
+        assertTrue(!modelAndView.getModelMap().containsAttribute("error"));
+        assertEquals(modelAndView.getModelMap().get("successful").toString(), Boolean.TRUE.toString());  
+        
+        RegisteredService result = this.servicesManager.findServiceBy(r.getId());
+        assertEquals(result.getEvaluationOrder(), 100);
+    }
+    
+    @Test
+    public void updateEvaluationOrderInvalidServiceId() {
+        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(1200);
+        r.setName("name");
+        r.setServiceId("test");
+        r.setEvaluationOrder(2);
+        
+        this.servicesManager.save(r);
+        
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("id", "5000");
+        
+        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
+        
+        assertNotNull(modelAndView);
+        assertEquals("jsonView", modelAndView.getViewName());
+        
+        assertTrue(modelAndView.getModelMap().containsAttribute("error"));
+        assertEquals(modelAndView.getModelMap().get("successful").toString(), Boolean.FALSE.toString());  
+    }
+    
+    @Test
+    public void updateEvaluationOrderInvalidEvalOrder() {
+        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(1200);
+        r.setName("name");
+        r.setServiceId("test");
+        r.setEvaluationOrder(2);
+        
+        this.servicesManager.save(r);
+        
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("evaluationOrder", "TEST");
+        
+        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
+        
+        assertNotNull(modelAndView);
+        assertEquals("jsonView", modelAndView.getViewName());
+        assertTrue(modelAndView.getModelMap().containsAttribute("error"));
+        assertEquals(modelAndView.getModelMap().get("successful").toString(), Boolean.FALSE.toString());  
+    }
+    
+    @Test
+    public void updateEvaluationOrderNonExistingService() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("id", "1200");
+        request.addParameter("evaluationOrder", "3");
+        
+        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
+        
+        assertNotNull(modelAndView);
+        assertEquals("jsonView", modelAndView.getViewName());
+        
+        assertTrue(modelAndView.getModelMap().containsAttribute("error"));
+        assertTrue(modelAndView.getModelMap().containsAttribute("successful"));
+        
     }
 }

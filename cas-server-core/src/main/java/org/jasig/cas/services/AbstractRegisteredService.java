@@ -28,6 +28,7 @@ import org.hibernate.annotations.IndexColumn;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.DiscriminatorColumn;
@@ -296,12 +297,12 @@ public abstract class AbstractRegisteredService
         this.setUsernameAttribute(source.getUsernameAttribute());
     }
 
+    /**
+     * @see RegisteredServiceComparator
+     */
     public int compareTo(final RegisteredService other) {
-        final int result = this.evaluationOrder - other.getEvaluationOrder();
-        if (result == 0) {
-            return (int) (this.id - other.getId());
-        }
-        return result;
+        final Comparator<RegisteredService> comparator = RegisteredServiceComparator.getInstance();
+        return comparator.compare(this, other);
     }
 
     public String toString() {

@@ -24,8 +24,10 @@ import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -34,11 +36,12 @@ import junit.framework.TestCase;
  * @since 3.0
  *
  */
-public class DefaultServicesManagerImplTests extends TestCase {
+public class DefaultServicesManagerImplTests  {
     
     private DefaultServicesManagerImpl defaultServicesManagerImpl;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         final List<RegisteredService> list = new ArrayList<RegisteredService>();
         
@@ -46,7 +49,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
-        r.setEvaluationOrder(1);
+        r.setEvaluationOrder(1000);
         
         list.add(r);
         
@@ -54,6 +57,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
         this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
     }
     
+    @Test
     public void testSaveAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
@@ -64,6 +68,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
         assertNotNull(this.defaultServicesManagerImpl.findServiceBy(1000));
     }
 
+    @Test
     public void testSaveWithReturnedPersistedInstance() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000L);
@@ -75,6 +80,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
         assertEquals(1000L, persistedRs.getId());
     }
     
+    @Test
     public void testDeleteAndGet() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
@@ -88,10 +94,12 @@ public class DefaultServicesManagerImplTests extends TestCase {
         assertNull(this.defaultServicesManagerImpl.findServiceBy(r.getId()));
     }
     
+    @Test
     public void testDeleteNotExistentService() {
         assertNull(this.defaultServicesManagerImpl.delete(1500));
     }
     
+    @Test
     public void testMatchesExistingService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
@@ -108,6 +116,7 @@ public class DefaultServicesManagerImplTests extends TestCase {
         assertNull(this.defaultServicesManagerImpl.findServiceBy(service2));
     }
     
+    @Test
     public void testAllService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
@@ -116,11 +125,46 @@ public class DefaultServicesManagerImplTests extends TestCase {
         r.setEvaluationOrder(2);
         
         this.defaultServicesManagerImpl.save(r);
-        
+         
         assertEquals(2, this.defaultServicesManagerImpl.getAllServices().size());
         assertTrue(this.defaultServicesManagerImpl.getAllServices().contains(r));
     }
     
+    @Test
+    public void testEvaluationOrderOfServices() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(100);
+        r.setName("test");
+        r.setServiceId("test");
+        r.setEvaluationOrder(200);
+        
+        final RegisteredServiceImpl r2 = new RegisteredServiceImpl();
+        r2.setId(101);
+        r2.setName("test");
+        r2.setServiceId("test");
+        r2.setEvaluationOrder(80);
+        
+        final RegisteredServiceImpl r3 = new RegisteredServiceImpl();
+        r3.setId(102);
+        r3.setName("Sample test service");
+        r3.setServiceId("test");
+        r3.setEvaluationOrder(80);
+        
+        this.defaultServicesManagerImpl.save(r);
+        this.defaultServicesManagerImpl.save(r3);
+        this.defaultServicesManagerImpl.save(r2);
+        
+        final List<RegisteredService> allServices = new ArrayList<RegisteredService>(this.defaultServicesManagerImpl.getAllServices());
+        
+        //We expect the 3 newly added services, plus the one added in setUp()
+        assertEquals(4, allServices.size());
+        
+        assertEquals(allServices.get(0).getId(), r3.getId());
+        assertEquals(allServices.get(1).getId(), r2.getId());
+        assertEquals(allServices.get(2).getId(), r.getId());
+        
+    }
+        
     protected class SimpleService implements Service {
         
         /**
