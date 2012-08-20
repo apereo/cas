@@ -39,7 +39,7 @@ public class RegisteredServiceComparator implements Comparator<RegisteredService
     }
     
     @Override
-    public int compare(RegisteredService o1, RegisteredService o2) {
+    public int compare(final RegisteredService o1, final RegisteredService o2) {
         int result = Integer.valueOf(o1.getEvaluationOrder()).compareTo(Integer.valueOf(o2.getEvaluationOrder()));    
         if (result == 0) {
             result = o1.getName().compareToIgnoreCase(o2.getName());
