@@ -53,6 +53,11 @@
     </property>
   </bean>
 
+  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver" 
+  		p:order="1" 
+  		p:location="/WEB-INF/view/views.xml" 
+  />
+  
   <!-- Locale Resolver -->
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/>
 
@@ -62,8 +67,8 @@
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
-        p:order="1"/>
-
+        p:order="2"/>
+  
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
