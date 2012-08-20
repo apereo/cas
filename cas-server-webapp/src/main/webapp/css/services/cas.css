@@ -359,7 +359,7 @@ td a:hover {color:#b00;}
     p.instructions {
         margin:1em 0;
         font-size:1.2em;
-        background:url('../../images/services/info.gif') no-repeat left center;; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
+        background:url('../../images/services/info.gif') no-repeat left center; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
         }
 
     fieldset {
@@ -424,3 +424,50 @@ button {font-size:1em;}
     color:green;
     font-weight:900;
     }
+    
+@media screen {
+    div#container {
+    	width:100%; 
+    	min-width:952px; 
+    	margin:0; 
+    	padding:0;
+   	}
+    table#headerTable {
+    	width:100%; 
+    	min-width:952px; 
+    	background:#999; 
+    	margin:0; 
+    	padding:0; 
+    	border:0; 
+    	border-collapse:collapse;
+    }
+    div.tableWrapper {
+    	width:100%; 
+    	min-width:952px; 
+    	max-height:250px; 
+    	overflow:auto; 
+    	overflow-x:hidden;
+    }
+    table#scrollTable {
+    	width:100%; 
+    	min-width:935px;
+    }
+    table#scrollTable thead {display:none;}
+    table#headerTable th, table#scrollTable td {padding:0 5px; border:0;}
+    table#scrollTable td {text-align:left; border-bottom:1px solid #eee;}
+    table#headerTable th {height:38px; border:0 !important;}
+    th.th1, td.td1 {width:200px; overflow:hidden;}
+    th.th2, td.td2 {overflow:hidden;}
+    th.th3, td.td3 {width:50px;}
+    th.th4, td.td4 {width:70px;}
+    th.th5, td.td5 {width:50px;}
+    th.th6, td.td6 {width:70px;}
+    th.th7, td.td7 {width:102px;}
+    th.th8, td.td8 {width:70px}
+    th.th9, td.td9 {width:70px; text-align:right !important;}
+    th.th10, td.td10 {width:102px; text-align:right !important;}
+    
+	.hint {margin-left:9.5em; margin-bottom:1em; line-height:1.5;}
+	.actions {margin:1.5em 0;}
+	#allowedAttributes {height:150px;}			
+}

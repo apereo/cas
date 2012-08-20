@@ -43,7 +43,6 @@
       <scope>runtime</scope>
     </dependency>
 
-
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
@@ -111,6 +110,13 @@
       <type>jar</type>
     </dependency>
 
+	<dependency>
+		<groupId>net.sf.json-lib</groupId>
+		<artifactId>json-lib-ext-spring</artifactId>
+		<version>1.0.2</version>
+		<scope>runtime</scope>
+	</dependency>
+		
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
