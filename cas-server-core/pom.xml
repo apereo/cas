@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-core</artifactId>
-  <name>JA-SIG CAS Core</name>
+  <name>Jasig CAS Core</name>
   <description>CAS core</description>
 
     <dependencies>
@@ -183,7 +183,7 @@
         <dependency>
           <groupId>org.opensaml</groupId>
           <artifactId>opensaml</artifactId>
-          <version>1.1b</version>
+          <version>2.5.1-1</version>
           <scope>compile</scope>
         </dependency>
 

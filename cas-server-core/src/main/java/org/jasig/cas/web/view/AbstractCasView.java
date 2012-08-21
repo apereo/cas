@@ -36,7 +36,7 @@ public abstract class AbstractCasView extends AbstractView {
     
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    protected final Assertion getAssertionFrom(final Map model) {
+    protected final Assertion getAssertionFrom(final Map<String, Object> model) {
         return (Assertion) model.get("assertion");
     }
 }

@@ -1,4 +1,4 @@
-<!--
+<%--
   ~ Licensed to Jasig under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
@@ -15,25 +15,17 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  -->
+  --%>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>3.5.1-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-generic</artifactId>
-	<packaging>jar</packaging>
-	<name>Jasig CAS Generic Support</name>
+<jsp:directive.include file="../../default/ui/includes/top.jsp" />
+		<div id="welcome">
+			<h2><spring:message code="screen.oauth.confirm.header" /></h2>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
-</project>
+			<p>
+			   <spring:message code="screen.oauth.confirm.message" arguments="${serviceName}" />
+			</p>
+			<p>
+				<a id="allow" name="allow" href="${callbackUrlWithCode}"><spring:message code="screen.oauth.confirm.allow" /></a>
+			</p>
+		</div>
+<jsp:directive.include file="../../default/ui/includes/bottom.jsp" />

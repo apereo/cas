@@ -199,6 +199,29 @@
         <directory>${basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
+    
+    <pluginManagement>
+      <plugins>
+      	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.12</version>
+        <configuration>
+          <forkMode>once</forkMode>
+          <includes>
+            <include>**/*Tests.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/Abstract*.java</exclude>
+          </excludes>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+      </plugins>
+    </pluginManagement>
+    
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -255,22 +278,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           </execution>
         </executions>
       </plugin>-->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.12</version>
-        <configuration>
-          <includes>
-            <include>**/*Tests.java</include>
-          </includes>
-          <excludes>
-            <exclude>**/Abstract*.java</exclude>
-          </excludes>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -420,7 +427,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   <repositories>
     <repository>
       <id>jasig-repository</id>
-      <name>JA-SIG Maven2 Repository</name>
+      <name>Jasig Maven2 Repository</name>
       <url>http://developer.ja-sig.org/maven2</url>
     </repository>
 
