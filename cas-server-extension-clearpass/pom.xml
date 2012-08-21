@@ -27,12 +27,12 @@
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-extension-clearpass</artifactId>
 
-	<name>JA-SIG CAS ClearPass Extension</name>
+	<name>Jasig CAS ClearPass Extension</name>
 	<description>CAS ClearPass Extension</description>
 	<packaging>jar</packaging>
 
 	<properties>
-		<ehcache.version>2.5.0</ehcache.version>
+		<ehcache.version>2.6.0</ehcache.version>
 		<cas.client.version>3.2.1</cas.client.version>
 		<uportal.version>3.2.4</uportal.version>
 	</properties>
@@ -80,7 +80,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.2.2</version>
 			</plugin>
 
 			<plugin>
@@ -123,6 +122,13 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-integration-ehcache</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>

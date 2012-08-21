@@ -33,11 +33,6 @@ import org.jasig.cas.authentication.principal.Service;
  */
 public interface RegisteredService extends Cloneable, Serializable {    
     /**
-     * Default username attribute to release for a given service.
-     */
-    public final String DEFAULT_USERNAME_ATTRIBUTE = "(default)";
-    
-    /**
      * Is this application currently allowed to use CAS?
      * 
      * @return true if it can use CAS, false otherwise.
@@ -132,7 +127,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return Either of the following values:
      * <ul>
      *  <li><code>String</code> representing the name of the attribute to consume as username</li>
-     *  <li>{@link #DEFAULT_USERNAME_ATTRIBUTE} indicating the default username</li>
+     *  <li><code>null</code> indicating the default username</li>
      * </ul>
      */
     public String getUsernameAttribute();
