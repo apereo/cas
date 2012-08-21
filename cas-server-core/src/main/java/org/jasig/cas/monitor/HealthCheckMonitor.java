@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.5.0
  */
 public class HealthCheckMonitor implements Monitor<HealthStatus> {
-    /** Invidual monitors that comprise health check. */
+    /** Individual monitors that comprise health check. */
     @NotNull
     private Collection<Monitor> monitors = Collections.emptySet();
 
@@ -46,12 +46,10 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
         this.monitors = monitors;
     }
 
-
     /** {@inheritDoc} */
     public String getName() {
         return HealthCheckMonitor.class.getSimpleName();
     }
-
 
     /** {@inheritDoc} */
     public HealthStatus observe() {

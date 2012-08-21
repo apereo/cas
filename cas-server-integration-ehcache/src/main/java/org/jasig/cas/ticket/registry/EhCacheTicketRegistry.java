@@ -24,6 +24,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.jasig.cas.monitor.SessionMonitor;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -48,16 +51,34 @@ import org.springframework.core.style.ToStringCreator;
  * @author Andrew Tillinghast
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
+   
+    private Cache serviceTicketsCache  = null;
     
-    private Cache serviceTicketsCache;
+    private Cache ticketGrantingTicketsCache = null;
+  
+    /** @see #setSupportRegistryState(boolean)*/
+    private boolean supportRegistryState = true;
     
-    private Cache ticketGrantingTicketsCache;
+    public EhCacheTicketRegistry() {}
+    
+    public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
+      super();
+      setServiceTicketsCache(serviceTicketsCache);
+      setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
+    }
+    
+    public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache, final boolean supportRegistryState) {
+      this(serviceTicketsCache, ticketGrantingTicketsCache);
+      setSupportRegistryState(supportRegistryState);
+    }
     
     public void addTicket(final Ticket ticket) {
-        Element element = new Element(ticket.getId(), ticket);
+        final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
+            log.debug("Adding service ticket {} to the cache", ticket.getId(), this.serviceTicketsCache.getName());
             this.serviceTicketsCache.put(element);
         } else if (ticket instanceof TicketGrantingTicket) {
+            log.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(), this.ticketGrantingTicketsCache.getName());
             this.ticketGrantingTicketsCache.put(element);
         } else {
             throw new IllegalArgumentException("Invalid ticket type " + ticket);
@@ -65,7 +86,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
     
     public boolean deleteTicket(final String ticketId) {
-        if (ticketId == null) {
+        if (StringUtils.isBlank(ticketId)) {
             return false;
         }
         return this.serviceTicketsCache.remove(ticketId) || this.ticketGrantingTicketsCache.remove(ticketId);
@@ -87,11 +108,11 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         throw new UnsupportedOperationException("GetTickets not supported.");
     }
     
-    public void setServiceTicketsCache(Cache serviceTicketsCache) {
+    public void setServiceTicketsCache(final Cache serviceTicketsCache) {
         this.serviceTicketsCache = serviceTicketsCache;
     }
     
-    public void setTicketGrantingTicketsCache(Cache ticketGrantingTicketsCache) {
+    public void setTicketGrantingTicketsCache(final Cache ticketGrantingTicketsCache) {
         this.ticketGrantingTicketsCache = ticketGrantingTicketsCache;
     }
     
@@ -102,7 +123,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
     
     @Override
-    protected void updateTicket(Ticket ticket) {
+    protected void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
     
@@ -111,25 +132,56 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     	return false;
     }
 
+    /** 
+     * Flag to indicate whether this registry instance should participate in reporting its state with default value set to <code>true</code>.
+     * Based on the <a href="http://ehcache.org/apidocs/net/sf/ehcache/Ehcache.html#getKeysWithExpiryCheck()">EhCache documentation</a>, 
+     * determining the number of service tickets and the total session count from the cache can be considered an expensive operation with the 
+     * time taken as O(n), where n is the number of elements in the cache. 
+     * 
+     * <p>Therefore, the flag provides a level of flexibility such that depending on the cache and environment settings, reporting statistics
+     * can be set to false and disabled.</p>
+     *  
+     * @see #sessionCount()
+     * @see #serviceTicketCount()
+     * @see SessionMonitor
+     */
+    public void setSupportRegistryState(final boolean supportRegistryState) {
+      this.supportRegistryState = supportRegistryState;
+    }
+    
     public void afterPropertiesSet() throws Exception {
       if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
-        String message = "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties. serviceTicketsCache=" + this.serviceTicketsCache + ", ticketGrantingTicketsCache=" + this.ticketGrantingTicketsCache;
-        log.error(message);
-        throw new BeanInstantiationException(this.getClass(), message);
+        throw new BeanInstantiationException(this.getClass(), "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties.");
       }
-      if(log.isDebugEnabled()) {
+      
+      if (this.log.isDebugEnabled()) {
         CacheConfiguration config = this.serviceTicketsCache.getCacheConfiguration();
-        log.debug("serviceTicketsCache.maxElementsInMemory=" + config.getMaxElementsInMemory());
-        log.debug("serviceTicketsCache.maxElementsOnDisk=" + config.getMaxElementsOnDisk());
-        log.debug("serviceTicketsCache.overflowToDisk=" + config.isOverflowToDisk());
-        log.debug("serviceTicketsCache.timeToLive=" + config.getTimeToLiveSeconds());
-        log.debug("serviceTicketsCache.timeToIdle=" + config.getTimeToIdleSeconds());
+        log.debug("serviceTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+        log.debug("serviceTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+        log.debug("serviceTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        log.debug("serviceTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+        log.debug("serviceTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
+  
         config = this.ticketGrantingTicketsCache.getCacheConfiguration();
-        log.debug("ticketGrantingTicketsCache.maxElementsInMemory=" + config.getMaxElementsInMemory());
-        log.debug("ticketGrantingTicketsCache.maxElementsOnDisk=" + config.getMaxElementsOnDisk());
-        log.debug("ticketGrantingTicketsCache.overflowToDisk=" + config.isOverflowToDisk());
-        log.debug("ticketGrantingTicketsCache.timeToLive=" + config.getTimeToLiveSeconds());
-        log.debug("ticketGrantingTicketsCache.timeToIdle=" + config.getTimeToIdleSeconds());
-      }
+        log.debug("ticketGrantingTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+        log.debug("ticketGrantingTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+        log.debug("ticketGrantingTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+        log.debug("ticketGrantingTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
+      } 
+    }
+
+    /**
+     * @see Cache#getKeysNoDuplicateCheck()
+     */
+    public int sessionCount() {
+        return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() , super.sessionCount());
+    }
+
+    /**
+     * @see Cache#getKeysNoDuplicateCheck()
+     */
+    public int serviceTicketCount() {
+        return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck().size() , super.serviceTicketCount());
     }
 }
