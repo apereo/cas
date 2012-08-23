@@ -99,7 +99,7 @@ public final class HttpClient implements Serializable, DisposableBean {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      */
     public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message, this.readTimeout, this.connectionTimeout));
+        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message, this.readTimeout, this.connectionTimeout, this.followRedirects));
 
         if (async) {
             return true;
@@ -206,11 +206,14 @@ public final class HttpClient implements Serializable, DisposableBean {
 
         private int connectionTimeout;
 
-        public MessageSender(final String url, final String message, final int readTimeout, final int connectionTimeout) {
+        private boolean followRedirects;
+
+        public MessageSender(final String url, final String message, final int readTimeout, final int connectionTimeout, final boolean followRedirects) {
             this.url = url;
             this.message = message;
             this.readTimeout = readTimeout;
             this.connectionTimeout = connectionTimeout;
+            this.followRedirects = followRedirects;
         }
 
         public Boolean call() throws Exception {
@@ -227,8 +230,9 @@ public final class HttpClient implements Serializable, DisposableBean {
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setRequestMethod("POST");
-                connection.setReadTimeout(readTimeout);
-                connection.setConnectTimeout(connectionTimeout);
+                connection.setReadTimeout(this.readTimeout);
+                connection.setConnectTimeout(this.connectionTimeout);
+                connection.setInstanceFollowRedirects(this.followRedirects);
                 connection.setRequestProperty("Content-Length", Integer.toString(output.getBytes().length));
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 final DataOutputStream printout = new DataOutputStream(connection.getOutputStream());
