@@ -72,6 +72,9 @@
           p:readTimeout="5000"
           p:connectionTimeout="5000"/>
 
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.HttpClient" parent="httpClient"
+          p:followRedirects="false" />
+
     <bean id="persistentIdGenerator"
           class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
           p:salt="casrocks"/>
