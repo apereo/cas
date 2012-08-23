@@ -41,11 +41,6 @@
     p:url="ldap://ldap1.rutgers.edu"
     p:userDn=""
     p:password="">
-    <property name="baseEnvironmentProperties">
-      <map>
-        <entry key="java.naming.security.protocol" value="ssl" />
-      </map>
-    </property>
   </bean>
   
   <bean id="poolingContextSoure"
