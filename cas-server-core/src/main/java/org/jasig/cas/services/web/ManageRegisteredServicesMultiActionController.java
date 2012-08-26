@@ -29,7 +29,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.web.servlet.ModelAndView;
@@ -129,36 +128,28 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
     * @throws IllegalArgumentException If either of the <code>id</code> or <code>evaluationOrder</code> are invalid
     *         or if the service cannot be located for that id by the active implementation of the {@link ServicesManager}.  
     */
-     public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
-  
-        final ModelAndView mv = new ModelAndView("jsonView");
-
-        try {
-            final String idAsString = request.getParameter("id");
-            if (!GenericValidator.isLong(idAsString)) {
-                throw new IllegalArgumentException("Invalid service id: " + idAsString);
-            }
-            
-            final String evalOrderAsString = request.getParameter("evaluationOrder");
-            if (!GenericValidator.isLong(evalOrderAsString)) {
-                throw new IllegalArgumentException("Invalid service evaluation order " + evalOrderAsString);
-            }
-            
-            final long id = NumberUtils.toLong(idAsString);
-            final int evaluationOrder = NumberUtils.toInt(evalOrderAsString);
-
-            final AbstractRegisteredService svc = (AbstractRegisteredService) this.servicesManager.findServiceBy(id);
-            if (svc != null) {
-                svc.setEvaluationOrder(evaluationOrder);
-                this.servicesManager.save(svc);
-            } else
-                throw new IllegalArgumentException("Service id " + id + " cannot be found.");
-        } catch (Exception e) {
-            mv.addObject("error", e.getMessage());
-            logger.error(e.getMessage(), e);
-        } finally {
-            mv.addObject("successful", !mv.getModelMap().containsKey("error"));
+    public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
+        final String idAsString = request.getParameter("id");
+        if (!GenericValidator.isLong(idAsString)) {
+            throw new IllegalArgumentException("Invalid service id: " + idAsString);
         }
-        return mv;
-     }
+        
+        final String evalOrderAsString = request.getParameter("evaluationOrder");
+        if (!GenericValidator.isLong(evalOrderAsString)) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new IllegalArgumentException("Invalid service evaluation order " + evalOrderAsString);
+        }
+        
+        final long id = NumberUtils.toLong(idAsString);
+        final int evaluationOrder = NumberUtils.toInt(evalOrderAsString);
+
+        final RegisteredService svc = this.servicesManager.findServiceBy(id);
+        if (svc == null)
+            throw new IllegalArgumentException("Service id " + id + " cannot be found.");
+        
+        svc.setEvaluationOrder(evaluationOrder);
+        this.servicesManager.save(svc);
+        
+        return new ModelAndView("jsonView");
+    }
 }

@@ -20,6 +20,7 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -28,7 +29,6 @@ import org.hibernate.annotations.IndexColumn;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.DiscriminatorColumn;
@@ -298,11 +298,17 @@ public abstract class AbstractRegisteredService
     }
 
     /**
-     * @see RegisteredServiceComparator
+     * Compares this instance with the <code>other</code> registered service based on 
+     * evaluation order, name and internal id. The name comparison is case insensitive.
+     * 
+     * @see #getEvaluationOrder()
      */
     public int compareTo(final RegisteredService other) {
-        final Comparator<RegisteredService> comparator = RegisteredServiceComparator.getInstance();
-        return comparator.compare(this, other);
+        return new CompareToBuilder()
+                  .append(this.getEvaluationOrder(), other.getEvaluationOrder())
+                  .append(this.getName().toLowerCase(), other.getName().toLowerCase())
+                  .append(this.getId(), other.getId())
+                  .toComparison();
     }
 
     public String toString() {

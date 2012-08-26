@@ -1,7 +1,8 @@
-var COLUMN_SERVICE_ID = "td1";
-var COLUMN_SERVICE_EVAL_ORDER = "td8";
-
 function updateRegisteredServiceOrder(movedService, pos) {
+	
+	var COLUMN_SERVICE_ID = "td1";
+	var COLUMN_SERVICE_EVAL_ORDER = "td8";
+	
 	var rowId = $(movedService).attr('id');	
 	
 	var serviceId = $('#' + rowId + ' td.' + COLUMN_SERVICE_ID).attr('id');
@@ -22,24 +23,24 @@ function updateRegisteredServiceOrder(movedService, pos) {
 			break;
 	}
 	
-  var result = true;
+	var result = false;
 	$.ajax({
-		type: "GET",
+		type: "POST",
 		async: false,
-		url: "updateRegisteredServiceEvaluationOrder.html?id=" + serviceId + "&evaluationOrder=" + evalOrder,
-		success: function(data){
-			if (!data.successful) {
+		url: "updateRegisteredServiceEvaluationOrder.html",
+		data: { id: serviceId, evaluationOrder: evalOrder },
+		success: 
+			function(data, textStatus, jqXHR) {
+				$('#' + rowId + ' td.ac.' + COLUMN_SERVICE_EVAL_ORDER).html(evalOrder);
+				result = true;
+			},
+		error: 
+			function(jqXHR, textStatus, errorThrown) {
 				$("#errorsDiv").show();
 				console.log(data.error);
-				
-				//Returning false prevents the move() operation.
-				result = false;
-				
-			} else
-				$('#' + rowId + ' td.ac.' + COLUMN_SERVICE_EVAL_ORDER).html(evalOrder);
-		}
+			}
 	});
-  return result;	
+	return result;
 }
 
 $(document).ready(function () {
