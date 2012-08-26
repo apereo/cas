@@ -127,6 +127,12 @@ public interface RegisteredService extends Cloneable, Serializable {
     int getEvaluationOrder();
 
     /**
+     * Sets the relative evaluation order of this service when determining
+     * matches.
+     */
+    void setEvaluationOrder(final int evaluationOrder);
+    
+    /**
      * Get the name of the attribute this service prefers to consume as username.
      * 
      * @return Either of the following values:

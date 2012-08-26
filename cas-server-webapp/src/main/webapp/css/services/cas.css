@@ -471,3 +471,11 @@ button {font-size:1em;}
 	.actions {margin:1.5em 0;}
 	#allowedAttributes {height:150px;}			
 }
+
+/* Container that holds the error messages on the services manage page
+ * This will be hidden by default and through JS calls, will be displayed
+ * when appropriate. 
+ */
+#errorsDiv {
+	display: none;
+}
