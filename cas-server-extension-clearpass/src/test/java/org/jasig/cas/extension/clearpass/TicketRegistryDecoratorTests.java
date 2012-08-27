@@ -49,8 +49,9 @@ public class TicketRegistryDecoratorTests {
     final Cache serviceTicketsCache = new Cache("serviceTicketsCache", 200, false, false, 100, 100);
     final Cache ticketGrantingTicketCache = new Cache("ticketGrantingTicketCache", 200, false, false, 100, 100);
 
-    CacheManager.getInstance().addCache(serviceTicketsCache);
-    CacheManager.getInstance().addCache(ticketGrantingTicketCache);
+    final CacheManager manager = new CacheManager(this.getClass().getClassLoader().getResourceAsStream("ehcacheClearPass.xml"));     
+    manager.addCache(serviceTicketsCache);
+    manager.addCache(ticketGrantingTicketCache);
     
     final Map<String, String> map = new HashMap<String, String>();
 
@@ -60,6 +61,9 @@ public class TicketRegistryDecoratorTests {
     
     assertEquals(decorator.serviceTicketCount(), 0);
     assertEquals(decorator.sessionCount(), 0);
+    
+    manager.removalAll();
+    manager.shutdown();
     
   }
 }
