@@ -65,8 +65,8 @@
 
     <bean id="periodicServiceRegistryReloaderTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
           p:jobDetail-ref="serviceRegistryReloaderJobDetail"
-          p:startDelay="120000"
-          p:repeatInterval="120000"/>
+          p:startDelay="${svc.registry.quartz.reloader.startDelay:120000}"
+          p:repeatInterval="${svc.registry.quartz.reloader.repeatInterval:120000}"/>
 
     <bean id="httpClient" class="org.jasig.cas.util.HttpClient"
           p:readTimeout="5000"
