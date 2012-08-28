@@ -1,0 +1,14 @@
+#cas {
+	#footer {
+		color: #999;
+		margin: 20px 0;
+	}
+}
+
+@media only screen and (max-width: 960px) {
+	#cas {
+		#footer {
+			padding-left: 10px;
+		}
+	}
+}

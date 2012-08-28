@@ -1,0 +1,29 @@
+#cas {
+	#header {
+		padding-top: 10px;
+		#company-name {
+			width: 118px;
+			height: 31px;
+			text-indent: -999em;
+			background: url(../images/ja-sig-logo.gif) no-repeat;
+			margin: 0 0 10px 10px;
+		}
+		#app-name {
+			background: #210F7A;
+			color: white;
+			padding: 1.4em 1.4em;
+			font-size: 2em;
+			font-weight: normal;
+		}
+	}
+}
+
+@media only screen and (max-width: 799px) {
+	#cas {
+		#header {
+			#app-name {
+				font-size: 1em;
+			}
+		}
+	}
+}
