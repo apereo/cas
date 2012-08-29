@@ -132,8 +132,7 @@ public final class SpnegoCredentialsAction extends
         this.messageBeginPrefix = constructMessagePrefix();
     }
 
-    public void setSend401OnAuthenticationFailure(boolean send401OnAuthenticationFailure) {
-
+    public void setSend401OnAuthenticationFailure(final boolean send401OnAuthenticationFailure) {
         this.send401OnAuthenticationFailure = send401OnAuthenticationFailure;
     }
 
