@@ -299,7 +299,7 @@ public abstract class AbstractRegisteredService
 
     /**
      * Compares this instance with the <code>other</code> registered service based on 
-     * evaluation order, name and internal id. The name comparison is case insensitive.
+     * evaluation order, name. The name comparison is case insensitive.
      * 
      * @see #getEvaluationOrder()
      */
@@ -307,7 +307,6 @@ public abstract class AbstractRegisteredService
         return new CompareToBuilder()
                   .append(this.getEvaluationOrder(), other.getEvaluationOrder())
                   .append(this.getName().toLowerCase(), other.getName().toLowerCase())
-                  .append(this.getId(), other.getId())
                   .toComparison();
     }
 
