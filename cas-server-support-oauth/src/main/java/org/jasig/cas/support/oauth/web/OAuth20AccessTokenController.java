@@ -28,8 +28,8 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.jasig.cas.ticket.ServiceTicketImpl;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +63,13 @@ public final class OAuth20AccessTokenController extends AbstractController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
-        String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
+        final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
         logger.debug("redirect_uri : {}", redirectUri);
-        String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         logger.debug("clientId : {}", clientId);
-        String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
+        final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
         logger.debug("clientSecret : {}", clientSecret);
-        String code = request.getParameter(OAuthConstants.CODE);
+        final String code = request.getParameter(OAuthConstants.CODE);
         logger.debug("code : {}", clientSecret);
         
         // clientId is required
@@ -94,9 +94,9 @@ public final class OAuth20AccessTokenController extends AbstractController {
         }
         
         // name of the CAS service
-        Collection<RegisteredService> services = servicesManager.getAllServices();
+        final Collection<RegisteredService> services = servicesManager.getAllServices();
         RegisteredService service = null;
-        for (RegisteredService aService : services) {
+        for (final RegisteredService aService : services) {
             if (StringUtils.equals(aService.getName(), clientId)) {
                 service = aService;
                 break;
@@ -107,7 +107,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         
-        String serviceId = service.getServiceId();
+        final String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
             logger.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
@@ -115,25 +115,24 @@ public final class OAuth20AccessTokenController extends AbstractController {
         }
         
         // description of the service should be the secret
-        String serviceDescription = service.getDescription();
+        final String serviceDescription = service.getDescription();
         if (!StringUtils.equals(serviceDescription, clientSecret)) {
             logger.error("Wrong client secret : {} for service description : {}", clientSecret, serviceDescription);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         
-        ServiceTicketImpl serviceTicket = (ServiceTicketImpl) ticketRegistry.getTicket(code);
+        final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
             logger.error("Code expired : {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, 400);
         }
-        TicketGrantingTicketImpl ticketGrantingTicketImpl = (TicketGrantingTicketImpl) serviceTicket
-            .getGrantingTicket();
+        final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
         
-        int expires = (int) (timeout - ((System.currentTimeMillis() - ticketGrantingTicketImpl.getLastTimeUsed()) / 1000));
-        String text = "access_token=" + ticketGrantingTicketImpl.getId() + "&expires=" + expires;
+        final int expires = (int) (timeout - ((System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000));
+        final String text = "access_token=" + ticketGrantingTicket.getId() + "&expires=" + expires;
         logger.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, 200);
     }
