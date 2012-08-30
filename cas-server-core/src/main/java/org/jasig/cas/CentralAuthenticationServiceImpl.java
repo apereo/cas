@@ -454,6 +454,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
 
         }
+        
+        log.debug("Principal id to return for service [{}] is [{}]. The default principal id is [{}].", 
+                  new Object[] {registeredService.getName(), principal.getId(), principalId});
         return principalId;
     }
 
