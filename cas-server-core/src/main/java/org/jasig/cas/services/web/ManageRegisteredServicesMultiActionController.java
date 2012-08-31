@@ -85,7 +85,7 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
         final long idAsLong = Long.parseLong(id);
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-            "/services/manage.html", true), "status", "deleted");
+            "manage.html", true), "status", "deleted");
 
 
         final RegisteredService r = this.servicesManager.delete(idAsLong);
