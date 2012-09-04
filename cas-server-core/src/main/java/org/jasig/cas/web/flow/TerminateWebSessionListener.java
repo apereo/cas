@@ -51,7 +51,7 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
         final HttpSession webSession = request.getSession(false);
         
         if (webSession != null) {
-            logger.info("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
+            logger.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
             // set the web session to die in timeToDieInSeconds
             webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
         }

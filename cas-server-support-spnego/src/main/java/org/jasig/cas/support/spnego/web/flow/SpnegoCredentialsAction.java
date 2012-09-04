@@ -49,6 +49,14 @@ public final class SpnegoCredentialsAction extends
     private boolean ntlm = false;
 
     private String messageBeginPrefix = constructMessagePrefix();
+    
+    /**
+     * Behavior in case of SPNEGO authentication failure :<br />
+     * <ul><li>True : if spnego is the last authentication method with no fallback.</li>
+     * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
+     * </ul>
+     */
+    private boolean send401OnAuthenticationFailure = true;
 
     protected Credentials constructCredentialsFromRequest(
         final RequestContext context) {
@@ -113,7 +121,7 @@ public final class SpnegoCredentialsAction extends
             logger.debug("Unable to obtain the output token required.");
         }
 
-        if (spnegoCredentials.getPrincipal() == null) {
+        if ((spnegoCredentials.getPrincipal() == null) && send401OnAuthenticationFailure) {
             logger.debug("Setting HTTP Status to 401");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
@@ -123,4 +131,9 @@ public final class SpnegoCredentialsAction extends
         this.ntlm = ntlm;
         this.messageBeginPrefix = constructMessagePrefix();
     }
+
+    public void setSend401OnAuthenticationFailure(final boolean send401OnAuthenticationFailure) {
+        this.send401OnAuthenticationFailure = send401OnAuthenticationFailure;
+    }
+
 }
