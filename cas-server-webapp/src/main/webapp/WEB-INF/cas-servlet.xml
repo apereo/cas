@@ -146,8 +146,13 @@
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
                                  expression-parser="expressionParser"/>
 
+<<<<<<< Updated upstream
   <!-- disable until we move out services management webapp in 3.6.0
   <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" /-->
+=======
+  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
+      p:serviceManagerUrl="${cas.securityContext.serviceProperties.service}" />
+>>>>>>> Stashed changes
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser"/>
 
