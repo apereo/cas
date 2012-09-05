@@ -146,7 +146,8 @@
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
                                  expression-parser="expressionParser"/>
 
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
+  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
+      p:serviceManagerUrl="${cas.securityContext.serviceProperties.service}" />
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser"/>
 
