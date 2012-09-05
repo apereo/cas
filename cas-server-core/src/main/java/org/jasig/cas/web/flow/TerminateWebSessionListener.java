@@ -60,7 +60,7 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
         // Guard against exceptions that arise from attempts to access terminated flow sessions
         try {
             service = WebUtils.getService(context);
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             logger.debug("Error getting service from flow state.", e);
             return;
         }
