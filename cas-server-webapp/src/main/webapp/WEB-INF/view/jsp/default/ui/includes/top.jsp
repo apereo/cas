@@ -29,20 +29,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 	<head>
 	    <title>CAS &#8211; Central Authentication Service</title>
-        <c:choose>
-           <c:when test="${not empty requestScope['isMobile'] and not empty mobileCss}">
-                <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
-                <meta name="apple-mobile-web-app-capable" content="yes" />
-                <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-                <link type="text/css" rel="stylesheet" media="screen" href="<c:url value="/css/fss-framework-1.1.2.css" />" />
-                <link type="text/css" rel="stylesheet" href="<c:url value="/css/fss-mobile-${requestScope['browserType']}-layout.css" />" />
-                <link type="text/css" rel="stylesheet" href="${mobileCss}" />
-           </c:when>
-           <c:otherwise>
-                <spring:theme code="standard.custom.css.file" var="customCssFile" />
-                <link type="text/css" rel="stylesheet" href="<c:url value="${customCssFile}" />" />
-           </c:otherwise>
-        </c:choose>
+        <c:if test="${not empty requestScope['isMobile'] and not empty mobileCss}">
+             <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+             <meta name="apple-mobile-web-app-capable" content="yes" />
+             <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+             <!--<link type="text/css" rel="stylesheet" media="screen" href="<c:url value="/css/fss-framework-1.1.2.css" />" />
+             <link type="text/css" rel="stylesheet" href="<c:url value="/css/fss-mobile-${requestScope['browserType']}-layout.css" />" />
+             <link type="text/css" rel="stylesheet" href="${mobileCss}" />-->
+        </c:if>
+		<spring:theme code="standard.custom.css.file" var="customCssFile" />
+        <link type="text/css" rel="stylesheet" href="<c:url value="${customCssFile}" />" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
 	</head>
@@ -50,6 +46,7 @@
     <div class="flc-screenNavigator-view-container">
         <div class="fl-screenNavigator-view">
             <div id="header" class="flc-screenNavigator-navbar fl-navbar fl-table">
+				<h1 id="company-name">Jasig</h1>
                 <h1 id="app-name" class="fl-table-cell">Central Authentication Service (CAS)</h1>
             </div>		
             <div id="content" class="fl-screenNavigator-scroll-container">
