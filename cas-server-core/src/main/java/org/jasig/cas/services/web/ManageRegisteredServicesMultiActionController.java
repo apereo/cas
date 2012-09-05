@@ -136,7 +136,6 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
         
         final String evalOrderAsString = request.getParameter("evaluationOrder");
         if (!GenericValidator.isLong(evalOrderAsString)) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new IllegalArgumentException("Invalid service evaluation order " + evalOrderAsString);
         }
         
