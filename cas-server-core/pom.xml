@@ -64,7 +64,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.service</groupId>
+            <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-impl</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -131,7 +131,6 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <version>${spring.security.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -211,7 +210,6 @@
         <dependency>
             <groupId>commons-jexl</groupId>
             <artifactId>commons-jexl</artifactId>
-            <version>${commons.jexl.version}</version>
             <scope>runtime</scope>
             <type>jar</type>
         </dependency>

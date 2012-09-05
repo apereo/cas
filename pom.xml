@@ -490,7 +490,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       </dependency>
 
       <dependency>
-        <groupId>org.jasig.service</groupId>
+        <groupId>org.jasig.service.persondir</groupId>
         <artifactId>person-directory-impl</artifactId>
         <version>${person.directory.version}</version>
         <exclusions>
@@ -812,7 +812,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
     <hibernate.core.version>4.1.0.Final</hibernate.core.version>
     <slf4j.version>1.5.8</slf4j.version>
-    <person.directory.version>1.5.0-RC6</person.directory.version>
+    <person.directory.version>1.5.1</person.directory.version>
     <servlet.api.version>2.5</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
     <commons.codec.version>1.4</commons.codec.version>
