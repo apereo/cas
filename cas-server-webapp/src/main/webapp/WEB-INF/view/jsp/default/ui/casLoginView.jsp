@@ -74,6 +74,7 @@
             </form:form>
           </div>
             <div id="sidebar">
+				<div class="sidebar-content">
                 <p class="fl-panel fl-note fl-bevel-white fl-font-size-80"><spring:message code="screen.welcome.security" /></p>
                 <div id="list-languages" class="fl-panel">
                 <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
@@ -135,5 +136,6 @@
                      </c:otherwise>
                    </c:choose>
                 </div>
+				</div>
             </div>
 <jsp:directive.include file="includes/bottom.jsp" />
