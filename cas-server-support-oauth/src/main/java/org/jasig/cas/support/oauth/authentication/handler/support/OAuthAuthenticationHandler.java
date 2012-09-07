@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.support.oauth.authentication.handler.support;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -40,6 +42,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
     
+    @NotNull
     private OAuthConfiguration configuration;
     
     @Override
