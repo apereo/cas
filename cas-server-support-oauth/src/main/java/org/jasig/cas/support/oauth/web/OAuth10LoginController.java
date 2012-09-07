@@ -22,9 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.jasig.cas.support.oauth.provider.OAuthProviders;
 import org.scribe.up.provider.OAuthProvider;
 import org.scribe.up.session.HttpUserSession;
 import org.springframework.web.servlet.ModelAndView;
@@ -40,24 +40,24 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class OAuth10LoginController extends AbstractController {
     
     @NotNull
-    private OAuthProviders providers;
+    private OAuthConfiguration configuration;
     
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
         // get provider type
-        String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
+        final String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
         // get provider
-        OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
+        final OAuthProvider provider = OAuthUtils.getProviderByType(configuration.getProviders(), providerType);
         
         // authorization url
-        String authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(request));
+        final String authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(request));
         
         return OAuthUtils.redirectTo(authorizationUrl);
     }
     
-    public void setProviders(final OAuthProviders providers) {
-        this.providers = providers;
+    public void setConfiguration(final OAuthConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

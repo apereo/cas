@@ -26,10 +26,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
-import org.jasig.cas.support.oauth.provider.OAuthProviders;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.scribe.up.credential.OAuthCredential;
@@ -58,7 +58,7 @@ public final class OAuthAction extends AbstractAction {
     private static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
     
     @NotNull
-    private OAuthProviders providers;
+    private OAuthConfiguration configuration;
     
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
@@ -77,7 +77,7 @@ public final class OAuthAction extends AbstractAction {
         // it's an authentication
         if (StringUtils.isNotBlank(providerType)) {
             // get provider
-            final OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
+            final OAuthProvider provider = OAuthUtils.getProviderByType(configuration.getProviders(), providerType);
             logger.debug("provider : {}", provider);
             
             // get credential
@@ -116,7 +116,7 @@ public final class OAuthAction extends AbstractAction {
             saveRequestParameter(request, session, OAuthConstants.METHOD);
             
             // for all providers, generate authorization urls
-            for (final OAuthProvider provider : providers.getProviders()) {
+            for (final OAuthProvider provider : configuration.getProviders()) {
                 final String key = provider.getType() + "Url";
                 String authorizationUrl = null;
                 // for OAuth 1.0 protocol, delay request_token request by pointing to an intermediate url
@@ -168,13 +168,12 @@ public final class OAuthAction extends AbstractAction {
         this.oauth10loginUrl = oauth10loginUrl;
     }
     
-    public void setProviders(final OAuthProviders providers) {
-        this.providers = providers;
-        // for all providers
-        for (final OAuthProvider provider : providers.getProviders()) {
+    public void setConfiguration(final OAuthConfiguration configuration) {
+        this.configuration = configuration;
+        for (final OAuthProvider provider : configuration.getProviders()) {
             final BaseOAuthProvider baseProvider = (BaseOAuthProvider) provider;
-            // calculate new callback url by adding the OAuth provider type
-            baseProvider.setCallbackUrl(OAuthUtils.addParameter(baseProvider.getCallbackUrl(),
+            // calculate new callback url by adding the OAuth provider type to the login url
+            baseProvider.setCallbackUrl(OAuthUtils.addParameter(configuration.getLoginUrl(),
                                                                 OAuthConstants.OAUTH_PROVIDER, provider.getType()));
         }
     }
