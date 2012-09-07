@@ -16,75 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.extension.clearpass;
+package org.jasig.cas.maps;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.io.IOException;
 import java.util.Map;
-import java.net.Socket;
-import org.jasig.cas.extension.clearpass.MemcachedBackedMap;
+import org.jasig.cas.maps.MemcachedBackedMap;
+import org.jasig.cas.ticket.registry.support.MemcachedBaseTest;
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author Eric Domazlicky
- * @version $Revision$ $Date$
- * @since 1.0.6
+ * @version $Revision$ $Date$ 
  */
-public class MemcachedBackedMapTests {
+public class MemcachedBackedMapTests extends MemcachedBaseTest {
 
 	private MemcachedBackedMap memcachemap;
 	private MemcachedClient client;
-	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Before
-	public void setUp() throws Exception {
-		
-		// Memcached is a required external test fixture.
-        // Abort tests if there is no memcached server available on localhost:11211.
-        final boolean environmentOk = isMemcachedListening();
-        if (!environmentOk) {
-            logger.warn("Aborting test since no memcached server is available on localhost.");
-        }
-        Assume.assumeTrue(environmentOk);
+	public void setUp() throws Exception {		
+		super.setUp();
 	
-		try {		
-			String hostnames[] = {"localhost:11211"};
-			this.client = new MemcachedClient(AddrUtil.getAddresses(Arrays.asList(hostnames)));
+		try {					
+			this.client = new MemcachedClient(AddrUtil.getAddresses(MemcachedServers));
 			this.memcachemap = new MemcachedBackedMap(client,7200,"memcachedtests_");			
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-	
-	private boolean isMemcachedListening() {
-        Socket socket = null;
-        try {
-            socket = new Socket("127.0.0.1", 11211);
-            return true;
-        } catch (Exception e) {
-            return false;
-        } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    // Ignore errors on close
-                }
-            }
-        }
-    }
 	
 	@Test
 	public void addItem() {

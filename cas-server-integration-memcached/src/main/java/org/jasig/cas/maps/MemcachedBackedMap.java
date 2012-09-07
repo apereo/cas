@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.extension.clearpass;
+package org.jasig.cas.maps;
 
 import java.io.IOException;
 
@@ -49,41 +49,42 @@ public class MemcachedBackedMap   implements Map<String,String> {
 	private final int mapTimeOut;
 	private final String mapPrefix;
 	private final static String nullPlaceholder = "#null#";
+	private final static String MemcachedNotSupported = "This operation is not supported on an Memcache-backed Map";
 	
 	 /** Memcached client */
     @NotNull
     private final MemcachedClient client;
 	
 	public MemcachedBackedMap(final MemcachedClient client, final int mapTimeOut,final String mapPrefix) {		
-			this.mapTimeOut = mapTimeOut;
-			this.mapPrefix = mapPrefix;
-            this.client = client;
-			cacheMap = new CacheMap(client,mapTimeOut,mapPrefix);       
+		this.mapTimeOut = mapTimeOut;
+		this.mapPrefix = mapPrefix;
+        this.client = client;
+		cacheMap = new CacheMap(client,mapTimeOut,mapPrefix);       
 	}
 	
-	private String replaceIfNull(String value) {
+	private String replaceIfNull(final String value) {
 		if(value==null)
-			return nullPlaceholder;
-		else
-			return value;
+			return nullPlaceholder;		
+			
+		return value;
 	}
 	
-	private String checkIfNull(String value) {
+	private String checkIfNull(final String value) {
 		if(value==null)
 			return null;
 		else if(value.equals(nullPlaceholder))
 			return null;
-		else
-			return value;
+			
+		return value;
 	}
 	
 	
 	public int size() {
-         throw new UnsupportedOperationException("This operation is not supported on an Memcache-backed Map");
+        throw new UnsupportedOperationException(MemcachedNotSupported);
     }
 
     public boolean isEmpty() {
-         throw new UnsupportedOperationException("This operation is not supported on an Memcache-backed Map");
+        throw new UnsupportedOperationException(MemcachedNotSupported);
     }
 
     public boolean containsKey(final Object key) {
@@ -91,7 +92,7 @@ public class MemcachedBackedMap   implements Map<String,String> {
     }
 
     public boolean containsValue(final Object value) {
-        throw new UnsupportedOperationException("This operation is not supported on an Memcache-backed Map");
+        throw new UnsupportedOperationException(MemcachedNotSupported);
     }
 	
 	public void putAll(final Map<? extends String, ? extends String> m) {
@@ -101,7 +102,7 @@ public class MemcachedBackedMap   implements Map<String,String> {
     }
 
     public String get(final Object key) {
-       return checkIfNull((String)this.cacheMap.get(replaceIfNull((String)key)));
+        return checkIfNull((String)this.cacheMap.get(replaceIfNull((String)key)));
     }
 
     public String put(final String key, final String value) {
@@ -110,11 +111,11 @@ public class MemcachedBackedMap   implements Map<String,String> {
     }
 	
 	public void clear() {
-		throw new UnsupportedOperationException("This operation is not supported on an Memcache-backed Map");
+		throw new UnsupportedOperationException(MemcachedNotSupported);
 	}
 	
 	public Set<String> keySet() {
-		throw new UnsupportedOperationException("This operation is not supported on an Memcache-backed Map");
+		throw new UnsupportedOperationException(MemcachedNotSupported);
 	}
 
     public String remove(final Object key) {        
@@ -124,11 +125,11 @@ public class MemcachedBackedMap   implements Map<String,String> {
     }
 	
 	public Collection<String> values() {
-	   throw new UnsupportedOperationException("This operation is not supported on an Memcache-backed Map");
+	    throw new UnsupportedOperationException(MemcachedNotSupported);
 	}
 	
 	 public Set<Entry<String, String>> entrySet() {
-        throw new UnsupportedOperationException("This operation is not supported on an Memcache-backed Map");
+        throw new UnsupportedOperationException(MemcachedNotSupported);
     }
 
 

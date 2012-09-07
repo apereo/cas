@@ -25,8 +25,14 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 
+  <!-- Your currently listening memcached server(s) (comma-seperated). If configured servers are not listening on specificed port than
+		the tests will be skipped automatically -->
+  <bean id="MemcachedServers" class="java.lang.String">
+	<constructor-arg value="localhost:11211" />
+  </bean>
+	   
   <bean id="testCase1" class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry">
-    <constructor-arg index="0" value="localhost:11211" />
+    <constructor-arg index="0" ref="MemcachedServers" />
     <constructor-arg index="1" value="36000" />
     <constructor-arg index="2" value="2" />
   </bean>
@@ -34,8 +40,7 @@
 
   <bean id="testCase2" class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry">
     <constructor-arg index="0">
-      <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"
-            p:servers="localhost:11211"
+      <bean class="net.spy.memcached.spring.MemcachedClientFactoryBean"            
             p:protocol="BINARY"
             p:locatorType="ARRAY_MOD"
             p:failureMode="Redistribute"
@@ -43,6 +48,7 @@
         <property name="hashAlg">
           <util:constant static-field="net.spy.memcached.DefaultHashAlgorithm.FNV1A_64_HASH" />
         </property>
+		<property name="servers" ref="MemcachedServers" />
       </bean>
     </constructor-arg>
     <constructor-arg index="1" value="36000" />
