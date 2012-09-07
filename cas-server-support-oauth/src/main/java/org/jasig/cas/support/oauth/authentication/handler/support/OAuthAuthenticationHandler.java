@@ -22,9 +22,9 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
-import org.jasig.cas.support.oauth.provider.OAuthProviders;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
 import org.slf4j.Logger;
@@ -40,26 +40,27 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     
     private static final Logger logger = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
     
-    private OAuthProviders providers;
+    private OAuthConfiguration configuration;
     
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
     }
     
     @Override
     protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
-        OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
+        final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
         logger.debug("credential : {}", oauthCredentials);
         
-        String providerType = oauthCredentials.getCredential().getProviderType();
+        final String providerType = oauthCredentials.getCredential().getProviderType();
         logger.debug("providerType : {}", providerType);
         
         // get provider
-        OAuthProvider provider = OAuthUtils.getProviderByType(providers, providerType);
+        final OAuthProvider provider = OAuthUtils.getProviderByType(configuration.getProviders(), providerType);
         logger.debug("provider : {}", provider);
         
         // get user profile
-        UserProfile userProfile = provider.getUserProfile(oauthCredentials.getCredential());
+        final UserProfile userProfile = provider.getUserProfile(oauthCredentials.getCredential());
         logger.debug("userProfile : {}", userProfile);
         
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
@@ -70,7 +71,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         }
     }
     
-    public void setProviders(final OAuthProviders providers) {
-        this.providers = providers;
+    public void setConfiguration(final OAuthConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
