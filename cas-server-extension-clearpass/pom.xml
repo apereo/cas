@@ -107,6 +107,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	
+	
 
 
 	<dependencies>
@@ -116,7 +118,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<version>${ehcache.version}</version>
 			<scope>compile</scope>
 			<type>jar</type>
-		</dependency>
+		</dependency>	
 
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
@@ -129,7 +131,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<artifactId>cas-server-integration-ehcache</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>		
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
