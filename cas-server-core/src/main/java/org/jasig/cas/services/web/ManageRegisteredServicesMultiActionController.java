@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.validator.GenericValidator;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.springframework.web.servlet.ModelAndView;
@@ -129,18 +128,22 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
     *         or if the service cannot be located for that id by the active implementation of the {@link ServicesManager}.  
     */
     public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
+        long id = 0;
+        int evaluationOrder = 0 ;
+        
         final String idAsString = request.getParameter("id");
-        if (!GenericValidator.isLong(idAsString)) {
+        try {
+            id = Long.parseLong(idAsString);
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid service id: " + idAsString);
         }
         
         final String evalOrderAsString = request.getParameter("evaluationOrder");
-        if (!GenericValidator.isLong(evalOrderAsString)) {
+        try {
+            evaluationOrder = Integer.parseInt(evalOrderAsString);
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid service evaluation order " + evalOrderAsString);
         }
-        
-        final long id = NumberUtils.toLong(idAsString);
-        final int evaluationOrder = NumberUtils.toInt(evalOrderAsString);
 
         final RegisteredService svc = this.servicesManager.findServiceBy(id);
         if (svc == null)
