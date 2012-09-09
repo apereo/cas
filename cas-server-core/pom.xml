@@ -221,13 +221,6 @@
             <scope>compile</scope>
             <type>jar</type>
         </dependency>
-        
-        <dependency>
-			<groupId>commons-validator</groupId>
-			<artifactId>commons-validator</artifactId>
-			<version>1.4.0</version>
-			<scope>compile</scope>
-		</dependency>
             
         <dependency>
           <groupId>org.opensymphony.quartz</groupId>
