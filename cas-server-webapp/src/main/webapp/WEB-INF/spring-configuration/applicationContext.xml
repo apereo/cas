@@ -108,7 +108,7 @@
         <property name="exceptionView" value="jsonView" />
         <property name="errorHandler">
 	        <list>
-	        	<bean class="org.springframework.web.servlet.view.json.error.HttpStatusError"/>
+	        	<bean class="org.springframework.web.servlet.view.json.error.HttpStatusError" p:errorCode="412"/>
 	            <bean class="org.springframework.web.servlet.view.json.error.ModelFlagError"/>
 	        </list>
         </property>
