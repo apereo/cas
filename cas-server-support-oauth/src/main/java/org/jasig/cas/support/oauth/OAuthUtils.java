@@ -128,11 +128,9 @@ public final class OAuthUtils {
      * @return the provider for the given type or null if no provider was found
      */
     public static OAuthProvider getProviderByType(final List<OAuthProvider> providers, final String type) {
-        if (providers != null && type != null) {
-            for (final OAuthProvider provider : providers) {
-                if (provider != null && type.equals(provider.getType())) {
-                    return provider;
-                }
+        for (final OAuthProvider provider : providers) {
+            if (provider != null && type.equals(provider.getType())) {
+                return provider;
             }
         }
         return null;

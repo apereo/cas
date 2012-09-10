@@ -59,7 +59,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         logger.debug("providerType : {}", providerType);
         
         // get provider
-        final OAuthProvider provider = OAuthUtils.getProviderByType(configuration.getProviders(), providerType);
+        final OAuthProvider provider = OAuthUtils.getProviderByType(this.configuration.getProviders(), providerType);
         logger.debug("provider : {}", provider);
         
         // get user profile

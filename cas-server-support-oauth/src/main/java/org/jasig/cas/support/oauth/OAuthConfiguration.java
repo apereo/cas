@@ -39,7 +39,7 @@ public final class OAuthConfiguration {
     private String loginUrl;
     
     public List<OAuthProvider> getProviders() {
-        return providers;
+        return this.providers;
     }
     
     public void setProviders(final List<OAuthProvider> providers) {
@@ -47,7 +47,7 @@ public final class OAuthConfiguration {
     }
     
     public String getLoginUrl() {
-        return loginUrl;
+        return this.loginUrl;
     }
     
     public void setLoginUrl(final String loginUrl) {
