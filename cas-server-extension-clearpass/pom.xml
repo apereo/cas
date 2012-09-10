@@ -39,15 +39,8 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-
+			
+			<!-- 
 			<plugin>
 				<groupId>com.atlassian.maven.plugins</groupId>
 				<artifactId>maven-clover2-plugin</artifactId>
@@ -58,7 +51,7 @@ mi2KuXZFGad>>Lz0ULLXhqIo2KPjARsdren1aP3vzebzkM
 qNNNUvQNpqopPoOQRqmTvqoPnOnMopRPqpSUtxrWTxOxTu
 pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 97W9kZkUUnmm]]></license>
-					<jdk>1.5</jdk>
+					<jdk>${jdk.version}</jdk>
 					<generateXml>true</generateXml>
 					<generateHtml>true</generateHtml>
 					<includes>
@@ -77,47 +70,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>.gitignore</exclude>
-						<exclude>LICENSE</exclude>
-						<exclude>NOTICE</exclude>
-						<exclude>README</exclude>
-						<exclude>*.releaseBackup</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+			-->
 		</plugins>
 	</build>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-
+	
 	<dependencies>
-		<dependency>
-			<groupId>net.sf.ehcache</groupId>
-			<artifactId>ehcache-core</artifactId>
-			<version>${ehcache.version}</version>
-			<scope>compile</scope>
-			<type>jar</type>
-		</dependency>
-
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
@@ -128,20 +85,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-integration-ehcache</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<scope>provided</scope>
-			<type>jar</type>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -172,14 +115,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>${mockito.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
 
 
