@@ -44,11 +44,13 @@ public class EncryptedMapDecoratorTests {
 
 	private EncryptedMapDecorator	decorator;
 
+	private CacheManager cacheManager;
+	 
 	@Before
 	public void setUp() throws Exception {
 		try {
-			final Cache cache = new Cache("name", 200, false, false, 100, 100);
-			CacheManager.getInstance().addCache(cache);
+		  this.cacheManager = new CacheManager(this.getClass().getClassLoader().getResourceAsStream("ehcacheClearPass.xml"));		  
+			final Cache cache = this.cacheManager.getCache("clearPassCache");
 			this.map = new EhcacheBackedMap(cache);
 			this.decorator = new EncryptedMapDecorator(map);
 		} catch (Exception e) {
@@ -58,7 +60,8 @@ public class EncryptedMapDecoratorTests {
 
 	@After
 	public void tearDown() throws Exception {
-		CacheManager.getInstance().removalAll();
+		this.cacheManager.removalAll();
+		this.cacheManager.shutdown();
 	}
 
 	@Test

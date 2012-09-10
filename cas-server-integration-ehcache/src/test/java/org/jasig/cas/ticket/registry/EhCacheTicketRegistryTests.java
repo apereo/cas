@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Status;
+
+import org.junit.After;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -36,7 +40,18 @@ public final class EhCacheTicketRegistryTests extends AbstractTicketRegistryTest
 
     @Override
     public TicketRegistry getNewTicketRegistry() throws Exception {
-        return (TicketRegistry) applicationContext.getBean("ticketRegistry");
+        return (TicketRegistry) this.applicationContext.getBean("ticketRegistry");
+    }
+    
+    @After
+    public void shutDown() {
+        final CacheManager mgr = this.applicationContext.getBean("cacheManager", CacheManager.class);
+                
+        if (mgr.getStatus().equals(Status.STATUS_ALIVE)) {
+            log.debug("Shutting down cache manager {}...", mgr.getName());
+            mgr.removalAll();
+            mgr.shutdown();
+        }
     }
 
     /**

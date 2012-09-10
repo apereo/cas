@@ -29,7 +29,9 @@
 
   <!-- Credentials Cache implementation -->
   <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
-        p:configLocation="classpath:ehcacheClearPass.xml"/>
+        p:configLocation="classpath:ehcacheClearPass.xml" 
+        p:shared="false"
+        p:cacheManagerName="ehCacheClearPassCacheManger"/>
 
   <bean id="clearPassEhCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean"
         p:cacheManager-ref="ehCacheManager"

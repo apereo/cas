@@ -24,20 +24,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     <description>
-        Configuration for the Ehcache TicketRegistry which stores the tickets in a distributed Ehcache and cleans
+        Configuration for the EhCache TicketRegistry which stores the tickets in a distributed EhCache and cleans
         them out as specified intervals.
     </description>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
         <property name="configLocation" value="classpath:ehcache-replicated.xml" />
-        <property name="shared" value="true" />
-        <property name="cacheManagerName" value="cacheManager" />
+        <property name="shared" value="false" />
+        <property name="cacheManagerName" value="ticketRegistryCacheManager" />
     </bean>
 
-    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry">
-        <property name="serviceTicketsCache" ref="serviceTicketsCache" />
-        <property name="ticketGrantingTicketsCache" ref="ticketGrantingTicketsCache" />
-    </bean>
+    <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry"
+    		p:serviceTicketsCache-ref="serviceTicketsCache"
+    		p:ticketGrantingTicketsCache-ref="ticketGrantingTicketsCache" />
 
 	<bean id="abstractTicketCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" abstract="true">
 		<property name="cacheManager" ref="cacheManager" />
@@ -129,7 +128,7 @@
 	</bean>
 	
 	<bean id="ticketCacheBootstrapCacheLoader" class="net.sf.ehcache.distribution.RMIBootstrapCacheLoader">
-        <constructor-arg name="asynchronous" value="false"/>  
+        <constructor-arg name="asynchronous" value="true"/>  
         <constructor-arg name="maximumChunkSize" value="5000000"/>  
     </bean>
             
