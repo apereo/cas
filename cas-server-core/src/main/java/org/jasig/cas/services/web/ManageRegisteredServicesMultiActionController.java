@@ -128,23 +128,9 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
     *         or if the service cannot be located for that id by the active implementation of the {@link ServicesManager}.  
     */
     public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
-        long id = 0;
-        int evaluationOrder = 0 ;
+        long id = Long.parseLong(request.getParameter("id"));
+        int evaluationOrder = Integer.parseInt(request.getParameter("evaluationOrder"));
         
-        final String idAsString = request.getParameter("id");
-        try {
-            id = Long.parseLong(idAsString);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid service id: " + idAsString);
-        }
-        
-        final String evalOrderAsString = request.getParameter("evaluationOrder");
-        try {
-            evaluationOrder = Integer.parseInt(evalOrderAsString);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid service evaluation order " + evalOrderAsString);
-        }
-
         final RegisteredService svc = this.servicesManager.findServiceBy(id);
         if (svc == null)
             throw new IllegalArgumentException("Service id " + id + " cannot be found.");
