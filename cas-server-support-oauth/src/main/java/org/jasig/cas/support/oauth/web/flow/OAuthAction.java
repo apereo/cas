@@ -77,7 +77,8 @@ public final class OAuthAction extends AbstractAction {
         // it's an authentication
         if (StringUtils.isNotBlank(providerType)) {
             // get provider
-            final OAuthProvider provider = OAuthUtils.getProviderByType(configuration.getProviders(), providerType);
+            final OAuthProvider provider = OAuthUtils
+                .getProviderByType(this.configuration.getProviders(), providerType);
             logger.debug("provider : {}", provider);
             
             // get credential
@@ -116,12 +117,12 @@ public final class OAuthAction extends AbstractAction {
             saveRequestParameter(request, session, OAuthConstants.METHOD);
             
             // for all providers, generate authorization urls
-            for (final OAuthProvider provider : configuration.getProviders()) {
+            for (final OAuthProvider provider : this.configuration.getProviders()) {
                 final String key = provider.getType() + "Url";
                 String authorizationUrl = null;
                 // for OAuth 1.0 protocol, delay request_token request by pointing to an intermediate url
                 if (provider instanceof BaseOAuth10Provider) {
-                    authorizationUrl = OAuthUtils.addParameter(request.getContextPath() + oauth10loginUrl,
+                    authorizationUrl = OAuthUtils.addParameter(request.getContextPath() + this.oauth10loginUrl,
                                                                OAuthConstants.OAUTH_PROVIDER, provider.getType());
                 } else {
                     authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(session));

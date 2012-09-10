@@ -49,7 +49,7 @@ public final class OAuth10LoginController extends AbstractController {
         // get provider type
         final String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
         // get provider
-        final OAuthProvider provider = OAuthUtils.getProviderByType(configuration.getProviders(), providerType);
+        final OAuthProvider provider = OAuthUtils.getProviderByType(this.configuration.getProviders(), providerType);
         
         // authorization url
         final String authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(request));
