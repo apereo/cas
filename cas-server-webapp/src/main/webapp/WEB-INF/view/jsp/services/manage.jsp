@@ -27,6 +27,10 @@
 	<div id="msg" class="success"><spring:message code="management.services.status.${param.status}" arguments="${param.serviceName}" /></div>
 </c:if>
 
+<div class="errors" id="errorsDiv">
+	<spring:message code="management.services.status.evaluationOrder.notupdated" />
+</div>
+
 <table id="headerTable" class="headerTable">
 	<tr>
 		<th class="th1"><spring:message code="management.services.manage.label.name" /></th>
@@ -36,8 +40,9 @@
 		<th class="th5 ac"><spring:message code="management.services.manage.label.ssoParticipant" /></th>
 		<th class="th6 ac"><spring:message code="management.services.manage.label.anonymous" /></th>
   		<th class="th7 ac"><spring:message code="management.services.manage.label.usernameAttribute" /></th>
-   		<th class="th8">&nbsp;</th>
-		<th class="th9">&nbsp;</th> 
+  		<th class="th8 ac"><spring:message code="management.services.manage.label.evaluationOrder" /></th>
+   		<th class="th9">&nbsp;</th>
+		<th class="th10">&nbsp;</th> 
 	</tr>
 </table>
 
@@ -53,8 +58,9 @@
 	         <td class="ac td5"><img src="../images/services/${service.ssoEnabled}.gif" alt="${service.ssoEnabled ? 'SSO Enabled' : 'SSO Disabled'}" /></td>
 	         <td class="ac td6"><img src="../images/services/${service.anonymousAccess}.gif" alt="${service.anonymousAccess ? 'Anonyous Access Enabled' : 'Anonyous Access Disabled'}" /></td>
 	         <td class="ac td7">${service.usernameAttribute}</td>
-	         <td class="td8" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit"><spring:message code="management.services.manage.action.edit" /></a></td> 
-	         <td class="td9" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}'); return false;"><spring:message code="management.services.manage.action.delete" /></a></td> 
+	         <td class="ac td8">${service.evaluationOrder}</td>
+	         <td class="td9" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit"><spring:message code="management.services.manage.action.edit" /></a></td> 
+	         <td class="td10" id="delete${status.index}"><a href="#" class="del" onclick="swapButtonsForConfirm('${status.index}','${service.id}'); return false;"><spring:message code="management.services.manage.action.delete" /></a></td>
 	       </tr>
 	       </c:forEach>
 		</tbody>
