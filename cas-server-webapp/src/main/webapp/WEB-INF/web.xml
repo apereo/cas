@@ -187,6 +187,11 @@
     <servlet-name>cas</servlet-name>
     <url-pattern>/services/deleteRegisteredService.html</url-pattern>
   </servlet-mapping>
+  
+  <servlet-mapping>
+	<servlet-name>cas</servlet-name>
+	<url-pattern>/services/updateRegisteredServiceEvaluationOrder.html</url-pattern>
+  </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
