@@ -43,7 +43,6 @@
       <scope>runtime</scope>
     </dependency>
 
-
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
@@ -111,6 +110,35 @@
       <type>jar</type>
     </dependency>
 
+	<dependency>
+	    <groupId>net.sf.spring-json</groupId>
+	    <artifactId>spring-json</artifactId>
+	    <version>1.3.1</version>
+	    <scope>runtime</scope>
+	    <exclusions>
+	    	<exclusion>
+		    	<groupId>net.sf.sojo</groupId>
+	            <artifactId>sojo-optional</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.springframework</groupId>
+            	<artifactId>*</artifactId>
+	    	</exclusion>
+	    </exclusions>
+	</dependency>
+	
+	<dependency>
+	    <groupId>net.sf.sojo</groupId>
+	    <artifactId>sojo</artifactId>
+	    <version>1.0.5</version>
+	    <exclusions>
+	    	<exclusion>
+		    	<groupId>commons-attributes</groupId>
+		    	<artifactId>*</artifactId>
+	    	</exclusion>
+	    </exclusions>
+	</dependency>
+	
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>

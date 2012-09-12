@@ -121,7 +121,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(this.services.values());
+        return Collections.unmodifiableCollection(convertToTreeSet());
     }
 
     public boolean matchesExistingService(final Service service) {
