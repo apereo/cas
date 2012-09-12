@@ -20,6 +20,7 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -298,12 +299,17 @@ public abstract class AbstractRegisteredService
         this.setUsernameAttribute(source.getUsernameAttribute());
     }
 
+    /**
+     * Compares this instance with the <code>other</code> registered service based on 
+     * evaluation order, name. The name comparison is case insensitive.
+     * 
+     * @see #getEvaluationOrder()
+     */
     public int compareTo(final RegisteredService other) {
-        final int result = this.evaluationOrder - other.getEvaluationOrder();
-        if (result == 0) {
-            return (int) (this.id - other.getId());
-        }
-        return result;
+        return new CompareToBuilder()
+                  .append(this.getEvaluationOrder(), other.getEvaluationOrder())
+                  .append(this.getName().toLowerCase(), other.getName().toLowerCase())
+                  .toComparison();
     }
 
     public String toString() {
