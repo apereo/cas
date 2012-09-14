@@ -75,12 +75,14 @@
             <list>
                 <bean class="org.jasig.cas.services.RegexRegisteredService">
                     <property name="id" value="0" />
+                    <property name="name" value="Test Service" />
                     <property name="serviceId" value="test$" />
                     <property name="evaluationOrder" value="1" />
                 </bean>
                 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="1" />
+                    <property name="name" value="Test Default Service" />
                     <property name="serviceId" value="testDefault" />
                     <property name="evaluationOrder" value="2" />
                     <property name="usernameAttribute" value="(default)" />
@@ -88,6 +90,7 @@
                 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="2" />
+                    <property name="name" value="EduPerson Test Service" />
                     <property name="serviceId" value="eduPersonTest" />
                     <property name="evaluationOrder" value="3" />
                     <property name="usernameAttribute" value="eduPersonAffiliation" />
@@ -96,6 +99,7 @@
                 
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="3" />
+                    <property name="name" value="EduPerson Test Invalid Service" />
                     <property name="serviceId" value="eduPersonTestInvalid" />
                     <property name="evaluationOrder" value="4" />
                     <property name="usernameAttribute" value="eduPersonAffiliation" />
