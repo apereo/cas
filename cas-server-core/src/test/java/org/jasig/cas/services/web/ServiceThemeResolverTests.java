@@ -61,6 +61,7 @@ public class ServiceThemeResolverTests extends TestCase {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setTheme("myTheme");
         r.setId(1000);
+        r.setName("Test Service");
         r.setServiceId("myServiceId");
         
         this.servicesManager.save(r);
