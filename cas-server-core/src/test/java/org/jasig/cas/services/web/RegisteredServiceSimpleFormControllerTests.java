@@ -124,6 +124,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
+        r.setName("Test Service");
         r.setServiceId("test");
         r.setDescription("description");
         
@@ -263,6 +264,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
         final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);
+        r.setName("Test Service");
         r.setServiceId("test");
         r.setDescription("description");
 
