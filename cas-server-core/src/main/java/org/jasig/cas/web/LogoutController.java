@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.servlet.ModelAndView;
@@ -85,8 +86,12 @@ public final class LogoutController extends AbstractController {
             this.warnCookieGenerator.removeCookie(response);
         }
 
-        if (this.followServiceRedirects && service != null && this.servicesManager.matchesExistingService(new SimpleWebApplicationServiceImpl(service))) {
-            return new ModelAndView(new RedirectView(service));
+        if (this.followServiceRedirects && service != null) {
+            final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
+
+            if (rService != null && rService.isEnabled()) {
+                return new ModelAndView(new RedirectView(service));
+            }
         }
 
         return new ModelAndView(this.logoutView);
