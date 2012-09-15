@@ -53,8 +53,11 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
 
     private DefaultServicesManagerImpl serviceManager;
 
+    private MockHttpServletRequest request;
+
     @Before
     public void onSetUp() throws Exception {
+        this.request = new MockHttpServletRequest();
        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
         this.serviceRegistryDao = new InMemoryServiceRegistryDaoImpl();
         this.serviceManager = new DefaultServicesManagerImpl(serviceRegistryDao);
@@ -76,17 +79,17 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
     @Test
     public void testLogoutNoCookie() throws Exception {
         assertNotNull(this.logoutController.handleRequestInternal(
-            new MockHttpServletRequest(), new MockHttpServletResponse()));
+            this.request, new MockHttpServletResponse()));
     }
 
     @Test
     public void testLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", "TestService");
+        this.request.addParameter("service", "TestService");
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("TestService");
         impl.setName("TestService");
-        this.serviceRegistryDao.save(impl);
+        impl.setEnabled(true);
+        this.serviceManager.save(impl);
         this.logoutController.setFollowServiceRedirects(true);
         assertTrue(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView);
@@ -94,31 +97,28 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
 
     @Test
     public void logoutForServiceWithNoFollowRedirects() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", "TestService");
+        this.request.addParameter("service", "TestService");
         this.logoutController.setFollowServiceRedirects(false);
         assertTrue(!(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
     @Test
-    public void logoutForServiceWithNoFollowRedirectsNotAllowed() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", "TestService");
+    public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
+        this.request.addParameter("service", "TestService");
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
-        impl.setServiceId("TestService2");
-        impl.setName("TestService2");
-        this.serviceRegistryDao.save(impl);
-        this.logoutController.setFollowServiceRedirects(false);
+        impl.setServiceId("http://FooBar");
+        impl.setName("FooBar");
+        this.serviceManager.save(impl);
+        this.logoutController.setFollowServiceRedirects(true);
         assertTrue(!(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
     @Test
     public void testLogoutCookie() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
         Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
-        request.setCookies(new Cookie[] {cookie});
+        this.request.setCookies(new Cookie[] {cookie});
         assertNotNull(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()));
     }
