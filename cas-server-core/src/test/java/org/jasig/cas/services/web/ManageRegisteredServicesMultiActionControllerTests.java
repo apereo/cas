@@ -27,6 +27,8 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,6 +43,8 @@ import static org.junit.Assert.*;
  *
  */
 public class ManageRegisteredServicesMultiActionControllerTests {
+    
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     private ManageRegisteredServicesMultiActionController controller;
     
@@ -121,10 +125,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         
         assertNotNull(modelAndView);
         assertEquals("jsonView", modelAndView.getViewName());
-        
-        assertTrue(!modelAndView.getModelMap().containsAttribute("error"));
-        assertEquals(modelAndView.getModelMap().get("successful").toString(), Boolean.TRUE.toString());  
-        
+
         RegisteredService result = this.servicesManager.findServiceBy(r.getId());
         assertEquals(result.getEvaluationOrder(), 100);
     }
@@ -139,16 +140,16 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         
         this.servicesManager.save(r);
         
+        try {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("id", "5000");
+        request.addParameter("evaluationOrder", "1000");
         
-        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        
-        assertNotNull(modelAndView);
-        assertEquals("jsonView", modelAndView.getViewName());
-        
-        assertTrue(modelAndView.getModelMap().containsAttribute("error"));
-        assertEquals(modelAndView.getModelMap().get("successful").toString(), Boolean.FALSE.toString());  
+        this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
+        } catch (IllegalArgumentException e) {
+            //Exception expected; service id cannot be found
+            log.debug(e.getMessage(), e);
+        }
     }
     
     @Test
@@ -162,29 +163,15 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.servicesManager.save(r);
         
         MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("id", "1000");
         request.addParameter("evaluationOrder", "TEST");
         
-        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        
-        assertNotNull(modelAndView);
-        assertEquals("jsonView", modelAndView.getViewName());
-        assertTrue(modelAndView.getModelMap().containsAttribute("error"));
-        assertEquals(modelAndView.getModelMap().get("successful").toString(), Boolean.FALSE.toString());  
+        try {
+            this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
+        } catch (IllegalArgumentException e) {
+            //Exception expected; evaluation order is invalid
+            log.debug(e.getMessage(), e);
+        }
     }
     
-    @Test
-    public void updateEvaluationOrderNonExistingService() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("id", "1200");
-        request.addParameter("evaluationOrder", "3");
-        
-        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        
-        assertNotNull(modelAndView);
-        assertEquals("jsonView", modelAndView.getViewName());
-        
-        assertTrue(modelAndView.getModelMap().containsAttribute("error"));
-        assertTrue(modelAndView.getModelMap().containsAttribute("successful"));
-        
-    }
 }
