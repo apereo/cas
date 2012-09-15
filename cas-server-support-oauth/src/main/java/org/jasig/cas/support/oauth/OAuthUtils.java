@@ -25,7 +25,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.support.oauth.provider.OAuthProviders;
 import org.scribe.up.provider.OAuthProvider;
 import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
@@ -69,7 +68,7 @@ public final class OAuthUtils {
             printWriter = response.getWriter();
             response.setStatus(status);
             printWriter.print(text);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("Failed to write to response", e);
         }
         return null;
@@ -108,7 +107,7 @@ public final class OAuthUtils {
      * @return the url with the parameter
      */
     public static String addParameter(final String url, final String name, final String value) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append(url);
         if (url.indexOf("?") >= 0) {
             sb.append("&");
@@ -128,13 +127,10 @@ public final class OAuthUtils {
      * @param type
      * @return the provider for the given type or null if no provider was found
      */
-    public static OAuthProvider getProviderByType(final OAuthProviders providers, final String type) {
-        List<OAuthProvider> listProviders = providers.getProviders();
-        if (listProviders != null && type != null) {
-            for (OAuthProvider provider : listProviders) {
-                if (provider != null && type.equals(provider.getType())) {
-                    return provider;
-                }
+    public static OAuthProvider getProviderByType(final List<OAuthProvider> providers, final String type) {
+        for (final OAuthProvider provider : providers) {
+            if (provider != null && type.equals(provider.getType())) {
+                return provider;
             }
         }
         return null;
