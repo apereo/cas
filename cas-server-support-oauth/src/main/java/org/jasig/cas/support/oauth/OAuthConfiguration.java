@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.oauth.provider;
+package org.jasig.cas.support.oauth;
 
 import java.util.List;
 
@@ -25,21 +25,32 @@ import javax.validation.constraints.NotNull;
 import org.scribe.up.provider.OAuthProvider;
 
 /**
- * This class gathers all the OAuth providers.
+ * This class gathers all the OAuth providers and the login url of the CAS server.
  * 
  * @author Jerome Leleu
  * @since 3.5.1
  */
-public final class OAuthProviders {
+public final class OAuthConfiguration {
     
     @NotNull
     private List<OAuthProvider> providers;
     
+    @NotNull
+    private String loginUrl;
+    
     public List<OAuthProvider> getProviders() {
-        return providers;
+        return this.providers;
     }
     
     public void setProviders(final List<OAuthProvider> providers) {
         this.providers = providers;
+    }
+    
+    public String getLoginUrl() {
+        return this.loginUrl;
+    }
+    
+    public void setLoginUrl(final String loginUrl) {
+        this.loginUrl = loginUrl;
     }
 }
