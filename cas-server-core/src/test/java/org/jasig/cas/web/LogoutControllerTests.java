@@ -21,6 +21,9 @@ package org.jasig.cas.web;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.services.DefaultServicesManagerImpl;
+import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,21 +49,28 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
     
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
+    private InMemoryServiceRegistryDaoImpl serviceRegistryDao;
+
+    private DefaultServicesManagerImpl serviceManager;
+
     @Before
     public void onSetUp() throws Exception {
        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.serviceRegistryDao = new InMemoryServiceRegistryDaoImpl();
+        this.serviceManager = new DefaultServicesManagerImpl(serviceRegistryDao);
+        this.serviceManager.reload();
         
         this.warnCookieGenerator.setCookieName("test");
         
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
         this.ticketGrantingTicketCookieGenerator.setCookieName(COOKIE_TGC_ID);
-        
-        
+
         this.logoutController = new LogoutController();
         this.logoutController.setCentralAuthenticationService(getCentralAuthenticationService());
         this.logoutController.setLogoutView("test");
         this.logoutController.setWarnCookieGenerator(this.warnCookieGenerator);
         this.logoutController.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
+        this.logoutController.setServicesManager(this.serviceManager);
     }
 
     @Test
@@ -70,18 +80,35 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
     }
 
     @Test
-    public void testLogoutForServiceWithFollowRedirects() throws Exception {
+    public void testLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "TestService");
+        final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+        impl.setServiceId("TestService");
+        impl.setName("TestService");
+        this.serviceRegistryDao.save(impl);
         this.logoutController.setFollowServiceRedirects(true);
         assertTrue(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView);
     }
 
     @Test
-    public void testLogoutForServiceWithNoFollowRedirects() throws Exception {
+    public void logoutForServiceWithNoFollowRedirects() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "TestService");
+        this.logoutController.setFollowServiceRedirects(false);
+        assertTrue(!(this.logoutController.handleRequestInternal(request,
+            new MockHttpServletResponse()).getView() instanceof RedirectView));
+    }
+
+    @Test
+    public void logoutForServiceWithNoFollowRedirectsNotAllowed() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", "TestService");
+        final RegisteredServiceImpl impl = new RegisteredServiceImpl();
+        impl.setServiceId("TestService2");
+        impl.setName("TestService2");
+        this.serviceRegistryDao.save(impl);
         this.logoutController.setFollowServiceRedirects(false);
         assertTrue(!(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView));
@@ -95,5 +122,4 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         assertNotNull(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()));
     }
-
 }
