@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -56,6 +59,9 @@ public final class LogoutController extends AbstractController {
     @NotNull
     private String logoutView;
 
+    @NotNull
+    private ServicesManager servicesManager;
+
     /**
      * Boolean to determine if we will redirect to any url provided in the
      * service request parameter.
@@ -81,7 +87,11 @@ public final class LogoutController extends AbstractController {
         }
 
         if (this.followServiceRedirects && service != null) {
-            return new ModelAndView(new RedirectView(service));
+            final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
+
+            if (rService != null && rService.isEnabled()) {
+                return new ModelAndView(new RedirectView(service));
+            }
         }
 
         return new ModelAndView(this.logoutView);
@@ -111,5 +121,9 @@ public final class LogoutController extends AbstractController {
 
     public void setLogoutView(final String logoutView) {
         this.logoutView = logoutView;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 }
