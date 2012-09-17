@@ -18,12 +18,13 @@
  */
 package org.jasig.cas;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import static org.junit.Assert.assertTrue;
 
@@ -33,15 +34,29 @@ import static org.junit.Assert.assertTrue;
  * @author Middleware Services
  * @version $Revision: $
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({
-    "file:src/main/webapp/WEB-INF/cas-servlet.xml",
-    "file:src/main/webapp/WEB-INF/deployerConfigContext.xml",
-    "file:src/main/webapp/WEB-INF/spring-configuration/*.xml"
-})
 public class WiringTests {
-    @Autowired
-    private ApplicationContext applicationContext;
+    private XmlWebApplicationContext applicationContext;
+
+    @Before
+    public void setUp() {
+        applicationContext = new XmlWebApplicationContext();
+        applicationContext.setConfigLocations(new String[]{
+                "file:src/main/webapp/WEB-INF/cas-servlet.xml",
+                "file:src/main/webapp/WEB-INF/deployerConfigContext.xml",
+                "file:src/main/webapp/WEB-INF/spring-configuration/*.xml"});
+        applicationContext.setServletContext(new MockServletContext(new ResourceLoader() {
+            @Override
+            public Resource getResource(final String location) {
+                return new FileSystemResource("src/main/webapp" + location);
+            }
+
+            @Override
+            public ClassLoader getClassLoader() {
+                return getClassLoader();
+            }
+        }));
+        applicationContext.refresh();
+    }
 
     @Test
     public void testWiring() throws Exception {
