@@ -19,7 +19,19 @@
 package org.jasig.cas.services.web;
 
 
-import org.jasig.cas.services.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.util.StringUtils;
@@ -28,16 +40,6 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * SimpleFormController to handle adding/editing of RegisteredServices.
@@ -106,7 +108,7 @@ public final class RegisteredServiceSimpleFormController extends SimpleFormContr
         logger.info("Saved changes to service " + service.getId());
 
         final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-            "/services/manage.html#" + service.getId(), true));
+            "manage.html#" + service.getId(), true));
         modelAndView.addObject("action", "add");
         modelAndView.addObject("id", service.getId());
 
