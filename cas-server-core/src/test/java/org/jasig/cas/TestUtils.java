@@ -1,23 +1,26 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.*;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -26,6 +29,11 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Scott Battaglia
@@ -50,7 +58,7 @@ public final class TestUtils {
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
     
-    public static final String CONST_GOOD_URL = "https://wwws.mint.com/";
+    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {
         // do not instanciate

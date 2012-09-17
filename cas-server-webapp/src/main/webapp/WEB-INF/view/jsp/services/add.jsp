@@ -1,5 +1,24 @@
 <%@include file="includes/top.jsp"%>
 
+<%--
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  --%>
+
 <form:form action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${fn:escapeXml(param.id)}" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
 
 		<c:if test="${not empty successMessage}">
@@ -71,23 +90,30 @@
 		<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</span>
-		
-				<span class="oneChoice">
-					<form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
-					<label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
-				</span>
-    
-    <span class="oneField">
-      <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
-      <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
-      <form:errors path="evaluationOrder" cssClass="formError" />
-      <br />
-    </span>
+	     
+    	<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.manage.label.usernameAttribute" /></label>
+    		<form:select path="usernameAttribute" items="${availableUsernameAttributes}" />
+    		<form:errors path="usernameAttribute" cssClass="formError" />
+    	</span>
+      		            
+	    <span class="oneChoice">
+	      <form:checkbox path="ignoreAttributes" value="true" cssClass="check" />
+	      <label for="ignoreAttributes1" id="ignoreAttributes-l" class="postField"><spring:message code="management.services.add.property.ignoreAttributes" /></label>
+	    </span>
+	    
+	    <span class="oneField">
+	      <label for="theme" class="preField"><spring:message code="management.services.add.property.evaluationOrder" /></label>
+	      <form:input path="evaluationOrder" size="11" maxlength="10" cssClass="required" cssErrorClass="error" />
+	      <form:errors path="evaluationOrder" cssClass="formError" />
+	      <br />
+	    </span>
 
-		</div>
+	</div>
 	</fieldset>
 	<div class="actions">
-		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="Save Changes"><spring:message code="management.services.add.button.save" /></button> or <a href="manage.html" style="color:#b00;"><spring:message code="management.services.add.button.cancel" /></a>
+		<button type="submit" class="primaryAction" id="submit-wf_FormGardenDemonst" value="<spring:message code="management.services.add.button.save" />">
+		<spring:message code="management.services.add.button.save" /></button> 
+		or <a href="manage.html" style="color:#b00;"><spring:message code="management.services.add.button.cancel" /></a>
 	</div>
 </form:form>
 <%@include file="includes/bottom.jsp" %>

@@ -1,10 +1,24 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.web.support;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,25 +41,23 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
-    private final ConcurrentMap<String, AtomicInteger> ipMap = new ConcurrentHashMap<String, AtomicInteger>();
+    private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<String, Date>();
 
     @Override
-    protected final int findCount(final HttpServletRequest request, final String usernameParameter, final int failureRangeInSeconds) {
-        final AtomicInteger existingValue = this.ipMap.get(constructKey(request, usernameParameter));
-        return existingValue == null ? 0 : existingValue.get();
-    }
-
-    @Override
-    protected final void updateCount(final HttpServletRequest request, final String usernameParameter) {
-        final AtomicInteger newAtomicInteger = new AtomicInteger(1);
-        final AtomicInteger oldAtomicInteger = this.ipMap.putIfAbsent(constructKey(request, usernameParameter), newAtomicInteger);
-
-        if (oldAtomicInteger != null) {
-            oldAtomicInteger.incrementAndGet();
+    protected final boolean exceedsThreshold(final HttpServletRequest request) {
+        final Date last = this.ipMap.get(constructKey(request));
+        if (last == null) {
+            return false;
         }
+        return submissionRate(new Date(), last) > getThresholdRate();
     }
 
-    protected abstract String constructKey(HttpServletRequest request, String usernameParameter);
+    @Override
+    protected final void recordSubmissionFailure(final HttpServletRequest request) {
+        this.ipMap.put(constructKey(request), new Date());
+    }
+
+    protected abstract String constructKey(HttpServletRequest request);
 
     /**
      * This class relies on an external configuration to clean it up. It ignores the threshold data in the parent class.
@@ -54,17 +66,27 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         final Set<String> keys = this.ipMap.keySet();
         log.debug("Decrementing counts for throttler.  Starting key count: " + keys.size());
 
-        for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) {
-            final String key = iter.next();
-            final AtomicInteger integer = this.ipMap.get(key);
-            final int  newValue = integer.decrementAndGet();
-
-            log.trace("Decrementing count for key [" + key + "]; starting count [" + integer + "]; ending count [" + newValue + "]");
-
-            if (newValue == 0) {
+        final Date now = new Date();
+        String key;
+        for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) { 
+            key = iter.next();
+            if (submissionRate(now, this.ipMap.get(key)) < getThresholdRate()) {
+                log.trace("Removing entry for key {}", key);
                 iter.remove();
             }
         }
         log.debug("Done decrementing count for throttler.");
+    }
+
+    /**
+     * Computes the instantaneous rate in between two given dates corresponding to two submissions.
+     *
+     * @param a First date.
+     * @param b Second date.
+     *
+     * @return  Instantaneous submission rate in submissions/sec, e.g. <code>a - b</code>.
+     */
+    private double submissionRate(final Date a, final Date b) {
+        return 1000.0 / (a.getTime() - b.getTime());
     }
 }

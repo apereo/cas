@@ -3,25 +3,23 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%--
-
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
---%>
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  --%>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
 <jsp:directive.include file="includes/top.jsp" />
@@ -76,6 +74,7 @@
             </form:form>
           </div>
             <div id="sidebar">
+				<div class="sidebar-content">
                 <p class="fl-panel fl-note fl-bevel-white fl-font-size-80"><spring:message code="screen.welcome.security" /></p>
                 <div id="list-languages" class="fl-panel">
                 <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
@@ -104,6 +103,8 @@
                                <option value="pl">Polish</option>
                                <option value="ca">Catalan</option>
                                <option value="mk">Macedonian</option>
+                               <option value="fa">Farsi</option>
+                               <option value="ar">Arabic</option>
                            </select>
                            <input type="submit" value="Switch">
                         </form>
@@ -128,10 +129,13 @@
 							><li><a href="${loginUrl}sl">Slovenian</a></li
                             ><li><a href="${loginUrl}ca">Catalan</a></li
                             ><li><a href="${loginUrl}mk">Macedonian</a></li
+                            ><li><a href="${loginUrl}fa">Farsi</a></li
+                            ><li><a href="${loginUrl}ar">Arabic</a></li
 							><li class="last"><a href="${loginUrl}pl">Polish</a></li
 						></ul>
                      </c:otherwise>
                    </c:choose>
                 </div>
+				</div>
             </div>
 <jsp:directive.include file="includes/bottom.jsp" />

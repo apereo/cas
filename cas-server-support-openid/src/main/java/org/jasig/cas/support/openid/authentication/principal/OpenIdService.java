@@ -1,24 +1,39 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.codec.binary.Base64;
-import org.jasig.cas.authentication.handler.DefaultPasswordEncoder;
-import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.util.ApplicationContextProvider;
+import org.openid4java.association.Association;
+import org.openid4java.message.AuthRequest;
+import org.openid4java.message.Message;
+import org.openid4java.message.MessageException;
+import org.openid4java.message.ParameterList;
+import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -29,7 +44,6 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  */
 public final class OpenIdService extends AbstractWebApplicationService {
-
     protected static final Logger LOG = LoggerFactory.getLogger(OpenIdService.class);
     
     /**
@@ -38,60 +52,89 @@ public final class OpenIdService extends AbstractWebApplicationService {
     private static final long serialVersionUID = 5776500133123291301L;
 
     private static final String CONST_PARAM_SERVICE = "openid.return_to";
-    
-    private static final PasswordEncoder ENCODER = new DefaultPasswordEncoder("SHA1");
-
-    private static final KeyGenerator keyGenerator;
 
     private String identity;
-    
-    private final SecretKey sharedSecret;
 
-    private final String signature;
-    
-    static {
-        try {
-            keyGenerator = KeyGenerator.getInstance("HmacSHA1");
-        } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private final String artifactId;
+
+    private final ParameterList requestParameters;
 
     protected OpenIdService(final String id, final String originalUrl,
         final String artifactId, final String openIdIdentity,
-        final String signature) {
+        final String signature, final ParameterList parameterList) {
         super(id, originalUrl, artifactId, null);
         this.identity = openIdIdentity;
-        this.signature = signature;
-        this.sharedSecret = keyGenerator.generateKey();
-    }
-    
-    protected String generateHash(final String value) {
-        try {
-            final Mac sha1 = Mac.getInstance("HmacSHA1");
-            sha1.init(this.sharedSecret);
-            return Base64.encodeBase64String(sha1.doFinal(value.getBytes()));
-        } catch (final Exception e) {
-            LOG.error(e.getMessage(),e);
-            return Base64.encodeBase64String(ENCODER.encode(value).getBytes());
-        }
+        this.artifactId = artifactId;
+        this.requestParameters = parameterList;
     }
 
+    /**
+     * Generates an Openid response.
+     * If no ticketId is found, response is negative.
+     * If we have a ticket id, then we check if we have an association.
+     * If so, we ask OpenId server manager to generate the answer according with the existing association.
+     * If not, we send back an answer with the ticket id as association handle.
+     * This will force the consumer to ask a verification, which will validate the service ticket.
+     * @param ticketId the service ticket to provide to the service.
+     * @return the generated authentication answer
+     */
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<String, String>();
-        
         if (ticketId != null) {
-            parameters.put("openid.mode", "id_res");
-            parameters.put("openid.identity", this.identity);
-            parameters.put("openid.assoc_handle", ticketId);
-            parameters.put("openid.return_to", getOriginalUrl());
-            parameters.put("openid.signed", "identity,return_to");
-            parameters.put("openid.sig", generateHash(
-                "identity=" + this.identity + ",return_to=" + getOriginalUrl()));
+
+            ServerManager manager = (ServerManager)ApplicationContextProvider.getApplicationContext().getBean("serverManager");
+            CentralAuthenticationService cas = (CentralAuthenticationService)ApplicationContextProvider.getApplicationContext().getBean("centralAuthenticationService");
+            boolean associated = false;
+            boolean associationValid = true;
+            try {
+                AuthRequest authReq = AuthRequest.createAuthRequest(requestParameters, manager.getRealmVerifier());
+                Map parameterMap = authReq.getParameterMap();
+                if (parameterMap != null && parameterMap.size() > 0) {
+                    String assocHandle = (String)parameterMap.get("openid.assoc_handle");
+                    if (assocHandle != null) {
+                        Association association = manager.getSharedAssociations().load(assocHandle);
+                        if (association != null) {
+                            associated = true;
+                            if (association.hasExpired()) {
+                                associationValid = false;
+                            }
+                        }
+
+                    }
+                }
+            } catch (MessageException me) {
+                LOG.error("Message exception : "+me.getMessage(), me);
+            }
+
+            boolean successFullAuthentication = true;
+            try {
+                if (associated) {
+                    if (associationValid) {
+                        cas.validateServiceTicket(ticketId, this);
+                        LOG.info("Validated openid ticket");
+                    } else {
+                        successFullAuthentication = false;
+                    }
+                }
+            } catch (TicketException te) {
+                LOG.error("Could not validate ticket : "+te.getMessage(), te);
+                successFullAuthentication = false;
+            }
+
+            // We sign directly (final 'true') because we don't add extensions
+            // response message can be either a DirectError or an AuthSuccess here. Anyway, handling is the same : send the response message
+            Message response = manager.authResponse(requestParameters,
+                    this.identity,
+                    this.identity,
+                    successFullAuthentication,
+                    true);
+            parameters.putAll(response.getParameterMap());
+            if (!associated) {
+                parameters.put("openid.assoc_handle", ticketId);
+            }
         } else {
             parameters.put("openid.mode", "cancel");
         }
-        
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
@@ -111,9 +154,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
         final String id = cleanupUrl(service);
         final String artifactId = request.getParameter("openid.assoc_handle");
+        ParameterList paramList = new ParameterList(request.getParameterMap());
 
         return new OpenIdService(id, service, artifactId, openIdIdentity,
-            signature);
+            signature, paramList);
     }
 
     public int hashCode() {
@@ -121,8 +165,6 @@ public final class OpenIdService extends AbstractWebApplicationService {
         int result = 1;
         result = prime * result
             + ((this.identity == null) ? 0 : this.identity.hashCode());
-        result = prime * result
-            + ((this.signature == null) ? 0 : this.signature.hashCode());
         return result;
     }
 
@@ -144,10 +186,5 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
     public String getIdentity() {
         return this.identity;
-    }
-
-    public String getSignature() {
-        return this.signature != null ? this.signature : generateHash(
-            "identity=" + this.identity + ",return_to=" + getOriginalUrl());
     }
 }

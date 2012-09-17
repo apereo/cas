@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
@@ -42,17 +61,17 @@
         </layout>
     </appender>
 
-       <appender name="graphExecutionTimes" class="org.perf4j.log4j.GraphingStatisticsAppender">
-           <!-- Possible GraphTypes are Mean, Min, Max, StdDev, Count and TPS -->
-           <param name="GraphType" value="Mean"/>
-           <!-- The tags of the timed execution blocks to graph are specified here -->
-           <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET" />
-       </appender>
+    <appender name="graphExecutionTimes" class="org.perf4j.log4j.GraphingStatisticsAppender">
+        <!-- Possible GraphTypes are Mean, Min, Max, StdDev, Count and TPS -->
+        <param name="GraphType" value="Mean"/>
+        <!-- The tags of the timed execution blocks to graph are specified here -->
+        <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET,AUTHENTICATE" />
+    </appender>
 
-       <appender name="graphExecutionTPS" class="org.perf4j.log4j.GraphingStatisticsAppender">
-           <param name="GraphType" value="TPS" />
-           <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET" />
-       </appender>
+    <appender name="graphExecutionTPS" class="org.perf4j.log4j.GraphingStatisticsAppender">
+        <param name="GraphType" value="TPS" />
+        <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET,AUTHENTICATE" />
+    </appender>
 
     <!-- Loggers -->
     <!--

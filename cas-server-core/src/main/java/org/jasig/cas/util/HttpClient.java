@@ -1,25 +1,47 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.util;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 import org.springframework.beans.factory.DisposableBean;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.*;
-import java.net.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
@@ -53,6 +75,8 @@ public final class HttpClient implements Serializable, DisposableBean {
     @Min(0)
     private int readTimeout = 5000;
 
+    private boolean followRedirects = true;
+
 
     /**
      * Note that changing this executor will affect all httpClients.  While not ideal, this change was made because certain ticket registries
@@ -75,7 +99,7 @@ public final class HttpClient implements Serializable, DisposableBean {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      */
     public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message, this.readTimeout, this.connectionTimeout));
+        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message, this.readTimeout, this.connectionTimeout, this.followRedirects));
 
         if (async) {
             return true;
@@ -105,6 +129,7 @@ public final class HttpClient implements Serializable, DisposableBean {
             connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(this.connectionTimeout);
             connection.setReadTimeout(this.readTimeout);
+            connection.setInstanceFollowRedirects(this.followRedirects);
 
             connection.connect();
 
@@ -158,6 +183,15 @@ public final class HttpClient implements Serializable, DisposableBean {
         this.readTimeout = readTimeout;
     }
 
+    /**
+     * Determines the behavior on receiving 3xx responses from HTTP endpoints.
+     *
+     * @param follow True to follow 3xx redirects (default), false otherwise.
+     */
+    public void setFollowRedirects(final boolean follow) {
+        this.followRedirects = follow;
+    }
+
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
     }
@@ -172,11 +206,14 @@ public final class HttpClient implements Serializable, DisposableBean {
 
         private int connectionTimeout;
 
-        public MessageSender(final String url, final String message, final int readTimeout, final int connectionTimeout) {
+        private boolean followRedirects;
+
+        public MessageSender(final String url, final String message, final int readTimeout, final int connectionTimeout, final boolean followRedirects) {
             this.url = url;
             this.message = message;
             this.readTimeout = readTimeout;
             this.connectionTimeout = connectionTimeout;
+            this.followRedirects = followRedirects;
         }
 
         public Boolean call() throws Exception {
@@ -193,8 +230,9 @@ public final class HttpClient implements Serializable, DisposableBean {
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setRequestMethod("POST");
-                connection.setReadTimeout(readTimeout);
-                connection.setConnectTimeout(connectionTimeout);
+                connection.setReadTimeout(this.readTimeout);
+                connection.setConnectTimeout(this.connectionTimeout);
+                connection.setInstanceFollowRedirects(this.followRedirects);
                 connection.setRequestProperty("Content-Length", Integer.toString(output.getBytes().length));
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 final DataOutputStream printout = new DataOutputStream(connection.getOutputStream());
