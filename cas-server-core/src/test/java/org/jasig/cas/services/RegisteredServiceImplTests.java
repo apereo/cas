@@ -1,71 +1,103 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.services;
 
-import junit.framework.TestCase;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.mock.MockService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * 
+ * Unit test for {@link RegisteredServiceImpl}.
+ *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
-public class RegisteredServiceImplTests extends TestCase {
+@RunWith(Parameterized.class)
+public class RegisteredServiceImplTests {
 
-    private RegisteredServiceImpl r = new RegisteredServiceImpl();
-    
-    public void testSettersAndGetters() {
-        final long ID = 1000;
-        final String DESCRIPTION = "test";
-        final String SERVICEID = "serviceId";
-        final String THEME = "theme";
-        final String NAME = "name";
-        final boolean ENABLED = false;
-        final boolean ALLOWED_TO_PROXY = false;
-        final boolean ANONYMOUS_ACCESS = true;
-        final boolean SSO_ENABLED = false;
-        final List<String> ALLOWED_ATTRIBUTES = Arrays.asList("Test");
-        
-        this.r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
-        this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
-        this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
-        this.r.setDescription(DESCRIPTION);
-        this.r.setEnabled(ENABLED);
-        this.r.setId(ID);
-        this.r.setName(NAME);
-        this.r.setServiceId(SERVICEID);
-        this.r.setSsoEnabled(SSO_ENABLED);
-        this.r.setTheme(THEME);
-        
-        assertEquals(ALLOWED_ATTRIBUTES, this.r.getAllowedAttributes());
-        assertEquals(ALLOWED_TO_PROXY, this.r.isAllowedToProxy());
-        assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
-        assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.isEnabled());
-        assertEquals(ID, this.r.getId());
-        assertEquals(NAME, this.r.getName());
-        assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.isSsoEnabled());
-        assertEquals(THEME, this.r.getTheme());
-        
-        assertFalse(this.r.equals(null));
-        assertFalse(this.r.equals(new Object()));
-        assertTrue(this.r.equals(this.r));
-        
-        this.r.setAllowedAttributes(null);
-        assertNotNull(this.r.getAllowedAttributes());
+    private RegisteredServiceImpl service;
+
+    private String serviceToMatch;
+
+    private boolean expected;
+
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> getParameters() {
+        return Arrays.asList(new Object[][]{
+                // Allow all paths on single host
+                {
+                        newService("https://host.vt.edu/**"),
+                        "https://host.vt.edu/a/b/c?a=1&b=2",
+                        true,
+                },
+                // Global catch-all for HTTP
+                {
+                        newService("http://**"),
+                        "http://host.subdomain.example.com/service",
+                        true,
+                },
+                // Null case
+                {
+                        newService("https:/example.com/**"),
+                        null,
+                        false,
+                },
+        });
     }
-    
-    public void testEquals() {
-        assertTrue(new RegisteredServiceImpl().equals(new RegisteredServiceImpl()));
-        assertFalse(new RegisteredServiceImpl().equals(null));
-        assertFalse(new RegisteredServiceImpl().equals(new Object()));
+
+
+    public RegisteredServiceImplTests(
+            final RegisteredServiceImpl service,
+            final String serviceToMatch,
+            final boolean expectedResult) {
+        this.service = service;
+        this.serviceToMatch = serviceToMatch;
+        this.expected = expectedResult;
+    }
+
+
+    @Test
+    public void testMatches() throws Exception {
+        final Service testService;
+        if (serviceToMatch == null) {
+            testService = null;
+        } else {
+            testService = new MockService(serviceToMatch);
+        }
+        assertEquals(expected, service.matches(testService));
+    }
+
+
+    private static RegisteredServiceImpl newService(final String id) {
+        final RegisteredServiceImpl service = new RegisteredServiceImpl();
+        service.setServiceId(id);
+        return service;
     }
 }

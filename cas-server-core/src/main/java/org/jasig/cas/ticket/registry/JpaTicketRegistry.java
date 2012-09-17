@@ -1,7 +1,20 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.ticket.registry;
 
@@ -9,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
@@ -28,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.2.1
  *
  */
@@ -44,11 +55,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     protected void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
+        log.debug("Updated ticket [{}].", ticket);
     }
 
     @Transactional(readOnly = false)
     public void addTicket(final Ticket ticket) {
         entityManager.persist(ticket);
+        log.debug("Added ticket [{}] to registry.", ticket);
     }
 
     @Transactional(readOnly = false)
@@ -61,10 +74,12 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         
         if (ticket instanceof ServiceTicket) {
             removeTicket(ticket);
+            log.debug("Deleted ticket [{}] from the registry.", ticket);
             return true;
         }
         
         deleteTicketAndChildren(ticket);
+        log.debug("Deleted ticket [{}] and its children from the registry.", ticket);
         return true;
     }
     
@@ -94,11 +109,11 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         try {
             if (log.isDebugEnabled()) {
                 final Date creationDate = new Date(ticket.getCreationTime());
-                log.debug("Removing Ticket >" + ticket.getId() + "< created: " + creationDate.toString());
+                log.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
              }
             entityManager.remove(ticket);
         } catch (final Exception e) {
-            log.error("Error removing " + ticket + " from registry.", e);
+            log.error("Error removing {} from registry.", ticket, e);
         }
     }
     
@@ -115,7 +130,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
             
             return entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
-            log.error("Error getting ticket " + ticketId + " from registry.", e);
+            log.error("Error getting ticket {} from registry.", ticketId, e);
         }
         return null;
     }
@@ -143,5 +158,28 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @Override
     protected boolean needsCallback() {
         return false;
+    }
+
+    @Transactional(readOnly=true)
+    public int sessionCount() {
+        return countToInt(entityManager.createQuery("select count(t) from TicketGrantingTicketImpl t").getSingleResult());
+    }
+
+    @Transactional(readOnly=true)
+    public int serviceTicketCount() {
+        return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+    }
+
+    private int countToInt(final Object result) {
+        final int intval;
+        if (result instanceof Long) {
+            intval = ((Long) result).intValue();
+        } else if (result instanceof Integer) {
+            intval = (Integer) result;
+        } else {
+            // Must be a Number of some kind
+            intval = ((Number) result).intValue();
+        }
+        return intval;
     }
 }
