@@ -1,7 +1,20 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.uportal.org/license.html
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
@@ -28,20 +41,24 @@ public final class OpenIdCredentialsAuthenticationHandler implements
     @NotNull
     private TicketRegistry ticketRegistry;
 
+
+
     public boolean authenticate(final Credentials credentials)
         throws AuthenticationException {
         final OpenIdCredentials c = (OpenIdCredentials) credentials;
 
+        boolean result = false;
         final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry
-            .getTicket(c.getTicketGrantingTicketId(),
-                TicketGrantingTicket.class);
+                .getTicket(c.getTicketGrantingTicketId(),
+                        TicketGrantingTicket.class);
 
-        if (t.isExpired()) {
-            return false;
+        if (t == null || t.isExpired()) {
+            result = false;
+        } else {
+            result = t.getAuthentication().getPrincipal().getId().equals(
+                    c.getUsername());
         }
-
-        return t.getAuthentication().getPrincipal().getId().equals(
-            c.getUsername());
+        return result;
     }
 
     public boolean supports(final Credentials credentials) {

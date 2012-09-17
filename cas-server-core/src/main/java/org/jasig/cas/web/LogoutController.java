@@ -1,7 +1,20 @@
 /*
- * Copyright 2007 The JA-SIG Collaborative. All rights reserved. See license
- * distributed with this file and available online at
- * http://www.ja-sig.org/products/cas/overview/license/
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.jasig.cas.web;
 
@@ -10,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -43,6 +59,9 @@ public final class LogoutController extends AbstractController {
     @NotNull
     private String logoutView;
 
+    @NotNull
+    private ServicesManager servicesManager;
+
     /**
      * Boolean to determine if we will redirect to any url provided in the
      * service request parameter.
@@ -68,7 +87,11 @@ public final class LogoutController extends AbstractController {
         }
 
         if (this.followServiceRedirects && service != null) {
-            return new ModelAndView(new RedirectView(service));
+            final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
+
+            if (rService != null && rService.isEnabled()) {
+                return new ModelAndView(new RedirectView(service));
+            }
         }
 
         return new ModelAndView(this.logoutView);
@@ -98,5 +121,9 @@ public final class LogoutController extends AbstractController {
 
     public void setLogoutView(final String logoutView) {
         this.logoutView = logoutView;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 }
