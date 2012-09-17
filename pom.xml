@@ -343,6 +343,18 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           </target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+          <excludes>
+            <exclude>**/NOTICE</exclude>
+            <exclude>README</exclude>
+            <exclude>LICENSE</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
