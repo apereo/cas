@@ -35,12 +35,12 @@
 			<map>
 				<entry key="/tickets">
 					<bean class="org.restlet.ext.spring.SpringFinder">
-						<lookup-method name="createResource" bean="ticketResource" />
+						<lookup-method name="create" bean="ticketResource" />
 					</bean>
 				</entry>
 				<entry key="/tickets/{ticketGrantingTicketId}">
 					<bean class="org.restlet.ext.spring.SpringFinder">
-						<lookup-method name="createResource" bean="ticketGrantingTicketResource" />
+						<lookup-method name="create" bean="ticketGrantingTicketResource" />
 					</bean>
 				</entry>
 			</map>

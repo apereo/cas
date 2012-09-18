@@ -63,6 +63,7 @@ public final class TicketGrantingTicketResource extends ServerResource {
     public void init(final Context context, final Request request, final Response response) {
         super.init(context, request, response);
         this.ticketGrantingTicketId = (String) request.getAttributes().get("ticketGrantingTicketId");
+        this.setNegotiated(false);
         this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
     }
 
@@ -71,13 +72,13 @@ public final class TicketGrantingTicketResource extends ServerResource {
     }
 
     @Delete
-    public void removeRepresentations() throws ResourceException {
+    public void removeRepresentations() {
         this.centralAuthenticationService.destroyTicketGrantingTicket(this.ticketGrantingTicketId);
         getResponse().setStatus(Status.SUCCESS_OK);
     }
 
     @Post
-    public void acceptRepresentation(final Representation entity) throws ResourceException {
+    public void acceptRepresentation(final Representation entity) {
         final Form form = new Form(entity);
         final String serviceUrl = form.getFirstValue("service");
         try {
