@@ -23,15 +23,15 @@ import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.restlet.Context;
+import org.restlet.Request;
+import org.restlet.Response;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
-import org.restlet.data.Request;
-import org.restlet.data.Response;
 import org.restlet.data.Status;
-import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
-import org.restlet.resource.ResourceException;
-import org.restlet.resource.Variant;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.3
  *
  */
-public final class TicketGrantingTicketResource extends Resource {
+public final class TicketGrantingTicketResource extends ServerResource {
     
     private final static Logger log = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
 
@@ -66,26 +66,19 @@ public final class TicketGrantingTicketResource extends Resource {
         this.getVariants().add(new Variant(MediaType.APPLICATION_WWW_FORM));
     }
 
-    public boolean allowDelete() {
-        return true;
-    }
-
-    public boolean allowPost() {
-        return true;
-    }
-
     public void setHttpClient(final HttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
+    @Delete
     public void removeRepresentations() throws ResourceException {
         this.centralAuthenticationService.destroyTicketGrantingTicket(this.ticketGrantingTicketId);
         getResponse().setStatus(Status.SUCCESS_OK);
     }
 
-    public void acceptRepresentation(final Representation entity)
-        throws ResourceException {
-        final Form form = getRequest().getEntityAsForm();
+    @Post
+    public void acceptRepresentation(final Representation entity) throws ResourceException {
+        final Form form = new Form(entity);
         final String serviceUrl = form.getFirstValue("service");
         try {
             final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(this.ticketGrantingTicketId, new SimpleWebApplicationServiceImpl(serviceUrl, this.httpClient));
