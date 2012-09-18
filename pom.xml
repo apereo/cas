@@ -1,855 +1,855 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-~ Licensed to Jasig under one or more contributor license
-~ agreements. See the NOTICE file distributed with this work
-~ for additional information regarding copyright ownership.
-~ Jasig licenses this file to you under the Apache License,
-~ Version 2.0 (the "License"); you may not use this file
-~ except in compliance with the License.  You may obtain a
-~ copy of the License at the following location:
-~
-~   http://www.apache.org/licenses/LICENSE-2.0
-~
-~ Unless required by applicable law or agreed to in writing,
-~ software distributed under the License is distributed on an
-~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~ KIND, either express or implied.  See the License for the
-~ specific language governing permissions and limitations
-~ under the License.
--->
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License.  You may obtain a
+  ~ copy of the License at the following location:
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-<parent>
-<groupId>org.jasig.parent</groupId>
-<artifactId>jasig-parent</artifactId>
-<version>34</version>
-</parent>
-<modelVersion>4.0.0</modelVersion>
-<groupId>org.jasig.cas</groupId>
-<artifactId>cas-server</artifactId>
-<packaging>pom</packaging>
-<name>Jasig Central Authentication Service</name>
-<description>Jasig CAS SSO server libraries and Web application.</description>
-<version>3.5.1-SNAPSHOT</version>
-<url>http://www.jasig.org/cas/</url>
-<inceptionYear>2004</inceptionYear>
+  <parent>
+    <groupId>org.jasig.parent</groupId>
+    <artifactId>jasig-parent</artifactId>
+    <version>34</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server</artifactId>
+  <packaging>pom</packaging>
+  <name>Jasig Central Authentication Service</name>
+  <description>Jasig CAS SSO server libraries and Web application.</description>
+  <version>3.5.1-SNAPSHOT</version>
+  <url>http://www.jasig.org/cas/</url>
+  <inceptionYear>2004</inceptionYear>
 
-<licenses>
-<license>
-<name>Apache 2</name>
-<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-<distribution>repo</distribution>
-</license>
-</licenses>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-<developers>
-<developer>
-<id>battags</id>
-<name>Scott Battaglia</name>
-<email>scott.battaglia@gmail.com</email>
-<timezone>-5</timezone>
-<roles>
-<role>developer</role>
-</roles>
-</developer>
-<developer>
-<id>serac</id>
-<name>Marvin S. Addison</name>
-<email>marvin.addison@gmail.com</email>
-<timezone>-5</timezone>
-<roles>
-<role>developer</role>
-<role>cas-server-support-ldap module lead</role>
-<role>cas-server-support-x509 module lead</role>
-</roles>
-</developer>
-<developer>
-<id>wgthom</id>
-<name>William G. Thompson</name>
-<email>wgthom@gmail.com</email>
-<timezone>-5</timezone>
-<roles>
-<role>developer</role>
-</roles>
-</developer>
-<developer>
-<id>apetro</id>
-<name>Andrew Petro</name>
-<email>apetro@unicon.net</email>
-<timezone>-5</timezone>
-<roles>
-<role>developer</role>
-</roles>
-</developer>
-<developer>
-<id>leleuj</id>
-<name>Jérôme Leleu</name>
-<email>leleuj@gmail.com</email>
-<timezone>-5</timezone>
-<roles>
-<role>developer</role>
-<role>cas-server-support-oauth module lead</role>
-</roles>
-</developer>
-<developer>
-<id>mmoayyed</id>
-<name>Misagh Moayyed</name>
-<email>mmoayyed@unicon.net</email>
-<timezone>-7</timezone>
-<roles>
-<role>developer</role>
-</roles>
-</developer>
+  <developers>
+    <developer>
+      <id>battags</id>
+      <name>Scott Battaglia</name>
+      <email>scott.battaglia@gmail.com</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>serac</id>
+      <name>Marvin S. Addison</name>
+      <email>marvin.addison@gmail.com</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+        <role>cas-server-support-ldap module lead</role>
+        <role>cas-server-support-x509 module lead</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>wgthom</id>
+      <name>William G. Thompson</name>
+      <email>wgthom@gmail.com</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>apetro</id>
+      <name>Andrew Petro</name>
+      <email>apetro@unicon.net</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>leleuj</id>
+      <name>Jérôme Leleu</name>
+      <email>leleuj@gmail.com</email>
+      <timezone>-5</timezone>
+      <roles>
+        <role>developer</role>
+        <role>cas-server-support-oauth module lead</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>mmoayyed</id>
+      <name>Misagh Moayyed</name>
+      <email>mmoayyed@unicon.net</email>
+      <timezone>-7</timezone>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
 
-</developers>
+  </developers>
 
-<contributors>
-<contributor>
-<name>Adam Rybicki</name>
-<email>arybicki@unicon.net</email>
-</contributor>
-<contributor>
-<name>Andrew Tillinghast</name>
-<email>atilling@conncoll.edu</email>
-</contributor>
-<contributor>
-<name>Arnaud Lesueur</name>
-<email>arnaud.lesueur@gmail.com</email>
-</contributor>
-<contributor>
-<name>Dmitriy Kopylenko</name>
-<email>dima767@gmail.com</email>
-</contributor>
-<contributor>
-<name>Drew Mazurek</name>
-<email>dmazurek@unicon.net</email>
-</contributor>
-<contributor>
-<name>Eric Dalquist</name>
-<email>eric.dalquist@doit.wisc.edu</email>
-</contributor>
-<contributor>
-<name>Eric Pierce</name>
-<email>epierce@usf.edu</email>
-</contributor>
-<contributor>
-<name>Frederic Esnault</name>
-<email>esnault.frederic@gmail.com</email>
-</contributor>
-<contributor>
-<name>Howard Gilbert</name>
-<email>Howard.Gilbert@yale.edu</email>
-</contributor>
-<contributor>
-<name>Jan Van der Velpen</name>
-<email>velpi@industria.be</email>
-</contributor>
-<contributor>
-<name>John Martin</name>
-<email>jmartin@unicon.net</email>
-</contributor>
-<contributor>
-<name>MarcAntoine Garrigue</name>
-<email>marc.antoine.garrigue@gmail.com</email>
-</contributor>
-<contributor>
-<name>Mihir Patel</name>
-<email>exploremihir@gmail.com</email>
-</contributor>
-</contributors>
+  <contributors>
+    <contributor>
+      <name>Adam Rybicki</name>
+      <email>arybicki@unicon.net</email>
+    </contributor>
+    <contributor>
+      <name>Andrew Tillinghast</name>
+      <email>atilling@conncoll.edu</email>
+    </contributor>
+    <contributor>
+      <name>Arnaud Lesueur</name>
+      <email>arnaud.lesueur@gmail.com</email>
+    </contributor>
+    <contributor>
+      <name>Dmitriy Kopylenko</name>
+      <email>dima767@gmail.com</email>
+    </contributor>
+    <contributor>
+      <name>Drew Mazurek</name>
+      <email>dmazurek@unicon.net</email>
+    </contributor>
+    <contributor>
+      <name>Eric Dalquist</name>
+      <email>eric.dalquist@doit.wisc.edu</email>
+    </contributor>
+    <contributor>
+      <name>Eric Pierce</name>
+      <email>epierce@usf.edu</email>
+    </contributor>
+    <contributor>
+      <name>Frederic Esnault</name>
+      <email>esnault.frederic@gmail.com</email>
+    </contributor>
+    <contributor>
+      <name>Howard Gilbert</name>
+      <email>Howard.Gilbert@yale.edu</email>
+    </contributor>
+    <contributor>
+      <name>Jan Van der Velpen</name>
+      <email>velpi@industria.be</email>
+    </contributor>
+    <contributor>
+      <name>John Martin</name>
+      <email>jmartin@unicon.net</email>
+    </contributor>
+    <contributor>
+      <name>MarcAntoine Garrigue</name>
+      <email>marc.antoine.garrigue@gmail.com</email>
+    </contributor>
+    <contributor>
+      <name>Mihir Patel</name>
+      <email>exploremihir@gmail.com</email>
+    </contributor>
+  </contributors>
 
-<issueManagement>
-<system>Jira</system>
-<url>https://issues.jasig.org/browse/CAS</url>
-</issueManagement>
+  <issueManagement>
+    <system>Jira</system>
+    <url>https://issues.jasig.org/browse/CAS</url>
+  </issueManagement>
+  
+  <mailingLists>
+    <mailingList>
+      <name>cas-user</name>
+      <subscribe>join-cas-user@lists.jasig.org</subscribe>
+      <unsubscribe>leave-cas-user@lists.jasig.org</unsubscribe>
+      <post>cas-user@lists.jasig.org</post>
+      <archive>https://lists.wisc.edu/read/?forum=cas-user</archive>
+    </mailingList>
+    <mailingList>
+      <name>cas-dev</name>
+      <subscribe>join-cas-dev@lists.jasig.org</subscribe>
+      <unsubscribe>leave-cas-dev@lists.jasig.org</unsubscribe>
+      <post>cas-dev@lists.jasig.org</post>
+      <archive>https://lists.wisc.edu/read/?forum=cas-dev</archive>
+    </mailingList>
+    <mailingList>
+      <name>cas-announce</name>
+      <subscribe>join-cas-announce@lists.jasig.org</subscribe>
+      <unsubscribe>leave-cas-announce@lists.jasig.org</unsubscribe>
+      <post>cas-announce@lists.jasig.org</post>
+      <archive>https://lists.wisc.edu/read/?forum=cas-announce</archive>
+    </mailingList>
+  </mailingLists>
 
-<mailingLists>
-<mailingList>
-<name>cas-user</name>
-<subscribe>join-cas-user@lists.jasig.org</subscribe>
-<unsubscribe>leave-cas-user@lists.jasig.org</unsubscribe>
-<post>cas-user@lists.jasig.org</post>
-<archive>https://lists.wisc.edu/read/?forum=cas-user</archive>
-</mailingList>
-<mailingList>
-<name>cas-dev</name>
-<subscribe>join-cas-dev@lists.jasig.org</subscribe>
-<unsubscribe>leave-cas-dev@lists.jasig.org</unsubscribe>
-<post>cas-dev@lists.jasig.org</post>
-<archive>https://lists.wisc.edu/read/?forum=cas-dev</archive>
-</mailingList>
-<mailingList>
-<name>cas-announce</name>
-<subscribe>join-cas-announce@lists.jasig.org</subscribe>
-<unsubscribe>leave-cas-announce@lists.jasig.org</unsubscribe>
-<post>cas-announce@lists.jasig.org</post>
-<archive>https://lists.wisc.edu/read/?forum=cas-announce</archive>
-</mailingList>
-</mailingLists>
+  <scm>
+    <connection>scm:git:git@github.com:Jasig/cas.git</connection>
+    <developerConnection>scm:git:git@github.com:Jasig/cas.git</developerConnection>
+    <url>https://github.com/Jasig/cas</url>
+  </scm>
 
-<scm>
-<connection>scm:git:git@github.com:Jasig/cas.git</connection>
-<developerConnection>scm:git:git@github.com:Jasig/cas.git</developerConnection>
-<url>https://github.com/Jasig/cas</url>
-</scm>
-
-<build>
-<testResources>
-<testResource>
-<directory>${basedir}/src/test/resources</directory>
-</testResource>
-</testResources>
-
-<pluginManagement>
-<plugins>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-surefire-plugin</artifactId>
-<version>2.12</version>
-<configuration>
-  <forkMode>once</forkMode>
-  <includes>
-    <include>**/*Tests.java</include>
-  </includes>
-  <excludes>
-    <exclude>**/Abstract*.java</exclude>
-  </excludes>
-  <additionalClasspathElements>
-    <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
-  </additionalClasspathElements>
-</configuration>
-</plugin>
-</plugins>
-</pluginManagement>
-
-<plugins>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-enforcer-plugin</artifactId>
-<executions>
-  <execution>
-    <id>enforce-versions</id>
-    <goals>
-      <goal>enforce</goal>
-    </goals>
-    <configuration>
-      <rules>
-	<requireMavenVersion>
-	  <version>2.0.9</version>
-	</requireMavenVersion>
-	<requireJavaVersion>
-	  <version>${jdk.version}</version>
-	</requireJavaVersion>
-      </rules>
-    </configuration>
-</execution>
-</executions>
-</plugin>
-<!--
-<plugin>
-<groupId>com.atlassian.maven.plugins</groupId>
-<artifactId>maven-clover2      lugin</artifactId>
-<version>${clover.version}</version>
-<configuration>
-  <license><![CDATA[oPpoNpLipDQKHHXaIXJPCIsoqRpdAfeXwIImkDIRoTnriq
+  <build>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+    
+    <pluginManagement>
+      <plugins>
+      	<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.12</version>
+        <configuration>
+          <forkMode>once</forkMode>
+          <includes>
+            <include>**/*Tests.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/Abstract*.java</exclude>
+          </excludes>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+      </plugins>
+    </pluginManagement>
+    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>2.0.9</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>${jdk.version}</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+        </execution>
+        </executions>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>com.atlassian.maven.plugins</groupId>
+        <artifactId>maven-clover2      lugin</artifactId>
+        <version>${clover.version}</version>
+        <configuration>
+          <license><![CDATA[oPpoNpLipDQKHHXaIXJPCIsoqRpdAfeXwIImkDIRoTnriq
 mi2KuXZFGad>>Lz0ULLXhqIo2KPjARsdren1aP3vzebzkM
 qNNNUvQNpqopPoOQRqmTvqoPnOnMopRPqpSUtxrWTxOxTu
 pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 97W9kZkUUnmm]]></license>
-  <jdk>${jdk.version}</jdk>
-  <generateXml>true</generateXml>
-  <generateHtml>true</generateHtml>
-  <includes>
-    <include>**/*.java</include>
-  </includes>
-  <excludes>
-    <exclude>**/CasVersion.java</exclude>
-    <exclude>
-      **/SamlCompliantUniqueTicketIdGenerator.java
-    </exclude>
-  </excludes>
-</configuration>
-<executions>
-  <execution>
-    <phase>verify</phase>
-    <goals>
-      <goal>instrument</goal>
-    </goals>
-  </execution>
-</executions>
-</plugin>-->
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-compiler-plugin</artifactId>
-<configuration>
-  <source>${jdk.version}</source>
-  <target>${jdk.version}</target>
-</configuration>
-</plugin>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-jar-plugin</artifactId>
-<configuration>
-  <archive>
-    <manifest>
-      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-    </manifest>
-  </archive>
-</configuration>
-</plugin>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-assembly-plugin</artifactId>
-<version>2.2.1</version>
-<configuration>
-  <descriptors>
-    <descriptor>${basedir}/assembly.xml</descriptor>
-  </descriptors>
-</configuration>
-</plugin>
-<plugin>
-<groupId>org.codehaus.mojo</groupId>
-<artifactId>aspectj-maven-plugin</artifactId>
-<version>1.3.1</version>
-<executions>
-  <execution>
-    <goals>
-      <goal>compile</goal>
-    </goals>
-  </execution>
-</executions>
-<configuration>
-  <source>${jdk.version}</source>
-  <target>${jdk.version}</target>
-</configuration>
-</plugin>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-release-plugin</artifactId>
-<version>2.2.1</version>
-<configuration>
-  <mavenExecutorId>forked-path</mavenExecutorId>
-  <tagNameFormat>v@{project.version}</tagNameFormat>
-</configuration>
-</plugin>
-<!-- CAS-988 generate hashes for assembly artifacts -->
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-antrun-plugin</artifactId>
-<version>1.5</version>
-<configuration>
-  <target>
-    <ant antfile="tasks.xml" target="genhash" />
-  </target>
-</configuration>
-</plugin>
-</plugins>
-</build>
+          <jdk>${jdk.version}</jdk>
+          <generateXml>true</generateXml>
+          <generateHtml>true</generateHtml>
+          <includes>
+            <include>**/*.java</include>
+          </includes>
+          <excludes>
+            <exclude>**/CasVersion.java</exclude>
+            <exclude>
+              **/SamlCompliantUniqueTicketIdGenerator.java
+            </exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <descriptors>
+            <descriptor>${basedir}/assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <version>1.3.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <mavenExecutorId>forked-path</mavenExecutorId>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+        </configuration>
+      </plugin>
+      <!-- CAS-988 generate hashes for assembly artifacts -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.5</version>
+        <configuration>
+          <target>
+            <ant antfile="tasks.xml" target="genhash" />
+          </target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-<dependencies>
-<dependency>
-<groupId>junit</groupId>
-<artifactId>junit</artifactId>
-<version>${junit.version}</version>
-<scope>test</scope>
-</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-<dependency>
-	<groupId>org.mockito</groupId>
-    <artifactId>mockito-core</artifactId>
-    <version>${mockito.version}</version>
-    <scope>test</scope>
-</dependency>
+	<dependency>
+		<groupId>org.mockito</groupId>
+	    <artifactId>mockito-core</artifactId>
+	    <version>${mockito.version}</version>
+	    <scope>test</scope>
+	</dependency>
 
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-test</artifactId>
-<version>${spring.version}</version>
-<scope>test</scope>
-</dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-<dependency>
-<groupId>javax.servlet</groupId>
-<artifactId>servlet-api</artifactId>
-<scope>provided</scope>
-</dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-<dependency>
-<groupId>org.aspectj</groupId>
-<artifactId>aspectjrt</artifactId>
-<scope>compile</scope>
-<version>${aspectj.version}</version>
-</dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjrt</artifactId>
+      <scope>compile</scope>
+      <version>${aspectj.version}</version>
+    </dependency>
 
-<dependency>
-<groupId>org.aspectj</groupId>
-<artifactId>aspectjweaver</artifactId>
-<scope>compile</scope>
-<version>${aspectj.version}</version>
-</dependency>
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <scope>compile</scope>
+      <version>${aspectj.version}</version>
+    </dependency>
 
-<dependency>
-<groupId>javax.validation</groupId>
-<artifactId>validation-api</artifactId>
-<version>${javax.validation.version}</version>
-<scope>compile</scope>
-</dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>${javax.validation.version}</version>
+      <scope>compile</scope>
+    </dependency>
 
-<dependency>
-<groupId>org.slf4j</groupId>
-<artifactId>slf4j-api</artifactId>
-<version>${slf4j.version}</version>
-<scope>compile</scope>
-</dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>compile</scope>
+    </dependency>
 
-<dependency>
-<groupId>org.slf4j</groupId>
-<artifactId>slf4j-log4j12</artifactId>
-<version>${slf4j.version}</version>
-<scope>runtime</scope>
-<type>jar</type>
-<exclusions>
-<exclusion>
-  <groupId>log4j</groupId>
-  <artifactId>log4j</artifactId>
-</exclusion>
-</exclusions>
-</dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>runtime</scope>
+      <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-<dependency>
-<groupId>org.slf4j</groupId>
-<artifactId>jcl-over-slf4j</artifactId>
-<version>${slf4j.version}</version>
-<scope>compile</scope>
-</dependency>
-</dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
 
-<repositories>
-<repository>
-<id>jasig-repository</id>
-<name>Jasig Maven2 Repository</name>
-<url>http://developer.ja-sig.org/maven2</url>
-</repository>
+  <repositories>
+    <repository>
+      <id>jasig-repository</id>
+      <name>Jasig Maven2 Repository</name>
+      <url>http://developer.ja-sig.org/maven2</url>
+    </repository>
 
-<repository>
-<id>jboss</id>
-<name>JBoss Repository</name>
-<layout>default</layout>
-<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
-</repository>
-</repositories>
+    <repository>
+      <id>jboss</id>
+      <name>JBoss Repository</name>
+      <layout>default</layout>
+      <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+    </repository>
+  </repositories>
 
-<pluginRepositories>
-<pluginRepository>
-<id>mojo-snapshot</id>
-<name>Codehause Mojo Snapshot Repository</name>
-<url>https://nexus.codehaus.org/content/repositories/codehaus-snapshots/</url>
-<snapshots>
-<enabled>true</enabled>
-</snapshots>
-</pluginRepository>
-</pluginRepositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>mojo-snapshot</id>
+      <name>Codehause Mojo Snapshot Repository</name>
+      <url>https://nexus.codehaus.org/content/repositories/codehaus-snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 
-<dependencyManagement>
-<dependencies>
-<dependency>
-<groupId>commons-lang</groupId>
-<artifactId>commons-lang</artifactId>
-<version>${commons.lang.version}</version>
-</dependency>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>${commons.lang.version}</version>
+      </dependency>
 
-<!-- Inspektr Dependencies -->
-<dependency>
-<groupId>com.github.inspektr</groupId>
-<artifactId>inspektr-audit</artifactId>
-<version>${inspektr.version}</version>
-</dependency>
+      <!-- Inspektr Dependencies -->
+      <dependency>
+        <groupId>com.github.inspektr</groupId>
+        <artifactId>inspektr-audit</artifactId>
+        <version>${inspektr.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>com.github.inspektr</groupId>
-<artifactId>inspektr-common</artifactId>
-<version>${inspektr.version}</version>
-</dependency>
+      <dependency>
+        <groupId>com.github.inspektr</groupId>
+        <artifactId>inspektr-common</artifactId>
+        <version>${inspektr.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>com.github.inspektr</groupId>
-<artifactId>inspektr-support-spring</artifactId>
-<version>${inspektr.version}</version>
-</dependency>
+      <dependency>
+        <groupId>com.github.inspektr</groupId>
+        <artifactId>inspektr-support-spring</artifactId>
+        <version>${inspektr.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>commons-jexl</groupId>
-<artifactId>commons-jexl</artifactId>
-<version>1.1</version>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
+      <dependency>
+        <groupId>commons-jexl</groupId>
+        <artifactId>commons-jexl</artifactId>
+        <version>1.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-<dependency>
-<groupId>org.jasig.service.persondir</groupId>
-<artifactId>person-directory-impl</artifactId>
-<version>${person.directory.version}</version>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
+      <dependency>
+        <groupId>org.jasig.service.persondir</groupId>
+        <artifactId>person-directory-impl</artifactId>
+        <version>${person.directory.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-<dependency>
-<groupId>commons-codec</groupId>
-<artifactId>commons-codec</artifactId>
-<version>${commons.codec.version}</version>
-<scope>compile</scope>
-</dependency>
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>${commons.codec.version}</version>
+        <scope>compile</scope>
+      </dependency>
 
-<dependency>
-<groupId>org.hibernate</groupId>
-<artifactId>hibernate-core</artifactId>
-<version>${hibernate.core.version}</version>
-<type>jar</type>
-</dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.core.version}</version>
+        <type>jar</type>
+      </dependency>
 
-<dependency>
-<groupId>org.hibernate</groupId>
-<artifactId>hibernate-entitymanager</artifactId>
-<version>${hibernate.core.version}</version>
-<type>jar</type>
-</dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>${hibernate.core.version}</version>
+        <type>jar</type>
+      </dependency>
 
-<dependency>
-<groupId>org.hibernate</groupId>
-<artifactId>hibernate-annotations</artifactId>
-<version>${hibernate.core.version}</version>
-<scope>compile</scope>
-<type>jar</type>
-</dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-annotations</artifactId>
+        <version>${hibernate.core.version}</version>
+        <scope>compile</scope>
+        <type>jar</type>
+      </dependency>
 
-<dependency>
-<groupId>org.hibernate.java-persistence</groupId>
-<artifactId>jpa-api</artifactId>
-<version>${jpa.version}</version>
-<scope>compile</scope>
-</dependency>
+      <dependency>
+        <groupId>org.hibernate.java-persistence</groupId>
+        <artifactId>jpa-api</artifactId>
+        <version>${jpa.version}</version>
+        <scope>compile</scope>
+      </dependency>
 
-<!-- Spring Security Managed Dependencies -->
-<dependency>
-<groupId>org.springframework.security</groupId>
-<artifactId>spring-security-cas</artifactId>
-<version>${spring.security.version}</version>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
+      <!-- Spring Security Managed Dependencies -->
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-cas</artifactId>
+        <version>${spring.security.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-<dependency>
-<groupId>org.springframework.security</groupId>
-<artifactId>spring-security-core</artifactId>
-<version>${spring.security.version}</version>
-</dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-core</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>org.springframework.security</groupId>
-<artifactId>spring-security-web</artifactId>
-<version>${spring.security.version}</version>
-</dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-web</artifactId>
+        <version>${spring.security.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>org.springframework.security</groupId>
-<artifactId>spring-security-config</artifactId>
-<version>${spring.security.version}</version>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-config</artifactId>
+        <version>${spring.security.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-<!-- Spring Managed Dependencies -->
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-aop</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-aspects</artifactId>
-<version>${spring.version}</version>
-</dependency>
+      <!-- Spring Managed Dependencies -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aspects</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-beans</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-context</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-context-support</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-core</artifactId>
-<version>${spring.version}</version>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-instrument</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-jdbc</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-jms</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-orm</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-oxm</artifactId>
-<version>${spring.version}</version>
-</dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-beans</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context-support</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-instrument</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jms</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-oxm</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-test</artifactId>
-<version>${spring.version}</version>
-<scope>test</scope>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-tx</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-web</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework</groupId>
-<artifactId>spring-webmvc</artifactId>
-<version>${spring.version}</version>
-</dependency>
-<dependency>
-<groupId>org.springframework.webflow</groupId>
-<artifactId>spring-webflow</artifactId>
-<version>${spring.webflow.version}</version>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-  <exclusion>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-context</artifactId>
-  </exclusion>
-  <exclusion>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-web</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${spring.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-web</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.webflow</groupId>
+        <artifactId>spring-webflow</artifactId>
+        <version>${spring.webflow.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-<dependency>
-<groupId>org.springframework.ldap</groupId>
-<artifactId>spring-ldap-core-tiger</artifactId>
-<version>${spring.ldap.version}</version>
-<scope>compile</scope>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
+      <dependency>
+        <groupId>org.springframework.ldap</groupId>
+        <artifactId>spring-ldap-core-tiger</artifactId>
+        <version>${spring.ldap.version}</version>
+        <scope>compile</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-<dependency>
-<groupId>org.springframework.ldap</groupId>
-<artifactId>spring-ldap-core</artifactId>
-<version>${spring.ldap.version}</version>
-<exclusions>
-  <exclusion>
-    <groupId>commons-logging</groupId>
-    <artifactId>commons-logging</artifactId>
-  </exclusion>
-</exclusions>
-</dependency>
+      <dependency>
+        <groupId>org.springframework.ldap</groupId>
+        <artifactId>spring-ldap-core</artifactId>
+        <version>${spring.ldap.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
-<dependency>
-<groupId>javax.servlet</groupId>
-<artifactId>servlet-api</artifactId>
-<version>${servlet.api.version}</version>
-</dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet.api.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>org.aspectj</groupId>
-<artifactId>aspectjweaver</artifactId>
-<version>${aspectj.version}</version>
-</dependency>
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>${aspectj.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>org.aspectj</groupId>
-<artifactId>aspectjrt</artifactId>
-<version>${aspectj.version}</version>
-</dependency>
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>${aspectj.version}</version>
+      </dependency>
 
-<dependency>
-<groupId>org.hibernate</groupId>
-<artifactId>hibernate-validator</artifactId>
-<version>${hibernate.validator.version}</version>
-</dependency>
-</dependencies>
-</dependencyManagement>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate.validator.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-<modules>
-<module>cas-server-core</module>
-<module>cas-server-webapp</module>
-<module>cas-server-support-generic</module>
-<module>cas-server-support-jdbc</module>
-<module>cas-server-support-ldap</module>
-<module>cas-server-support-legacy</module>
-<module>cas-server-support-openid</module>
-<module>cas-server-support-radius</module>
-<module>cas-server-support-spnego</module>
-<module>cas-server-support-trusted</module>
-<module>cas-server-support-x509</module>
-<module>cas-server-support-oauth</module>
-<module>cas-server-integration-jboss</module>
-<module>cas-server-integration-memcached</module>
-<module>cas-server-integration-ehcache</module>
-<module>cas-server-integration-restlet</module>
-<module>cas-server-uber-webapp</module>
-<module>cas-server-documentation</module>
-<module>cas-server-extension-clearpass</module>
-</modules>
+  <modules>
+    <module>cas-server-core</module>
+    <module>cas-server-webapp</module>
+    <module>cas-server-support-generic</module>
+    <module>cas-server-support-jdbc</module>
+    <module>cas-server-support-ldap</module>
+    <module>cas-server-support-legacy</module>
+    <module>cas-server-support-openid</module>
+    <module>cas-server-support-radius</module>
+    <module>cas-server-support-spnego</module>
+    <module>cas-server-support-trusted</module>
+    <module>cas-server-support-x509</module>
+    <module>cas-server-support-oauth</module>
+    <module>cas-server-integration-jboss</module>
+    <module>cas-server-integration-memcached</module>
+    <module>cas-server-integration-ehcache</module>
+    <module>cas-server-integration-restlet</module>
+    <module>cas-server-uber-webapp</module>
+    <module>cas-server-documentation</module>
+    <module>cas-server-extension-clearpass</module>
+  </modules>
 
-<reporting>
-<plugins>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-project-info-reports-plugin</artifactId>
-<version>2.4</version>
-<reportSets>
-  <reportSet>
-    <reports>
-      <report>index</report>
-      <report>project-team</report>
-      <report>mailing-list</report>
-      <report>issue-tracking</report>
-      <report>license</report>
-      <report>scm</report>
-    </reports>
-  </reportSet>
-</reportSets>
-</plugin>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-checkstyle-plugin</artifactId>
-<version>2.9.1</version>
-</plugin>
-<!--
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-javadoc-plugin</artifactId> 
-<configuration>
-  <minmemory>128m</minmemory>
-  <maxmemory>512</maxmemory>
-</configuration> 
-</plugin>-->
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-jxr-plugin</artifactId>
-<version>2.3</version>
-</plugin>
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-pmd-plugin</artifactId>
-<version>2.7.1</version>
-</plugin>
-</plugins>
-</reporting>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.4</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>project-team</report>
+              <report>mailing-list</report>
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.9.1</version>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId> 
+        <configuration>
+          <minmemory>128m</minmemory>
+          <maxmemory>512</maxmemory>
+        </configuration> 
+      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.7.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
-<profiles>
-<profile>
-<id>ci</id>
-<build>
-<plugins>
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-source-plugin</artifactId>
-    <version>2.2</version>
-    <executions>
-      <execution>
-	<id>attach-sources</id>
-	<goals>
-	  <goal>jar</goal>
-	</goals>
-      </execution>
-    </executions>
-  </plugin>
-  <plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-javadoc-plugin</artifactId>
-    <version>2.8</version>
-    <configuration>
-      <charset>UTF-8</charset>
-      <encoding>UTF-8</encoding>
-      <docencoding>UTF-8</docencoding>
-    </configuration>
-    <executions>
-      <execution>
-	<id>attach-javadocs</id>
-	<goals>
-	  <goal>jar</goal>
-	</goals>
-      </execution>
-    </executions>
-  </plugin>
-</plugins>
-</build>
-</profile>
-</profiles>
-
-<properties>
-<issues.projectKey>CAS</issues.projectKey>
-<spring.webflow.version>2.3.0.RELEASE</spring.webflow.version>
-<spring.version>3.1.1.RELEASE</spring.version>
-<spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
-<spring.security.version>3.1.0.RELEASE</spring.security.version>
-<clover.version>2.6.3</clover.version>
-<aspectj.version>1.6.10</aspectj.version>
-<javax.validation.version>1.0.0.GA</javax.validation.version>
-<perf4j.version>0.9.14</perf4j.version>
-<commons.jexl.version>1.1</commons.jexl.version>
+  <profiles>
+    <profile>
+      <id>ci</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>2.2</version>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.8</version>
+            <configuration>
+              <charset>UTF-8</charset>
+              <encoding>UTF-8</encoding>
+              <docencoding>UTF-8</docencoding>
+            </configuration>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  
+  <properties>
+    <issues.projectKey>CAS</issues.projectKey>
+    <spring.webflow.version>2.3.0.RELEASE</spring.webflow.version>
+    <spring.version>3.1.1.RELEASE</spring.version>
+    <spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
+    <spring.security.version>3.1.0.RELEASE</spring.security.version>
+    <clover.version>2.6.3</clover.version>
+    <aspectj.version>1.6.10</aspectj.version>
+    <javax.validation.version>1.0.0.GA</javax.validation.version>
+    <perf4j.version>0.9.14</perf4j.version>
+    <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
     <hibernate.core.version>4.1.0.Final</hibernate.core.version>
     <slf4j.version>1.7.1</slf4j.version>
