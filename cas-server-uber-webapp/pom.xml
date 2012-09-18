@@ -22,7 +22,7 @@
     <parent>
         <artifactId>cas-server</artifactId>
         <groupId>org.jasig.cas</groupId>
-        <version>3.5.1-RC1</version>
+        <version>3.5.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
