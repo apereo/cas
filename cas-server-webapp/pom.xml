@@ -122,7 +122,15 @@
 	    	</exclusion>
 	    	<exclusion>
 	    		<groupId>org.springframework</groupId>
-            	<artifactId>*</artifactId>
+            	<artifactId>spring</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.springframework</groupId>
+            	<artifactId>spring-mock</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.springframework</groupId>
+            	<artifactId>spring-webmvc</artifactId>
 	    	</exclusion>
 	    </exclusions>
 	</dependency>
@@ -134,7 +142,11 @@
 	    <exclusions>
 	    	<exclusion>
 		    	<groupId>commons-attributes</groupId>
-		    	<artifactId>*</artifactId>
+		    	<artifactId>commons-attributes-api</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+		    	<groupId>commons-logging</groupId>
+		    	<artifactId>commons-logging</artifactId>
 	    	</exclusion>
 	    </exclusions>
 	</dependency>
