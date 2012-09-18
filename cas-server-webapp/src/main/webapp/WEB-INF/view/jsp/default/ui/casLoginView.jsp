@@ -90,7 +90,7 @@
                                <option value="fr">French</option>
                                <option value="ru">Russian</option>
                                <option value="nl">Nederlands</option>
-                               <option value="sv">Svenskt</option>
+                               <option value="sv">Svenska</option>
                                <option value="it">Italiano</option>
                                <option value="ur">Urdu</option>
                                <option value="zh_CN">Chinese (Simplified)</option>
@@ -105,6 +105,8 @@
                                <option value="mk">Macedonian</option>
                                <option value="fa">Farsi</option>
                                <option value="ar">Arabic</option>
+                               <option value="pt_PT">Portuguese</option>
+                               <option value="pt_BR">Portuguese (Brazil)</option>
                            </select>
                            <input type="submit" value="Switch">
                         </form>
@@ -117,7 +119,7 @@
 							><li><a href="${loginUrl}fr">French</a></li
 							><li><a href="${loginUrl}ru">Russian</a></li
 							><li><a href="${loginUrl}nl">Nederlands</a></li
-							><li><a href="${loginUrl}sv">Svenskt</a></li
+							><li><a href="${loginUrl}sv">Svenska</a></li
 							><li><a href="${loginUrl}it">Italiano</a></li
 							><li><a href="${loginUrl}ur">Urdu</a></li
 							><li><a href="${loginUrl}zh_CN">Chinese (Simplified)</a></li
@@ -131,6 +133,8 @@
                             ><li><a href="${loginUrl}mk">Macedonian</a></li
                             ><li><a href="${loginUrl}fa">Farsi</a></li
                             ><li><a href="${loginUrl}ar">Arabic</a></li
+                            ><li><a href="${loginUrl}pt_PT">Portuguese</a></li
+                            ><li><a href="${loginUrl}pt_BR">Portuguese (Brazil)</a></li
 							><li class="last"><a href="${loginUrl}pl">Polish</a></li
 						></ul>
                      </c:otherwise>
