@@ -33,9 +33,12 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.restlet.data.Status;
+import org.restlet.representation.Representation;
+import org.restlet.resource.Post;
 import org.restlet.resource.Representation;
 import org.restlet.resource.Resource;
 import org.restlet.resource.ResourceException;
+import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,25 +54,18 @@ import org.springframework.web.context.request.WebRequest;
  * @since 3.3
  * 
  */
-public class TicketResource extends Resource {
+public class TicketResource extends ServerResource {
     
     private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
-    
-    public final boolean allowGet() {
-        return false;
-    }
 
-    public final boolean allowPost() {
-        return true;
-    }
-
-    public final void acceptRepresentation(final Representation entity)
-        throws ResourceException {
+    @Post
+    public final void acceptRepresentation(final Representation entity) throws ResourceException {
         if (log.isDebugEnabled()) {
             log.debug("Obtaining credentials...");
+            final Form form =
             log.debug(getRequest().getEntityAsForm().toString());
         }
      
