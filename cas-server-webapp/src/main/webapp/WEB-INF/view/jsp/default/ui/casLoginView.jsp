@@ -90,7 +90,7 @@
                                <option value="fr">French</option>
                                <option value="ru">Russian</option>
                                <option value="nl">Nederlands</option>
-                               <option value="sv">Svenskt</option>
+                               <option value="sv">Svenska</option>
                                <option value="it">Italiano</option>
                                <option value="ur">Urdu</option>
                                <option value="zh_CN">Chinese (Simplified)</option>
@@ -117,7 +117,7 @@
 							><li><a href="${loginUrl}fr">French</a></li
 							><li><a href="${loginUrl}ru">Russian</a></li
 							><li><a href="${loginUrl}nl">Nederlands</a></li
-							><li><a href="${loginUrl}sv">Svenskt</a></li
+							><li><a href="${loginUrl}sv">Svenska</a></li
 							><li><a href="${loginUrl}it">Italiano</a></li
 							><li><a href="${loginUrl}ur">Urdu</a></li
 							><li><a href="${loginUrl}zh_CN">Chinese (Simplified)</a></li
