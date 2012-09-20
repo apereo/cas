@@ -91,7 +91,6 @@ public final class TicketGrantingTicketResource extends Resource {
             final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(this.ticketGrantingTicketId, new SimpleWebApplicationServiceImpl(serviceUrl, this.httpClient));
             getResponse().setEntity(serviceTicketId, MediaType.TEXT_PLAIN);
         } catch (final InvalidTicketException e) {
-            log.error(e.getMessage(),e);
             getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");
         } catch (final Exception e) {
             log.error(e.getMessage(),e);
