@@ -18,7 +18,6 @@ under the License.
 This project includes:
   "Java Concurrency in Practice" book annotations under Creative Commons Attribution License
   A Hibernate Core Module under GNU Lesser General Public License
-  ant under Apache Software License, Version 1.1
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Log4j under The Apache Software License, Version 2.0
@@ -45,7 +44,6 @@ This project includes:
   Inspektr - Common API under Apache 2.0 License
   Inspektr - Error Logging under Apache 2.0 License
   Inspektr - Spring Framework Support under Apache 2.0 License
-  Jakarta Commons Attributes API under Apache License, Version 2.0
   Jasig CAS Client for Java - Core under Apache License Version 2.0
   Jasig CAS Core under Apache 2
   Jasig CAS Web Application under Apache 2
@@ -76,15 +74,12 @@ This project includes:
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
-  qdox under Apache License, Version 2.0
   quartz under The Apache Software License, Version 2.0
   servlet-api under Commons Development and Distribution License, Version 1.0
   SLF4J API Module under MIT License
   SLF4J LOG4J-12 Binding under MIT License
   SOJO under The Apache Software License, Version 2.0
   Spring Binding under Apache License, Version 2.0
-  Spring Framework under The Apache Software License, Version 2.0
-  Spring Framework: Mock under The Apache Software License, Version 2.0
   Spring JavaScript under Apache License, Version 2.0
   Spring JavaScript Resources under Apache License, Version 2.0
   Spring Json View under The Apache Software License, Version 2.0

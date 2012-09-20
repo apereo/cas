@@ -1,5 +1,3 @@
-/* IE Pick-a-boo bug fix */
-
 /*
  * Licensed to Jasig under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
@@ -19,6 +17,7 @@
  * under the License.
  */
 
+/* IE Pick-a-boo bug fix */
 form {height: expression('1%');}
 
 /* Fixes Display: Block issue in IE5.5 and 6x */
