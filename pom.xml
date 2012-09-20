@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>Jasig Central Authentication Service</name>
   <description>Jasig CAS SSO server libraries and Web application.</description>
-  <version>3.5.1-SNAPSHOT</version>
+  <version>3.5.1-RC2-SNAPSHOT</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
 
@@ -341,6 +341,34 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           <target>
             <ant antfile="tasks.xml" target="genhash" />
           </target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <configuration>
+          <header>src/licensing/header.txt</header>
+          <headerDefinitions>
+            <headerDefinition>src/licensing/header-definitions.xml</headerDefinition>
+          </headerDefinitions>
+          <aggregate>true</aggregate>
+          <excludes>
+            <exclude>LICENSE</exclude>
+            <exclude>**/INSTALL*</exclude>
+            <exclude>**/NOTICE*</exclude>
+            <exclude>**/README*</exclude>
+            <exclude>**/readme*</exclude>
+            <exclude>**/*.log</exclude>
+            <exclude>**/*.license</exclude>
+            <exclude>**/*.txt</exclude>
+            <exclude>**/*.crt</exclude>
+            <exclude>**/*.crl</exclude>
+            <exclude>**/*.key</exclude>
+            <exclude>**/.gitignore</exclude>
+            <exclude>**/overlays/**</exclude>
+            <exclude>src/licensing/**</exclude>
+            <exclude>**/testCA/**</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
@@ -852,7 +880,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <commons.jexl.version>1.1</commons.jexl.version>
     <hibernate.validator.version>4.2.0.Final</hibernate.validator.version>
     <hibernate.core.version>4.1.0.Final</hibernate.core.version>
-    <slf4j.version>1.5.8</slf4j.version>
+    <slf4j.version>1.7.1</slf4j.version>
     <person.directory.version>1.5.1</person.directory.version>
     <servlet.api.version>2.5</servlet.api.version>
     <jpa.version>2.0-cr-1</jpa.version>
