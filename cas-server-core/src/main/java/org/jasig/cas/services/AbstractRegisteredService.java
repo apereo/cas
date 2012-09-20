@@ -75,12 +75,16 @@ public abstract class AbstractRegisteredService
     @IndexColumn(name = "a_id")
     private List<String> allowedAttributes = new ArrayList<String>();
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String description;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     protected String serviceId;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String name;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String theme;
 
     private boolean allowedToProxy = true;
