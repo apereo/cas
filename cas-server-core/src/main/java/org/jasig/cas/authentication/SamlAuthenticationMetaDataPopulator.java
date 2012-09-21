@@ -68,15 +68,12 @@ public class SamlAuthenticationMetaDataPopulator implements
                 AUTHN_METHOD_X509_PUBLICKEY);
     }
 
-    public final Authentication populateAttributes(
-        final Authentication authentication, final Credentials credentials) {
+    public final Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
 
         final String credentialsClass = credentials.getClass().getName();
-        final String authenticationMetehod = this.authenticationMethods
-            .get(credentialsClass);
+        final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
 
-        authentication.getAttributes().put(ATTRIBUTE_AUTHENTICATION_METHOD,
-            authenticationMetehod);
+        authentication.getAttributes().put(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
 
         return authentication;
     }
