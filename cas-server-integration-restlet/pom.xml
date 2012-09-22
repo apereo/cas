@@ -81,7 +81,7 @@
 	</repositories>
 
     <properties>
-        <restlet.version>2.1-RC6</restlet.version>
+        <restlet.version>2.1.0</restlet.version>
     </properties>
 
 </project>
