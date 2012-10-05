@@ -36,7 +36,7 @@
 
   <bean id="auditTrailManagementAspect" class="com.github.inspektr.audit.AuditTrailManagementAspect">
     <!-- String applicationCode -->
-    <constructor-arg index="0" value="Management" />
+    <constructor-arg index="0" value="CAS_Management" />
 
     <!-- PrincipalResolver auditablePrincipalResolver -->
     <constructor-arg index="1" ref="auditablePrincipalResolver" />
