@@ -44,7 +44,7 @@
   <sec:http entry-point-ref="casProcessingFilterEntryPoint" auto-config="true">
     <sec:logout logout-url="/logout.html" logout-success-url="/loggedOut.html"/>
     <sec:custom-filter ref="casProcessingFilter" after="CAS_FILTER"/>
-    <sec:intercept-url pattern="/**" access="${management.securityContext.serviceProperties.adminRoles}"/>
+    <sec:intercept-url pattern="/**" access="${cas-management.securityContext.serviceProperties.adminRoles}"/>
   </sec:http>
 
   <sec:authentication-manager alias="casAuthenticationManager">
@@ -52,7 +52,7 @@
   </sec:authentication-manager>
 
   <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties"
-        p:service="${management.securityContext.serviceProperties.service}"
+        p:service="${cas-management.securityContext.serviceProperties.service}"
         p:sendRenew="false"/>
 
   <bean id="casProcessingFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter"

@@ -30,7 +30,7 @@
 
   <!-- Theme Resolver -->
   <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver"
-        p:defaultThemeName="${management.themeResolver.defaultThemeName}">
+        p:defaultThemeName="${cas-management.themeResolver.defaultThemeName}">
   </bean>
 
   <!-- View Resolver -->
@@ -38,7 +38,7 @@
         p:order="0">
     <property name="basenames">
       <list>
-        <value>${management.viewResolver.basename}</value>
+        <value>${cas-management.viewResolver.basename}</value>
       </list>
     </property>
   </bean>
@@ -118,7 +118,7 @@
   <bean id="manageRegisteredServicesMultiActionController"
         class="org.jasig.cas.services.web.ManageRegisteredServicesMultiActionController">
     <constructor-arg index="0" ref="servicesManager"/>
-    <constructor-arg index="1" value="${management.securityContext.serviceProperties.service}"/>
+    <constructor-arg index="1" value="${cas-management.securityContext.serviceProperties.service}"/>
   </bean>
 
   <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
