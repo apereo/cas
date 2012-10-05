@@ -31,5 +31,5 @@
 	</description>
        
 	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-		p:location="/WEB-INF/management.properties" />
+		p:location="/WEB-INF/cas-management.properties" />
 </beans>

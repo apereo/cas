@@ -32,8 +32,8 @@
         </layout>
     </appender>
 
-    <appender name="management" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="management.log" />
+    <appender name="cas-management" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="cas-management.log" />
         <param name="MaxFileSize" value="512KB" />
         <param name="MaxBackupIndex" value="3" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -53,12 +53,12 @@
 
     <logger name="org.jasig" additivity="true">
         <level value="INFO" />
-        <appender-ref ref="management" />
+        <appender-ref ref="cas-management" />
     </logger>
 
     <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
         <level value="INFO" />
-        <appender-ref ref="management" />
+        <appender-ref ref="cas-management" />
     </logger>
 
     <!--
