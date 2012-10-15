@@ -82,6 +82,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 		</dependency>
 		
 		<dependency>
+	      <groupId>net.sf.ehcache</groupId>
+	      <artifactId>ehcache-core</artifactId>
+	    </dependency>  
+    
+		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-integration-ehcache</artifactId>
 			<version>${project.version}</version>
