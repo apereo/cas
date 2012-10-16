@@ -198,6 +198,23 @@
           </webResources>
         </configuration>
       </plugin>
+      <plugin>
+	    <groupId>org.jasig.maven</groupId>
+	    <artifactId>maven-translate-plugin</artifactId>
+	    <version>0.0.1</version>
+	    <executions>
+	        <execution>
+	            <goals>
+	                <goal>check</goal>
+	            </goals>
+	            <phase>process-sources</phase>
+	        </execution>
+	    </executions>
+	    <configuration>
+	        <messagesDirectory>${basedir}/src/main/webapp/WEB-INF/classes/</messagesDirectory>
+	        <mainMessagesFile>messages_en.properties</mainMessagesFile>
+	    </configuration>
+	  </plugin>
     </plugins>
   </build>
 </project>
