@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -106,7 +107,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
             .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         logger.debug("callbackAuthorizeUrl : {}", callbackAuthorizeUrl);
         
-        String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE, callbackAuthorizeUrl);
+        String loginUrlWithService = OAuthUtils.addParameter(loginUrl, CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, callbackAuthorizeUrl);
         logger.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
     }

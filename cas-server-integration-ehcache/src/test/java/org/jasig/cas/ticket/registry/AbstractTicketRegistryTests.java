@@ -21,6 +21,7 @@ package org.jasig.cas.ticket.registry;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -75,7 +76,7 @@ public abstract class AbstractTicketRegistryTests  {
     
     public static Service getService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", "test");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
         return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
     

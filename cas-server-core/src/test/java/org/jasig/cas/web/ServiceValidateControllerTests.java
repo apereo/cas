@@ -21,6 +21,7 @@ package org.jasig.cas.web;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockValidationSpecification;
 import org.jasig.cas.ticket.TicketException;
@@ -74,9 +75,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             .grantServiceTicket(tId, TestUtils.getService());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService()
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService()
             .getId());
-        request.addParameter("ticket", sId2);
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET, sId2);
         request.addParameter("renew", "true");
 
         return request;
@@ -107,9 +108,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService()
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService()
             .getId());
-        request.addParameter("ticket", sId);
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET, sId);
 
         assertEquals(CONST_SUCCESS_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -153,9 +154,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService()
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService()
             .getId());
-        request.addParameter("ticket", sId);
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET, sId);
 
         assertEquals(CONST_FAILURE_VIEW,
             this.serviceValidateController.handleRequestInternal(request,
@@ -172,9 +173,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService()
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService()
             .getId());
-        request.addParameter("ticket", sId);
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET, sId);
         request
             .addParameter("pgtUrl", "https://www.acs.rutgers.edu");
 
@@ -193,9 +194,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService()
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService()
             .getId());
-        request.addParameter("ticket", sId);
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET, sId);
         request.addParameter("pgtUrl", "http://www.acs.rutgers.edu");
 
         final ModelAndView modelAndView = this.serviceValidateController
@@ -215,9 +216,9 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
             .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", TestUtils.getService()
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService()
             .getId());
-        request.addParameter("ticket", sId);
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET, sId);
         request.addParameter("pgtUrl", "duh");
 
         final ModelAndView modelAndView = this.serviceValidateController

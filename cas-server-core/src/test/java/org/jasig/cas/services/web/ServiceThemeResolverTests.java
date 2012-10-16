@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -67,7 +68,7 @@ public class ServiceThemeResolverTests extends TestCase {
         this.servicesManager.save(r);
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "myServiceId");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
         System.out.println("1");
         assertEquals("myTheme", this.serviceThemeResolver.resolveThemeName(request));
@@ -75,7 +76,7 @@ public class ServiceThemeResolverTests extends TestCase {
     
     public void testGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "myServiceId");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
@@ -83,7 +84,7 @@ public class ServiceThemeResolverTests extends TestCase {
     public void testGetDefaultServiceWithNoServicesManager() {
         this.serviceThemeResolver.setServicesManager(null);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "myServiceId");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }

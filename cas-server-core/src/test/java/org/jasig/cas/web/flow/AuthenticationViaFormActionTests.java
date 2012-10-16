@@ -21,20 +21,19 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
@@ -112,7 +111,7 @@ public class AuthenticationViaFormActionTests extends
         request.addParameter("username", "test");
         request.addParameter("password", "test");
         request.addParameter("warn", "true");
-        request.addParameter("service", "test");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
 
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, response));
@@ -157,13 +156,13 @@ public class AuthenticationViaFormActionTests extends
 
         context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
         request.addParameter("renew", "true");
-        request.addParameter("service", "test");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
         request.addParameter("username", "test");
         request.addParameter("password", "test");
         
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getFlowScope().put("service", TestUtils.getService("test"));
+        context.getFlowScope().put(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService("test"));
     //    this.action.bind(context);
      //   assertEquals("warn", this.action.submit(context).getId());
     }
@@ -178,7 +177,7 @@ public class AuthenticationViaFormActionTests extends
 
         context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
         request.addParameter("renew", "true");
-        request.addParameter("service", "test");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
         request.addParameter("username", "test2");
         request.addParameter("password", "test2");
 
@@ -199,7 +198,7 @@ public class AuthenticationViaFormActionTests extends
 
         context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
         request.addParameter("renew", "true");
-        request.addParameter("service", "test");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
 
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));

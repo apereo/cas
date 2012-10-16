@@ -45,10 +45,11 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This class represents an action in the webflow to retrieve OAuth information on the callback url which is the webflow url (/login). The
- * {@link org.jasig.cas.support.oauth.OAuthConstants.OAUTH_PROVIDER} and the other OAuth parameters are expected after OAuth authentication.
- * Providers are defined by configuration. The {@link org.jasig.cas.support.oauth.OAuthConstants.SERVICE},
- * {@link org.jasig.cas.support.oauth.OAuthConstants.THEME}, {@link org.jasig.cas.support.oauth.OAuthConstants.LOCALE} and
- * {@link org.jasig.cas.support.oauth.OAuthConstants.METHOD} parameters are saved and restored from web session after OAuth authentication.
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#OAUTH_PROVIDER} and the other OAuth parameters are expected after OAuth authentication.
+ * Providers are defined by configuration. The {@link CentralAuthenticationService#PROTOCOL_PARAMETER_SERVICE},
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#THEME}, {@link org.jasig.cas.support.oauth.OAuthConstants#LOCALE} and
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#METHOD} parameters are saved and restored from web session after OAuth authentication.
+ * 
  * 
  * @author Jerome Leleu
  * @since 3.5.0
@@ -88,8 +89,8 @@ public final class OAuthAction extends AbstractAction {
             logger.debug("credential : {}", credential);
             
             // retrieve parameters from web session
-            final Service service = (Service) session.getAttribute(OAuthConstants.SERVICE);
-            context.getFlowScope().put(OAuthConstants.SERVICE, service);
+            final Service service = (Service) session.getAttribute(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE);
+            context.getFlowScope().put(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, service);
             restoreRequestAttribute(request, session, OAuthConstants.THEME);
             restoreRequestAttribute(request, session, OAuthConstants.LOCALE);
             restoreRequestAttribute(request, session, OAuthConstants.METHOD);
@@ -108,9 +109,9 @@ public final class OAuthAction extends AbstractAction {
             // no authentication : go to login page
             
             // save parameters in web session
-            final Service service = (Service) context.getFlowScope().get(OAuthConstants.SERVICE);
+            final Service service = (Service) context.getFlowScope().get(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE);
             if (service != null) {
-                session.setAttribute(OAuthConstants.SERVICE, service);
+                session.setAttribute(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, service);
             }
             saveRequestParameter(request, session, OAuthConstants.THEME);
             saveRequestParameter(request, session, OAuthConstants.LOCALE);

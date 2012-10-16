@@ -20,6 +20,7 @@ package org.jasig.cas.web.flow;
 
 import java.util.Arrays;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
@@ -107,7 +108,7 @@ public class InitialFlowSetupActionTests extends TestCase {
     public void testServiceFound() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "test");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         
         final Event event = this.action.execute(context);

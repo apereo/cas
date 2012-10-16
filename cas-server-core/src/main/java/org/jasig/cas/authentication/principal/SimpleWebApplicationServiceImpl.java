@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.jasig.cas.util.HttpClient;
 import org.springframework.util.StringUtils;
@@ -37,11 +38,7 @@ import org.springframework.util.StringUtils;
 public final class SimpleWebApplicationServiceImpl extends
     AbstractWebApplicationService {
 
-    private static final String CONST_PARAM_SERVICE = "service";
-
     private static final String CONST_PARAM_TARGET_SERVICE = "targetService";
-
-    private static final String CONST_PARAM_TICKET = "ticket";
 
     private static final String CONST_PARAM_METHOD = "method";
 
@@ -77,14 +74,14 @@ public final class SimpleWebApplicationServiceImpl extends
             .getParameter(CONST_PARAM_TARGET_SERVICE);
         final String method = request.getParameter(CONST_PARAM_METHOD);
         final String serviceToUse = StringUtils.hasText(targetService)
-            ? targetService : request.getParameter(CONST_PARAM_SERVICE);
+            ? targetService : request.getParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE);
 
         if (!StringUtils.hasText(serviceToUse)) {
             return null;
         }
 
         final String id = cleanupUrl(serviceToUse);
-        final String artifactId = request.getParameter(CONST_PARAM_TICKET);
+        final String artifactId = request.getParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET);
 
         return new SimpleWebApplicationServiceImpl(id, serviceToUse,
             artifactId, "POST".equals(method) ? ResponseType.POST
@@ -95,7 +92,7 @@ public final class SimpleWebApplicationServiceImpl extends
         final Map<String, String> parameters = new HashMap<String, String>();
 
         if (StringUtils.hasText(ticketId)) {
-            parameters.put(CONST_PARAM_TICKET, ticketId);
+            parameters.put(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET, ticketId);
         }
 
         if (ResponseType.POST == this.responseType) {

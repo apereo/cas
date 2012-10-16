@@ -76,7 +76,7 @@ public final class LogoutController extends AbstractController {
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         final String ticketGrantingTicketId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-        final String service = request.getParameter("service");
+        final String service = request.getParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE);
 
         if (ticketGrantingTicketId != null) {
             this.centralAuthenticationService

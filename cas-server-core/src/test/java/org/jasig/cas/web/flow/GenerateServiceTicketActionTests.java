@@ -21,6 +21,7 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -56,12 +57,12 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void testServiceTicketFromCookie() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService());
         context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket);
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "service");
         request.setCookies(new Cookie[] {new Cookie("TGT",
             this.ticketGrantingTicket)});
 
@@ -73,11 +74,11 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void testTicketGrantingTicketFromRequest() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "service");
         WebUtils.putTicketGrantingTicketInRequestScope(context,
             this.ticketGrantingTicket);
 
@@ -89,11 +90,11 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void testTicketGrantingTicketNoTgt() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "service");
         WebUtils.putTicketGrantingTicketInRequestScope(context, "bleh");
 
         assertEquals("error", this.action.execute(context).getId());
@@ -102,11 +103,11 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void testTicketGrantingTicketNotTgtButGateway() throws Exception {
         MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        request.addParameter("service", "service");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "service");
         request.addParameter("gateway", "true");
         WebUtils.putTicketGrantingTicketInRequestScope(context, "bleh");
 

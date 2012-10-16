@@ -21,16 +21,15 @@ package org.jasig.cas.web;
 import javax.servlet.http.Cookie;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.Assert.*;
 
@@ -84,7 +83,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
 
     @Test
     public void testLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
-        this.request.addParameter("service", "TestService");
+        this.request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "TestService");
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("TestService");
         impl.setName("TestService");
@@ -97,7 +96,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
 
     @Test
     public void logoutForServiceWithNoFollowRedirects() throws Exception {
-        this.request.addParameter("service", "TestService");
+        this.request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "TestService");
         this.logoutController.setFollowServiceRedirects(false);
         assertTrue(!(this.logoutController.handleRequestInternal(request,
             new MockHttpServletResponse()).getView() instanceof RedirectView));
@@ -105,7 +104,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
 
     @Test
     public void logoutForServiceWithFollowRedirectsNoAllowedService() throws Exception {
-        this.request.addParameter("service", "TestService");
+        this.request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "TestService");
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("http://FooBar");
         impl.setName("FooBar");

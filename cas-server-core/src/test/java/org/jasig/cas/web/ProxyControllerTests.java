@@ -21,6 +21,7 @@ package org.jasig.cas.web;
 import java.util.Map;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -85,7 +86,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
         assertTrue(this.proxyController.handleRequestInternal(request,
             new MockHttpServletResponse()).getModel().containsKey(
-            "ticket"));
+            CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET));
     }
     
     @Test
@@ -98,6 +99,6 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
       request.addParameter("targetService", "service");
   
       final Map<String, Object> map = this.proxyController.handleRequestInternal(request,  new MockHttpServletResponse()).getModel();
-      assertTrue(!map.containsKey("ticket"));
+      assertTrue(!map.containsKey(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET));
     }
 }
