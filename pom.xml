@@ -485,6 +485,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <artifactId>commons-lang</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
+      
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache-core</artifactId>
+        <version>${ehcache.version}</version>
+      </dependency>  
 
       <!-- Inspektr Dependencies -->
       <dependency>
@@ -893,5 +899,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.9.0</mockito.version>
     <jdk.version>1.6</jdk.version>
+    <ehcache.version>2.6.0</ehcache.version>
   </properties>
 </project>
