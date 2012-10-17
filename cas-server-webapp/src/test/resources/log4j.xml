@@ -83,7 +83,7 @@
       upstream loggers.
     -->
     <logger name="org.perf4j.TimingLogger" additivity="false">
-        <level value="INFO" />
+        <level value="${log4j.logger.cas.server.webapp.org.perf4j.TimingLogger}" />
         <appender-ref ref="CoalescingStatistics" />
     </logger>
 
@@ -94,20 +94,20 @@
         apply DEBUG level logging on a an org.springframework.* package level (i.e. org.springframework.dao)
     -->
     <logger name="org.springframework">
-        <level value="WARN" />
+        <level value="${log4j.logger.cas.server.webapp.org.springframework}" />
     </logger>
 
     <logger name="org.springframework.webflow">
-        <level value="WARN" />
+        <level value="${log4j.logger.cas.server.webapp.org.springframework.webflow}" />
     </logger>
 
     <logger name="org.jasig" additivity="true">
-        <level value="INFO" />
+        <level value="${log4j.logger.cas.server.webapp.org.jasig}" />
         <appender-ref ref="cas" />
     </logger>
 
     <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
-        <level value="INFO" />
+        <level value="${log4j.logger.cas.server.webapp.com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager}" />
         <appender-ref ref="cas" />
     </logger>
 
@@ -117,7 +117,7 @@
         cleartext authentication credentials
     -->
     <logger name="org.jasig.cas.web.flow" additivity="true">
-        <level value="INFO" />
+        <level value="${log4j.logger.cas.server.webapp.org.jasig.cas.web.flow}" />
         <appender-ref ref="cas" />
     </logger>
 
@@ -126,7 +126,7 @@
       logger to System.out.
     -->
     <root>
-        <level value="ERROR" />
+        <level value="${log4j.logger.cas.server.webapp.rootCategory}" />
         <appender-ref ref="console" />
     </root>
 </log4j:configuration>

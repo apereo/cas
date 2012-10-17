@@ -194,9 +194,14 @@
   </scm>
 
   <build>
+	<filters>
+      <filter>../pom.properties</filter>
+    </filters>
+    
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
+        <filtering>true</filtering>
       </testResource>
     </testResources>
     
