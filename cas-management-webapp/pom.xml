@@ -30,13 +30,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>com.github.inspektr</groupId>
       <artifactId>inspektr-support-spring</artifactId>
       <scope>runtime</scope>
@@ -102,13 +95,6 @@
       <scope>compile</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.opensymphony.quartz</groupId>
-      <artifactId>quartz</artifactId>
-      <version>1.6.1</version>
-      <type>jar</type>
-    </dependency>
-
 	<dependency>
 	    <groupId>net.sf.spring-json</groupId>
 	    <artifactId>spring-json</artifactId>
@@ -162,13 +148,6 @@
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
       <type>jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>ognl</groupId>
-      <artifactId>ognl</artifactId>
-      <version>2.7.3</version>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>

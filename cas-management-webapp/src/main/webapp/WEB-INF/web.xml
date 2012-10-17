@@ -29,7 +29,7 @@
     <param-name>contextConfigLocation</param-name>
     <param-value>
       /WEB-INF/spring-configuration/*.xml
-      /WEB-INF/deployerConfigContext.xml
+      /WEB-INF/managementConfigContext.xml
     </param-value>
   </context-param>
 
@@ -154,11 +154,6 @@
     <!-- Default to 5 minute session timeouts -->
     <session-timeout>5</session-timeout>
   </session-config>
-
-  <error-page>
-    <exception-type>org.springframework.context.ApplicationContextException</exception-type>
-    <location>/WEB-INF/view/jsp/brokenContext.jsp</location>
-  </error-page>
 
   <error-page>
     <error-code>500</error-code>
