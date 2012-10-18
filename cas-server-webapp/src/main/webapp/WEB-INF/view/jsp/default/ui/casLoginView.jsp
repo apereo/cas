@@ -29,7 +29,7 @@
 
   <div class="box fl-panel" id="login">
 			<form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true">
-                  <form:errors path="*" id="msg" cssClass="errors" element="div" />
+                  <form:errors path="*" id="msg" cssClass="errors" element="div" htmlEscape="false" />
                 <!-- <spring:message code="screen.welcome.welcome" /> -->
                     <h2><spring:message code="screen.welcome.instructions" /></h2>
                     <div class="row fl-controls-left">
