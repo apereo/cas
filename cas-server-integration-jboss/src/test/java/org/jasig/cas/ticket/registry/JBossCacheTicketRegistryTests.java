@@ -17,11 +17,13 @@
  * under the License.
  */
 package org.jasig.cas.ticket.registry;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import junit.framework.TestCase;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
@@ -33,60 +35,51 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jboss.cache.Cache;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * Test case to test the DefaultTicketRegistry based on test cases to test all
- * Ticket Registries.
+ * Ticket Registries. Here only one {@link Cache}-Instance is configured
+ * for ticket granting tickets and service tickets.
  * 
  * @author Scott Battaglia
  * @author Marc-Antoine Garrigue
  * @version $Revision$ $Date$
  */
-public final class JBossCacheTicketRegistryTests extends TestCase {
-    
-    private static final String APPLICATION_CONTEXT_FILE_NAME = "jbossTestContext.xml";
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(value="/jbossTestContext.xml")
+public class JBossCacheTicketRegistryTests {
 
-    private static final String APPLICATION_CONTEXT_CACHE_BEAN_NAME = "ticketRegistry";
-
-    private JBossCacheTicketRegistry registry;
+	private static final int TICKETS_IN_REGISTRY = 10;
     
+    @Autowired  @Qualifier(value="cache")
     private Cache<String, Ticket> treeCache;
-    
-    private static final int TICKETS_IN_REGISTRY = 10;
 
+    @Autowired
     private TicketRegistry ticketRegistry;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-        this.ticketRegistry = this.getNewTicketRegistry();
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @Before
+    public void setUp() throws Exception {
+        this.treeCache.removeNode(JBossCacheTicketRegistry.FQN_TICKET);
+        this.treeCache.removeNode(JBossCacheTicketRegistry.FQN_SERVICE_TICKET);
     }
 
     protected Authentication getAuthentication() {
         return new ImmutableAuthentication(new SimplePrincipal("test"));
     }
 
-    public TicketRegistry getNewTicketRegistry() throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-            APPLICATION_CONTEXT_FILE_NAME);
-        this.registry = (JBossCacheTicketRegistry) context
-            .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
-
-        this.treeCache = (Cache<String, Ticket>) context.getBean("cache");
-        this.treeCache.removeNode("/ticket");
-        
-        return this.registry;
-    }
-    
     /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add
      * the ticket and return. Failure upon any exception.
      */
+    @Test
     public void testAddTicketToCache() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
@@ -96,6 +89,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testGetNullTicket() {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
@@ -104,6 +98,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testGetNonExistingTicket() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL",
@@ -113,6 +108,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testGetExistingTicketWithProperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
@@ -123,6 +119,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testGetExistingTicketWithInproperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
@@ -134,6 +131,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         fail("ClassCastException expected.");
     }
 
+    @Test
     public void testGetNullTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket(null);
@@ -142,6 +140,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testGetNonExistingTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
@@ -150,6 +149,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testGetExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
@@ -161,6 +161,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testDeleteExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
@@ -172,6 +173,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testDeleteNonExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
@@ -183,6 +185,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testDeleteNullTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
@@ -194,16 +197,18 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
     }
 
+    @Test
     public void testGetTicketsIsZero() {
         try {
             assertEquals("The size of the empty registry is not zero.",
-                this.ticketRegistry.getTickets().size(), 0);
+                0, this.ticketRegistry.getTickets().size());
         } catch (Exception e) {
             e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testGetTicketsFromRegistryEqualToTicketsAdded() {
         final Collection<Ticket> tickets = new ArrayList<Ticket>();
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -226,7 +231,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
             Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
                 "The size of the registry is not the same as the collection.",
-                ticketRegistryTickets.size(), tickets.size());
+                tickets.size(), ticketRegistryTickets.size());
 
             for (final Ticket ticket : tickets) {
                 if (!ticketRegistryTickets.contains(ticket)) {

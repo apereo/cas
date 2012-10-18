@@ -25,7 +25,7 @@
 		class="org.jasig.cas.ticket.registry.JBossCacheTicketRegistry">
 		<property name="cache" ref="cache" />
 	</bean>
-
+	
 	<bean id="cache" class="org.jasig.cas.util.JBossCacheFactoryBean">
 		<property name="configLocation"
 			value="classpath:jbossTestCache.xml" />
