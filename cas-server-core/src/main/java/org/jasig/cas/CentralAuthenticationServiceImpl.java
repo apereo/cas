@@ -169,8 +169,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
-     * @throws IllegalArgumentException if TicketGrantingTicket ID, Credentials
-     * or Service are null.
+     * @throws IllegalArgumentException if ticketGrantingTicketId or service are null.
      */
     @Audit(
         action="SERVICE_TICKET",
@@ -179,12 +178,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Profiled(tag="GRANT_SERVICE_TICKET", logFailuresSeparately = false)
     @Transactional(readOnly = false)
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws TicketException {
-
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final TicketGrantingTicket ticketGrantingTicket;
-        ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticketGrantingTicket == null) {
             throw new InvalidTicketException();
@@ -418,7 +415,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * 
      * <ul>
      *  <li> If the service is marked to allow anonymous access, a persistent id is returned. </li>
-     *  <li> If the attribute name matches {@link RegisteredService#DEFAULT_USERNAME_ATTRIBUTE}, then the default principal id is returned.</li>
+     *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default principal id is returned.</li>
      *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed attributes for the service, 
      *      the corresponding attribute value will be returned.
      *  </li>
