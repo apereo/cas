@@ -16,11 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.adaptors.ldap.lppe;
+
+import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
 
 public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationException {
 
-    public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.password.message";
+    private int numberOfDaysToPasswordExpirationDate = -1;
+    
+    public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.lppe.message";
 
     private static final long  serialVersionUID      = 4365292208441435202L;
 
@@ -31,5 +35,16 @@ public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationEx
     public LdapPasswordPolicyEnforcementException(final String code, final String msg) {
         super(code, msg);
     }
+    
+    public LdapPasswordPolicyEnforcementException(String code, String msg, String type) {
+        super(code, msg, type);
+    }
 
+    public void setNumberOfDaysToPasswordExpirationDate(final int days) {
+        this.numberOfDaysToPasswordExpirationDate = days;
+    }
+    
+    public int getNumberOfDaysToPasswordExpirationDate() {
+        return this.numberOfDaysToPasswordExpirationDate;
+    }
 }

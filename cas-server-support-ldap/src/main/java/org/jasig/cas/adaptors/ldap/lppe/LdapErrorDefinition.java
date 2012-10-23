@@ -16,19 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.adaptors.ldap.lppe;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-
-public class LdapAuthenticationException extends AuthenticationException {
-
-    private static final long serialVersionUID = 1L;
-
-    public LdapAuthenticationException(final String code, final String msg) {
-        super(code, msg);
-    }
-
-    public LdapAuthenticationException(final String code, final String msg, final String type) {
-        super(code, msg, type);
-    }
+public interface LdapErrorDefinition {
+    String getType();
+    
+    String getDefinition();
+    
+    boolean matches(String error);
 }

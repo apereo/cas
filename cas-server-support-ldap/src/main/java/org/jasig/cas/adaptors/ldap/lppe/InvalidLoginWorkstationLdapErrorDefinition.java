@@ -16,36 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.adaptors.ldap;
+package org.jasig.cas.adaptors.ldap.lppe;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-public class LdapErrorDefinition {
-
-    private Pattern ldapPattern = null;
-
-    private String type  = null;
-
-    public String getType() {
-        return this.type;
+public class InvalidLoginWorkstationLdapErrorDefinition extends AbstractLdapErrorDefinition {
+    public InvalidLoginWorkstationLdapErrorDefinition() {
+        super("data 531", "badWorkstation");
     }
-
-    public boolean matches(final String msg) {
-        final Matcher matcher = getLdapPattern().matcher(msg);
-        return matcher.find();
-    }
-
-    public void setLdapPattern(final String ldapPattern) {
-        this.ldapPattern = Pattern.compile(ldapPattern);
-    }
-
-    public void setType(final String errMessage) {
-        this.type = errMessage;
-    }
-
-    private Pattern getLdapPattern() {
-        return this.ldapPattern;
-    }
-
 }
