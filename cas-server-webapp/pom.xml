@@ -212,7 +212,7 @@
 	    </executions>
 	    <configuration>
 	        <messagesDirectory>${basedir}/src/main/webapp/WEB-INF/classes/</messagesDirectory>
-	        <mainMessagesFile>messages_en.properties</mainMessagesFile>
+	        <mainMessagesFile>messages.properties</mainMessagesFile>
 	    </configuration>
 	  </plugin>
     </plugins>
