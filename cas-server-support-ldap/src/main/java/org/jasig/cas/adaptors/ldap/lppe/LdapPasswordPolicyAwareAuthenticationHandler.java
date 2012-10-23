@@ -41,7 +41,7 @@ import org.springframework.beans.factory.InitializingBean;
 public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     private enum LdapUserAccountControlFlags {
-        UAC_FLAG_ACCOUNTDISABLE(2),
+        UAC_FLAG_ACCOUNT_DISABLED(2),
         UAC_FLAG_LOCKOUT(16),
         UAC_FLAG_PASSWD_NOTREQD(32),
         UAC_FLAG_DONT_EXPIRE_PASSWD(65536),
@@ -295,6 +295,23 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
 
     private void examineAccountStatus(final UsernamePasswordCredentials credentials, final LdapPasswordPolicyConfiguration passwordPolicyConfig) throws AuthenticationException {
         
+        if (NumberUtils.isNumber(passwordPolicyConfig.getUserAccountControl())) {
+           final int uacValue = Integer.parseInt(passwordPolicyConfig.getUserAccountControl());
+           if ((uacValue & LdapUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) == 
+                   LdapUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) {
+               throw new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE, 
+                                                     String.format("Account %s is disabled", passwordPolicyConfig.getUserId()),
+                                                     new AccountDisabledLdapErrorDefinition().getType());
+           } 
+           
+           if ((uacValue & LdapUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) == 
+                   LdapUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) {
+               throw new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE, 
+                                                     String.format("Account %s is locked", passwordPolicyConfig.getUserId()),
+                                                     new AccountLockedLdapErrorDefinition().getType());
+           } 
+        }
+
         if (passwordPolicyConfig.isAccountDisabled()) {
             throw new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE, 
                                                   String.format("Account %s is disabled", passwordPolicyConfig.getUserId()),
@@ -426,9 +443,9 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
             ignoreChecks = this.ignorePasswordExpirationWarningFlags.contains(ignoreCheckValue);
         }
     
-        if (!ignoreChecks && NumberUtils.isNumber(config.getPasswordExpirationDate())) {
-            final int rawExpirationDate = Integer.parseInt(config.getPasswordExpirationDate());
-            ignoreChecks = ((rawExpirationDate & LdapUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD.getValue()) == 
+        if (!ignoreChecks && NumberUtils.isNumber(config.getUserAccountControl())) {
+            final int uacValue = Integer.parseInt(config.getUserAccountControl());
+            ignoreChecks = ((uacValue & LdapUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD.getValue()) == 
                            LdapUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD.getValue());
         }
         return ignoreChecks;

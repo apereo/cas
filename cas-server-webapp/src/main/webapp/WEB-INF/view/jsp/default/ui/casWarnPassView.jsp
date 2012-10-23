@@ -24,7 +24,7 @@
   <c:set var="ticketArg"  value="ticket=${serviceTicketId}"/>
 </c:if>
 
-<div class="errors">
+<div id="msg" class="errors">
   <p>
     <c:if test="${expireDays == 0}">
       <h2><spring:message code="screen.warnpass.heading.today" /></h2>
@@ -41,7 +41,7 @@
   <spring:message code="screen.warnpass.message.line1" arguments="${passwordPolicyUrl}"  />
   </p>
   <p>
-  <spring:message code="screen.warnpass.message.line2" arguments="${fn:escapeXml(param.service)}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}${ticketArg}" />
+  <spring:message code="screen.warnpass.message.line2" arguments="${fn:escapeXml(service)}${fn:indexOf(service, '?') eq -1 ? '?' : '&'}${ticketArg}" />
   </p>
 </div>
 <script type="text/javascript">
@@ -50,6 +50,6 @@
   function redirectTo(URL) {
     window.location = URL ;
   }
-  setTimeout("redirectTo('${param.service}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}${ticketArg}')", 10000);
+  setTimeout("redirectTo('${service}${fn:indexOf(service, '?') eq -1 ? '?' : '&'}${ticketArg}')", 10000);
 
 </script>
