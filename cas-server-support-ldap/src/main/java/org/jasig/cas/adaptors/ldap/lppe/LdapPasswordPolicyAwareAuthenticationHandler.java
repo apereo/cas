@@ -40,6 +40,11 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
+    /**
+     * This enumeration defines a selective set of ldap user account control flags
+     * that indicate various statuses of the user account. The account status
+     * is a bitwise flag that may contain one of more of the following values.
+     */
     private enum LdapUserAccountControlFlags {
         UAC_FLAG_ACCOUNT_DISABLED(2),
         UAC_FLAG_LOCKOUT(16),
@@ -76,13 +81,16 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
     /** The attribute that contains the data that will determine if password warning is skipped  */
     private String ignorePasswordExpirationWarningAttributeName = null;
 
+    /** Default number of days which the password may be considered valid **/
     private int defaultValidPasswordNumberOfDays = 180;
     
+    /** Default number of days to use when calculating the warning period **/
     private int defaultPasswordWarningNumberOfDays = 30;
     
     /** The value that will cause password warning to be bypassed  */
     private List<String> ignorePasswordExpirationWarningFlags;
 
+    /** Url to the password policy application **/
     private String passwordPolicyUrl;
     
     @NotNull
@@ -184,9 +192,8 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         
     /**
      * Calculates the number of days left to the expiration date based on the {@code expireDate} parameter
-     * @param expireDate
-     * @param userId
-     * @return number of days left to the expiration date, or {@value #PASSWORD_STATUS_PASS}
+     * @return Number of days left to the expiration date or -1 if the no expiration warning is 
+     * calculated based on the defined policy. 
      */
     protected int getDaysToExpirationDate(final LdapPasswordPolicyConfiguration config, final DateTime expireDate)
             throws LdapPasswordPolicyEnforcementException {
@@ -200,17 +207,13 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         int daysToExpirationDate = d.getDays();
 
         if (expireDate.equals(currentTime) || expireDate.isBefore(currentTime)) {
-            String msgToLog = "Authentication failed because account password has expired with " + daysToExpirationDate + " to expiration date. ";
-            msgToLog += "Verify the value of the " + this.passwordExpirationDateAttributeName
-                    + " attribute and make sure it's not before the current date, which is " + currentTime.toString();
-
-            final LdapPasswordPolicyEnforcementException exc = new LdapPasswordPolicyEnforcementException(msgToLog);
-
-            log.error(msgToLog, exc);
-            throw exc;
+            String msgToLog = String.format("Authentication failed because account password has expired with %s to expiration date." + 
+                                            "Verify the value of the attribute and make sure it's not before the current date, which is %s", 
+                                            daysToExpirationDate, this.passwordExpirationDateAttributeName, currentTime);
+            throw new LdapPasswordPolicyEnforcementException(msgToLog);
         }
 
-        // Warning period begins from X number of ways before the expiration date
+        // Warning period begins from X number of days before the expiration date
         final DateTime warnPeriod = new DateTime(DateTime.parse(expireDate.toString()), this.ldapDateConverter.getTimeZone()).minusDays(config
                 .getPasswordWarningNumberOfDays());
         log.info("Warning period begins on {}", warnPeriod.toString());
@@ -228,7 +231,8 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
     }
 
     /**
-     * Determines the expiration date to use based on the settings.
+     * Determines the expiration date to use based on the password policy configuration.
+     * @see #setLdapDateConverter(LdapDateConverter)
      */
     protected DateTime getExpirationDateToUse(final LdapPasswordPolicyConfiguration config) {
         final DateTime dateValue = this.ldapDateConverter.convert(config.getPasswordExpirationDate());
@@ -247,13 +251,6 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
       }
   
       final DateTime expireTime = this.getExpirationDateToUse(passwordPolicyConfig);
-  
-      if (expireTime == null) {
-          final String msg = String
-                  .format("Expiration date cannot be determined for date %s", passwordPolicyConfig.getPasswordExpirationDate());
-          throw new LdapAuthenticationException(msg);
-      }
-  
       final int days = this.getDaysToExpirationDate(passwordPolicyConfig, expireTime);
       if (days != -1) {
           LdapPasswordPolicyEnforcementException ex = new LdapPasswordPolicyEnforcementException(LdapPasswordPolicyEnforcementException.CODE, 
