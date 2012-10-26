@@ -52,7 +52,7 @@
   </filter-mapping>
   <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/services/*</url-pattern>
+    <url-pattern>/statistics</url-pattern>
   </filter-mapping>
 
   <filter>
@@ -151,52 +151,17 @@
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
-    <url-pattern>/services/add.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
-    <url-pattern>/services/viewStatistics.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
-    <url-pattern>/services/logout.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
-    <url-pattern>/services/loggedOut.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
-    <url-pattern>/services/manage.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
-    <url-pattern>/services/edit.html</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
     <url-pattern>/openid/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
-    <url-pattern>/services/deleteRegisteredService.html</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-	<servlet-name>cas</servlet-name>
-	<url-pattern>/services/updateRegisteredServiceEvaluationOrder.html</url-pattern>
+    <url-pattern>/status</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
-    <url-pattern>/status</url-pattern>
+    <url-pattern>/statistics</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>

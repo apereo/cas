@@ -85,15 +85,11 @@
         <prop key="/proxy">proxyController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
         <prop key="/samlValidate">samlValidateController</prop>
-        <prop key="/services/add.html">addRegisteredServiceSimpleFormController</prop>
-        <prop key="/services/edit.html">editRegisteredServiceSimpleFormController</prop>
-        <prop key="/services/loggedOut.html">serviceLogoutViewController</prop>
-        <prop key="/services/viewStatistics.html">viewStatisticsController</prop>
-        <prop key="/services/*">manageRegisteredServicesMultiActionController</prop>
         <prop key="/openid/*">openIdProviderController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
         <prop key="/403.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
+        <prop key="/statistics">statisticsController</prop>
       </props>
     </property>
     <property
@@ -114,7 +110,7 @@
   <bean
       id="openIdProviderController"
       class="org.jasig.cas.web.OpenIdProviderController"
-      p:loginUrl="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"/>
+      p:loginUrl="${cas.loginUrl}"/>
 
   <bean
       id="serviceLogoutViewController"
@@ -152,8 +148,7 @@
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
                                  expression-parser="expressionParser"/>
 
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener"
-      p:serviceManagerUrl="${cas.securityContext.serviceProperties.service}" />
+  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.WebFlowOgnlExpressionParser"/>
 
@@ -194,7 +189,7 @@
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
-  <bean id="viewStatisticsController" class="org.jasig.cas.web.StatisticsController"
+  <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
         p:casTicketSuffix="${host.name}">
     <constructor-arg index="0" ref="ticketRegistry"/>
   </bean>
@@ -236,38 +231,6 @@
 
   <bean id="generateLoginTicketAction" class="org.jasig.cas.web.flow.GenerateLoginTicketAction"
         p:ticketIdGenerator-ref="loginTicketUniqueIdGenerator"/>
-
-  <bean id="addRegisteredServiceSimpleFormController"
-        class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
-        p:formView="addServiceView"
-        p:successView="addServiceView"
-        p:commandName="registeredService"
-        p:validator-ref="registeredServiceValidator"
-        p:sessionForm="true">
-    <constructor-arg index="0" ref="servicesManager"/>
-    <constructor-arg index="1" ref="attributeRepository"/>
-  </bean>
-
-  <bean id="editRegisteredServiceSimpleFormController"
-        class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
-        p:formView="editServiceView"
-        p:successView="editServiceView"
-        p:commandName="registeredService"
-        p:validator-ref="registeredServiceValidator"
-        p:sessionForm="false">
-    <constructor-arg index="0" ref="servicesManager"/>
-    <constructor-arg index="1" ref="attributeRepository"/>
-  </bean>
-
-  <bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
-        p:servicesManager-ref="servicesManager" 
-        p:personAttributeDao-ref="attributeRepository" />
-
-  <bean id="manageRegisteredServicesMultiActionController"
-        class="org.jasig.cas.services.web.ManageRegisteredServicesMultiActionController">
-    <constructor-arg index="0" ref="servicesManager"/>
-    <constructor-arg index="1" value="${cas.securityContext.serviceProperties.service}"/>
-  </bean>
 
   <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
 
