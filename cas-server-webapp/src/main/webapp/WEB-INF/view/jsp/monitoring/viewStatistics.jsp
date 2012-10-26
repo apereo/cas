@@ -18,7 +18,7 @@
     under the License.
 
 --%>
-<%@include file="includes/top.jsp"%>
+<%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
 <h2>Runtime Statistics</h2>
 <table width="800">
@@ -47,7 +47,7 @@
         </tr>
         <tr>
             <td>Memory</td>
-            <td> ${freeMemory} MB free <img src="../images/green.gif" width="${freeMemory / (totalMemory) * 500}" height="30" /><img src="../images/red.gif" width="${(totalMemory - freeMemory) / totalMemory * 500}" height="30" /> ${totalMemory} MB total </td>
+            <td> ${freeMemory} MB free <img src="images/green.gif" width="${freeMemory / (totalMemory) * 500}" height="30" /><img src="images/red.gif" width="${(totalMemory - freeMemory) / totalMemory * 500}" height="30" /> ${totalMemory} MB total </td>
         </tr>
         <tr>
             <td>Maximum Memory</td>
@@ -99,4 +99,4 @@
 
 </c:forEach>
 
-<%@include file="includes/bottom.jsp" %>
+<%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
