@@ -169,24 +169,19 @@
     <url-pattern>/authorizationFailure.html</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
-    <url-pattern>/403.html</url-pattern>
-  </servlet-mapping>
-
   <session-config>
     <!-- Default to 5 minute session timeouts -->
     <session-timeout>5</session-timeout>
   </session-config>
 
   <error-page>
-    <exception-type>org.springframework.context.ApplicationContextException</exception-type>
-    <location>/WEB-INF/view/jsp/brokenContext.jsp</location>
+    <error-code>401</error-code>
+    <location>/authorizationFailure.html</location>
   </error-page>
 
   <error-page>
-    <error-code>500</error-code>
-    <location>/WEB-INF/view/jsp/errors.jsp</location>
+    <error-code>403</error-code>
+    <location>/authorizationFailure.html</location>
   </error-page>
 
   <error-page>
@@ -195,8 +190,18 @@
   </error-page>
 
   <error-page>
-    <error-code>403</error-code>
-    <location>/403.html</location>
+    <error-code>500</error-code>
+    <location>/WEB-INF/view/jsp/errors.jsp</location>
+  </error-page>
+
+  <error-page>
+    <error-code>501</error-code>
+    <location>/WEB-INF/view/jsp/errors.jsp</location>
+  </error-page>
+
+  <error-page>
+    <error-code>503</error-code>
+    <location>/WEB-INF/view/jsp/errors.jsp</location>
   </error-page>
 
   <welcome-file-list>

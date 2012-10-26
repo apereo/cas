@@ -65,7 +65,6 @@
         <prop key="/edit.html">editRegisteredServiceSimpleFormController</prop>
         <prop key="/loggedOut.html">serviceLogoutViewController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/403.html">passThroughController</prop>
         <prop key="/*">manageRegisteredServicesMultiActionController</prop>
       </props>
     </property>

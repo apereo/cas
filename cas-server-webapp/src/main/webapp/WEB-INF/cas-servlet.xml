@@ -87,7 +87,6 @@
         <prop key="/samlValidate">samlValidateController</prop>
         <prop key="/openid/*">openIdProviderController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/403.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
         <prop key="/statistics">statisticsController</prop>
       </props>
