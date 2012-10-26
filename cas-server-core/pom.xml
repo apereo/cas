@@ -25,7 +25,6 @@
     <version>4.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-core</artifactId>
   <name>Jasig CAS Core</name>
   <description>CAS core</description>
