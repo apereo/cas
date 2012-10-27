@@ -20,7 +20,7 @@ package org.jasig.cas.adaptors.ldap.lppe;
 
 import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
 
-public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationException {
+public class LdapPasswordPolicyAuthenticationException extends LdapAuthenticationException {
 
     private int numberOfDaysToPasswordExpirationDate = -1;
     
@@ -28,19 +28,8 @@ public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationEx
 
     private static final long  serialVersionUID      = 4365292208441435202L;
 
-    public LdapPasswordPolicyEnforcementException(final String msg) {
-        this(CODE_PASSWORD_CHANGE, msg);
-    }
-
-    public LdapPasswordPolicyEnforcementException(final String code, final String msg) {
-        super(code, msg);
-    }
-    
-    public LdapPasswordPolicyEnforcementException(String code, String msg, String type) {
-        super(code, msg, type);
-    }
-
-    public void setNumberOfDaysToPasswordExpirationDate(final int days) {
+    public LdapPasswordPolicyAuthenticationException(final Exception e, final int days) {
+        super(e);
         this.numberOfDaysToPasswordExpirationDate = days;
     }
     

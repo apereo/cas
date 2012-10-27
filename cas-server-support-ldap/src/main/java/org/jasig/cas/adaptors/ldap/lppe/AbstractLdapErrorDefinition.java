@@ -21,6 +21,8 @@ package org.jasig.cas.adaptors.ldap.lppe;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 
 public abstract class AbstractLdapErrorDefinition implements LdapErrorDefinition {
 
@@ -30,6 +32,11 @@ public abstract class AbstractLdapErrorDefinition implements LdapErrorDefinition
     public AbstractLdapErrorDefinition(final String def, final String type) {
         this.type = type;
         this.errorDefinition = Pattern.compile(def);
+    }
+
+    @Override
+    public AuthenticationException getAuthenticationException(final String message) {
+        return new LdapAuthenticationException(message, getType());
     }
 
     @Override

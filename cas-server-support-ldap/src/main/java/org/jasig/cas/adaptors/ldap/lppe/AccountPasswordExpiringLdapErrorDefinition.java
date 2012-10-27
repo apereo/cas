@@ -16,25 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.adaptors.ldap;
+package org.jasig.cas.adaptors.ldap.lppe;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 
-public class LdapAuthenticationException extends AuthenticationException {
+public class AccountPasswordExpiringLdapErrorDefinition extends AbstractLdapErrorDefinition {
+    public AccountPasswordExpiringLdapErrorDefinition() {
+        super("[0-9]+ days$", "passwordExpirationWarning");
+    }
 
-    private static final String CODE = "error.ldap.authentication.credentials.bad";
-    
-    private static final long serialVersionUID = 1L;
-    
-    public LdapAuthenticationException(final Exception e) {
-        super(CODE, e);
+    public AuthenticationException getAuthenticationException(final String message, final int days) {
+        return new LdapPasswordPolicyAuthenticationException(getAuthenticationException(message), days);
     }
-    
-    public LdapAuthenticationException(final Exception e, final String type) {
-        super(e.getMessage(), e, CODE, type);
-    }
-    
-    public LdapAuthenticationException(final String message, final String type) {
-        super(message, CODE, type);
-    }
+
 }

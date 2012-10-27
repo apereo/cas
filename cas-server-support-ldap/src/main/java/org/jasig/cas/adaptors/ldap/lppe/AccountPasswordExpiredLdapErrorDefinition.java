@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
-public class PasswordExpiredLdapErrorDefinition extends AbstractLdapErrorDefinition {
-    public PasswordExpiredLdapErrorDefinition() {
+public class AccountPasswordExpiredLdapErrorDefinition extends AbstractLdapErrorDefinition {
+    public AccountPasswordExpiredLdapErrorDefinition() {
         super("data (701|532)", "passwordExpired");
     }
 }

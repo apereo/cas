@@ -48,6 +48,8 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class AuthenticationViaFormAction {
 
+    private static final String DEFAULT_WEBFLOW_ERROR_EVENT_ID = "error";
+    
     /**
      * Binder that allows additional binding of form object beyond Spring
      * defaults.
@@ -61,8 +63,8 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
-
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+        
     public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
@@ -76,11 +78,11 @@ public class AuthenticationViaFormAction {
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
         if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
-            this.logger.warn("Invalid login ticket " + providedLoginTicket);
+            log.warn("Invalid login ticket " + providedLoginTicket);
             final String code = "INVALID_TICKET";
             messageContext.addMessage(
                 new MessageBuilder().error().code(code).arg(providedLoginTicket).defaultText(code).build());
-            return "error";
+            return DEFAULT_WEBFLOW_ERROR_EVENT_ID;
         }
 
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -93,14 +95,14 @@ public class AuthenticationViaFormAction {
                 putWarnCookieIfRequestParameterPresent(context);
                 return "warn";
             } catch (final TicketException e) {
-                if (isCauseAuthenticationException(e)) {
+                if (isTicketExceptionCauseAuthenticationException(e)) {
                     populateErrorsInstance(e, messageContext);
-                    return getAuthenticationExceptionEventId(e);
+                    return getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e);
                 }
                 
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
+                if (log.isDebugEnabled()) {
+                    log.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
                 }
             }
         }
@@ -111,19 +113,20 @@ public class AuthenticationViaFormAction {
             return "success";
         } catch (final TicketException e) {
             populateErrorsInstance(e, messageContext);
-            if (isCauseAuthenticationException(e))
-                return getAuthenticationExceptionEventId(e);
-            return "error";
+            return getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e);
         }
     }
 
-
+    protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
+                                                          final MessageContext messageContext, final TicketException e) {
+        return DEFAULT_WEBFLOW_ERROR_EVENT_ID;
+    }
+    
     private void populateErrorsInstance(final TicketException e, final MessageContext messageContext) {
-
         try {
             messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).defaultText(e.getCode()).build());
         } catch (final Exception fe) {
-            logger.error(fe.getMessage(), fe);
+            log.error(fe.getMessage(), fe);
         }
     }
 
@@ -136,21 +139,8 @@ public class AuthenticationViaFormAction {
             this.warnCookieGenerator.removeCookie(response);
         }
     }
-    
-    private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
-        return (AuthenticationException) e.getCause();
-    }
 
-    private String getAuthenticationExceptionEventId(final TicketException e) {
-        final AuthenticationException authEx = getAuthenticationExceptionAsCause(e);
-
-        if (this.logger.isDebugEnabled())
-            this.logger.debug("An authentication error has occurred. Returning the event id " + authEx.getType());
-
-        return authEx.getType();
-    }
-
-    private boolean isCauseAuthenticationException(final TicketException e) {
+    protected boolean isTicketExceptionCauseAuthenticationException(final TicketException e) {
         return e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass());
     }
 

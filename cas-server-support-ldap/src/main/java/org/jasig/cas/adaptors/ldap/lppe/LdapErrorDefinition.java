@@ -18,10 +18,14 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
+import org.jasig.cas.authentication.handler.AuthenticationException;
+
 public interface LdapErrorDefinition {
     String getType();
     
     String getDefinition();
     
-    boolean matches(String error);
+    boolean matches(final String error);
+    
+    AuthenticationException getAuthenticationException(final String message);
 }

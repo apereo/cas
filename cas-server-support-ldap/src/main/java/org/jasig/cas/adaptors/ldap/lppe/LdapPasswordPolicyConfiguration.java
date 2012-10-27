@@ -18,28 +18,36 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+
 final class LdapPasswordPolicyConfiguration {
 
     private String passwordExpirationDate;
     private String ignorePasswordExpirationWarning;
     private String userId;
+    
     private int validPasswordNumberOfDays;
     private int passwordWarningNumberOfDays;
+    
     private boolean accountDisabled;
     private boolean accountLocked;
     private boolean accountPasswordMustChange;
-    private String userAccountControl;
+    
+    private long userAccountControl = -1;
         
     public LdapPasswordPolicyConfiguration(final String userId) {
         this.userId = userId;
     }
 
-    public String getUserAccountControl() {
+    public long getUserAccountControl() {
         return this.userAccountControl;
     }
 
     public void setUserAccountControl(String userAccountControl) {
-        this.userAccountControl = userAccountControl;
+        if (!StringUtils.isBlank(userAccountControl) && NumberUtils.isNumber(userAccountControl)) {
+            this.userAccountControl = Long.parseLong(userAccountControl);
+        }
     }
     
     public boolean isAccountDisabled() {

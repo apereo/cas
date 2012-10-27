@@ -69,6 +69,10 @@
 	</action-state>
 	 -->
 
+	<decision-state id="passwordWarningCheck">
+		<if test="flowScope.service != null" then="pwdWarningPostView" else="pwdWarningPostView" />
+	</decision-state>
+	
 	<end-state id="pwdWarningAbstractView">
 		<on-entry>
 			<set name="flowScope.passwordPolicyUrl" value="lppeEnabledLdapAuthenticationHandler.getPasswordPolicyUrl()" />
@@ -111,7 +115,7 @@
 	    <transition on="badHours" to="casBadHoursView" />
 	    <transition on="badWorkstation" to="casBadWorkstationView" />
 	    <transition on="passwordExpired" to="casExpiredPassView" />
-	    
+	    <transition on="passwordExpirationWarning" to="pwdWarningPostView" />
 	</action-state>
 	
 	<action-state id="sendTicketGrantingTicket">
