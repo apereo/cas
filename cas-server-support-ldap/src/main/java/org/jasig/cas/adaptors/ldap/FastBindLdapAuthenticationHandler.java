@@ -35,12 +35,12 @@ import javax.naming.directory.SearchResult;
  * hand the path to the uid.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.3
  */
 public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    @Override
+    protected final SearchResult authenticateLdapUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
         DirContext dirContext = null;
         try {
             final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
@@ -52,10 +52,10 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePassw
             if (!StringUtils.isBlank(getSearchBase())) {
                 final NamingEnumeration<SearchResult> result = dirContext.search(getSearchBase(), bindDn, getSearchControls());
                 if (result.hasMore()) {
-                    setAuthenticatedDistinguishedNameSearchResult(result.next());
+                    return result.next();
                 }
             }
-            return true;
+            return null;
         } catch (final Exception e) {
             log.error(e.getMessage(), e);            
             throw new LdapAuthenticationException(e);

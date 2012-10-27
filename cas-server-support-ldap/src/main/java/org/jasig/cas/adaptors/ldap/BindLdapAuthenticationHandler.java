@@ -56,7 +56,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
     /** Boolean of whether multiple accounts are allowed. */
     private boolean allowMultipleAccounts;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    @Override
+    protected final SearchResult authenticateLdapUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
 
         final Map<String, SearchResult> cns = new HashMap<String, SearchResult>();
         final SearchControls searchControls = getSearchControls();
@@ -78,11 +79,11 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         
         if (cns.isEmpty()) {
             log.info("Search for " + filter + " returned 0 results.");
-            return false;
+            return null;
         }
         if (cns.size() > 1 && !this.allowMultipleAccounts) {
             log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
-            return false;
+            return null;
         }
 
         final Iterator<String> setOfCns = cns.keySet().iterator();
@@ -97,8 +98,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
                 log.debug("Performing LDAP bind with credential: " + dn);
                 test = this.getContextSource().getContext(finalDn, getPasswordEncoder().encode(credentials.getPassword()));
                 if (test != null) {
-                    setAuthenticatedDistinguishedNameSearchResult(cns.get(dn));
-                    return true;
+                    return cns.get(dn);
                 }
             } catch (final Exception e) {
                 log.error(e.getMessage(), e);
@@ -108,7 +108,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
             }
         }
 
-        return false;
+        return null;
     }
 
     protected String composeCompleteDnToCheck(final String dn,

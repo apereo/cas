@@ -21,7 +21,9 @@ package org.jasig.cas.adaptors.ldap;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.ContextSource;
@@ -37,7 +39,6 @@ import javax.validation.constraints.NotNull;
  * Abstract class to handle common LDAP functionality.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.3
  */
 public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
@@ -91,6 +92,14 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends 
     @NotNull
     private List<String> attributesToReturn = new ArrayList<String>();
     
+    @Override
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials cred) throws AuthenticationException {
+        setAuthenticatedDistinguishedNameSearchResult(authenticateLdapUsernamePasswordInternal(cred));
+        return getAuthenticatedDistinguishedNameSearchResult() != null;
+    }
+    
+    protected abstract SearchResult authenticateLdapUsernamePasswordInternal(final UsernamePasswordCredentials cred)  throws AuthenticationException;
+    
     /**
      * Method to set the data source and generate a JdbcTemplate.
      * 
@@ -113,7 +122,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends 
      * @see FastBindLdapAuthenticationHandler
      * @see #authenticatedDistinguishedNameSearchResult
      **/
-    protected void setAuthenticatedDistinguishedNameSearchResult(final SearchResult dn) {
+    private void setAuthenticatedDistinguishedNameSearchResult(final SearchResult dn) {
         this.authenticatedDistinguishedNameSearchResult = dn;
     }
     
@@ -263,7 +272,5 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends 
      */
     public final void setFilter(final String filter) {
         this.filter = filter;
-    }
-
-    
+    }    
 }
