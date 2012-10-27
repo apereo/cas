@@ -119,7 +119,7 @@ public abstract class AuthenticationException extends Exception {
     public final String toString() {
         String msg = getCode();
         if (getMessage() != null && getMessage().trim().length() > 0)
-            msg = ":" + getMessage();
+            msg = getMessage();
         return msg;
     }
 
