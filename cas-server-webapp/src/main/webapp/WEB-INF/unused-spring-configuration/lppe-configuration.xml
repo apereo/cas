@@ -38,21 +38,26 @@
 		       <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountPasswordExpiredLdapErrorDefinition" />
 		    </list>
 		</property>
-		  
-		<property name="alwaysDisplayPasswordExpirationWarning" value="${ldap.authentication.lppe.warnAll}"/>
+		
+		<property name="ldapPasswordPolicyExaminers">
+			<list>
+				<bean class="org.jasig.cas.adaptors.ldap.lppe.LdapPasswordExpirationPolicyExaminer">
+					<property name="ignorePasswordExpirationWarningFlags" value="${ldap.authentication.lppe.noWarnValues}" />
+					<property name="alwaysDisplayPasswordExpirationWarning" value="${ldap.authentication.lppe.warnAll}" />
+					<property name="ldapDateConverter">
+						<bean class="org.jasig.cas.adaptors.ldap.lppe.ActiveDirectoryLdapDateConverter" />
+					</property> 
+				</bean>
+			</list>
+		</property>
+
 		<property name="passwordExpirationDateAttributeName" value="${ldap.authentication.lppe.dateAttribute}" />
 		<property name="passwordWarningNumberOfDaysAttributeName" value="${ldap.authentication.lppe.warningDaysAttribute}" />
 		<property name="validPasswordNumberOfDaysAttributeName" value="${ldap.authentication.lppe.validDaysAttribute}" />
 		
 		<property name="defaultValidPasswordNumberOfDays" value="${ldap.authentication.lppe.validDays}" />
 		<property name="defaultPasswordWarningNumberOfDays" value="${ldap.authentication.lppe.warningDays}" />
-		
-		<property name="ldapDateConverter">
-			<bean class="org.jasig.cas.adaptors.ldap.lppe.ActiveDirectoryLdapDateConverter" />
-		</property>  
-		
 		<property name="ignorePasswordExpirationWarningAttributeName" value="${ldap.authentication.lppe.noWarnAttribute}" />
-		<property name="ignorePasswordExpirationWarningFlags"><list/></property>
 		<property name="passwordPolicyUrl" value="${ldap.authentication.lppe.password.url}" />   
 	</bean>
     

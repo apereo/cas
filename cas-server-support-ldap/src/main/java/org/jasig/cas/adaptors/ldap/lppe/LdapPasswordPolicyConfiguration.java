@@ -20,12 +20,15 @@ package org.jasig.cas.adaptors.ldap.lppe;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
-final class LdapPasswordPolicyConfiguration {
+public final class LdapPasswordPolicyConfiguration {
 
+    private UsernamePasswordCredentials credentials;
+    
     private String passwordExpirationDate;
     private String ignorePasswordExpirationWarning;
-    private String userId;
+    private String passwordExpirationDateAttributeName;
     
     private int validPasswordNumberOfDays;
     private int passwordWarningNumberOfDays;
@@ -36,15 +39,15 @@ final class LdapPasswordPolicyConfiguration {
     
     private long userAccountControl = -1;
         
-    public LdapPasswordPolicyConfiguration(final String userId) {
-        this.userId = userId;
+    public LdapPasswordPolicyConfiguration(final UsernamePasswordCredentials credentials) {
+        this.credentials = credentials;
     }
 
     public long getUserAccountControl() {
         return this.userAccountControl;
     }
 
-    public void setUserAccountControl(String userAccountControl) {
+    public void setUserAccountControl(final String userAccountControl) {
         if (!StringUtils.isBlank(userAccountControl) && NumberUtils.isNumber(userAccountControl)) {
             this.userAccountControl = Long.parseLong(userAccountControl);
         }
@@ -54,7 +57,7 @@ final class LdapPasswordPolicyConfiguration {
         return this.accountDisabled;
     }
 
-    public void setAccountDisabled(boolean accountDisabled) {
+    public void setAccountDisabled(final boolean accountDisabled) {
         this.accountDisabled = accountDisabled;
     }
 
@@ -82,8 +85,8 @@ final class LdapPasswordPolicyConfiguration {
         return this.ignorePasswordExpirationWarning;
     }
 
-    public String getUserId() {
-        return this.userId;
+    public UsernamePasswordCredentials getCredentials() {
+        return this.credentials;
     }
 
     public int getValidPasswordNumberOfDays() {
@@ -108,5 +111,13 @@ final class LdapPasswordPolicyConfiguration {
 
     public void setPasswordWarningNumberOfDays(final int warn) {
         this.passwordWarningNumberOfDays = warn;
+    }
+
+    void setPasswordExpirationDateAttributeName(final String value) {
+        this.passwordExpirationDateAttributeName = value;
+    }
+
+    public String getPasswordExpirationDateAttributeName() {
+        return this.passwordExpirationDateAttributeName;
     }
 }

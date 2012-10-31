@@ -18,9 +18,14 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe.web.flow;
 
+import java.util.List;
+
 import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
 import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyAuthenticationException;
 import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyAwareAuthenticationHandler;
+import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyConfiguration;
+import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyExaminer;
+import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyExpirationException;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.ticket.TicketException;
@@ -58,16 +63,27 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
     
     @Override
     protected String getAuthenticationWebFlowSuccessEventId(RequestContext context, Credentials credentials, MessageContext messageContext) {
+        String eventId = super.getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
+        
         if (isLdapPasswordPolicyAuthenticationHandlerUsed()) {
             try {
-                this.ldapPasswordPolicyAuthenticationHandler.validateAccountPasswordExpirationPolicy();
-            }  catch (final LdapPasswordPolicyAuthenticationException e) {
+                final LdapPasswordPolicyConfiguration configuration = this.ldapPasswordPolicyAuthenticationHandler.getPasswordPolicyConfiguration();
+                final List<LdapPasswordPolicyExaminer> examinersList = this.ldapPasswordPolicyAuthenticationHandler.getLdapPasswordPolicyExaminers();
+                
+                if (examinersList != null && examinersList.size() > 0) {
+                  for (final LdapPasswordPolicyExaminer examiner : this.ldapPasswordPolicyAuthenticationHandler.getLdapPasswordPolicyExaminers()) {
+                      examiner.examinePasswordPolicy(configuration);
+                  }
+                }
+            }  catch (final LdapPasswordPolicyExpirationException e) {
                 context.getFlowScope().put("expireDays", e.getNumberOfDaysToPasswordExpirationDate());
-                return ((AuthenticationException)e.getCause()).getType();
+                eventId = e.getType();
+            } catch (final LdapPasswordPolicyAuthenticationException e) {
+                eventId = e.getType();
             }
         }
         
-        return super.getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
+        return eventId;
     }
 
     private boolean isLdapPasswordPolicyAuthenticationHandlerUsed() {

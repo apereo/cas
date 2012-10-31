@@ -18,15 +18,19 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
-import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
+public class LdapPasswordPolicyExpirationException extends LdapPasswordPolicyAuthenticationException {
 
-public class LdapPasswordPolicyAuthenticationException extends LdapAuthenticationException {
+    private static final long serialVersionUID = 1829192900884929654L;
 
-    public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.lppe.message";
-
-    private static final long  serialVersionUID      = 4365292208441435202L;
-
-    public LdapPasswordPolicyAuthenticationException(final String msg, final String type) {
-        super(msg, type);
+    private int numberOfDaysToPasswordExpirationDate = -1;
+    
+    public LdapPasswordPolicyExpirationException(final String msg, final int days) {
+        super(msg, "passwordExpirationWarning");
+        this.numberOfDaysToPasswordExpirationDate = days;
     }
+    
+    public int getNumberOfDaysToPasswordExpirationDate() {
+        return this.numberOfDaysToPasswordExpirationDate;
+    }
+   
 }
