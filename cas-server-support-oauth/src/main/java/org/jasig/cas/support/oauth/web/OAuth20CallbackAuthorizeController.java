@@ -52,18 +52,24 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         
         // retrieve callback url from session
         final HttpSession session = request.getSession();
-        final String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
+        String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
         logger.debug("callbackUrl : {}", callbackUrl);
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
+        // and state
+        final String state = (String) session.getAttribute(OAuthConstants.OAUTH20_STATE);
+        logger.debug("state : {}", state);
+        session.removeAttribute(OAuthConstants.OAUTH20_STATE);
         
-        // return to callback with code
-        final String callbackUrlWithCode = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
-        logger.debug("callbackUrlWithCode : {}", callbackUrlWithCode);
+        // return callback url with code & state
+        callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
+        callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.STATE, state);
+        logger.debug("callbackUrl : {}", callbackUrl);
         
         final Map<String, Object> model = new HashMap<String, Object>();
-        model.put("callbackUrlWithCode", callbackUrlWithCode);
+        model.put("callbackUrl", callbackUrl);
         // retrieve service name from session
         final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
+        logger.debug("serviceName : {}", serviceName);
         model.put("serviceName", serviceName);
         return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
     }

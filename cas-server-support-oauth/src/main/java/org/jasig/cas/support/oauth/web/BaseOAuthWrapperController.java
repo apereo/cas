@@ -57,7 +57,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
-        String method = getMethod(request);
+        final String method = getMethod(request);
         logger.debug("method : {}", method);
         return internalHandleRequest(method, request, response);
     }
@@ -76,7 +76,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         if (method.indexOf("?") >= 0) {
             method = StringUtils.substringBefore(method, "?");
         }
-        int pos = method.lastIndexOf("/");
+        final int pos = method.lastIndexOf("/");
         if (pos >= 0) {
             method = method.substring(pos + 1);
         }
