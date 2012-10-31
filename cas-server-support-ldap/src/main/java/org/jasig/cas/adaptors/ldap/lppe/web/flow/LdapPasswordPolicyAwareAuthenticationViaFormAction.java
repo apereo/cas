@@ -20,6 +20,7 @@ package org.jasig.cas.adaptors.ldap.lppe.web.flow;
 
 import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
 import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyAuthenticationException;
+import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyAwareAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.ticket.TicketException;
@@ -30,22 +31,22 @@ import org.springframework.webflow.execution.RequestContext;
 
 public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends AuthenticationViaFormAction {
 
+    private LdapPasswordPolicyAwareAuthenticationHandler ldapPasswordPolicyAuthenticationHandler;
+    
+    public void setLdapPasswordPolicyAuthenticationHandler(final LdapPasswordPolicyAwareAuthenticationHandler ldapPasswordPolicyAuthenticationHandler) {
+        this.ldapPasswordPolicyAuthenticationHandler = ldapPasswordPolicyAuthenticationHandler;
+    }
+
     @Override
     protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
                                                           final MessageContext messageContext, final TicketException e) {
         
         String eventId = super.getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e); 
         
-        if (super.isTicketExceptionCauseAuthenticationException(e)) {
+        if (isTicketExceptionCauseAuthenticationException(e)) {
             final AuthenticationException ex = (AuthenticationException) e.getCause();
             log.debug("Handling ldap password policy authentication error...");
-            
-            if (ex.getCause() != null && LdapPasswordPolicyAuthenticationException.class.isAssignableFrom(ex.getCause().getClass())) {
-                final LdapPasswordPolicyAuthenticationException policyEx = (LdapPasswordPolicyAuthenticationException) ex.getCause();
-                context.getFlowScope().put("expireDays", policyEx.getNumberOfDaysToPasswordExpirationDate());
-                eventId = policyEx.getType();
-            }
-            
+                        
             if (LdapAuthenticationException.class.isAssignableFrom(ex.getClass())) {
                eventId = ex.getType(); 
             }   
@@ -53,5 +54,23 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
         
         log.debug("Returning webflow error event id: {}", eventId);
         return eventId;
+    }
+    
+    @Override
+    protected String getAuthenticationWebFlowSuccessEventId(RequestContext context, Credentials credentials, MessageContext messageContext) {
+        if (isLdapPasswordPolicyAuthenticationHandlerUsed()) {
+            try {
+                this.ldapPasswordPolicyAuthenticationHandler.validateAccountPasswordExpirationPolicy();
+            }  catch (final LdapPasswordPolicyAuthenticationException e) {
+                context.getFlowScope().put("expireDays", e.getNumberOfDaysToPasswordExpirationDate());
+                return ((AuthenticationException)e.getCause()).getType();
+            }
+        }
+        
+        return super.getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
+    }
+
+    private boolean isLdapPasswordPolicyAuthenticationHandlerUsed() {
+        return (this.ldapPasswordPolicyAuthenticationHandler == null || this.ldapPasswordPolicyAuthenticationHandler.getPasswordPolicyConfiguration() != null);
     }
 }

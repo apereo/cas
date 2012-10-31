@@ -69,16 +69,28 @@
 	</action-state>
 	 -->
 
+	<action-state id="passwordServiceCheck">
+		<evaluate expression="sendTicketGrantingTicketAction" />
+		<transition to="passwordWarningCheck" />
+	</action-state>
+	
 	<decision-state id="passwordWarningCheck">
-		<if test="flowScope.service != null" then="pwdWarningPostView" else="pwdWarningPostView" />
+		<if test="flowScope.service != null" then="casPwdWarningRedirect" else="casPwdWarningPostView" />
 	</decision-state>
+	
+	<action-state id="casPwdWarningRedirect">
+		<evaluate expression="generateServiceTicketAction" />
+		<transition on="success" to="casPwdWarningPostView" />
+		<transition on="error" to="generateLoginTicket" />
+		<transition on="gateway" to="gatewayServicesManagementCheck" />
+	</action-state>
 	
 	<end-state id="pwdWarningAbstractView">
 		<on-entry>
 			<set name="flowScope.passwordPolicyUrl" value="lppeEnabledLdapAuthenticationHandler.getPasswordPolicyUrl()" />
 		</on-entry>
 	</end-state>
-	<end-state id="pwdWarningPostView" view="casWarnPassView" parent="#pwdWarningAbstractView" />
+	<end-state id="casPwdWarningPostView" view="casWarnPassView" parent="#pwdWarningAbstractView" />
 	<end-state id="casExpiredPassView" view="casExpiredPassView" parent="#pwdWarningAbstractView" />
 	<end-state id="casMustChangePassView" view="casMustChangePassView" parent="#pwdWarningAbstractView" />
 	<end-state id="casAccountDisabledView" view="casAccountDisabledView" />
@@ -115,7 +127,7 @@
 	    <transition on="badHours" to="casBadHoursView" />
 	    <transition on="badWorkstation" to="casBadWorkstationView" />
 	    <transition on="passwordExpired" to="casExpiredPassView" />
-	    <transition on="passwordExpirationWarning" to="pwdWarningPostView" />
+	    <transition on="passwordExpirationWarning" to="passwordServiceCheck" />
 	</action-state>
 	
 	<action-state id="sendTicketGrantingTicket">

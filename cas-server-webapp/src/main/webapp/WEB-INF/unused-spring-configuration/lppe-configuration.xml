@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
     Licensed to Jasig under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
@@ -17,28 +16,30 @@
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
-
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       					   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
-	<bean id="lppeEnabledLdapAuthenticationHandler" class="org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyAwareAuthenticationHandler"> 
+	<bean id="lppeEnabledLdapAuthenticationHandler" class="org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyAwareAuthenticationHandler"
+	       scope="singleton"> 
 		<property name="ldapAuthenticationHandler" ref="bindLdapAuthenticationHandler" />
 		
 		<property name="ldapErrorDefinitions">
-	     <list>
-	        <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountDisabledLdapErrorDefinition" />
-	        <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountLockedLdapErrorDefinition" />
-	        <bean class="org.jasig.cas.adaptors.ldap.lppe.InvalidLoginHoursLdapErrorDefinition" />
-	        <bean class="org.jasig.cas.adaptors.ldap.lppe.InvalidLoginWorkstationLdapErrorDefinition" />
-	        <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountMustChangePasswordLdapErrorDefinition" />
-	        <bean class="org.jasig.cas.adaptors.ldap.lppe.PasswordExpiredLdapErrorDefinition" />
-	     </list>
-	   </property>
-	   
-	   <property name="alwaysDisplayPasswordExpirationWarning" value="${ldap.authentication.lppe.warnAll}"/>
+		    <list>
+		       <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountDisabledLdapErrorDefinition" />
+		       <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountLockedLdapErrorDefinition" />
+		       <bean class="org.jasig.cas.adaptors.ldap.lppe.InvalidLoginHoursLdapErrorDefinition" />
+		       <bean class="org.jasig.cas.adaptors.ldap.lppe.InvalidLoginWorkstationLdapErrorDefinition" />
+		       <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountMustChangePasswordLdapErrorDefinition" />
+		       <bean class="org.jasig.cas.adaptors.ldap.lppe.AccountPasswordExpiredLdapErrorDefinition" />
+		    </list>
+		</property>
+		  
+		<property name="alwaysDisplayPasswordExpirationWarning" value="${ldap.authentication.lppe.warnAll}"/>
 		<property name="passwordExpirationDateAttributeName" value="${ldap.authentication.lppe.dateAttribute}" />
 		<property name="passwordWarningNumberOfDaysAttributeName" value="${ldap.authentication.lppe.warningDaysAttribute}" />
 		<property name="validPasswordNumberOfDaysAttributeName" value="${ldap.authentication.lppe.validDaysAttribute}" />
@@ -47,8 +48,7 @@
 		<property name="defaultPasswordWarningNumberOfDays" value="${ldap.authentication.lppe.warningDays}" />
 		
 		<property name="ldapDateConverter">
-			<bean class="org.jasig.cas.adaptors.ldap.lppe.SimpleDateFormatLdapDateConverter" 
-			      p:passwordExpirationDateFormat="${ldap.authentication.lppe.dateFormat}" />
+			<bean class="org.jasig.cas.adaptors.ldap.lppe.ActiveDirectoryLdapDateConverter" />
 		</property>  
 		
 		<property name="ignorePasswordExpirationWarningAttributeName" value="${ldap.authentication.lppe.noWarnAttribute}" />

@@ -63,6 +63,8 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         }
     }
     
+    private LdapPasswordPolicyConfiguration passwordPolicyConfiguration = null;
+    
     /** The custom attribute that indicates the account is disabled **/
     private String accountDisabledAttributeName = null;
 
@@ -189,16 +191,19 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
     public void setDefaultPasswordWarningNumberOfDays(final int days) {
         this.defaultPasswordWarningNumberOfDays = days;
     }
-        
+      
+    public LdapPasswordPolicyConfiguration getPasswordPolicyConfiguration() {
+        return this.passwordPolicyConfiguration;
+    }
+    
     /**
      * Calculates the number of days left to the expiration date based on the {@code expireDate} parameter
      * @return Number of days left to the expiration date or -1 if the no expiration warning is 
      * calculated based on the defined policy. 
      */
-    protected int getDaysToExpirationDate(final LdapPasswordPolicyConfiguration config, final DateTime expireDate)
-            throws LdapPasswordPolicyAuthenticationException {
+    protected int getDaysToExpirationDate(final DateTime expireDate) throws LdapPasswordPolicyAuthenticationException {
 
-        log.debug("Calculating number of days left to the expiration date for user {}", config.getUserId());
+        log.debug("Calculating number of days left to the expiration date for user {}", getPasswordPolicyConfiguration().getUserId());
 
         final DateTime currentTime = new DateTime(this.ldapDateConverter.getTimeZone());
         log.debug("Current date is {}. Expiration date is {}" + currentTime, expireDate);
@@ -215,12 +220,12 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         }
 
         // Warning period begins from X number of days before the expiration date
-        final DateTime warnPeriod = new DateTime(DateTime.parse(expireDate.toString()), this.ldapDateConverter.getTimeZone()).minusDays(config
-                .getPasswordWarningNumberOfDays());
+        final DateTime warnPeriod = new DateTime(DateTime.parse(expireDate.toString()), 
+                                     this.ldapDateConverter.getTimeZone()).minusDays(getPasswordPolicyConfiguration().getPasswordWarningNumberOfDays());
         log.debug("Warning period begins on {}", warnPeriod.toString());
 
         if (this.alwaysDisplayPasswordExpirationWarning) {
-            log.debug("Warning all. The password for {} will expire in {} day(s)", config.getUserId(), daysToExpirationDate);
+            log.debug("Warning all. The password for {} will expire in {} day(s)", getPasswordPolicyConfiguration().getUserId(), daysToExpirationDate);
         } else if (currentTime.equals(warnPeriod) || currentTime.isAfter(warnPeriod)) {
             log.debug("Password will expire in {} day(s)", daysToExpirationDate);
         } else {
@@ -235,27 +240,27 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
      * Determines the expiration date to use based on the password policy configuration.
      * @see #setLdapDateConverter(LdapDateConverter)
      */
-    protected DateTime getExpirationDateToUse(final LdapPasswordPolicyConfiguration config) {
-        final DateTime dateValue = this.ldapDateConverter.convert(config.getPasswordExpirationDate());
-        final DateTime expireDate = dateValue.plusDays(config.getValidPasswordNumberOfDays());
+    protected DateTime getExpirationDateToUse() {
+        final DateTime dateValue = this.ldapDateConverter.convert(getPasswordPolicyConfiguration().getPasswordExpirationDate());
+        final DateTime expireDate = dateValue.plusDays(getPasswordPolicyConfiguration().getValidPasswordNumberOfDays());
         log.debug("Retrieved date value {} for date attribute {} and added {} days. The final expiration date is {}", dateValue,
-                config.getPasswordExpirationDate(), config.getValidPasswordNumberOfDays(), expireDate);
+                getPasswordPolicyConfiguration().getPasswordExpirationDate(), getPasswordPolicyConfiguration().getValidPasswordNumberOfDays(), expireDate);
 
         return expireDate;
     }
 
     
-    protected void examineAccountPasswordPolicy(final UsernamePasswordCredentials credentials, final LdapPasswordPolicyConfiguration passwordPolicyConfig) throws AuthenticationException {  
-      if (this.isAccountPasswordSetToNeverExpire(passwordPolicyConfig)) {
+    public void validateAccountPasswordExpirationPolicy() throws LdapPasswordPolicyAuthenticationException {  
+      if (this.isAccountPasswordSetToNeverExpire()) {
           log.debug("Account password will never expire. Skipping password warning check...");
           return;
       }
   
-      final DateTime expireTime = getExpirationDateToUse(passwordPolicyConfig);
-      final int days = getDaysToExpirationDate(passwordPolicyConfig, expireTime);
+      final DateTime expireTime = getExpirationDateToUse();
+      final int days = getDaysToExpirationDate(expireTime);
       if (days != -1) {
           final String msg = String.format("Password expires in %d days", days);
-          throw new AccountPasswordExpiringLdapErrorDefinition().getAuthenticationException(msg, days);
+          throw new LdapPasswordPolicyAuthenticationException(new LdapAuthenticationException(msg, "passwordExpirationWarning"), days);
       }        
     }
 
@@ -272,15 +277,14 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
                     return authenticated;
                 }
 
-                final LdapPasswordPolicyConfiguration passwordPolicyConfig = getPasswordPolicyConfiguration(authenticatedDn);
+                this.passwordPolicyConfiguration = buildPasswordPolicyConfiguration(authenticatedDn);
                 
-                if (passwordPolicyConfig == null) {
+                if (passwordPolicyConfiguration == null) {
                     log.warn("Password policy configuration could not be constructed. Skipping all password policy checks...");
                     return authenticated;
                 }
                 
-                examineAccountStatus(credentials, passwordPolicyConfig);
-                examineAccountPasswordPolicy(credentials, passwordPolicyConfig);
+                examineAccountStatus(credentials);
             }
             return authenticated;
         } catch (final AuthenticationException e) {
@@ -288,45 +292,45 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         }
     }
 
-    protected void examineAccountStatus(final UsernamePasswordCredentials credentials, final LdapPasswordPolicyConfiguration passwordPolicyConfig) throws AuthenticationException {
-        final long uacValue = passwordPolicyConfig.getUserAccountControl();
+    protected void examineAccountStatus(final UsernamePasswordCredentials credential) throws AuthenticationException {
+        final long uacValue = getPasswordPolicyConfiguration().getUserAccountControl();
         
         if (uacValue > 0) {
            if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) == 
                ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) {
-               final String msg = String.format("User account control flag is set. Account %s is disabled", passwordPolicyConfig.getUserId());
+               final String msg = String.format("User account control flag is set. Account %s is disabled", getPasswordPolicyConfiguration().getUserId());
                throw new AccountDisabledLdapErrorDefinition().getAuthenticationException(msg);
            } 
            
            if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) == 
                ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) {
-               final String msg = String.format("User account control flag is set. Account %s is locked", passwordPolicyConfig.getUserId());
+               final String msg = String.format("User account control flag is set. Account %s is locked", getPasswordPolicyConfiguration().getUserId());
                throw new AccountLockedLdapErrorDefinition().getAuthenticationException(msg);
            } 
            
            if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED.getValue()) == 
                ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED.getValue()) {
                
-               final String msg = String.format("User account control flag is set. Account %s has expired", passwordPolicyConfig.getUserId());
+               final String msg = String.format("User account control flag is set. Account %s has expired", getPasswordPolicyConfiguration().getUserId());
                throw new AccountPasswordExpiredLdapErrorDefinition().getAuthenticationException(msg);
            } 
         }
 
-        if (passwordPolicyConfig.isAccountDisabled()) {
+        if (getPasswordPolicyConfiguration().isAccountDisabled()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s is disabled", this.accountDisabledAttributeName,
-                                                passwordPolicyConfig.getUserId());
+                    getPasswordPolicyConfiguration().getUserId());
             throw new AccountDisabledLdapErrorDefinition().getAuthenticationException(msg);
         }
         
-        if (passwordPolicyConfig.isAccountLocked()) {
+        if (getPasswordPolicyConfiguration().isAccountLocked()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s is locked", this.accountLockedAttributeName,
-                                            passwordPolicyConfig.getUserId());
+                    getPasswordPolicyConfiguration().getUserId());
             throw new AccountLockedLdapErrorDefinition().getAuthenticationException(msg);
         }
         
-        if (passwordPolicyConfig.isAccountPasswordMustChange()) {
+        if (getPasswordPolicyConfiguration().isAccountPasswordMustChange()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s must change it password", 
-                                             this.accountPasswordMustChangeAttributeName, passwordPolicyConfig.getUserId());
+                                             this.accountPasswordMustChangeAttributeName, getPasswordPolicyConfiguration().getUserId());
             throw new AccountMustChangePasswordLdapErrorDefinition().getAuthenticationException(msg); 
         }
     }
@@ -340,7 +344,7 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         return null;
     }
     
-    protected LdapPasswordPolicyConfiguration getPasswordPolicyConfiguration(final SearchResult authenticatedDn) throws LdapAuthenticationException {
+    protected LdapPasswordPolicyConfiguration buildPasswordPolicyConfiguration(final SearchResult authenticatedDn) throws LdapAuthenticationException {
         LdapPasswordPolicyConfiguration configuration = null;
         try {
 
@@ -434,15 +438,15 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
      *
      * @return boolean that indicates whether  or not password warning should proceed.
      */
-    protected boolean isAccountPasswordSetToNeverExpire(final LdapPasswordPolicyConfiguration config) {
-        final String ignoreCheckValue = config.getIgnorePasswordExpirationWarning();
+    protected boolean isAccountPasswordSetToNeverExpire() {
+        final String ignoreCheckValue = getPasswordPolicyConfiguration().getIgnorePasswordExpirationWarning();
         boolean ignoreChecks = false;
 
         if (!StringUtils.isBlank(ignoreCheckValue) && this.ignorePasswordExpirationWarningFlags != null) {
             ignoreChecks = this.ignorePasswordExpirationWarningFlags.contains(ignoreCheckValue);
         }
     
-        final long uacValue  = config.getUserAccountControl();
+        final long uacValue  = getPasswordPolicyConfiguration().getUserAccountControl();
         if (!ignoreChecks && uacValue > 0) {
             ignoreChecks = ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD.getValue()) == 
                            ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD.getValue());

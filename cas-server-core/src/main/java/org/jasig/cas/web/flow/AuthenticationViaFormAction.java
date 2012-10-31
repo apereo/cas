@@ -49,6 +49,8 @@ import org.springframework.webflow.execution.RequestContext;
 public class AuthenticationViaFormAction {
 
     private static final String DEFAULT_WEBFLOW_ERROR_EVENT_ID = "error";
+    protected static final String DEFAULT_WEBFLOW_SUCCESS_EVENT_ID = "success";
+    private static final String DEFAULT_WEBFLOW_WARN_EVENT_ID = "warn";
     
     /**
      * Binder that allows additional binding of form object beyond Spring
@@ -93,7 +95,7 @@ public class AuthenticationViaFormAction {
                 final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
-                return "warn";
+                return getAuthenticationWebFlowWarningEventId(context, credentials, messageContext);
             } catch (final TicketException e) {
                 if (isTicketExceptionCauseAuthenticationException(e)) {
                     populateErrorsInstance(e, messageContext);
@@ -110,7 +112,7 @@ public class AuthenticationViaFormAction {
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
-            return "success";
+            return getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
         } catch (final TicketException e) {
             populateErrorsInstance(e, messageContext);
             return getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e);
@@ -120,6 +122,16 @@ public class AuthenticationViaFormAction {
     protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
                                                           final MessageContext messageContext, final TicketException e) {
         return DEFAULT_WEBFLOW_ERROR_EVENT_ID;
+    }
+    
+    protected String getAuthenticationWebFlowSuccessEventId(final RequestContext context, final Credentials credentials, 
+                                                            final MessageContext messageContext) {
+        return DEFAULT_WEBFLOW_SUCCESS_EVENT_ID;
+    }
+    
+    protected String getAuthenticationWebFlowWarningEventId(final RequestContext context, final Credentials credentials, 
+                                                            final MessageContext messageContext) {
+        return DEFAULT_WEBFLOW_SUCCESS_EVENT_ID;
     }
     
     private void populateErrorsInstance(final TicketException e, final MessageContext messageContext) {
@@ -140,7 +152,7 @@ public class AuthenticationViaFormAction {
         }
     }
 
-    protected boolean isTicketExceptionCauseAuthenticationException(final TicketException e) {
+    protected final boolean isTicketExceptionCauseAuthenticationException(final TicketException e) {
         return e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass());
     }
 
