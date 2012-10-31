@@ -29,7 +29,7 @@ import org.codehaus.jackson.JsonGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.profile.CasWrapperProfile;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +56,11 @@ public final class OAuth20ProfileController extends AbstractController {
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
-        String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
+        final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         logger.debug("accessToken : {}", accessToken);
         
-        JsonFactory jsonFactory = new JsonFactory();
-        JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
+        final JsonFactory jsonFactory = new JsonFactory();
+        final JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
         
         // accessToken is required
         if (StringUtils.isBlank(accessToken)) {
@@ -74,9 +74,8 @@ public final class OAuth20ProfileController extends AbstractController {
         }
         
         // get ticket granting ticket
-        TicketGrantingTicketImpl ticketGrantingTicketImpl = (TicketGrantingTicketImpl) ticketRegistry
-            .getTicket(accessToken);
-        if (ticketGrantingTicketImpl == null || ticketGrantingTicketImpl.isExpired()) {
+        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) ticketRegistry.getTicket(accessToken);
+        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
             logger.error("expired accessToken : {}", accessToken);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
@@ -87,12 +86,12 @@ public final class OAuth20ProfileController extends AbstractController {
         }
         
         // generate profile : identifier + attributes
-        Principal principal = ticketGrantingTicketImpl.getAuthentication().getPrincipal();
+        final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField(CasWrapperProfile.ID, principal.getId());
         jsonGenerator.writeArrayFieldStart(CasWrapperProfile.ATTRIBUTES);
-        Map<String, Object> attributes = principal.getAttributes();
-        for (String key : attributes.keySet()) {
+        final Map<String, Object> attributes = principal.getAttributes();
+        for (final String key : attributes.keySet()) {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeObjectField(key, attributes.get(key));
             jsonGenerator.writeEndObject();
