@@ -71,15 +71,15 @@
   <bean id="clearPassFilterChainProxy" class="org.springframework.security.web.FilterChainProxy">
     <sec:filter-chain-map request-matcher="ant">
       <sec:filter-chain pattern="/clearPass"
-                        filters="casAuthenticationFilter,casValidationFilter,httpServletRequestWrappingFilter"/>
+                        filters="casValidationFilter,httpServletRequestWrappingFilter"/>
     </sec:filter-chain-map>
   </bean>
-
+<!-- this is dangerous to include for protecting /clearPass! 
   <bean id="casAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">
     <property name="casServerLoginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"/>
     <property name="serverName" value="${server.name}"/>
   </bean>
-
+-->
   <!--
     NOTE:
     A bean named clearPassProxyList must be defined in deployerConfigContext.xml that defines
