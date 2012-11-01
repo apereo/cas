@@ -35,6 +35,7 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -73,9 +74,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        verify(logger).error("missing clientId");
     }
     
     public void testNoRedirectUri() throws Exception {
@@ -87,9 +91,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        verify(logger).error("missing redirectUri");
     }
     
     public void testNoClientSecret() throws Exception {
@@ -101,9 +108,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        verify(logger).error("missing clientSecret");
     }
     
     public void testNoCode() throws Exception {
@@ -115,9 +125,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        verify(logger).error("missing code");
     }
     
     public void testNoCasService() throws Exception {
@@ -133,9 +146,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        verify(logger).error("Unknown clientId : {}", CLIENT_ID);
     }
     
     public void testRedirectUriDoesNotStartWithServiceId() throws Exception {
@@ -156,9 +172,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        verify(logger).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
     }
     
     public void testWrongSecret() throws Exception {
@@ -180,9 +199,13 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
+        verify(logger).error("Wrong client secret : {} for service description : {}", CLIENT_SECRET,
+                             WRONG_CLIENT_SECRET);
     }
     
     public void testNoServiceTicket() throws Exception {
@@ -207,9 +230,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
+        verify(logger).error("Code expired : {}", CODE);
     }
     
     public void testExpiredServiceTicket() throws Exception {
@@ -236,9 +262,12 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
         oauth20WrapperController.afterPropertiesSet();
+        final Logger logger = mock(Logger.class);
+        OAuth20AccessTokenController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
+        verify(logger).error("Code expired : {}", CODE);
     }
     
     public void testOK() throws Exception {

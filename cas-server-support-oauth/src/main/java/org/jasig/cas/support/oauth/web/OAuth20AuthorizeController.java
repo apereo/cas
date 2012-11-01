@@ -43,7 +43,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20AuthorizeController extends AbstractController {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
+    private static Logger logger = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
     
     private final String loginUrl;
     
@@ -111,5 +111,9 @@ public final class OAuth20AuthorizeController extends AbstractController {
                                                                    callbackAuthorizeUrl);
         logger.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
+    }
+    
+    static void setLogger(final Logger aLogger) {
+        logger = aLogger;
     }
 }

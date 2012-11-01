@@ -44,7 +44,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20AccessTokenController extends AbstractController {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
+    private static Logger logger = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
     
     private final ServicesManager servicesManager;
     
@@ -135,5 +135,9 @@ public final class OAuth20AccessTokenController extends AbstractController {
         final String text = "access_token=" + ticketGrantingTicket.getId() + "&expires=" + expires;
         logger.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, 200);
+    }
+    
+    static void setLogger(final Logger aLogger) {
+        logger = aLogger;
     }
 }
