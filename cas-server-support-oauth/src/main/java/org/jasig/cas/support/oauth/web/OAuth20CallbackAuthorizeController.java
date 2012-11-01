@@ -62,7 +62,9 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         
         // return callback url with code & state
         callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
-        callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.STATE, state);
+        if (state != null) {
+            callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.STATE, state);
+        }
         logger.debug("callbackUrl : {}", callbackUrl);
         
         final Map<String, Object> model = new HashMap<String, Object>();

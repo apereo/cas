@@ -45,7 +45,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20ProfileController extends AbstractController {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    private static Logger logger = LoggerFactory.getLogger(OAuth20ProfileController.class);
     
     private final TicketRegistry ticketRegistry;
     
@@ -101,5 +101,9 @@ public final class OAuth20ProfileController extends AbstractController {
         jsonGenerator.close();
         response.flushBuffer();
         return null;
+    }
+    
+    static void setLogger(final Logger aLogger) {
+        logger = aLogger;
     }
 }
