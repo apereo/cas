@@ -55,9 +55,6 @@ public final class ProxyController extends AbstractController {
     /** View for if the creation of a "Proxy" Ticket Succeeds. */
     private static final String CONST_PROXY_SUCCESS = "casProxySuccessView";
 
-    /** Key to use in model for service tickets. */
-    private static final String MODEL_SERVICE_TICKET = "ticket";
-
     /** CORE to delegate all non-web tier functionality to. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
@@ -82,7 +79,7 @@ public final class ProxyController extends AbstractController {
         }
 
         try {
-            return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET,
+            return new ModelAndView(CONST_PROXY_SUCCESS, CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET,
                 this.centralAuthenticationService.grantServiceTicket(ticket,
                     targetService));
         } catch (TicketException e) {

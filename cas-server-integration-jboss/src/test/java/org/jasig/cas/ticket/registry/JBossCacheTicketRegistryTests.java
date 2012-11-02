@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -207,7 +208,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
     public void testGetTicketsFromRegistryEqualToTicketsAdded() {
         final Collection<Ticket> tickets = new ArrayList<Ticket>();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", "test");
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(

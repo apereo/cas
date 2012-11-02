@@ -38,15 +38,11 @@ public interface OAuthConstants {
     
     public final static String CODE = "code";
     
-    public final static String SERVICE = "service";
-    
     public final static String THEME = "theme";
     
     public final static String LOCALE = "locale";
     
     public final static String METHOD = "method";
-    
-    public final static String TICKET = "ticket";
     
     public final static String ACCESS_TOKEN = "access_token";
     

@@ -20,6 +20,7 @@ package org.jasig.cas.web.support;
 
 import java.util.Arrays;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -40,7 +41,7 @@ public class WebUtilTests extends TestCase {
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
             openIdArgumentExtractor, casArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "test");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
 
         final Service service = WebUtils.getService(Arrays
             .asList(argumentExtractors), request);
@@ -53,7 +54,7 @@ public class WebUtilTests extends TestCase {
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
             openIdArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "test");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "test");
 
         final Service service = WebUtils.getService(Arrays
             .asList(argumentExtractors), request);

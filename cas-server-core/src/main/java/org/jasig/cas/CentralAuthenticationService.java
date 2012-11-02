@@ -46,6 +46,15 @@ import org.jasig.cas.validation.Assertion;
  */
 public interface CentralAuthenticationService {
 
+    /** 
+     * The identifier of the application the client is trying to access. In almost all cases, 
+     * this will be the URL of the application. 
+     */
+    public static final String PROTOCOL_PARAMETER_SERVICE = "service";
+    
+    /** The identifier for the ticket issues by CAS */
+    public static final String PROTOCOL_PARAMETER_TICKET = "ticket";
+    
     /**
      * Create a TicketGrantingTicket based on opaque credentials supplied by the
      * caller.

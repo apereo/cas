@@ -19,6 +19,7 @@
 
 package org.jasig.cas.extension.clearpass.integration.uportal;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.util.XmlUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -75,7 +76,8 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
     }
 
     protected final String retrievePasswordFromResponse(final String proxyTicket) {
-        final String url = this.clearPassUrl + (this.clearPassUrl.contains("?") ? "&" : "?") + "ticket=" + proxyTicket;
+        final String url = this.clearPassUrl + (this.clearPassUrl.contains("?") ? "&" : "?") +  
+                CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET + "=" + proxyTicket;
         final String response = retrieveResponseFromServer(url, "UTF-8");
         final String password = XmlUtils.getTextForElement(response, "credentials");
 

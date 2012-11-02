@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
@@ -89,7 +90,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
             logger.debug("Placing service in FlowScope: " + service.getId());
         }
 
-        context.getFlowScope().put("service", service);
+        context.getFlowScope().put(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, service);
 
         return result("success");
     }

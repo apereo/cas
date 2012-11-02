@@ -120,7 +120,7 @@ public final class TestUtils {
 
     public static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", name);
+        request.addParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, name);
         return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
 

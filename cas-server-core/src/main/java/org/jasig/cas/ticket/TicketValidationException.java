@@ -41,7 +41,7 @@ public class TicketValidationException extends TicketException {
      * Constructs a TicketValidationException with the default exception code
      * and the original exception that was thrown.
      * 
-     * @param throwable the chained exception
+     * @param service the service whose ticket validation has failed
      */
     public TicketValidationException(final Service service) {
         super(CODE);

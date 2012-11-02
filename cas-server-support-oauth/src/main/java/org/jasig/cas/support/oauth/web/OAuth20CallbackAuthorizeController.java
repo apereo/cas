@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         // get CAS ticket
-        final String ticket = request.getParameter(OAuthConstants.TICKET);
+        final String ticket = request.getParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET);
         logger.debug("ticket : {}", ticket);
         
         // retrieve callback url from session

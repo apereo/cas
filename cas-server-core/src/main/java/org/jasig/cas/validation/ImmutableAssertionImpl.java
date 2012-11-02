@@ -21,6 +21,7 @@ package org.jasig.cas.validation;
 import java.util.Collections;
 import java.util.List;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -94,6 +95,7 @@ public final class ImmutableAssertionImpl implements Assertion {
     }
 
     public String toString() {
-        return "[principals={" + this.principals.toString() + "} for service=" + this.service.toString() + "]";
+        return "[principals={" + this.principals.toString() + "} for " + CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE 
+                + "=" + this.service.toString() + "]";
     }
 }

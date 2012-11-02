@@ -20,6 +20,7 @@ package org.jasig.cas.authentication.principal;
 
 import junit.framework.TestCase;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -35,7 +36,7 @@ public class SimpleWebApplicationServiceImplTests extends TestCase {
 
     public void testResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "service");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "service");
         final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
         
         final Response response = impl.getResponse("ticketId");
@@ -45,7 +46,7 @@ public class SimpleWebApplicationServiceImplTests extends TestCase {
     
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "http://www.cnn.com/;jsession=test");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "http://www.cnn.com/;jsession=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
         
         assertEquals("http://www.cnn.com/", impl.getId());
@@ -53,30 +54,30 @@ public class SimpleWebApplicationServiceImplTests extends TestCase {
     
     public void testResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "service");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "service");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
         
         final Response response = impl.getResponse(null);
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
-        assertFalse(response.getUrl().contains("ticket="));
+        assertFalse(response.getUrl().contains(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET + "="));
     }
     
     public void testResponseWithNoTicketAndNoParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "http://foo.com/");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "http://foo.com/");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
         
         final Response response = impl.getResponse(null);
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
-        assertFalse(response.getUrl().contains("ticket="));
+        assertFalse(response.getUrl().contains(CentralAuthenticationService.PROTOCOL_PARAMETER_TICKET + "="));
         assertEquals("http://foo.com/",response.getUrl());
     }
     
     public void testResponseWithNoTicketAndOneParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "http://foo.com/?param=test");
+        request.setParameter(CentralAuthenticationService.PROTOCOL_PARAMETER_SERVICE, "http://foo.com/?param=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
         
         final Response response = impl.getResponse(null);
