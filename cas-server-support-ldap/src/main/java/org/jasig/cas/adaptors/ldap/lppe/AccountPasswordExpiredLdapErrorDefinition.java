@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
-public class AccountPasswordExpiredLdapErrorDefinition extends AbstractLdapErrorDefinition {
+/**
+ * An implementation of a ldap error definition which indicates an authentication failure
+ * due to the account password being expired.
+ */
+public final class AccountPasswordExpiredLdapErrorDefinition extends AbstractLdapErrorDefinition {
     public AccountPasswordExpiredLdapErrorDefinition() {
         super("data (701|532)", "passwordExpired");
     }

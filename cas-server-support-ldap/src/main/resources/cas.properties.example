@@ -115,3 +115,12 @@ ldap.authentication.lppe.validDays=90
 
 #Url to which the user will be redirected to change the passsword
 ldap.authentication.lppe.password.url=https://password.example.edu/change
+
+#Custom attribute to determine if account is disabled
+ldap.authentication.lppe.accountDisabledAttribute=
+
+#Custom attribute to determine if account is locked
+ldap.authentication.lppe.accountLockedAttribute=
+
+#Custom attribute to determine if account must change its password
+ldap.authentication.lppe.accountPasswordMustChangeAttribute=

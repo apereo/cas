@@ -27,25 +27,39 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
 
+/**
+ * An implementation of the {@link LdapPasswordPolicyExaminer} that determines whether
+ * an ldap account's password has expired. 
+ */
 public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyExaminer {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
     
+    /** The ldap converter used in calculating the expiration date attribute value.*/
     @NotNull
     private LdapDateConverter ldapDateConverter = null;
     
     /** The value that will cause password warning to be bypassed  */
     private List<String> ignorePasswordExpirationWarningFlags;
     
+    /** An instance of the password policy configuration retrieved from the ldap instance.*/
     private LdapPasswordPolicyConfiguration configuration = null;
     
     /** Disregard the warning period and warn all users of password expiration */
     private boolean alwaysDisplayPasswordExpirationWarning = false;
     
+    /**
+     * Set the flag values which will used to calculate whether the password expiration
+     * warning should be ignored for this account. 
+     * @see #isAccountPasswordSetToNeverExpire()
+     */
     public void setIgnorePasswordExpirationWarningFlags(final List<String> ignorePasswordWarningFlags) {
         this.ignorePasswordExpirationWarningFlags = ignorePasswordWarningFlags;
     }
 
+    /** Set the ldap converter used in calculating the expiration date attribute value.*/
+    @Required
     public void setLdapDateConverter(final LdapDateConverter ldapDateConverter) {
         this.ldapDateConverter = ldapDateConverter;
     }
@@ -65,7 +79,7 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
     }
     
     /**
-     * Calculates the number of days left to the expiration date based on the {@code expireDate} parameter
+     * Calculates the number of days left to the expiration date 
      * @return Number of days left to the expiration date or -1 if the no expiration warning is 
      * calculated based on the defined policy. 
      */
@@ -80,9 +94,8 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
         int daysToExpirationDate = d.getDays();
 
         if (expireDate.equals(currentTime) || expireDate.isBefore(currentTime)) {
-            final String msgToLog = String.format("Authentication failed because account password has expired with %s to expiration date." + 
-                                            "Verify the value of the attribute and make sure it's not before the current date, which is %s", 
-                                            daysToExpirationDate, getPasswordPolicyConfiguration().getPasswordExpirationDateAttributeName(), currentTime);
+            final String msgToLog = String.format("Password expiration date %s is on/before the current time %s. The account password has expired.",
+                                            daysToExpirationDate, currentTime);
             log.debug(msgToLog);
             return 0;
         }
@@ -119,7 +132,7 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
     
     private void validateAccountPasswordExpirationPolicy() throws LdapPasswordPolicyAuthenticationException {
         if (isAccountPasswordSetToNeverExpire()) {
-            log.debug("Account password will never expire. Skipping password warning check...");
+            log.debug("Account password will never expire. Skipping password warning checks...");
             return;
         }
 
@@ -132,9 +145,8 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
     }
     
     /**
-     * Determines if the password value is set to never expire.
-     *
-     * @return boolean that indicates whether  or not password warning should proceed.
+     * Determines if the password value is set to never expire. Takes into account {@link #setIgnorePasswordExpirationWarningFlags(List)}
+     * and the policy defined for {@link LdapPasswordPolicyConfiguration#getUserAccountControl()}, if any.
      */
     private boolean isAccountPasswordSetToNeverExpire() {
         final String ignoreCheckValue = getPasswordPolicyConfiguration().getIgnorePasswordExpirationWarning();

@@ -22,6 +22,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
+/**
+ * The password policy configuration defined by the ldap instance.
+ * This is only constructed by the appropriate authentication handler
+ * {@link LdapPasswordPolicyAwareAuthenticationHandler} and may be passed to {@link LdapPasswordPolicyExaminer} examiners.
+ */
 public final class LdapPasswordPolicyConfiguration {
 
     private UsernamePasswordCredentials credentials;

@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
-public class AccountDisabledLdapErrorDefinition extends AbstractLdapErrorDefinition {
+/**
+ * An implementation of a ldap error definition which indicates an authentication failure
+ * due to the account being disabled.
+ */
+public final class AccountDisabledLdapErrorDefinition extends AbstractLdapErrorDefinition {
     public AccountDisabledLdapErrorDefinition() {
         super("data 533", "accountDisabled");
     }

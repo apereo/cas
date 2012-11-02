@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
-public class AccountMustChangePasswordLdapErrorDefinition extends AbstractLdapErrorDefinition {
+/**
+ * An implementation of a ldap error definition which indicates an authentication failure
+ * where the authenticating account must changes its password.
+ */
+public final class AccountMustChangePasswordLdapErrorDefinition extends AbstractLdapErrorDefinition {
     public AccountMustChangePasswordLdapErrorDefinition() {
         super("data 773", "mustChangePassword");
     }

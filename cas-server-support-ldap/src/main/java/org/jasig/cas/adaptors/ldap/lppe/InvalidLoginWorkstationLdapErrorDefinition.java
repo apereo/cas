@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
-public class InvalidLoginWorkstationLdapErrorDefinition extends AbstractLdapErrorDefinition {
+/**
+ * An implementation of a ldap error definition which indicates an authentication failure
+ * due to the account being unauthorized to login from the current machine.
+ */
+public final class InvalidLoginWorkstationLdapErrorDefinition extends AbstractLdapErrorDefinition {
     public InvalidLoginWorkstationLdapErrorDefinition() {
         super("data 531", "badWorkstation");
     }

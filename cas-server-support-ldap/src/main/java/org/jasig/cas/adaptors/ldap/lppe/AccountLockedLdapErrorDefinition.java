@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
-public class AccountLockedLdapErrorDefinition extends AbstractLdapErrorDefinition {
+/**
+ * An implementation of a ldap error definition which indicates an authentication failure
+ * due to the account being locked.
+ */
+public final class AccountLockedLdapErrorDefinition extends AbstractLdapErrorDefinition {
     public AccountLockedLdapErrorDefinition() {
         super("data 775", "accountLocked");
     }

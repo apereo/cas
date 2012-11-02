@@ -24,6 +24,10 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 
+/**
+ * An implementation the {@link LdapDateConverter} that expects the received
+ * to be defined in time units specified by {@link #setTimeUnit(TimeUnit)}
+ */
 public class TimeUnitLdapDateConverter extends AbstractLdapDateConverter {
 
     @NotNull

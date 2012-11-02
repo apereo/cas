@@ -20,7 +20,13 @@ package org.jasig.cas.adaptors.ldap.lppe;
 
 import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
 
-public class LdapPasswordPolicyAuthenticationException extends LdapAuthenticationException {
+/**
+ * Indicates an ldap authentication exception. Specific authentication error codes may be explained
+ * by indicating the <code>type</code>.
+ * 
+ * @see #getType()
+ */
+public abstract class LdapPasswordPolicyAuthenticationException extends LdapAuthenticationException {
 
     public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.lppe.message";
 

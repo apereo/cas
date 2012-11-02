@@ -35,7 +35,15 @@ import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationExceptio
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Required;
 
+/**
+ * An implementation of an ldap authentication handler that acts as the wrapper/decorator around an existing ldap authentication handler.
+ * The main task of this handler is configure the attribute retrieval policy for the true authentication handler, retrieve the results,
+ * construct an instance of {@link LdapPasswordPolicyConfiguration} that is to be used for examining account policy. 
+ * 
+ * @see #setLdapAuthenticationHandler(AbstractLdapUsernamePasswordAuthenticationHandler)
+ */
 public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
     
     private LdapPasswordPolicyConfiguration passwordPolicyConfiguration = null;
@@ -51,8 +59,7 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
 
     /** The attribute that indicates the user account status **/
     private String userAccountControlAttributeName = "userAccountControl";
-    
-    
+        
     /** The attribute that contains the data that will determine if password warning is skipped  */
     private String ignorePasswordExpirationWarningAttributeName = null;
 
@@ -101,7 +108,7 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         this.accountLockedAttributeName = accountLockedAttributeName;
     }
 
-    public void setAccountPasswordMustChange(final String accountPasswordMustChange) {
+    public void setAccountPasswordMustChangeAttributeName(final String accountPasswordMustChange) {
         this.accountPasswordMustChangeAttributeName = accountPasswordMustChange;
     } 
 
@@ -109,6 +116,7 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
         this.ignorePasswordExpirationWarningAttributeName = noWarningAttributeName;
     }
 
+    @Required
     public void setLdapAuthenticationHandler(final AbstractLdapUsernamePasswordAuthenticationHandler ldapAuthenticationHandler) {
         this.ldapAuthenticationHandler = ldapAuthenticationHandler;      
     }
@@ -123,7 +131,6 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
      * 
      * @param ldapErrorDefs
      * @see AbstractLdapErrorDefinition
-     * 
      */
     public void setLdapErrorDefinitions(final List<LdapErrorDefinition> ldapErrorDefs) {
         this.ldapErrorDefinitions = ldapErrorDefs;
@@ -157,6 +164,12 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
       return this.ldapPasswordPolicyExaminers;
     }
   
+    /**
+     * Allows to set a list of {@link LdapPasswordPolicyExaminer}s which may be invoked after authentication has taken place.
+     * This is specifically used by the authentication flow to verify account policy condition that may not necessarily
+     * be considered errors to prevent authentication, such as password expiration warnings, etc.
+     * @param ldapPasswordPolicyExaminers
+     */
     public void setLdapPasswordPolicyExaminers(final List<LdapPasswordPolicyExaminer> ldapPasswordPolicyExaminers) {
         this.ldapPasswordPolicyExaminers = ldapPasswordPolicyExaminers;
     }
@@ -169,7 +182,7 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
                 
                 final SearchResult authenticatedDn = this.ldapAuthenticationHandler.getAuthenticatedDistinguishedNameSearchResult();
                 if (authenticatedDn == null) {
-                    log.warn("Authentication handler {} has indicated success, but the authentication DN cannot be found. Ignoring password policy checks...",
+                    log.warn("Authentication handler {} has indicated success, but the ldap authentication search result cannot be found. Ignoring password policy checks...",
                             this.ldapAuthenticationHandler.getName());
                     return authenticated;
                 }
@@ -191,43 +204,43 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
 
     protected void examineAccountStatus(final UsernamePasswordCredentials credential) throws AuthenticationException {
         final long uacValue = getPasswordPolicyConfiguration().getUserAccountControl();
+        final String uid =  getPasswordPolicyConfiguration().getCredentials().getUsername();
         
         if (uacValue > 0) {
+           
            if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) == 
                ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) {
-               final String msg = String.format("User account control flag is set. Account %s is disabled", getPasswordPolicyConfiguration().getCredentials().getUsername());
+               final String msg = String.format("User account control flag is set. Account %s is disabled", uid);
                throw new AccountDisabledLdapErrorDefinition().getAuthenticationException(msg);
            } 
            
            if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) == 
                ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) {
-               final String msg = String.format("User account control flag is set. Account %s is locked", getPasswordPolicyConfiguration().getCredentials().getUsername());
+               final String msg = String.format("User account control flag is set. Account %s is locked", uid);
                throw new AccountLockedLdapErrorDefinition().getAuthenticationException(msg);
            } 
            
            if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED.getValue()) == 
                ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED.getValue()) {
                
-               final String msg = String.format("User account control flag is set. Account %s has expired", getPasswordPolicyConfiguration().getCredentials().getUsername());
+               final String msg = String.format("User account control flag is set. Account %s has expired", uid);
                throw new AccountPasswordExpiredLdapErrorDefinition().getAuthenticationException(msg);
            } 
         }
 
         if (getPasswordPolicyConfiguration().isAccountDisabled()) {
-            final String msg = String.format("Password policy attribute %s is set. Account %s is disabled", this.accountDisabledAttributeName,
-                    getPasswordPolicyConfiguration().getCredentials().getUsername());
+            final String msg = String.format("Password policy attribute %s is set. Account %s is disabled", this.accountDisabledAttributeName, uid);
             throw new AccountDisabledLdapErrorDefinition().getAuthenticationException(msg);
         }
         
         if (getPasswordPolicyConfiguration().isAccountLocked()) {
-            final String msg = String.format("Password policy attribute %s is set. Account %s is locked", this.accountLockedAttributeName,
-                    getPasswordPolicyConfiguration().getCredentials().getUsername());
+            final String msg = String.format("Password policy attribute %s is set. Account %s is locked", this.accountLockedAttributeName, uid);
             throw new AccountLockedLdapErrorDefinition().getAuthenticationException(msg);
         }
         
         if (getPasswordPolicyConfiguration().isAccountPasswordMustChange()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s must change it password", 
-                                             this.accountPasswordMustChangeAttributeName, getPasswordPolicyConfiguration().getCredentials().getUsername());
+                                             this.accountPasswordMustChangeAttributeName, uid);
             throw new AccountMustChangePasswordLdapErrorDefinition().getAuthenticationException(msg); 
         }
     }
@@ -317,19 +330,19 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
     protected AuthenticationException handleLdapError(final Exception e) {
         if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
             log.debug("No error definitions are defined. Throwing error {}", e.getMessage());
-            return BadCredentialsAuthenticationException.ERROR;
+            return new LdapAuthenticationException(e);
         }
 
         log.debug("Handling error {}", e.getMessage());
         for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions) {
             if (ldapErrorDef.matches(e.getMessage())) {
                 log.debug("Found ldap error definition {}. Throwing error for {}", ldapErrorDef, e.getMessage());
-                return new LdapAuthenticationException(e, ldapErrorDef.getType());
+                return ldapErrorDef.getAuthenticationException(e.getMessage());
             }
         }
 
         log.debug("No error definition could be matched against the error. Throwing default error for {}", e.getMessage());
-        return BadCredentialsAuthenticationException.ERROR;
+        return new LdapAuthenticationException(e);
     }
 
     

@@ -24,6 +24,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 
+/**
+ * An abstract implementation of the {@link LdapErrorDefinition} which expects
+ * the error definition to be a regular expression pattern.
+ */
 public abstract class AbstractLdapErrorDefinition implements LdapErrorDefinition {
 
     private Pattern errorDefinition = null;

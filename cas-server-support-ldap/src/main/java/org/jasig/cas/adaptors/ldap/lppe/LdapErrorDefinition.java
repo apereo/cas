@@ -20,6 +20,13 @@ package org.jasig.cas.adaptors.ldap.lppe;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 
+/**
+ * This interface describes the structure of an ldap error such as {@link AccountDisabledLdapErrorDefinition}.
+ * The error defined requires the definition/code noted by {@link #getDefinition()} thrown as part of the ldap authentication failure, 
+ * {@link #getType()} that described the error and may be mapped and trapped by the authentication flow which may be noted
+ * by a customized instance of {@link AuthenticationException}.
+ * @see AbstractLdapErrorDefinition
+ */
 public interface LdapErrorDefinition {
     String getType();
     

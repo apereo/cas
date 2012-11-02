@@ -34,6 +34,12 @@ import org.jasig.cas.web.flow.AuthenticationViaFormAction;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.execution.RequestContext;
 
+/**
+ * An extension of the {@link AuthenticationViaFormAction} whose main task is to communicate the ldap authentication error
+ * type back to the flow in case of an error, or invoke policy examiners after authentication has taken place successfully.
+ * This action simplifies extending the authentication flow by allowing a mapping between authentication error types
+ * and the event id to which the flow may switch.  
+ */
 public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends AuthenticationViaFormAction {
 
     private LdapPasswordPolicyAwareAuthenticationHandler ldapPasswordPolicyAuthenticationHandler;
@@ -41,7 +47,7 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
     public void setLdapPasswordPolicyAuthenticationHandler(final LdapPasswordPolicyAwareAuthenticationHandler ldapPasswordPolicyAuthenticationHandler) {
         this.ldapPasswordPolicyAuthenticationHandler = ldapPasswordPolicyAuthenticationHandler;
     }
-
+    
     @Override
     protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
                                                           final MessageContext messageContext, final TicketException e) {

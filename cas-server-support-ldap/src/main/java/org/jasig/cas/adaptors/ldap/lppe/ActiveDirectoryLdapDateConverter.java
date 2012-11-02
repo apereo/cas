@@ -20,6 +20,12 @@ package org.jasig.cas.adaptors.ldap.lppe;
 
 import org.joda.time.DateTime;
 
+/**
+ * An implementation the {@link LdapDateConverter} for Active Directory. This class
+ * expects the date value to be of type long based on which it will calculate the corresponding
+ * {@link DateTime} instance. The calculation is based on the the assumption that Active Directory's epoch 
+ * is 01 January, 1601, with the Java epoch being 01 January, 1970.
+ */
 public class ActiveDirectoryLdapDateConverter extends AbstractLdapDateConverter {
 
     /*
@@ -29,6 +35,12 @@ public class ActiveDirectoryLdapDateConverter extends AbstractLdapDateConverter 
     private static final long YEARS_FROM_1601_1970 = 1970 - 1601;
     private static final long TOTAL_SECONDS_FROM_1601_1970 = (YEARS_FROM_1601_1970 * 365 + YEARS_FROM_1601_1970 / 4 - 3) * 24 * 60 * 60;
     
+    /**
+     * {@inheritDoc}
+     * The conversion will convert the date value to seconds first.
+     * It will then subtract the java epoch from the value, 
+     * and reconstructs the {@link DateTime} objects with the specified {@link #getTimeZone()}
+     */
     @Override
     public DateTime convert(final String dateValue) {
         final long l = Long.parseLong(dateValue.trim());

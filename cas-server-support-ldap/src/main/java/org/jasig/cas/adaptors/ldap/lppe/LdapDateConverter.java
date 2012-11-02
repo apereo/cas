@@ -21,7 +21,27 @@ package org.jasig.cas.adaptors.ldap.lppe;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+/**
+ * This interface defines the generic means by which a given date attribute value in 
+ * an ldap instance can be converted back to a {@link DateTime} object, given the 
+ * specified {@link #getTimeZone()}
+ * 
+ * @see AbstractLdapDateConverter
+ */
 public interface LdapDateConverter {
+    
+    /**
+     * Converts the received ldap date value back to a {@link DateTime} object
+     * @param dateValue the value of a given date attribute in ldap
+     * @return The corresponding {@link DateTime} objects based on the value received.
+     */
     DateTime convert(final String dateValue);
+    
+    /**
+     * @return The expected timezone appropriate when constructing the {@link DateTime}
+     * object during the conversion.
+     * 
+     * @see #getTimeZone()
+     */
     DateTimeZone getTimeZone();
 }

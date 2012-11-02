@@ -49,7 +49,11 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends 
     /** The default timeout. */
     private static final int DEFAULT_TIMEOUT = 1000;
 
-    /** The ldap query search result on the current transformed username. Contains attributes defined to be returned by the query, if any. **/
+    /** 
+     * The ldap query search result on the current transformed username. Contains attributes defined to be returned 
+     * by the query, if any.
+     * @see #setAttributesToReturn(List) 
+     */
     private SearchResult authenticatedDistinguishedNameSearchResult = null;
     
     /** 
@@ -92,12 +96,24 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends 
     @NotNull
     private List<String> attributesToReturn = new ArrayList<String>();
     
+    /**
+     * {@inheritDoc}
+     * Expects and sets the authenticated search result from the implementing class.
+     * @return True of the authentication is successful having received the authentication search result. False, otherwise.
+     * @see #setAuthenticatedDistinguishedNameSearchResult(SearchResult)
+     */
     @Override
     protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials cred) throws AuthenticationException {
         setAuthenticatedDistinguishedNameSearchResult(authenticateLdapUsernamePasswordInternal(cred));
         return getAuthenticatedDistinguishedNameSearchResult() != null;
     }
     
+    /**
+     * Internal abstract method, intended to carry out the ldap authentication. 
+     * @see #authenticateUsernamePasswordInternal(UsernamePasswordCredentials)
+     * @return The authentication {@link SearchResult} if successful, or null.
+     * @throws AuthenticationException if Ldap authentication encounters an error.
+     */
     protected abstract SearchResult authenticateLdapUsernamePasswordInternal(final UsernamePasswordCredentials cred)  throws AuthenticationException;
     
     /**

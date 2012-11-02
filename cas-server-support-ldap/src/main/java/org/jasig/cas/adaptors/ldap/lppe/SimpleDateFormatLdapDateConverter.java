@@ -24,9 +24,14 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+/**
+ * An implementation the {@link LdapDateConverter} that expects the received
+ * date value to be consistent with a given {@link DateTimeFormatter}'s pattern.
+ * 
+ * @see #setPasswordExpirationDateFormat(String)
+ */
 public class SimpleDateFormatLdapDateConverter extends AbstractLdapDateConverter {
 
-    /** The format of the date in dateFormat */
     @NotNull
     private String passwordExpirationDateFormat = null;
     
