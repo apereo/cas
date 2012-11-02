@@ -28,10 +28,11 @@ import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyExaminer;
 import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyExpirationException;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.flow.AuthenticationViaFormAction;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.util.Assert;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -40,7 +41,7 @@ import org.springframework.webflow.execution.RequestContext;
  * This action simplifies extending the authentication flow by allowing a mapping between authentication error types
  * and the event id to which the flow may switch.  
  */
-public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends AuthenticationViaFormAction {
+public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends AuthenticationViaFormAction implements InitializingBean {
 
     private LdapPasswordPolicyAwareAuthenticationHandler ldapPasswordPolicyAuthenticationHandler;
     
@@ -50,11 +51,11 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
     
     @Override
     protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
-                                                          final MessageContext messageContext, final TicketException e) {
+                                                          final MessageContext messageContext, final Exception e) {
         
         String eventId = super.getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e); 
         
-        if (isTicketExceptionCauseAuthenticationException(e)) {
+        if (isExceptionCauseAuthenticationException(e)) {
             final AuthenticationException ex = (AuthenticationException) e.getCause();
             log.debug("Handling ldap password policy authentication error...");
                         
@@ -68,31 +69,49 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
     }
     
     @Override
-    protected String getAuthenticationWebFlowSuccessEventId(RequestContext context, Credentials credentials, MessageContext messageContext) {
+    protected String getAuthenticationWebFlowSuccessEventId(final RequestContext context, final Credentials credentials, final MessageContext messageContext) {
         String eventId = super.getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
         
-        if (isLdapPasswordPolicyAuthenticationHandlerUsed()) {
-            try {
+        try {
+            
+            if (isLdapPasswordPolicyAuthenticationSuccessful(credentials)) {
                 final LdapPasswordPolicyConfiguration configuration = this.ldapPasswordPolicyAuthenticationHandler.getPasswordPolicyConfiguration();
                 final List<LdapPasswordPolicyExaminer> examinersList = this.ldapPasswordPolicyAuthenticationHandler.getLdapPasswordPolicyExaminers();
                 
                 if (examinersList != null && examinersList.size() > 0) {
+                  log.debug("Ldap password policy authentication has passed. Invoking ldap password policy examiners...");
                   for (final LdapPasswordPolicyExaminer examiner : this.ldapPasswordPolicyAuthenticationHandler.getLdapPasswordPolicyExaminers()) {
                       examiner.examinePasswordPolicy(configuration);
                   }
                 }
-            }  catch (final LdapPasswordPolicyExpirationException e) {
-                context.getFlowScope().put("expireDays", e.getNumberOfDaysToPasswordExpirationDate());
-                eventId = e.getType();
-            } catch (final LdapPasswordPolicyAuthenticationException e) {
-                eventId = e.getType();
+            } else {
+                log.debug("Ldap password policy authentication has failed. This may be due to account password policy, " +
+                		      "or the provided credentials cannot be located in the configured ldap.");
             }
+        }  catch (final LdapPasswordPolicyExpirationException e) {
+            context.getFlowScope().put("expireDays", e.getNumberOfDaysToPasswordExpirationDate());
+            eventId = e.getType();
+        } catch (final LdapPasswordPolicyAuthenticationException e) {
+            eventId = e.getType();
+        } catch (final AuthenticationException e) {
+            populateErrorsInstance(e.getCode(), messageContext);
+            eventId = getAuthenticationWebFlowErrorEventId(context, credentials, messageContext,e);
         }
+         
         
         return eventId;
     }
 
-    private boolean isLdapPasswordPolicyAuthenticationHandlerUsed() {
-        return (this.ldapPasswordPolicyAuthenticationHandler == null || this.ldapPasswordPolicyAuthenticationHandler.getPasswordPolicyConfiguration() != null);
+    private boolean isLdapPasswordPolicyAuthenticationSuccessful(final Credentials credentials) throws AuthenticationException {
+        if (this.ldapPasswordPolicyAuthenticationHandler.getPasswordPolicyConfiguration() == null) {
+            return (this.ldapPasswordPolicyAuthenticationHandler.authenticate(credentials));
+        } 
+        
+        return true;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        Assert.notNull(this.ldapPasswordPolicyAuthenticationHandler, "ldapPasswordPolicyAuthenticationHandler cannot be null");       
     }
 }

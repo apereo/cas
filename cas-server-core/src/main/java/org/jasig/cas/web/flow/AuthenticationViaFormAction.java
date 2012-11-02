@@ -97,8 +97,8 @@ public class AuthenticationViaFormAction {
                 putWarnCookieIfRequestParameterPresent(context);
                 return getAuthenticationWebFlowWarningEventId(context, credentials, messageContext);
             } catch (final TicketException e) {
-                if (isTicketExceptionCauseAuthenticationException(e)) {
-                    populateErrorsInstance(e, messageContext);
+                if (isExceptionCauseAuthenticationException(e)) {
+                    populateErrorsInstance(e.getCode(), messageContext);
                     return getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e);
                 }
                 
@@ -114,13 +114,13 @@ public class AuthenticationViaFormAction {
             putWarnCookieIfRequestParameterPresent(context);
             return getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
         } catch (final TicketException e) {
-            populateErrorsInstance(e, messageContext);
+            populateErrorsInstance(e.getCode(), messageContext);
             return getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e);
         }
     }
-
+    
     protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
-                                                          final MessageContext messageContext, final TicketException e) {
+                                                          final MessageContext messageContext, final Exception e) {
         return DEFAULT_WEBFLOW_ERROR_EVENT_ID;
     }
     
@@ -134,9 +134,9 @@ public class AuthenticationViaFormAction {
         return DEFAULT_WEBFLOW_SUCCESS_EVENT_ID;
     }
     
-    private void populateErrorsInstance(final TicketException e, final MessageContext messageContext) {
+    protected void populateErrorsInstance(final String code, final MessageContext messageContext) {
         try {
-            messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).defaultText(e.getCode()).build());
+            messageContext.addMessage(new MessageBuilder().error().code(code).defaultText(code).build());
         } catch (final Exception fe) {
             log.error(fe.getMessage(), fe);
         }
@@ -152,7 +152,7 @@ public class AuthenticationViaFormAction {
         }
     }
 
-    protected final boolean isTicketExceptionCauseAuthenticationException(final TicketException e) {
+    protected final boolean isExceptionCauseAuthenticationException(final Exception e) {
         return e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass());
     }
 
