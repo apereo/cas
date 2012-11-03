@@ -33,15 +33,44 @@ public class TimeUnitLdapDateConverter extends AbstractLdapDateConverter {
     @NotNull
     private TimeUnit timeUnit = TimeUnit.DAYS;
     
+    private DateTime sinceDateTime = null;
+   
+    public TimeUnitLdapDateConverter() {}
+    
+    public TimeUnitLdapDateConverter(final TimeUnit timeUnit) {
+        setTimeUnit(timeUnit);
+    }
+    
+    public TimeUnitLdapDateConverter(final TimeUnit timeUnit, final DateTime sinceDateTime) {
+        this(timeUnit);
+        setSinceDateTime(sinceDateTime);
+    }
+    
     public void setTimeUnit(final TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
 
+    public void setSinceDateTime(final DateTime sinceDateTime) {
+        this.sinceDateTime = sinceDateTime;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Will convert the received ldap date value into milliseconds, based on the timeUnit specified by {@link #setTimeUnit(TimeUnit)}.
+     * @return If {@link #sinceDateTime} is specified, will return a {@link DateTime} instance since that 
+     *         date plus the converted time unit to milliseconds. Otherwise, will calculate a {@link DateTime} instance 
+     *         since the Java epoch plus the converted time unit to milliseconds. 
+     */
     @Override
     public DateTime convert(final String dateValue) {
         final long longDate = Long.parseLong(dateValue);
-        final long dateInMillis = TimeUnit.MILLISECONDS.convert(longDate, this.timeUnit);
-        return new DateTime(dateInMillis, this.getTimeZone());
+        final Long dateInMillis = TimeUnit.MILLISECONDS.convert(longDate, this.timeUnit);
+        
+        if (sinceDateTime == null)
+            return new DateTime(dateInMillis, this.getTimeZone());
+        
+        return sinceDateTime.plusMillis(dateInMillis.intValue());
     }
 
 }

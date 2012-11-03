@@ -29,6 +29,29 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  */
 public final class LdapPasswordPolicyConfiguration {
 
+    /**
+     * This enumeration defines a selective limited set of ldap user account control flags
+     * that indicate various statuses of the user account. The account status
+     * is a bitwise flag that may contain one of more of the following values.
+     */
+    private enum ActiveDirectoryUserAccountControlFlags {
+        UAC_FLAG_ACCOUNT_DISABLED(2),
+        UAC_FLAG_LOCKOUT(16),
+        UAC_FLAG_PASSWD_NOTREQD(32),
+        UAC_FLAG_DONT_EXPIRE_PASSWD(65536),
+        UAC_FLAG_PASSWORD_EXPIRED(8388608);
+        
+        private int value;
+        
+        ActiveDirectoryUserAccountControlFlags(final int id) { 
+            this.value = id; 
+        }
+        
+        public final int getValue() { 
+            return this.value; 
+        }
+    }
+    
     private UsernamePasswordCredentials credentials;
     
     private String passwordExpirationDate;
@@ -52,7 +75,7 @@ public final class LdapPasswordPolicyConfiguration {
         return this.userAccountControl;
     }
 
-    public void setUserAccountControl(final String userAccountControl) {
+    void setUserAccountControl(final String userAccountControl) {
         if (!StringUtils.isBlank(userAccountControl) && NumberUtils.isNumber(userAccountControl)) {
             this.userAccountControl = Long.parseLong(userAccountControl);
         }
@@ -62,7 +85,7 @@ public final class LdapPasswordPolicyConfiguration {
         return this.accountDisabled;
     }
 
-    public void setAccountDisabled(final boolean accountDisabled) {
+    void setAccountDisabled(final boolean accountDisabled) {
         this.accountDisabled = accountDisabled;
     }
 
@@ -70,7 +93,7 @@ public final class LdapPasswordPolicyConfiguration {
         return this.accountLocked;
     }
 
-    public void setAccountLocked(final boolean accountLocked) {
+    void setAccountLocked(final boolean accountLocked) {
         this.accountLocked = accountLocked;
     }
 
@@ -78,11 +101,11 @@ public final class LdapPasswordPolicyConfiguration {
         return this.accountPasswordMustChange;
     }
 
-    public void setAccountPasswordMustChange(final boolean accountPasswordMustChange) {
+    void setAccountPasswordMustChange(final boolean accountPasswordMustChange) {
         this.accountPasswordMustChange = accountPasswordMustChange;
     }
 
-    public String getPasswordExpirationDate() {
+    String getPasswordExpirationDate() {
         return this.passwordExpirationDate;
     }
 
@@ -90,7 +113,7 @@ public final class LdapPasswordPolicyConfiguration {
         return this.ignorePasswordExpirationWarning;
     }
 
-    public UsernamePasswordCredentials getCredentials() {
+    UsernamePasswordCredentials getCredentials() {
         return this.credentials;
     }
 
@@ -102,19 +125,19 @@ public final class LdapPasswordPolicyConfiguration {
         return this.passwordWarningNumberOfDays;
     }
 
-    public void setPasswordExpirationDate(final String date) {
+    void setPasswordExpirationDate(final String date) {
         this.passwordExpirationDate = date;
     }
 
-    public void setIgnorePasswordExpirationWarning(final String value) {
+    void setIgnorePasswordExpirationWarning(final String value) {
         this.ignorePasswordExpirationWarning = value;
     }
 
-    public void setValidPasswordNumberOfDays(final int valid) {
+    void setValidPasswordNumberOfDays(final int valid) {
         this.validPasswordNumberOfDays = valid;
     }
 
-    public void setPasswordWarningNumberOfDays(final int warn) {
+    void setPasswordWarningNumberOfDays(final int warn) {
         this.passwordWarningNumberOfDays = warn;
     }
 
@@ -124,5 +147,28 @@ public final class LdapPasswordPolicyConfiguration {
 
     public String getPasswordExpirationDateAttributeName() {
         return this.passwordExpirationDateAttributeName;
+    }
+    
+    boolean isUserAccountControlSetToNeverExpirePassword() {
+        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD);
+    }
+    
+    boolean isUserAccountControlSetToDisableAccount() {
+        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED);
+    }
+    
+    boolean isUserAccountControlSetToLockAccount() {
+        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT);
+    }
+
+    boolean isUserAccountControlSetToExpirePassword() {
+        return isUserAccountControlBitSet(ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED);
+    }
+
+    boolean isUserAccountControlBitSet(final ActiveDirectoryUserAccountControlFlags bit) {
+        if (getUserAccountControl() > 0) {
+            return ((getUserAccountControl() & bit.getValue()) == bit.getValue());
+        }
+        return false;  
     }
 }

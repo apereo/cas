@@ -31,8 +31,9 @@ import org.joda.time.DateTimeZone;
 public interface LdapDateConverter {
     
     /**
-     * Converts the received ldap date value back to a {@link DateTime} object
-     * @param dateValue the value of a given date attribute in ldap
+     * Converts the received ldap date value back to a {@link DateTime} object.
+     * 
+     * @param dateValue the value of a given date attribute in ldap.
      * @return The corresponding {@link DateTime} objects based on the value received.
      */
     DateTime convert(final String dateValue);

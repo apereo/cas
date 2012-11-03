@@ -29,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.cas.adaptors.ldap.AbstractLdapUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
-import org.jasig.cas.adaptors.ldap.lppe.LdapPasswordPolicyExaminer.ActiveDirectoryUserAccountControlFlags;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -203,30 +202,24 @@ public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUserna
     }
 
     protected void examineAccountStatus(final UsernamePasswordCredentials credential) throws AuthenticationException {
-        final long uacValue = getPasswordPolicyConfiguration().getUserAccountControl();
+
         final String uid =  getPasswordPolicyConfiguration().getCredentials().getUsername();
         
-        if (uacValue > 0) {
-           
-           if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) == 
-               ActiveDirectoryUserAccountControlFlags.UAC_FLAG_ACCOUNT_DISABLED.getValue()) {
-               final String msg = String.format("User account control flag is set. Account %s is disabled", uid);
-               throw new AccountDisabledLdapErrorDefinition().getAuthenticationException(msg);
-           } 
-           
-           if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) == 
-               ActiveDirectoryUserAccountControlFlags.UAC_FLAG_LOCKOUT.getValue()) {
-               final String msg = String.format("User account control flag is set. Account %s is locked", uid);
-               throw new AccountLockedLdapErrorDefinition().getAuthenticationException(msg);
-           } 
-           
-           if ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED.getValue()) == 
-               ActiveDirectoryUserAccountControlFlags.UAC_FLAG_PASSWORD_EXPIRED.getValue()) {
-               
-               final String msg = String.format("User account control flag is set. Account %s has expired", uid);
-               throw new AccountPasswordExpiredLdapErrorDefinition().getAuthenticationException(msg);
-           } 
+        if (getPasswordPolicyConfiguration().isUserAccountControlSetToDisableAccount()) {
+            final String msg = String.format("User account control flag is set. Account %s is disabled", uid);
+            throw new AccountDisabledLdapErrorDefinition().getAuthenticationException(msg);
         }
+
+        if (getPasswordPolicyConfiguration().isUserAccountControlSetToLockAccount()) {
+            final String msg = String.format("User account control flag is set. Account %s is locked", uid);
+            throw new AccountLockedLdapErrorDefinition().getAuthenticationException(msg);
+        }
+
+        if (getPasswordPolicyConfiguration().isUserAccountControlSetToExpirePassword()) {
+            final String msg = String.format("User account control flag is set. Account %s has expired", uid);
+            throw new AccountPasswordExpiredLdapErrorDefinition().getAuthenticationException(msg);
+        }
+        
 
         if (getPasswordPolicyConfiguration().isAccountDisabled()) {
             final String msg = String.format("Password policy attribute %s is set. Account %s is disabled", this.accountDisabledAttributeName, uid);

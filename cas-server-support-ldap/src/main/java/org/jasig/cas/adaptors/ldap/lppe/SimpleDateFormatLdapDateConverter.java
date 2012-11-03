@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.ldap.lppe;
 import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -35,8 +36,27 @@ public class SimpleDateFormatLdapDateConverter extends AbstractLdapDateConverter
     @NotNull
     private String passwordExpirationDateFormat = null;
     
+    private DateTimeZone timeZone = getTimeZone();
+    
+    public SimpleDateFormatLdapDateConverter() {}
+    
+    public SimpleDateFormatLdapDateConverter(final String passwordExpirationDateFormat) {
+        setPasswordExpirationDateFormat(passwordExpirationDateFormat);
+    }
+    
+    public SimpleDateFormatLdapDateConverter(final String passwordExpirationDateFormat, final DateTimeZone timeZone) {
+        this(passwordExpirationDateFormat);
+        this.timeZone = timeZone;
+    }
+    
     public void setPasswordExpirationDateFormat(final String passwordExpirationDateFormat) {
         this.passwordExpirationDateFormat = passwordExpirationDateFormat;
+    }
+
+    
+    @Override
+    public DateTimeZone getTimeZone() {
+        return this.timeZone;
     }
 
     @Override

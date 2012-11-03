@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -48,6 +49,26 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
     
     /** Disregard the warning period and warn all users of password expiration */
     private boolean alwaysDisplayPasswordExpirationWarning = false;
+    
+    public LdapPasswordExpirationPolicyExaminer() {}
+    
+    public LdapPasswordExpirationPolicyExaminer(final LdapDateConverter ldapDateConverter) {
+        this(ldapDateConverter, false);
+    }
+    
+    public LdapPasswordExpirationPolicyExaminer(final LdapDateConverter ldapDateConverter, final boolean warnAll) {
+        this(ldapDateConverter, new ArrayList<String>(), warnAll);
+    }
+
+    public LdapPasswordExpirationPolicyExaminer(final LdapDateConverter ldapDateConverter, final List<String> ignorePasswordWarningFlags) {
+       this(ldapDateConverter, ignorePasswordWarningFlags, false);
+    }
+    
+    public LdapPasswordExpirationPolicyExaminer(final LdapDateConverter ldapDateConverter, final List<String> ignorePasswordWarningFlags, final boolean warnAll) {
+        setIgnorePasswordExpirationWarningFlags(ignorePasswordWarningFlags);
+        setLdapDateConverter(ldapDateConverter);
+        setAlwaysDisplayPasswordExpirationWarning(warnAll);
+    }
     
     /**
      * Set the flag values which will used to calculate whether the password expiration
@@ -88,11 +109,12 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
         log.debug("Calculating number of days left to the expiration date for user {}", getPasswordPolicyConfiguration().getCredentials().getUsername());
 
         final DateTime currentTime = new DateTime(this.ldapDateConverter.getTimeZone());
-        log.debug("Current date is {}. Expiration date is {}" + currentTime, expireDate);
+        log.debug("Current date is {}. Expiration date is {}", currentTime, expireDate);
 
         final Days d = Days.daysBetween(currentTime, expireDate);
         int daysToExpirationDate = d.getDays();
 
+        log.debug("Days left to the expiration date: {}", daysToExpirationDate);
         if (expireDate.equals(currentTime) || expireDate.isBefore(currentTime)) {
             final String msgToLog = String.format("Password expiration date %s is on/before the current time %s. The account password has expired.",
                                             daysToExpirationDate, currentTime);
@@ -103,7 +125,7 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
         // Warning period begins from X number of days before the expiration date
         final DateTime warnPeriod = new DateTime(DateTime.parse(expireDate.toString()), 
                                      this.ldapDateConverter.getTimeZone()).minusDays(getPasswordPolicyConfiguration().getPasswordWarningNumberOfDays());
-        log.debug("Warning period begins on {}", warnPeriod.toString());
+        log.debug("Warning period begins on {}", warnPeriod);
 
         if (this.alwaysDisplayPasswordExpirationWarning) {
             log.debug("Warning all. The password for {} will expire in {} day(s)", getPasswordPolicyConfiguration().getCredentials().getUsername(), daysToExpirationDate);
@@ -125,7 +147,8 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
         final DateTime dateValue = this.ldapDateConverter.convert(getPasswordPolicyConfiguration().getPasswordExpirationDate());
         final DateTime expireDate = dateValue.plusDays(getPasswordPolicyConfiguration().getValidPasswordNumberOfDays());
         log.debug("Retrieved date value {} for date attribute {} and added {} days. The final expiration date is {}", dateValue,
-                getPasswordPolicyConfiguration().getPasswordExpirationDate(), getPasswordPolicyConfiguration().getValidPasswordNumberOfDays(), expireDate);
+                getPasswordPolicyConfiguration().getPasswordExpirationDateAttributeName(), 
+                getPasswordPolicyConfiguration().getValidPasswordNumberOfDays(), expireDate);
 
         return expireDate;
     }
@@ -152,15 +175,12 @@ public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyE
         final String ignoreCheckValue = getPasswordPolicyConfiguration().getIgnorePasswordExpirationWarning();
         boolean ignoreChecks = false;
 
-       
         if (!StringUtils.isBlank(ignoreCheckValue) && this.ignorePasswordExpirationWarningFlags != null) {
             ignoreChecks = this.ignorePasswordExpirationWarningFlags.contains(ignoreCheckValue);
         }
-    
-        final long uacValue  = getPasswordPolicyConfiguration().getUserAccountControl();
-        if (!ignoreChecks && uacValue > 0) {
-            ignoreChecks = ((uacValue & ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD.getValue()) == 
-                           ActiveDirectoryUserAccountControlFlags.UAC_FLAG_DONT_EXPIRE_PASSWD.getValue());
+        
+        if (!ignoreChecks) {
+            ignoreChecks = getPasswordPolicyConfiguration().isUserAccountControlSetToNeverExpirePassword();
         }
         return ignoreChecks;
     }

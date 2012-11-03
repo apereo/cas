@@ -19,30 +19,7 @@
 package org.jasig.cas.adaptors.ldap.lppe;
 
 public interface LdapPasswordPolicyExaminer {
-    
-    /**
-     * This enumeration defines a selective set of ldap user account control flags
-     * that indicate various statuses of the user account. The account status
-     * is a bitwise flag that may contain one of more of the following values.
-     */
-    public enum ActiveDirectoryUserAccountControlFlags {
-        UAC_FLAG_ACCOUNT_DISABLED(2),
-        UAC_FLAG_LOCKOUT(16),
-        UAC_FLAG_PASSWD_NOTREQD(32),
-        UAC_FLAG_DONT_EXPIRE_PASSWD(65536),
-        UAC_FLAG_PASSWORD_EXPIRED(8388608);
         
-        private int value;
-        
-        ActiveDirectoryUserAccountControlFlags(final int id) { 
-            this.value = id; 
-        }
-        
-        public final int getValue() { 
-            return this.value; 
-        }
-    }
-    
     /**
      * Using the <code>configuration</configuration>, defines an abstract mechanism by which
      * the password policy may be examined for instance for expiration warnings, strength, etc.
