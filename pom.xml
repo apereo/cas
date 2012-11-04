@@ -392,7 +392,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -406,14 +405,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjrt</artifactId>
       <scope>compile</scope>
-      <version>${aspectj.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <scope>compile</scope>
-      <version>${aspectj.version}</version>
     </dependency>
 
     <dependency>
@@ -876,10 +873,10 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   
   <properties>
     <issues.projectKey>CAS</issues.projectKey>
-    <spring.webflow.version>2.3.0.RELEASE</spring.webflow.version>
-    <spring.version>3.1.1.RELEASE</spring.version>
+    <spring.webflow.version>2.3.1.RELEASE</spring.webflow.version>
+    <spring.version>3.1.3.RELEASE</spring.version>
     <spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
-    <spring.security.version>3.1.0.RELEASE</spring.security.version>
+    <spring.security.version>3.1.2.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.6.10</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>

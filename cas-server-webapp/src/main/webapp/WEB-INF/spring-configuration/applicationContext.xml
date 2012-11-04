@@ -46,7 +46,7 @@
 
     <!-- Message source for this context, loaded from localized "messages_xx" files -->
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
-          p:basename="messages"/>
+          p:basename="messages" p:fallbackToSystemLocale="false" />
 
     <bean
             id="servicesManager"
