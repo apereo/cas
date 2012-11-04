@@ -33,13 +33,13 @@ import org.slf4j.LoggerFactory;
 public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuthCredentialsToPrincipalResolver.class);
+    private static final Logger log = LoggerFactory.getLogger(OAuthCredentialsToPrincipalResolver.class);
     
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
         OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
         String principalId = oauthCredentials.getUserProfile().getTypedId();
-        logger.debug("principalId : {}", principalId);
+        log.debug("principalId : {}", principalId);
         return principalId;
     }
     
