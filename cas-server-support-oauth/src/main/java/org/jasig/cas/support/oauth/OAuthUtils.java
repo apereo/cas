@@ -40,7 +40,7 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public final class OAuthUtils {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuthUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(OAuthUtils.class);
     
     /**
      * Write to the ouput this error text and return a null view.
@@ -69,7 +69,7 @@ public final class OAuthUtils {
             response.setStatus(status);
             printWriter.print(text);
         } catch (final IOException e) {
-            logger.error("Failed to write to response", e);
+            log.error("Failed to write to response", e);
         }
         return null;
     }

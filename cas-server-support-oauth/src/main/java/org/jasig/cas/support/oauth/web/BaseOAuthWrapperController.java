@@ -39,7 +39,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
     
-    protected static final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+    protected static final Logger log = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
     
     @NotNull
     protected String loginUrl;
@@ -58,7 +58,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         throws Exception {
         
         final String method = getMethod(request);
-        logger.debug("method : {}", method);
+        log.debug("method : {}", method);
         return internalHandleRequest(method, request, response);
     }
     

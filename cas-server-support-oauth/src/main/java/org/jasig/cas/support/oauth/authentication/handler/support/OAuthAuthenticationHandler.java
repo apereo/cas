@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
     
     @NotNull
     private OAuthConfiguration configuration;
@@ -53,18 +53,18 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     @Override
     protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
         final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
-        logger.debug("credential : {}", oauthCredentials);
+        log.debug("credential : {}", oauthCredentials);
         
         final String providerType = oauthCredentials.getCredential().getProviderType();
-        logger.debug("providerType : {}", providerType);
+        log.debug("providerType : {}", providerType);
         
         // get provider
         final OAuthProvider provider = OAuthUtils.getProviderByType(this.configuration.getProviders(), providerType);
-        logger.debug("provider : {}", provider);
+        log.debug("provider : {}", provider);
         
         // get user profile
         final UserProfile userProfile = provider.getUserProfile(oauthCredentials.getCredential());
-        logger.debug("userProfile : {}", userProfile);
+        log.debug("userProfile : {}", userProfile);
         
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
             oauthCredentials.setUserProfile(userProfile);

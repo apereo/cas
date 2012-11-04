@@ -45,7 +45,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20ProfileController extends AbstractController {
     
-    private static Logger logger = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    private static Logger log = LoggerFactory.getLogger(OAuth20ProfileController.class);
     
     private final TicketRegistry ticketRegistry;
     
@@ -57,14 +57,14 @@ public final class OAuth20ProfileController extends AbstractController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
-        logger.debug("accessToken : {}", accessToken);
+        log.debug("accessToken : {}", accessToken);
         
         final JsonFactory jsonFactory = new JsonFactory();
         final JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
         
         // accessToken is required
         if (StringUtils.isBlank(accessToken)) {
-            logger.error("missing accessToken");
+            log.error("missing accessToken");
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
             jsonGenerator.writeEndObject();
@@ -76,7 +76,7 @@ public final class OAuth20ProfileController extends AbstractController {
         // get ticket granting ticket
         final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) ticketRegistry.getTicket(accessToken);
         if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-            logger.error("expired accessToken : {}", accessToken);
+            log.error("expired accessToken : {}", accessToken);
             jsonGenerator.writeStartObject();
             jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
             jsonGenerator.writeEndObject();
@@ -104,6 +104,6 @@ public final class OAuth20ProfileController extends AbstractController {
     }
     
     static void setLogger(final Logger aLogger) {
-        logger = aLogger;
+        log = aLogger;
     }
 }
