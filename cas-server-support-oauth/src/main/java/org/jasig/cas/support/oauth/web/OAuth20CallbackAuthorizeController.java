@@ -41,23 +41,23 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20CallbackAuthorizeController extends AbstractController {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
+    private static final Logger log = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
     
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         // get CAS ticket
         final String ticket = request.getParameter(OAuthConstants.TICKET);
-        logger.debug("ticket : {}", ticket);
+        log.debug("ticket : {}", ticket);
         
         // retrieve callback url from session
         final HttpSession session = request.getSession();
         String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
-        logger.debug("callbackUrl : {}", callbackUrl);
+        log.debug("callbackUrl : {}", callbackUrl);
         session.removeAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
         // and state
         final String state = (String) session.getAttribute(OAuthConstants.OAUTH20_STATE);
-        logger.debug("state : {}", state);
+        log.debug("state : {}", state);
         session.removeAttribute(OAuthConstants.OAUTH20_STATE);
         
         // return callback url with code & state
@@ -65,13 +65,13 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         if (state != null) {
             callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.STATE, state);
         }
-        logger.debug("callbackUrl : {}", callbackUrl);
+        log.debug("callbackUrl : {}", callbackUrl);
         
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrl", callbackUrl);
         // retrieve service name from session
         final String serviceName = (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME);
-        logger.debug("serviceName : {}", serviceName);
+        log.debug("serviceName : {}", serviceName);
         model.put("serviceName", serviceName);
         return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model);
     }
