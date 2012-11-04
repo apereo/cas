@@ -4,36 +4,45 @@
 
 ## Introduction
 
-The Central Authentication Service (CAS) is the standard mechanism by which web
-applications should authenticate users. Any custom applications written benefit
-from using CAS.
+Welcome to the home of  the Central Authentication Service project, more commonly referred to as CAS.  The Central Authentication Service (CAS) is the standard mechanism by which web applications should authenticate users. 
 
-Note that CAS provides authentication; that is, it determines that your users
-are who they say they are. CAS should not be viewed as an access-control system;
-in particular, providers of applications that grant access to anyone who
-possesses a NetID should understand that loose affiliates of an organization may
-be granted NetIDs.
+CAS provides enterprise single sign-on service:
 
-## Release info
+- An open and well-documented protocol
+- An open-source Java server component
+- A library of clients for Java, .Net, PHP, Perl, Apache, uPortal, and others
+- Integrates with uPortal, BlueSocket, TikiWiki, Mule, Liferay, Moodle and others 
+- Community documentation and implementation support
+- An extensive community of adopters
 
-CAS requires J2SE 1.5 and J2EE1.3.
+## Requirements
+CAS requires J2SE 1.6, J2EE1.3 and a servlet container that can handle JSP 2.0 (e.g., Tomcat 5.0.28)
 
-## Distribution JAR files
+## Build
+It is recommended to build and deploy CAS locally using the [Maven War Overlay method](https://wiki.jasig.org/display/CASUM/Best+Practice+-+Setting+Up+CAS+Locally+using+the+Maven2+WAR+Overlay+Method). This approach does not require the adopter to *explicitly* download any version of CAS, but rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local customozations to further ease future upgrades and maintenance.
 
-The "modules" directory contains distinct jars for each Maven module.  It also
-contains a war file that can be used for demo purposes.
+## Download
+- Binary releases may be downloaded from [here](http://www.jasig.org/cas/download).
+- CAS artifacts are published through the [Maven Central Repository.](http://mvnrepository.com/artifact/org.jasig.cas)
+- A snapshot of the codebase's master branch may be downloaded from [here](https://github.com/Jasig/cas/archive/master.zip).
+- Alternatively, the source code may be *cloned* using a Git client via the following command:
+`git clone git@github.com:Jasig/cas.git`
 
-## Dependencies
-
-## Deployment
-
-* Servlet Container that can handle JSP 2.0 (e.g., Tomcat 5.0.28)
-
-## Note
-
-If building CAS from the source, running the test cases currently
-requires an active Internet connection.
-
+**Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
 
 [skip]: http://maven.apache.org/general.html#skip-test
+
+## Documentation
+- [CAS Protocol](http://www.jasig.org/cas/protocol)
+- [CAS User Manual](https://wiki.jasig.org/display/CASUM/Home)
+- [Javadocs](http://jasig.github.com/cas/apidocs/index.html)
+- [Release Notes](https://issues.jasig.org/secure/ReleaseNote.jspa?projectId=10007)
+
+## Addons
+- [CAS Addons](https://github.com/Unicon/cas-addons) is an open source collection of useful JASIG-CAS server addons.
+
+## Contributions
+- [How to contribute to Jasig](http://www.jasig.org/jasig/contribute)
+- [Contributor guidelines](https://github.com/Jasig/cas/wiki/Contributor-Guidelines)
+- [CAS code conventions](https://wiki.jasig.org/display/CAS/Code+Conventions)
