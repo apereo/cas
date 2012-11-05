@@ -29,8 +29,6 @@ import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This handler authenticates OAuth credentials : it uses them to get the user profile returned by the provider for an authenticated user.
@@ -39,8 +37,6 @@ import org.slf4j.LoggerFactory;
  * @since 3.5.0
  */
 public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    
-    private static final Logger log = LoggerFactory.getLogger(OAuthAuthenticationHandler.class);
     
     @NotNull
     private OAuthConfiguration configuration;

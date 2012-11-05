@@ -21,8 +21,6 @@ package org.jasig.cas.support.oauth.authentication.principal;
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class resolves the principal id regarding the OAuth credentials : it's the typed user identifier.
@@ -33,12 +31,10 @@ import org.slf4j.LoggerFactory;
 public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
     implements CredentialsToPrincipalResolver {
     
-    private static final Logger log = LoggerFactory.getLogger(OAuthCredentialsToPrincipalResolver.class);
-    
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
-        OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
-        String principalId = oauthCredentials.getUserProfile().getTypedId();
+        final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
+        final String principalId = oauthCredentials.getUserProfile().getTypedId();
         log.debug("principalId : {}", principalId);
         return principalId;
     }
@@ -46,6 +42,7 @@ public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDir
     /**
      * Return true if Credentials are OAuthCredentials, false otherwise.
      */
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
     }
