@@ -42,6 +42,8 @@ import org.springframework.beans.factory.annotation.Required;
  * construct an instance of {@link LdapPasswordPolicyConfiguration} that is to be used for examining account policy. 
  * 
  * @see #setLdapAuthenticationHandler(AbstractLdapUsernamePasswordAuthenticationHandler)
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public class LdapPasswordPolicyAwareAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
     

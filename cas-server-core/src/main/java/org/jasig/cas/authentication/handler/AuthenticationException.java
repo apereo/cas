@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication.handler;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The most generic type of authentication exception that one can catch if not
  * sure what specific implementation will be thrown. Top of the tree of all
@@ -118,8 +120,9 @@ public abstract class AuthenticationException extends Exception {
     @Override
     public final String toString() {
         String msg = getCode();
-        if (getMessage() != null && getMessage().trim().length() > 0)
+        if (StringUtils.isNotBlank(getMessage())) {
             msg = getMessage();
+        }
         return msg;
     }
 

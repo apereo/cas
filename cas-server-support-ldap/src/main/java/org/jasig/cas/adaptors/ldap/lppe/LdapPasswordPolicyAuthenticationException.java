@@ -25,6 +25,8 @@ import org.jasig.cas.adaptors.ldap.LdapAuthenticationException;
  * by indicating the <code>type</code>.
  * 
  * @see #getType()
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public abstract class LdapPasswordPolicyAuthenticationException extends LdapAuthenticationException {
 

@@ -33,6 +33,9 @@ import org.springframework.beans.factory.annotation.Required;
 /**
  * An implementation of the {@link LdapPasswordPolicyExaminer} that determines whether
  * an ldap account's password has expired. 
+ *
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public class LdapPasswordExpirationPolicyExaminer implements LdapPasswordPolicyExaminer {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());

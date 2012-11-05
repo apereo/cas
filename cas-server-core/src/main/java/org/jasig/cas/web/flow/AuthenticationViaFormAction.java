@@ -35,6 +35,8 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -43,15 +45,9 @@ import org.springframework.webflow.execution.RequestContext;
  * the Service Ticket required.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public class AuthenticationViaFormAction {
-
-    private static final String DEFAULT_WEBFLOW_ERROR_EVENT_ID = "error";
-    protected static final String DEFAULT_WEBFLOW_SUCCESS_EVENT_ID = "success";
-    private static final String DEFAULT_WEBFLOW_WARN_EVENT_ID = "warn";
-    
     /**
      * Binder that allows additional binding of form object beyond Spring
      * defaults.
@@ -75,7 +71,7 @@ public class AuthenticationViaFormAction {
         }
     }
     
-    public final String submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
+    public final Event submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
@@ -84,7 +80,7 @@ public class AuthenticationViaFormAction {
             final String code = "INVALID_TICKET";
             messageContext.addMessage(
                 new MessageBuilder().error().code(code).arg(providedLoginTicket).defaultText(code).build());
-            return DEFAULT_WEBFLOW_ERROR_EVENT_ID;
+            return getAuthenticationWebFlowWarningEventId(context, credentials, messageContext);
         }
 
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -119,19 +115,19 @@ public class AuthenticationViaFormAction {
         }
     }
     
-    protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
-                                                          final MessageContext messageContext, final Exception e) {
-        return DEFAULT_WEBFLOW_ERROR_EVENT_ID;
+    protected Event getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
+                                                         final MessageContext messageContext, final Exception e) {
+        return new EventFactorySupport().error(this);
     }
     
-    protected String getAuthenticationWebFlowSuccessEventId(final RequestContext context, final Credentials credentials, 
-                                                            final MessageContext messageContext) {
-        return DEFAULT_WEBFLOW_SUCCESS_EVENT_ID;
+    protected Event getAuthenticationWebFlowSuccessEventId(final RequestContext context, final Credentials credentials, 
+                                                           final MessageContext messageContext) {
+        return new EventFactorySupport().success(this);
     }
     
-    protected String getAuthenticationWebFlowWarningEventId(final RequestContext context, final Credentials credentials, 
-                                                            final MessageContext messageContext) {
-        return DEFAULT_WEBFLOW_SUCCESS_EVENT_ID;
+    protected Event getAuthenticationWebFlowWarningEventId(final RequestContext context, final Credentials credentials, 
+                                                           final MessageContext messageContext) {
+        return new Event(this, "warning");
     }
     
     protected void populateErrorsInstance(final String code, final MessageContext messageContext) {

@@ -26,6 +26,8 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
  * {@link #getType()} that described the error and may be mapped and trapped by the authentication flow which may be noted
  * by a customized instance of {@link AuthenticationException}.
  * @see AbstractLdapErrorDefinition
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public interface LdapErrorDefinition {
     String getType();

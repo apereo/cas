@@ -27,6 +27,9 @@ import org.joda.time.DateTime;
 /**
  * An implementation the {@link LdapDateConverter} that expects the received
  * to be defined in time units specified by {@link #setTimeUnit(TimeUnit)}
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public class TimeUnitLdapDateConverter extends AbstractLdapDateConverter {
 

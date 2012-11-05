@@ -25,6 +25,9 @@ import org.joda.time.DateTime;
  * expects the date value to be of type long based on which it will calculate the corresponding
  * {@link DateTime} instance. The calculation is based on the the assumption that Active Directory's epoch 
  * is 01 January, 1601, with the Java epoch being 01 January, 1970.
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public class ActiveDirectoryLdapDateConverter extends AbstractLdapDateConverter {
 

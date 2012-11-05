@@ -21,6 +21,9 @@ package org.jasig.cas.adaptors.ldap.lppe;
 /**
  * An implementation of a ldap error definition which indicates an authentication failure
  * due to the account being unauthorized to login at the authentication date/time.
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public class InvalidLoginHoursLdapErrorDefinition extends AbstractLdapErrorDefinition {
     public InvalidLoginHoursLdapErrorDefinition() {

@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
  * An abstract implementation of the {@link LdapDateConverter} which defines common
  * settings to all converters, namely the specification and configuration of the
  * {@link #setTimeZone(DateTimeZone)}.
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public abstract class AbstractLdapDateConverter implements LdapDateConverter {
     protected final Logger log = LoggerFactory.getLogger(this.getClass());

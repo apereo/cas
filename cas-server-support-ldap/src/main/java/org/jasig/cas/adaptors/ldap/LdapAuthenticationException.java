@@ -20,11 +20,15 @@ package org.jasig.cas.adaptors.ldap;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 
+/** 
+ * @author Misagh Moayyed
+ * @version 4.0.0
+ */
 public class LdapAuthenticationException extends AuthenticationException {
 
+    private static final long serialVersionUID = 3298900641124398115L;
+
     private static final String CODE = "error.ldap.authentication.credentials.bad";
-    
-    private static final long serialVersionUID = 1L;
     
     public LdapAuthenticationException(final Exception e) {
         super(CODE, e);

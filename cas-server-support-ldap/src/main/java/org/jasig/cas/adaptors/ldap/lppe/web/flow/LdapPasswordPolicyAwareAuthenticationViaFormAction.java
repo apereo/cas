@@ -33,6 +33,7 @@ import org.jasig.cas.web.flow.AuthenticationViaFormAction;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.util.Assert;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -40,6 +41,9 @@ import org.springframework.webflow.execution.RequestContext;
  * type back to the flow in case of an error, or invoke policy examiners after authentication has taken place successfully.
  * This action simplifies extending the authentication flow by allowing a mapping between authentication error types
  * and the event id to which the flow may switch.  
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends AuthenticationViaFormAction implements InitializingBean {
 
@@ -50,17 +54,17 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
     }
     
     @Override
-    protected String getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
-                                                          final MessageContext messageContext, final Exception e) {
+    protected Event getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
+                                                         final MessageContext messageContext, final Exception e) {
         
-        String eventId = super.getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e); 
+        Event eventId = super.getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e); 
         
         if (isExceptionCauseAuthenticationException(e)) {
             final AuthenticationException ex = (AuthenticationException) e.getCause();
             log.debug("Handling ldap password policy authentication error...");
                         
             if (LdapAuthenticationException.class.isAssignableFrom(ex.getClass())) {
-               eventId = ex.getType(); 
+               eventId = new Event(this, ex.getType()); 
             }   
         } 
         
@@ -69,8 +73,9 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
     }
     
     @Override
-    protected String getAuthenticationWebFlowSuccessEventId(final RequestContext context, final Credentials credentials, final MessageContext messageContext) {
-        String eventId = super.getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
+    protected Event getAuthenticationWebFlowSuccessEventId(final RequestContext context, final Credentials credentials, 
+                                                           final MessageContext messageContext) {
+        Event eventId = super.getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
         
         try {
             
@@ -90,9 +95,9 @@ public class LdapPasswordPolicyAwareAuthenticationViaFormAction extends Authenti
             }
         }  catch (final LdapPasswordPolicyExpirationException e) {
             context.getFlowScope().put("expireDays", e.getNumberOfDaysToPasswordExpirationDate());
-            eventId = e.getType();
+            eventId = new Event(this, e.getType());
         } catch (final LdapPasswordPolicyAuthenticationException e) {
-            eventId = e.getType();
+            eventId = new Event(this, e.getType());
         } catch (final AuthenticationException e) {
             populateErrorsInstance(e.getCode(), messageContext);
             eventId = getAuthenticationWebFlowErrorEventId(context, credentials, messageContext,e);

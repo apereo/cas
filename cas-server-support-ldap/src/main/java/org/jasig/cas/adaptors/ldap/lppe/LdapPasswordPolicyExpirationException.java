@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.adaptors.ldap.lppe;
 
+/**
+ * @author Misagh Moayyed
+ * @version 4.0.0
+ */
 public class LdapPasswordPolicyExpirationException extends LdapPasswordPolicyAuthenticationException {
 
     private static final long serialVersionUID = 1829192900884929654L;

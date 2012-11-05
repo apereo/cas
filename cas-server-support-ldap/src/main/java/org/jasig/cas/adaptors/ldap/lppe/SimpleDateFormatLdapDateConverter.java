@@ -30,6 +30,8 @@ import org.joda.time.format.DateTimeFormatter;
  * date value to be consistent with a given {@link DateTimeFormatter}'s pattern.
  * 
  * @see #setPasswordExpirationDateFormat(String)
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public class SimpleDateFormatLdapDateConverter extends AbstractLdapDateConverter {
 

@@ -27,6 +27,8 @@ import org.joda.time.DateTimeZone;
  * specified {@link #getTimeZone()}
  * 
  * @see AbstractLdapDateConverter
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public interface LdapDateConverter {
     

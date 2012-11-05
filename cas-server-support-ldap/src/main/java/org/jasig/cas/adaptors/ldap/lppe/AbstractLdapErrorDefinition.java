@@ -27,6 +27,9 @@ import org.jasig.cas.authentication.handler.AuthenticationException;
 /**
  * An abstract implementation of the {@link LdapErrorDefinition} which expects
  * the error definition to be a regular expression pattern.
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public abstract class AbstractLdapErrorDefinition implements LdapErrorDefinition {
 

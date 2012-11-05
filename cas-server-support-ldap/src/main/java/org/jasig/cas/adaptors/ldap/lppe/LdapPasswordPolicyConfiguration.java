@@ -26,6 +26,8 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * The password policy configuration defined by the ldap instance.
  * This is only constructed by the appropriate authentication handler
  * {@link LdapPasswordPolicyAwareAuthenticationHandler} and may be passed to {@link LdapPasswordPolicyExaminer} examiners.
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
 public final class LdapPasswordPolicyConfiguration {
 

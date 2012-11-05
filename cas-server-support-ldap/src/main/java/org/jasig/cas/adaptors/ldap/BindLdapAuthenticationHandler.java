@@ -67,7 +67,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         this.getLdapTemplate().search(
             new SearchExecutor() {
                 public NamingEnumeration<?> executeSearch(final DirContext context) throws NamingException {
-                    return context.search(BindLdapAuthenticationHandler.this.getSearchBase(), filter, searchControls);
+                    return context.search(getSearchBase(), filter, searchControls);
                 }
             },
             new NameClassPairCallbackHandler(){
