@@ -74,12 +74,16 @@
                         filters="casValidationFilter,httpServletRequestWrappingFilter"/>
     </sec:filter-chain-map>
   </bean>
-<!-- this is dangerous to include for protecting /clearPass! 
+  <!-- NOTE:
+	 It is dangerous to include a non-proxied CAS Filter for protecting /clearPass. Non-proxied CAS Filters
+	 like AuthenticationFilter don't honor the Filter chain proxy protection mechanism and, worse yet, allow access to the
+	 logged on user's cleartext password. It could be useful to enable this bean for easy testing of clearPass functionality however.-->
+   <!--
   <bean id="casAuthenticationFilter" class="org.jasig.cas.client.authentication.AuthenticationFilter">
     <property name="casServerLoginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}"/>
     <property name="serverName" value="${server.name}"/>
   </bean>
--->
+  -->
   <!--
     NOTE:
     A bean named clearPassProxyList must be defined in deployerConfigContext.xml that defines
