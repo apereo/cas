@@ -39,7 +39,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
     
-    protected static final Logger log = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+    protected final Logger log = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
     
     @NotNull
     protected String loginUrl;
