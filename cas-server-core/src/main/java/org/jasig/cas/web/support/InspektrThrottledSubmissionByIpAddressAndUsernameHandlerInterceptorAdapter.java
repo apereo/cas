@@ -47,7 +47,6 @@ import org.springframework.jdbc.core.RowMapper;
  * in a subclass.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.3.5
  */
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
@@ -105,6 +104,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         final String userToUse = constructUsername(request, getUsernameParameter());
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
+            private static final long serialVersionUID = 1L;
+
             public String asString() {
                 return String.format("%s.recordThrottle()", this.getClass().getName());
             }
