@@ -21,11 +21,8 @@ package org.jasig.cas.audit.spi;
 
 import com.github.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.AopUtils;
 
-import javax.validation.constraints.NotNull;
 
 /**
  * Resolves a service id to the service.
@@ -33,7 +30,6 @@ import javax.validation.constraints.NotNull;
  * The expectation is that args[0] is a Long.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.4.6
  */
 public final class ServiceManagementResourceResolver implements AuditResourceResolver {
