@@ -36,10 +36,10 @@
    <cacheManagerPeerProviderFactory 
 	            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
 	            properties="peerDiscovery=manual,
-				rmiUrls=//localhost:40001/org.jasig.cas.ticket.ServiceTicket|//localhost:40001/org.jasig.cas.ticket.TicketGrantingTicket" />
+				rmiUrls=//localhost:41001/org.jasig.cas.ticket.ServiceTicket|//localhost:41001/org.jasig.cas.ticket.TicketGrantingTicket" />
   
                
    <cacheManagerPeerListenerFactory 
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
-            properties="port=40001" />
+            properties="port=41001,remoteObjectPort=41002" />
 </ehcache>
