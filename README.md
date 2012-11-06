@@ -8,10 +8,10 @@ Welcome to the home of  the Central Authentication Service project, more commonl
 
 CAS provides enterprise single sign-on service:
 
-- An open and well-documented protocol
+- [An open and well-documented protocol][protocol]
 - An open-source Java server component
-- A library of clients for Java, .Net, PHP, Perl, Apache, uPortal, and others
-- Integrates with uPortal, BlueSocket, TikiWiki, Mule, Liferay, Moodle and others 
+- [A library of clients for Java, .Net, PHP, Perl, Apache, uPortal, and others](https://wiki.jasig.org/display/CASC/Official+Clients)
+- [Integrates with uPortal, BlueSocket, TikiWiki, Mule, Liferay, Moodle and others](https://wiki.jasig.org/display/CAS/CASifying+Applications)
 - Community documentation and implementation support
 - An extensive community of adopters
 
@@ -24,17 +24,17 @@ It is recommended to build and deploy CAS locally using the [Maven War Overlay m
 ## Download
 - Binary releases may be downloaded from [here](http://www.jasig.org/cas/download).
 - CAS artifacts are published through the [Maven Central Repository.](http://mvnrepository.com/artifact/org.jasig.cas)
-- A snapshot of the codebase's master branch may be downloaded from [here](https://github.com/Jasig/cas/archive/master.zip).
-- Alternatively, the source code may be *cloned* using a Git client via the following command:
+- A snapshot of the codebase's `master` branch may be downloaded from [here](https://github.com/Jasig/cas/archive/master.zip).
+- Snapshot artifacts are also published through the [Sonatype snapashots repository](https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/) under the group id **`org.jasig.cas`**.
+- The codebase may also be *cloned* using a Git client via the following command:
 `git clone git@github.com:Jasig/cas.git`
 
 **Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
 
-[skip]: http://maven.apache.org/general.html#skip-test
 
 ## Documentation
-- [CAS Protocol](http://www.jasig.org/cas/protocol)
+- [CAS Protocol][protocol]
 - [CAS User Manual](https://wiki.jasig.org/display/CASUM/Home)
 - [Javadocs](http://jasig.github.com/cas/apidocs/index.html)
 - [Release Notes](https://issues.jasig.org/secure/ReleaseNote.jspa?projectId=10007)
@@ -46,3 +46,6 @@ Please [see the maven docs][skip] on how to disable the tests.
 - [How to contribute to Jasig](http://www.jasig.org/jasig/contribute)
 - [Contributor guidelines](https://github.com/Jasig/cas/wiki/Contributor-Guidelines)
 - [CAS code conventions](https://wiki.jasig.org/display/CAS/Code+Conventions)
+
+[protocol]: http://www.jasig.org/cas/protocol
+[skip]: http://maven.apache.org/general.html#skip-test
