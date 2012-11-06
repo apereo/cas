@@ -44,9 +44,14 @@
     <bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect"/>
 
 
-    <!-- Message source for this context, loaded from localized "messages_xx" files -->
+    <!-- Message source for this context, loaded from localized "messages_xx" files.
+    	Disable the fallback mechanism to the system/JVM locale. By turning off this behavior, CAS
+    	will be able to revert back to the default language bundle that is "messages.properties"
+    	and will not rely on the JVM default locale which introduces the side effect of rendering
+    	the UI in the JVM locale by default.
+    -->
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
-          p:basename="messages"/>
+          p:basename="messages" p:fallbackToSystemLocale="false" />
 
     <bean
             id="servicesManager"
