@@ -27,10 +27,8 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.web.servlet.view.RedirectView;
 import static org.junit.Assert.*;
 
