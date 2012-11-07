@@ -3,6 +3,8 @@
 .project
 .settings
 target
+test-output/
+bin/
 *.ipr
 *.iml
 *.iws

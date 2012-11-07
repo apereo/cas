@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
-		<version>3.5.2-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.jasig.cas</groupId>
@@ -37,40 +37,32 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.restlet</groupId>
+			<groupId>org.restlet.jee</groupId>
 			<artifactId>org.restlet</artifactId>
-			<version>1.1.1</version>
+			<version>${restlet.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
-			<groupId>org.restlet</groupId>
+			<groupId>org.restlet.jee</groupId>
 			<artifactId>org.restlet.ext.spring</artifactId>
-			<version>1.1.1</version>
-			<scope>runtime</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.noelios.restlet</groupId>
-			<artifactId>com.noelios.restlet.ext.spring</artifactId>
-			<version>1.1.1</version>
+			<version>${restlet.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
         <dependency>
-            <groupId>com.noelios.restlet</groupId>
-            <artifactId>com.noelios.restlet.ext.servlet</artifactId>
-            <version>1.1.1</version>
-            <type>jar</type>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet.ext.servlet</artifactId>
+            <version>${restlet.version}</version>
             <scope>runtime</scope>
         </dependency>
-		
-		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-			<version>2.1_3</version>
-			<scope>runtime</scope>
-		</dependency>
+
+        <dependency>
+            <groupId>org.restlet.jee</groupId>
+            <artifactId>org.restlet.ext.slf4j</artifactId>
+            <version>${restlet.version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -87,5 +79,9 @@
 			<url>http://maven.restlet.org</url>
 		</repository>
 	</repositories>
+
+    <properties>
+        <restlet.version>2.1.0</restlet.version>
+    </properties>
 
 </project>
