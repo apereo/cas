@@ -19,23 +19,21 @@
 package org.jasig.cas.integration.restlet;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.ticket.TicketException;
+import org.restlet.Request;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Reference;
-import org.restlet.data.Request;
 import org.restlet.data.Status;
-import org.restlet.resource.Representation;
-import org.restlet.resource.Resource;
-import org.restlet.resource.ResourceException;
+import org.restlet.representation.Representation;
+import org.restlet.resource.Post;
+import org.restlet.resource.ServerResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,28 +49,20 @@ import org.springframework.web.context.request.WebRequest;
  * @since 3.3
  * 
  */
-public class TicketResource extends Resource {
+public class TicketResource extends ServerResource {
     
     private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
-    
-    public final boolean allowGet() {
-        return false;
+
+    public TicketResource() {
+        setNegotiated(false);
     }
 
-    public final boolean allowPost() {
-        return true;
-    }
-
-    public final void acceptRepresentation(final Representation entity)
-        throws ResourceException {
-        if (log.isDebugEnabled()) {
-            log.debug("Obtaining credentials...");
-            log.debug(getRequest().getEntityAsForm().toString());
-        }
-     
+    @Post
+    public final void acceptRepresentation(final Representation entity)  {
+        log.debug("Obtaining credentials...");
         final Credentials c = obtainCredentials();
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
@@ -102,14 +92,28 @@ public class TicketResource extends Resource {
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
         final RestletWebRequest webRequest = new RestletWebRequest(getRequest());
         
-        if (log.isDebugEnabled()) {
-            log.debug(getRequest().getEntityAsForm().toString());
-            log.debug("Username from RestletWebRequest: " + webRequest.getParameter("username"));
-        }
-        
+        logFormRequest(new Form(getRequest().getEntity()));
         binder.bind(webRequest);
         
         return c;
+    }
+
+    private void logFormRequest(final Form form) {
+        if (log.isDebugEnabled()) {
+            final Set<String> pairs = new HashSet<String>();
+            for (final String name : form.getNames()) {
+                final StringBuilder builder = new StringBuilder();
+                builder.append(name);
+                builder.append(": ");
+                if (!"password".equalsIgnoreCase(name)) {
+                    builder.append(form.getValues(name));
+                } else {
+                    builder.append("*****");
+                }
+                pairs.add(builder.toString());
+            }
+            log.debug(StringUtils.join(pairs, ", "));
+        }
     }
     
     protected class RestletWebRequest implements WebRequest {
@@ -119,7 +123,7 @@ public class TicketResource extends Resource {
         private final Request request;
         
         public RestletWebRequest(final Request request) {
-            this.form = getRequest().getEntityAsForm();
+            this.form = new Form(request.getEntity());
             this.request = request;
         }
 
@@ -207,23 +211,23 @@ public class TicketResource extends Resource {
         }
 
         public String getHeader(final String s) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
 
         public String[] getHeaderValues(String s) {
-            return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+            return new String[0];
         }
 
         public Iterator<String> getHeaderNames() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
 
         public Iterator<String> getParameterNames() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
 
         public Object resolveReference(String s) {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            return null;
         }
     }
 }
