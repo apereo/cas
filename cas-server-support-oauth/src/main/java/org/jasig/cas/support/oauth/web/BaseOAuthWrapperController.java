@@ -39,7 +39,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
     
-    protected static final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+    protected final Logger log = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
     
     @NotNull
     protected String loginUrl;
@@ -57,8 +57,8 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         
-        String method = getMethod(request);
-        logger.debug("method : {}", method);
+        final String method = getMethod(request);
+        log.debug("method : {}", method);
         return internalHandleRequest(method, request, response);
     }
     
@@ -76,7 +76,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         if (method.indexOf("?") >= 0) {
             method = StringUtils.substringBefore(method, "?");
         }
-        int pos = method.lastIndexOf("/");
+        final int pos = method.lastIndexOf("/");
         if (pos >= 0) {
             method = method.substring(pos + 1);
         }

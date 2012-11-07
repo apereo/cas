@@ -80,7 +80,7 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
         }
         
         // else error
-        logger.error("Unknown method : {}", method);
+        log.error("Unknown method : {}", method);
         OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);
         return null;
     }
