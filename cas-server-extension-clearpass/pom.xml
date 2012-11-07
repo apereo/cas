@@ -22,7 +22,7 @@
 	<parent>
 		<artifactId>cas-server</artifactId>
 		<groupId>org.jasig.cas</groupId>
-		<version>3.5.2-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-extension-clearpass</artifactId>
@@ -81,6 +81,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<version>${project.version}</version>
 		</dependency>
 		
+		<dependency>
+	      <groupId>net.sf.ehcache</groupId>
+	      <artifactId>ehcache-core</artifactId>
+	    </dependency>  
+    
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-integration-ehcache</artifactId>

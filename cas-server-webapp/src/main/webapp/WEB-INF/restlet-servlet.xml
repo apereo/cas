@@ -25,9 +25,9 @@
   xmlns:context="http://www.springframework.org/schema/context"
   xmlns:p="http://www.springframework.org/schema/p"
   xsi:schemaLocation="http://www.springframework.org/schema/beans   
-					  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+					  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 					  http://www.springframework.org/schema/context 
-					  http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+					  http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 	<context:annotation-config/>
 	
@@ -36,12 +36,12 @@
 			<map>
 				<entry key="/tickets">
 					<bean class="org.restlet.ext.spring.SpringFinder">
-						<lookup-method name="createResource" bean="ticketResource" />
+						<lookup-method name="create" bean="ticketResource" />
 					</bean>
 				</entry>
 				<entry key="/tickets/{ticketGrantingTicketId}">
 					<bean class="org.restlet.ext.spring.SpringFinder">
-						<lookup-method name="createResource" bean="ticketGrantingTicketResource" />
+						<lookup-method name="create" bean="ticketGrantingTicketResource" />
 					</bean>
 				</entry>
 			</map>
