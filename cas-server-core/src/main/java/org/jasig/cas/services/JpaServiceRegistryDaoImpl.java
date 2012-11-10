@@ -18,50 +18,44 @@
  */
 package org.jasig.cas.services;
 
-import java.util.List;
+import org.springframework.orm.jpa.support.JpaDaoSupport;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Implementation of the ServiceRegistryDao based on JPA.
  * 
  * @author Scott Battaglia
+ * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
+public final class JpaServiceRegistryDaoImpl extends JpaDaoSupport implements
+    ServiceRegistryDao {
 
-    @NotNull
-    @PersistenceContext
-    private EntityManager entityManager;
-  
     public boolean delete(final RegisteredService registeredService) {
-      if (this.entityManager.contains(registeredService)) {
-        this.entityManager.remove(registeredService);
-      } else {
-        this.entityManager.remove(this.entityManager.merge(registeredService));
-      }
-      return true;
+        getJpaTemplate().remove(
+            getJpaTemplate().contains(registeredService) ? registeredService
+                : getJpaTemplate().merge(registeredService));
+        return true;
     }
 
     public List<RegisteredService> load() {
-        return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        return getJpaTemplate().find("select r from AbstractRegisteredService r");
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
         final boolean isNew = registeredService.getId() == -1;
 
-        final RegisteredService r = this.entityManager.merge(registeredService);
+        final RegisteredService r = getJpaTemplate().merge(registeredService);
         
         if (!isNew) {
-          this.entityManager.persist(r);
+            getJpaTemplate().persist(r);
         }
         
         return r;
     }
 
     public RegisteredService findServiceById(final long id) {
-        return this.entityManager.find(AbstractRegisteredService.class, id);
+        return getJpaTemplate().find(AbstractRegisteredService.class, id);
     }
 }
