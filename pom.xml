@@ -194,9 +194,26 @@
   </scm>
 
   <build>
+	<filters>
+  		<filter>../src/test/resources/log4j-levels.properties</filter>
+  	</filters>
+  	
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
+        <includes>
+        	<include>**/*.xml</include>
+        	<include>**/*.properties</include>
+        </includes>
+        <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/resources</directory>
+        <excludes>
+        	<exclude>**/*.xml</exclude>
+        	<exclude>**/*.properties</exclude>
+        </excludes>
+        <filtering>false</filtering>
       </testResource>
     </testResources>
     
