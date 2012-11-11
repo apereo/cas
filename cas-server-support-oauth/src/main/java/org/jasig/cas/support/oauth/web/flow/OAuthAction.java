@@ -45,10 +45,10 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This class represents an action in the webflow to retrieve OAuth information on the callback url which is the webflow url (/login). The
- * {@link org.jasig.cas.support.oauth.OAuthConstants.OAUTH_PROVIDER} and the other OAuth parameters are expected after OAuth authentication.
- * Providers are defined by configuration. The {@link org.jasig.cas.support.oauth.OAuthConstants.SERVICE},
- * {@link org.jasig.cas.support.oauth.OAuthConstants.THEME}, {@link org.jasig.cas.support.oauth.OAuthConstants.LOCALE} and
- * {@link org.jasig.cas.support.oauth.OAuthConstants.METHOD} parameters are saved and restored from web session after OAuth authentication.
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#OAUTH_PROVIDER} and the other OAuth parameters are expected after OAuth authentication.
+ * Providers are defined by configuration. The {@link org.jasig.cas.support.oauth.OAuthConstants#SERVICE},
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#THEME}, {@link org.jasig.cas.support.oauth.OAuthConstants#LOCALE} and
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#METHOD} parameters are saved and restored from web session after OAuth authentication.
  * 
  * @author Jerome Leleu
  * @since 3.5.0
