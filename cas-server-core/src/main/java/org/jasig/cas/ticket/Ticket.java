@@ -45,7 +45,7 @@ public interface Ticket extends Serializable {
     boolean isExpired();
 
     /**
-     * Method to retrive the TicketGrantingTicket that granted this ticket.
+     * Method to retrieve the TicketGrantingTicket that granted this ticket.
      * 
      * @return the ticket or null if it has no parent
      */
@@ -59,8 +59,7 @@ public interface Ticket extends Serializable {
     long getCreationTime();
     
     /**
-     * Returns the number of times this ticket was used.
-     * @return
+     * @return the number of times this ticket was used.
      */
     int getCountOfUses();
 }
