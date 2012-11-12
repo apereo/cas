@@ -21,7 +21,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 </div>
-                <div id="footer" class="fl-panel fl-note fl-bevel-white fl-font-size-80">
+                <div id="footer">
                 	<a id="jasig" href="http://www.jasig.org" title="go to Jasig home page"></a>
                     <div id="copyright">
                         <p>Copyright &copy; 2005 - 2012 Jasig, Inc. All rights reserved.</p>

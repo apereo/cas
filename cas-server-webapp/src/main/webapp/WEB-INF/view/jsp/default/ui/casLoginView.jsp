@@ -27,13 +27,13 @@
 </div>
 </c:if>
 
-  <div class="box fl-panel" id="login">
-			<form:form method="post" id="fm1" cssClass="fm-v clearfix" commandName="${commandName}" htmlEscape="true">
+  <div class="box" id="login">
+			<form:form method="post" id="fm1" cssClass="clearfix" commandName="${commandName}" htmlEscape="true">
                   <form:errors path="*" id="msg" cssClass="errors" element="div" />
                 <!-- <spring:message code="screen.welcome.welcome" /> -->
                     <h2><spring:message code="screen.welcome.instructions" /></h2>
-                    <div class="row fl-controls-left">
-                        <label for="username" class="fl-label"><spring:message code="screen.welcome.label.netid" /></label>
+                    <div class="row">
+                        <label for="username"><spring:message code="screen.welcome.label.netid" /></label>
 						<c:if test="${not empty sessionScope.openIdLocalId}">
 						<strong>${sessionScope.openIdLocalId}</strong>
 						<input type="hidden" id="username" name="username" value="${sessionScope.openIdLocalId}" />
@@ -44,8 +44,8 @@
 						<form:input cssClass="required" cssErrorClass="error" id="username" size="25" tabindex="1" accesskey="${userNameAccessKey}" path="username" autocomplete="off" htmlEscape="true" />
 						</c:if>
                     </div>
-                    <div class="row fl-controls-left">
-                        <label for="password" class="fl-label"><spring:message code="screen.welcome.label.password" /></label>
+                    <div class="row">
+                        <label for="password"><spring:message code="screen.welcome.label.password" /></label>
 						<%--
 						NOTE: Certain browsers will offer the option of caching passwords for a user.  There is a non-standard attribute,
 						"autocomplete" that when set to "off" will tell certain browsers not to prompt to cache credentials.  For more
@@ -71,8 +71,8 @@
           </div>
             <div id="sidebar">
 				<div class="sidebar-content">
-                <p class="fl-panel fl-note fl-bevel-white fl-font-size-80"><spring:message code="screen.welcome.security" /></p>
-                <div id="list-languages" class="fl-panel">
+                <p><spring:message code="screen.welcome.security" /></p>
+                <div id="list-languages">
                 <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
 					<c:set var='query' value='<%=queryString%>' />
                     <c:set var="xquery" value="${fn:escapeXml(query)}" />
