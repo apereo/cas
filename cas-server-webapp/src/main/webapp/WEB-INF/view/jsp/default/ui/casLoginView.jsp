@@ -34,7 +34,7 @@
   
     <h2><spring:message code="screen.welcome.instructions" /></h2>
   
-    <div class="row">
+    <section class="row">
       <label for="username"><spring:message code="screen.welcome.label.netid" /></label>
       <c:if test="${not empty sessionScope.openIdLocalId}">
         <strong>${sessionScope.openIdLocalId}</strong>
@@ -44,9 +44,9 @@
         <spring:message code="screen.welcome.label.netid.accesskey" var="userNameAccessKey" />
         <form:input cssClass="required" cssErrorClass="error" id="username" size="25" tabindex="1" accesskey="${userNameAccessKey}" path="username" autocomplete="off" htmlEscape="true" />
       </c:if>
-    </div>
+    </section>
     
-    <div class="row">
+    <section class="row">
       <label for="password"><spring:message code="screen.welcome.label.password" /></label>
       <%--
       NOTE: Certain browsers will offer the option of caching passwords for a user.  There is a non-standard attribute,
@@ -56,21 +56,21 @@
       --%>
       <spring:message code="screen.welcome.label.password.accesskey" var="passwordAccessKey" />
       <form:password cssClass="required" cssErrorClass="error" id="password" size="25" tabindex="2" path="password"  accesskey="${passwordAccessKey}" htmlEscape="true" autocomplete="off" />
-    </div>
+    </section>
     
-    <div class="row check">
+    <section class="row check">
       <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
       <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
-    </div>
+    </section>
     
-    <div class="row btn-row">
+    <section class="row btn-row">
       <input type="hidden" name="lt" value="${loginTicket}" />
       <input type="hidden" name="execution" value="${flowExecutionKey}" />
       <input type="hidden" name="_eventId" value="submit" />
 
       <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" type="submit" />
       <input class="btn-reset" name="reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" type="reset" />
-    </div>
+    </section>
   </form:form>
 </div>
   
