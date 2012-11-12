@@ -75,8 +75,7 @@
     p:generateDdl="true"
     p:showSql="true" />
 
-  <bean class="org.jasig.cas.services.JpaServiceRegistryDaoImpl" id="dao" 
-    p:entityManagerFactory-ref="factoryBean" />
+  <bean class="org.jasig.cas.services.JpaServiceRegistryDaoImpl" id="dao"  />
 
   <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
     p:entityManagerFactory-ref="factoryBean" />
