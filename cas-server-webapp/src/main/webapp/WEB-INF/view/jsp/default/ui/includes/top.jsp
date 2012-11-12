@@ -36,10 +36,10 @@
 	    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
 	</head>
 	<body id="cas">
-    <div class="flc-screenNavigator-view-container">
-        <div class="fl-screenNavigator-view">
-            <div id="header" class="flc-screenNavigator-navbar fl-navbar fl-table">
+    <div class="container">
+        <div>
+            <div id="header">
 				<h1 id="company-name">Jasig</h1>
-                <h1 id="app-name" class="fl-table-cell">Central Authentication Service (CAS)</h1>
+                <h1 id="app-name">Central Authentication Service (CAS)</h1>
             </div>		
-            <div id="content" class="fl-screenNavigator-scroll-container">
+            <div id="content">

@@ -53,12 +53,12 @@ input, select { vertical-align: middle; }
 body { font-family: Verdana, sans-serif; font-size: 11px; line-height: 1.4em; }
 
 #cas { background: #eee; }
-#cas .flc-screenNavigator-view-container { width: 95%; margin: 0 auto; }
-#cas .flc-screenNavigator-view-container #header, #cas .flc-screenNavigator-view-container #content { background: #fff; -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1); box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1); }
-#cas .flc-screenNavigator-view-container #content { -webkit-border-bottom-right-radius: 4px; -webkit-border-bottom-left-radius: 4px; -moz-border-radius-bottomright: 4px; -moz-border-radius-bottomleft: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; }
+#cas .container { width: 95%; margin: 0 auto; }
+#cas .container #header, #cas .container #content { background: #fff; -webkit-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1); box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1); }
+#cas .container #content { -webkit-border-bottom-right-radius: 4px; -webkit-border-bottom-left-radius: 4px; -moz-border-radius-bottomright: 4px; -moz-border-radius-bottomleft: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; }
 
-@media only screen and (max-width: 960px) { #cas .flc-screenNavigator-view-container { width: 100%; }
-  #cas .flc-screenNavigator-view-container #content { -webkit-border-bottom-right-radius: 0px; -webkit-border-bottom-left-radius: 0px; -moz-border-radius-bottomright: 0px; -moz-border-radius-bottomleft: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; } }
+@media only screen and (max-width: 960px) { #cas .container { width: 100%; }
+  #cas .container #content { -webkit-border-bottom-right-radius: 0px; -webkit-border-bottom-left-radius: 0px; -moz-border-radius-bottomright: 0px; -moz-border-radius-bottomleft: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; } }
 /* header */
 #cas #header { padding-top: 10px; }
 #cas #header #company-name { width: 118px; height: 31px; text-indent: -999em; background: url(../images/ja-sig-logo.gif) no-repeat; margin: 0 0 10px 10px; }
@@ -75,7 +75,7 @@ body { font-family: Verdana, sans-serif; font-size: 11px; line-height: 1.4em; }
 #cas #content #login #fm1 { padding: 20px; background: #eee; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
 #cas #content #login #fm1 h2 { font-size: 1.4em; font-weight: normal; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #DDDDDD; }
 #cas #content #login #fm1 .row { margin-bottom: 10px; }
-#cas #content #login #fm1 .row .fl-label { display: block; color: #777777; }
+#cas #content #login #fm1 .row label { display: block; color: #777777; }
 #cas #content #login #fm1 .row input[type=text], #cas #content #login #fm1 .row input[type=password] { padding: 6px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; border: 1px solid #DDDDDD; background: #FFFFDD; }
 #cas #content #login #fm1 .row.check { padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #DDDDDD; color: #777; font-size: 11px; }
 #cas #content #login #fm1 .row .btn-submit { border-width: 2px; padding: 3px; margin-right: 4px; }
@@ -96,7 +96,7 @@ body { font-family: Verdana, sans-serif; font-size: 11px; line-height: 1.4em; }
 /* < 799 */
 @media only screen and (max-width: 799px) { #cas #header #app-name { font-size: 1em; }
   #cas #content #login { float: none; width: 100%; }
-  #cas #content #login #fm1 .row .fl-label { margin-left: -10px; }
+  #cas #content #login #fm1 .row label { margin-left: -10px; }
   #cas #content #login #fm1 .row input[type=text], #cas #content #login #fm1 .row input[type=password] { width: 100%; margin-left: -10px; padding: 10px; }
   #cas #content #login #fm1 .row .btn-submit { outline: none; -webkit-appearance: none; -webkit-border-radius: 0; border: 0; background: #210F7A; color: white; font-weight: bold; width: 100%; padding: 10px 20px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
   #cas #content #login #fm1 .row .btn-reset { display: none; }
