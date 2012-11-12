@@ -39,7 +39,6 @@
 </head>
 <body id="cas">
   <div class="container">
-    <div>
       <div id="header">
         <h1 id="company-name">Jasig</h1>
         <h1 id="app-name">Central Authentication Service (CAS)</h1>
