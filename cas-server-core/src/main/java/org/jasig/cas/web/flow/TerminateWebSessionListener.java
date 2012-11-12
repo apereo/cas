@@ -42,37 +42,10 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class TerminateWebSessionListener extends FlowExecutionListenerAdapter {
 
-    /** Session marker that if present indicates a session that should not be terminated by this component. */
-    private static final String DO_NOT_TERMINATE = TerminateWebSessionListener.class + ".DO_NOT_TERMINATE";
-    
     private static final Logger logger = LoggerFactory.getLogger(TerminateWebSessionListener.class);
 
     @Min(0)
     private int timeToDieInSeconds = 2;
-
-    /** URL to service manager Web application. */
-    @NotNull
-    private String serviceManagerUrl;
-
-    @Override
-    public void sessionStarted(final RequestContext context, final FlowSession session) {
-        final Service service;
-        // Guard against exceptions that arise from attempts to access terminated flow sessions
-        try {
-            service = WebUtils.getService(context);
-        } catch (final IllegalStateException e) {
-            logger.debug("Error getting service from flow state.", e);
-            return;
-        }
-        // If the user has requested a ticket for the service manager application
-        // then tag the session so it is not terminated.
-        if (service != null && service.getId().startsWith(serviceManagerUrl)) {
-            final HttpSession webSession = WebUtils.getHttpServletRequest(context).getSession(false);
-            if (webSession != null) {
-                webSession.setAttribute(DO_NOT_TERMINATE, true);
-            }
-        }
-    }
 
     @Override
     public void sessionEnded(final RequestContext context, final FlowSession session, final String outcome,
@@ -82,7 +55,7 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
         // get session but don't create it if it doesn't already exist
         final HttpSession webSession = request.getSession(false);
 
-        if (webSession != null && webSession.getAttribute(DO_NOT_TERMINATE) == null) {
+        if (webSession != null) {
             logger.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
             // set the web session to die in timeToDieInSeconds
             webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
@@ -95,14 +68,5 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
 
     public void setTimeToDieInSeconds(final int timeToDieInSeconds) {
         this.timeToDieInSeconds = timeToDieInSeconds;
-    }
-
-    /**
-     * Sets the URL to the service manager Web application.
-     *
-     * @param  url  URL to service manager.
-     */
-    public void setServiceManagerUrl(final String url) {
-        this.serviceManagerUrl = url;
     }
 }

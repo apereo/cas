@@ -44,7 +44,7 @@
   </bean>
 
   <!-- Locale Resolver -->
-  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/>
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
 
   <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
 
@@ -65,7 +65,6 @@
         <prop key="/edit.html">editRegisteredServiceSimpleFormController</prop>
         <prop key="/loggedOut.html">serviceLogoutViewController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/403.html">passThroughController</prop>
         <prop key="/*">manageRegisteredServicesMultiActionController</prop>
       </props>
     </property>
