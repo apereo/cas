@@ -48,7 +48,7 @@
   <![endif]-->
 </head>
 <body id="cas">
-  <div class="container">
+  <div id="container">
       <header>
         <a id="logo" href="http://www.jasig.org" title="go to Jasig home page">Jasig</a>
         <h1>Central Authentication Service (CAS)</h1>
