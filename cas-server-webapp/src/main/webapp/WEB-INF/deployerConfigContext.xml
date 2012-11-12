@@ -131,19 +131,6 @@
 		</property>
 	</bean>
 
-
-	<!--
-	This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
-	More robust deployments will want to use another option, such as the Jdbc version.
-	
-	The name of this should remain "userDetailsService" in order for Spring Security to find it.
-	 -->
-    <!-- <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />-->
-
-    <sec:user-service id="userDetailsService">
-        <sec:user name="@@THIS SHOULD BE REPLACED@@" password="notused" authorities="ROLE_ADMIN" />
-    </sec:user-service>
-	
 	<!-- 
 	Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation
 	may go against a database or LDAP server.  The id should remain "attributeRepository" though.
