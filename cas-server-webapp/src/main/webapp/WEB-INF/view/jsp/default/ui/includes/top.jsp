@@ -50,7 +50,7 @@
 <body id="cas">
   <div class="container">
       <header>
-        <h1 id="company-name">Jasig</h1>
-        <h1 id="app-name">Central Authentication Service (CAS)</h1>
+        <a id="logo" href="http://www.jasig.org" title="go to Jasig home page">Jasig</a>
+        <h1>Central Authentication Service (CAS)</h1>
       </header>
       <div id="content">
