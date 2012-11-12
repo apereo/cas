@@ -34,7 +34,6 @@
 
   <!-- As of Spring SEC 3.1 -->
   <sec:http pattern="/loggedOut.html" security="none"/>
-  <sec:http pattern="/403.html" security="none"/>
   <sec:http pattern="/authorizationFailure.html" security="none"/>
   <sec:http pattern="/css/**" security="none"/>
   <sec:http pattern="/images/**" security="none"/>
