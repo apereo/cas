@@ -41,14 +41,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.annotation.ProfileValueSourceConfiguration;
 import org.springframework.test.annotation.SystemProfileValueSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -77,14 +77,14 @@ public class JpaLockingStrategyTests implements InitializingBean {
     @Autowired
     private EntityManagerFactory factory;
     
-    private SimpleJdbcTemplate simpleJdbcTemplate;
+    private JdbcTemplate simpleJdbcTemplate;
     
     /**
-     * Set the datasource.
+     * Set the dataSource.
      */
     @Autowired
     public void setDataSource(final DataSource dataSource) {
-        this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.simpleJdbcTemplate = new JdbcTemplate(dataSource);
     }
     
     /**
@@ -93,7 +93,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On setup errors.
      */
     public void afterPropertiesSet() throws Exception {
-        SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "locks");
+        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "locks");
     }
 
     /**
