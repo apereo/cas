@@ -24,7 +24,7 @@
       
       <footer>
         <div id="copyright">
-          <p>Copyright &copy; 2005&ndash;2012 Jasig, Inc. All rights reserved.</p>
+          <p><spring:message code="copyright" /></p>
           <p>Powered by <a href="http://www.jasig.org/cas">Jasig Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
         </div>
       </footer>
