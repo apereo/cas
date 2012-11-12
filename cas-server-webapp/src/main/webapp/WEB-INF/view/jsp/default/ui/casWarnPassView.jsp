@@ -24,7 +24,7 @@
   <c:set var="ticketArg"  value="ticket=${serviceTicketId}"/>
 </c:if>
 
-<div class="errors">
+<div id="msg" class="errors">
   <p>
     <c:if test="${expireDays == 0}">
       <h2><spring:message code="screen.warnpass.heading.today" /></h2>
