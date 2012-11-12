@@ -32,7 +32,8 @@
         </div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
+
+        <spring:theme code="cas.javascript.file" var="casJavascriptFile" text="" />
+        <script type="text/javascript" src="<c:url value="${casJavascriptFile}" />"></script>
     </body>
 </html>
-
