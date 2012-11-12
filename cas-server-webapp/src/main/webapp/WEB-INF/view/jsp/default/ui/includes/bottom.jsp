@@ -23,7 +23,6 @@
       </div> <!-- END #content -->
       
       <footer>
-        <a id="jasig" href="http://www.jasig.org" title="go to Jasig home page"></a>
         <div id="copyright">
           <p>Copyright &copy; 2005&ndash;2012 Jasig, Inc. All rights reserved.</p>
           <p>Powered by <a href="http://www.jasig.org/cas">Jasig Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
