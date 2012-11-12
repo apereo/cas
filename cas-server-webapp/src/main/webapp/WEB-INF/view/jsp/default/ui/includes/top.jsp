@@ -18,7 +18,8 @@
     under the License.
 
 --%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
+
 <%@ page session="true" %>
 <%@ page pageEncoding="UTF-8" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
@@ -27,20 +28,29 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta charset="UTF-8" />
   
   <title>CAS &#8211; Central Authentication Service</title>
   
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
-  <link type="text/css" rel="stylesheet" href="<c:url value="${customCssFile}" />" />
+  <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
   <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
+  
+  <!--[if lte IE 8]>
+    <script type="text/javascript">
+      var e = ["article", "aside", "details", "figcaption", "figure", "footer", "header", "hgroup", "menu", "nav", "section"];
+      for (var i = 0; i < e.length; i++) {
+        document.createElement(e[i]);
+      }       
+    </script>
+  <![endif]-->
 </head>
 <body id="cas">
   <div class="container">
-      <div id="header">
+      <header>
         <h1 id="company-name">Jasig</h1>
         <h1 id="app-name">Central Authentication Service (CAS)</h1>
-      </div>
+      </header>
       <div id="content">
