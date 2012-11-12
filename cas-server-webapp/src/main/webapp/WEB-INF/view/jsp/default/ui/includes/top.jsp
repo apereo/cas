@@ -28,18 +28,20 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
-	<head>
-	    <title>CAS &#8211; Central Authentication Service</title>
-		<spring:theme code="standard.custom.css.file" var="customCssFile" />
-        <link type="text/css" rel="stylesheet" href="<c:url value="${customCssFile}" />" />
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
-	</head>
-	<body id="cas">
-    <div class="container">
-        <div>
-            <div id="header">
-				<h1 id="company-name">Jasig</h1>
-                <h1 id="app-name">Central Authentication Service (CAS)</h1>
-            </div>		
-            <div id="content">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  
+  <title>CAS &#8211; Central Authentication Service</title>
+  
+  <spring:theme code="standard.custom.css.file" var="customCssFile" />
+  <link type="text/css" rel="stylesheet" href="<c:url value="${customCssFile}" />" />
+  <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
+</head>
+<body id="cas">
+  <div class="container">
+    <div>
+      <div id="header">
+        <h1 id="company-name">Jasig</h1>
+        <h1 id="app-name">Central Authentication Service (CAS)</h1>
+      </div>
+      <div id="content">
