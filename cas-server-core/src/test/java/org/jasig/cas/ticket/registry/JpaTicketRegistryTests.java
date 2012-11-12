@@ -52,13 +52,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.annotation.ProfileValueSourceConfiguration;
 import org.springframework.test.annotation.SystemProfileValueSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -69,7 +69,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * Unit test for {@link JpaTicketRegistry} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -94,7 +93,7 @@ public class JpaTicketRegistryTests {
     @Autowired
     private JpaTicketRegistry jpaTicketRegistry;
 
-    private SimpleJdbcTemplate simpleJdbcTemplate;
+    private JdbcTemplate simpleJdbcTemplate;
 
 
     /**
@@ -102,14 +101,14 @@ public class JpaTicketRegistryTests {
      */
     @Autowired
     public void setDataSource(final DataSource dataSource) {
-        this.simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+        this.simpleJdbcTemplate = new JdbcTemplate(dataSource);
     }
 
 
     @Before
     public void setUp() {
-        SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "SERVICETICKET");
-        SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "TICKETGRANTINGTICKET");
+        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "SERVICETICKET");
+        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "TICKETGRANTINGTICKET");
     }
     
     
