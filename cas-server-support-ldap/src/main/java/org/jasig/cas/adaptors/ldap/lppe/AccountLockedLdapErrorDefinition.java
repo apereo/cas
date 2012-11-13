@@ -16,20 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.adaptors.ldap.lppe;
 
-public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationException {
-
-    public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.password.message";
-
-    private static final long  serialVersionUID      = 4365292208441435202L;
-
-    public LdapPasswordPolicyEnforcementException(final String msg) {
-        this(CODE_PASSWORD_CHANGE, msg);
+/**
+ * An implementation of a ldap error definition which indicates an authentication failure
+ * due to the account being locked.
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
+ */
+public final class AccountLockedLdapErrorDefinition extends AbstractLdapErrorDefinition {
+    public AccountLockedLdapErrorDefinition() {
+        super("data 775", "accountLocked");
     }
-
-    public LdapPasswordPolicyEnforcementException(final String code, final String msg) {
-        super(code, msg);
-    }
-
 }

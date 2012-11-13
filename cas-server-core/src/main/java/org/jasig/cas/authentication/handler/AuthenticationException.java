@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication.handler;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The most generic type of authentication exception that one can catch if not
  * sure what specific implementation will be thrown. Top of the tree of all
@@ -64,20 +66,26 @@ public abstract class AuthenticationException extends Exception {
 
     /**
      * Constructor that takes a <code>code</code> description of the error along with the exception
-     * <code>msg</code> generally for logging purposes and the <code>type</code> of the error that originally caused the exception.
+     * generally for logging purposes and the <code>type</code> of the error that originally caused the exception.
      * These codes normally have a corresponding entries in the messages file for the internationalization of error messages.
      *
      * @param code The short unique identifier for this error.
-     * @param msg The error message associated with this exception for additional logging purposes.
+     * @param msg The message describing the nature of the error
      * @param type The type of the error message that caused the exception to be thrown. By default,
      * all errors are considered of <code>error</code>.
+     * @param e The original exception that caused the error
      */
-    public AuthenticationException(final String code, final String msg, final String type) {
-        super(msg);
+    public AuthenticationException(final String msg, final Throwable e, final String code, final String type) {
+        super(msg, e);
         this.code = code;
         this.type = type;
     }
 
+    public AuthenticationException(final String msg, final String code, final String type) {
+      this(code, msg);
+      this.type = type;
+  }
+    
     /**
      * Constructor that takes a code description of the error and the chained
      * exception. These codes normally have a corresponding entries in the
@@ -112,8 +120,9 @@ public abstract class AuthenticationException extends Exception {
     @Override
     public final String toString() {
         String msg = getCode();
-        if (getMessage() != null && getMessage().trim().length() > 0)
-            msg = ":" + getMessage();
+        if (StringUtils.isNotBlank(getMessage())) {
+            msg = getMessage();
+        }
         return msg;
     }
 

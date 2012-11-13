@@ -16,22 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.adaptors.ldap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.jasig.cas.authentication.handler.AuthenticationException;
 
-/**
- * Abstract class providing common functionality for checking the account's
- * expiration time.
- *
- * @author Eric Pierce
- * @author Jan Van der Velpen
- * @version 1.1 3/30/2009 11:47:37
- *
+/** 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
-public abstract class AbstractPasswordPolicyEnforcer implements PasswordPolicyEnforcer, InitializingBean {
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+public class LdapAuthenticationException extends AuthenticationException {
 
+    private static final long serialVersionUID = 3298900641124398115L;
+
+    private static final String CODE = "error.ldap.authentication.credentials.bad";
+    
+    public LdapAuthenticationException(final Exception e) {
+        super(CODE, e);
+    }
+    
+    public LdapAuthenticationException(final Exception e, final String type) {
+        super(e.getMessage(), e, CODE, type);
+    }
+    
+    public LdapAuthenticationException(final String message, final String type) {
+        super(message, CODE, type);
+    }
 }
