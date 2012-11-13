@@ -54,6 +54,8 @@ public final class OAuth20ProfileControllerTests extends TestCase {
     
     private static final String VALUE = "attributeValue";
     
+    private static final String CONTENT_TYPE = "application/json";
+    
     public void testNoAccessToken() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.PROFILE_URL);
@@ -64,6 +66,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
         OAuth20ProfileController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
         verify(logger).error("missing accessToken");
     }
@@ -82,6 +85,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
         OAuth20ProfileController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
         verify(logger).error("expired accessToken : {}", TGT_ID);
     }
@@ -102,6 +106,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
         OAuth20ProfileController.setLogger(logger);
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
         verify(logger).error("expired accessToken : {}", TGT_ID);
     }
@@ -128,6 +133,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
         oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"}]}",
                      mockResponse.getContentAsString());
     }

@@ -41,7 +41,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20CallbackAuthorizeController extends AbstractController {
     
-    private static final Logger log = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
+    private final Logger log = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
     
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
