@@ -62,6 +62,8 @@ public final class OAuth20ProfileController extends AbstractController {
         final JsonFactory jsonFactory = new JsonFactory();
         final JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
         
+        response.setContentType("application/json");
+        
         // accessToken is required
         if (StringUtils.isBlank(accessToken)) {
             log.error("missing accessToken");
