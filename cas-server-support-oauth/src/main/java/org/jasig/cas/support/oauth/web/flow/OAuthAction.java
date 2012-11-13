@@ -55,7 +55,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class OAuthAction extends AbstractAction {
     
-    private static final Logger log = LoggerFactory.getLogger(OAuthAction.class);
+    private final Logger log = LoggerFactory.getLogger(OAuthAction.class);
     
     @NotNull
     private OAuthConfiguration configuration;
