@@ -53,8 +53,6 @@ public interface TicketRegistry {
      * @param ticketId the id of the ticket we wish to retrieve.
      * @param clazz The expected class of the ticket we wish to retrieve.
      * @return the requested ticket.
-     * @throws InvalidTicketClassException if the ticket does not match the
-     * class provided.
      */
     Ticket getTicket(String ticketId, Class<? extends Ticket> clazz);
 

@@ -25,11 +25,11 @@ import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date: 2007-02-20 09:41:49 -0500 (Tue, 20 Feb
- * 2007) $
  * @since 3.0.3
  */
 public abstract class AbstractAuthentication implements Authentication {
+
+    private static final long serialVersionUID = 6893533826116808126L;
 
     /** A Principal object representing the authenticated entity. */
     private final Principal principal;
