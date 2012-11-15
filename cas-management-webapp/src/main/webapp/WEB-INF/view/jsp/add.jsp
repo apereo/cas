@@ -19,6 +19,7 @@
 
 --%>
 <%@include file="includes/top.jsp"%>
+<h1><spring:message code="${pageTitle}" /></h1>
 <form:form action="${registeredService.id ge 0 ? 'edit.html' : 'add.html'}?id=${fn:escapeXml(param.id)}" cssClass="v" cssStyle="width:75%;" commandName="${commandName}">
 
 		<c:if test="${not empty successMessage}">
@@ -87,11 +88,11 @@
 			<br/>
 		</span>
 			
-		<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
+		<span class="oneField"><label class="preField" style="float:left;"><spring:message code="management.services.add.property.attributes" /></label>
 			<form:select path="allowedAttributes" items="${availableAttributes}" multiple="true" />
 		</span>
 	     
-    	<span class="oneField"><label class="preField ieFix" style="float:left;"><spring:message code="management.services.manage.label.usernameAttribute" /></label>
+    	<span class="oneField"><label class="preField" style="float:left;"><spring:message code="management.services.manage.label.usernameAttribute" /></label>
     		<form:select path="usernameAttribute" items="${availableUsernameAttributes}" />
     		<form:errors path="usernameAttribute" cssClass="formError" />
     	</span>
