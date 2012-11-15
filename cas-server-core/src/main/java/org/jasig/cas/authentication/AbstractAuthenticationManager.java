@@ -103,9 +103,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
         if (e instanceof AuthenticationException) {
             // CAS-1181 Log common authentication failures at INFO without stack trace
-            this.log.info("{} failed authenticating {}", handlerName, credentials);
+            log.info("{} failed authenticating {}", handlerName, credentials);
         } else {
-            this.log.error("{} threw error authenticating {}", handlerName, credentials, e);
+            log.error("{} threw error authenticating {}", handlerName, credentials, e);
         }
     }
 
