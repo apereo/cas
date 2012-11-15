@@ -57,11 +57,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         // we can only get here if the above method doesn't throw an exception. And if it doesn't, then the pair must not be null.
         final Principal p = pair.getSecond();
-        log.info(String.format("Principal found: %s", p.getId()));
-
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("Attribute map for %s: %s", p.getId(), p.getAttributes()));
-        }
+        log.info("Authenticated {} with credential {}.", p, credentials);
+        log.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
 
         Authentication authentication = new MutableAuthentication(p);
 
@@ -97,15 +94,19 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
 
     /**
-     * Logs the exception occurred as an error.
+     * Logs authentication handler errors.
      * 
      * @param handlerName The class name of the authentication handler.
      * @param credentials Client credentials subject to authentication. 
      * @param e The exception that has occurred during authentication attempt.
      */
     protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
-        if (this.log.isErrorEnabled())
-            this.log.error("{} threw error authenticating {}", new Object[] {handlerName, credentials, e});
+        if (e instanceof AuthenticationException) {
+            // CAS-1181 Log common authentication failures at INFO without stack trace
+            this.log.info("{} failed authenticating {}", handlerName, credentials);
+        } else {
+            this.log.error("{} threw error authenticating {}", handlerName, credentials, e);
+        }
     }
 
 
