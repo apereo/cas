@@ -28,11 +28,6 @@
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
-  <!-- Theme Resolver -->
-  <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver"
-        p:defaultThemeName="${cas-management.themeResolver.defaultThemeName}">
-  </bean>
-
   <!-- View Resolver -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
         p:order="0">
