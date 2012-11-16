@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.ldap;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.NamingSecurityException;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
@@ -121,10 +122,11 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
                 if (test != null) {
                     return true;
                 }
+            } catch (final NamingSecurityException e) {
+                log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
+                throw handleLdapError(e);
             } catch (final Exception e) {
-                if (this.log.isErrorEnabled())
-                    this.log.error(e.getMessage(), e);
-
+                this.log.error(e.getMessage(), e);
                 throw handleLdapError(e);
             } finally {
                 LdapUtils.closeContext(test);
