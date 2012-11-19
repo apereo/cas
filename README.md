@@ -36,7 +36,8 @@ Please [see the maven docs][skip] on how to disable the tests.
 ## Documentation
 - [CAS Protocol][protocol]
 - [CAS User Manual](https://wiki.jasig.org/display/CASUM/Home)
-- [Javadocs](http://jasig.github.com/cas/apidocs/index.html)
+- [Javadocs](https://oss.sonatype.org/content/repositories/releases/org/jasig/cas/) 
+Javadocs may also be created locally using the Maven command: `mvn clean site site:stage` and will then be available at the `target/staging` folder of the root project directory.
 - [Release Notes](https://issues.jasig.org/secure/ReleaseNote.jspa?projectId=10007)
 
 ## Addons
