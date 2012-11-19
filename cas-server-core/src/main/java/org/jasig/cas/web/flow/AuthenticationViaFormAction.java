@@ -35,6 +35,8 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -43,11 +45,9 @@ import org.springframework.webflow.execution.RequestContext;
  * the Service Ticket required.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public class AuthenticationViaFormAction {
-
     /**
      * Binder that allows additional binding of form object beyond Spring
      * defaults.
@@ -61,8 +61,8 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
-
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+        
     public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
@@ -71,16 +71,16 @@ public class AuthenticationViaFormAction {
         }
     }
     
-    public final String submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
+    public final Event submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
         if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
-            this.logger.warn("Invalid login ticket " + providedLoginTicket);
+            log.warn("Invalid login ticket " + providedLoginTicket);
             final String code = "INVALID_TICKET";
             messageContext.addMessage(
                 new MessageBuilder().error().code(code).arg(providedLoginTicket).defaultText(code).build());
-            return "error";
+            return getAuthenticationWebFlowWarningEventId(context, credentials, messageContext);
         }
 
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -91,16 +91,16 @@ public class AuthenticationViaFormAction {
                 final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
-                return "warn";
+                return getAuthenticationWebFlowWarningEventId(context, credentials, messageContext);
             } catch (final TicketException e) {
-                if (isCauseAuthenticationException(e)) {
-                    populateErrorsInstance(e, messageContext);
-                    return getAuthenticationExceptionEventId(e);
+                if (isExceptionCauseAuthenticationException(e)) {
+                    populateErrorsInstance(e.getCode(), messageContext);
+                    return getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e);
                 }
                 
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
+                if (log.isDebugEnabled()) {
+                    log.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
                 }
             }
         }
@@ -108,22 +108,33 @@ public class AuthenticationViaFormAction {
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
-            return "success";
+            return getAuthenticationWebFlowSuccessEventId(context, credentials, messageContext);
         } catch (final TicketException e) {
-            populateErrorsInstance(e, messageContext);
-            if (isCauseAuthenticationException(e))
-                return getAuthenticationExceptionEventId(e);
-            return "error";
+            populateErrorsInstance(e.getCode(), messageContext);
+            return getAuthenticationWebFlowErrorEventId(context, credentials, messageContext, e);
         }
     }
-
-
-    private void populateErrorsInstance(final TicketException e, final MessageContext messageContext) {
-
+    
+    protected Event getAuthenticationWebFlowErrorEventId(final RequestContext context, final Credentials credentials, 
+                                                         final MessageContext messageContext, final Exception e) {
+        return new EventFactorySupport().error(this);
+    }
+    
+    protected Event getAuthenticationWebFlowSuccessEventId(final RequestContext context, final Credentials credentials, 
+                                                           final MessageContext messageContext) {
+        return new EventFactorySupport().success(this);
+    }
+    
+    protected Event getAuthenticationWebFlowWarningEventId(final RequestContext context, final Credentials credentials, 
+                                                           final MessageContext messageContext) {
+        return new Event(this, "warning");
+    }
+    
+    protected void populateErrorsInstance(final String code, final MessageContext messageContext) {
         try {
-            messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).defaultText(e.getCode()).build());
+            messageContext.addMessage(new MessageBuilder().error().code(code).defaultText(code).build());
         } catch (final Exception fe) {
-            logger.error(fe.getMessage(), fe);
+            log.error(fe.getMessage(), fe);
         }
     }
 
@@ -136,21 +147,8 @@ public class AuthenticationViaFormAction {
             this.warnCookieGenerator.removeCookie(response);
         }
     }
-    
-    private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
-        return (AuthenticationException) e.getCause();
-    }
 
-    private String getAuthenticationExceptionEventId(final TicketException e) {
-        final AuthenticationException authEx = getAuthenticationExceptionAsCause(e);
-
-        if (this.logger.isDebugEnabled())
-            this.logger.debug("An authentication error has occurred. Returning the event id " + authEx.getType());
-
-        return authEx.getType();
-    }
-
-    private boolean isCauseAuthenticationException(final TicketException e) {
+    protected final boolean isExceptionCauseAuthenticationException(final Exception e) {
         return e.getCause() != null && AuthenticationException.class.isAssignableFrom(e.getCause().getClass());
     }
 

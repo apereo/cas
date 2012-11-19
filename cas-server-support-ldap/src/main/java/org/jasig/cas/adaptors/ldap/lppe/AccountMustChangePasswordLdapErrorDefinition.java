@@ -16,20 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.adaptors.ldap.lppe;
 
 /**
- * Interface for a class that fetches an account status.
- *
- * @author Jan Van der Velpen
- * @version $Revision: 1.0 $ $Date: 2006/12/13 14:28:05 $
- * @since 3.1
+ * An implementation of a ldap error definition which indicates an authentication failure
+ * where the authenticating account must changes its password.
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
  */
-public interface PasswordPolicyEnforcer {
-    /**
-     * @param userId The unique ID of the user
-     * @return Number of days to the expiration date, or -1 if checks pass.
-     */
-    public long getNumberOfDaysToPasswordExpirationDate(final String userId) throws LdapPasswordPolicyEnforcementException;
-
+public final class AccountMustChangePasswordLdapErrorDefinition extends AbstractLdapErrorDefinition {
+    public AccountMustChangePasswordLdapErrorDefinition() {
+        super("data 773", "mustChangePassword");
+    }
 }
