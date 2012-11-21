@@ -304,6 +304,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         verify(ticketRegistry).deleteTicket(CODE);
+        assertEquals("text/plain", mockResponse.getContentType());
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
         assertTrue(body.startsWith("access_token=" + TGT_ID + "&expires="));
