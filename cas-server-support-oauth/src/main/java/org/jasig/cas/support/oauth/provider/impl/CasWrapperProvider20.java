@@ -20,13 +20,15 @@ package org.jasig.cas.support.oauth.provider.impl;
 
 import java.util.Iterator;
 
-import org.codehaus.jackson.JsonNode;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.profile.CasWrapperProfile;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.up.profile.JsonHelper;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.BaseOAuth20Provider;
+import org.scribe.up.provider.BaseOAuthProvider;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * This class is the OAuth provider to authenticate user in CAS server wrapping OAuth protocol.
@@ -40,28 +42,28 @@ public final class CasWrapperProvider20 extends BaseOAuth20Provider {
     
     @Override
     protected void internalInit() {
-        CasWrapperApi20.setServerUrl(serverUrl);
-        service = new ServiceBuilder().provider(CasWrapperApi20.class).apiKey(key).apiSecret(secret)
-            .callback(callbackUrl).build();
+        CasWrapperApi20.setServerUrl(this.serverUrl);
+        this.service = new ServiceBuilder().provider(CasWrapperApi20.class).apiKey(this.key).apiSecret(this.secret)
+            .callback(this.callbackUrl).build();
     }
     
     @Override
     protected String getProfileUrl() {
-        return serverUrl + "/" + OAuthConstants.PROFILE_URL;
+        return this.serverUrl + "/" + OAuthConstants.PROFILE_URL;
     }
     
     @Override
     protected UserProfile extractUserProfile(final String body) {
-        CasWrapperProfile userProfile = new CasWrapperProfile();
+        final CasWrapperProfile userProfile = new CasWrapperProfile();
         JsonNode json = JsonHelper.getFirstNode(body);
         if (json != null) {
             userProfile.setId(JsonHelper.get(json, CasWrapperProfile.ID));
             json = json.get(CasWrapperProfile.ATTRIBUTES);
             if (json != null) {
-                Iterator<JsonNode> nodes = json.iterator();
+                final Iterator<JsonNode> nodes = json.iterator();
                 while (nodes.hasNext()) {
                     json = nodes.next();
-                    String attribute = json.getFieldNames().next();
+                    final String attribute = json.fieldNames().next();
                     userProfile.addAttribute(attribute, JsonHelper.get(json, attribute));
                 }
             }
@@ -71,5 +73,12 @@ public final class CasWrapperProvider20 extends BaseOAuth20Provider {
     
     public void setServerUrl(final String serverUrl) {
         this.serverUrl = serverUrl;
+    }
+    
+    @Override
+    protected BaseOAuthProvider newProvider() {
+        final CasWrapperProvider20 newProvider = new CasWrapperProvider20();
+        newProvider.setServerUrl(this.serverUrl);
+        return newProvider;
     }
 }

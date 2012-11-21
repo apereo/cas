@@ -24,7 +24,6 @@
 		<version>3.5.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-support-oauth</artifactId>
 	<packaging>jar</packaging>
 	<name>Jasig CAS OAuth Support</name>
@@ -52,7 +51,7 @@
 		<dependency>
 			<groupId>org.scribe</groupId>
 			<artifactId>scribe-up</artifactId>
-			<version>1.1.0</version>
+			<version>1.2.0</version>
 		</dependency>
     </dependencies>
 </project>
