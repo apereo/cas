@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
@@ -35,6 +35,7 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -45,7 +46,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public final class OAuth20AccessTokenControllerTests extends TestCase {
+public final class OAuth20AccessTokenControllerTests {
     
     private static final String CONTEXT = "/oauth2.0/";
     
@@ -65,6 +66,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
     
     private static final int TIMEOUT = 7200;
     
+    @Test
     public void testNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -82,6 +84,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("missing clientId");
     }
     
+    @Test
     public void testNoRedirectUri() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -99,6 +102,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("missing redirectUri");
     }
     
+    @Test
     public void testNoClientSecret() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -116,6 +120,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("missing clientSecret");
     }
     
+    @Test
     public void testNoCode() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -133,6 +138,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("missing code");
     }
     
+    @Test
     public void testNoCasService() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -154,6 +160,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("Unknown clientId : {}", CLIENT_ID);
     }
     
+    @Test
     public void testRedirectUriDoesNotStartWithServiceId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -180,6 +187,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
     }
     
+    @Test
     public void testWrongSecret() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -208,6 +216,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
                              WRONG_CLIENT_SECRET);
     }
     
+    @Test
     public void testNoServiceTicket() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -238,6 +247,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("Code expired : {}", CODE);
     }
     
+    @Test
     public void testExpiredServiceTicket() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);
@@ -270,6 +280,7 @@ public final class OAuth20AccessTokenControllerTests extends TestCase {
         verify(logger).error("Code expired : {}", CODE);
     }
     
+    @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.ACCESS_TOKEN_URL);

@@ -18,19 +18,20 @@
  */
 package org.jasig.cas.support.oauth.web.flow;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.junit.Test;
 import org.scribe.up.provider.OAuthProvider;
 import org.scribe.up.provider.impl.FacebookProvider;
 import org.scribe.up.provider.impl.TwitterProvider;
@@ -47,7 +48,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public final class OAuthActionTests extends TestCase {
+public final class OAuthActionTests {
     
     private final static String MY_KEY = "my_key";
     
@@ -79,6 +80,7 @@ public final class OAuthActionTests extends TestCase {
         return oAuthConfiguration;
     }
     
+    @Test
     public void testStartAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(OAuthConstants.THEME, MY_THEME);
@@ -108,6 +110,7 @@ public final class OAuthActionTests extends TestCase {
         assertEquals("/oauth10login?oauth_provider=TwitterProvider", flowScope.get("TwitterProviderUrl"));
     }
     
+    @Test
     public void testFinishAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setParameter(OAuthConstants.OAUTH_PROVIDER, "FacebookProvider");
