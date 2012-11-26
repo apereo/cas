@@ -131,6 +131,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
         
+        response.setContentType("text/plain");
         final int expires = (int) (timeout - ((System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000));
         final String text = "access_token=" + ticketGrantingTicket.getId() + "&expires=" + expires;
         log.debug("text : {}", text);
