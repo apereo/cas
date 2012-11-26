@@ -18,14 +18,15 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.web.flow.OAuthAction;
+import org.junit.Test;
 import org.scribe.up.provider.OAuthProvider;
 import org.scribe.up.provider.impl.TwitterProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,10 +41,11 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public final class OAuth10LoginControllerTests extends TestCase {
+public final class OAuth10LoginControllerTests {
     
     private final static String MY_LOGIN_URL = "http://casserver/login";
     
+    @Test
     public void testOK() throws Exception {
         // must be an OAuth 1.0 provider
         final TwitterProvider twitterProvider = new TwitterProvider();
