@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,13 +26,12 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -42,7 +42,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public final class OAuth20ProfileControllerTests extends TestCase {
+public final class OAuth20ProfileControllerTests {
     
     private static final String CONTEXT = "/oauth2.0/";
     
@@ -56,6 +56,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
     
     private static final String CONTENT_TYPE = "application/json";
     
+    @Test
     public void testNoAccessToken() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.PROFILE_URL);
@@ -71,6 +72,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
         verify(logger).error("missing accessToken");
     }
     
+    @Test
     public void testNoTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.PROFILE_URL);
@@ -90,6 +92,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
         verify(logger).error("expired accessToken : {}", TGT_ID);
     }
     
+    @Test
     public void testExpiredTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.PROFILE_URL);
@@ -111,6 +114,7 @@ public final class OAuth20ProfileControllerTests extends TestCase {
         verify(logger).error("expired accessToken : {}", TGT_ID);
     }
     
+    @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.PROFILE_URL);
