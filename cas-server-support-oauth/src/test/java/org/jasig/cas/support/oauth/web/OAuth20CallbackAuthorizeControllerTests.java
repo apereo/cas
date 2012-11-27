@@ -18,11 +18,12 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -34,7 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public final class OAuth20CallbackAuthorizeControllerTests extends TestCase {
+public final class OAuth20CallbackAuthorizeControllerTests {
     
     private static final String CONTEXT = "/oauth2.0/";
     
@@ -46,6 +47,7 @@ public final class OAuth20CallbackAuthorizeControllerTests extends TestCase {
     
     private static final String STATE = "state";
     
+    @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
                                                                               "GET",
@@ -66,6 +68,7 @@ public final class OAuth20CallbackAuthorizeControllerTests extends TestCase {
         assertEquals(REDIRECT_URI + "?" + OAuthConstants.CODE + "=" + SERVICE_TICKET, map.get("callbackUrl"));
     }
     
+    @Test
     public void testOKWithState() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
                                                                               "GET",
