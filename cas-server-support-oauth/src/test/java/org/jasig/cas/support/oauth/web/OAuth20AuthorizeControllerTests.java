@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.support.oauth.web;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,12 +29,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-import junit.framework.TestCase;
-
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.junit.Test;
 import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -47,7 +48,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public final class OAuth20AuthorizeControllerTests extends TestCase {
+public final class OAuth20AuthorizeControllerTests {
     
     private static final String CONTEXT = "/oauth2.0/";
     
@@ -69,6 +70,7 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
     
     private static final String STATE = "state";
     
+    @Test
     public void testNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.AUTHORIZE_URL);
@@ -83,6 +85,7 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
         verify(logger).error("missing clientId");
     }
     
+    @Test
     public void testNoRedirectUri() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.AUTHORIZE_URL);
@@ -97,6 +100,7 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
         verify(logger).error("missing redirectUri");
     }
     
+    @Test
     public void testNoCasService() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.AUTHORIZE_URL);
@@ -115,6 +119,7 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
         verify(logger).error("Unknown clientId : {}", CLIENT_ID);
     }
     
+    @Test
     public void testRedirectUriDoesNotStartWithServiceId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.AUTHORIZE_URL);
@@ -138,6 +143,7 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
         verify(logger).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
     }
     
+    @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.AUTHORIZE_URL);
@@ -161,8 +167,8 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
         oauth20WrapperController.afterPropertiesSet();
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         final HttpSession session = mockRequest.getSession();
-        assertEquals(REDIRECT_URI, (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL));
-        assertEquals(SERVICE_NAME, (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME));
+        assertEquals(REDIRECT_URI, session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL));
+        assertEquals(SERVICE_NAME, session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME));
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
@@ -171,6 +177,7 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
                      redirectView.getUrl());
     }
     
+    @Test
     public void testOKWithState() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                                                                                      + OAuthConstants.AUTHORIZE_URL);
@@ -195,9 +202,9 @@ public final class OAuth20AuthorizeControllerTests extends TestCase {
         oauth20WrapperController.afterPropertiesSet();
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         final HttpSession session = mockRequest.getSession();
-        assertEquals(REDIRECT_URI, (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL));
-        assertEquals(SERVICE_NAME, (String) session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME));
-        assertEquals(STATE, (String) session.getAttribute(OAuthConstants.OAUTH20_STATE));
+        assertEquals(REDIRECT_URI, session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL));
+        assertEquals(SERVICE_NAME, session.getAttribute(OAuthConstants.OAUTH20_SERVICE_NAME));
+        assertEquals(STATE, session.getAttribute(OAuthConstants.OAUTH20_STATE));
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
