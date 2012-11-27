@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -30,10 +31,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public class OAuth20WrapperControllerTests extends TestCase {
+public class OAuth20WrapperControllerTests {
     
     private static final String CONTEXT = "/oauth2.0/";
     
+    @Test
     public void testWrongMethod() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + "wrongmethod");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
