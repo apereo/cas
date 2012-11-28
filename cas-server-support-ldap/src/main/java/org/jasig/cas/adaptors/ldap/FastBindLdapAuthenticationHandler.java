@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import javax.naming.directory.DirContext;
+
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
 import org.springframework.ldap.NamingException;
-
-import javax.naming.directory.DirContext;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
@@ -45,9 +45,7 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePassw
             dirContext = this.getContextSource().getContext(bindDn, getPasswordEncoder().encode(credentials.getPassword()));
             return true;
         } catch (final NamingException e) {
-            if (this.log.isErrorEnabled())
-                this.log.error(e.getMessage(), e);
-            
+            log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
             throw handleLdapError(e);
         } finally {
             if (dirContext != null) {
