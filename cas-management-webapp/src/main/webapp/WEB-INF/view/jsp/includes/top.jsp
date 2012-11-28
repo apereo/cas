@@ -29,15 +29,14 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title><spring:message code="${pageTitle}" text="Logged Out" /></title>
+  <title><spring:message code="management.services.title" /></title>
   <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
   <link rel="icon" href="<c:url value="../favicon.ico" />" type="image/x-icon" />
-  <link rel="stylesheet" href="<c:url value="/css/services/cas.css" />" type="text/css" />
+  <link rel="stylesheet" href="<c:url value="/css/management.css" />" type="text/css" />
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="<c:url value="/js/cas.js" />"></script>
   <script type="text/javascript" src="<c:url value="/js/MyInfusion.js" />"></script>
-  <script type="text/javascript" src="<c:url value="/js/services.js" />"></script>
+  <script type="text/javascript" src="<c:url value="/js/management.js" />"></script>
 
   <style type="text/css">
   #nav-main #${pageTitle} span {
@@ -47,22 +46,21 @@
   </style>
 </head>
 
-<body id="${pageTitle}-body">
+<body>
 <div id="header">
   <div id="nav-system">
-    <ul
-      ><li><a href="logout.html" title="logout of current session"><spring:message code="management.services.link.logout" /></a></li
-    ></ul>
+    <ul>
+    	<li><a href="logout.html" title="logout of current session"><spring:message code="management.services.link.logout" /></a></li>
+    </ul>
   </div>
   <p id="tagline"><spring:message code="application.title" /></p>
   <h1 id="app-name"><spring:message code="management.services.title" /></h1>
 </div>
 <div id="nav-main">
-  <ul
-    ><li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li
-    ><li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li
-    ></ul>
+  <ul>
+  	<li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li>
+  	<li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li>
+  </ul>
 </div>
 <!-- CONTENT -->
 <div id="content">
-  <h1><spring:message code="${pageTitle}" text="Logged Out" /></h1>
