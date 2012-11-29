@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
@@ -119,12 +121,22 @@ public class AuthenticationViaFormAction {
 
 
     private void populateErrorsInstance(final TicketException e, final MessageContext messageContext) {
-
-        try {
-            messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).defaultText(e.getCode()).build());
-        } catch (final Exception fe) {
-            logger.error(fe.getMessage(), fe);
-        }
+      try {
+          final String exceptionCode = e.getCode();
+          final MessageBuilder messageBuilder = new MessageBuilder().error().code(exceptionCode);
+          messageContext.addMessage(messageBuilder.build());
+      } catch (final NoSuchMessageException ex) {
+          /*
+           * If no message is mapped to the exception code, use the default exception code of BadCredentialsAuthenticationException.
+           * Displaying the exception message back to the client may expose sensitive credential and error data.   
+           */
+          final String defaultCode = BadCredentialsAuthenticationException.CODE;
+          logger.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]", defaultCode);
+          messageContext.addMessage(new MessageBuilder().error().code(defaultCode)
+                        .defaultText("The exception code could not be located for " + defaultCode).build());
+      } catch (final Exception fe) {
+          logger.error(fe.getMessage(), fe);
+      }
     }
 
     private void putWarnCookieIfRequestParameterPresent(final RequestContext context) {
