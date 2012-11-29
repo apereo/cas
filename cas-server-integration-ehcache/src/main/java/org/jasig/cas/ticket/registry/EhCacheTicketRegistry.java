@@ -19,6 +19,8 @@
 package org.jasig.cas.ticket.registry;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -101,11 +103,28 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         if (element == null) {
             element = this.ticketGrantingTicketsCache.get(ticketId);
         }
-        return element == null ? null : getProxiedTicketInstance((Ticket)element.getValue());
+        return element == null ? null : getProxiedTicketInstance((Ticket)element.getObjectValue());
     }
     
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("GetTickets not supported.");
+        final Collection<Element> serviceTickets = this.serviceTicketsCache.getAll(this.serviceTicketsCache.getKeysWithExpiryCheck()).values();
+        final Collection<Element> tgtTicketsTickets = this.ticketGrantingTicketsCache.getAll(this.ticketGrantingTicketsCache.getKeysWithExpiryCheck()).values();
+        
+        final Collection<Ticket> allTickets = new HashSet<Ticket>(serviceTickets.size() + tgtTicketsTickets.size());
+        
+        Iterator<Element> it = serviceTickets.iterator();
+        
+        while (it.hasNext()) {
+            allTickets.add((Ticket)it.next().getObjectValue());
+        }
+        
+        it = tgtTicketsTickets.iterator();
+        
+        while (it.hasNext()) {
+            allTickets.add((Ticket)it.next().getObjectValue());
+        }
+        
+        return allTickets;
     }
     
     public void setServiceTicketsCache(final Cache serviceTicketsCache) {
@@ -129,7 +148,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     
     @Override
     protected boolean needsCallback(){
-    	return false;
+    	  return false;
     }
 
     /** 
@@ -154,32 +173,34 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         throw new BeanInstantiationException(this.getClass(), "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties.");
       }
       
-      if (this.log.isDebugEnabled()) {
+      if (log.isDebugEnabled()) {
         CacheConfiguration config = this.serviceTicketsCache.getCacheConfiguration();
         log.debug("serviceTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
         log.debug("serviceTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
-        log.debug("serviceTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        log.debug("serviceTicketsCache.isOverflowToDisk={}", config.isOverflowToDisk());
         log.debug("serviceTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
         log.debug("serviceTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
-  
+        log.debug("serviceTicketsCache.cacheManager={}", this.serviceTicketsCache.getCacheManager().getName());
+        
         config = this.ticketGrantingTicketsCache.getCacheConfiguration();
         log.debug("ticketGrantingTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
         log.debug("ticketGrantingTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
-        log.debug("ticketGrantingTicketsCache.overflowToDisk={}", config.isOverflowToDisk());
+        log.debug("ticketGrantingTicketsCache.isOverflowToDisk={}", config.isOverflowToDisk());
         log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
         log.debug("ticketGrantingTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
+        log.debug("ticketGrantingTicketsCache.cacheManager={}", this.ticketGrantingTicketsCache.getCacheManager().getName());
       } 
     }
 
     /**
-     * @see Cache#getKeysNoDuplicateCheck()
+     * @see Cache#getKeysWithExpiryCheck()
      */
     public int sessionCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() , super.sessionCount());
     }
 
     /**
-     * @see Cache#getKeysNoDuplicateCheck()
+     * @see Cache#getKeysWithExpiryCheck()
      */
     public int serviceTicketCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck().size() , super.serviceTicketCount());
