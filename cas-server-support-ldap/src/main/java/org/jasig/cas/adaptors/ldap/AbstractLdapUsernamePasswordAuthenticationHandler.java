@@ -18,34 +18,66 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.cas.authentication.LdapAuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.util.Assert;
 
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle common LDAP functionality.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.3
  */
-public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+    
+    /** The default maximum number of results to return. */
+    private static final int DEFAULT_MAX_NUMBER_OF_RESULTS = 1000;
 
-    /** LdapTemplate to execute ldap queries. */
+    /** The default timeout. */
+    private static final int DEFAULT_TIMEOUT = 1000;
+
+    /** 
+     * The ldap query search result on the current transformed username. Contains attributes defined to be returned 
+     * by the query, if any.
+     * @see #setAttributesToReturn(List) 
+     */
+    private SearchResult authenticatedDistinguishedNameSearchResult = null;
+    
+    /** 
+     * The ldap query scope. 
+     *  @see #getSearchControls()
+     */
+    @Min(0)
+    @Max(2)
+    private int scope = SearchControls.SUBTREE_SCOPE;
+
+    /** The search base to find the user under. */
+    private String searchBase;
+    
+    /** The maximum number of results to return. */
+    private int maxNumberResults = DEFAULT_MAX_NUMBER_OF_RESULTS;
+
+    /** The amount of time to wait. */
+    private int timeout = DEFAULT_TIMEOUT;
+    
+    /** {@link LdapTemplate} to execute ldap queries. */
     @NotNull
     private LdapTemplate ldapTemplate;
     
-    /** Instance of ContextSource */
+    /** Instance of {@link ContextSource} */
     @NotNull
     private ContextSource contextSource;
 
@@ -53,16 +85,41 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     @NotNull
     private String filter;
     
-    /** List of error definitions and their types, based on which the user will be directed to a given view in the flow **/
-    private List<LdapErrorDefinition> ldapErrorDefinitions;
     
     /** Whether the LdapTemplate should ignore partial results. */
     private boolean ignorePartialResultException = false;
 
     /**
-     * Method to set the datasource and generate a JdbcTemplate.
+     * List of attributes to return as part of the ldap query
+     * @see #getSearchControls()
+     */
+    @NotNull
+    private List<String> attributesToReturn = new ArrayList<String>();
+    
+    /**
+     * {@inheritDoc}
+     * Expects and sets the authenticated search result from the implementing class.
+     * @return True of the authentication is successful having received the authentication search result. False, otherwise.
+     * @see #setAuthenticatedDistinguishedNameSearchResult(SearchResult)
+     */
+    @Override
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials cred) throws AuthenticationException {
+        setAuthenticatedDistinguishedNameSearchResult(authenticateLdapUsernamePasswordInternal(cred));
+        return getAuthenticatedDistinguishedNameSearchResult() != null;
+    }
+    
+    /**
+     * Internal abstract method, intended to carry out the ldap authentication. 
+     * @see #authenticateUsernamePasswordInternal(UsernamePasswordCredentials)
+     * @return The authentication {@link SearchResult} if successful, or null.
+     * @throws AuthenticationException if Ldap authentication encounters an error.
+     */
+    protected abstract SearchResult authenticateLdapUsernamePasswordInternal(final UsernamePasswordCredentials cred)  throws AuthenticationException;
+    
+    /**
+     * Method to set the data source and generate a JdbcTemplate.
      * 
-     * @param contextSource the datasource to use.
+     * @param contextSource the data source to use.
      */
     public final void setContextSource(final ContextSource contextSource) {
         this.contextSource = contextSource;
@@ -72,8 +129,100 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
         this.ignorePartialResultException = ignorePartialResultException;
     }
     
-    public void setLdapErrorDefinitions(final List<LdapErrorDefinition> ldapErrorDefs) {
-        this.ldapErrorDefinitions = ldapErrorDefs;
+    /** 
+     * Allows to set the ldap query search result on the current transformed username. 
+     * Contains attributes defined to be returned by the query, if any. Subclasses can choose
+     * to set this property when locating the user in the directory. 
+     * 
+     * @see BindLdapAuthenticationHandler
+     * @see FastBindLdapAuthenticationHandler
+     * @see #authenticatedDistinguishedNameSearchResult
+     **/
+    private void setAuthenticatedDistinguishedNameSearchResult(final SearchResult dn) {
+        this.authenticatedDistinguishedNameSearchResult = dn;
+    }
+    
+    /** 
+     * Allows to return the ldap query search result on the current transformed username. 
+     * Contains attributes defined to be returned by the query, if any. 
+     * @see BindLdapAuthenticationHandler
+     * @see FastBindLdapAuthenticationHandler
+     * @see #authenticatedDistinguishedNameSearchResult
+     **/
+    public SearchResult getAuthenticatedDistinguishedNameSearchResult() {
+        return this.authenticatedDistinguishedNameSearchResult;
+    }
+    
+    /**
+     * Specifies the search criteria to be used by the ldap query
+     * @return an instance of {@link SearchControls} that encapsulated the query configuration. 
+     */
+    protected SearchControls getSearchControls() {
+        final SearchControls constraints = new SearchControls();
+        constraints.setSearchScope(this.scope);
+
+        final String[] attr = this.getAttributesToReturn().toArray(new String[this.getAttributesToReturn().size()]);        
+        constraints.setReturningAttributes(attr);
+        
+        constraints.setTimeLimit(this.timeout);
+        constraints.setCountLimit(this.maxNumberResults);
+        return constraints;
+    }
+    
+    /**
+     * Method to return the search base.
+     * @return the search base.
+     */
+    protected String getSearchBase() {
+        return this.searchBase;
+    }
+
+    /**
+     * @param searchBase The searchBase to set.
+     */
+    public final void setSearchBase(final String searchBase) {
+        this.searchBase = searchBase;
+    }
+    /**
+     * Method to return the max number of results allowed.
+     * @return the maximum number of results.
+     */
+    protected int getMaxNumberResults() {
+        return this.maxNumberResults;
+    }
+
+    /**
+     * Method to return the scope.
+     * @return the scope
+     */
+    protected int getScope() {
+        return this.scope;
+    }
+
+    /**
+     * Method to return the timeout. 
+     * @return the timeout.
+     */
+    protected int getTimeout() {
+        return this.timeout;
+    }
+
+    public final void setScope(final int scope) {
+        this.scope = scope;
+    }
+
+    /**
+     * @param maxNumberResults The maxNumberResults to set.
+     */
+    public final void setMaxNumberResults(final int maxNumberResults) {
+        this.maxNumberResults = maxNumberResults;
+    }
+
+    /**
+     * @param timeout The timeout to set.
+     */
+    public final void setTimeout(final int timeout) {
+        this.timeout = timeout;
     }
 
     /**
@@ -92,7 +241,24 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     protected final String getFilter() {
         return this.filter;
     }
+    
+    /**
+     * 
+     * @return an array of attribute names that are to be returned by the ldap query
+     */
+    public final List<String> getAttributesToReturn() {
+        return this.attributesToReturn;
+    }
 
+    /**
+     * Specify the list of attribute names to be returned by the ldap query.
+     * @param attr attribute names to return
+     */
+    public final void setAttributesToReturn(final List<String> attr) {
+        this.attributesToReturn = attr;
+    }
+    
+    @Override
     public final void afterPropertiesSet() throws Exception {
         Assert.isTrue(this.filter.contains("%u") || this.filter.contains("%U"), "filter must contain %u or %U");
 
@@ -122,36 +288,5 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
      */
     public final void setFilter(final String filter) {
         this.filter = filter;
-    }
-    
-    /**
-     * Available ONLY for subclasses that would want to customize how ldap error codes are handled
-     *
-     * @param e The ldap exception that occurred.
-     * @return an instance of {@link AuthenticationException}
-     */
-    protected AuthenticationException handleLdapError(final Exception e) {
-        if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
-            if (this.log.isDebugEnabled())
-                this.log.debug("No error definitions are defined. Throwing error " + e.getMessage());
-            return BadCredentialsAuthenticationException.ERROR;
-        }
-
-        if (this.log.isDebugEnabled())
-            this.log.debug("Handling error: " + e.getMessage());
-
-        for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions)
-            if (ldapErrorDef.matches(e.getMessage())) {
-                if (this.log.isDebugEnabled())
-                    this.log.debug("Found error type " + ldapErrorDef.getType() +  ". Throwing error for " + e.getMessage());
-
-                return new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE, e.getMessage(), ldapErrorDef.getType());
-
-            }
-
-        if (this.log.isDebugEnabled())
-            this.log.debug("No error definition could be matched against the error. Throwing default error for " + e.getMessage());
-
-        return BadCredentialsAuthenticationException.ERROR;
-    }
+    }    
 }

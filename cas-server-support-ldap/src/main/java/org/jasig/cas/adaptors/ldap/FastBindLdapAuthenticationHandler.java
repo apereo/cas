@@ -20,10 +20,14 @@ package org.jasig.cas.adaptors.ldap;
 
 import javax.naming.directory.DirContext;
 
+
+import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.util.LdapUtils;
-import org.springframework.ldap.NamingException;
+
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.SearchResult;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
@@ -31,22 +35,30 @@ import org.springframework.ldap.NamingException;
  * hand the path to the uid.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.3
  */
 public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    @Override
+    protected final SearchResult authenticateLdapUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
         DirContext dirContext = null;
         try {
             final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
             final String bindDn = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
-            this.log.debug("Performing LDAP bind with credential: " + bindDn);
+            
+            log.debug("Performing LDAP bind with credential {}", bindDn);
             dirContext = this.getContextSource().getContext(bindDn, getPasswordEncoder().encode(credentials.getPassword()));
-            return true;
-        } catch (final NamingException e) {
-            log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
-            throw handleLdapError(e);
+            
+            if (!StringUtils.isBlank(getSearchBase())) {
+                final NamingEnumeration<SearchResult> result = dirContext.search(getSearchBase(), bindDn, getSearchControls());
+                if (result.hasMore()) {
+                    return result.next();
+                }
+            }
+            return null;
+        } catch (final Exception e) {
+            log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());    
+            throw new LdapAuthenticationException(e);
         } finally {
             if (dirContext != null) {
                 LdapUtils.closeContext(dirContext);

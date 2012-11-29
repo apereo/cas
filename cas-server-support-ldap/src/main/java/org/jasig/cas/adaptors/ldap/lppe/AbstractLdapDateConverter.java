@@ -16,19 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.adaptors.ldap.lppe;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class LdapAuthenticationException extends AuthenticationException {
+/**
+ * An abstract implementation of the {@link LdapDateConverter} which defines common
+ * settings to all converters, namely the specification and configuration of the
+ * {@link #setTimeZone(DateTimeZone)}.
+ * 
+ * @author Misagh Moayyed
+ * @version 4.0.0
+ */
+public abstract class AbstractLdapDateConverter implements LdapDateConverter {
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    private static final long serialVersionUID = 1L;
-
-    public LdapAuthenticationException(final String code, final String msg) {
-        super(code, msg);
+    private DateTimeZone timeZone = DateTimeZone.UTC;
+    
+    public void setTimeZone(final DateTimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 
-    public LdapAuthenticationException(final String code, final String msg, final String type) {
-        super(code, msg, type);
+    @Override
+    public DateTimeZone getTimeZone() {
+       return this.timeZone;
     }
 }
+
+
