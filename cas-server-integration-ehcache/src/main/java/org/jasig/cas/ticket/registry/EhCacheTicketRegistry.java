@@ -112,18 +112,14 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         
         final Collection<Ticket> allTickets = new HashSet<Ticket>(serviceTickets.size() + tgtTicketsTickets.size());
         
-        Iterator<Element> it = serviceTickets.iterator();
-        
-        while (it.hasNext()) {
-            allTickets.add((Ticket)it.next().getObjectValue());
+        for (final Element ticket : serviceTickets) {
+            allTickets.add((Ticket)ticket.getObjectValue());
         }
-        
-        it = tgtTicketsTickets.iterator();
-        
-        while (it.hasNext()) {
-            allTickets.add((Ticket)it.next().getObjectValue());
+
+        for (final Element ticket : tgtTicketsTickets) {
+          allTickets.add((Ticket)ticket.getObjectValue());
         }
-        
+                
         return allTickets;
     }
     
