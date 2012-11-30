@@ -127,8 +127,9 @@ public class AuthenticationViaFormAction {
           messageContext.addMessage(messageBuilder.build());
       } catch (final NoSuchMessageException ex) {
           /*
-           * If no message is mapped to the exception code, use the default exception code of BadCredentialsAuthenticationException.
-           * Displaying the exception message back to the client may expose sensitive credential and error data.   
+           * If no message is mapped to the exception code, use the default exception code of 
+           * BadCredentialsAuthenticationException. Displaying the exception message itself back to the 
+           * client may expose sensitive credential and error data.   
            */
           final String defaultCode = BadCredentialsAuthenticationException.CODE;
           logger.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]", defaultCode);
