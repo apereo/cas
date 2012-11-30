@@ -18,8 +18,20 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.ticket.TicketException;
 import org.springframework.util.Assert;
 
+/**
+ * Generic CAS exception that sits at the top of the exception hierarchy. Provides
+ * unified logic around retrieval and configuration of exception codes that may be
+ * mapped inside an external resource bundle for internationalization of error messages. 
+ * 
+ * @author Misagh Moayyed
+ * @see AuthenticationException
+ * @see TicketException
+ * @since 4.0.0
+ */
 public abstract class RootCasException extends Exception {
 
   private static final long serialVersionUID = -2384466176716541689L;
