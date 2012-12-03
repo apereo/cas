@@ -38,13 +38,8 @@
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
   <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
   
-  <!--[if lte IE 8]>
-    <script type="text/javascript">
-      var e = ["article", "aside", "details", "figcaption", "figure", "footer", "header", "hgroup", "menu", "nav", "section"];
-      for (var i = 0; i < e.length; i++) {
-        document.createElement(e[i]);
-      }       
-    </script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js" type="text/javascript"></script>
   <![endif]-->
 </head>
 <body id="cas">
