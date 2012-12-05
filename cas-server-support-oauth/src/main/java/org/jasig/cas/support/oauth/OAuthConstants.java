@@ -26,8 +26,6 @@ package org.jasig.cas.support.oauth;
  */
 public interface OAuthConstants {
     
-    public final static String OAUTH_PROVIDER = "oauth_provider";
-    
     public final static String PROVIDER_TYPE = "providerType";
     
     public final static String REDIRECT_URI = "redirect_uri";
