@@ -963,7 +963,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.9.0</mockito.version>
-    <ehcache.version>2.6.0</ehcache.version>
+    <ehcache.version>2.6.2</ehcache.version>
 		
     <project.build.sourceVersion>1.6</project.build.sourceVersion>
     <project.build.targetVersion>1.6</project.build.targetVersion>
