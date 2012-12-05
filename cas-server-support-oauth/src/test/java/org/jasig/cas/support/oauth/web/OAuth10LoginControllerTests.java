@@ -20,14 +20,8 @@ package org.jasig.cas.support.oauth.web;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jasig.cas.support.oauth.OAuthConfiguration;
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.web.flow.OAuthAction;
 import org.junit.Test;
-import org.scribe.up.provider.OAuthProvider;
+import org.scribe.up.provider.ProvidersDefinition;
 import org.scribe.up.provider.impl.TwitterProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -52,22 +46,17 @@ public final class OAuth10LoginControllerTests {
         twitterProvider.setKey("OPEWaSoTuAe49K4dSoRvNw");
         twitterProvider.setSecret("aKmvleltXAmLKcnlMgzRjTsCnhV3QVMVDh153xJttCo");
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", MY_LOGIN_URL);
-        mockRequest.setParameter(OAuthConstants.OAUTH_PROVIDER, twitterProvider.getType());
+        mockRequest.setParameter(ProvidersDefinition.DEFAULT_PROVIDER_TYPE_PARAMETER, twitterProvider.getType());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
-        oAuthConfiguration.setLoginUrl(MY_LOGIN_URL);
-        final List<OAuthProvider> providers = new ArrayList<OAuthProvider>();
-        providers.add(twitterProvider);
-        oAuthConfiguration.setProviders(providers);
-        // use OAuthAction to init oAuthConfiguration (as it's done in its class)
-        final OAuthAction oAuthAction = new OAuthAction();
-        oAuthAction.setConfiguration(oAuthConfiguration);
+        final ProvidersDefinition providersDefinition = new ProvidersDefinition(twitterProvider);
+        providersDefinition.setBaseUrl(MY_LOGIN_URL);
+        providersDefinition.init();
         final OAuth10LoginController oAuth10LoginController = new OAuth10LoginController();
-        oAuth10LoginController.setConfiguration(oAuthConfiguration);
+        oAuth10LoginController.setProvidersDefinition(providersDefinition);
         final ModelAndView modelAndView = oAuth10LoginController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertTrue(redirectView.getUrl().startsWith("https://api.twitter.com/oauth/authorize?oauth_token="));
+        assertTrue(redirectView.getUrl().startsWith("https://api.twitter.com/oauth/authenticate?oauth_token="));
     }
 }
