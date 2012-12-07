@@ -84,9 +84,8 @@ footer { color: #999; margin: 20px 0; }
 @media only screen and (max-width: 799px) { 
   header h1 { font-size: 1em; }
   #login { float: none; width: 100%; }
-  #fm1 .row label { margin-left: -10px; }
   #fm1 .row input[type=text], 
-  #fm1 .row input[type=password] { width: 100%; margin-left: -10px; padding: 10px; }
+  #fm1 .row input[type=password] { width: 100%; padding: 10px; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
   #fm1 .row .btn-submit { outline: none; -webkit-appearance: none; -webkit-border-radius: 0; border: 0; background: #210F7A; color: white; font-weight: bold; width: 100%; padding: 10px 20px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
   #fm1 .row .btn-reset { display: none; }
   #sidebar { margin-top: 20px; }
