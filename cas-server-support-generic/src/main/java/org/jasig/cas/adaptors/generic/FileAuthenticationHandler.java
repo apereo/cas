@@ -22,8 +22,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.core.io.Resource;
 
 import javax.validation.constraints.NotNull;
@@ -42,7 +42,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.0
  */
 public class FileAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+        AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
     private static final String DEFAULT_SEPARATOR = "::";
@@ -55,7 +55,7 @@ public class FileAuthenticationHandler extends
     @NotNull
     private Resource fileName;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) {
         BufferedReader bufferedReader = null;
 
         try {

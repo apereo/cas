@@ -24,15 +24,14 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
+import org.jasig.cas.support.oauth.authentication.principal.OAuthCredential;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
-import org.scribe.up.credential.OAuthCredential;
 import org.scribe.up.provider.BaseOAuth10Provider;
 import org.scribe.up.provider.BaseOAuthProvider;
 import org.scribe.up.provider.OAuthProvider;
@@ -83,7 +82,7 @@ public final class OAuthAction extends AbstractAction {
             
             // get credential
             @SuppressWarnings("unchecked")
-            final OAuthCredential credential = provider.getCredential(new HttpUserSession(request),
+            final org.scribe.up.credential.OAuthCredential credential = provider.getCredential(new HttpUserSession(request),
                                                                       request.getParameterMap());
             log.debug("credential : {}", credential);
             
@@ -95,7 +94,7 @@ public final class OAuthAction extends AbstractAction {
             restoreRequestAttribute(request, session, OAuthConstants.METHOD);
             
             // create credentials
-            final Credentials credentials = new OAuthCredentials(credential);
+            final Credential credentials = new OAuthCredential(credential);
             
             try {
                 WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService

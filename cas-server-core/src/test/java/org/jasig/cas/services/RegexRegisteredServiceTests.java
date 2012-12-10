@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.mock.MockService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

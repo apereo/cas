@@ -24,7 +24,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import com.esotericsoftware.kryo.Kryo;
-import org.jasig.cas.authentication.principal.GoogleAccountsService;
+import org.jasig.cas.authentication.service.GoogleAccountsService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
 /**

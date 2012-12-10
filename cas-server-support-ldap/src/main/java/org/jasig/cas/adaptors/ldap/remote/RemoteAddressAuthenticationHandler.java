@@ -23,7 +23,7 @@ import java.net.UnknownHostException;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,9 +51,9 @@ public final class RemoteAddressAuthenticationHandler implements
     @NotNull
     private InetAddress inetNetwork = null;
 
-    public boolean authenticate(final Credentials credentials)
+    public boolean authenticate(final Credential credential)
         throws AuthenticationException {
-        final RemoteAddressCredentials c = (RemoteAddressCredentials) credentials;
+        final RemoteAddressCredential c = (RemoteAddressCredential) credential;
         try {
             final InetAddress inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
             return containsAddress(this.inetNetwork, this.inetNetmask, inetAddress);
@@ -62,8 +62,8 @@ public final class RemoteAddressAuthenticationHandler implements
         }  
     }
 
-    public boolean supports(final Credentials credentials) {
-        return credentials.getClass().equals(RemoteAddressCredentials.class);
+    public boolean supports(final Credential credential) {
+        return credential.getClass().equals(RemoteAddressCredential.class);
     }
     
     /**

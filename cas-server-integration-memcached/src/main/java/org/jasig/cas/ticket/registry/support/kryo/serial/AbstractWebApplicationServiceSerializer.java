@@ -22,11 +22,11 @@ import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
-import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.service.AbstractWebApplicationService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
 /**
- * Serializer for classes that extend {@link org.jasig.cas.authentication.principal.AbstractWebApplicationService}.
+ * Serializer for classes that extend {@link org.jasig.cas.authentication.service.AbstractWebApplicationService}.
  *
  * @author Marvin S. Addison
  * @version $Revision: $

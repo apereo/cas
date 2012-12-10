@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,12 +25,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import javax.sql.DataSource;
 
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -43,14 +40,11 @@ import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.IfProfileValue;
@@ -63,6 +57,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 
 /**
@@ -157,7 +156,7 @@ public class JpaTicketRegistryTests {
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 idGenerator.getNewTicketId("TGT"),
-                new ImmutableAuthentication(principal, null),
+                TestUtils.newAuthentication(principal),
                 expirationPolicyTGT);
     }
     
@@ -218,7 +217,7 @@ public class JpaTicketRegistryTests {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
                 public String doInTransaction(final TransactionStatus status) {
                     // Querying for the TGT prior to updating it as done in
-                    // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credentials)
+                    // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credential)
                     final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
                     jpaTicketRegistry.addTicket(st);
                     return st.getId();

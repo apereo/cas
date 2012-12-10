@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.*;
@@ -39,7 +39,7 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
     protected BindTestConfig bindTestConfig;
 
     public void testSuccessUsernamePassword() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.bindTestConfig.getExistsCredential());
         c.setPassword(this.bindTestConfig.getExistsSuccessPassword());
         
@@ -48,7 +48,7 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
 
 
     public void testBadUsernamePassword() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.bindTestConfig.getExistsCredential());
         c.setPassword(this.bindTestConfig.getExistsFailurePassword());
         
@@ -57,7 +57,7 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
 
 
     public void testNotExistsUsername() throws Exception {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.bindTestConfig.getNotExistsCredential());
         c.setPassword("");
         

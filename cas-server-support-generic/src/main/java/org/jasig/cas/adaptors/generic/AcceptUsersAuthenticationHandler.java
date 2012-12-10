@@ -21,8 +21,8 @@ package org.jasig.cas.adaptors.generic;
 import java.util.Collections;
 import java.util.Map;
 
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 import javax.validation.constraints.NotNull;
 
@@ -50,7 +50,7 @@ public class AcceptUsersAuthenticationHandler extends
     @NotNull
     private Map<String, String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String cachedPassword = this.users.get(transformedUsername);
 

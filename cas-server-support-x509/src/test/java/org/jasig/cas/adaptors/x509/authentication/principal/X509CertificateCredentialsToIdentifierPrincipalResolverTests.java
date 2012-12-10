@@ -23,9 +23,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToIdentifierPrincipalResolver;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 
 /**
@@ -38,27 +36,27 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
     extends AbstractX509CertificateTests {
 
-    X509CertificateCredentialsToIdentifierPrincipalResolver resolver = new X509CertificateCredentialsToIdentifierPrincipalResolver();
+    X509CertificateIdentifierPrincipalResolver resolver = new X509CertificateIdentifierPrincipalResolver();
     
     public void testResolvePrincipalInternal() throws Exception {
-        final X509CertificateCredentials credentials = new X509CertificateCredentials(
+        final X509CertificateCredential credentials = new X509CertificateCredential(
             new X509Certificate[0]);
         credentials.setCertificate(getTestCertificate());
 
         this.resolver.setIdentifier("$C, $CN");
-        assertEquals("The principals should match", this.resolver.resolvePrincipal(
-            credentials).getId(), "SE, test testsson");
+        assertEquals("The principals should match", this.resolver.resolve(
+                credentials).getId(), "SE, test testsson");
         assertFalse("The principals should not match", this.resolver
-            .resolvePrincipal(credentials).getId().equals("SE, Altcom Test"));
+            .resolve(credentials).getId().equals("SE, Altcom Test"));
     }
 
     public void testSupport() {
-        final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
     
     public void testSupportFalse() {
-        assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
+        assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 
     private X509Certificate getTestCertificate() {

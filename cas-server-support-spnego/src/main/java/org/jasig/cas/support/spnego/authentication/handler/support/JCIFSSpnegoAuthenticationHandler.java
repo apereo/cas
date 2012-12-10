@@ -19,12 +19,11 @@
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import jcifs.spnego.Authentication;
+import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import java.util.regex.Pattern;
  * @since 3.1
  */
 public final class JCIFSSpnegoAuthenticationHandler extends
-    AbstractPreAndPostProcessingAuthenticationHandler {
+        AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -58,9 +57,9 @@ public final class JCIFSSpnegoAuthenticationHandler extends
      */
     private boolean isNTLMallowed = false;
 
-    protected boolean doAuthentication(final Credentials credentials)
+    protected boolean doAuthentication(final Credential credential)
         throws AuthenticationException {
-        final SpnegoCredentials spnegoCredentials = (SpnegoCredentials) credentials;
+        final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         Principal principal;
         byte[] nextToken;
         try {
@@ -76,7 +75,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
         }
         // evaluate jcifs response
         if (nextToken != null) {
-            logger.debug("Setting nextToken in credentials");
+            logger.debug("Setting nextToken in credential");
             spnegoCredentials.setNextToken(nextToken);
         } else {
             logger.debug("nextToken is null");
@@ -85,7 +84,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
         if (principal != null) {
             if (spnegoCredentials.isNtlm()) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("NTLM Credentials is valid for user ["
+                    logger.debug("NTLM Credential is valid for user ["
                         + principal.getName() + "]");
                 }
                 spnegoCredentials.setPrincipal(getSimplePrincipal(principal
@@ -94,7 +93,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends
             }
             // else => kerberos
             if (logger.isDebugEnabled()) {
-                logger.debug("Kerberos Credentials is valid for user ["
+                logger.debug("Kerberos Credential is valid for user ["
                     + principal.getName() + "]");
             }
             spnegoCredentials.setPrincipal(getSimplePrincipal(principal
@@ -108,9 +107,9 @@ public final class JCIFSSpnegoAuthenticationHandler extends
         return false;
     }
 
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-            && SpnegoCredentials.class.equals(credentials.getClass());
+    public boolean supports(final Credential credential) {
+        return credential != null
+            && SpnegoCredential.class.equals(credential.getClass());
     }
 
     public void setAuthentication(final Authentication authentication) {

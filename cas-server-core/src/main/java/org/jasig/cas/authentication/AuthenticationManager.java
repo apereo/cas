@@ -18,39 +18,35 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 /**
- * The AuthenticationManager class is the entity that determines the
- * authenticity of the credentials provided. It (or a class it delegates to) is
- * the sole authority on whether credentials are valid or not.
- * 
+ * Authentication managers employ various strategies to authenticate one or more credentials.
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ * @see AuthenticationHandler
  */
 public interface AuthenticationManager {
     
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
 
     /**
-     * Method to validate the credentials provided. On successful validation, a
-     * fully populated Authentication object will be returned. Typically this
-     * will involve resolving a principal and providing any additional
-     * attributes, but specifics are left to the individual implementations to
-     * determine. Failure to authenticate is considered an exceptional case, and
-     * an AuthenticationException is thrown.
-     * 
-     * @param credentials The credentials provided for authentication.
-     * @return fully populated Authentication object.
-     * @throws AuthenticationException if unable to determine validity of
-     * credentials or there is an extenuating circumstance related to
-     * credentials (i.e. Account locked).
+     * Authenticates the given credentials. Depending on the strategy employed by the component, one, several, or all
+     * credentials may be authenticated. At least one credential MUST be authenticated in order for authentication to
+     * succeed. The credential must be resolved into a principal by some means as part of authentication. Implementers
+     * SHOULD treat failure to resolve a principal as an authentication failure.
+     *
+     * @param credentials One or more credentials to authenticate.
+     *
+     * @return An authentication containing a resolved principal on success.
+     *
+     * @throws GeneralSecurityException On authentication failures where the root cause is security related,
+     * e.g. invalid credentials.
+     * @throws IOException On authentication failures caused by IO errors (e.g. socket errors communicating with remote
+     * authentication sources).
      */
-    Authentication authenticate(final Credentials credentials)
-        throws AuthenticationException;
+    Authentication authenticate(final Credential ... credentials) throws GeneralSecurityException, IOException;
 }

@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -29,29 +30,54 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractAuthentication implements Authentication {
 
-    private static final long serialVersionUID = 6893533826116808126L;
+    /** Serialization version marker. */
+    private static final long serialVersionUID = -7375625871357827332L;
 
     /** A Principal object representing the authenticated entity. */
-    private final Principal principal;
+    private Principal principal;
 
     /** Associated authentication attributes. */
-    private final Map<String, Object> attributes;
+    private Map<String, Object> attributes;
 
-    public AbstractAuthentication(final Principal principal,
-        final Map<String, Object> attributes) {
-        Assert.notNull(principal, "principal cannot be null");
-        Assert.notNull(attributes, "attributes cannot be null");
+    private Map<HandlerResult, Principal> successes;
 
-        this.principal = principal;
+    private Map<String, GeneralSecurityException> failures;
+
+
+    protected void setAttributes(final Map<String, Object> attributes) {
+        Assert.notNull(attributes, "Attributes cannot be null.");
         this.attributes = attributes;
     }
+
 
     public final Map<String, Object> getAttributes() {
         return this.attributes;
     }
 
+    protected void setPrincipal(final Principal principal) {
+        this.principal = principal;
+    }
+
     public final Principal getPrincipal() {
         return this.principal;
+    }
+
+    protected void setSuccesses(Map<HandlerResult, Principal> successes) {
+        Assert.notEmpty(successes, "Successes cannot be null or empty.");
+        this.successes = successes;
+    }
+
+    public Map<HandlerResult, Principal> getSuccesses() {
+        return this.successes;
+    }
+
+    protected void setFailures(final Map<String, GeneralSecurityException> failures) {
+        Assert.notNull(failures , "Failures cannot be null.");
+        this.failures = failures;
+    }
+
+    public Map<String, GeneralSecurityException> getFailures() {
+        return this.failures;
     }
 
     public final boolean equals(final Object o) {
@@ -62,12 +88,19 @@ public abstract class AbstractAuthentication implements Authentication {
         Authentication a = (Authentication) o;
 
         return this.principal.equals(a.getPrincipal())
-            && this.getAuthenticatedDate().equals(a.getAuthenticatedDate()) && this.attributes.equals(a.getAttributes());
+                && this.getAuthenticatedDate().equals(a.getAuthenticatedDate())
+                && this.attributes.equals(a.getAttributes())
+                && this.successes.equals(a.getSuccesses())
+                && this.failures.equals(a.getFailures());
     }
 
     public final int hashCode() {
-        return 49 * this.principal.hashCode()
-            ^ this.getAuthenticatedDate().hashCode();
+        final HashCodeBuilder builder = new HashCodeBuilder(49, 31);
+        builder.append(this.principal);
+        builder.append(this.getAuthenticatedDate());
+        builder.append(this.successes);
+        builder.append(this.failures);
+        return builder.toHashCode();
     }
 
     public final String toString() {

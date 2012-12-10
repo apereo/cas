@@ -19,7 +19,7 @@
 
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.web.support.WebUtils;

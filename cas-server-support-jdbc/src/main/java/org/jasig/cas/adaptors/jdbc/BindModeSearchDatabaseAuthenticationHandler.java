@@ -22,7 +22,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
 /**
@@ -40,7 +40,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends
     AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
+        final UsernamePasswordCredential credentials)
         throws AuthenticationException {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();

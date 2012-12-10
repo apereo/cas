@@ -47,48 +47,48 @@
 		<!--
 			| This is the List of CredentialToPrincipalResolvers that identify what Principal is trying to authenticate.
 			| The AuthenticationManagerImpl considers them in order, finding a CredentialToPrincipalResolver which 
-			| supports the presented credentials.
+			| supports the presented credential.
 			|
 			| AuthenticationManagerImpl uses these resolvers for two purposes.  First, it uses them to identify the Principal
 			| attempting to authenticate to CAS /login .  In the default configuration, it is the DefaultCredentialsToPrincipalResolver
-			| that fills this role.  If you are using some other kind of credentials than UsernamePasswordCredentials, you will need to replace
-			| DefaultCredentialsToPrincipalResolver with a CredentialsToPrincipalResolver that supports the credentials you are
+			| that fills this role.  If you are using some other kind of credential than UsernamePasswordCredential, you will need to replace
+			| DefaultCredentialsToPrincipalResolver with a PrincipalResolver that supports the credential you are
 			| using.
 			|
 			| Second, AuthenticationManagerImpl uses these resolvers to identify a service requesting a proxy granting ticket. 
-			| In the default configuration, it is the HttpBasedServiceCredentialsToPrincipalResolver that serves this purpose. 
+			| In the default configuration, it is the HttpBasedServicePrincipalResolver that serves this purpose.
 			| You will need to change this list if you are identifying services by something more or other than their callback URL.
 			+-->
-		<property name="credentialsToPrincipalResolvers">
+		<property name="principalResolvers">
 			<list>
 				<!--
-					| UsernamePasswordCredentialsToPrincipalResolver supports the UsernamePasswordCredentials that we use for /login 
-					| by default and produces SimplePrincipal instances conveying the username from the credentials.
+					| UsernamePasswordPrincipalResolver supports the UsernamePasswordCredential that we use for /login
+					| by default and produces SimplePrincipal instances conveying the username from the credential.
 					| 
-					| If you've changed your LoginFormAction to use credentials other than UsernamePasswordCredentials then you will also
-					| need to change this bean declaration (or add additional declarations) to declare a CredentialsToPrincipalResolver that supports the
-					| Credentials you are using.
+					| If you've changed your LoginFormAction to use credential other than UsernamePasswordCredential then you will also
+					| need to change this bean declaration (or add additional declarations) to declare a PrincipalResolver that supports the
+					| Credential you are using.
 					+-->
 				<bean
-					class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+					class="org.jasig.cas.authentication.principal.UsernamePasswordPrincipalResolver" />
 				<!--
-					| HttpBasedServiceCredentialsToPrincipalResolver supports HttpBasedCredentials.  It supports the CAS 2.0 approach of
-					| authenticating services by SSL callback, extracting the callback URL from the Credentials and representing it as a
+					| HttpBasedServicePrincipalResolver supports HttpBasedCredentials.  It supports the CAS 2.0 approach of
+					| authenticating services by SSL callback, extracting the callback URL from the Credential and representing it as a
 					| SimpleService identified by that callback URL.
 					|
 					| If you are representing services by something more or other than an HTTPS URL whereat they are able to
 					| receive a proxy callback, you will need to change this bean declaration (or add additional declarations).
 					+-->
 				<bean
-					class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+					class="org.jasig.cas.authentication.service.HttpBasedServicePrincipalResolver" />
 			</list>
 		</property>
 
 		<!--
-			| Whereas CredentialsToPrincipalResolvers identify who it is some Credentials might authenticate, 
-			| AuthenticationHandlers actually authenticate credentials.  Here we declare the AuthenticationHandlers that
+			| Whereas CredentialsToPrincipalResolvers identify who it is some Credential might authenticate,
+			| AuthenticationHandlers actually authenticate credential.  Here we declare the AuthenticationHandlers that
 			| authenticate the Principals that the CredentialsToPrincipalResolvers identified.  CAS will try these handlers in turn
-			| until it finds one that both supports the Credentials presented and succeeds in authenticating.
+			| until it finds one that both supports the Credential presented and succeeds in authenticating.
 			+-->
 		<property name="authenticationHandlers">
 			<list>
@@ -97,11 +97,11 @@
 					| a server side SSL certificate.
 					+-->
 				<bean
-					class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+					class="org.jasig.cas.authentication.HttpBasedServiceCredentialsAuthenticationHandler" />
 
 				<!--
 					| This is the authentication handler declaration that every CAS deployer will need to change before deploying CAS 
-					| into production.  The default SimpleTestUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredentials
+					| into production.  The default SimpleTestUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredential
 					| where the username equals the password.  You will need to replace this with an AuthenticationHandler that implements your
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.

@@ -20,15 +20,15 @@ package org.jasig.cas.adaptors.x509.web.flow;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Concrete implementation of AbstractNonInteractiveCredentialsAction that
  * obtains the X509 Certificates from the HttpServletRequest and places them in
- * the X509CertificateCredentials.
+ * the X509CertificateCredential.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -39,7 +39,7 @@ public final class X509CertificateCredentialsNonInteractiveAction extends
 
     private static final String CERTIFICATE_REQUEST_ATTRIBUTE = "javax.servlet.request.X509Certificate";
 
-    protected Credentials constructCredentialsFromRequest(
+    protected Credential constructCredentialsFromRequest(
         final RequestContext context) {
         final X509Certificate[] certificates = (X509Certificate[]) context
             .getExternalContext().getRequestMap().get(
@@ -55,6 +55,6 @@ public final class X509CertificateCredentialsNonInteractiveAction extends
         if (logger.isDebugEnabled()) {
             logger.debug("Certificate found in request.");
         }
-        return new X509CertificateCredentials(certificates);
+        return new X509CertificateCredential(certificates);
     }
 }

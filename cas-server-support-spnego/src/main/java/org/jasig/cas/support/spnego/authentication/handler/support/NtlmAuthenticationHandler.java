@@ -28,13 +28,12 @@ import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
 
+import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import javax.validation.constraints.NotNull;
 
@@ -49,7 +48,7 @@ import javax.validation.constraints.NotNull;
  */
 
 public class NtlmAuthenticationHandler extends
-    AbstractPreAndPostProcessingAuthenticationHandler {
+        AbstractPreAndPostProcessingAuthenticationHandler {
 
     private boolean loadBalance = true;
 
@@ -58,9 +57,9 @@ public class NtlmAuthenticationHandler extends
     
     private String includePattern = null;
 
-    protected final boolean doAuthentication(final Credentials credentials)
+    protected final boolean doAuthentication(final Credential credential)
         throws AuthenticationException {
-        final SpnegoCredentials ntlmCredentials = (SpnegoCredentials) credentials;
+        final SpnegoCredential ntlmCredentials = (SpnegoCredential) credential;
         final byte[] src = ntlmCredentials.getInitToken();
 
         UniAddress dc = null;
@@ -125,9 +124,9 @@ public class NtlmAuthenticationHandler extends
         return false;
     }
 
-    public boolean supports(final Credentials credentials) {
-        return credentials != null
-            && SpnegoCredentials.class.equals(credentials.getClass());
+    public boolean supports(final Credential credential) {
+        return credential != null
+            && SpnegoCredential.class.equals(credential.getClass());
     }
 
     public void setLoadBalance(final boolean loadBalance) {

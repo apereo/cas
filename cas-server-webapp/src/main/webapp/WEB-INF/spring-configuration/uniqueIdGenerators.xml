@@ -73,16 +73,16 @@
 	
 	<util:map id="uniqueIdGeneratorsMap">
 		<entry
-			key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+			key="org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl"
 			value-ref="serviceTicketUniqueIdGenerator" />
         <entry
             key="org.jasig.cas.support.openid.authentication.principal.OpenIdService"
             value-ref="serviceTicketUniqueIdGenerator" />
 		<entry
-			key="org.jasig.cas.authentication.principal.SamlService"
+			key="org.jasig.cas.authentication.service.SamlService"
 			value-ref="samlServiceTicketUniqueIdGenerator" />
 		<entry
-			key="org.jasig.cas.authentication.principal.GoogleAccountsService"
+			key="org.jasig.cas.authentication.service.GoogleAccountsService"
 			value-ref="serviceTicketUniqueIdGenerator" />
 	</util:map>
 

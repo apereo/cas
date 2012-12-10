@@ -18,19 +18,19 @@
  */
 package org.jasig.cas.mock;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Mock ticket-granting ticket;
@@ -55,7 +55,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
-        authentication = new ImmutableAuthentication(new SimplePrincipal(principal));
+        authentication = TestUtils.newAuthentication(new SimplePrincipal(principal));
         created = new Date();
     }
     

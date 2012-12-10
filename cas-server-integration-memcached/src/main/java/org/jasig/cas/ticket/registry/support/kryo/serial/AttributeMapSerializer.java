@@ -29,7 +29,7 @@ import com.esotericsoftware.kryo.Kryo.RegisteredClass;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
- * Serializes the attribute map of a {@link org.jasig.cas.authentication.principal.SimplePrincipal}.
+ * Serializes the attribute map of a {@link org.jasig.cas.authentication.SimplePrincipal}.
  *
  * @author Middleware Services
  * @version $Revision: $

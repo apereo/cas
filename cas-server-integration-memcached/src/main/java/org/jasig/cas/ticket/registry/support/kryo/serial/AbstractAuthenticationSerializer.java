@@ -25,7 +25,7 @@ import java.util.Map;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.Principal;
 
 /**
  * Serializer for classes that extend {@link org.jasig.cas.authentication.AbstractAuthentication}.

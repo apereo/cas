@@ -43,7 +43,7 @@
 			name="uniqueTicketIdGeneratorsForService">
 			<map>
                 <entry
-                        key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                        key="org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl"
                         value-ref="uniqueTicketIdGenerator" />
                 <entry
                         key="org.jasig.cas.authentication.principal.OpenIdService"
@@ -117,31 +117,15 @@
 	
 	<bean
 		id="authenticationManager"
-		class="org.jasig.cas.authentication.AuthenticationManagerImpl">
-		<property
-			name="credentialsToPrincipalResolvers">
-			<list>
-				<ref
-					local="usernamePasswordCredentialsToPrincipalResolver" />
-				<ref
-					local="httpBasedServiceCredentialsToPrincipalResolver" />
-<!--				<bean
-					class="org.jasig.cas.authentication.principal.OpenIdCredentialsToPrincipalResolver" />-->
-			</list>
-		</property>
-		<property
-			name="authenticationHandlers">
-			<list>
-				<ref
-					local="simpleTestUsernamePasswordAuthenticationHandler" />
-				<ref
-					local="httpBasedServiceCredentialsAuthenticationHandler" />
-<!--				<bean
-					class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler">
-					<property name="ticketRegistry" ref="ticketRegistry" />
-				</bean>-->
-			</list>
-		</property>
+		class="org.jasig.cas.authentication.AnyAuthenticationManger">
+    <constructor-arg>
+      <map>
+        <entry key-ref="simpleTestUsernamePasswordAuthenticationHandler"
+               value-ref="usernamePasswordCredentialsToPrincipalResolver" />
+        <entry key-ref="httpBasedServiceCredentialsAuthenticationHandler"
+               value-ref="httpBasedServiceCredentialsToPrincipalResolver" />
+      </map>
+    </constructor-arg>
 		<property
 			name="authenticationMetaDataPopulators">
 			<list>
@@ -165,17 +149,17 @@
 		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 
 	<bean id="usernamePasswordCredentialsToPrincipalResolver"
-		class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" >
+		class="org.jasig.cas.authentication.principal.UsernamePasswordPrincipalResolver" >
 		<property name="attributeRepository" ref="attributeRepository" />
 	</bean>
 		
 	<bean
 		id="httpBasedServiceCredentialsToPrincipalResolver"
-		class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+		class="org.jasig.cas.authentication.service.HttpBasedServicePrincipalResolver" />
 		
 	<bean
 		id="httpBasedServiceCredentialsAuthenticationHandler"
-		class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
+		class="org.jasig.cas.authentication.HttpBasedServiceCredentialsAuthenticationHandler">
 		<property name="httpClient">
 			<bean class="org.jasig.cas.util.HttpClient" />
 		</property>
@@ -183,7 +167,7 @@
 	
 	<bean
 		id="simpleTestUsernamePasswordAuthenticationHandler"
-		class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />		
+		class="org.jasig.cas.authentication.SimpleTestUsernamePasswordAuthenticationHandler" />
 		
 	<bean
 		id="authenticationMetaDataPopulator"

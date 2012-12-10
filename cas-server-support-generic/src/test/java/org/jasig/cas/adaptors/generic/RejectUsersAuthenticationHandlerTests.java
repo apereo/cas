@@ -23,10 +23,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import junit.framework.TestCase;
 
 /**
@@ -52,7 +51,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
     }
 
     public void testSupportsProperUserCredentials() {
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");
@@ -66,7 +65,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
     public void testDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
-                .supports(new HttpBasedServiceCredentials(new URL(
+                .supports(new HttpBasedServiceCredential(new URL(
                     "http://www.rutgers.edu"))));
         } catch (MalformedURLException e) {
             fail("Could not resolve URL.");
@@ -74,7 +73,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsUserInMap() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -88,7 +87,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
     }
 
     public void testPassesUserNotInMap() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -101,7 +100,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsNullUserName() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -114,7 +113,7 @@ public class RejectUsersAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsNullUserNameAndPassword() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);

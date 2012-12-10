@@ -21,7 +21,7 @@ package org.jasig.cas.services.web.support;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;

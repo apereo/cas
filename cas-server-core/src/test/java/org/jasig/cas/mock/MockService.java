@@ -20,9 +20,9 @@ package org.jasig.cas.mock;
 
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.service.Response;
+import org.jasig.cas.authentication.service.Service;
 
 /**
  * Simple mock implementation of a service principal.

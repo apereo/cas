@@ -160,7 +160,7 @@
                     username nor the name of the resolved principal may exist in more than one authentication source.</para>
             </caution>
 
-            <para>CAS supports many ways of authenticating user credentials, including:</para>
+            <para>CAS supports many ways of authenticating user credential, including:</para>
 
             <itemizedlist>
                 <listitem>

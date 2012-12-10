@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.SimplePrincipal;
 
 import junit.framework.TestCase;
 
@@ -31,10 +31,10 @@ import junit.framework.TestCase;
  */
 public class PrincipalBearingCredentialsTests extends TestCase {
 
-        private PrincipalBearingCredentials principalBearingCredentials;
+        private PrincipalBearingCredential principalBearingCredentials;
         
         public void setUp() throws Exception {
-            this.principalBearingCredentials = new PrincipalBearingCredentials(new SimplePrincipal("test"));
+            this.principalBearingCredentials = new PrincipalBearingCredential(new SimplePrincipal("test"));
         }
         
         public void testGetOfPrincipal() {

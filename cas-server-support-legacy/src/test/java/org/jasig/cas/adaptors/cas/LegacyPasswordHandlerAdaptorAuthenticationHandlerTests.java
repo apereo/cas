@@ -48,18 +48,18 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
 
     public void testSupports() {
         assertFalse(this.lphaah.supports(null));
-        assertTrue(this.lphaah.supports(new LegacyCasCredentials()));
-        assertFalse(this.lphaah.supports(new LegacyCasTrustedCredentials()));
+        assertTrue(this.lphaah.supports(new LegacyCasCredential()));
+        assertFalse(this.lphaah.supports(new LegacyCasTrustedCredential()));
     }
 
     /**
-     * Test that throws UnsupportedCredentialsException for a known unsupported
+     * Test that throws UnsupportedCredentialException for a known unsupported
      * credential.
      * 
      * @throws AuthenticationException as a failure modality
      */
     public void testAuthenticateUnsupported() {
-        this.lphaah.supports(new LegacyCasTrustedCredentials());
+        this.lphaah.supports(new LegacyCasTrustedCredential());
     }
 
     public void testAuthenticateSuccess() {
@@ -68,8 +68,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         mockHandler.setSucceed(true);
         this.lphaah.setPasswordHandler(mockHandler);
 
-        // configure the LegacyCasCredentials
-        LegacyCasCredentials credentials = new LegacyCasCredentials();
+        // configure the LegacyCasCredential
+        LegacyCasCredential credentials = new LegacyCasCredential();
         credentials.setUsername("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();
@@ -89,8 +89,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         mockHandler.setSucceed(false);
         this.lphaah.setPasswordHandler(mockHandler);
 
-        // configure the LegacyCasCredentials
-        LegacyCasCredentials credentials = new LegacyCasCredentials();
+        // configure the LegacyCasCredential
+        LegacyCasCredential credentials = new LegacyCasCredential();
         credentials.setUsername("testUser");
         credentials.setPassword("testPassword");
         ServletRequest servletRequest = new MockHttpServletRequest();

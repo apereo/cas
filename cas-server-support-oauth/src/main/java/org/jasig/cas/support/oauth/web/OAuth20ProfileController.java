@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.profile.CasWrapperProfile;
 import org.jasig.cas.ticket.TicketGrantingTicket;

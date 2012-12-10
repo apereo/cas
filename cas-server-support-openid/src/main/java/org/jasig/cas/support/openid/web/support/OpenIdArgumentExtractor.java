@@ -20,7 +20,7 @@ package org.jasig.cas.support.openid.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.service.WebApplicationService;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.web.support.ArgumentExtractor;
 

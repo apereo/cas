@@ -20,8 +20,7 @@ package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * @author Scott Battaglia
@@ -33,25 +32,25 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 public class X509CertificateCredentialsToSNAndIssuerDNPrincipalResolverTests
     extends AbstractX509CertificateTests {
     
-    private X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver resolver = new X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver();
+    private X509CertificateSerialNumberAndIssuerDNPrincipalResolver resolver = new X509CertificateSerialNumberAndIssuerDNPrincipalResolver();
     
     public void testResolvePrincipalInternal() {
-        final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
         
         
         final String value = "SERIALNUMBER=" + VALID_CERTIFICATE.getSerialNumber().toString() + ", " + VALID_CERTIFICATE.getIssuerDN().getName();
         
-        assertEquals(value, this.resolver.resolvePrincipal(c).getId());
+        assertEquals(value, this.resolver.resolve(c).getId());
     }
     
     public void testSupport() {
-        final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
+        final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
     
     public void testSupportFalse() {
-        assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
+        assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
     
 }

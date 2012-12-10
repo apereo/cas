@@ -22,7 +22,7 @@ import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
-import org.jasig.cas.authentication.principal.SamlService;
+import org.jasig.cas.authentication.service.SamlService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.util.HttpClient;
 

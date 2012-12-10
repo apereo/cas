@@ -22,11 +22,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.TestCase;
 
-import org.jasig.cas.adaptors.generic.FileAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UnsupportedCredentialException;
+import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -49,14 +48,14 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testSupportsProperUserCredentials() {
-        UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
         try {
             this.authenticationHandler.authenticate(c);
-        } catch (UnsupportedCredentialsException e) {
-            fail("UnsupportedCredentialsException caught");
+        } catch (UnsupportedCredentialException e) {
+            fail("UnsupportedCredentialException caught");
         } catch (AuthenticationException e) {
             fail("AuthenticationException caught.");
         }
@@ -64,7 +63,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
 
     public void testDoesntSupportBadUserCredentials() {
         try {
-            final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
+            final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
                 new URL("http://www.rutgers.edu"));
             assertFalse(this.authenticationHandler.supports(c));
         } catch (MalformedURLException e) {
@@ -73,7 +72,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testAuthenticatesUserInFileWithDefaultSeparator() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword("rutgers");
@@ -86,7 +85,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsUserNotInFileWithDefaultSeparator() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
@@ -99,7 +98,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsNullUserName() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -112,7 +111,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsNullUserNameAndPassword() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
@@ -125,7 +124,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsNullPassword() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
         c.setPassword(null);
@@ -138,7 +137,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testAuthenticatesUserInFileWithCommaSeparator() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
@@ -154,7 +153,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsUserNotInFileWithCommaSeparator() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
@@ -170,7 +169,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testFailsGoodUsernameBadPassword() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
@@ -186,7 +185,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
     }
 
     public void testAuthenticateNoFileName() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         this.authenticationHandler.setFileName(new ClassPathResource("fff"));
 
         c.setUsername("scott");

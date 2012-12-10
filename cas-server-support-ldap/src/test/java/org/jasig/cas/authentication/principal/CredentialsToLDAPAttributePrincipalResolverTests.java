@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -35,7 +37,7 @@ import static org.junit.Assert.*;
 public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJUnit4SpringContextTests {
 
     @Autowired
-    protected CredentialsToLDAPAttributePrincipalResolver ldapResolver;
+    protected LDAPAttributePrincipalResolver ldapResolver;
 
     @Autowired
     protected ResolverTestConfig resolverTestConfig;
@@ -43,12 +45,12 @@ public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJU
     // XXX TEMPORARILY DISABLED TEST SO WE CAN BUILD
     /*
     public void testRuIdFound() {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(this.resolverTestConfig.getExistsCredential());
         
         assertTrue(this.ldapResolver.supports(credentials));
         
-        final Principal p = this.ldapResolver.resolvePrincipal(credentials);
+        final Principal p = this.ldapResolver.resolve(credentials);
         
         assertNotNull(p);
         assertEquals(this.resolverTestConfig.getExistsPrincipal(), p.getId());
@@ -56,20 +58,20 @@ public class CredentialsToLDAPAttributePrincipalResolverTests extends AbstractJU
 
     @Test
     public void testRuIdNotFound() {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(this.resolverTestConfig.getNotExistsCredential());
         
-        final Principal p = this.ldapResolver.resolvePrincipal(credentials);
+        final Principal p = this.ldapResolver.resolve(credentials);
         
         assertNull(p);
     }
 
     @Test
     public void testTooMany() {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(this.resolverTestConfig.getTooManyCredential());
         
-        final Principal p = this.ldapResolver.resolvePrincipal(credentials);
+        final Principal p = this.ldapResolver.resolve(credentials);
         
         assertNull(p);
     }

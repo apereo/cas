@@ -19,10 +19,9 @@
 package org.jasig.cas.authentication;
 
 import java.io.Serializable;
+import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.Map;
-
-import org.jasig.cas.authentication.principal.Principal;
 
 /**
  * <p>
@@ -42,6 +41,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @version $Revision$ $Date$
  * @since 3.0
  * <p>
@@ -71,4 +71,19 @@ public interface Authentication extends Serializable {
      * @return the map of attributes.
      */
     Map<String, Object> getAttributes();
+
+    /**
+     * Gets a map describing successful authentications produced by {@link AuthenticationHandler} components.
+     *
+     * @return Map of handler results to resolved principals of all authentication handlers
+     * that successfully authenticated credentials.
+     */
+    Map<HandlerResult, Principal> getSuccesses();
+
+    /**
+     * Gets a map describing failed authentications.
+     *
+     * @return Map of authentication handler names to the authentication errors produced on attempted authentication.
+     */
+    Map<String, GeneralSecurityException> getFailures();
 }

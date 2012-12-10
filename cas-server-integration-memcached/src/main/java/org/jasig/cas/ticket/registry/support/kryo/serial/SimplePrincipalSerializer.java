@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.SimplePrincipal;
 
 /**
  * Serializer for {@link SimplePrincipal} class.

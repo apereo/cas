@@ -20,10 +20,9 @@ package org.jasig.cas.support.openid.authentication.handler.support;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -54,12 +53,12 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends TestCase {
     }
     
     public void testSupports() {
-        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredentials("test", "test")));
-        assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredentials()));
+        assertTrue(this.openIdCredentialsAuthenticationHandler.supports(new OpenIdCredential("test", "test")));
+        assertFalse(this.openIdCredentialsAuthenticationHandler.supports(new UsernamePasswordCredential()));
     }
     
     public void testTGTWithSameId() throws Exception {
-        final OpenIdCredentials c = new OpenIdCredentials("test", "test");
+        final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
         
@@ -67,7 +66,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends TestCase {
     }
     
     public void testTGTThatIsExpired() throws Exception {
-        final OpenIdCredentials c = new OpenIdCredentials("test", "test");
+        final OpenIdCredential c = new OpenIdCredential("test", "test");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
         
@@ -76,7 +75,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends TestCase {
     }
     
     public void testTGTWithDifferentId() throws Exception {
-        final OpenIdCredentials c = new OpenIdCredentials("test", "test1");
+        final OpenIdCredential c = new OpenIdCredential("test", "test1");
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
         

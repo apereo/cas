@@ -20,11 +20,11 @@ package org.jasig.cas.adaptors.cas;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.web.bind.CredentialsBinder;
 
 /**
- * Custom Binder to populate the Legacy CAS Credentials with the required
+ * Custom Binder to populate the Legacy CAS Credential with the required
  * ServletRequest.
  * 
  * @author Scott Battaglia
@@ -34,19 +34,19 @@ import org.jasig.cas.web.bind.CredentialsBinder;
 public final class LegacyCasCredentialsBinder implements CredentialsBinder {
 
     public void bind(final HttpServletRequest request,
-        final Credentials credentials) {
-        if (credentials.getClass().equals(LegacyCasCredentials.class)) {
-            ((LegacyCasCredentials) credentials).setServletRequest(request);
+        final Credential credential) {
+        if (credential.getClass().equals(LegacyCasCredential.class)) {
+            ((LegacyCasCredential) credential).setServletRequest(request);
         } else {
-            ((LegacyCasTrustedCredentials) credentials)
+            ((LegacyCasTrustedCredential) credential)
                 .setServletRequest(request);
         }
     }
 
     public boolean supports(final Class<?> clazz) {
         return !(clazz == null)
-            && (clazz.equals(LegacyCasCredentials.class) || clazz
-                .equals(LegacyCasTrustedCredentials.class));
+            && (clazz.equals(LegacyCasCredential.class) || clazz
+                .equals(LegacyCasTrustedCredential.class));
     }
 
 }

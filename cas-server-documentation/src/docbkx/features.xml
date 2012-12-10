@@ -46,7 +46,7 @@ http://www.w3.org/1999/xlink "
         <title>Single Sign-On for the Web</title>
         <para>Jasig CAS implements single sign-on for the Web.</para>
         <para>This means that, within a browser session, users can log in once to CAS, and then log in to additional
-            applications without having to again enter their credentials (most commonly, username and password).
+            applications without having to again enter their credential (most commonly, username and password).
         </para>
         <para>CAS accomplishes this by means of a secure cookie between the end user's Web browser and the CAS server.
             This cookie is exclusively to allow the CAS server to recognize that user on a subsequent login attempt
@@ -74,7 +74,7 @@ http://www.w3.org/1999/xlink "
     <section>
         <title>User authentication</title>
         <para>CAS services as the login and single sign-on user experience web application, but is not itself a
-        repository for end-user accounts and credentials.  Rather, CAS integrates with an external means of credential
+        repository for end-user accounts and credential.  Rather, CAS integrates with an external means of credential
         validation of your choice.  You'll probably choose LDAP (whether as implemented in Microsoft ActiveDirectory
         or as implemented in another LDAP server implementation), but you could instead choose to check against hashed
         passwords stored in a database, rely upon the container (say, an Apache module), use RADIUS, accept an
@@ -122,7 +122,7 @@ http://www.w3.org/1999/xlink "
         <para>CAS implements its login experience using Spring Web Flow, a free and open source framework for building
             end-user-facing Web-based flows. That simple CAS login form is actually a whole flow, processing the user's
             login request to apply single sign-on behaviors if appropriate, to request and authenticate user
-            credentials,
+            credential,
             and to send the user along to the requested service.
         </para>
         <para>It's a web flow, but it's still a pretty simple one.</para>

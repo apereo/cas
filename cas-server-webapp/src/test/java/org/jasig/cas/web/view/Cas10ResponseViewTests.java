@@ -26,8 +26,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -47,7 +46,7 @@ public class Cas10ResponseViewTests extends TestCase {
     protected void setUp() throws Exception {
         this.model = new HashMap<String,Object>();
         List<Authentication> list = new ArrayList<Authentication>();
-        list.add(new ImmutableAuthentication(new SimplePrincipal("test")));
+        list.add(TestUtils.newAuthentication(new SimplePrincipal("test")));
         this.model.put("assertion", new ImmutableAssertionImpl(list,
             TestUtils.getService("TestService"), true));
     }

@@ -18,39 +18,69 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.Date;
-import java.util.HashMap;
-
-import org.jasig.cas.authentication.principal.Principal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Mutable implementation of Authentication interface.
- * <p>
- * Instanciators of the MutableAuthentication class must take care that the map
- * they provide is serializable (i.e. HashMap).
- * 
+ * Provides a mutable implementation of an authentication event that supports property changes.
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0.3
  */
 public final class MutableAuthentication extends AbstractAuthentication {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = -4415875344376642246L;
+    private static final long serialVersionUID = -7489614453763421849L;
 
     /** The date/time this authentication object became valid. */
     private final Date authenticatedDate;
 
-    public MutableAuthentication(final Principal principal) {
-        this(principal, new Date());
+
+    public MutableAuthentication() {
+        this.authenticatedDate = new Date();
+        setAttributes(new LinkedHashMap<String, Object>());
+        setSuccesses(new LinkedHashMap<HandlerResult, Principal>());
+        setFailures(new LinkedHashMap<String, GeneralSecurityException>());
     }
-    
-    public MutableAuthentication(final Principal principal, final Date date) {
-        super(principal, new HashMap<String, Object>());
-        this.authenticatedDate = date;
+
+    /**
+     * Creates a new mutable clone of the given authentication.
+     *
+     * @param source Source to clone.
+     */
+    public MutableAuthentication(final Authentication source) {
+        this.authenticatedDate = source.getAuthenticatedDate();
+        setPrincipal(source.getPrincipal());
+        setAttributes(new LinkedHashMap<String, Object>(source.getAttributes()));
+        setSuccesses(new LinkedHashMap<HandlerResult, Principal>(source.getSuccesses()));
+        setFailures(new LinkedHashMap<String, GeneralSecurityException>(source.getFailures()));
+    }
+
+    @Override
+    public void setAttributes(final Map<String, Object> attributes) {
+        super.setAttributes(attributes);
+    }
+
+    @Override
+    public void setPrincipal(final Principal principal) {
+        super.setPrincipal(principal);
+    }
+
+    @Override
+    public void setSuccesses(final Map<HandlerResult, Principal> successes) {
+        super.setSuccesses(successes);
+    }
+
+    @Override
+    public void setFailures(final Map<String, GeneralSecurityException> failures) {
+        super.setFailures(failures);
     }
 
     public Date getAuthenticatedDate() {
         return this.authenticatedDate;
     }
+
 }

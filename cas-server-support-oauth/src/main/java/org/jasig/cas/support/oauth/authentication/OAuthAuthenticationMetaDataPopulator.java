@@ -19,16 +19,16 @@
 package org.jasig.cas.support.oauth.authentication;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
+import org.jasig.cas.authentication.support.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
+import org.jasig.cas.support.oauth.authentication.principal.OAuthCredential;
 
 /**
- * This class is a meta data populator for OAuth authentication. As attributes are stored in OAuthCredentials (through user profile), they
+ * This class is a meta data populator for OAuth authentication. As attributes are stored in OAuthCredential (through user profile), they
  * are added to the returned principal. The provider type associated to the authentication is also added to the authentication attributes.
  * 
  * @author Jerome Leleu
@@ -36,9 +36,9 @@ import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
  */
 public final class OAuthAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
     
-    public Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
-        if (credentials instanceof OAuthCredentials) {
-            OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
+    public Authentication populateAttributes(final Authentication authentication, final Credential credential) {
+        if (credential instanceof OAuthCredential) {
+            OAuthCredential oauthCredentials = (OAuthCredential) credential;
             final Principal simplePrincipal = new SimplePrincipal(authentication.getPrincipal().getId(),
                                                                   oauthCredentials.getUserProfile().getAttributes());
             final MutableAuthentication mutableAuthentication = new MutableAuthentication(simplePrincipal,

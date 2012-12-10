@@ -19,7 +19,7 @@
 package org.jasig.cas.ticket;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 
 import junit.framework.TestCase;
 

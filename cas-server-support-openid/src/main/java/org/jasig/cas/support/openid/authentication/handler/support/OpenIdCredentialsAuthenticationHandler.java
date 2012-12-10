@@ -20,8 +20,8 @@ package org.jasig.cas.support.openid.authentication.handler.support;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
@@ -43,9 +43,9 @@ public final class OpenIdCredentialsAuthenticationHandler implements
 
 
 
-    public boolean authenticate(final Credentials credentials)
+    public boolean authenticate(final Credential credential)
         throws AuthenticationException {
-        final OpenIdCredentials c = (OpenIdCredentials) credentials;
+        final OpenIdCredential c = (OpenIdCredential) credential;
 
         boolean result = false;
         final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry
@@ -61,8 +61,8 @@ public final class OpenIdCredentialsAuthenticationHandler implements
         return result;
     }
 
-    public boolean supports(final Credentials credentials) {
-        return credentials instanceof OpenIdCredentials;
+    public boolean supports(final Credential credential) {
+        return credential instanceof OpenIdCredential;
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {

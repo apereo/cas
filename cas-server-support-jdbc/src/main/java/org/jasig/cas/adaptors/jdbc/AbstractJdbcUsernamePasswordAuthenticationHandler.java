@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;

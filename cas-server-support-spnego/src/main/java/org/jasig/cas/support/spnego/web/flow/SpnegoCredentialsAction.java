@@ -19,8 +19,8 @@
 package org.jasig.cas.support.spnego.web.flow;
 
 import jcifs.util.Base64;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
@@ -32,9 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
- * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials}.<br/>
+ * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.<br/>
  * Once AbstractNonInteractiveCredentialsAction has executed the authentication
- * procedure, this action check wether a principal is present in Credentials and
+ * procedure, this action check wether a principal is present in Credential and
  * add correspondings response headers.
  * 
  * @author Arnaud Lesueur
@@ -58,7 +58,7 @@ public final class SpnegoCredentialsAction extends
      */
     private boolean send401OnAuthenticationFailure = true;
 
-    protected Credentials constructCredentialsFromRequest(
+    protected Credential constructCredentialsFromRequest(
         final RequestContext context) {
         final HttpServletRequest request = WebUtils
             .getHttpServletRequest(context);
@@ -79,7 +79,7 @@ public final class SpnegoCredentialsAction extends
             if (logger.isDebugEnabled()) {
                 logger.debug("Obtained token: " + new String(token));
             }
-            return new SpnegoCredentials(token);
+            return new SpnegoCredential(token);
         }
 
         return null;
@@ -91,24 +91,24 @@ public final class SpnegoCredentialsAction extends
     }
 
     protected void onError(final RequestContext context,
-        final Credentials credentials) {
-        setResponseHeader(context, credentials);
+        final Credential credential) {
+        setResponseHeader(context, credential);
     }
 
     protected void onSuccess(final RequestContext context,
-        final Credentials credentials) {
-        setResponseHeader(context, credentials);
+        final Credential credential) {
+        setResponseHeader(context, credential);
     }
 
     private void setResponseHeader(final RequestContext context,
-        final Credentials credentials) {
-        if (credentials == null) {
+        final Credential credential) {
+        if (credential == null) {
             return;
         }
 
         final HttpServletResponse response = WebUtils
             .getHttpServletResponse(context);
-        final SpnegoCredentials spnegoCredentials = (SpnegoCredentials) credentials;
+        final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
             if (logger.isDebugEnabled()) {

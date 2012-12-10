@@ -120,14 +120,14 @@
   />
 
   <bean id="ldapResolver"
-    class="org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver"
+    class="org.jasig.cas.authentication.principal.LDAPAttributePrincipalResolver"
     p:filter="rutgersEduIID=%u"
     p:principalAttributeName="uid"
     p:searchBase="ou=people,dc=rutgers,dc=edu"
     p:contextSource-ref="contextSource">
-    <property name="credentialsToPrincipalResolver">
+    <property name="principalResolver">
       <bean
-        class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver">
+        class="org.jasig.cas.authentication.principal.UsernamePasswordPrincipalResolver">
       </bean>
     </property>
   </bean>

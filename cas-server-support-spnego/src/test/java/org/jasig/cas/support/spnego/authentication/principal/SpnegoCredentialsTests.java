@@ -18,9 +18,8 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentials;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.SimplePrincipal;
 
 import junit.framework.TestCase;
 
@@ -29,13 +28,13 @@ public class SpnegoCredentialsTests extends TestCase {
 
     
     public void testToStringWithNoPrincipal() {
-        final SpnegoCredentials credentials = new SpnegoCredentials(new byte[] {});
+        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
         
         assertTrue(credentials.toString().contains("unknown"));
     }
     
     public void testToStringWithPrincipal() {
-        final SpnegoCredentials credentials = new SpnegoCredentials(new byte[] {});
+        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
         final Principal principal = new SimplePrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.toString());

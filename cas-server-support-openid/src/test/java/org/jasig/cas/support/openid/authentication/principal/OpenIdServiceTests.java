@@ -19,14 +19,12 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
+import org.jasig.cas.authentication.service.Response;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.openid4java.association.Association;
 import org.openid4java.server.ServerAssociationStore;
 import org.openid4java.server.ServerManager;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;

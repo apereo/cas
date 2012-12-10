@@ -23,7 +23,7 @@ import java.util.Map;
 
 import com.esotericsoftware.kryo.Kryo;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
 /**

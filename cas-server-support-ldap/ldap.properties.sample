@@ -35,7 +35,7 @@ saslMd5FastBindTestConfig.existsCredential=testuser
 saslMd5FastBindTestConfig.existsSuccessPassword=RealPasswordHere
 
 # Settings for
-# org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver
+# org.jasig.cas.authentication.principal.LDAPAttributePrincipalResolver
 ldapResolver.filter=uid=%u
 ldapResolver.principalAttributeName=eduPersonPrincipalName
 ldapResolver.searchBase=ou=people,dc=yournamespace,dc=edu

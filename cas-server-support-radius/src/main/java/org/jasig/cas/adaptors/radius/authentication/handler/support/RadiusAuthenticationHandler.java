@@ -21,9 +21,9 @@ package org.jasig.cas.adaptors.radius.authentication.handler.support;
 import java.util.List;
 
 import org.jasig.cas.adaptors.radius.RadiusServer;
+import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,7 +36,7 @@ import javax.validation.constraints.Size;
  * @since 3.0
  */
 public class RadiusAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+        AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
     @NotNull
@@ -55,7 +55,7 @@ public class RadiusAuthenticationHandler extends
      */
     private boolean failoverOnAuthenticationFailure;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
 
         for (final RadiusServer radiusServer : this.servers) {
             try {

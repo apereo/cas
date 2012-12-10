@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.xml.namespace.QName;
 
-import org.jasig.cas.authentication.principal.SamlService;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.service.SamlService;
+import org.jasig.cas.authentication.service.WebApplicationService;
 import org.jasig.cas.util.CasHTTPSOAP11Encoder;
 import org.jasig.cas.web.support.SamlArgumentExtractor;
 import org.joda.time.DateTime;

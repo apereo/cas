@@ -45,8 +45,8 @@ http://www.w3.org/1999/xlink "
     <section xml:id="if-not-using-proxy-tickets">
             <title>If you aren't using Proxy Tickets</title>
         <para>Proxy Tickets are a powerful, important, and potentially security-improving feature of the CAS
-            single sign-on solution. You can use them to good effect in place of replaying end-user credentials
-            or plenipotent service credentials that do not require participation in an end-user single sign-on session.
+            single sign-on solution. You can use them to good effect in place of replaying end-user credential
+            or plenipotent service credential that do not require participation in an end-user single sign-on session.
         </para>
         <para>However, Proxy Tickets carry risk in that services accepting proxy tickets are responsible for validating
             the

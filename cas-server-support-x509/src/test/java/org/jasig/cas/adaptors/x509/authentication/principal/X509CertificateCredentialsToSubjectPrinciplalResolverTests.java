@@ -31,7 +31,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link X509CertificateCredentialsToSubjectPrinciplalResolver}.
+ * Unit test for {@link X509CertificateSubjectPrinciplalResolver}.
  *
  * @author Marvin S. Addison
  * @version $Revision$ $Date$
@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class X509CertificateCredentialsToSubjectPrinciplalResolverTests {
     
     private X509Certificate certificate;
-    private X509CertificateCredentialsToSubjectPrinciplalResolver resolver;
+    private X509CertificateSubjectPrinciplalResolver resolver;
     private String expected;
 
     /**
@@ -56,7 +56,7 @@ public class X509CertificateCredentialsToSubjectPrinciplalResolverTests {
         final String descriptor,
         final String expectedResult) {
        
-        this.resolver = new X509CertificateCredentialsToSubjectPrinciplalResolver();
+        this.resolver = new X509CertificateSubjectPrinciplalResolver();
         this.resolver.setDescriptor(descriptor);
         try {
 	        this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(

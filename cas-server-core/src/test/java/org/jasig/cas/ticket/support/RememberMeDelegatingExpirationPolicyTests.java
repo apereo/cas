@@ -20,7 +20,7 @@ package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.RememberMeCredentials;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 
 import junit.framework.TestCase;
@@ -44,8 +44,9 @@ public final class RememberMeDelegatingExpirationPolicyTests extends TestCase {
     }
 
     public void testTicketExpirationWithRememberMe() {
-        final MutableAuthentication authentication = new MutableAuthentication(TestUtils.getPrincipal());
-        authentication.getAttributes().put(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
+        final MutableAuthentication authentication = new MutableAuthentication();
+        authentication.setPrincipal(TestUtils.getPrincipal());
+        authentication.getAttributes().put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
@@ -54,7 +55,8 @@ public final class RememberMeDelegatingExpirationPolicyTests extends TestCase {
     }
     
     public void testTicketExpirationWithoutRememberMe() {
-        final MutableAuthentication authentication = new MutableAuthentication(TestUtils.getPrincipal());
+        final MutableAuthentication authentication = new MutableAuthentication();
+        authentication.setPrincipal(TestUtils.getPrincipal());
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", TestUtils.getService(), this.p, false);

@@ -21,8 +21,7 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.authentication.LdapAuthenticationException;
 import org.jasig.cas.authentication.LdapPasswordPolicyEnforcementException;
 import org.jasig.cas.authentication.PasswordPolicyEnforcer;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.util.Assert;
@@ -87,7 +86,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
             this.logger.debug("Checking account status for password...");
 
         final String ticket = context.getRequestScope().getString("serviceTicketId");
-        final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) context.getFlowScope().get("credentials");
+        final UsernamePasswordCredential credentials = (UsernamePasswordCredential) context.getFlowScope().get("credentials");
         final String userId = credentials.getUsername();
 
         Event returnedEvent = error();

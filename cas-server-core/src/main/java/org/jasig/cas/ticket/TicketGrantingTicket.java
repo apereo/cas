@@ -21,7 +21,7 @@ package org.jasig.cas.ticket;
 import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 
 /**
  * Interface for a ticket granting ticket. A TicketGrantingTicket is the main

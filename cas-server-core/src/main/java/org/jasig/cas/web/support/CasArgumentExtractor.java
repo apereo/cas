@@ -20,8 +20,8 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.service.WebApplicationService;
 
 /**
  * Implements the traditional CAS2 protocol.  Accepts an HttpClient reference.  A default

@@ -26,12 +26,10 @@ import java.util.Map;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToSerialNumberPrincipalResolver;
-import org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
-import org.jasig.cas.authentication.AuthenticationManagerImpl;
+import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateSerialNumberPrincipalResolver;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.PrincipalResolver;
+import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -62,7 +60,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         a.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
         
         authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {a}));
-        authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new X509CertificateCredentialsToSerialNumberPrincipalResolver()}));
+        authenticationManager.setPrincipalResolvers(Arrays.asList(new PrincipalResolver[]{new X509CertificateSerialNumberPrincipalResolver()}));
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);

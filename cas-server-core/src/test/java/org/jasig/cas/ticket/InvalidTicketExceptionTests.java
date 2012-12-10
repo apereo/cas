@@ -18,8 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
+import java.security.GeneralSecurityException;
 
 import junit.framework.TestCase;
 
@@ -31,7 +30,7 @@ public class InvalidTicketExceptionTests extends TestCase {
     }
 
     public void testCodeWithThrowable() {
-        AuthenticationException a = new BadCredentialsAuthenticationException();
+        GeneralSecurityException a = new GeneralSecurityException();
         TicketException t = new InvalidTicketException(a);
 
         assertEquals(a.toString(), t.getCode());

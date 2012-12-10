@@ -20,8 +20,8 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.SamlService;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.service.SamlService;
+import org.jasig.cas.authentication.service.WebApplicationService;
 
 /**
  * Retrieve the ticket and artifact based on the SAML 1.1 profile.

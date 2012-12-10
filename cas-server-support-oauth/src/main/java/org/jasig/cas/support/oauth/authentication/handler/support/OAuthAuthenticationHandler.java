@@ -22,11 +22,11 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
+import org.jasig.cas.support.oauth.authentication.principal.OAuthCredential;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
 
@@ -42,13 +42,13 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     private OAuthConfiguration configuration;
     
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
+    public boolean supports(final Credential credential) {
+        return credential != null && (OAuthCredential.class.isAssignableFrom(credential.getClass()));
     }
     
     @Override
-    protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
-        final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
+    protected boolean doAuthentication(final Credential credential) throws AuthenticationException {
+        final OAuthCredential oauthCredentials = (OAuthCredential) credential;
         log.debug("credential : {}", oauthCredentials);
         
         final String providerType = oauthCredentials.getCredential().getProviderType();

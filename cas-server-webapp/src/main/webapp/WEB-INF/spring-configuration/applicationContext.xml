@@ -82,7 +82,7 @@
           p:followRedirects="false" />
 
     <bean id="persistentIdGenerator"
-          class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+          class="org.jasig.cas.authentication.support.ShibbolethCompatiblePersistentIdGenerator"
           p:salt="casrocks"/>
 
     <!-- CentralAuthenticationService -->

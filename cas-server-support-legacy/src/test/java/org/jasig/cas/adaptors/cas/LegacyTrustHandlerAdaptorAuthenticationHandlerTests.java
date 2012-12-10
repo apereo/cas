@@ -48,18 +48,18 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
 
     /**
      * Currently, tests that the adaptor does not support null credentials,
-     * supports an instance of LegacyCasTrustedCredentials, and does not support
-     * an instance of LegacyCasCredentials.
+     * supports an instance of LegacyCasTrustedCredential, and does not support
+     * an instance of LegacyCasCredential.
      */
     public void testSupports() {
 
         assertFalse(this.legacyTrustAdaptor.supports(null));
 
-        LegacyCasTrustedCredentials goodCred = new LegacyCasTrustedCredentials();
+        LegacyCasTrustedCredential goodCred = new LegacyCasTrustedCredential();
 
         assertTrue(this.legacyTrustAdaptor.supports(goodCred));
 
-        LegacyCasCredentials badCred = new LegacyCasCredentials();
+        LegacyCasCredential badCred = new LegacyCasCredential();
 
         assertFalse(this.legacyTrustAdaptor.supports(badCred));
 
@@ -71,7 +71,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      * @throws AuthenticationException as one failure modality
      */
     public void testAuthenticate() {
-        LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
+        LegacyCasTrustedCredential trustedCredentials = new LegacyCasTrustedCredential();
 
         ServletRequest request = new MockHttpServletRequest();
 
@@ -95,7 +95,7 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      * @throws AuthenticationException - as one failure modality
      */
     public void testAuthenticateFails() {
-        LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
+        LegacyCasTrustedCredential trustedCredentials = new LegacyCasTrustedCredential();
 
         ServletRequest request = new MockHttpServletRequest();
 
@@ -114,13 +114,13 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
     }
 
     /**
-     * Test that throws UnsupportedCredentialsException for an unsupported
+     * Test that throws UnsupportedCredentialException for an unsupported
      * credential.
      * 
      * @throws AuthenticationException
      */
     public void testAuthenticateUnsupported() {
-        LegacyCasCredentials badCredentials = new LegacyCasCredentials();
+        LegacyCasCredential badCredentials = new LegacyCasCredential();
         assertFalse(this.legacyTrustAdaptor.supports(badCredentials));
     }
 }

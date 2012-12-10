@@ -33,7 +33,7 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +170,7 @@ public final class JRadiusServerImpl implements RadiusServer {
     }
 
     public boolean authenticate(
-        final UsernamePasswordCredentials usernamePasswordCredentials) {
+        final UsernamePasswordCredential usernamePasswordCredentials) {
         final RadiusClient radiusClient = getNewRadiusClient();
 
         final AttributeList attributeList = new AttributeList();

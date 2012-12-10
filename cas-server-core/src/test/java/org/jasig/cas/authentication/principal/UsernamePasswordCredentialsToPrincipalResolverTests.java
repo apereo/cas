@@ -21,6 +21,8 @@ package org.jasig.cas.authentication.principal;
 import org.jasig.cas.TestUtils;
 
 import junit.framework.TestCase;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.PrincipalResolver;
 
 /**
  * @author Scott Battaglia
@@ -30,7 +32,7 @@ import junit.framework.TestCase;
 public final class UsernamePasswordCredentialsToPrincipalResolverTests extends
     TestCase {
 
-    private CredentialsToPrincipalResolver resolver = new UsernamePasswordCredentialsToPrincipalResolver();
+    private PrincipalResolver resolver = new UsernamePasswordPrincipalResolver();
 
     public void testValidSupportsCredentials() {
         assertTrue(this.resolver.supports(TestUtils
@@ -47,8 +49,8 @@ public final class UsernamePasswordCredentialsToPrincipalResolverTests extends
     }
 
     public void testValidCredentials() {
-        Principal p = this.resolver.resolvePrincipal(TestUtils
-            .getCredentialsWithSameUsernameAndPassword());
+        Principal p = this.resolver.resolve(TestUtils
+                .getCredentialsWithSameUsernameAndPassword());
 
         assertEquals(p.getId(), TestUtils
             .getCredentialsWithSameUsernameAndPassword().getUsername());

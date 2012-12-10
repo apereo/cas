@@ -26,18 +26,16 @@ import junit.framework.TestCase;
 
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl;
 import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentialsToPrincipalResolver;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
-import org.jasig.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -74,16 +72,16 @@ public class OpenIdSingleSignOnActionTests extends TestCase {
         this.ticketRegistry = new DefaultTicketRegistry();
         this.authenticationManager = new DirectMappingAuthenticationManagerImpl();
         
-        final Map<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping = new HashMap<Class<? extends Credentials>, DirectAuthenticationHandlerMappingHolder>();
+        final Map<Class<? extends Credential>, DirectAuthenticationHandlerMappingHolder> credentialsMapping = new HashMap<Class<? extends Credential>, DirectAuthenticationHandlerMappingHolder>();
         
         final DirectAuthenticationHandlerMappingHolder holder = new DirectAuthenticationHandlerMappingHolder();
         final OpenIdCredentialsAuthenticationHandler handler = new OpenIdCredentialsAuthenticationHandler();
         handler.setTicketRegistry(this.ticketRegistry);
         holder.setAuthenticationHandler(handler);
-        holder.setCredentialsToPrincipalResolver(new OpenIdCredentialsToPrincipalResolver());
+        holder.setPrincipalResolver(new OpenIdPrincipalResolver());
         
         this.authenticationManager.setCredentialsMapping(credentialsMapping);
-        credentialsMapping.put(OpenIdCredentials.class, holder);
+        credentialsMapping.put(OpenIdCredential.class, holder);
         
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
