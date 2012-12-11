@@ -25,13 +25,18 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
 /**
+ * Base class for mutable and immutable authentications.
+ *
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @since 3.0.3
+ * @see MutableAuthentication
+ * @see ImmutableAuthentication
  */
 public abstract class AbstractAuthentication implements Authentication {
 
     /** Serialization version marker. */
-    private static final long serialVersionUID = -7375625871357827332L;
+    private static final long serialVersionUID = 4864026953978544147L;
 
     /** A Principal object representing the authenticated entity. */
     private Principal principal;
@@ -39,8 +44,10 @@ public abstract class AbstractAuthentication implements Authentication {
     /** Associated authentication attributes. */
     private Map<String, Object> attributes;
 
+    /** Metadata about successfully authenticated credentials. */
     private Map<HandlerResult, Principal> successes;
 
+    /** Metadata about credentials that failed authentication. */
     private Map<String, GeneralSecurityException> failures;
 
 
@@ -62,8 +69,8 @@ public abstract class AbstractAuthentication implements Authentication {
         return this.principal;
     }
 
-    protected void setSuccesses(Map<HandlerResult, Principal> successes) {
-        Assert.notEmpty(successes, "Successes cannot be null or empty.");
+    protected void setSuccesses(final Map<HandlerResult, Principal> successes) {
+        Assert.notNull(successes, "Successes cannot be null.");
         this.successes = successes;
     }
 
@@ -104,7 +111,6 @@ public abstract class AbstractAuthentication implements Authentication {
     }
 
     public final String toString() {
-        return "[Principal=" + this.principal.getId() + ", attributes="
-            + this.attributes.toString() + "]";
+        return this.principal.getId() + ":" + this.attributes;
     }
 }

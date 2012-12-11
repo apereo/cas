@@ -76,7 +76,7 @@ public class UsernamePasswordCredential implements Credential {
     }
 
     public String toString() {
-        return "[username: " + this.username + "]";
+        return this.username;
     }
 
     @Override

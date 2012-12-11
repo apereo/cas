@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.audit.spi;
 
-import org.aspectj.lang.JoinPoint;
 import com.github.inspektr.audit.spi.AuditResourceResolver;
+import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.util.AopUtils;
 
@@ -33,13 +33,26 @@ import org.jasig.cas.util.AopUtils;
  */
 public final class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
 
+    private final String PREFIX = "supplied credentials: [";
+
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
-        final Credential credential = (Credential) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
-        return new String[] { "supplied credential: " + credential.toString() };
+        return new String[] { resolveFromInternal(joinPoint) };
     }
 
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
-        final Credential credential = (Credential) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
-        return new String[] { "supplied credential: " + credential.toString() };
+        return new String[] { resolveFromInternal(joinPoint) };
+    }
+
+    protected String resolveFromInternal(final JoinPoint joinPoint) {
+        final Credential[] credentials = (Credential [])AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
+        final StringBuilder sb = new StringBuilder(PREFIX);
+        int i = 0;
+        for (Credential c : credentials) {
+            sb.append(c);
+            if (i++ > 0) {
+                sb.append(", ");
+            }
+        }
+        return sb.append(']').toString();
     }
 }

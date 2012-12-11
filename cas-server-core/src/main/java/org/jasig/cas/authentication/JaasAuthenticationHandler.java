@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -28,7 +30,6 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.springframework.util.Assert;
 
 /**
@@ -55,8 +56,7 @@ import org.springframework.util.Assert;
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
  */
-public class JaasAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** If no realm is specified, we default to CAS. */
     private static final String DEFAULT_REALM = "CAS";
@@ -66,39 +66,24 @@ public class JaasAuthenticationHandler extends
     private String realm = DEFAULT_REALM;
     
     public JaasAuthenticationHandler() {
-        Assert.notNull(Configuration.getConfiguration(), "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+        Assert.notNull(Configuration.getConfiguration(),
+        "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credentials)
-        throws AuthenticationException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+        throws GeneralSecurityException, IOException {
 
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
-
+        log.debug("Attempting to authenticate {}", transformedUsername);
+        final CallbackHandler cb = new UsernamePasswordCallbackHandler(transformedUsername, credentials.getPassword());
+        final LoginContext lc = new LoginContext(this.realm, cb);
+        lc.login();
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Attempting authentication for: "
-                    + transformedUsername);
-            }
-            final LoginContext lc = new LoginContext(this.realm,
-                new UsernamePasswordCallbackHandler(transformedUsername,
-                    credentials.getPassword()));
-
-            lc.login();
             lc.logout();
-        } catch (final LoginException fle) {
-            if (log.isDebugEnabled()) {
-                log.debug("Authentication failed for: "
-                    + transformedUsername);
-            }
-            return false;
+        } catch (LoginException e) {
+            log.warn("Failed logging out {}", transformedUsername, e);
         }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Authentication succeeded for: "
-                + transformedUsername);
-        }
-        return true;
+        return new HandlerResult(this, new SimplePrincipal(transformedUsername));
     }
 
     public void setRealm(final String realm) {
@@ -132,17 +117,14 @@ public class JaasAuthenticationHandler extends
 
         }
 
-        public void handle(final Callback[] callbacks)
-            throws UnsupportedCallbackException {
+        public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
             for (final Callback callback : callbacks ) {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);
                 } else if (callback.getClass().equals(PasswordCallback.class)) {
-                    ((PasswordCallback) callback).setPassword(this.password
-                        .toCharArray());
+                    ((PasswordCallback) callback).setPassword(this.password.toCharArray());
                 } else {
-                    throw new UnsupportedCallbackException(callback,
-                        "Unrecognized Callback");
+                    throw new UnsupportedCallbackException(callback);
                 }
             }
         }

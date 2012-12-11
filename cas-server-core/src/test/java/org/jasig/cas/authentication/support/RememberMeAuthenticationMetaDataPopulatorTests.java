@@ -37,8 +37,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests extends TestCase {
     private RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
 
     public void testWithTrueRememberMeCredentials() {
-        final MutableAuthentication auth = new MutableAuthentication();
-        auth.setPrincipal(TestUtils.getPrincipal());
+        final MutableAuthentication auth = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
         
@@ -48,8 +47,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests extends TestCase {
     }
     
     public void testWithFalseRememberMeCredentials() {
-        final MutableAuthentication auth = new MutableAuthentication();
-        auth.setPrincipal(TestUtils.getPrincipal());
+        final MutableAuthentication auth = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
         
@@ -60,8 +58,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests extends TestCase {
 
     
     public void testWithoutRememberMeCredentials() {
-        final MutableAuthentication auth = new MutableAuthentication();
-        auth.setPrincipal(TestUtils.getPrincipal());
+        final MutableAuthentication auth = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         final Authentication auth2 = this.p.populateAttributes(auth, TestUtils.getCredentialsWithSameUsernameAndPassword());
         
         assertNull(auth2.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));

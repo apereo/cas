@@ -18,13 +18,20 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import java.io.IOException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.LoginException;
+import javax.validation.constraints.NotNull;
+
+import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -39,7 +46,8 @@ import javax.validation.constraints.NotNull;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class HttpBasedServiceCredentialsAuthenticationHandler implements AuthenticationHandler {
+public final class HttpBasedServiceCredentialsAuthenticationHandler
+        extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /** The string representing the HTTPS protocol. */
     private static final String PROTOCOL_HTTPS = "https";
@@ -54,22 +62,16 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     @NotNull
     private HttpClient httpClient;
 
-    public boolean authenticate(final Credential credential) {
-        final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
-        if (this.requireSecure
-            && !serviceCredentials.getCallbackUrl().getProtocol().equals(
-                PROTOCOL_HTTPS)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Authentication failed because url was not secure.");
-            }
-            return false;
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, IOException {
+        final URL endpoint = ((HttpBasedServiceCredential) credential).getCallbackUrl();
+        if (this.requireSecure && !endpoint.getProtocol().equals(PROTOCOL_HTTPS)) {
+            throw new LoginException("URL has http scheme but configuration requires https.");
         }
-        log
-            .debug("Attempting to resolve credential for "
-                + serviceCredentials);
-
-        return this.httpClient.isValidEndPoint(serviceCredentials
-            .getCallbackUrl());
+        log.debug("Attempting to communicate with {}", endpoint);
+        if (this.httpClient.isValidEndPoint(endpoint)) {
+            return new HandlerResult(this, new SimplePrincipal(endpoint.toExternalForm()));
+        }
+        throw new LoginException("Invalid callback URL " + endpoint);
     }
 
     /**
@@ -78,8 +80,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
      */
     public boolean supports(final Credential credential) {
         return credential != null
-            && HttpBasedServiceCredential.class.isAssignableFrom(credential
-                .getClass());
+            && HttpBasedServiceCredential.class.isAssignableFrom(credential.getClass());
     }
 
     /** Sets the HttpClient which will do all of the connection stuff. */
@@ -89,7 +90,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
 
     /**
      * Set whether a secure url is required or not.
-     * 
+     *
      * @param requireSecure true if its required, false if not. Default is true.
      */
     public void setRequireSecure(final boolean requireSecure) {

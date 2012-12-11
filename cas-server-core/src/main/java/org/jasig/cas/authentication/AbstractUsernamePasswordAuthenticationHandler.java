@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.support.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.support.PasswordEncoder;
 import org.jasig.cas.authentication.support.PlainTextPasswordEncoder;
@@ -68,8 +69,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * and delegates to abstract authenticateUsernamePasswordInternal so
      * subclasses do not need to cast.
      */
-    protected final boolean doAuthentication(final Credential credential)
-        throws AuthenticationException {
+    protected final HandlerResult doAuthentication(final Credential credential)
+        throws GeneralSecurityException, IOException {
         return authenticateUsernamePasswordInternal((UsernamePasswordCredential) credential);
     }
 
@@ -77,14 +78,15 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * Abstract convenience method that assumes the credential passed in are a
      * subclass of UsernamePasswordCredential.
      * 
-     * @param credentials the credential representing the Username and Password
-     * presented to CAS
-     * @return true if the credential are authentic, false otherwise.
-     * @throws AuthenticationException if authenticity cannot be determined.
+     * @param credential Username/password credential to authenticate.
+     *
+     * @return Authentication handler result on authentication success.
+     *
+     * @throws GeneralSecurityException When authentication should fail for security reasons.
+     * @throws IOException When authentication fails for reasons other than security.
      */
-    protected abstract boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credentials)
-        throws AuthenticationException;
+    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential)
+            throws GeneralSecurityException, IOException;
 
     /**
      * Method to return the PasswordEncoder to be used to encode passwords.

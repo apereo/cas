@@ -18,12 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * Abstract authentication handler that allows deployers to utilize the bundled
@@ -34,9 +35,8 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public abstract class AbstractPreAndPostProcessingAuthenticationHandler
-    implements NamedAuthenticationHandler {
-    
+public abstract class AbstractPreAndPostProcessingAuthenticationHandler implements AuthenticationHandler {
+
     /** Instance of logging for subclasses. */
     protected Logger log = LoggerFactory.getLogger(this.getClass());
     
@@ -47,8 +47,9 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     /**
      * Method to execute before authentication occurs.
      * 
-     * @param credential the Credential supplied
-     * @return true if authentication should continue, false otherwise.
+     * @param credential Credential to authenticate.
+     *
+     * @return True if authentication should continue, false otherwise.
      */
     protected boolean preAuthenticate(final Credential credential) {
         return true;
@@ -57,13 +58,17 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     /**
      * Method to execute after authentication occurs.
      * 
-     * @param credential the supplied credential
-     * @param authenticated the result of the authentication attempt.
-     * @return true if the handler should return true, false otherwise.
+     * @param credential Successfully authenticated credential.
+     * @param result Result produced by the authentication handler that authenticated the credential.
+     *
+     * @return Handler result provided or a modified version thereof.
+     *
+     * @throws GeneralSecurityException When authentication should fail for security reasons.
+     * @throws IOException When authentication fails for reasons other than security.
      */
-    protected boolean postAuthenticate(final Credential credential,
-        final boolean authenticated) {
-        return authenticated;
+    protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result)
+        throws GeneralSecurityException, IOException {
+        return result;
     }
     
     public final void setName(final String name) {
@@ -71,21 +76,21 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler
     }
     
     public final String getName() {
-        return this.name;
+        if (StringUtils.hasText(this.name)) {
+            return this.name;
+        }
+        return getClass().getSimpleName();
     }
 
-    public final boolean authenticate(final Credential credential)
-        throws AuthenticationException {
+    public final HandlerResult authenticate(final Credential credential)
+            throws GeneralSecurityException, IOException {
 
         if (!preAuthenticate(credential)) {
-            return false;
+            throw new GeneralSecurityException("Pre-authentication failed.");
         }
-
-        final boolean authenticated = doAuthentication(credential);
-
-        return postAuthenticate(credential, authenticated);
+        return postAuthenticate(credential, doAuthentication(credential));
     }
 
-    protected abstract boolean doAuthentication(final Credential credential)
-        throws AuthenticationException;
+    protected abstract HandlerResult doAuthentication(Credential credential)
+            throws GeneralSecurityException, IOException;
 }

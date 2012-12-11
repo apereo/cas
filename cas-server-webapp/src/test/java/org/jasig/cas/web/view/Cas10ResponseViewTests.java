@@ -46,7 +46,7 @@ public class Cas10ResponseViewTests extends TestCase {
     protected void setUp() throws Exception {
         this.model = new HashMap<String,Object>();
         List<Authentication> list = new ArrayList<Authentication>();
-        list.add(TestUtils.newAuthentication(new SimplePrincipal("test")));
+        list.add(TestUtils.newImmutableAuthentication(new SimplePrincipal("test")));
         this.model.put("assertion", new ImmutableAssertionImpl(list,
             TestUtils.getService("TestService"), true));
     }

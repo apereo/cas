@@ -156,7 +156,7 @@ public class JpaTicketRegistryTests {
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 idGenerator.getNewTicketId("TGT"),
-                TestUtils.newAuthentication(principal),
+                TestUtils.newImmutableAuthentication(principal),
                 expirationPolicyTGT);
     }
     

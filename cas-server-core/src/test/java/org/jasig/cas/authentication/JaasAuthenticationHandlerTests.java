@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.TestUtils;
+import java.security.GeneralSecurityException;
 
 import junit.framework.TestCase;
-import org.jasig.cas.authentication.JaasAuthenticationHandler;
+import org.jasig.cas.TestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class JaasAuthenticationHandlerTests extends TestCase {
         log.info("PATH PREFIX: " + pathPrefix);
 
         final String pathToConfig = pathPrefix
-            + "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
+            + "/src/test/resources/org/jasig/cas/authentication/jaas.conf";
         System.setProperty("java.security.auth.login.config", "="+pathToConfig); 
         this.handler = new JaasAuthenticationHandler();
     }
@@ -46,24 +46,29 @@ public class JaasAuthenticationHandlerTests extends TestCase {
     public void testWithAlternativeRealm() throws Exception {
 
         this.handler.setRealm("TEST");
-        assertFalse(this.handler.authenticate(TestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("test", "test1")));
+        try {
+            this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
     }
 
     public void testWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
-        assertTrue(this.handler.authenticate(TestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("test", "test")));
+        final HandlerResult result = this.handler.authenticate(
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test"));
+        assertEquals(this.handler.getName(), result.getHandlerName());
     }
 
     public void testWithValidCredenials() throws Exception {
-        assertTrue(this.handler.authenticate(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
+        final HandlerResult result = this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        assertEquals(this.handler.getName(), result.getHandlerName());
     }
 
     public void testWithInvalidCredentials() throws Exception {
-        assertFalse(this.handler.authenticate(TestUtils
-            .getCredentialsWithDifferentUsernameAndPassword("test", "test1")));
+        try {
+            this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
     }
 
 }

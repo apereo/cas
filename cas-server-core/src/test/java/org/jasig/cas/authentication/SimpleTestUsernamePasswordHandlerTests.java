@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.support.PlainTextPasswordEncoder;
+import java.security.GeneralSecurityException;
 
 import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.support.PlainTextPasswordEncoder;
 
 /**
  * Test of the simple username/password handler
@@ -37,41 +37,39 @@ public final class SimpleTestUsernamePasswordHandlerTests extends TestCase {
 
     protected void setUp() throws Exception {
         this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        this.authenticationHandler
-            .setPasswordEncoder(new PlainTextPasswordEncoder());
+        this.authenticationHandler.setPasswordEncoder(new PlainTextPasswordEncoder());
     }
 
     public void testSupportsProperUserCredentials() {
-        assertTrue(this.authenticationHandler.supports(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     public void testDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(TestUtils
-            .getHttpBasedServiceCredentials()));
+        assertFalse(this.authenticationHandler.supports(TestUtils.getHttpBasedServiceCredentials()));
     }
 
-    public void testValidUsernamePassword() throws AuthenticationException {
-        assertTrue(this.authenticationHandler.authenticate(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
-    }
-
-    public void testInvalidUsernamePassword() {
+    public void testValidUsernamePassword() throws Exception {
         try {
-            assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getCredentialsWithDifferentUsernameAndPassword()));
-        } catch (AuthenticationException ae) {
-            // this is okay
+            final HandlerResult result = this.authenticationHandler.authenticate(
+                    TestUtils.getCredentialsWithSameUsernameAndPassword());
+            assertEquals(this.authenticationHandler.getName(), result.getHandlerName());
+        } catch (GeneralSecurityException e) {
+            fail("Authentication failed when it should have succeeded.");
         }
     }
 
-    public void testNullUsernamePassword() {
+    public void testInvalidUsernamePassword() throws Exception {
         try {
-            assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getCredentialsWithSameUsernameAndPassword(null)));
-        } catch (AuthenticationException ae) {
-            // this is okay
-        }
+            this.authenticationHandler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
+    }
+
+    public void testNullUsernamePassword() throws Exception {
+        try {
+            this.authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword(null));
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
     }
     
     public void testAlternateClass() {

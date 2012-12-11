@@ -112,7 +112,7 @@ public class SessionMonitorTests {
         for (int i = 0; i < tgtCount; i++) {
             ticket = new TicketGrantingTicketImpl(
                     GENERATOR.getNewTicketId("TGT"),
-                    TestUtils.newAuthentication(new SimplePrincipal("grover")),
+                    TestUtils.newImmutableAuthentication(new SimplePrincipal("grover")),
                     TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }

@@ -46,9 +46,7 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
     
     public void testAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        final MutableAuthentication ma = new MutableAuthentication();
-        ma.setPrincipal(TestUtils.getPrincipal());
-        
+        final MutableAuthentication ma = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
         assertEquals(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"), SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD);
@@ -56,9 +54,7 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
     
     public void testAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
-        final MutableAuthentication ma = new MutableAuthentication();
-        ma.setPrincipal(TestUtils.getPrincipal());
-
+        final MutableAuthentication ma = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
         assertNull(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));
@@ -71,10 +67,8 @@ public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
         added.put(CustomCredential.class.getName(), "FF");
         
         this.populator.setUserDefinedMappings(added);
-        
-        final MutableAuthentication ma = new MutableAuthentication();
-        ma.setPrincipal(TestUtils.getPrincipal());
 
+        final MutableAuthentication ma = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
         
         assertEquals("FF", m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));

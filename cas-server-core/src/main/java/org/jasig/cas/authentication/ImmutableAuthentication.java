@@ -24,6 +24,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.joda.time.Instant;
+
 /**
  * Default implementation of Authentication interface. ImmutableAuthentication
  * is an immutable object and thus its attributes cannot be changed.
@@ -39,10 +41,10 @@ import java.util.Map;
 public final class ImmutableAuthentication extends AbstractAuthentication {
 
     /** UID for serializing. */
-    private static final long serialVersionUID = 338144637135640911L;
+    private static final long serialVersionUID = -2566320547789416017L;
 
-    /** The date/time this authentication object became valid. */
-    final Date authenticatedDate;
+    /** Authentication timestamp. */
+    private final Instant authenticatedDate;
 
 
     /**
@@ -57,11 +59,11 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
             final Map<String, Object> attributes,
             final Map<HandlerResult, Principal> successes,
             final Map<String, GeneralSecurityException> failures) {
-        this.authenticatedDate = new Date();
+        this.authenticatedDate = new Instant();
         setPrincipal(principal);
         setSuccesses(successes);
         setAttributes(attributes);
-
+        setFailures(failures);
     }
 
     /**
@@ -70,7 +72,7 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
      * @param source Source to clone.
      */
     public ImmutableAuthentication(final Authentication source) {
-        this.authenticatedDate = source.getAuthenticatedDate();
+        this.authenticatedDate = new Instant(source.getAuthenticatedDate().getTime());
         setPrincipal(source.getPrincipal());
         setAttributes(clone(source.getAttributes()));
         setSuccesses(clone(source.getSuccesses()));
@@ -78,7 +80,7 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
     }
 
     public Date getAuthenticatedDate() {
-        return new Date(this.authenticatedDate.getTime());
+        return this.authenticatedDate.toDate();
     }
 
     @Override
@@ -108,11 +110,7 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
         }
     }
 
-    private boolean notEmpty(final Map<?, ?> map) {
-        return map != null && !map.isEmpty();
-    }
-
-    private <K, V> Map<K,V> clone(final Map<K, V> map) {
+    private <K, V> Map<K, V> clone(final Map<K, V> map) {
         if (map != null && !map.isEmpty()) {
             return new LinkedHashMap<K, V>(map);
         }

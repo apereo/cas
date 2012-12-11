@@ -31,6 +31,7 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -153,15 +154,15 @@ public final class TestUtils {
     }
 
     public static Authentication getAuthentication() {
-        return newAuthentication(getPrincipal());
+        return newImmutableAuthentication(getPrincipal());
     }
 
     public static Authentication getAuthenticationWithService() {
-        return newAuthentication(getService());
+        return newImmutableAuthentication(getService());
     }
 
     public static Authentication getAuthentication(final String name) {
-        return newAuthentication(getPrincipal(name));
+        return newImmutableAuthentication(getPrincipal(name));
     }
 
     public static Assertion getAssertion(final boolean fromNewLogin) {
@@ -216,8 +217,16 @@ public final class TestUtils {
         return context;
     }
 
-    public static Authentication newAuthentication(final Principal p) {
+    public static ImmutableAuthentication newImmutableAuthentication(final Principal p) {
         final HandlerResult hr = new HandlerResult(AUTHENTICATION_HANDLER, p);
         return new ImmutableAuthentication(p, null, Collections.singletonMap(hr, p), null);
+    }
+
+    public static MutableAuthentication newMutableAuthentication(final Principal p) {
+        final HandlerResult hr = new HandlerResult(AUTHENTICATION_HANDLER, p);
+        final MutableAuthentication auth = new MutableAuthentication();
+        auth.setPrincipal(p);
+        auth.getSuccesses().put(hr, p);
+        return auth;
     }
 }

@@ -23,10 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.jasig.cas.web.support.WebUtils;
@@ -65,15 +64,15 @@ public class AuthenticationViaFormAction {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-    public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
+    public final void doBind(final RequestContext context, final Credential credential) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
-        if (this.credentialsBinder != null && this.credentialsBinder.supports(credentials.getClass())) {
-            this.credentialsBinder.bind(request, credentials);
+        if (this.credentialsBinder != null && this.credentialsBinder.supports(credential.getClass())) {
+            this.credentialsBinder.bind(request, credential);
         }
     }
     
-    public final String submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
+    public final String submit(final RequestContext context, final Credential credentials, final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
@@ -131,7 +130,7 @@ public class AuthenticationViaFormAction {
            * BadCredentialsAuthenticationException. Displaying the exception message itself back to the 
            * client may expose sensitive credential and error data.   
            */
-          final String defaultCode = BadCredentialsAuthenticationException.CODE;
+          final String defaultCode = "error.authentication.credential.bad";
           logger.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]", defaultCode);
           messageContext.addMessage(new MessageBuilder().error().code(defaultCode)
                         .defaultText("A technical has error occured. [code:" + defaultCode + "]").build());

@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.LoginException;
+
 import org.springframework.util.StringUtils;
 
 /**
@@ -34,25 +38,21 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
     AbstractUsernamePasswordAuthenticationHandler {
 
     public SimpleTestUsernamePasswordAuthenticationHandler() {
-        log
-            .warn(this.getClass().getName()
-                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+        log.warn(
+                "{} is for testing and demonstration exclusively.  NEVER enable in a production environment.",
+                getClass().getName());
     }
 
-    public boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) {
+    public HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
+
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(getPasswordEncoder().encode(password))) {
-            log
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
-            return true;
+            return new HandlerResult(this);
         }
-
-        log.debug("User [" + username + "] failed authentication");
-
-        return false;
+        throw new LoginException("Enocoded password does not match username.");
     }
 }

@@ -81,7 +81,8 @@ public interface Authentication extends Serializable {
     Map<HandlerResult, Principal> getSuccesses();
 
     /**
-     * Gets a map describing failed authentications.
+     * Gets a map describing failed authentications. By definition the failures here were not sufficient to prevent
+     * authentication.
      *
      * @return Map of authentication handler names to the authentication errors produced on attempted authentication.
      */

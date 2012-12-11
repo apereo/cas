@@ -44,8 +44,7 @@ public final class RememberMeDelegatingExpirationPolicyTests extends TestCase {
     }
 
     public void testTicketExpirationWithRememberMe() {
-        final MutableAuthentication authentication = new MutableAuthentication();
-        authentication.setPrincipal(TestUtils.getPrincipal());
+        final MutableAuthentication authentication = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         authentication.getAttributes().put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
@@ -55,8 +54,7 @@ public final class RememberMeDelegatingExpirationPolicyTests extends TestCase {
     }
     
     public void testTicketExpirationWithoutRememberMe() {
-        final MutableAuthentication authentication = new MutableAuthentication();
-        authentication.setPrincipal(TestUtils.getPrincipal());
+        final MutableAuthentication authentication = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", TestUtils.getService(), this.p, false);

@@ -72,7 +72,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     protected boolean exceedsThreshold(final HttpServletRequest request) {
         final String query = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? " +
                 "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
-        final String userToUse = constructUsername(request, getUsernameParameter());
+        final String userToUse = request.getParameter(getUsernameParameter());
         final Calendar cutoff = Calendar.getInstance();
         cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
         final List<Timestamp> failures = this.jdbcTemplate.query(
@@ -99,7 +99,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     @Override
     protected void recordThrottle(final HttpServletRequest request) {
         super.recordThrottle(request);
-        final String userToUse = constructUsername(request, getUsernameParameter());
+        final String userToUse = request.getParameter(getUsernameParameter());
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
             private static final long serialVersionUID = 1L;
@@ -126,10 +126,5 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     
     public final void setAuthenticationFailureCode(final String authenticationFailureCode) {
         this.authenticationFailureCode = authenticationFailureCode;
-    }
-
-    protected String constructUsername(HttpServletRequest request, String usernameParameter) {
-        final String username = request.getParameter(usernameParameter);
-        return "[username: " + (username != null ? username : "") + "]";
     }
 }

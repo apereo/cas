@@ -33,9 +33,9 @@ import java.util.Map;
 public final class MutableAuthentication extends AbstractAuthentication {
 
     /** Unique Id for serialization. */
-    private static final long serialVersionUID = -7489614453763421849L;
+    private static final long serialVersionUID = -2639544258220286911L;
 
-    /** The date/time this authentication object became valid. */
+    /** Authentication timestamp. */
     private final Date authenticatedDate;
 
 
@@ -52,16 +52,11 @@ public final class MutableAuthentication extends AbstractAuthentication {
      * @param source Source to clone.
      */
     public MutableAuthentication(final Authentication source) {
-        this.authenticatedDate = source.getAuthenticatedDate();
+        this.authenticatedDate = new Date();
         setPrincipal(source.getPrincipal());
-        setAttributes(new LinkedHashMap<String, Object>(source.getAttributes()));
-        setSuccesses(new LinkedHashMap<HandlerResult, Principal>(source.getSuccesses()));
-        setFailures(new LinkedHashMap<String, GeneralSecurityException>(source.getFailures()));
-    }
-
-    @Override
-    public void setAttributes(final Map<String, Object> attributes) {
-        super.setAttributes(attributes);
+        setAttributes(clone(source.getAttributes()));
+        setSuccesses(clone(source.getSuccesses()));
+        setFailures(clone(source.getFailures()));
     }
 
     @Override
@@ -69,18 +64,14 @@ public final class MutableAuthentication extends AbstractAuthentication {
         super.setPrincipal(principal);
     }
 
-    @Override
-    public void setSuccesses(final Map<HandlerResult, Principal> successes) {
-        super.setSuccesses(successes);
-    }
-
-    @Override
-    public void setFailures(final Map<String, GeneralSecurityException> failures) {
-        super.setFailures(failures);
-    }
-
     public Date getAuthenticatedDate() {
         return this.authenticatedDate;
     }
 
+    private <K, V> Map<K, V> clone(final Map<K, V> map) {
+        if (map != null && !map.isEmpty()) {
+            return new LinkedHashMap<K, V>(map);
+        }
+        return new LinkedHashMap<K, V>();
+    }
 }

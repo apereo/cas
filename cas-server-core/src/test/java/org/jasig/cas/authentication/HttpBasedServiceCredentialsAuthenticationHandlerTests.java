@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.HttpBasedServiceCredentialsAuthenticationHandler;
-import org.jasig.cas.util.HttpClient;
+import java.security.GeneralSecurityException;
 
 import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.util.HttpClient;
 
 /**
  * @author Scott Battaglia
@@ -49,38 +49,53 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
             .getCredentialsWithSameUsernameAndPassword()));
     }
 
-    public void testAcceptsProperCertificateCredentials() {
-        assertTrue(this.authenticationHandler.authenticate(TestUtils
-            .getHttpBasedServiceCredentials()));
+    public void testAcceptsProperCertificateCredentials() throws Exception {
+        final HandlerResult result = this.authenticationHandler.authenticate(
+                TestUtils.getHttpBasedServiceCredentials());
+        assertEquals(this.authenticationHandler.getName(), result.getHandlerName());
+
     }
 
-    public void testRejectsInProperCertificateCredentials() {
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-            .getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org")));
+    public void testRejectsInProperCertificateCredentials() throws Exception {
+        try {
+            this.authenticationHandler.authenticate(
+                    TestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
     }
 
-    public void testRejectsNonHttpsCredentials() {
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-            .getHttpBasedServiceCredentials("http://www.jasig.org")));
+    public void testRejectsNonHttpsCredentials() throws Exception {
+         try {
+            this.authenticationHandler.authenticate(
+                    TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org"));
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
     }
     
-    public void testAcceptsNonHttpsCredentials() {
+    public void testAcceptsNonHttpsCredentials() throws Exception {
         this.authenticationHandler.setHttpClient(new HttpClient());
         this.authenticationHandler.setRequireSecure(false);
-        assertTrue(this.authenticationHandler.authenticate(TestUtils
-            .getHttpBasedServiceCredentials("http://www.jasig.org")));
+        final HandlerResult result = this.authenticationHandler.authenticate(
+                TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org"));
+        assertEquals(this.authenticationHandler.getName(), result.getHandlerName());
     }
 
     public void testNoAcceptableStatusCode() throws Exception {
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-            .getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
+        try {
+            this.authenticationHandler.authenticate(
+                    TestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"));
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
     }
     
     public void testNoAcceptableStatusCodeButOneSet() throws Exception {
         final HttpClient httpClient = new HttpClient();
         httpClient.setAcceptableCodes(new int[] {900});
         this.authenticationHandler.setHttpClient(httpClient);
-        assertFalse(this.authenticationHandler.authenticate(TestUtils
-            .getHttpBasedServiceCredentials("https://www.ja-sig.org")));
+        try {
+            this.authenticationHandler.authenticate(
+                    TestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
+            fail("Authentication succeeded when it should have failed.");
+        } catch (GeneralSecurityException e) {}
     }
 }
