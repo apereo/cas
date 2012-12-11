@@ -134,7 +134,7 @@ public class AuthenticationViaFormAction {
           final String defaultCode = BadCredentialsAuthenticationException.CODE;
           logger.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]", defaultCode);
           messageContext.addMessage(new MessageBuilder().error().code(defaultCode)
-                        .defaultText("The exception code could not be located for " + defaultCode).build());
+                        .defaultText("A technical has error occured. [code:" + defaultCode + "]").build());
       } catch (final Exception fe) {
           logger.error(fe.getMessage(), fe);
       }
