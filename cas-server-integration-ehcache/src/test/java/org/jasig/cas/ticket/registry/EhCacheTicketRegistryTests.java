@@ -18,14 +18,21 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.service.Service;
+import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -38,14 +45,16 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * <p> Modifications :</p>
@@ -82,7 +91,21 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     }
     
     public static Authentication getAuthentication() {
-        return new ImmutableAuthentication(new SimplePrincipal("test"));
+        final Principal principal = new SimplePrincipal("test");
+        final HandlerResult hr = new HandlerResult(new AuthenticationHandler() {
+            public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+                return new HandlerResult(this, principal);
+            }
+
+            public boolean supports(final Credential credential) {
+                return true;
+            }
+
+            public String getName() {
+                return "TestAuthenticationHandler";
+            }
+        }, principal);
+        return new ImmutableAuthentication(principal, null, Collections.singletonMap(hr, principal), null);
     }
     /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add

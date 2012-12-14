@@ -18,10 +18,18 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamField;
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.jasig.cas.util.SerialUtils;
+import org.joda.time.Instant;
 import org.springframework.util.Assert;
 
 /**
@@ -33,13 +41,17 @@ import org.springframework.util.Assert;
  * @see MutableAuthentication
  * @see ImmutableAuthentication
  */
-public abstract class AbstractAuthentication implements Authentication {
+public abstract class AbstractAuthentication implements Authentication, Serializable {
 
-    /** Serialization version marker. */
-    private static final long serialVersionUID = 4864026953978544147L;
+    /** Serialization support. */
+    private static final long serialVersionUID = -809499206803382824L;
+    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
 
     /** A Principal object representing the authenticated entity. */
     private Principal principal;
+
+    /** Authentication timestamp. */
+    private Instant authenticatedDate = new Instant();
 
     /** Associated authentication attributes. */
     private Map<String, Object> attributes;
@@ -56,8 +68,8 @@ public abstract class AbstractAuthentication implements Authentication {
         this.attributes = attributes;
     }
 
-
-    public final Map<String, Object> getAttributes() {
+    @Override
+    public Map<String, Object> getAttributes() {
         return this.attributes;
     }
 
@@ -65,8 +77,18 @@ public abstract class AbstractAuthentication implements Authentication {
         this.principal = principal;
     }
 
+    @Override
     public final Principal getPrincipal() {
         return this.principal;
+    }
+
+    protected void setAuthenticatedDate(final Instant date) {
+        this.authenticatedDate = date;
+    }
+
+    @Override
+    public Date getAuthenticatedDate() {
+        return this.authenticatedDate.toDate();
     }
 
     protected void setSuccesses(final Map<HandlerResult, Principal> successes) {
@@ -74,6 +96,7 @@ public abstract class AbstractAuthentication implements Authentication {
         this.successes = successes;
     }
 
+    @Override
     public Map<HandlerResult, Principal> getSuccesses() {
         return this.successes;
     }
@@ -83,34 +106,55 @@ public abstract class AbstractAuthentication implements Authentication {
         this.failures = failures;
     }
 
+    @Override
     public Map<String, GeneralSecurityException> getFailures() {
         return this.failures;
     }
 
+    @Override
     public final boolean equals(final Object o) {
-        if (o == null || !this.getClass().isAssignableFrom(o.getClass())) {
+        if (!(o instanceof AbstractAuthentication)) {
             return false;
         }
-
+        if (o == this) {
+            return true;
+        }
         Authentication a = (Authentication) o;
-
         return this.principal.equals(a.getPrincipal())
-                && this.getAuthenticatedDate().equals(a.getAuthenticatedDate())
+                && this.authenticatedDate.isEqual(a.getAuthenticatedDate().getTime())
                 && this.attributes.equals(a.getAttributes())
                 && this.successes.equals(a.getSuccesses())
                 && this.failures.equals(a.getFailures());
     }
 
+    @Override
     public final int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(49, 31);
         builder.append(this.principal);
-        builder.append(this.getAuthenticatedDate());
+        builder.append(this.authenticatedDate);
         builder.append(this.successes);
         builder.append(this.failures);
         return builder.toHashCode();
     }
 
+    @Override
     public final String toString() {
         return this.principal.getId() + ":" + this.attributes;
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        SerialUtils.writeObject(this.principal, out);
+        SerialUtils.writeObject(this.authenticatedDate, out);
+        SerialUtils.writeMap(this.attributes, out);
+        SerialUtils.writeMap(this.successes, out);
+        SerialUtils.writeMap(this.failures, out);
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        this.principal = SerialUtils.readObject(Principal.class, in);
+        this.authenticatedDate = SerialUtils.readObject(Instant.class, in);
+        this.attributes = SerialUtils.readMap(String.class, Object.class, in);
+        this.successes = SerialUtils.readMap(HandlerResult.class, Principal.class, in);
+        this.failures = SerialUtils.readMap(String.class, GeneralSecurityException.class, in);
     }
 }

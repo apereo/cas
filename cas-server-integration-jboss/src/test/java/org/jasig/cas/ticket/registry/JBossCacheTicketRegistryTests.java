@@ -18,13 +18,20 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -68,7 +75,21 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
     }
 
     protected Authentication getAuthentication() {
-        return new ImmutableAuthentication(new SimplePrincipal("test"));
+        final Principal principal = new SimplePrincipal("test");
+        final HandlerResult hr = new HandlerResult(new AuthenticationHandler() {
+            public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+                return new HandlerResult(this, principal);
+            }
+
+            public boolean supports(final Credential credential) {
+                return true;
+            }
+
+            public String getName() {
+                return "TestAuthenticationHandler";
+            }
+        }, principal);
+        return new ImmutableAuthentication(principal, null, Collections.singletonMap(hr, principal), null);
     }
 
     public TicketRegistry getNewTicketRegistry() throws Exception {

@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -100,7 +101,7 @@ public final class TestUtils {
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(
         final String username) {
         return getCredentialsWithDifferentUsernameAndPassword(username,
-            username);
+                username);
     }
 
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword() {
@@ -141,6 +142,10 @@ public final class TestUtils {
 
     public static Principal getPrincipal(final String name) {
         return new SimplePrincipal(name);
+    }
+
+    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+        return new SimplePrincipal(name, attributes);
     }
 
     public static Service getService() {

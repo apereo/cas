@@ -18,10 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.ObjectStreamField;
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.joda.time.Instant;
 
 /**
  * Provides a mutable implementation of an authentication event that supports property changes.
@@ -30,17 +34,14 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.3
  */
-public final class MutableAuthentication extends AbstractAuthentication {
+public final class MutableAuthentication extends AbstractAuthentication implements Serializable {
 
-    /** Unique Id for serialization. */
-    private static final long serialVersionUID = -2639544258220286911L;
-
-    /** Authentication timestamp. */
-    private final Date authenticatedDate;
+    /** Serialization support. */
+    private static final long serialVersionUID = -4195570482629389829L;
+    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
 
 
     public MutableAuthentication() {
-        this.authenticatedDate = new Date();
         setAttributes(new LinkedHashMap<String, Object>());
         setSuccesses(new LinkedHashMap<HandlerResult, Principal>());
         setFailures(new LinkedHashMap<String, GeneralSecurityException>());
@@ -52,7 +53,6 @@ public final class MutableAuthentication extends AbstractAuthentication {
      * @param source Source to clone.
      */
     public MutableAuthentication(final Authentication source) {
-        this.authenticatedDate = new Date();
         setPrincipal(source.getPrincipal());
         setAttributes(clone(source.getAttributes()));
         setSuccesses(clone(source.getSuccesses()));
@@ -64,8 +64,8 @@ public final class MutableAuthentication extends AbstractAuthentication {
         super.setPrincipal(principal);
     }
 
-    public Date getAuthenticatedDate() {
-        return this.authenticatedDate;
+    public void setAuthenticatedDate(final Date date) {
+        setAuthenticatedDate(new Instant(date.getTime()));
     }
 
     private <K, V> Map<K, V> clone(final Map<K, V> map) {

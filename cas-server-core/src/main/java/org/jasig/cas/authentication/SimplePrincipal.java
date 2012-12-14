@@ -18,32 +18,36 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamField;
+import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.jasig.cas.util.SerialUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Simple implementation of a AttributePrincipal that exposes an unmodifiable
  * map of attributes.
  * 
  * @author Scott Battaglia
+ * @author Marvin S. Addison
  * @version $Revision: 1.3 $ $Date: 2007/04/19 20:13:01 $
  * @since 3.1
  */
-public class SimplePrincipal implements Principal {
+public class SimplePrincipal implements Principal, Serializable {
 
-    private static final Map<String, Object> EMPTY_MAP = Collections
-        .unmodifiableMap(new HashMap<String, Object>());
-
-    /**
-     * Unique Id for Serialization.
-     */
-    private static final long serialVersionUID = -5265620187476296219L;
+    /** Serialization support. */
+    private static final long serialVersionUID = -5116401025146946946L;
+    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
 
     /** The unique identifier for the principal. */
-    private final String id;
+    private String id;
 
     /** Map of attributes for the Principal. */
     private Map<String, Object> attributes;
@@ -55,37 +59,54 @@ public class SimplePrincipal implements Principal {
     public SimplePrincipal(final String id, final Map<String, Object> attributes) {
         Assert.notNull(id, "id cannot be null");
         this.id = id;
-
-        this.attributes = attributes == null || attributes.isEmpty()
-            ? EMPTY_MAP : Collections.unmodifiableMap(attributes);
+        this.attributes = CollectionUtils.isEmpty(attributes) ? Collections.<String, Object>emptyMap() : attributes;
     }
 
-    /**
-     * Returns an immutable map.
-     */
-    public Map<String, Object> getAttributes() {
-        return this.attributes;
-    }
-
-    public String toString() {
-        return this.id;
-    }
-
-    public int hashCode() {
-        return super.hashCode() ^ this.id.hashCode();
-    }
-
+    @Override
     public final String getId() {
         return this.id;
     }
 
+    /**
+     * Gets an immutable view of attributes.
+     *
+     * @return Immutable attribute map.
+     */
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(this.attributes);
+    }
+
+    @Override
+    public String toString() {
+        return this.id;
+    }
+
+    @Override
+    public int hashCode() {
+        final HashCodeBuilder builder = new HashCodeBuilder(101, 31);
+        builder.append(this.id);
+        builder.append(this.attributes);
+        return builder.toHashCode();
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }
 
         final SimplePrincipal p = (SimplePrincipal) o;
+        return this.id.equals(p.getId()) && this.attributes.equals(p.getAttributes());
+    }
 
-        return this.id.equals(p.getId());
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        SerialUtils.writeObject(this.id, out);
+        SerialUtils.writeMap(this.attributes, out);
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        this.id = SerialUtils.readObject(String.class, in);
+        this.attributes = SerialUtils.readMap(String.class, Object.class, in);
     }
 }
