@@ -35,11 +35,12 @@ import org.springframework.util.Assert;
  * updating).
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 @MappedSuperclass
 public abstract class AbstractTicket implements Ticket, TicketState {
+
+    private static final long serialVersionUID = -8506442397878267555L;
 
     /** The ExpirationPolicy this ticket will be following. */
     // XXX removed final

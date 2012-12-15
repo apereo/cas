@@ -24,7 +24,6 @@
     <version>4.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-webapp</artifactId>
   <packaging>war</packaging>
   <name>Jasig CAS Web Application</name>
@@ -57,12 +56,6 @@
 
     <dependency>
       <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-cas</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
       <scope>runtime</scope>
     </dependency>
@@ -76,18 +69,6 @@
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-core</artifactId>
       <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jasig.cas.client</groupId>
-      <artifactId>cas-client-core</artifactId>
-      <version>3.2.1</version>
-      <exclusions>
-        <exclusion>
-        <groupId>javax.servlet</groupId>
-        <artifactId>servlet-api</artifactId>
-      </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -199,51 +180,18 @@
         </configuration>
       </plugin>
       <plugin>
-	    <groupId>org.jasig.maven</groupId>
-	    <artifactId>maven-translate-plugin</artifactId>
-	    <version>0.0.1</version>
-	    <executions>
-	        <execution>
-	            <goals>
-	                <goal>check</goal>
-	            </goals>
-	            <phase>process-resources</phase>
-	        </execution>
-	    </executions>
-	    <configuration>
-	        <messagesDirectory>${basedir}/src/main/webapp/WEB-INF/classes/</messagesDirectory>
-	        <mainMessagesFile>messages_en.properties</mainMessagesFile>
-	    </configuration>
-	  </plugin>
+        <groupId>org.jasig.maven</groupId>
+        <artifactId>maven-translate-plugin</artifactId>
+      </plugin>
     </plugins>
     <pluginManagement>
-    	<plugins>
-    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-    		<plugin>
-    			<groupId>org.eclipse.m2e</groupId>
-    			<artifactId>lifecycle-mapping</artifactId>
-    			<version>1.0.0</version>
-    			<configuration>
-    				<lifecycleMappingMetadata>
-    					<pluginExecutions>
-    						<pluginExecution>
-    							<pluginExecutionFilter>
-    								<groupId>org.jasig.maven</groupId>
-    								<artifactId>maven-translate-plugin</artifactId>
-    								<versionRange>[0.0.1,)</versionRange>
-    								<goals>
-    									<goal>check</goal>
-    								</goals>
-    							</pluginExecutionFilter>
-    							<action>
-    								<ignore></ignore>
-    							</action>
-    						</pluginExecution>
-    					</pluginExecutions>
-    				</lifecycleMappingMetadata>
-    			</configuration>
-    		</plugin>
-    	</plugins>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+        </plugin>
+      </plugins>
     </pluginManagement>
   </build>
 </project>
