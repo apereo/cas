@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+  <import resource="spring-configuration/propertyFileConfigurer.xml"/>
+
+  <!-- View Resolver -->
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
+        p:order="0">
+    <property name="basenames">
+      <list>
+        <value>${cas-management.viewResolver.basename}</value>
+      </list>
+    </property>
+  </bean>
+
+  <!-- Locale Resolver -->
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
+
+  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+
+  <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+        p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
+        p:prefix="/WEB-INF/view/jsp/"
+        p:suffix=".jsp"
+        p:order="2"/>
+  
+  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+
+  <bean
+      id="handlerMappingC"
+      class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <props>
+        <prop key="/add.html">addRegisteredServiceSimpleFormController</prop>
+        <prop key="/edit.html">editRegisteredServiceSimpleFormController</prop>
+        <prop key="/loggedOut.html">serviceLogoutViewController</prop>
+        <prop key="/authorizationFailure.html">passThroughController</prop>
+        <prop key="/*">manageRegisteredServicesMultiActionController</prop>
+      </props>
+    </property>
+    <property
+        name="alwaysUseFullPath" value="true"/>
+    <!--
+     uncomment this to enable sending PageRequest events.
+     <property
+       name="interceptors">
+       <list>
+         <ref bean="pageRequestHandlerInterceptorAdapter" />
+       </list>
+     </property>
+      -->
+  </bean>
+
+  <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+
+  <bean
+      id="serviceLogoutViewController"
+      class="org.springframework.web.servlet.mvc.ParameterizableViewController"
+      p:viewName="serviceLogoutView"/>
+
+  <bean id="addRegisteredServiceSimpleFormController"
+        class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
+        p:formView="addServiceView"
+        p:successView="addServiceView"
+        p:commandName="registeredService"
+        p:validator-ref="registeredServiceValidator"
+        p:sessionForm="true">
+    <constructor-arg index="0" ref="servicesManager"/>
+    <constructor-arg index="1" ref="attributeRepository"/>
+  </bean>
+
+  <bean id="editRegisteredServiceSimpleFormController"
+        class="org.jasig.cas.services.web.RegisteredServiceSimpleFormController"
+        p:formView="editServiceView"
+        p:successView="editServiceView"
+        p:commandName="registeredService"
+        p:validator-ref="registeredServiceValidator"
+        p:sessionForm="false">
+    <constructor-arg index="0" ref="servicesManager"/>
+    <constructor-arg index="1" ref="attributeRepository"/>
+  </bean>
+
+  <bean id="registeredServiceValidator" class="org.jasig.cas.services.web.support.RegisteredServiceValidator"
+        p:servicesManager-ref="servicesManager" 
+        p:personAttributeDao-ref="attributeRepository" />
+
+  <bean id="manageRegisteredServicesMultiActionController"
+        class="org.jasig.cas.services.web.ManageRegisteredServicesMultiActionController">
+    <constructor-arg index="0" ref="servicesManager"/>
+    <constructor-arg index="1" value="${cas-management.securityContext.serviceProperties.service}"/>
+  </bean>
+
+  <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
+
+  <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
+        p:messageInterpolator-ref="messageInterpolator"/>
+</beans>

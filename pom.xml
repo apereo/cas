@@ -192,7 +192,15 @@
     <developerConnection>scm:git:git@github.com:Jasig/cas.git</developerConnection>
     <url>https://github.com/Jasig/cas</url>
   </scm>
-
+	
+  <distributionManagement>
+    <site>
+      <id>cas-site</id>
+      <name>CAS Staging Site Documentation</name>
+      <url>file:${project.site.deployDirectory}</url>
+    </site>
+  </distributionManagement>
+	
   <build>
     <testResources>
       <testResource>
@@ -202,23 +210,65 @@
     
     <pluginManagement>
       <plugins>
-      	<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.12</version>
-        <configuration>
-          <forkMode>once</forkMode>
-          <includes>
-            <include>**/*Tests.java</include>
-          </includes>
-          <excludes>
-            <exclude>**/Abstract*.java</exclude>
-          </excludes>
-          <additionalClasspathElements>
-            <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
-          </additionalClasspathElements>
-        </configuration>
-      </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.12.4</version>
+          <configuration>
+            <forkMode>once</forkMode>
+            <includes>
+              <include>**/*Tests.java</include>
+            </includes>
+            <excludes>
+              <exclude>**/Abstract*.java</exclude>
+            </excludes>
+            <additionalClasspathElements>
+              <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
+            </additionalClasspathElements>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jasig.maven</groupId>
+          <artifactId>maven-translate-plugin</artifactId>
+          <version>0.0.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>process-resources</phase>
+            </execution>
+          </executions>
+          <configuration>
+            <messagesDirectory>${basedir}/src/main/resources/</messagesDirectory>
+            <mainMessagesFile>messages.properties</mainMessagesFile>
+          </configuration>
+        </plugin>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.jasig.maven</groupId>
+                    <artifactId>maven-translate-plugin</artifactId>
+                    <versionRange>[0.0.1,)</versionRange>
+                    <goals>
+                      <goal>check</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     
@@ -238,7 +288,7 @@
                   <version>2.0.9</version>
                 </requireMavenVersion>
                 <requireJavaVersion>
-                  <version>${jdk.version}</version>
+                  <version>${project.build.sourceVersion}</version>
                 </requireJavaVersion>
               </rules>
             </configuration>
@@ -256,7 +306,7 @@ mi2KuXZFGad>>Lz0ULLXhqIo2KPjARsdren1aP3vzebzkM
 qNNNUvQNpqopPoOQRqmTvqoPnOnMopRPqpSUtxrWTxOxTu
 pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 97W9kZkUUnmm]]></license>
-          <jdk>${jdk.version}</jdk>
+          <jdk>${project.build.sourceVersion}</jdk>
           <generateXml>true</generateXml>
           <generateHtml>true</generateHtml>
           <includes>
@@ -282,8 +332,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
+          <source>${project.build.sourceVersion}</source>
+          <target>${project.build.targetVersion}</target>
         </configuration>
       </plugin>
       <plugin>
@@ -310,7 +360,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>aspectj-maven-plugin</artifactId>
-        <version>1.3.1</version>
+        <version>1.4</version>
         <executions>
           <execution>
             <goals>
@@ -319,8 +369,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           </execution>
         </executions>
         <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
+          <source>${project.build.sourceVersion}</source>
+          <target>${project.build.targetVersion}</target>
         </configuration>
       </plugin>
       <plugin>
@@ -392,7 +442,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -406,14 +455,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjrt</artifactId>
       <scope>compile</scope>
-      <version>${aspectj.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <scope>compile</scope>
-      <version>${aspectj.version}</version>
     </dependency>
 
     <dependency>
@@ -784,10 +831,16 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <module>cas-server-uber-webapp</module>
     <module>cas-server-documentation</module>
     <module>cas-server-extension-clearpass</module>
+    <module>cas-management-webapp</module>
   </modules>
 
   <reporting>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -810,15 +863,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>2.9.1</version>
       </plugin>
-      <!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId> 
-        <configuration>
-          <minmemory>128m</minmemory>
-          <maxmemory>512</maxmemory>
-        </configuration> 
-      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
@@ -828,6 +872,28 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>2.7.1</version>
+        <configuration>
+          <targetJdk>${project.build.targetVersion}</targetJdk>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>1.3.1</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependency-updates-report</report>
+              <report>plugin-updates-report</report>
+              <report>property-updates-report</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.4</version>
       </plugin>
     </plugins>
   </reporting>
@@ -853,11 +919,11 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.8</version>
+						<version>2.9</version>
             <configuration>
-              <charset>UTF-8</charset>
-              <encoding>UTF-8</encoding>
-              <docencoding>UTF-8</docencoding>
+              <charset>${project.reporting.outputEncoding}</charset>
+              <encoding>${project.reporting.outputEncoding}</encoding>
+              <docencoding>${project.reporting.outputEncoding}</docencoding>
             </configuration>
             <executions>
               <execution>
@@ -875,12 +941,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   
   <properties>
     <issues.projectKey>CAS</issues.projectKey>
-    <spring.webflow.version>2.3.0.RELEASE</spring.webflow.version>
-    <spring.version>3.1.1.RELEASE</spring.version>
+    <spring.webflow.version>2.3.1.RELEASE</spring.webflow.version>
+    <spring.version>3.1.3.RELEASE</spring.version>
     <spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
-    <spring.security.version>3.1.0.RELEASE</spring.security.version>
+    <spring.security.version>3.1.2.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
-    <aspectj.version>1.6.10</aspectj.version>
+    <aspectj.version>1.6.11</aspectj.version>
     <javax.validation.version>1.0.0.GA</javax.validation.version>
     <perf4j.version>0.9.14</perf4j.version>
     <commons.jexl.version>1.1</commons.jexl.version>
@@ -897,7 +963,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.9.0</mockito.version>
-    <jdk.version>1.6</jdk.version>
-    <ehcache.version>2.6.0</ehcache.version>
+    <ehcache.version>2.6.2</ehcache.version>
+		
+    <project.build.sourceVersion>1.6</project.build.sourceVersion>
+    <project.build.targetVersion>1.6</project.build.targetVersion>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.site.deployDirectory>/tmp/cas-deploy-site</project.site.deployDirectory>
   </properties>
 </project>

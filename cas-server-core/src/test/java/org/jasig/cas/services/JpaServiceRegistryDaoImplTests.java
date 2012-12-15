@@ -31,7 +31,6 @@ import static org.junit.Assert.*;
 /**
  * 
  * @author battags
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
