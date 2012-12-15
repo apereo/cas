@@ -30,7 +30,7 @@
 <div class="box" id="login">
   <form:form method="post" id="fm1" commandName="${commandName}" htmlEscape="true">
 
-    <form:errors path="*" id="msg" cssClass="errors" element="div" />
+    <form:errors path="*" id="msg" cssClass="errors" element="div" htmlEscape="false" />
   
     <h2><spring:message code="screen.welcome.instructions" /></h2>
   
