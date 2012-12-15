@@ -45,17 +45,17 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This class represents an action in the webflow to retrieve OAuth information on the callback url which is the webflow url (/login). The
- * {@link org.jasig.cas.support.oauth.OAuthConstants.OAUTH_PROVIDER} and the other OAuth parameters are expected after OAuth authentication.
- * Providers are defined by configuration. The {@link org.jasig.cas.support.oauth.OAuthConstants.SERVICE},
- * {@link org.jasig.cas.support.oauth.OAuthConstants.THEME}, {@link org.jasig.cas.support.oauth.OAuthConstants.LOCALE} and
- * {@link org.jasig.cas.support.oauth.OAuthConstants.METHOD} parameters are saved and restored from web session after OAuth authentication.
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#OAUTH_PROVIDER} and the other OAuth parameters are expected after OAuth authentication.
+ * Providers are defined by configuration. The {@link org.jasig.cas.support.oauth.OAuthConstants#SERVICE},
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#THEME}, {@link org.jasig.cas.support.oauth.OAuthConstants#LOCALE} and
+ * {@link org.jasig.cas.support.oauth.OAuthConstants#METHOD} parameters are saved and restored from web session after OAuth authentication.
  * 
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuthAction extends AbstractAction {
     
-    private static final Logger logger = LoggerFactory.getLogger(OAuthAction.class);
+    private final Logger log = LoggerFactory.getLogger(OAuthAction.class);
     
     @NotNull
     private OAuthConfiguration configuration;
@@ -72,20 +72,20 @@ public final class OAuthAction extends AbstractAction {
         
         // get provider type
         final String providerType = request.getParameter(OAuthConstants.OAUTH_PROVIDER);
-        logger.debug("providerType : {}", providerType);
+        log.debug("providerType : {}", providerType);
         
         // it's an authentication
         if (StringUtils.isNotBlank(providerType)) {
             // get provider
             final OAuthProvider provider = OAuthUtils
                 .getProviderByType(this.configuration.getProviders(), providerType);
-            logger.debug("provider : {}", provider);
+            log.debug("provider : {}", provider);
             
             // get credential
             @SuppressWarnings("unchecked")
             final OAuthCredential credential = provider.getCredential(new HttpUserSession(request),
                                                                       request.getParameterMap());
-            logger.debug("credential : {}", credential);
+            log.debug("credential : {}", credential);
             
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(OAuthConstants.SERVICE);
@@ -127,7 +127,7 @@ public final class OAuthAction extends AbstractAction {
                 } else {
                     authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(session));
                 }
-                logger.debug("{} -> {}", key, authorizationUrl);
+                log.debug("{} -> {}", key, authorizationUrl);
                 context.getFlowScope().put(key, authorizationUrl);
             }
         }

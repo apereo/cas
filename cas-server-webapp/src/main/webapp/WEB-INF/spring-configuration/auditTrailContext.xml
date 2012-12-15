@@ -69,12 +69,6 @@
         <entry key="VALIDATE_SERVICE_TICKET_RESOLVER">
           <ref local="ticketValidationActionResolver" />
         </entry>
-        <entry key="DELETE_SERVICE_ACTION_RESOLVER">
-            <ref local="deleteServiceActionResolver" />
-        </entry>
-        <entry key="SAVE_SERVICE_ACTION_RESOLVER">
-          <ref local="saveServiceActionResolver" />
-        </entry>
       </map>
     </constructor-arg>
     
@@ -99,29 +93,9 @@
         <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
           <ref local="ticketResourceResolver" />
         </entry>
-        <entry key="DELETE_SERVICE_RESOURCE_RESOLVER">
-            <ref local="deleteServiceResourceResolver" />
-        </entry>
-        <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
-            <ref local="saveServiceResourceResolver" />
-        </entry>
       </map>
     </constructor-arg>
   </bean>
-
-    <bean id="saveServiceResourceResolver" class="com.github.inspektr.audit.spi.support.ParametersAsStringResourceResolver" />
-
-    <bean id="deleteServiceResourceResolver" class="org.jasig.cas.audit.spi.ServiceManagementResourceResolver" />
-
-    <bean id="saveServiceActionResolver" class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
-        <constructor-arg index="0" value="_SUCCEEDED" />
-        <constructor-arg index="1" value="_FAILED" />
-    </bean>
-
-    <bean id="deleteServiceActionResolver" class="com.github.inspektr.audit.spi.support.ObjectCreationAuditActionResolver">
-        <constructor-arg index="0" value="_SUCCEEDED" />
-        <constructor-arg index="1" value="_FAILED" />
-    </bean>
 
   <bean id="auditablePrincipalResolver" class="org.jasig.cas.audit.spi.TicketOrCredentialPrincipalResolver">
       <constructor-arg index="0" ref="ticketRegistry" />

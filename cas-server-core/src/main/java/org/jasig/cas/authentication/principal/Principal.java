@@ -48,7 +48,7 @@ public interface Principal extends Serializable {
     
     /**
      * 
-     * @return
+     * @return the map of configured attributes for this principal
      */
     Map<String, Object> getAttributes();
 }

@@ -26,7 +26,7 @@
 			   <spring:message code="screen.oauth.confirm.message" arguments="${serviceName}" />
 			</p>
 			<p>
-				<a id="allow" name="allow" href="${callbackUrlWithCode}"><spring:message code="screen.oauth.confirm.allow" /></a>
+				<a id="allow" name="allow" href="${callbackUrl}"><spring:message code="screen.oauth.confirm.allow" /></a>
 			</p>
 		</div>
 <jsp:directive.include file="../../default/ui/includes/bottom.jsp" />
