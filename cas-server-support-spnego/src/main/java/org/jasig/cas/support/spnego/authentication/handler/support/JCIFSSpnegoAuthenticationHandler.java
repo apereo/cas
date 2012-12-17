@@ -18,17 +18,20 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.Principal;
+import java.util.regex.Pattern;
+import javax.security.auth.login.FailedLoginException;
+
 import jcifs.spnego.Authentication;
 import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.security.Principal;
-import java.util.regex.Pattern;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
@@ -40,8 +43,7 @@ import java.util.regex.Pattern;
  * @version $Revision$ $Date$
  * @since 3.1
  */
-public final class JCIFSSpnegoAuthenticationHandler extends
-        AbstractPreAndPostProcessingAuthenticationHandler {
+public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -57,11 +59,10 @@ public final class JCIFSSpnegoAuthenticationHandler extends
      */
     private boolean isNTLMallowed = false;
 
-    protected boolean doAuthentication(final Credential credential)
-        throws AuthenticationException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, IOException {
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
-        Principal principal;
-        byte[] nextToken;
+        final Principal principal;
+        final byte[] nextToken;
         try {
             // proceed authentication using jcifs
             synchronized (this) {
@@ -71,7 +72,8 @@ public final class JCIFSSpnegoAuthenticationHandler extends
                 nextToken = this.authentication.getNextToken();
             }
         } catch (jcifs.spnego.AuthenticationException e) {
-            throw new BadCredentialsAuthenticationException(e);
+            log.debug("Authentication failed due to error {}", e);
+            throw new FailedLoginException();
         }
         // evaluate jcifs response
         if (nextToken != null) {
@@ -87,24 +89,19 @@ public final class JCIFSSpnegoAuthenticationHandler extends
                     logger.debug("NTLM Credential is valid for user ["
                         + principal.getName() + "]");
                 }
-                spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                    .getName(), true));
-                return this.isNTLMallowed;
+                spnegoCredentials.setPrincipal(getSimplePrincipal(principal.getName(), true));
+                if (!this.isNTLMallowed) {
+                    throw new FailedLoginException("NTLM not allowed.");
+                }
+            } else {
+                logger.debug("Kerberos Credential is valid for user {}", principal.getName());
+                spnegoCredentials.setPrincipal(getSimplePrincipal(principal.getName(), false));
             }
-            // else => kerberos
-            if (logger.isDebugEnabled()) {
-                logger.debug("Kerberos Credential is valid for user ["
-                    + principal.getName() + "]");
-            }
-            spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                .getName(), false));
-            return true;
-
+            return new HandlerResult(this, new SimplePrincipal(principal.getName()));
+        } else {
+            logger.debug("Principal is null, the processing of the SPNEGO Token failed");
         }
-
-        logger
-            .debug("Principal is null, the processing of the SPNEGO Token failed");
-        return false;
+        throw new FailedLoginException();
     }
 
     public boolean supports(final Credential credential) {

@@ -19,10 +19,12 @@
 package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * AuthenticationHandler which authenticates Principal-bearing credentials.
@@ -32,22 +34,30 @@ import org.slf4j.LoggerFactory;
  * true.
  * 
  * @author Andrew Petro
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0.5
  */
-public final class PrincipalBearingCredentialsAuthenticationHandler implements
-    AuthenticationHandler {
+public final class PrincipalBearingCredentialsAuthenticationHandler implements AuthenticationHandler {
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
-    public boolean authenticate(final Credential credential) {
-        if (log.isDebugEnabled()) {
-            log.debug("Trusting credential for: " + credential);
-        }
-        return true;
+    private String name;
+
+    public HandlerResult authenticate(final Credential credential) {
+        log.debug("Trusting credential {}", credential);
+        return new HandlerResult(this);
     }
 
     public boolean supports(final Credential credential) {
         return credential.getClass().equals(PrincipalBearingCredential.class);
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return StringUtils.hasText(this.name) ? this.name : getClass().getSimpleName();
     }
 }

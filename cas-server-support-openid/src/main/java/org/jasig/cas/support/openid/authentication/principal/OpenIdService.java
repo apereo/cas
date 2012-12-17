@@ -138,7 +138,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
         return Response.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
-    public boolean logOutOfService(HttpClient httpClient, final String sessionIdentifier) {
+    public boolean logOutOfService(final String sessionIdentifier) {
         return false;
     }
 

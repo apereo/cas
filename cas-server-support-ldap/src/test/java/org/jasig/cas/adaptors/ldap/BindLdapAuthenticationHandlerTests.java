@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import javax.security.auth.login.FailedLoginException;
+
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -43,7 +45,7 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
         c.setUsername(this.bindTestConfig.getExistsCredential());
         c.setPassword(this.bindTestConfig.getExistsSuccessPassword());
         
-        assertTrue(this.bindAuthHandler.authenticate(c));
+        assertEquals(c.getUsername(), this.bindAuthHandler.authenticate(c).getPrincipal().getId());
     }
 
 
@@ -51,8 +53,11 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.bindTestConfig.getExistsCredential());
         c.setPassword(this.bindTestConfig.getExistsFailurePassword());
-        
-        assertFalse(this.bindAuthHandler.authenticate(c));
+
+        try {
+            this.bindAuthHandler.authenticate(c);
+            fail("Should have thrown FailedLoginException");
+        } catch (FailedLoginException e) {}
     }
 
 
@@ -60,7 +65,10 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
         c.setUsername(this.bindTestConfig.getNotExistsCredential());
         c.setPassword("");
-        
-        assertFalse(this.bindAuthHandler.authenticate(c));
+
+        try {
+            this.bindAuthHandler.authenticate(c);
+            fail("Should have thrown FailedLoginException");
+        } catch (FailedLoginException e) {}
     }
 }

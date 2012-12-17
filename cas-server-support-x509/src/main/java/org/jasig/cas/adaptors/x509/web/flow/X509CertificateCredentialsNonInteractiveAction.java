@@ -41,20 +41,15 @@ public final class X509CertificateCredentialsNonInteractiveAction extends
 
     protected Credential constructCredentialsFromRequest(
         final RequestContext context) {
-        final X509Certificate[] certificates = (X509Certificate[]) context
-            .getExternalContext().getRequestMap().get(
+        final X509Certificate[] certificates = (X509Certificate[]) context.getExternalContext().getRequestMap().get(
                 CERTIFICATE_REQUEST_ATTRIBUTE);
 
         if (certificates == null || certificates.length == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Certificates not found in request.");
-            }
+            logger.debug("Certificates not found in request.");
             return null;
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Certificate found in request.");
-        }
+        logger.debug("Certificate found in request.");
         return new X509CertificateCredential(certificates);
     }
 }

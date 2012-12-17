@@ -29,8 +29,7 @@ import org.jasig.cas.authentication.Credential;
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public final class OpenIdPrincipalResolver extends
-        AbstractPersonDirectoryPrincipalResolver {
+public final class OpenIdPrincipalResolver extends AbstractPersonDirectoryPrincipalResolver {
 
     protected String extractPrincipalId(final Credential credential) {
         return ((OpenIdCredential) credential).getUsername();

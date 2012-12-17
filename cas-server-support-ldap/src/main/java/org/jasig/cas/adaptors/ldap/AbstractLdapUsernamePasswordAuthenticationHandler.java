@@ -18,17 +18,17 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.LdapAuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.Assert;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle common LDAP functionality.
@@ -124,33 +124,31 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     }
     
     /**
-     * Available ONLY for subclasses that would want to customize how ldap error codes are handled
+     * Maps a Spring LDAP authentication exception onto a {@link GeneralSecurityException} as required by
+     * the contract of
+     * {@link org.jasig.cas.authentication.AuthenticationHandler#authenticate(org.jasig.cas.authentication.Credential)}.
+     * The set of configured {@link #ldapErrorDefinitions} are consulted to map exceptions based on error
+     * message text into the corresponding subclass of {@link GeneralSecurityException}.
      *
-     * @param e The ldap exception that occurred.
-     * @return an instance of {@link AuthenticationException}
+     * @param e Authentication exception thrown by Spring LDAP components.
+     *
+     * @return A security exception that may be the original or one translated according to
+     * configured {@link #ldapErrorDefinitions}.
      */
-    protected AuthenticationException handleLdapError(final Exception e) {
+    protected GeneralSecurityException handleLdapError(final AuthenticationException e) {
         if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
-            if (this.log.isDebugEnabled())
-                this.log.debug("No error definitions are defined. Throwing error " + e.getMessage());
-            return BadCredentialsAuthenticationException.ERROR;
+            log.debug("No error definitions are defined. Throwing default FailedLoginException.");
+            return new FailedLoginException();
         }
 
-        if (this.log.isDebugEnabled())
-            this.log.debug("Handling error: " + e.getMessage());
-
+        log.debug("Attempting to handle {}: {}", e.getClass().getSimpleName(), e.getMessage());
         for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions)
             if (ldapErrorDef.matches(e.getMessage())) {
-                if (this.log.isDebugEnabled())
-                    this.log.debug("Found error type " + ldapErrorDef.getType() +  ". Throwing error for " + e.getMessage());
-
-                return new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE, e.getMessage(), ldapErrorDef.getType());
-
+                log.debug("{} matches {}", e, ldapErrorDef);
+                return ldapErrorDef.getMappedException();
             }
 
-        if (this.log.isDebugEnabled())
-            this.log.debug("No error definition could be matched against the error. Throwing default error for " + e.getMessage());
-
-        return BadCredentialsAuthenticationException.ERROR;
+        log.debug("No matching error definition found. Throwing default FailedLoginException.");
+        return new FailedLoginException();
     }
 }

@@ -18,12 +18,16 @@
  */
 package org.jasig.cas.support.oauth.authentication.handler.support;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredential;
@@ -47,7 +51,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     }
     
     @Override
-    protected boolean doAuthentication(final Credential credential) throws AuthenticationException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, IOException {
         final OAuthCredential oauthCredentials = (OAuthCredential) credential;
         log.debug("credential : {}", oauthCredentials);
         
@@ -64,10 +68,10 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
             oauthCredentials.setUserProfile(userProfile);
-            return true;
-        } else {
-            return false;
+            return new HandlerResult(this, new SimplePrincipal(userProfile.getId()));
         }
+        log.info("Failed to authenticate {}", userProfile);
+        throw new FailedLoginException();
     }
     
     public void setConfiguration(final OAuthConfiguration configuration) {

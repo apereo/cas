@@ -19,7 +19,7 @@
 package org.jasig.cas.adaptors.x509.web.flow;
 
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +27,8 @@ import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateSerialNumberPrincipalResolver;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.AnyAuthenticationManger;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PrincipalResolver;
 import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -52,16 +53,13 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
+        final X509CredentialsAuthenticationHandler handler = new X509CredentialsAuthenticationHandler();
+        handler.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
+        final AuthenticationManager authenticationManager = new AnyAuthenticationManger(
+                Collections.<org.jasig.cas.authentication.AuthenticationHandler, PrincipalResolver>singletonMap(
+                        handler,
+                        new X509CertificateSerialNumberPrincipalResolver()));
 
-
-        final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();
-
-        final X509CredentialsAuthenticationHandler a = new X509CredentialsAuthenticationHandler();
-        a.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
-        
-        authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {a}));
-        authenticationManager.setPrincipalResolvers(Arrays.asList(new PrincipalResolver[]{new X509CertificateSerialNumberPrincipalResolver()}));
-        
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);
         centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());

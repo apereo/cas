@@ -18,11 +18,16 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Class that if provided a query that returns a password (parameter of query
@@ -40,19 +45,24 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     @NotNull
     private String sql;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
-        final String username = getPrincipalNameTransformer().transform(credentials.getUsername());
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
+        final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String password = credentials.getPassword();
         final String encryptedPassword = this.getPasswordEncoder().encode(
             password);
         
         try {
-            final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
-            return dbPassword.equals(encryptedPassword);
+            final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, transformedUsername);
+            if (dbPassword.equals(encryptedPassword)) {
+                return new HandlerResult(this, new SimplePrincipal(transformedUsername));
+            }
         } catch (final IncorrectResultSizeDataAccessException e) {
-            // this means the username was not found.
-            return false;
+            log.debug("{} not found", transformedUsername);
+            throw new AccountNotFoundException();
         }
+        log.info("Failed to authenticate {}", transformedUsername);
+        throw new FailedLoginException();
     }
 
     /**

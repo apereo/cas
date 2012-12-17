@@ -18,13 +18,16 @@
  */
 package org.jasig.cas.adaptors.generic;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one
@@ -37,25 +40,24 @@ import javax.validation.constraints.NotNull;
  * RejectUsersAuthenticationHandler to authenticate someone.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0
  */
-public class RejectUsersAuthenticationHandler extends
-        AbstractUsernamePasswordAuthenticationHandler {
+public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The collection of users to reject. */
     @NotNull
     private List<String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
 
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
 
         if (this.users.contains(transformedUsername)) {
-            throw new BlockedCredentialsAuthenticationException();
+            throw new FailedLoginException();
         }
-
-        return true;
+        return new HandlerResult(this, new SimplePrincipal(transformedUsername));
     }
 
     /**

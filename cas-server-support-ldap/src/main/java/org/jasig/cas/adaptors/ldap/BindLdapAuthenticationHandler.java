@@ -18,24 +18,29 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.util.LdapUtils;
-import org.springframework.ldap.NamingSecurityException;
-import org.springframework.ldap.core.ContextSource;
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.core.NameClassPairCallbackHandler;
-import org.springframework.ldap.core.SearchExecutor;
-
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.NameClassPairCallbackHandler;
+import org.springframework.ldap.core.SearchExecutor;
+import org.springframework.security.core.AuthenticationException;
 
 /**
  * Performs LDAP authentication via two distinct steps:
@@ -78,7 +83,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
     /** Boolean of whether multiple accounts are allowed. */
     private boolean allowMultipleAccounts;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
 
         final List<String> cns = new ArrayList<String>();
         
@@ -102,12 +108,12 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
             });
         
         if (cns.isEmpty()) {
-            log.info("Search for " + filter + " returned 0 results.");
-            return false;
+            log.info("Search for {} returned 0 results.", filter);
+            throw new AccountNotFoundException();
         }
         if (cns.size() > 1 && !this.allowMultipleAccounts) {
-            log.warn("Search for " + filter + " returned multiple results, which is not allowed.");
-            return false;
+            log.warn("Search for {} returned multiple results, which is not allowed.", filter);
+            throw new FailedLoginException();
         }
 
         for (final String dn : cns) {
@@ -120,20 +126,18 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
                     getPasswordEncoder().encode(credentials.getPassword()));
 
                 if (test != null) {
-                    return true;
+                    return new HandlerResult(this, new SimplePrincipal(transformedUsername));
                 }
-            } catch (final NamingSecurityException e) {
+            } catch (final AuthenticationException e) {
                 log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
                 throw handleLdapError(e);
             } catch (final Exception e) {
-                this.log.error(e.getMessage(), e);
-                throw handleLdapError(e);
+                throw new IOException("Unexpected error on LDAP bind.", e);
             } finally {
                 LdapUtils.closeContext(test);
             }
         }
-
-        return false;
+        throw new FailedLoginException();
     }
 
     protected String composeCompleteDnToCheck(final String dn,

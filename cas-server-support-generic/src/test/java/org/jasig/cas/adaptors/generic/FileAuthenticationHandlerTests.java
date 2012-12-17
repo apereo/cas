@@ -18,183 +18,81 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import junit.framework.TestCase;
+import java.util.Arrays;
+import java.util.Collection;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.UnsupportedCredentialException;
-import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.core.io.ClassPathResource;
 
+import static org.junit.Assert.assertEquals;
+
 /**
- * @author Scott Battaglia
- * @version $Id: FileAuthenticationHandlerTests.java,v 1.3 2005/02/27 05:49:26
- * sbattaglia Exp $
+ * Unit test for {@link FileAuthenticationHandler}.
+ *
+ * @author Marvin S. Addison
  */
-public class FileAuthenticationHandlerTests extends TestCase {
+@RunWith(Parameterized.class)
+public class FileAuthenticationHandlerTests {
 
     private FileAuthenticationHandler authenticationHandler;
 
-    /**
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-        this.authenticationHandler = new FileAuthenticationHandler();
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication.txt"));
+    private UsernamePasswordCredential credential;
 
+    boolean expected;
+
+    public FileAuthenticationHandlerTests(
+            final FileAuthenticationHandler handler,
+            final UsernamePasswordCredential credential,
+            final boolean expected) {
+        this.authenticationHandler = handler;
+        this.credential = credential;
+        this.expected = expected;
     }
 
-    public void testSupportsProperUserCredentials() {
-        UsernamePasswordCredential c = new UsernamePasswordCredential();
+    @Parameterized.Parameters
+    public static Collection<Object[]> generateData() throws Exception {
 
-        c.setUsername("scott");
-        c.setPassword("rutgers");
-        try {
-            this.authenticationHandler.authenticate(c);
-        } catch (UnsupportedCredentialException e) {
-            fail("UnsupportedCredentialException caught");
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught.");
-        }
+        final FileAuthenticationHandler handlerDefaultSep = new FileAuthenticationHandler();
+        handlerDefaultSep.setFileName(new ClassPathResource("/authentication.txt"));
+
+        final FileAuthenticationHandler handlerCommaSep = new FileAuthenticationHandler();
+        handlerCommaSep.setFileName(new ClassPathResource("/authentication2.txt"));
+        handlerCommaSep.setSeparator(",");
+
+        final FileAuthenticationHandler handlerNoFile = new FileAuthenticationHandler();
+
+        return Arrays.asList(new Object[][]{
+                {handlerDefaultSep, newCredential("scott", "rutgers"), true},
+                {handlerDefaultSep, newCredential("scott", "Rutgers"), false},
+                {handlerDefaultSep, newCredential("scott", "invalid"), false},
+                {handlerDefaultSep, newCredential(null, "nomatter"), false},
+                {handlerCommaSep, newCredential("bill", "YES"), true},
+                {handlerCommaSep, newCredential("bill", "yes"), false},
+                {handlerNoFile , newCredential("scott", "rutgers"), false},
+        });
     }
 
-    public void testDoesntSupportBadUserCredentials() {
+    @Test
+    public void testAuthenticate() {
+        boolean success;
         try {
-            final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"));
-            assertFalse(this.authenticationHandler.supports(c));
-        } catch (MalformedURLException e) {
-            fail("MalformedURLException caught.");
-        }
-    }
-
-    public void testAuthenticatesUserInFileWithDefaultSeparator() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        c.setUsername("scott");
-        c.setPassword("rutgers");
-
-        try {
-            assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught but it should not have been thrown.");
-        }
-    }
-
-    public void testFailsUserNotInFileWithDefaultSeparator() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        c.setUsername("fds");
-        c.setPassword("rutgers");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
-    }
-
-    public void testFailsNullUserName() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        c.setUsername(null);
-        c.setPassword("user");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
-    }
-
-    public void testFailsNullUserNameAndPassword() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        c.setUsername(null);
-        c.setPassword(null);
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
-    }
-
-    public void testFailsNullPassword() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        c.setUsername("scott");
-        c.setPassword(null);
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
-    }
-
-    public void testAuthenticatesUserInFileWithCommaSeparator() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
-        this.authenticationHandler.setSeparator(",");
-
-        c.setUsername("scott");
-        c.setPassword("rutgers");
-
-        try {
-            assertTrue(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            fail("AuthenticationException caught but it should not have been thrown.");
-        }
-    }
-
-    public void testFailsUserNotInFileWithCommaSeparator() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
-        this.authenticationHandler.setSeparator(",");
-
-        c.setUsername("fds");
-        c.setPassword("rutgers");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
-    }
-
-    public void testFailsGoodUsernameBadPassword() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
-        this.authenticationHandler.setSeparator(",");
-
-        c.setUsername("scott");
-        c.setPassword("rutgers1");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
-    }
-
-    public void testAuthenticateNoFileName() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        this.authenticationHandler.setFileName(new ClassPathResource("fff"));
-
-        c.setUsername("scott");
-        c.setPassword("rutgers");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
+            this.authenticationHandler.authenticate(this.credential);
+            success = true;
         } catch (Exception e) {
-            // this is good
+            success = false;
         }
+        assertEquals(expected, success);
+    }
+
+
+
+    private static UsernamePasswordCredential newCredential(final String user, final String password) {
+        final UsernamePasswordCredential credential = new UsernamePasswordCredential();
+        credential.setUsername(user);
+        credential.setPassword(password);
+        return credential;
     }
 }

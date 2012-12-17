@@ -18,11 +18,15 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.beans.factory.InitializingBean;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -52,14 +56,17 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String sql;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String encyptedPassword = getPasswordEncoder().encode(credentials.getPassword());
 
-        final int count = getJdbcTemplate().queryForInt(this.sql,
-           transformedUsername, encyptedPassword);
-
-        return count > 0;
+        final int count = getJdbcTemplate().queryForInt(this.sql, transformedUsername, encyptedPassword);
+        if (count > 0) {
+            return new HandlerResult(this, new SimplePrincipal(transformedUsername));
+        }
+        log.info("Failed to authenticate {}", transformedUsername);
+        throw new FailedLoginException();
     }
 
     public void afterPropertiesSet() throws Exception {

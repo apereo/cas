@@ -19,21 +19,21 @@
 package org.jasig.cas.support.openid.web.flow;
 
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AnyAuthenticationManger;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
-import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.PrincipalResolver;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
@@ -64,25 +64,18 @@ public class OpenIdSingleSignOnActionTests extends TestCase {
     
     private TicketRegistry ticketRegistry;
     
-    private DirectMappingAuthenticationManagerImpl authenticationManager;
+    private AuthenticationManager authenticationManager;
     
     private CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
     
     protected void setUp() throws Exception {
         this.ticketRegistry = new DefaultTicketRegistry();
-        this.authenticationManager = new DirectMappingAuthenticationManagerImpl();
-        
-        final Map<Class<? extends Credential>, DirectAuthenticationHandlerMappingHolder> credentialsMapping = new HashMap<Class<? extends Credential>, DirectAuthenticationHandlerMappingHolder>();
-        
-        final DirectAuthenticationHandlerMappingHolder holder = new DirectAuthenticationHandlerMappingHolder();
         final OpenIdCredentialsAuthenticationHandler handler = new OpenIdCredentialsAuthenticationHandler();
+        final PrincipalResolver resolver = new OpenIdPrincipalResolver();
+        this.authenticationManager = new AnyAuthenticationManger(
+                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(handler, resolver));
         handler.setTicketRegistry(this.ticketRegistry);
-        holder.setAuthenticationHandler(handler);
-        holder.setPrincipalResolver(new OpenIdPrincipalResolver());
-        
-        this.authenticationManager.setCredentialsMapping(credentialsMapping);
-        credentialsMapping.put(OpenIdCredential.class, holder);
-        
+
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
         
@@ -134,7 +127,8 @@ public class OpenIdSingleSignOnActionTests extends TestCase {
     public void testSuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Authentication authentication = new MutableAuthentication(new SimplePrincipal("scootman28"));
+        final MutableAuthentication authentication = new MutableAuthentication();
+        authentication.setPrincipal(new SimplePrincipal("scootman28"));
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication, new NeverExpiresExpirationPolicy());
         
         this.ticketRegistry.addTicket(t);

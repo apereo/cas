@@ -32,14 +32,15 @@ import junit.framework.TestCase;
 public final class PrincipalBearingCredentialsAuthenticationHandlerTests 
     extends TestCase {
 
-    private PrincipalBearingCredentialsAuthenticationHandler handler 
-        = new PrincipalBearingCredentialsAuthenticationHandler();    
+    private PrincipalBearingCredentialsAuthenticationHandler handler =
+            new PrincipalBearingCredentialsAuthenticationHandler();
+
     /**
      * When the credentials bear a Principal, succeed the authentication.
      */
-    public void testNonNullPrincipal() {
+    public void testNonNullPrincipal() throws Exception {
         PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
-        assertTrue(this.handler.authenticate(credentials));
+        assertNotNull(this.handler.authenticate(credentials));
     }    
     
     public void testSupports() {

@@ -18,10 +18,14 @@
  */
 package org.jasig.cas.adaptors.jdbc;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import javax.security.auth.login.FailedLoginException;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 
@@ -33,25 +37,23 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * 
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends
-    AbstractJdbcUsernamePasswordAuthenticationHandler {
+public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
-    protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredential credentials)
-        throws AuthenticationException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+        throws GeneralSecurityException, IOException {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
 
         try {
-            final Connection c = this.getDataSource()
-                .getConnection(username, password);
+            final Connection c = this.getDataSource().getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this.getDataSource());
-            return true;
+            return new HandlerResult(this, new SimplePrincipal(username));
         } catch (final SQLException e) {
-            return false;
+            log.info("Failed to authenticate {} due to error {}", username, e);
+            throw new FailedLoginException();
         }
     }
 }

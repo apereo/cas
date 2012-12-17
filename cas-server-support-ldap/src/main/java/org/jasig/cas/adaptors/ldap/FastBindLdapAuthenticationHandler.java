@@ -18,12 +18,15 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import javax.naming.directory.DirContext;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.util.LdapUtils;
-import org.springframework.ldap.NamingException;
+import org.springframework.security.core.AuthenticationException;
 
 /**
  * Implementation of an LDAP handler to do a "fast bind." A fast bind skips the
@@ -36,17 +39,20 @@ import org.springframework.ldap.NamingException;
  */
 public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
         DirContext dirContext = null;
         try {
             final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
             final String bindDn = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
-            this.log.debug("Performing LDAP bind with credential: " + bindDn);
+            log.debug("Performing LDAP bind with credential: " + bindDn);
             dirContext = this.getContextSource().getContext(bindDn, getPasswordEncoder().encode(credentials.getPassword()));
-            return true;
-        } catch (final NamingException e) {
+            return new HandlerResult(this, new SimplePrincipal(transformedUsername));
+        } catch (final AuthenticationException e) {
             log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
             throw handleLdapError(e);
+        } catch (final Exception e) {
+            throw new IOException("Unexpected error on LDAP bind.", e);
         } finally {
             if (dirContext != null) {
                 LdapUtils.closeContext(dirContext);

@@ -18,6 +18,11 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+
 import jcifs.Config;
 import jcifs.UniAddress;
 import jcifs.netbios.NbtAddress;
@@ -27,15 +32,12 @@ import jcifs.ntlmssp.Type3Message;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
-
 import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
-
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of an AuthenticationHandler for NTLM supports.
@@ -47,8 +49,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 
-public class NtlmAuthenticationHandler extends
-        AbstractPreAndPostProcessingAuthenticationHandler {
+public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private boolean loadBalance = true;
 
@@ -57,25 +58,23 @@ public class NtlmAuthenticationHandler extends
     
     private String includePattern = null;
 
-    protected final boolean doAuthentication(final Credential credential)
-        throws AuthenticationException {
+    protected final HandlerResult doAuthentication(final Credential credential)
+            throws GeneralSecurityException, IOException {
+
         final SpnegoCredential ntlmCredentials = (SpnegoCredential) credential;
         final byte[] src = ntlmCredentials.getInitToken();
-
         UniAddress dc = null;
-
         try {
-
             if (this.loadBalance) {
             	// find the first dc that matches the includepattern
             	if(this.includePattern != null){
-            		NbtAddress [] dcs  = NbtAddress.getAllByName(this.domainController,0x1C, null,null);
-            		for(int i=0;i<dcs.length;i++){
-            			if(dcs[i].getHostAddress().matches(this.includePattern)){
-            				dc = new UniAddress(dcs[i]);
-            				break;
-            			}
-            		}
+            		final NbtAddress [] dcs  = NbtAddress.getAllByName(this.domainController,0x1C, null,null);
+                    for (final NbtAddress dc1 : dcs) {
+                        if (dc1.getHostAddress().matches(this.includePattern)) {
+                            dc = new UniAddress(dc1);
+                            break;
+                        }
+                    }
             	}
             	else
             		dc = new UniAddress(NbtAddress.getByName(this.domainController,
@@ -93,7 +92,6 @@ public class NtlmAuthenticationHandler extends
                         challenge, null);
                     log.debug("Type 2 returned. Setting next token.");
                     ntlmCredentials.setNextToken(type2.toByteArray());
-                    return false;
                 case 3:
                     log.debug("Type 3 received");
                     final Type3Message type3 = new Type3Message(src);
@@ -108,20 +106,17 @@ public class NtlmAuthenticationHandler extends
                         + " with domain controller");
                     try {
                         SmbSession.logon(dc, ntlm);
-                        ntlmCredentials.setPrincipal(new SimplePrincipal(type3
-                            .getUser()));
-                        return true;
+                        final Principal principal = new SimplePrincipal(type3.getUser());
+                        ntlmCredentials.setPrincipal(principal);
+                        return new HandlerResult(this, principal);
                     } catch (final SmbAuthException sae) {
-                        log.debug("Authentication failed", sae);
-                        return false;
+                        log.debug("Authentication failed due to error {}", sae);
                     }
             }
         } catch (final Exception e) {
-            log.error(e.getMessage(), e);
-            throw new BadCredentialsAuthenticationException(e);
+            log.debug("Authentication failed due to error {}", e);
         }
-
-        return false;
+        throw new FailedLoginException();
     }
 
     public boolean supports(final Credential credential) {

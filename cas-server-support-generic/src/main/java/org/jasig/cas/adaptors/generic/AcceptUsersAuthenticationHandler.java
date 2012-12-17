@@ -18,13 +18,17 @@
  */
 package org.jasig.cas.adaptors.generic;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Map;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -40,32 +44,29 @@ import javax.validation.constraints.NotNull;
  * to it.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0
  */
-public class AcceptUsersAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The list of users we will accept. */
     @NotNull
     private Map<String, String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String cachedPassword = this.users.get(transformedUsername);
 
         if (cachedPassword == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The user [" + transformedUsername
-                    + "] was not found in the map.");
+            log.debug("{} not found in map provided in configuration.", transformedUsername);
+        } else {
+            final String encodedPassword = this.getPasswordEncoder().encode(credentials.getPassword());
+            if (cachedPassword.equals(encodedPassword)) {
+                return new HandlerResult(this, new SimplePrincipal(transformedUsername));
             }
-            return false;
         }
-
-        final String encodedPassword = this.getPasswordEncoder().encode(
-            credentials.getPassword());
-
-        return (cachedPassword.equals(encodedPassword));
+        throw new FailedLoginException();
     }
 
     /**

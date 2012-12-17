@@ -31,12 +31,10 @@ import org.jasig.cas.authentication.Credential;
  * 2007) $
  * @since 3.0.5
  */
-public final class PrincipalBearingPrincipalResolver extends
-        AbstractPersonDirectoryPrincipalResolver {
+public final class PrincipalBearingPrincipalResolver extends AbstractPersonDirectoryPrincipalResolver {
 
-    protected String extractPrincipalId(Credential credential) {
-        return ((PrincipalBearingCredential) credential).getPrincipal()
-            .getId();
+    protected String extractPrincipalId(final Credential credential) {
+        return ((PrincipalBearingCredential) credential).getPrincipal().getId();
     }
 
     public boolean supports(final Credential credential) {

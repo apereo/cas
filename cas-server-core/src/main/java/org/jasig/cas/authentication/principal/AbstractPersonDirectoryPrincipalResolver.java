@@ -41,8 +41,7 @@ import org.springframework.util.StringUtils;
  * @since 3.1
  *
  */
-public abstract class AbstractPersonDirectoryPrincipalResolver
-    implements PrincipalResolver {
+public abstract class AbstractPersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Log instance. */
     protected final Logger log = LoggerFactory.getLogger(this.getClass());

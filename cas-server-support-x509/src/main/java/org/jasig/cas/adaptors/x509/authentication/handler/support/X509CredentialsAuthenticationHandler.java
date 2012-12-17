@@ -18,21 +18,23 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 import java.util.Set;
 import java.util.regex.Pattern;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Authentication Handler that accepts X509 Certificiates, determines their
@@ -48,7 +50,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0.4
  */
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
@@ -114,49 +116,39 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                .getClass());
    }
 
-   protected final boolean doAuthentication(final Credential credential)
-       throws AuthenticationException {
+   protected final HandlerResult doAuthentication(final Credential credential)
+           throws GeneralSecurityException, IOException {
 
        final X509CertificateCredential x509Credentials = (X509CertificateCredential) credential;
        final X509Certificate[] certificates = x509Credentials.getCertificates();
 
        X509Certificate clientCert = null;
-       boolean valid = true;
        boolean hasTrustedIssuer = false;
        for (int i = certificates.length - 1; i >= 0; i--) {
            final X509Certificate certificate = certificates[i];
-           try {
-               if (this.log.isDebugEnabled()) {
-                   this.log.debug("Evaluating " + CertUtils.toString(certificate));
-               }
-               
-               validate(certificate);
-               
-               if (!hasTrustedIssuer) {
-                   hasTrustedIssuer = isCertificateFromTrustedIssuer(certificate);
-               }
-               
-               // getBasicConstraints returns pathLenContraint which is
-               // >=0 when this is a CA cert and -1 when it's not
-               int pathLength = certificate.getBasicConstraints();
-               if (pathLength < 0) {
-                   this.log.debug("Found valid client certificate");
-                   clientCert = certificate;
-               } else {
-                   this.log.debug("Found valid CA certificate");
-               }
-           } catch (final GeneralSecurityException e) {
-               this.log.warn("Failed to validate " + CertUtils.toString(certificate), e);
-               valid = false;
+           this.log.debug("Evaluating {}", CertUtils.toString(certificate));
+           validate(certificate);
+           if (!hasTrustedIssuer) {
+               hasTrustedIssuer = isCertificateFromTrustedIssuer(certificate);
+           }
+
+           // getBasicConstraints returns pathLenContraint which is
+           // >=0 when this is a CA cert and -1 when it's not
+           int pathLength = certificate.getBasicConstraints();
+           if (pathLength < 0) {
+               this.log.debug("Found valid client certificate");
+               clientCert = certificate;
+           } else {
+               this.log.debug("Found valid CA certificate");
            }
        }
-       if (valid && hasTrustedIssuer && clientCert != null) {
+       if (hasTrustedIssuer && clientCert != null) {
 	       x509Credentials.setCertificate(clientCert);
-	       this.log.info("Successfully authenticated " + credential);
-	       return true;
+           this.log.info("Successfully authenticated " + credential);
+           return new HandlerResult(this, new SimplePrincipal(clientCert.getSubjectDN().getName()));
        }
        this.log.info("Failed to authenticate " + credential);
-       return false;
+       throw new FailedLoginException();
    }
 
    public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {

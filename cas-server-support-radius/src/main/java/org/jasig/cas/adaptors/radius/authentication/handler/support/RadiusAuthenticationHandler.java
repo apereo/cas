@@ -18,15 +18,18 @@
  */
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.jasig.cas.adaptors.radius.RadiusServer;
 import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
@@ -35,8 +38,7 @@ import javax.validation.constraints.Size;
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public class RadiusAuthenticationHandler extends
-        AbstractUsernamePasswordAuthenticationHandler {
+public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** Array of RADIUS servers to authenticate against. */
     @NotNull
@@ -55,30 +57,28 @@ public class RadiusAuthenticationHandler extends
      */
     private boolean failoverOnAuthenticationFailure;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) throws AuthenticationException {
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
+            throws GeneralSecurityException, IOException {
 
         for (final RadiusServer radiusServer : this.servers) {
             try {
-                final boolean response = radiusServer.authenticate(credentials);
-
-                if (response
-                    || (!response && !this.failoverOnAuthenticationFailure)) {
-                    return response;
+                if (radiusServer.authenticate(credential)) {
+                    return new HandlerResult(this, new SimplePrincipal(credential.getUsername()));
                 }
-
-                log
-                    .debug("Failing over to next handler because failoverOnAuthenticationFailure is set to true.");
+                if (!this.failoverOnAuthenticationFailure) {
+                    break;
+                }
+                log.debug("Failing over to next handler because failoverOnAuthenticationFailure=true.");
             } catch (Exception e) {
+                log.debug("Authenticating {} failed with error {}", credential.getUsername(), e);
                 if (!this.failoverOnException) {
-                    log
-                        .warn("Failover disabled.  Returning false for authentication request.");
+                    throw new IOException("RADIUS authentication failed with error " + e);
                 } else {
-                    log.warn("Failover enabled.  Trying next RadiusServer.");
+                    log.info("Trying next RadiusServer because failoverOnException=true.");
                 }
             }
         }
-
-        return false;
+        throw new FailedLoginException();
     }
 
     /**

@@ -18,13 +18,16 @@
  */
 package org.jasig.cas.web.flow;
 
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.CredentialException;
+import javax.validation.constraints.NotNull;
+
+import org.jasig.cas.ErrorMessageResolver;
 import org.jasig.cas.authentication.LdapAuthenticationException;
-import org.jasig.cas.authentication.LdapPasswordPolicyEnforcementException;
 import org.jasig.cas.authentication.PasswordPolicyEnforcer;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.util.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -38,14 +41,20 @@ import org.springframework.webflow.execution.RequestContext;
  * Based on AccountStatusGetter by Bart Ophelders & Johan Peeters
  *
  * @author Eric Pierce
- * @version 1.1 3/30/2009 11:47:37
+ * @author Marvin S. Addison
  *
  */
-public final class PasswordPolicyEnforcementAction extends AbstractAction implements InitializingBean {
+public final class PasswordPolicyEnforcementAction extends AbstractAction {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @NotNull
     private PasswordPolicyEnforcer passwordPolicyEnforcer;
 
-    private String                 passwordPolicyUrl;
+    private String passwordPolicyUrl;
+
+    @NotNull
+    private ErrorMessageResolver errorMessageResolver;
 
     public final PasswordPolicyEnforcer getPasswordPolicyEnforcer() {
         return this.passwordPolicyEnforcer;
@@ -63,15 +72,15 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
         this.passwordPolicyUrl = passwordPolicyUrl;
     }
 
-    private void populateErrorsInstance(final LdapAuthenticationException e, final RequestContext reqCtx) {
+    public void setErrorMessageResolver(final ErrorMessageResolver errorMessageResolver) {
+        this.errorMessageResolver = errorMessageResolver;
+    }
+
+    private void populateErrorsInstance(final GeneralSecurityException e, final RequestContext reqCtx) {
         try {
-            final String code = e.getCode();
-            reqCtx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(code).build());
+            reqCtx.getMessageContext().addMessage(new CasMessageResolver(this.errorMessageResolver.resolve(e)));
         } catch (final Exception fe) {
-
-            if (this.logger.isErrorEnabled())
-                this.logger.error(fe.getMessage(), fe);
-
+            logger.error(fe.getMessage(), fe);
         }
     }
 
@@ -82,79 +91,46 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
 
-        if (this.logger.isDebugEnabled())
-            this.logger.debug("Checking account status for password...");
+        logger.debug("Checking account status for password...");
 
         final String ticket = context.getRequestScope().getString("serviceTicketId");
         final UsernamePasswordCredential credentials = (UsernamePasswordCredential) context.getFlowScope().get("credentials");
         final String userId = credentials.getUsername();
 
         Event returnedEvent = error();
-        String msgToLog = null;
 
         try {
 
             if (userId == null && ticket == null) {
-                msgToLog = "No user principal or service ticket available.";
-
-                if (this.logger.isErrorEnabled())
-                    this.logger.error(msgToLog);
-
-                throw new LdapPasswordPolicyEnforcementException(BadCredentialsAuthenticationException.CODE, msgToLog);
+                throw new CredentialException("No user principal or service ticket available.");
             }
 
             if (userId == null && ticket != null) {
-
                 returnedEvent = success();
-
-                if (this.logger.isDebugEnabled())
-                    this.logger.debug("Received service ticket " + ticket
-                            + " but no user id. This is not a login attempt, so skip password enforcement.");
-
+                logger.debug("Received service ticket {} but no user id. Skipping password enforcement.", ticket);
             } else {
+                logger.debug("Retrieving number of days to password expiration date for user {}", userId);
 
-                if (this.logger.isDebugEnabled())
-                    this.logger.debug("Retrieving number of days to password expiration date for user " + userId);
-
-                final long daysToExpirationDate = getPasswordPolicyEnforcer().getNumberOfDaysToPasswordExpirationDate(userId);
-
+                final long daysToExpirationDate =
+                        getPasswordPolicyEnforcer().getNumberOfDaysToPasswordExpirationDate(userId);
                 if (daysToExpirationDate == -1) {
-
                     returnedEvent = success();
-
-                    if (this.logger.isDebugEnabled())
-                        this.logger.debug("Password for " + userId + " is not expiring");
+                    this.logger.debug("Password for {} is not expiring", userId);
                 } else {
                     returnedEvent = warning();
-
-                    if (this.logger.isDebugEnabled())
-                        this.logger.debug("Password for " + userId + " is expiring in " + daysToExpirationDate + " days");
-
+                    this.logger.debug("Password for {} is expiring in {} days", userId, daysToExpirationDate);
                     context.getFlowScope().put("expireDays", daysToExpirationDate);
                 }
 
             }
         } catch (final LdapAuthenticationException e) {
-            if (this.logger.isErrorEnabled())
-                this.logger.error(e.getMessage(), e);
-
+            this.logger.error(e.getMessage(), e);
             populateErrorsInstance(e, context);
             returnedEvent = error();
         } finally {
-
-
-            if (this.logger.isDebugEnabled())
-                this.logger.debug("Switching to flow event id " + returnedEvent.getId() + " for user " + userId);
+            this.logger.debug("Switching to event id {} for user {}", returnedEvent.getId(), userId);
         }
 
         return returnedEvent;
-    }
-
-    @Override
-    protected void initAction() throws Exception {
-        Assert.notNull(getPasswordPolicyEnforcer(), "password policy enforcer cannot be null");
-
-        if (this.logger.isDebugEnabled())
-            this.logger.debug("Initialized the action with password policy enforcer " + getPasswordPolicyEnforcer().getClass().getName());
     }
 }

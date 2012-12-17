@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import java.security.GeneralSecurityException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,10 +26,14 @@ public class LdapErrorDefinition {
 
     private Pattern ldapPattern = null;
 
-    private String type  = null;
+    private GeneralSecurityException mappedException;
 
-    public String getType() {
-        return this.type;
+    public GeneralSecurityException getMappedException() {
+        return mappedException;
+    }
+
+    public void setMappedException(final GeneralSecurityException mappedException) {
+        this.mappedException = mappedException;
     }
 
     public boolean matches(final String msg) {
@@ -40,12 +45,12 @@ public class LdapErrorDefinition {
         this.ldapPattern = Pattern.compile(ldapPattern);
     }
 
-    public void setType(final String errMessage) {
-        this.type = errMessage;
-    }
-
     private Pattern getLdapPattern() {
         return this.ldapPattern;
     }
 
+    @Override
+    public String toString() {
+        return "LdapErrorDefinition for " + this.mappedException.getClass().getSimpleName();
+    }
 }

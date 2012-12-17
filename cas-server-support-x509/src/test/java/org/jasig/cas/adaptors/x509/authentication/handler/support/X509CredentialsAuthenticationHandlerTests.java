@@ -18,22 +18,19 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import edu.vt.middleware.crypt.util.CryptReader;
-
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-
+import org.jasig.cas.authentication.HandlerResult;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -50,14 +47,11 @@ public class X509CredentialsAuthenticationHandlerTests {
     /** Subject of test. */
     private X509CredentialsAuthenticationHandler handler;
 
-    /** Test uthentication credential. */
-    private Credential credential;
-
-    /** Expected result of supports test. */
-    private boolean expectedSupports;
+    /** Test credential. */
+    private X509CertificateCredential credential;
 
     /** Expected result of authentication attempt. */
-    private boolean expectedAuthenticate;
+    private boolean expected;
     
     
     /**
@@ -65,19 +59,16 @@ public class X509CredentialsAuthenticationHandlerTests {
      *
      * @param handler Test authentication handler.
      * @param credential Test credential.
-     * @param supports Expected result of supports test.
      * @param authenticationSuccess Expected result of authentication test.
      */
     public X509CredentialsAuthenticationHandlerTests(
         final X509CredentialsAuthenticationHandler handler,
-        final Credential credential,
-        final boolean supports,
+        final X509CertificateCredential credential,
         final boolean authenticationSuccess) {
        
         this.handler = handler;
         this.credential = credential;
-        this.expectedSupports = supports;
-        this.expectedAuthenticate = authenticationSuccess;
+        this.expected = authenticationSuccess;
     }
 
     /**
@@ -93,19 +84,8 @@ public class X509CredentialsAuthenticationHandlerTests {
       final Collection<Object[]> params = new ArrayList<Object[]>();
       
       X509CredentialsAuthenticationHandler handler;
-      
+
       // Test case #1
-      // Unsupported credential type
-      handler = new X509CredentialsAuthenticationHandler();
-      handler.setTrustedIssuerDnPattern(".*");
-      params.add(new Object[] {
-          handler,
-          new UsernamePasswordCredential(),
-          false,
-          false,
-      });
-      
-      // Test case #2
       // Valid certificate
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
@@ -113,32 +93,29 @@ public class X509CredentialsAuthenticationHandlerTests {
           handler,
           new X509CertificateCredential(createCertificates("user-valid.crt")),
           true,
-          true,
       });
       
-      // Test case #3
+      // Test case #2
       // Expired certificate
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
       params.add(new Object[] {
           handler,
           new X509CertificateCredential(createCertificates("user-expired.crt")),
-          true,
           false,
       });
       
-      // Test case #4
+      // Test case #3
       // Untrusted issuer
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US");
       params.add(new Object[] {
           handler,
           new X509CertificateCredential(createCertificates("snake-oil.crt")),
-          true,
           false,
       });
       
-      // Test case #5
+      // Test case #4
       // Disallowed subject
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
@@ -146,11 +123,10 @@ public class X509CredentialsAuthenticationHandlerTests {
       params.add(new Object[] {
           handler,
           new X509CertificateCredential(createCertificates("snake-oil.crt")),
-          true,
           false,
       });
       
-      // Test case #6
+      // Test case #5
       // Check key usage on a cert without keyUsage extension
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
@@ -159,10 +135,9 @@ public class X509CredentialsAuthenticationHandlerTests {
           handler,
           new X509CertificateCredential(createCertificates("user-valid.crt")),
           true,
-          true,
       });
       
-      // Test case #7
+      // Test case #6
       // Require key usage on a cert without keyUsage extension
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
@@ -171,11 +146,10 @@ public class X509CredentialsAuthenticationHandlerTests {
       params.add(new Object[] {
           handler,
           new X509CertificateCredential(createCertificates("user-valid.crt")),
-          true,
           false,
       });
       
-      // Test case #8
+      // Test case #7
       // Require key usage on a cert with acceptable keyUsage extension values
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
@@ -185,10 +159,9 @@ public class X509CredentialsAuthenticationHandlerTests {
           handler,
           new X509CertificateCredential(createCertificates("user-valid-keyUsage.crt")),
           true,
-          true,
       });
       
-      // Test case #9
+      // Test case #8
       // Require key usage on a cert with unacceptable keyUsage extension values
       handler = new X509CredentialsAuthenticationHandler();
       handler.setTrustedIssuerDnPattern(".*");
@@ -197,7 +170,6 @@ public class X509CredentialsAuthenticationHandlerTests {
       params.add(new Object[] {
           handler,
           new X509CertificateCredential(createCertificates("user-invalid-keyUsage.crt")),
-          true,
           false,
       });
       
@@ -206,7 +178,7 @@ public class X509CredentialsAuthenticationHandlerTests {
       //===================================
       ResourceCRLRevocationChecker checker;
 
-      // Test case #10
+      // Test case #9
       // Valid certificate with CRL checking
       handler = new X509CredentialsAuthenticationHandler();
       checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
@@ -217,10 +189,9 @@ public class X509CredentialsAuthenticationHandlerTests {
           handler,
           new X509CertificateCredential(createCertificates("user-valid.crt")),
           true,
-          true,
       });
 
-      // Test case #11
+      // Test case #10
       // Revoked end user certificate
       handler = new X509CredentialsAuthenticationHandler();
       checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
@@ -230,11 +201,10 @@ public class X509CredentialsAuthenticationHandlerTests {
       params.add(new Object[] {
           handler,
           new X509CertificateCredential(createCertificates("user-revoked.crt")),
-          true,
           false,
       });
       
-      // Test case #12
+      // Test case #11
       // Valid certificate on expired CRL data
       final ThresholdExpiredCRLRevocationPolicy zeroThresholdPolicy = new ThresholdExpiredCRLRevocationPolicy();
       zeroThresholdPolicy.setThreshold(0);
@@ -247,7 +217,6 @@ public class X509CredentialsAuthenticationHandlerTests {
       params.add(new Object[] {
           handler,
           new X509CertificateCredential(createCertificates("user-valid.crt")),
-          true,
           false,
       });
       
@@ -258,30 +227,28 @@ public class X509CredentialsAuthenticationHandlerTests {
      * Tests the {@link X509CredentialsAuthenticationHandler#authenticate(org.jasig.cas.authentication.Credential)} method.
      */
     @Test
-    public void testAuthenticate() {
+    public void testAuthenticate() throws Exception {
         try {
-            Assert.assertEquals(this.expectedAuthenticate, this.handler.authenticate(this.credential));
-        } catch (Exception e) {
-            if (this.handler.supports(this.credential)) {
-                e.printStackTrace();
-                Assert.fail("Unexpected authentication error: " + e);
+            final HandlerResult result = this.handler.authenticate(this.credential);
+            if (this.expected) {
+                Assert.assertEquals(
+                        this.credential.getCertificate().getSubjectDN().getName(),
+                        result.getPrincipal().getId());
+            } else {
+                Assert.fail("Should have thrown GeneralSecurityException");
+            }
+        } catch (GeneralSecurityException e) {
+            if (this.expected) {
+                Assert.fail("Authentication failed where it should have succeeded.");
             }
         }
-    }
-
-    /**
-     * Tests the {@link X509CredentialsAuthenticationHandler#supports(org.jasig.cas.authentication.Credential)} method.
-     */
-    @Test
-    public void testSupports() {
-        Assert.assertEquals(this.expectedSupports, this.handler.supports(this.credential));
     }
 
     protected static X509Certificate[] createCertificates(final String ... files) {
         final X509Certificate[] certs = new X509Certificate[files.length];
         
         int i = 0;
-        for (String file : files) {
+        for (final String file : files) {
             try {
                 certs[i++] = (X509Certificate) CryptReader.readCertificate(
                     new ClassPathResource(file).getInputStream());

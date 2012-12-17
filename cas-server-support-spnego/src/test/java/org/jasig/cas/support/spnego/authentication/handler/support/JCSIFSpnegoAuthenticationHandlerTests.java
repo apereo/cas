@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
-import junit.framework.TestCase;
+import javax.security.auth.login.FailedLoginException;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import junit.framework.TestCase;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.support.spnego.MockJCSIFAuthentication;
@@ -40,31 +40,31 @@ public class JCSIFSpnegoAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler = new JCIFSSpnegoAuthenticationHandler();
     }
 
-    public void testSuccessfulAuthenticationWithDomainName() throws AuthenticationException {
+    public void testSuccessfulAuthenticationWithDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(true);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
-        assertTrue(this.authenticationHandler.authenticate(credentials));
+        this.authenticationHandler.authenticate(credentials);
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
     }
 
-    public void testSuccessfulAuthenticationWithoutDomainName() throws AuthenticationException {
+    public void testSuccessfulAuthenticationWithoutDomainName() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setPrincipalWithDomainName(false);
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
-        assertTrue(this.authenticationHandler.authenticate(credentials));
+        this.authenticationHandler.authenticate(credentials);
         assertEquals("test", credentials.getPrincipal().getId());
         assertNotNull(credentials.getNextToken());
     }
 
-    public void testUnsuccessfulAuthentication() {
+    public void testUnsuccessfulAuthentication() throws Exception {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
         this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(false));
         try {
             this.authenticationHandler.authenticate(credentials);
             fail("An AuthenticationException should have been thrown");
-        } catch (AuthenticationException e) {
+        } catch (FailedLoginException e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
         }

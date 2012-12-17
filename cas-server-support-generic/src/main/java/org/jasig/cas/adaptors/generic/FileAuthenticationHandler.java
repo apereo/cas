@@ -21,12 +21,15 @@ package org.jasig.cas.adaptors.generic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.core.io.Resource;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -38,11 +41,10 @@ import javax.validation.constraints.NotNull;
  * "::" (without quotes).
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0
  */
-public class FileAuthenticationHandler extends
-        AbstractUsernamePasswordAuthenticationHandler {
+public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
     private static final String DEFAULT_SEPARATOR = "::";
@@ -55,9 +57,10 @@ public class FileAuthenticationHandler extends
     @NotNull
     private Resource fileName;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials) {
-        BufferedReader bufferedReader = null;
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
+            throws GeneralSecurityException, IOException {
 
+        BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(this.fileName.getInputStream()));
             String line = bufferedReader.readLine();
@@ -65,30 +68,26 @@ public class FileAuthenticationHandler extends
                 final String[] lineFields = line.split(this.separator);
                 final String userName = lineFields[0];
                 final String password = lineFields[1];
-
                 final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
                 if (transformedUsername.equals(userName)) {
-                    if (this.getPasswordEncoder().encode(
-                        credentials.getPassword()).equals(password)) {
-                        return true;
+                    log.debug("Found matching username {}", userName);
+                    if (this.getPasswordEncoder().encode(credentials.getPassword()).equals(password)) {
+                        return new HandlerResult(this, new SimplePrincipal(transformedUsername));
                     }
                     break;
                 }
                 line = bufferedReader.readLine();
             }
-        } catch (final Exception e) {
-            log.error(e.getMessage(), e);
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-            } catch (IOException e) {
-                log.error(e.getMessage(),e);
+            } catch (final IOException e) {
+                log.warn("Error closing " + fileName);
             }
         }
-
-        return false;
+        throw new FailedLoginException();
     }
 
     /**

@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import javax.security.auth.login.FailedLoginException;
+
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -45,7 +47,7 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
         c.setUsername(this.fastBindTestConfig.getExistsCredential());
         c.setPassword(this.fastBindTestConfig.getExistsSuccessPassword());
 
-        assertTrue(this.fastBindAuthHandler.authenticate(c));
+        assertEquals(c.getUsername(), this.fastBindAuthHandler.authenticate(c).getPrincipal().getId());
     }
 
 
@@ -54,7 +56,7 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
         c.setUsername(this.saslMd5FastBindTestConfig.getExistsCredential());
         c.setPassword(this.saslMd5FastBindTestConfig.getExistsSuccessPassword());
 
-        assertTrue(this.saslMd5FastBindAuthHandler.authenticate(c));
+        assertEquals(c.getUsername(), this.fastBindAuthHandler.authenticate(c).getPrincipal().getId());
     }
 
 
@@ -63,7 +65,10 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
         c.setUsername(this.fastBindTestConfig.getExistsCredential());
         c.setPassword(this.fastBindTestConfig.getExistsFailurePassword());
 
-        assertFalse(this.fastBindAuthHandler.authenticate(c));
+        try {
+            this.fastBindAuthHandler.authenticate(c);
+            fail("Should have thrown FailedLoginException");
+        } catch (FailedLoginException e) {}
     }
 
 
@@ -72,6 +77,9 @@ public class FastBindLdapAuthenticationHandlerTests extends AbstractJUnit4Spring
         c.setUsername(this.fastBindTestConfig.getNotExistsCredential());
         c.setPassword("");
 
-        assertFalse(this.fastBindAuthHandler.authenticate(c));
+        try {
+            this.fastBindAuthHandler.authenticate(c);
+            fail("Should have thrown FailedLoginException");
+        } catch (FailedLoginException e) {}
     }
 }

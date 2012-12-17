@@ -19,14 +19,17 @@
 package org.jasig.cas.adaptors.trusted.web.flow;
 
 import java.security.Principal;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.AnyAuthenticationManger;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PrincipalResolver;
 import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -38,8 +41,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -61,11 +62,10 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<String, UniqueTicketIdGenerator>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
-
-        final AuthenticationManagerImpl authenticationManager = new AuthenticationManagerImpl();
-   
-        authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {new PrincipalBearingCredentialsAuthenticationHandler()}));
-        authenticationManager.setPrincipalResolvers(Arrays.asList(new PrincipalResolver[]{new PrincipalBearingPrincipalResolver()}));
+        final AuthenticationManager authenticationManager = new AnyAuthenticationManger(
+                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
+                        new PrincipalBearingCredentialsAuthenticationHandler(),
+                        new PrincipalBearingPrincipalResolver()));
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);
