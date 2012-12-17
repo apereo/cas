@@ -19,7 +19,7 @@
 
 --%>
 <%@include file="includes/top.jsp"%>
-
+<h1><spring:message code="${pageTitle}" /></h1>
 <c:if test="${fn:length(services) eq 0}">
        <div id="msg" class="errors"><p><spring:message code="management.services.service.warn" arguments="${defaultServiceUrl}" /></p></div>
    </c:if>
@@ -54,10 +54,10 @@
 	       <tr id="row${status.index}"${param.id eq service.id ? ' class="added"' : ''}>
 	         <td id="${service.id}" class="td1">${service.name}</td>
 	         <td class="td2">${fn:length(service.serviceId) < 100 ? service.serviceId : fn:substring(service.serviceId, 0, 100)}</td>
-	         <td class="ac td3"><img src="images/services/${service.enabled}.gif" alt="${service.enabled ? 'Enabled' : 'Disabled'}" /></td>
-	         <td class="ac td4"><img src="images/services/${service.allowedToProxy}.gif" alt="${service.allowedToProxy ? 'Allowed to Proxy' : 'Not Allowed to Proxy'}" /></td>
-	         <td class="ac td5"><img src="images/services/${service.ssoEnabled}.gif" alt="${service.ssoEnabled ? 'SSO Enabled' : 'SSO Disabled'}" /></td>
-	         <td class="ac td6"><img src="images/services/${service.anonymousAccess}.gif" alt="${service.anonymousAccess ? 'Anonyous Access Enabled' : 'Anonyous Access Disabled'}" /></td>
+	         <td class="ac td3"><img src="images/${service.enabled}.gif" alt="${service.enabled ? 'Enabled' : 'Disabled'}" /></td>
+	         <td class="ac td4"><img src="images/${service.allowedToProxy}.gif" alt="${service.allowedToProxy ? 'Allowed to Proxy' : 'Not Allowed to Proxy'}" /></td>
+	         <td class="ac td5"><img src="images/${service.ssoEnabled}.gif" alt="${service.ssoEnabled ? 'SSO Enabled' : 'SSO Disabled'}" /></td>
+	         <td class="ac td6"><img src="images/${service.anonymousAccess}.gif" alt="${service.anonymousAccess ? 'Anonyous Access Enabled' : 'Anonyous Access Disabled'}" /></td>
 	         <td class="ac td7">${service.usernameAttribute}</td>
 	         <td class="ac td8">${service.evaluationOrder}</td>
 	         <td class="td9" id="edit${status.index}"><a href="edit.html?id=${service.id}" class="edit"><spring:message code="management.services.manage.action.edit" /></a></td> 
