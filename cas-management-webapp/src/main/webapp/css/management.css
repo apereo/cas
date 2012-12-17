@@ -185,7 +185,7 @@ form {
     float:right;
     clear:both;
     display: block;
-    background-image: url(../../images/ja-sig-logo.gif);
+    background-image: url(../images/ja-sig-logo.gif);
     width: 118px;
     height: 31px;
     margin:1em 5px .5em;
@@ -237,13 +237,13 @@ _______________________________
 .success {
     border:1px dotted #390;
     color:#390;
-    background:#dfa url('../../images/services/success.gif') no-repeat 2em 50%;
+    background:#dfa url('../images/success.gif') no-repeat 2em 50%;
 }
 
 .errors {
     border:1px dotted #b00;
     color:#e71708; /* bg */
-    background:#fed url('../../images/services/error.gif') no-repeat 2em 50%;
+    background:#fed url('../images/error.gif') no-repeat 2em 50%;
 }
 
 /* FORMS
@@ -274,7 +274,7 @@ input.check { margin:0 0 0 .5em; width:13px; height:13px; vertical-align:middle;
 .required {background:#ff9;}
 
 .formError {
-background: #fafafa url('../../images/services/alert2.gif') no-repeat 0 50%;
+background: #fafafa url('../images/alert2.gif') no-repeat 0 50%;
 /* bg */
 color:#b00; /* bg */
 margin-left:.5em; /* bg */
@@ -341,7 +341,7 @@ td a {
     font-size:1.1em;
 }
     
-.add a {background: url('../../images/services/add_service.gif') no-repeat left center;
+.add a {background: url('../images/add_service.gif') no-repeat left center;
     text-decoration: none;
     display: inline;
     line-height:32px;
@@ -351,21 +351,21 @@ td a {
 
 
 .add a:hover {color:#b00;}
-td a.edit {background: url('../../images/services/edit_service.gif') no-repeat left center;}
-td a.del {background: url('../../images/services/delete_service.gif') no-repeat left center;}
+td a.edit {background: url('../images/edit_service.gif') no-repeat left center;}
+td a.del {background: url('../images/delete_service.gif') no-repeat left center;}
 td a:hover {color:#b00;}
 
 
     p.instructions {
         margin:1em 0;
         font-size:1.2em;
-        background:url('../../images/services/info.gif') no-repeat left center; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
+        background:url('../images/info.gif') no-repeat left center; padding-left:2em; padding-right:0; padding-top:5px; padding-bottom:5px
         }
 
     fieldset {
-        padding:15px 10px;
+        padding:0 10px;
         background-color:#fafafa;
-        margin:20px 0;
+        margin:0;
         position:relative;
         border:1px solid #ddd;
         }
