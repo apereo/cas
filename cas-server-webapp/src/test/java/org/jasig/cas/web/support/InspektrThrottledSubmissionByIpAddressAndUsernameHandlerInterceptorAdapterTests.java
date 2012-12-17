@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.web.support;
 
-import com.github.inspektr.common.web.ClientInfo;
-import com.github.inspektr.common.web.ClientInfoHolder;
+import static org.junit.Assert.fail;
+
+import javax.sql.DataSource;
+
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -34,56 +36,51 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import javax.sql.DataSource;
-
-import static org.junit.Assert.fail;
+import com.github.inspektr.common.web.ClientInfo;
+import com.github.inspektr.common.web.ClientInfoHolder;
 
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
- *
+ * 
  * @author Marvin S. Addison
  * @version $Revision$ $Date$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "classpath:/applicationContext.xml",
-        "classpath:/jpaTestApplicationContext.xml",
-        "classpath:/inspektrThrottledSubmissionContext.xml"
+@ContextConfiguration(locations = {
+    "classpath:/core-context.xml", "classpath:/applicationContext.xml", "classpath:/jpaTestApplicationContext.xml",
+    "classpath:/inspektrThrottledSubmissionContext.xml"
 })
-public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests
-        extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
-
+public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
+    AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+    
     @Autowired
     private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
-
+    
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    
     @Autowired
     private DataSource dataSource;
-
-
+    
     @Before
     public void setUp() throws Exception {
-        new JdbcTemplate(dataSource).execute(
-                "CREATE TABLE COM_AUDIT_TRAIL ( " +
-                "AUD_USER      VARCHAR(100)  NOT NULL, " +
-                "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, " +
-                "AUD_SERVER_IP VARCHAR(15)    NOT NULL, " +
-                "AUD_RESOURCE  VARCHAR(100)  NOT NULL, " +
-                "AUD_ACTION    VARCHAR(100)  NOT NULL, " +
-                "APPLIC_CD     VARCHAR(5)    NOT NULL, " +
-                "AUD_DATE      TIMESTAMP      NOT NULL)");
+        new JdbcTemplate(dataSource).execute("CREATE TABLE COM_AUDIT_TRAIL ( "
+                                             + "AUD_USER      VARCHAR(100)  NOT NULL, "
+                                             + "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, "
+                                             + "AUD_SERVER_IP VARCHAR(15)    NOT NULL, "
+                                             + "AUD_RESOURCE  VARCHAR(100)  NOT NULL, "
+                                             + "AUD_ACTION    VARCHAR(100)  NOT NULL, "
+                                             + "APPLIC_CD     VARCHAR(5)    NOT NULL, "
+                                             + "AUD_DATE      TIMESTAMP      NOT NULL)");
     }
-
-
+    
     protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
         return throttle;
     }
-
-
+    
     @Override
-    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
+    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
+        throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("POST");
@@ -93,9 +90,9 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         context.setCurrentEvent(new Event("", "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-
+        
         getThrottle().preHandle(request, response, null);
-
+        
         try {
             authenticationManager.authenticate(badCredentials(username));
         } catch (AuthenticationException e) {
