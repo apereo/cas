@@ -68,6 +68,16 @@
       <groupId>org.jasig.cas</groupId>
       <artifactId>cas-server-core</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.webflow</groupId>
+          <artifactId>spring-webflow</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
