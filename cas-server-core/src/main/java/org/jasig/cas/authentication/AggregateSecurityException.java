@@ -27,6 +27,7 @@ import java.util.Collection;
  * such as authenticating multiple credentials, each of which may fail with {@link GeneralSecurityException}.
  *
  * @author Marvin S. Addison
+ * @since 4.0
  */
 public class AggregateSecurityException extends GeneralSecurityException {
 

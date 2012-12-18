@@ -52,6 +52,11 @@ public class CasMessageResolver implements MessageResolver {
         this(message, source, DEFAULT_SEVERITY);
     }
 
+
+    public CasMessageResolver(final org.jasig.cas.Message message, final Severity severity) {
+        this(message, null, severity);
+    }
+
     public CasMessageResolver(final org.jasig.cas.Message message, final Object source, final Severity severity) {
         this.message = new SpringMessageAdapter(message);
         this.source = source;
@@ -61,5 +66,17 @@ public class CasMessageResolver implements MessageResolver {
     @Override
     public Message resolveMessage(final MessageSource source, final Locale locale) {
         return new Message(this.source, source.getMessage(this.message, locale), this.severity);
+    }
+
+    public static CasMessageResolver info(final org.jasig.cas.Message message) {
+        return new CasMessageResolver(message, Severity.INFO);
+    }
+
+    public static CasMessageResolver warn(final org.jasig.cas.Message message) {
+        return new CasMessageResolver(message, Severity.WARNING);
+    }
+
+    public static CasMessageResolver error(final org.jasig.cas.Message message) {
+        return new CasMessageResolver(message, Severity.ERROR);
     }
 }

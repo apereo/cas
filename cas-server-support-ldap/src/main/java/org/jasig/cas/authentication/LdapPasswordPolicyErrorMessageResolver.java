@@ -20,15 +20,12 @@ package org.jasig.cas.authentication;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.security.auth.login.AccountException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.CredentialExpiredException;
 
 import org.jasig.cas.ErrorMessageResolver;
 import org.jasig.cas.Message;
 
 /**
- * Resolves exceptions that come out of LDAP/LPPE components into an abstract message representation that can be
+ * Resolves exceptions that come out of LPPE components into an abstract message representation that can be
  * converted by Spring components into human-readable text.
  *
  * @author Marvin S. Addison
@@ -36,22 +33,16 @@ import org.jasig.cas.Message;
  */
 public class LdapPasswordPolicyErrorMessageResolver implements ErrorMessageResolver {
 
-    private static final Map<Class<? extends Exception>, Message> MESSAGE_MAP =
-            new HashMap<Class<? extends Exception>, Message>();
+    private static final Map<Class<? extends Throwable>, Message> MESSAGE_MAP =
+            new HashMap<Class<? extends Throwable>, Message>();
 
     static {
-        MESSAGE_MAP.put(AccountException.class, new Message("screen.badhours.heading"));
-        MESSAGE_MAP.put(AccountDisabledException.class, new Message("screen.accountdisabled.heading"));
-        MESSAGE_MAP.put(AccountLockedException.class, new Message("screen.accountlocked.heading"));
-        MESSAGE_MAP.put(CredentialExpiredException.class, new Message("screen.expiredpass.heading"));
-        MESSAGE_MAP.put(InvalidLoginLocationException.class, new Message("screen.badworkstation.heading"));
-        MESSAGE_MAP.put(InvalidLoginTimeException.class, new Message("screen.badhours.heading"));
         MESSAGE_MAP.put(
                 LdapPasswordPolicyEnforcementException.class, new Message("screen.accounterror.password.message"));
     }
 
     @Override
-    public Message resolve(final Exception e) {
+    public Message resolve(final Throwable e) {
         final Message message = MESSAGE_MAP.get(e);
         if (message != null) {
             return message;

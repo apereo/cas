@@ -16,22 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas;
+package org.jasig.cas.web.flow;
 
 /**
- * Resolves a {@link Message} from an exception.
+ * Maps exceptions onto Webflow state names that should be rendered when the exception is raised.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author Marvin S. Addison
+ * @since 4.0
  */
-public interface ErrorMessageResolver {
-
+public interface ErrorStateResolver {
     /**
-     * Resolves a coded and possibly parameterized message for the given exception.
+     * Resolves a Webflow state name from an error.
      *
-     * @param e Error for which to resolve a message.
+     * @param e Error.
      *
-     * @return Message for given exception. Instances MUST NOT throw or return null.
+     * @return State name or null if a view name could not be resolved from the error.
      */
-    Message resolve(Throwable e);
+    String resolve(Throwable e);
 }

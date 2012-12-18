@@ -144,8 +144,10 @@
     <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login"/>
   </webflow:flow-registry>
 
-  <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
-                                 expression-parser="expressionParser"/>
+  <webflow:flow-builder-services id="builder"
+                                 view-factory-creator="viewFactoryCreator"
+                                 expression-parser="expressionParser"
+                                 validator="validator"/>
 
   <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
 
@@ -211,7 +213,9 @@
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"/>
+        p:warnCookieGenerator-ref="warnCookieGenerator"
+        p:errorMessageResolver-ref="webflowErrorMessageResolver"
+        p:errorStateResolver-ref="webflowErrorStateResolver"/>
 
   <bean id="generateServiceTicketAction" class="org.jasig.cas.web.flow.GenerateServiceTicketAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
@@ -233,6 +237,10 @@
 
   <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
 
-  <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
+  <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
+
+  <bean id="webflowErrorMessageResolver" class="org.jasig.cas.web.flow.AuthenticationErrorMessageResolver" />
+
+  <bean id="webflowErrorStateResolver" class="org.jasig.cas.web.flow.AuthenticationErrorStateResolver" />
 </beans>
