@@ -57,12 +57,19 @@ public final class OAuthAction extends AbstractAction {
     private final Logger log = LoggerFactory.getLogger(OAuthAction.class);
     
     @NotNull
-    private ProvidersDefinition providersDefinition;
+    private final ProvidersDefinition providersDefinition;
     
     @NotNull
-    private CentralAuthenticationService centralAuthenticationService;
+    private final CentralAuthenticationService centralAuthenticationService;
     
     private String oauth10loginUrl = "/" + OAuthConstants.OAUTH10_LOGIN_URL;
+    
+    public OAuthAction(final CentralAuthenticationService centralAuthenticationService,
+                       final ProvidersDefinition providersDefinition) {
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.providersDefinition = providersDefinition;
+        this.providersDefinition.init();
+    }
     
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -160,16 +167,7 @@ public final class OAuthAction extends AbstractAction {
         }
     }
     
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-    
     public void setOauth10loginUrl(final String oauth10loginUrl) {
         this.oauth10loginUrl = oauth10loginUrl;
-    }
-    
-    public void setProvidersDefinition(final ProvidersDefinition providersDefinition) {
-        this.providersDefinition = providersDefinition;
-        this.providersDefinition.init();
     }
 }
