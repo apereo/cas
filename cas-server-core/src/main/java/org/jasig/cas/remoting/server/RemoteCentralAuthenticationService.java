@@ -18,16 +18,18 @@
  */
 package org.jasig.cas.remoting.server;
 
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
-
-import javax.validation.*;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
 
 /**
  * Wrapper implementation around a CentralAuthenticationService that does
@@ -57,14 +59,13 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     /**
-     * @throws IllegalArgumentException if the Credential are null or if given
-     * invalid credential.
+     * @throws IllegalArgumentException if the credentials are null, empty, or invalid.
      */
-    public String createTicketGrantingTicket(final Credential credential) throws TicketException {
-        Assert.notNull(credential, "credential cannot be null");
-        checkForErrors(credential);
+    public String createTicketGrantingTicket(final Credential ... credentials) throws TicketException {
+        Assert.notEmpty(credentials, "credentials cannot be null or empty");
+        checkForErrors(credentials);
 
-        return this.centralAuthenticationService.createTicketGrantingTicket(credential);
+        return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
     }
 
     public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketException {
@@ -72,12 +73,14 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     }
 
     /**
-     * @throws IllegalArgumentException if given invalid credential
+     * @throws IllegalArgumentException if any of credentials are invalid.
      */
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credential credential) throws TicketException {
-        checkForErrors(credential);
+    public String grantServiceTicket(
+            final String ticketGrantingTicketId, final Service service, final Credential ... credentials)
+            throws TicketException {
+        checkForErrors(credentials);
 
-        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credential);
+        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
     }
 
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
@@ -89,22 +92,26 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     }
 
     /**
-     * @throws IllegalArgumentException if the credential are invalid.
+     * @throws IllegalArgumentException if any of the credentials are invalid.
      */
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential credential) throws TicketException {
-        checkForErrors(credential);
+    public String delegateTicketGrantingTicket(
+            final String serviceTicketId, final Credential ... credentials)
+            throws TicketException {
+        checkForErrors(credentials);
 
-        return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credential);
+        return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
     }
 
-    private void checkForErrors(final Credential credential) {
-        if (credential == null) {
+    private void checkForErrors(final Credential ... credentials) {
+        if (credentials == null) {
             return;
         }
-        
-        final Set<ConstraintViolation<Credential>> errors = this.validator.validate(credential);
-        if (!errors.isEmpty()) {
-            throw new IllegalArgumentException("Error validating credential: " + errors.toString());
+
+        for (Credential credential : credentials) {
+            final Set<ConstraintViolation<Credential>> errors = this.validator.validate(credential);
+            if (!errors.isEmpty()) {
+                throw new IllegalArgumentException("Error validating credential: " + errors.toString());
+            }
         }
     }
 

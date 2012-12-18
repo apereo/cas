@@ -65,7 +65,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     protected String resolveFromInternal(final JoinPoint joinPoint) {
         String principal = UNKNOWN_USER;
         final Object arg1 = joinPoint.getArgs()[0];
-        if (Credential.class.isAssignableFrom(arg1.getClass().getComponentType())) {
+        if (arg1.getClass().isArray() && Credential.class.isAssignableFrom(arg1.getClass().getComponentType())) {
             final Credential[] credentials = (Credential[]) arg1;
             if (credentials.length > 0) {
                 principal = credentials[0].toString();
