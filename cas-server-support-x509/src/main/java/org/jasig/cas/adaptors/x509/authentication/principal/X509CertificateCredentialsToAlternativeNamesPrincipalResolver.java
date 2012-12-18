@@ -44,20 +44,33 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
     /** Pattern used to extract attribute names from descriptor */
     private static final Pattern ATTR_PATTERN = Pattern.compile("\\$(\\w+)");
     
-    private static final int ATTR_OTHERNAME     = 0;
-    private static final int ATTR_RFC822NAME    = 1;
-    private static final int ATTR_DNSNAME       = 2;
-    private static final int ATTR_X400ADDRESS   = 3;
-    private static final int ATTR_DIRECTORYNAME = 4;
-    private static final int ATTR_EDIPARTYNAME  = 5;
-    private static final int ATTR_URI           = 6;
-    private static final int ATTR_IPADDRESS     = 7;
-    private static final int ATTR_REGISTEREDID  = 8;
+    /** alternative name types per RFC 3280 */ 
+    public enum NameTypes {
+        OTHERNAME, 
+        RFC822NAME,
+        DNSNAME,
+        X400ADDRESS,
+        DIRECTORYNAME,
+        EDIPARTYNAME,
+        URI,
+        IPADDRESS,
+        REGISTEREDID;
+        
+        public static NameTypes fromCode(final int code) {
+            for (int i = 0; i < NameTypes.values().length; i++) {
+                if (i == code) {
+                    return NameTypes.values()[i];
+                }
+            }
+            throw new IllegalArgumentException("Unknown CRL reason code.");
+        }
+    }
+
 
     
     /** Descriptor representing an abstract format of the principal to be resolved.*/
     @NotNull
-        private String descriptor;
+    private String descriptor;
 
     /**
      * Sets the descriptor that describes for format of the principal ID to
@@ -122,66 +135,79 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
                 for ( List<?> next : subjAltNames) {
                     String value = "";
                     bool implemented = false;
-                    
-                    switch (((Integer)next.get(0)).intValue())
-                        {
-                        case ATTR_OTHERNAME: 
-                            name = "OTHERNAME";
-                            value = (String) next.get(1);
-                            implemented = true;
-                            break;
-                        case ATTR_RFC822NAME:
-                            name = "RFC822NAME";
-                            value = (String) next.get(1);
-                            implemented = true;
-                            break;
-                        case ATTR_DNSNAME:
-                            name = "DNSNAME";
-                            value = (String) next.get(1);
-                            implemented = true;
-                            break;
-                        case ATTR_X400ADDRESS:
-                            name = "X400ADDRESS";
-                            break;
-                        case ATTR_DIRECTORYNAME:
-                            name = "DIRECTORYNAME";
-                            value = (String) next.get(1);
-                            implemented = true;
-                            break;
-                        case ATTR_EDIPARTYNAME:
-                            name = "EDIPARTYNAME";
-                            value = (String) next.get(1);
-                            implemented = true;
-                            break;
-                        case ATTR_URI:
-                            name = "URI";
-                            value = (String) next.get(1);
-                            implemented = true;
-                            break;
-                        case ATTR_IPADDRESS:
-                            name = "IPADDRESS";
-                            break;
-                        case ATTR_REGISTEREDID:
-                            name = "REGISTEREDID";
-                            break;
-                        default:
-                            this.log.error("Unknown alternative name No. " + (Integer)next.get(0) 
-                                           + " in certificate" + certificate );
+
+                    int code = ((Integer)next.get(0)).intValue();
+                    if (code < NameTypes.values().length) {
+                        try {
+                            switch (NameTypes.fromCode(code))
+                            {
+                            case NameTypes.OTHERNAME: 
+                                name = "OTHERNAME";
+                                break;
+                            case NameTypes.RFC822NAME:
+                                name = "RFC822NAME";
+                                value = (String) next.get(1);
+                                implemented = true;
+                                break;
+                            case NameTypes.DNSNAME:
+                                name = "DNSNAME";
+                                value = (String) next.get(1);
+                                implemented = true;
+                                break;
+                            case NameTypes.X400ADDRESS:
+                                name = "X400ADDRESS";
+                                break;
+                            case NameTypes.DIRECTORYNAME:
+                                name = "DIRECTORYNAME";
+                                value = (String) next.get(1);
+                                implemented = true;
+                                break;
+                            case NameTypes.EDIPARTYNAME:
+                                name = "EDIPARTYNAME";
+                                break;
+                            case NameTypes.URI:
+                                name = "URI";
+                                value = (String) next.get(1);
+                                implemented = true;
+                                break;
+                            case NameTypes.IPADDRESS:
+                                name = "IPADDRESS";
+                                value = (String) next.get(1);
+                                implemented = true;
+                                break;
+                            case NameTypes.REGISTEREDID:
+                                name = "REGISTEREDID";
+                                value = (String) next.get(1);
+                                implemented = true;
+                                break;
+                            default:
+                                // this code should not be executed at all. Otherwise we did something wrong.
+                                name = "<unknown>";
+                                this.log.error("Unknown alternative name No. {} in certificate {}",
+                                              (Integer)next.get(0) , certificate );
+                            }
+                        } catch ( final Exception e ) {
+                            name = "<invalid>";
+                            this.log.warn("Unknown alternative name No. {} in certificate {}", 
+                                             code, certificate);
                         }
 
-                    if (implemented) {
-                        if (!attrMap.containsKey(name)) {
-                            values = new String[]{ value };
-                            context = new AttributeContext(name, values);
+                        if (implemented) {
+                            if (!attrMap.containsKey(name)) {
+                                values = new String[]{ value };
+                                context = new AttributeContext(name, values);
+                            } else {
+                                context = attrMap.get(name);
+                                context.addValue((String) value next.get(1));
+                            }
+
+                            attrMap.put(name,context);
                         } else {
-                            context = attrMap.get(name);
-                            context.addValue((String) value next.get(1));
+                            this.log.warn("Unsupported field detected {} in certificate {}",name, certificate);
                         }
-                    } else {
-                        this.log.warning("Unsupported field detected: {}",name);
-                    }
 
-                    attrMap.put(name,context);
+                       
+                    }
                 }
             }
 
