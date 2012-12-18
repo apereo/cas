@@ -117,7 +117,8 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
      * @see org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateCredentialsToPrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
      */
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        this.log.debug("Resolving principal \"" + this.descriptor + "\" for " + certificate);
+        this.log.debug("Resolving principal \"{}\" for {}", 
+                       this.descriptor, certificate);
         final StringBuffer sb = new StringBuffer ();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<String, AttributeContext>();
@@ -126,10 +127,10 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
         String[] values;
         AttributeContext context;
         try {
-            this.log.debug("certificate.getSubjectAlternativeNames() = " 
-                           + certificate.getSubjectAlternativeNames());
+            this.log.debug("certificate.getSubjectAlternativeNames() = {}",
+                           certificate.getSubjectAlternativeNames());
             Collection<List<?>> subjAltNames = certificate.getSubjectAlternativeNames();
-            this.log.debug("subjAltNmaes = " + subjAltNames);
+            this.log.debug("subjAltNmaes = {}", subjAltNames);
 
             if (subjAltNames != null) {
                 for ( List<?> next : subjAltNames) {
@@ -211,11 +212,11 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
                 }
             }
 
-            this.log.debug("Replacement map has been intitialized: " + attrMap);
+            this.log.debug("Replacement map has been intitialized: {}",attrMap);
 
             while (m.find()) {
                 name = m.group(1);
-                this.log.debug("Searching for \"" + name + "\" in " + attrMap );
+                this.log.debug("Searching for \"{}\" in {}", name, attrMap );
                 if (!attrMap.containsKey(name)) {
                     m.appendReplacement(sb, "");
                 } else {
@@ -227,7 +228,7 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
             m.appendTail(sb);
 
         } catch (CertificateParsingException e) {
-            this.log.error("Error parsing Certificate: " + e); 
+            this.log.error("Error parsing Certificate: {}", e); 
             // @todo: check whether the debug level is appropriate
         }
         return sb.toString();
