@@ -18,16 +18,27 @@
  */
 package org.jasig.cas.authentication;
 
-public class LdapPasswordPolicyEnforcementException extends Exception {
+import java.io.Serializable;
+import javax.security.auth.login.AccountException;
 
-    private static final long serialVersionUID = 1449385713648575852L;
+/**
+ * Exception describes an authentication failure caused by a disabled user account. The conditions for
+ * this exception are distinguised from {@link javax.security.auth.login.AccountLockedException} in that a locked
+ * account MAY have been locked through actions caused by the user, whereas a disabled account is not capable of
+ * authentication due to administrator action.
+ *
+ * @author Marvin S. Addison
+ * @since 4.0
+ */
+public class AccountDisabledException extends AccountException implements Serializable {
 
-    public LdapPasswordPolicyEnforcementException() {
+    private static final long serialVersionUID = 3028978427657056083L;
+
+    public AccountDisabledException() {
         super();
     }
 
-    public LdapPasswordPolicyEnforcementException(final String msg) {
-        super(msg);
+    public AccountDisabledException(final String message) {
+        super(message);
     }
-
 }

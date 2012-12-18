@@ -18,16 +18,25 @@
  */
 package org.jasig.cas.authentication;
 
-public class LdapPasswordPolicyEnforcementException extends Exception {
+import java.io.Serializable;
+import javax.security.auth.login.AccountException;
 
-    private static final long serialVersionUID = 1449385713648575852L;
+/**
+ * Describes an error condition where authentication occurs at a time that is disallowed by security policy
+ * applied to the underlying user account.
+ *
+ * @author Marvin S. Addison
+ * @version 4.0
+ */
+public class InvalidLoginTimeException extends AccountException implements Serializable {
 
-    public LdapPasswordPolicyEnforcementException() {
+    private static final long serialVersionUID = -6699752791525619208L;
+
+    public InvalidLoginTimeException() {
         super();
     }
 
-    public LdapPasswordPolicyEnforcementException(final String msg) {
-        super(msg);
+    public InvalidLoginTimeException(final String message) {
+        super(message);
     }
-
 }

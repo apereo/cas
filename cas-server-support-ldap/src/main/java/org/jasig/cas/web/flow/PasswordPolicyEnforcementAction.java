@@ -18,12 +18,11 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.security.GeneralSecurityException;
 import javax.security.auth.login.CredentialException;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.ErrorMessageResolver;
-import org.jasig.cas.authentication.LdapAuthenticationException;
+import org.jasig.cas.authentication.LdapPasswordPolicyEnforcementException;
 import org.jasig.cas.authentication.PasswordPolicyEnforcer;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.slf4j.Logger;
@@ -76,7 +75,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction {
         this.errorMessageResolver = errorMessageResolver;
     }
 
-    private void populateErrorsInstance(final GeneralSecurityException e, final RequestContext reqCtx) {
+    private void populateErrorsInstance(final Exception e, final RequestContext reqCtx) {
         try {
             reqCtx.getMessageContext().addMessage(new CasMessageResolver(this.errorMessageResolver.resolve(e)));
         } catch (final Exception fe) {
@@ -123,7 +122,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction {
                 }
 
             }
-        } catch (final LdapAuthenticationException e) {
+        } catch (final LdapPasswordPolicyEnforcementException e) {
             this.logger.error(e.getMessage(), e);
             populateErrorsInstance(e, context);
             returnedEvent = error();

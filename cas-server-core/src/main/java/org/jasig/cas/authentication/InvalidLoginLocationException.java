@@ -18,17 +18,25 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import java.io.Serializable;
+import javax.security.auth.login.AccountException;
 
-public class LdapAuthenticationException extends AuthenticationException {
+/**
+ * Describes an error condition where authentication occurs from a location that is disallowed by security policy
+ * applied to the underlying user account.
+ *
+ * @author Marvin S. Addison
+ * @version 4.0
+ */
+public class InvalidLoginLocationException extends AccountException implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5745711263227480194L;
 
-    public LdapAuthenticationException(final String code, final String msg) {
-        super(code, msg);
+    public InvalidLoginLocationException() {
+        super();
     }
 
-    public LdapAuthenticationException(final String code, final String msg, final String type) {
-        super(code, msg, type);
+    public InvalidLoginLocationException(final String message) {
+        super(message);
     }
 }

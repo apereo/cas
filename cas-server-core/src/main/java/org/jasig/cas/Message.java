@@ -39,7 +39,7 @@ import org.springframework.util.Assert;
 public class Message implements Serializable {
 
     /** Serialization support. */
-    private static final long serialVersionUID = -9022062191460678513L;
+    private static final long serialVersionUID = 3555362857703539081L;
     private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
 
     private String code;
@@ -48,6 +48,9 @@ public class Message implements Serializable {
 
     private Serializable[] params;
 
+    public Message(final String code) {
+        this(code, code);
+    }
 
     public Message(final String code, final String defaultMessage, final Serializable... params) {
         Assert.hasText(code, "Code cannot be null or empty");

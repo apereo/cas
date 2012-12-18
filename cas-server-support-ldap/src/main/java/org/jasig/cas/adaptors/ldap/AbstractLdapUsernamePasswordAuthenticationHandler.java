@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.adaptors.ldap;
 
+import java.lang.reflect.Constructor;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import javax.security.auth.login.FailedLoginException;
@@ -130,22 +131,28 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
      * The set of configured {@link #ldapErrorDefinitions} are consulted to map exceptions based on error
      * message text into the corresponding subclass of {@link GeneralSecurityException}.
      *
-     * @param e Authentication exception thrown by Spring LDAP components.
+     * @param authEx Authentication exception thrown by Spring LDAP components.
      *
      * @return A security exception that may be the original or one translated according to
      * configured {@link #ldapErrorDefinitions}.
      */
-    protected GeneralSecurityException handleLdapError(final AuthenticationException e) {
+    protected GeneralSecurityException handleLdapError(final AuthenticationException authEx) {
         if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
             log.debug("No error definitions are defined. Throwing default FailedLoginException.");
             return new FailedLoginException();
         }
 
-        log.debug("Attempting to handle {}: {}", e.getClass().getSimpleName(), e.getMessage());
+        log.debug("Attempting to handle {}: {}", authEx.getClass().getSimpleName(), authEx.getMessage());
         for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions)
-            if (ldapErrorDef.matches(e.getMessage())) {
-                log.debug("{} matches {}", e, ldapErrorDef);
-                return ldapErrorDef.getMappedException();
+            if (ldapErrorDef.matches(authEx.getMessage())) {
+                log.debug("{} matches {}", authEx, ldapErrorDef);
+                try {
+                    final Constructor<?> cons = ldapErrorDef.getExceptionClass().getConstructor(null);
+                    return (GeneralSecurityException) cons.newInstance(null);
+                } catch (Exception e) {
+                    log.debug("Failed instantiating {}:{}", ldapErrorDef.getExceptionClass(), e);
+                    return new GeneralSecurityException();
+                }
             }
 
         log.debug("No matching error definition found. Throwing default FailedLoginException.");
