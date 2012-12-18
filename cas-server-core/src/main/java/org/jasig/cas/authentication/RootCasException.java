@@ -92,4 +92,8 @@ public abstract class RootCasException extends Exception {
       this.code = code;
   }
   
+  @Override
+  public String toString() {
+    return this.getCode();
+  }
 }
