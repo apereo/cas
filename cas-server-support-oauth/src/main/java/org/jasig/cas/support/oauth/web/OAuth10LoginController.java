@@ -39,7 +39,11 @@ import org.springframework.web.servlet.mvc.AbstractController;
 public final class OAuth10LoginController extends AbstractController {
     
     @NotNull
-    private ProvidersDefinition providersDefinition;
+    private final ProvidersDefinition providersDefinition;
+    
+    public OAuth10LoginController(final ProvidersDefinition providersDefinition) {
+        this.providersDefinition = providersDefinition;
+    }
     
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
@@ -54,9 +58,5 @@ public final class OAuth10LoginController extends AbstractController {
         final String authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(request));
         
         return OAuthUtils.redirectTo(authorizationUrl);
-    }
-    
-    public void setProvidersDefinition(final ProvidersDefinition providersDefinition) {
-        this.providersDefinition = providersDefinition;
     }
 }
