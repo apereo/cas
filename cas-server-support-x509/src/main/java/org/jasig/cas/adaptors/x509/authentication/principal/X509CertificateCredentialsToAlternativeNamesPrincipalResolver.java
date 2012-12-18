@@ -57,7 +57,7 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
     
     /** Descriptor representing an abstract format of the principal to be resolved.*/
     @NotNull
-    private String descriptor;
+        private String descriptor;
 
     /**
      * Sets the descriptor that describes for format of the principal ID to
@@ -108,84 +108,102 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
         final StringBuffer sb = new StringBuffer ();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<String, AttributeContext>();
-	//	Map<String,int> 
+        //        Map<String,int> 
         String name = "";
         String[] values;
         AttributeContext context;
-	try {
-	    this.log.debug("certificate.getSubjectAlternativeNames() = " 
-			   + certificate.getSubjectAlternativeNames());
-	    Collection<List<?>> subjAltNames = certificate.getSubjectAlternativeNames();
-	    this.log.debug("subjAltNmaes = " + subjAltNames);
+        try {
+            this.log.debug("certificate.getSubjectAlternativeNames() = " 
+                           + certificate.getSubjectAlternativeNames());
+            Collection<List<?>> subjAltNames = certificate.getSubjectAlternativeNames();
+            this.log.debug("subjAltNmaes = " + subjAltNames);
 
-	    if (subjAltNames != null) {
-		for ( List<?> next : subjAltNames) {
-		    
-		    switch (((Integer)next.get(0)).intValue())
-		    {
-		    case ATTR_OTHERNAME: 
-			name = "OTHERNAME";
-			break;
-		    case ATTR_RFC822NAME:
-			name = "RFC822NAME";
-			break;
-		    case ATTR_DNSNAME:
-			name = "DNSNAME";
-			break;
-		    case ATTR_X400ADDRESS:
-			name = "X400ADDRESS";
-			break;
-		    case ATTR_DIRECTORYNAME:
-			name = "DIRECTORYNAME";
-			break;
-		    case ATTR_EDIPARTYNAME:
-			name = "EDIPARTYNAME";
-			break;
-		    case ATTR_URI:
-			name = "URI";
-			break;
-		    case ATTR_IPADDRESS:
-			name = "IPADDRESS";
-			break;
-		    case ATTR_REGISTEREDID:
-			name = "REGISTEREDID";
-			break;
-		    default:
-			this.log.error("Unknown alternative name No. " + (Integer)next.get(0) 
-				       + " in certificate" + certificate );
-		    }
+            if (subjAltNames != null) {
+                for ( List<?> next : subjAltNames) {
+                    String value = "";
+                    bool implemented = false;
+                    
+                    switch (((Integer)next.get(0)).intValue())
+                        {
+                        case ATTR_OTHERNAME: 
+                            name = "OTHERNAME";
+                            value = (String) next.get(1);
+                            implemented = true;
+                            break;
+                        case ATTR_RFC822NAME:
+                            name = "RFC822NAME";
+                            value = (String) next.get(1);
+                            implemented = true;
+                            break;
+                        case ATTR_DNSNAME:
+                            name = "DNSNAME";
+                            value = (String) next.get(1);
+                            implemented = true;
+                            break;
+                        case ATTR_X400ADDRESS:
+                            name = "X400ADDRESS";
+                            break;
+                        case ATTR_DIRECTORYNAME:
+                            name = "DIRECTORYNAME";
+                            value = (String) next.get(1);
+                            implemented = true;
+                            break;
+                        case ATTR_EDIPARTYNAME:
+                            name = "EDIPARTYNAME";
+                            value = (String) next.get(1);
+                            implemented = true;
+                            break;
+                        case ATTR_URI:
+                            name = "URI";
+                            value = (String) next.get(1);
+                            implemented = true;
+                            break;
+                        case ATTR_IPADDRESS:
+                            name = "IPADDRESS";
+                            break;
+                        case ATTR_REGISTEREDID:
+                            name = "REGISTEREDID";
+                            break;
+                        default:
+                            this.log.error("Unknown alternative name No. " + (Integer)next.get(0) 
+                                           + " in certificate" + certificate );
+                        }
 
-		    if (!attrMap.containsKey(name)) {
-			values = new String[]{ (String) next.get(1) };
-			context = new AttributeContext(name, values);
-		    } else {
-			context = attrMap.get(name);
-			context.addValue((String) next.get(1));
-		    }
+                    if (implemented) {
+                        if (!attrMap.containsKey(name)) {
+                            values = new String[]{ value };
+                            context = new AttributeContext(name, values);
+                        } else {
+                            context = attrMap.get(name);
+                            context.addValue((String) value next.get(1));
+                        }
+                    } else {
+                        this.log.warning("Unsupported field detected: {}",name);
+                    }
 
-		    attrMap.put(name,context);
-		}
-	    }
+                    attrMap.put(name,context);
+                }
+            }
 
-	    this.log.debug("Replacement map has been intitialized: " + attrMap);
+            this.log.debug("Replacement map has been intitialized: " + attrMap);
 
-	    while (m.find()) {
-		name = m.group(1);
-		this.log.debug("Searching for \"" + name + "\" in " + attrMap );
-		if (!attrMap.containsKey(name)) {
-		    m.appendReplacement(sb, "");
-		} else {
-		    context = attrMap.get(name);
-		    m.appendReplacement(sb,context.nextValue());
-		}
-	    }
+            while (m.find()) {
+                name = m.group(1);
+                this.log.debug("Searching for \"" + name + "\" in " + attrMap );
+                if (!attrMap.containsKey(name)) {
+                    m.appendReplacement(sb, "");
+                } else {
+                    context = attrMap.get(name);
+                    m.appendReplacement(sb,context.nextValue());
+                }
+            }
 
-	    m.appendTail(sb);
+            m.appendTail(sb);
 
-	} catch (CertificateParsingException e) {
-	    this.log.error("Error parsing Certificate: " + e); 
-	    // @todo: check whether the debug level is appropriate
-	}
+        } catch (CertificateParsingException e) {
+            this.log.error("Error parsing Certificate: " + e); 
+            // @todo: check whether the debug level is appropriate
+        }
         return sb.toString();
     }
     
@@ -206,12 +224,12 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
             return this.values[this.currentIndex++];
         }
 
-	public void addValue(String value) {
-	    int oldSize = values.length;
-	    String[] newValues = new String[oldSize+1];
-	    System.arraycopy (values,0,newValues,0,oldSize);
-	    newValues[oldSize+1] = value;
-	    values = newValues;
-	}
+        public void addValue(String value) {
+            int oldSize = values.length;
+            String[] newValues = new String[oldSize+1];
+            System.arraycopy (values,0,newValues,0,oldSize);
+            newValues[oldSize+1] = value;
+            values = newValues;
+        }
     }
 }
