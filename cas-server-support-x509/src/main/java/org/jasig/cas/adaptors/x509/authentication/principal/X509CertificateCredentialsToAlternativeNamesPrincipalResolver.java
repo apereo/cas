@@ -135,48 +135,48 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
             if (subjAltNames != null) {
                 for ( List<?> next : subjAltNames) {
                     String value = "";
-                    bool implemented = false;
+                    boolean implemented = false;
 
                     int code = ((Integer)next.get(0)).intValue();
                     if (code < NameTypes.values().length) {
                         try {
                             switch (NameTypes.fromCode(code))
                             {
-                            case NameTypes.OTHERNAME: 
+                            case OTHERNAME: 
                                 name = "OTHERNAME";
                                 break;
-                            case NameTypes.RFC822NAME:
+                            case RFC822NAME:
                                 name = "RFC822NAME";
                                 value = (String) next.get(1);
                                 implemented = true;
                                 break;
-                            case NameTypes.DNSNAME:
+                            case DNSNAME:
                                 name = "DNSNAME";
                                 value = (String) next.get(1);
                                 implemented = true;
                                 break;
-                            case NameTypes.X400ADDRESS:
+                            case X400ADDRESS:
                                 name = "X400ADDRESS";
                                 break;
-                            case NameTypes.DIRECTORYNAME:
+                            case DIRECTORYNAME:
                                 name = "DIRECTORYNAME";
                                 value = (String) next.get(1);
                                 implemented = true;
                                 break;
-                            case NameTypes.EDIPARTYNAME:
+                            case EDIPARTYNAME:
                                 name = "EDIPARTYNAME";
                                 break;
-                            case NameTypes.URI:
+                            case URI:
                                 name = "URI";
                                 value = (String) next.get(1);
                                 implemented = true;
                                 break;
-                            case NameTypes.IPADDRESS:
+                            case IPADDRESS:
                                 name = "IPADDRESS";
                                 value = (String) next.get(1);
                                 implemented = true;
                                 break;
-                            case NameTypes.REGISTEREDID:
+                            case REGISTEREDID:
                                 name = "REGISTEREDID";
                                 value = (String) next.get(1);
                                 implemented = true;
@@ -199,7 +199,7 @@ public class X509CertificateCredentialsToAlternativeNamesPrincipalResolver
                                 context = new AttributeContext(name, values);
                             } else {
                                 context = attrMap.get(name);
-                                context.addValue((String) value next.get(1));
+                                context.addValue( value);
                             }
 
                             attrMap.put(name,context);
