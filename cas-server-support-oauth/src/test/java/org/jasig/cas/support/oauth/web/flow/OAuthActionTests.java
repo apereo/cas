@@ -97,8 +97,8 @@ public final class OAuthActionTests {
         mockRequestContext.setExternalContext(servletExternalContext);
         mockRequestContext.getFlowScope().put(OAuthConstants.SERVICE, new SimpleWebApplicationServiceImpl(MY_SERVICE));
         
-        final OAuthAction oAuthAction = new OAuthAction();
-        oAuthAction.setProvidersDefinition(newProvidersDefinition());
+        final OAuthAction oAuthAction = new OAuthAction(mock(CentralAuthenticationService.class),
+                                                        newProvidersDefinition());
         final Event event = oAuthAction.execute(mockRequestContext);
         assertEquals("error", event.getId());
         assertEquals(MY_THEME, mockSession.getAttribute(OAuthConstants.THEME));
@@ -131,11 +131,8 @@ public final class OAuthActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
         
-        final CentralAuthenticationService centralAuthenticationService = mock(CentralAuthenticationService.class);
-        
-        final OAuthAction oAuthAction = new OAuthAction();
-        oAuthAction.setProvidersDefinition(newProvidersDefinition());
-        oAuthAction.setCentralAuthenticationService(centralAuthenticationService);
+        final OAuthAction oAuthAction = new OAuthAction(mock(CentralAuthenticationService.class),
+                                                        newProvidersDefinition());
         final Event event = oAuthAction.execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(OAuthConstants.THEME));

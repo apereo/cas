@@ -38,7 +38,11 @@ import org.scribe.up.provider.ProvidersDefinition;
 public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     
     @NotNull
-    private ProvidersDefinition providersDefinition;
+    private final ProvidersDefinition providersDefinition;
+    
+    public OAuthAuthenticationHandler(final ProvidersDefinition providersDefinition) {
+        this.providersDefinition = providersDefinition;
+    }
     
     @Override
     public boolean supports(final Credentials credentials) {
@@ -67,9 +71,5 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         } else {
             return false;
         }
-    }
-    
-    public void setProvidersDefinition(final ProvidersDefinition providersDefinition) {
-        this.providersDefinition = providersDefinition;
     }
 }

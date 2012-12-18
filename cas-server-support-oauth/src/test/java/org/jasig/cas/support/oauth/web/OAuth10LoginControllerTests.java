@@ -51,8 +51,7 @@ public final class OAuth10LoginControllerTests {
         final ProvidersDefinition providersDefinition = new ProvidersDefinition(twitterProvider);
         providersDefinition.setBaseUrl(MY_LOGIN_URL);
         providersDefinition.init();
-        final OAuth10LoginController oAuth10LoginController = new OAuth10LoginController();
-        oAuth10LoginController.setProvidersDefinition(providersDefinition);
+        final OAuth10LoginController oAuth10LoginController = new OAuth10LoginController(providersDefinition);
         final ModelAndView modelAndView = oAuth10LoginController.handleRequest(mockRequest, mockResponse);
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
