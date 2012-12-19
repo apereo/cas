@@ -31,7 +31,7 @@
 
    Use the bean id below in the main configuration file when you reference the authentication handler bean.
    -->
-  <bean id="lppeEnabledLdapAuthenticationHandler" class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+  <bean id="lppeEnabledLdapAuthenticationHandler" class="org.jasig.cas.authentication.BindLdapAuthenticationHandler"
         p:filter="${ldap.authentication.filter}"
         p:searchBase="${ldap.authentication.basedn}"
         p:contextSource-ref="contextSource"
@@ -40,23 +40,23 @@
 
     <property name="ldapErrorDefinitions">
       <list>
-        <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+        <bean class="org.jasig.cas.authentication.support.LdapErrorDefinition"
               p:ldapPattern="data 530"
               p:type="org.jasig.cas.authentication.InvalidLoginTimeException"/>
 
-        <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+        <bean class="org.jasig.cas.authentication.support.LdapErrorDefinition"
               p:ldapPattern="data 533"
               p:type="org.jasig.cas.authentication.AccountDisabledException"/>
 
-        <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+        <bean class="org.jasig.cas.authentication.support.LdapErrorDefinition"
               p:ldapPattern="data 775"
               p:type="javax.security.auth.login.AccountLockedException"/>
 
-        <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+        <bean class="org.jasig.cas.authentication.support.LdapErrorDefinition"
               p:ldapPattern="data 531"
               p:type="org.jasig.cas.authentication.InvalidLoginLocationException"/>
 
-        <bean class="org.jasig.cas.adaptors.ldap.LdapErrorDefinition"
+        <bean class="org.jasig.cas.authentication.support.LdapErrorDefinition"
               p:ldapPattern="data (701|773|532)"
               p:type="javax.security.auth.login.CredentialExpiredException"/>
       </list>
@@ -120,7 +120,7 @@
     <property name="passwordPolicyEnforcer" ref="ldapPasswordPolicyEnforcer"/>
     <property name="passwordPolicyUrl" value="${ldap.authentication.lppe.password.url}"/>
     <property name="errorMessageResolver">
-      <bean class="org.jasig.cas.authentication.LdapPasswordPolicyErrorMessageResolver" />
+      <bean class="org.jasig.cas.authentication.support.LdapPasswordPolicyErrorMessageResolver" />
     </property>
   </bean>
 
@@ -128,7 +128,7 @@
     This bean defines the current implementation of the password policy enforcer for ldap.
     The properties defined below would possibly exist inside the local 'cas.properties' file
   -->
-  <bean id="ldapPasswordPolicyEnforcer" class="org.jasig.cas.adaptors.ldap.LdapPasswordPolicyEnforcer">
+  <bean id="ldapPasswordPolicyEnforcer" class="org.jasig.cas.authentication.support.LdapPasswordPolicyEnforcer">
     <property name="searchBase" value="${ldap.authentication.basedn}"/>
     <property name="contextSource" ref="contextSource"/>
     <property name="filter" value="${ldap.authentication.filter}"/>

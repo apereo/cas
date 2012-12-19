@@ -70,7 +70,7 @@
 					| Credential you are using.
 					+-->
 				<bean
-					class="org.jasig.cas.authentication.principal.UsernamePasswordPrincipalResolver" />
+					class="org.jasig.cas.authentication.UsernamePasswordPrincipalResolver" />
 				<!--
 					| HttpBasedServicePrincipalResolver supports HttpBasedCredentials.  It supports the CAS 2.0 approach of
 					| authenticating services by SSL callback, extracting the callback URL from the Credential and representing it as a
@@ -107,7 +107,7 @@
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
 					+-->
 				<bean
-					class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler">
+					class="org.jasig.cas.authentication.BindLdapAuthenticationHandler">
 					<property name="filter" value="uid=%u" />
 					<property name="searchBase" value="ou=people,dc=rutgers,dc=edu" /> 
 					<property

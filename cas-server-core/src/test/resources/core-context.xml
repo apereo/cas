@@ -149,7 +149,7 @@
 		class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
 
 	<bean id="usernamePasswordCredentialsToPrincipalResolver"
-		class="org.jasig.cas.authentication.principal.UsernamePasswordPrincipalResolver" >
+		class="org.jasig.cas.authentication.UsernamePasswordPrincipalResolver" >
 		<property name="attributeRepository" ref="attributeRepository" />
 	</bean>
 		

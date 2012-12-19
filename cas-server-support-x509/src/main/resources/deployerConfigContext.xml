@@ -36,7 +36,7 @@
      X.509 authentication handler example.
   -->
   <bean id="certificateAuthenticationHandler"
-        class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
+        class="org.jasig.cas.authentication.X509CredentialsAuthenticationHandler">
     <property name="trustedIssuerDnPattern"
               value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
     <property name="subjectDnPattern"
@@ -46,7 +46,7 @@
     <property name="maxPathLength" value="2147483647" />
     <property name="maxPathLengthAllowUnspecified" value="true" />
     <property name="revocationChecker">
-      <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker">
+      <bean class="org.jasig.cas.authentication.support.CRLDistributionPointRevocationChecker">
         <constructor-arg>
           <!-- Cache CRL fetches for 6h -->
           <bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
@@ -64,13 +64,13 @@
         <property name="unavailableCRLPolicy">
           <!--
             Default is to trigger authentication failure on unavailable CRL data.
-            Use org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy
+            Use org.jasig.cas.authentication.support.AllowRevocationPolicy
             to allow auth on unavailable CRL data.
           -->
-          <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
+          <bean class="org.jasig.cas.authentication.support.DenyRevocationPolicy" />
         </property>
         <property name="expiredCRLPolicy">
-          <bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy">
+          <bean class="org.jasig.cas.authentication.support.ThresholdExpiredCRLRevocationPolicy">
             <!--
                 Allow expired CRL data up to 48h after expiration.
                 Set to 0 to prevent expired CRL data.
@@ -88,7 +88,7 @@
     | subject DN is DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto.
     +-->
   <bean id="certificatePrincipalResolver"
-        class="org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateSubjectPrinciplalResolver"
+        class="org.jasig.cas.authentication.X509CertificateSubjectPrinciplalResolver"
         p:descriptor="$UID@$DC.$DC" />
 
 </beans>

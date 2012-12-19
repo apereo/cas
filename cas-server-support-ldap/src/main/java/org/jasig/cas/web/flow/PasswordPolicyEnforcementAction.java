@@ -22,8 +22,8 @@ import javax.security.auth.login.CredentialException;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.ErrorMessageResolver;
-import org.jasig.cas.authentication.LdapPasswordPolicyEnforcementException;
-import org.jasig.cas.authentication.PasswordPolicyEnforcer;
+import org.jasig.cas.authentication.support.LdapPasswordPolicyEnforcementException;
+import org.jasig.cas.authentication.support.PasswordPolicyEnforcer;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * This action checks the expiration time for a user and displays a warning page when the expiration date is near.
  * Password Expiration and Account locking are NOT done here -- those are AuthenticationExceptions in
- * org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler
+ * org.jasig.cas.authentication.BindLdapAuthenticationHandler
  *
  * This action should be run after the TGT and ST are created, but before the client is sent back to the service.
  * Based on AccountStatusGetter by Bart Ophelders & Johan Peeters

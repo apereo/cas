@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryPrincipalResolver;
+import org.jasig.cas.authentication.AbstractPersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
 
 /**

@@ -99,7 +99,7 @@
     | to declare a PrincipalResolver that supports the Credential you are using.
     +-->
   <bean id="usernamePasswordPrincipalResolver"
-        class="org.jasig.cas.authentication.principal.UsernamePasswordPrincipalResolver"
+        class="org.jasig.cas.authentication.UsernamePasswordPrincipalResolver"
         p:attributeRepository-ref="attributeRepository" />
 
   <!--

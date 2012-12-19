@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.oauth.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractPersonDirectoryPrincipalResolver;
+import org.jasig.cas.authentication.AbstractPersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.PrincipalResolver;
 
