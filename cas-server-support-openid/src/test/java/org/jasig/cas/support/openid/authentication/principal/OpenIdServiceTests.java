@@ -48,27 +48,27 @@ public class OpenIdServiceTests extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-        request.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
-        request.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");
-        request.addParameter("openid.mode", "checkid_setup");
-        sharedAssociations = mock(ServerAssociationStore.class);
-        manager = new ServerManager();
-        manager.setOPEndpointUrl("https://localshot:8443/cas/login");
-        manager.setEnforceRpId(false);
-        manager.setSharedAssociations(sharedAssociations);
-        context = mock(ApplicationContext.class);
-        ApplicationContextProvider contextProvider = new ApplicationContextProvider();
-        contextProvider.setApplicationContext(context);
-        cas = mock(CentralAuthenticationService.class);
+        this.request.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
+        this.request.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");
+        this.request.addParameter("openid.mode", "checkid_setup");
+        this.sharedAssociations = mock(ServerAssociationStore.class);
+        this.manager = new ServerManager();
+        this.manager.setOPEndpointUrl("https://localshot:8443/cas/login");
+        this.manager.setEnforceRpId(false);
+        this.manager.setSharedAssociations(this.sharedAssociations);
+        this.context = mock(ApplicationContext.class);
+        final ApplicationContextProvider contextProvider = new ApplicationContextProvider();
+        contextProvider.setApplicationContext(this.context);
+        this.cas = mock(CentralAuthenticationService.class);
     }
     
     public void testGetResponse() {
-        openIdService = OpenIdService.createServiceFrom(request);
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
+        this.openIdService = OpenIdService.createServiceFrom(this.request);
+        when(this.context.getBean("serverManager")).thenReturn(this.manager);
+        when(this.context.getBean("centralAuthenticationService")).thenReturn(this.cas);
         final Response response = this.openIdService.getResponse("test");
         try {
-            verify(cas, never()).validateServiceTicket("test", openIdService);
+            verify(this.cas, never()).validateServiceTicket("test", this.openIdService);
         } catch (Exception e) {
         }
         assertNotNull(response);
@@ -82,25 +82,25 @@ public class OpenIdServiceTests extends TestCase {
     }
 
     public void testSmartModeGetResponse() {
-        request.addParameter("openid.assoc_handle", "test");
-        openIdService = OpenIdService.createServiceFrom(request);
+        this.request.addParameter("openid.assoc_handle", "test");
+        this.openIdService = OpenIdService.createServiceFrom(this.request);
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1,"test", 60) ;
         } catch (Exception e) {
             fail("Could not generate association");
         }
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
-        when(sharedAssociations.load("test")).thenReturn(association);
+        when(this.context.getBean("serverManager")).thenReturn(this.manager);
+        when(this.context.getBean("centralAuthenticationService")).thenReturn(this.cas);
+        when(this.sharedAssociations.load("test")).thenReturn(association);
         final Response response = this.openIdService.getResponse("test");
         try {
-            verify(cas).validateServiceTicket("test", openIdService);
+            verify(this.cas).validateServiceTicket("test", this.openIdService);
         } catch (Exception e) {
             fail("Error while validating ticket");
         }
 
-        request.removeParameter("openid.assoc_handle");
+        this.request.removeParameter("openid.assoc_handle");
         assertNotNull(response);
 
         assertEquals("test", response.getAttributes().get("openid.assoc_handle"));
@@ -109,17 +109,17 @@ public class OpenIdServiceTests extends TestCase {
     }
 
     public void testExpiredAssociationGetResponse() {
-        request.addParameter("openid.assoc_handle", "test");
-        openIdService = OpenIdService.createServiceFrom(request);
+        this.request.addParameter("openid.assoc_handle", "test");
+        this.openIdService = OpenIdService.createServiceFrom(this.request);
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1,"test", 2) ;
         } catch (Exception e) {
             fail("Could not generate association");
         }
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
-        when(sharedAssociations.load("test")).thenReturn(association);
+        when(this.context.getBean("serverManager")).thenReturn(this.manager);
+        when(this.context.getBean("centralAuthenticationService")).thenReturn(this.cas);
+        when(this.sharedAssociations.load("test")).thenReturn(association);
         synchronized (this) {
             try {
                 this.wait(3000);
@@ -128,7 +128,7 @@ public class OpenIdServiceTests extends TestCase {
             }
         }
         final Response response = this.openIdService.getResponse("test");
-        request.removeParameter("openid.assoc_handle");
+        this.request.removeParameter("openid.assoc_handle");
         assertNotNull(response);
 
         assertEquals(1, response.getAttributes().size());

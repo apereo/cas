@@ -77,7 +77,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
         }
         
         // name of the CAS service
-        final Collection<RegisteredService> services = servicesManager.getAllServices();
+        final Collection<RegisteredService> services = this.servicesManager.getAllServices();
         RegisteredService service = null;
         for (final RegisteredService aService : services) {
             if (StringUtils.equals(aService.getName(), clientId)) {
@@ -107,7 +107,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
             .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         log.debug("callbackAuthorizeUrl : {}", callbackAuthorizeUrl);
         
-        final String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE,
+        final String loginUrlWithService = OAuthUtils.addParameter(this.loginUrl, OAuthConstants.SERVICE,
                                                                    callbackAuthorizeUrl);
         log.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);

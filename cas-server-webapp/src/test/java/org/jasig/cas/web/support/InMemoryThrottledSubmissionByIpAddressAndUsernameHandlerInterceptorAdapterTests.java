@@ -39,6 +39,6 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
-        return throttle;
+        return this.throttle;
     }
 }

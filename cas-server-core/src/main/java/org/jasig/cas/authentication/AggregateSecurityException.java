@@ -48,7 +48,7 @@ public class AggregateSecurityException extends GeneralSecurityException {
     public String getMessage() {
         final StringBuilder sb = new StringBuilder("Errors: [");
         int i = 0;
-        for (GeneralSecurityException e : this.errors) {
+        for (final GeneralSecurityException e : this.errors) {
             sb.append(e.getClass().getName()).append(':').append(e.getMessage());
             if (i++ > 0) {
                 sb.append(", ");

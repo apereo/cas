@@ -48,10 +48,10 @@ import org.springframework.core.io.ClassPathResource;
 public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
 
     /** Instance under test */
-    private CRLDistributionPointRevocationChecker checker;
+    private final CRLDistributionPointRevocationChecker checker;
 
     /** Answers requests for CRLs made to localhost:8085. */
-    private MockWebServer webServer;
+    private final MockWebServer webServer;
 
 
     /**
@@ -135,7 +135,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
       params.add(new Object[] {
           new CRLDistributionPointRevocationChecker(cache),
           new RevocationPolicy<X509CRL>() {
-              public void apply(X509CRL crl) {/* Do nothing to allow unconditionally */}
+              public void apply(final X509CRL crl) {/* Do nothing to allow unconditionally */}
           },
           new String[] {"user-valid-distcrl.crt"},
          "userCA-expired.crl",

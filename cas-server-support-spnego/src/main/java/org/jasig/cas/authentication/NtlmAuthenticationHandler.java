@@ -91,7 +91,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                     final Type3Message type3 = new Type3Message(src);
                     final byte[] lmResponse = type3.getLMResponse() == null
                         ? new byte[0] : type3.getLMResponse();
-                    byte[] ntResponse = type3.getNTResponse() == null
+                    final byte[] ntResponse = type3.getNTResponse() == null
                         ? new byte[0] : type3.getNTResponse();
                     final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
                         type3.getDomain(), type3.getUser(), challenge,

@@ -56,7 +56,7 @@ public final class SpnegoCredential implements Credential {
     /**
      * The authentication type should be Kerberos or NTLM.
      */
-    private boolean isNtlm;
+    private final boolean isNtlm;
 
     public SpnegoCredential(final byte[] initToken) {
         Assert.notNull(initToken, "The initToken cannot be null.");

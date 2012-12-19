@@ -202,7 +202,7 @@ public abstract class AbstractTicketRegistryTests extends TestCase {
         }
         
         try {
-            Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
+            final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
                 "The size of the registry is not the same as the collection.",
                 ticketRegistryTickets.size(), tickets.size());

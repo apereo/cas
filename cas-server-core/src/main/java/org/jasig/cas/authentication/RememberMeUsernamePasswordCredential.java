@@ -45,7 +45,7 @@ public class RememberMeUsernamePasswordCredential extends
         return result;
     }
 
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (!super.equals(obj))
@@ -58,7 +58,7 @@ public class RememberMeUsernamePasswordCredential extends
         return true;
     }
 
-    public final void setRememberMe(boolean rememberMe) {
+    public final void setRememberMe(final boolean rememberMe) {
         this.rememberMe = rememberMe;
     }
 }

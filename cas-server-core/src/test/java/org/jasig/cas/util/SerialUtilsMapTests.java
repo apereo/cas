@@ -48,9 +48,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(org.junit.runners.Parameterized.class)
 public class SerialUtilsMapTests {
 
-    private Map<?, ?> map;
-    private Class<?> keyClass;
-    private Class<?> valueClass;
+    private final Map<?, ?> map;
+    private final Class<?> keyClass;
+    private final Class<?> valueClass;
 
     public SerialUtilsMapTests(final Map<?, ?> map, final Class<?> keyClass, final Class<?> valueClass) {
         this.map = map;

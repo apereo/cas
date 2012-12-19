@@ -38,7 +38,7 @@ public final class OAuthAuthenticationMetaDataPopulator implements Authenticatio
     
     public Authentication populateAttributes(final Authentication authentication, final Credential credential) {
         if (credential instanceof OAuthCredential) {
-            OAuthCredential oauthCredentials = (OAuthCredential) credential;
+            final OAuthCredential oauthCredentials = (OAuthCredential) credential;
             final Principal simplePrincipal = new SimplePrincipal(authentication.getPrincipal().getId(),
                                                                   oauthCredentials.getUserProfile().getAttributes());
             final MutableAuthentication mutableAuthentication = new MutableAuthentication(authentication);

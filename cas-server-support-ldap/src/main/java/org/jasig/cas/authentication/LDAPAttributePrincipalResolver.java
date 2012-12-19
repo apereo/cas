@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.util.LdapUtils;
-import org.springframework.ldap.core.AttributesMapper;
-
+import java.util.List;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+
+import org.jasig.cas.util.LdapUtils;
+import org.springframework.ldap.core.AttributesMapper;
 
 /**
  * @author Jan Van der Velpen
@@ -127,7 +127,7 @@ public final class LDAPAttributePrincipalResolver extends AbstractLdapPersonDire
      * to set.
      */
     public final void setPrincipalResolver(
-            PrincipalResolver principalResolver) {
+            final PrincipalResolver principalResolver) {
         this.principalResolver = principalResolver;
     }
 }

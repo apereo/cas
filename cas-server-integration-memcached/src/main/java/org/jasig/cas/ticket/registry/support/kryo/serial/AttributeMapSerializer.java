@@ -47,17 +47,17 @@ public final class AttributeMapSerializer extends SimpleSerializer<Map<String, O
         Object value;
         Collection items;
         for (final String key : map.keySet()) {
-            kryo.writeObjectData(buffer, key);
+            this.kryo.writeObjectData(buffer, key);
             value = map.get(key);
             if (value instanceof Collection) {
                 items = (Collection) value;
-                kryo.writeClass(buffer, ArrayList.class);
+                this.kryo.writeClass(buffer, ArrayList.class);
                 buffer.putInt(items.size());
                 for (final Object o : items) {
-                    kryo.writeClassAndObject(buffer, o);
+                    this.kryo.writeClassAndObject(buffer, o);
                 }
             } else {
-                kryo.writeClassAndObject(buffer, map.get(key));
+                this.kryo.writeClassAndObject(buffer, map.get(key));
             }
         }
     }
@@ -71,8 +71,8 @@ public final class AttributeMapSerializer extends SimpleSerializer<Map<String, O
         Class<?> valueClass;
         int valueSize;
         for (int i = 0; i < size; i++) {
-            key = kryo.readObjectData(buffer, String.class);
-            registeredClass = kryo.readClass(buffer);
+            key = this.kryo.readObjectData(buffer, String.class);
+            registeredClass = this.kryo.readClass(buffer);
             // readClass returns null for the class of a null object
             if (registeredClass != null) {
                 valueClass = registeredClass.getType();
@@ -80,11 +80,11 @@ public final class AttributeMapSerializer extends SimpleSerializer<Map<String, O
                     valueSize = buffer.getInt();
                     final ArrayList<Object> items = new ArrayList<Object>(valueSize);
                     for (int j = 0; j < valueSize; j++) {
-                        items.add(kryo.readClassAndObject(buffer));
+                        items.add(this.kryo.readClassAndObject(buffer));
                     }
                     value = items;
                 } else if (String.class.isAssignableFrom(valueClass)) {
-                    value = kryo.readObjectData(buffer, String.class);
+                    value = this.kryo.readObjectData(buffer, String.class);
                 } else {
                     throw new IllegalStateException("Unexpected attribute value type " + valueClass);
                 }

@@ -171,7 +171,7 @@ public class DefaultServicesManagerImplTests  {
          * Comment for <code>serialVersionUID</code>
          */
         private static final long serialVersionUID = 6572142033945243669L;
-        private String id;
+        private final String id;
 
         protected SimpleService(final String id) {
             this.id = id;
@@ -185,15 +185,15 @@ public class DefaultServicesManagerImplTests  {
             return this.id;
         }
 
-        public void setPrincipal(Principal principal) {
+        public void setPrincipal(final Principal principal) {
             // nothing to do
         }
 
-        public boolean logOutOfService(String sessionIdentifier) {
+        public boolean logOutOfService(final String sessionIdentifier) {
             return false;
         }
         
-        public boolean matches(Service service) {
+        public boolean matches(final Service service) {
             return true;
         }
     }

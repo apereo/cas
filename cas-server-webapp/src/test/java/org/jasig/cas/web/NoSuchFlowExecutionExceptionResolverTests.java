@@ -46,9 +46,9 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
     }
 
     public void testNoSuchFlowExecutionException() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
-        ModelAndView model = (this.resolver.resolveException(request,
+        final ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
             new NoSuchFlowExecutionException(new FlowExecutionKey(){
             
@@ -59,7 +59,7 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
                 }
 
                 @Override
-                public boolean equals(Object o) {
+                public boolean equals(final Object o) {
                     return true;
                 }
 
@@ -74,10 +74,10 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
     }
     
     public void testNoSuchFlowExecutionExeptionWithQueryString() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
         request.setQueryString("test=test");
-        ModelAndView model = (this.resolver.resolveException(request,
+        final ModelAndView model = (this.resolver.resolveException(request,
             new MockHttpServletResponse(), null,
             new NoSuchFlowExecutionException(new FlowExecutionKey(){
                 
@@ -88,7 +88,7 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
                 }
 
                 @Override
-                public boolean equals(Object o) {
+                public boolean equals(final Object o) {
                     return true;
                 }
 

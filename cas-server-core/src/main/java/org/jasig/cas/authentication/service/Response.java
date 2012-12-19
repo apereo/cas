@@ -52,7 +52,7 @@ public final class Response {
 
     private final Map<String, String> attributes;
 
-    protected Response(ResponseType responseType, final String url, final Map<String, String> attributes) {
+    protected Response(final ResponseType responseType, final String url, final Map<String, String> attributes) {
         this.responseType = responseType;
         this.url = url;
         this.attributes = attributes;

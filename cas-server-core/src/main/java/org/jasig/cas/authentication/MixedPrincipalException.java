@@ -28,9 +28,9 @@ import javax.security.auth.login.LoginException;
  */
 public class MixedPrincipalException extends LoginException {
 
-    private Principal first;
+    private final Principal first;
 
-    private Principal second;
+    private final Principal second;
 
     public MixedPrincipalException(final Principal a, final Principal b) {
         this.first = a;
@@ -38,10 +38,10 @@ public class MixedPrincipalException extends LoginException {
     }
 
     public Principal getFirst() {
-        return first;
+        return this.first;
     }
 
     public Principal getSecond() {
-        return second;
+        return this.second;
     }
 }

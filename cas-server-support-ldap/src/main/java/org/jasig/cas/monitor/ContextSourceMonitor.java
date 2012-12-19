@@ -51,7 +51,7 @@ public class ContextSourceMonitor extends AbstractNamedMonitor<Status> {
     }
 
     public Status observe() {
-        if (dirContextValidator.validateDirContext(DirContextType.READ_ONLY, contextSource.getReadOnlyContext())) {
+        if (this.dirContextValidator.validateDirContext(DirContextType.READ_ONLY, this.contextSource.getReadOnlyContext())) {
             return Status.OK;
         }
         return Status.ERROR;

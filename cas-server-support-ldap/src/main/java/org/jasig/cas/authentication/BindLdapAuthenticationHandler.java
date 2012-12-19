@@ -115,7 +115,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
 
         for (final String dn : cns) {
             DirContext test = null;
-            String finalDn = composeCompleteDnToCheck(dn, credentials);
+            final String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
                 this.log.debug("Performing LDAP bind with credential: " + dn);
                 test = this.getContextSource().getContext(

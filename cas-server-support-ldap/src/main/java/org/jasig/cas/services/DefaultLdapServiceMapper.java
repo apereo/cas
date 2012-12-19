@@ -71,7 +71,7 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
 
 
     protected RegisteredService doMapFromContext(final DirContextOperations ctx) {
-        RegisteredServiceImpl s = new RegisteredServiceImpl();
+        final RegisteredServiceImpl s = new RegisteredServiceImpl();
 
         s.setId(Long.parseLong(ctx.getStringAttribute(this.idAttribute)));
         s.setServiceId(ctx.getStringAttribute(this.serviceIdAttribute));
@@ -109,7 +109,7 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
     }
 
     protected DirContextAdapter createCtx(final String parentDn, final RegisteredService service) {
-        DistinguishedName dn = new DistinguishedName(parentDn);
+        final DistinguishedName dn = new DistinguishedName(parentDn);
         dn.add(this.namingAttribute, service.getName());
         return new DirContextAdapter(dn);
     }

@@ -63,9 +63,9 @@ public class RevokedCertificateException extends GeneralSecurityException {
         }
     }
     
-    private Date revocationDate;
+    private final Date revocationDate;
     
-    private BigInteger serial;
+    private final BigInteger serial;
     
     private Reason reason;
     

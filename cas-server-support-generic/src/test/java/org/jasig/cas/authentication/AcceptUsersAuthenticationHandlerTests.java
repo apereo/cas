@@ -37,9 +37,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class AcceptUsersAuthenticationHandlerTests {
 
-    private AcceptUsersAuthenticationHandler authenticationHandler;
+    private final AcceptUsersAuthenticationHandler authenticationHandler;
 
-    private UsernamePasswordCredential credential;
+    private final UsernamePasswordCredential credential;
 
     boolean expected;
 
@@ -82,7 +82,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         } catch (Exception e) {
             success = false;
         }
-        assertEquals(expected, success);
+        assertEquals(this.expected, success);
     }
 
 

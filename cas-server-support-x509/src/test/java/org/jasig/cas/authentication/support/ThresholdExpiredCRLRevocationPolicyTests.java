@@ -46,13 +46,13 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /** Policy instance under test. */
-    private ThresholdExpiredCRLRevocationPolicy policy;
+    private final ThresholdExpiredCRLRevocationPolicy policy;
 
     /** CRL to test. */
-    private X509CRL crl;
+    private final X509CRL crl;
 
     /** Expected result of check; null for success */
-    private GeneralSecurityException expected;
+    private final GeneralSecurityException expected;
 
 
     /**

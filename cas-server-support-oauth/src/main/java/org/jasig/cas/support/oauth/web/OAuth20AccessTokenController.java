@@ -94,7 +94,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
         }
         
         // name of the CAS service
-        final Collection<RegisteredService> services = servicesManager.getAllServices();
+        final Collection<RegisteredService> services = this.servicesManager.getAllServices();
         RegisteredService service = null;
         for (final RegisteredService aService : services) {
             if (StringUtils.equals(aService.getName(), clientId)) {
@@ -121,7 +121,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         
-        final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
+        final ServiceTicket serviceTicket = (ServiceTicket) this.ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
             log.error("Code expired : {}", code);
@@ -129,10 +129,10 @@ public final class OAuth20AccessTokenController extends AbstractController {
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
         // remove service ticket
-        ticketRegistry.deleteTicket(serviceTicket.getId());
+        this.ticketRegistry.deleteTicket(serviceTicket.getId());
         
         response.setContentType("text/plain");
-        final int expires = (int) (timeout - ((System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000));
+        final int expires = (int) (this.timeout - ((System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000));
         final String text = "access_token=" + ticketGrantingTicket.getId() + "&expires=" + expires;
         log.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, 200);

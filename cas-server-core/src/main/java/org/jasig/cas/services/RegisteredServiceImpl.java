@@ -47,7 +47,7 @@ public class RegisteredServiceImpl extends AbstractRegisteredService {
     }
 
     public boolean matches(final Service service) {
-        return service != null && PATH_MATCHER.match(serviceId.toLowerCase(), service.getId().toLowerCase());
+        return service != null && PATH_MATCHER.match(this.serviceId.toLowerCase(), service.getId().toLowerCase());
     }
 
     protected AbstractRegisteredService newInstance() {

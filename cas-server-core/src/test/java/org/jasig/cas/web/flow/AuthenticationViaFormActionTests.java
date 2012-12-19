@@ -237,14 +237,14 @@ public class AuthenticationViaFormActionTests extends
 
         final CredentialsBinder cb = new CredentialsBinder(){
 
-            public void bind(HttpServletRequest request, Credential credentials) {
+            public void bind(final HttpServletRequest request, final Credential credentials) {
                 ((UsernamePasswordCredential) credentials)
                     .setUsername("test2");
                 ((UsernamePasswordCredential) credentials)
                     .setPassword("test2");
             }
 
-            public boolean supports(Class<?> clazz) {
+            public boolean supports(final Class<?> clazz) {
                 return true;
             }
 

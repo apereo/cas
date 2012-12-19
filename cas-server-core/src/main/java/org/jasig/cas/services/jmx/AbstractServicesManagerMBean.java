@@ -19,6 +19,10 @@
 
 package org.jasig.cas.services.jmx;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -26,10 +30,6 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.util.Assert;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract base class to support both the {@link org.jasig.cas.services.ServicesManager} and the
@@ -43,7 +43,7 @@ import java.util.List;
 public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
 
     @NotNull
-    private T servicesManager;
+    private final T servicesManager;
 
     protected AbstractServicesManagerMBean(final T servicesManager) {
         this.servicesManager = servicesManager;

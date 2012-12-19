@@ -45,7 +45,7 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
         try {
-            if (legacyHandler.authenticate(credential)) {
+            if (this.legacyHandler.authenticate(credential)) {
                 return this.result;
             } else {
                 throw new GeneralSecurityException(String.format("%s failed to authenticate %s", this.getName(), credential));

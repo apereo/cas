@@ -23,10 +23,6 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.Principal;
-import org.jasig.cas.authentication.PrincipalResolver;
-import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -114,7 +110,7 @@ public abstract class AbstractPersonDirectoryPrincipalResolver implements Princi
         return getClass().getSimpleName();
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 }

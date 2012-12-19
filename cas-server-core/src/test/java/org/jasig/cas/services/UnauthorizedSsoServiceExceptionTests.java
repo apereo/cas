@@ -26,7 +26,7 @@ public class UnauthorizedSsoServiceExceptionTests extends TestCase {
     private static final String CODE = "service.not.authorized.sso";
     
     public void testGetCode() {
-        UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException();
+        final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException();
         assertEquals(CODE, e.getMessage());
     }
 

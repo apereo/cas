@@ -24,7 +24,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jasig.cas.authentication.X509CertificateSubjectPrinciplalResolver;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +41,8 @@ import org.junit.runners.Parameterized.Parameters;
 public class X509CertificateCredentialsToSubjectPrinciplalResolverTests {
     
     private X509Certificate certificate;
-    private X509CertificateSubjectPrinciplalResolver resolver;
-    private String expected;
+    private final X509CertificateSubjectPrinciplalResolver resolver;
+    private final String expected;
 
     /**
      * Creates a new test instance with the given parameters.

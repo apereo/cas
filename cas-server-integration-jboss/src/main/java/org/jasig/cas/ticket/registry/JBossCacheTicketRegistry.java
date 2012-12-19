@@ -23,13 +23,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.ticket.Ticket;
 import org.jboss.cache.Cache;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.Node;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of TicketRegistry that is backed by a JBoss TreeCache.
@@ -50,7 +49,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     
     
     
-    protected void updateTicket(Ticket ticket) {
+    protected void updateTicket(final Ticket ticket) {
         try {
             this.cache.put(FQN_TICKET, ticket.getId(), ticket);
         } catch (final CacheException e) {

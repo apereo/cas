@@ -35,7 +35,7 @@ import org.springframework.util.StringUtils;
  */
 public final class PrincipalBearingCredentialsAuthenticationHandler implements AuthenticationHandler {
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private String name;
 

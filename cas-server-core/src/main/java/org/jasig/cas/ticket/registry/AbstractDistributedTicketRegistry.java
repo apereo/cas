@@ -82,7 +82,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         public final boolean isExpired() {
-            if (!callback) {
+            if (!this.callback) {
                 return this.ticket.isExpired();
             }
 
@@ -94,7 +94,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         public final TicketGrantingTicket getGrantingTicket() {
             final TicketGrantingTicket old = this.ticket.getGrantingTicket();
 
-            if (old == null || !callback) {
+            if (old == null || !this.callback) {
                 return old;
             }
 

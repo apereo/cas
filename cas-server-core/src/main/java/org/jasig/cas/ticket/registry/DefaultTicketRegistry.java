@@ -18,15 +18,15 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.springframework.util.Assert;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.springframework.util.Assert;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
@@ -57,7 +57,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
      * threads. The implementation performs internal sizing to try to
      * accommodate this many threads.
      */
-    public DefaultTicketRegistry(int initialCapacity, final float loadFactor, final int concurrencyLevel) {
+    public DefaultTicketRegistry(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
         this.cache = new ConcurrentHashMap<String, Ticket>(initialCapacity, loadFactor, concurrencyLevel);
     }
     
@@ -107,7 +107,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 
     public int sessionCount() {
         int count = 0;
-        for (Ticket t : this.cache.values()) {
+        for (final Ticket t : this.cache.values()) {
             if (t instanceof TicketGrantingTicket) {
                 count++;
             }
@@ -117,7 +117,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 
     public int serviceTicketCount() {
         int count = 0;
-        for (Ticket t : this.cache.values()) {
+        for (final Ticket t : this.cache.values()) {
             if (t instanceof ServiceTicket) {
                 count++;
             }

@@ -54,13 +54,13 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             
 
     public MockTicketGrantingTicket(final String principal) {
-        id = ID_GENERATOR.getNewTicketId("TGT");
-        authentication = TestUtils.newImmutableAuthentication(new SimplePrincipal(principal));
-        created = new Date();
+        this.id = ID_GENERATOR.getNewTicketId("TGT");
+        this.authentication = TestUtils.newImmutableAuthentication(new SimplePrincipal(principal));
+        this.created = new Date();
     }
     
     public Authentication getAuthentication() {
-        return authentication;
+        return this.authentication;
     }
     
     public ServiceTicket grantServiceTicket(final Service service) {
@@ -72,12 +72,12 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             final Service service,
             final ExpirationPolicy expirationPolicy,
             final boolean credentialsProvided) {
-        usageCount++;
+        this.usageCount++;
         return new MockServiceTicket(id, service, this);
     }
 
     public void expire() {
-        expired = true;
+        this.expired = true;
     }
 
     public boolean isRoot() {
@@ -89,11 +89,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public boolean isExpired() {
-        return expired;
+        return this.expired;
     }
 
     public TicketGrantingTicket getGrantingTicket() {
@@ -101,10 +101,10 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public long getCreationTime() {
-        return created.getTime();
+        return this.created.getTime();
     }
 
     public int getCountOfUses() {
-        return usageCount;
+        return this.usageCount;
     }
 }

@@ -18,10 +18,8 @@
  */
 package org.jasig.cas.validation;
 
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.validation.Cas10ProtocolValidationSpecification;
-
 import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
 
 /**
  * @author Scott Battaglia
@@ -31,13 +29,13 @@ import junit.framework.TestCase;
 public class Cas10ProtocolValidationSpecificationTests extends TestCase {
 
     public void testRenewGettersAndSettersFalse() {
-        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
+        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
     public void testRenewGettersAndSettersTrue() {
-        Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
+        final Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }

@@ -80,7 +80,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     protected AbstractAuthenticationManager(final List<AuthenticationHandler> handlers ) {
         Assert.notEmpty(handlers, "At least one authentication handler is required");
         this.handlerResolverMap = new LinkedHashMap<AuthenticationHandler, PrincipalResolver>(handlers.size());
-        for (AuthenticationHandler handler : handlers) {
+        for (final AuthenticationHandler handler : handlers) {
             this.handlerResolverMap.put(handler, null);
         }
     }
@@ -111,12 +111,12 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         if (principal  == null) {
             throw new UnresolvedPrincipalException();
         }
-        for (Principal p : authentication.getSuccesses().values()) {
+        for (final Principal p : authentication.getSuccesses().values()) {
             if (p != null && !principal.equals(p)) {
                 throw new MixedPrincipalException(principal, p);
             }
         }
-        for (HandlerResult result : authentication.getSuccesses().keySet()) {
+        for (final HandlerResult result : authentication.getSuccesses().keySet()) {
             authentication.getAttributes().put(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
         }
 
@@ -124,7 +124,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         log.debug("Attribute map for {}: {}", principal.getId(), principal.getAttributes());
 
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
-            for (Credential credential : credentials) {
+            for (final Credential credential : credentials) {
                 authentication = populator.populateAttributes(authentication, credential);
             }
         }
@@ -163,9 +163,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         boolean found;
         Principal principal;
         PrincipalResolver resolver;
-        for (Credential credential : credentials) {
+        for (final Credential credential : credentials) {
             found = false;
-            for (AuthenticationHandler handler : this.handlerResolverMap.keySet()) {
+            for (final AuthenticationHandler handler : this.handlerResolverMap.keySet()) {
                 if (handler.supports(credential)) {
                     found = true;
                     try {

@@ -80,11 +80,11 @@ public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20; 
     
-    private static UniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator(64);
+    private static final UniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator(64);
     
-    private static ExpirationPolicy expirationPolicyTGT = new HardTimeoutExpirationPolicy(1000);
+    private static final ExpirationPolicy expirationPolicyTGT = new HardTimeoutExpirationPolicy(1000);
 
-    private static ExpirationPolicy expirationPolicyST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
+    private static final ExpirationPolicy expirationPolicyST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 
     @Autowired
     private PlatformTransactionManager txManager;
@@ -106,8 +106,8 @@ public class JpaTicketRegistryTests {
 
     @Before
     public void setUp() {
-        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "SERVICETICKET");
-        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "TICKETGRANTINGTICKET");
+        JdbcTestUtils.deleteFromTables(this.simpleJdbcTemplate, "SERVICETICKET");
+        JdbcTestUtils.deleteFromTables(this.simpleJdbcTemplate, "TICKETGRANTINGTICKET");
     }
     
     
@@ -139,7 +139,7 @@ public class JpaTicketRegistryTests {
                 generators.add(new ServiceTicketGenerator(newTgt.getId()));
             }
             final List<Future<String>> results = executor.invokeAll(generators);
-            for (Future<String> result : results) {
+            for (final Future<String> result : results) {
                 assertNotNull(result.get());
             }
         } catch (Exception e) {
@@ -169,36 +169,36 @@ public class JpaTicketRegistryTests {
     }
     
     void addTicketInTransaction(final Ticket ticket) {
-        new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
+        new TransactionTemplate(this.txManager).execute(new TransactionCallback<Void>() {
             public Void doInTransaction(final TransactionStatus status) {
-                jpaTicketRegistry.addTicket(ticket);
+                JpaTicketRegistryTests.this.jpaTicketRegistry.addTicket(ticket);
                 return null;
             }
         });
     }
     
     void deleteTicketInTransaction(final String ticketId) {
-        new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
+        new TransactionTemplate(this.txManager).execute(new TransactionCallback<Void>() {
             public Void doInTransaction(final TransactionStatus status) {
-                jpaTicketRegistry.deleteTicket(ticketId);
+                JpaTicketRegistryTests.this.jpaTicketRegistry.deleteTicket(ticketId);
                 return null;
             }
         });
     }
 
     Ticket getTicketInTransaction(final String ticketId) {
-        return new TransactionTemplate(txManager).execute(new TransactionCallback<Ticket>() {
+        return new TransactionTemplate(this.txManager).execute(new TransactionCallback<Ticket>() {
             public Ticket doInTransaction(final TransactionStatus status) {
-                return jpaTicketRegistry.getTicket(ticketId);
+                return JpaTicketRegistryTests.this.jpaTicketRegistry.getTicket(ticketId);
             }
         });
     }
     
     ServiceTicket grantServiceTicketInTransaction(final TicketGrantingTicket parent) {
-        return new TransactionTemplate(txManager).execute(new TransactionCallback<ServiceTicket>() {
+        return new TransactionTemplate(this.txManager).execute(new TransactionCallback<ServiceTicket>() {
             public ServiceTicket doInTransaction(final TransactionStatus status) {
                 final ServiceTicket st = newST(parent);
-                jpaTicketRegistry.addTicket(st);
+                JpaTicketRegistryTests.this.jpaTicketRegistry.addTicket(st);
                 return st;
             }
         });
@@ -206,20 +206,20 @@ public class JpaTicketRegistryTests {
 
     class ServiceTicketGenerator implements Callable<String> {
         
-        private String parentTgtId;
+        private final String parentTgtId;
         
         public ServiceTicketGenerator(final String tgtId) {
-            parentTgtId = tgtId;
+            this.parentTgtId = tgtId;
         }
 
         /** {@inheritDoc} */
         public String call() throws Exception {
-            return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
+            return new TransactionTemplate(JpaTicketRegistryTests.this.txManager).execute(new TransactionCallback<String>() {
                 public String doInTransaction(final TransactionStatus status) {
                     // Querying for the TGT prior to updating it as done in
                     // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credential)
-                    final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
-                    jpaTicketRegistry.addTicket(st);
+                    final ServiceTicket st = newST((TicketGrantingTicket) JpaTicketRegistryTests.this.jpaTicketRegistry.getTicket(ServiceTicketGenerator.this.parentTgtId));
+                    JpaTicketRegistryTests.this.jpaTicketRegistry.addTicket(st);
                     return st.getId();
                 }
             });

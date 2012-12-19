@@ -35,7 +35,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
     
-    public boolean delete(RegisteredService registeredService) {
+    public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
     }
 

@@ -47,8 +47,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class SerialUtilsCollectionTests {
 
-    private Collection<?> collection;
-    private Class<?> itemClass;
+    private final Collection<?> collection;
+    private final Class<?> itemClass;
 
     public SerialUtilsCollectionTests(final Collection<?> collection, final Class<?> itemClass) {
         this.collection = collection;

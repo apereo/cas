@@ -18,20 +18,17 @@
  */
 package org.jasig.cas.extension.clearpass;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
 import java.util.Map;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-
-import org.jasig.cas.extension.clearpass.EhcacheBackedMap;
-import org.jasig.cas.extension.clearpass.EncryptedMapDecorator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Scott Battaglia
@@ -52,7 +49,7 @@ public class EncryptedMapDecoratorTests {
 		  this.cacheManager = new CacheManager(this.getClass().getClassLoader().getResourceAsStream("ehcacheClearPass.xml"));		  
 			final Cache cache = this.cacheManager.getCache("clearPassCache");
 			this.map = new EhcacheBackedMap(cache);
-			this.decorator = new EncryptedMapDecorator(map);
+			this.decorator = new EncryptedMapDecorator(this.map);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

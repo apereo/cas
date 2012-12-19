@@ -113,7 +113,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(RegisteredService rs : this.manager.getAllServices()) {
+        for(final RegisteredService rs : this.manager.getAllServices()) {
             assertTrue(rs instanceof RegisteredServiceImpl);
         }
     }
@@ -176,7 +176,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(RegisteredService rs : this.manager.getAllServices()) {
+        for(final RegisteredService rs : this.manager.getAllServices()) {
             assertTrue(rs instanceof RegexRegisteredService);
         }
     }
@@ -220,7 +220,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(2, services.size());
-        for(RegisteredService rs : this.manager.getAllServices()) {
+        for(final RegisteredService rs : this.manager.getAllServices()) {
             if(rs.getName().equals("ant")) {
                 assertTrue(rs instanceof RegisteredServiceImpl);
             }else if (rs.getName().equals("regex")) {
@@ -253,7 +253,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
-        for(RegisteredService rs : this.manager.getAllServices()) {
+        for(final RegisteredService rs : this.manager.getAllServices()) {
             assertTrue(rs instanceof MockRegisteredService);
         }
     }

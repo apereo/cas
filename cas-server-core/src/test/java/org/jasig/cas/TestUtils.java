@@ -75,12 +75,12 @@ public final class TestUtils {
 
     public static final AuthenticationHandler AUTHENTICATION_HANDLER = new AuthenticationHandler() {
         @Override
-        public HandlerResult authenticate(Credential credential) throws GeneralSecurityException, IOException {
+        public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
             return new HandlerResult(this);
         }
 
         @Override
-        public boolean supports(Credential credential) {
+        public boolean supports(final Credential credential) {
             return credential instanceof UsernamePasswordCredential;
         }
 

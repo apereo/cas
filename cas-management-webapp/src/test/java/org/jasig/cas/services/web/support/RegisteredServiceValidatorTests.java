@@ -103,15 +103,15 @@ public class RegisteredServiceValidatorTests extends TestCase {
             this.returnValue = returnValue;
         }
 
-        public RegisteredService delete(long id) {
+        public RegisteredService delete(final long id) {
             return null;
         }
 
-        public RegisteredService findServiceBy(long id) {
+        public RegisteredService findServiceBy(final long id) {
             return null;
         }
 
-        public RegisteredService findServiceBy(Service service) {
+        public RegisteredService findServiceBy(final Service service) {
             return null;
         }
 

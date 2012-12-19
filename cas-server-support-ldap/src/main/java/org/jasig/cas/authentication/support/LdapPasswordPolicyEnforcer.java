@@ -406,7 +406,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         else
             dateValue = formatDateByPattern(ldapDateResult);
               
-        DateTime expireDate = dateValue.plusDays(this.validDays);
+        final DateTime expireDate = dateValue.plusDays(this.validDays);
         logDebug("Retrieved date value " + dateValue.toString() + " for date attribute " + this.dateAttribute + " and added " + this.validDays
                 + " days. The final expiration date is " + expireDate.toString());
 
@@ -486,7 +486,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      */
     private LdapPasswordPolicyResult getResultsFromLdap(final String userId) {
 
-        String[] attributeIds;
+        final String[] attributeIds;
         final List<String> attributeList = new ArrayList<String>();
 
         attributeList.add(this.dateAttribute);

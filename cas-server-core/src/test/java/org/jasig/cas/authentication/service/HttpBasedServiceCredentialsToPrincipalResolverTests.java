@@ -31,7 +31,7 @@ import org.junit.Assert;
 public final class HttpBasedServiceCredentialsToPrincipalResolverTests extends
     TestCase {
 
-    private PrincipalResolver resolver = new HttpBasedServicePrincipalResolver();
+    private final PrincipalResolver resolver = new HttpBasedServicePrincipalResolver();
 
     public void testInValidSupportsCredentials() {
         Assert.assertFalse(this.resolver.supports(TestUtils

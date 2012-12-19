@@ -221,10 +221,10 @@ public final class HttpClient implements Serializable, DisposableBean {
             BufferedReader in = null;
             try {
                 if (log.isDebugEnabled()) {
-                    log.debug("Attempting to access " + url);
+                    log.debug("Attempting to access " + this.url);
                 }
-                final URL logoutUrl = new URL(url);
-                final String output = "logoutRequest=" + URLEncoder.encode(message, "UTF-8");
+                final URL logoutUrl = new URL(this.url);
+                final String output = "logoutRequest=" + URLEncoder.encode(this.message, "UTF-8");
 
                 connection = (HttpURLConnection) logoutUrl.openConnection();
                 connection.setDoInput(true);
@@ -247,14 +247,14 @@ public final class HttpClient implements Serializable, DisposableBean {
                 }
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Finished sending message to" + url);
+                    log.debug("Finished sending message to" + this.url);
                 }
                 return true;
             } catch (final SocketTimeoutException e) {
-                log.warn("Socket Timeout Detected while attempting to send message to [" + url + "].");
+                log.warn("Socket Timeout Detected while attempting to send message to [" + this.url + "].");
                 return false;
             } catch (final Exception e) {
-                log.warn("Error Sending message to url endpoint [" + url + "].  Error is [" + e.getMessage() + "]");
+                log.warn("Error Sending message to url endpoint [" + this.url + "].  Error is [" + e.getMessage() + "]");
                 return false;
             } finally {
                 if (in != null) {

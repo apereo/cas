@@ -46,7 +46,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class SerialUtilsObjectTests {
 
-    private Object object;
+    private final Object object;
 
     public SerialUtilsObjectTests(final Object object) {
         this.object = object;

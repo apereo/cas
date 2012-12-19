@@ -33,7 +33,7 @@ public class DefaultTicketRegistryCleanerTests extends
 
     public RegistryCleaner getNewRegistryCleaner(
         final TicketRegistry ticketRegistry) {
-        DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();
+        final DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();
         cleaner.setTicketRegistry(ticketRegistry);
 
         return cleaner;

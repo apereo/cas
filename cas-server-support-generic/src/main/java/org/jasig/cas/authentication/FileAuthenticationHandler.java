@@ -25,10 +25,6 @@ import java.security.GeneralSecurityException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.SimplePrincipal;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.core.io.Resource;
 
 /**
@@ -84,7 +80,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                     bufferedReader.close();
                 }
             } catch (final IOException e) {
-                log.warn("Error closing " + fileName);
+                log.warn("Error closing " + this.fileName);
             }
         }
         throw new FailedLoginException();

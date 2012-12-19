@@ -18,11 +18,8 @@
  */
 package org.jasig.cas.validation;
 
-import org.jasig.cas.TestUtils;
-
-import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
-
 import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
 
 /**
  * @author Scott Battaglia
@@ -32,13 +29,13 @@ import junit.framework.TestCase;
 public class Cas20ProtocolValidationSpecificationTests extends TestCase {
 
     public void testRenewGettersAndSettersFalse() {
-        Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
+        final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
     public void testRenewGettersAndSettersTrue() {
-        Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
+        final Cas20ProtocolValidationSpecification s = new Cas20ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }

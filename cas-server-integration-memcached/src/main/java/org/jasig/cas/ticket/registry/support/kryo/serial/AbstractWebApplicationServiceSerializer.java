@@ -44,17 +44,17 @@ public abstract class AbstractWebApplicationServiceSerializer<T extends Abstract
     }
 
     public void write(final ByteBuffer buffer, final T service) {
-        kryo.writeObjectData(buffer, service.getId());
-        kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "originalUrl"));
-        kryo.writeObject(buffer, service.getArtifactId());
+        this.kryo.writeObjectData(buffer, service.getId());
+        this.kryo.writeObject(buffer, this.fieldHelper.getFieldValue(service, "originalUrl"));
+        this.kryo.writeObject(buffer, service.getArtifactId());
     }
 
     public T read(final ByteBuffer buffer) {
         return createService(
                 buffer,
-                kryo.readObjectData(buffer, String.class),
-                kryo.readObject(buffer, String.class),
-                kryo.readObject(buffer, String.class));
+                this.kryo.readObjectData(buffer, String.class),
+                this.kryo.readObject(buffer, String.class),
+                this.kryo.readObject(buffer, String.class));
     }
 
     protected abstract T createService(

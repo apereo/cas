@@ -42,7 +42,7 @@ import org.springframework.core.io.ClassPathResource;
 @RunWith(Parameterized.class)
 public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
     /** Instance under test */
-    private ResourceCRLRevocationChecker checker;
+    private final ResourceCRLRevocationChecker checker;
 
 
     /**
@@ -141,7 +141,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
               new ClassPathResource("userCA-expired.crl"),
           }),
           new RevocationPolicy<X509CRL>() {
-              public void apply(X509CRL crl) {/* Do nothing to allow unconditionally */}
+              public void apply(final X509CRL crl) {/* Do nothing to allow unconditionally */}
           },
           new String[] {"user-valid.crt"},
           null,

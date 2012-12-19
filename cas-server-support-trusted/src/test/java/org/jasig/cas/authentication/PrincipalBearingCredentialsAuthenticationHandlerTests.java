@@ -18,11 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.PrincipalBearingCredential;
-import org.jasig.cas.authentication.PrincipalBearingCredentialsAuthenticationHandler;
-import org.jasig.cas.authentication.SimplePrincipal;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-
 import junit.framework.TestCase;
 
 /**
@@ -33,19 +28,19 @@ import junit.framework.TestCase;
 public final class PrincipalBearingCredentialsAuthenticationHandlerTests 
     extends TestCase {
 
-    private PrincipalBearingCredentialsAuthenticationHandler handler =
+    private final PrincipalBearingCredentialsAuthenticationHandler handler =
             new PrincipalBearingCredentialsAuthenticationHandler();
 
     /**
      * When the credentials bear a Principal, succeed the authentication.
      */
     public void testNonNullPrincipal() throws Exception {
-        PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
+        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
         assertNotNull(this.handler.authenticate(credentials));
     }    
     
     public void testSupports() {
-        PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
+        final PrincipalBearingCredential credentials = new PrincipalBearingCredential(new SimplePrincipal("scott"));
         assertTrue(this.handler.supports(credentials));
         assertFalse(this.handler.supports(new UsernamePasswordCredential()));
     }

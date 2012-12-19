@@ -84,18 +84,18 @@ public class UsernamePasswordCredential implements Credential {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UsernamePasswordCredential that = (UsernamePasswordCredential) o;
+        final UsernamePasswordCredential that = (UsernamePasswordCredential) o;
 
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+        if (this.password != null ? !this.password.equals(that.password) : that.password != null) return false;
+        if (this.username != null ? !this.username.equals(that.username) : that.username != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
+        int result = this.username != null ? this.username.hashCode() : 0;
+        result = 31 * result + (this.password != null ? this.password.hashCode() : 0);
         return result;
     }
 }

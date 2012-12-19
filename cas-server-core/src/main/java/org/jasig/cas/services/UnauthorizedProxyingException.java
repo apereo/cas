@@ -39,11 +39,11 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
         super(CODE);
     }
 
-    public UnauthorizedProxyingException(String message, Throwable cause) {
+    public UnauthorizedProxyingException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public UnauthorizedProxyingException(String message) {
+    public UnauthorizedProxyingException(final String message) {
         super(message);
     }
 }

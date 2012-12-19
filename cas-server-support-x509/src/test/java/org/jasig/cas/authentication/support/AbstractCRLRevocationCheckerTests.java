@@ -23,12 +23,10 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.authentication.support.RevocationChecker;
+import edu.vt.middleware.crypt.util.CryptReader;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-
-import edu.vt.middleware.crypt.util.CryptReader;
 
 
 /**
@@ -42,10 +40,10 @@ import edu.vt.middleware.crypt.util.CryptReader;
 public abstract class AbstractCRLRevocationCheckerTests {
     
     /** Certificate to be tested */
-    private X509Certificate[] certificates;
+    private final X509Certificate[] certificates;
 
     /** Expected result of check; null for success */
-    private GeneralSecurityException expected;
+    private final GeneralSecurityException expected;
     
 
     /**
@@ -61,7 +59,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
         this.expected = expected;
         this.certificates = new X509Certificate[certFiles.length];
         int i = 0;
-        for (String file : certFiles) {
+        for (final String file : certFiles) {
             this.certificates[i++] = readCertificate(file);
         }
 
@@ -73,7 +71,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
     @Test
     public void testCheck() {
         try {
-            for (X509Certificate cert : this.certificates) {
+            for (final X509Certificate cert : this.certificates) {
                 getChecker().check(cert);
             }
             if (this.expected != null) {

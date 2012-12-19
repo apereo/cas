@@ -206,7 +206,7 @@ public class ServiceValidateController extends DelegateController {
      * {@inheritDoc}
      */
     @Override
-    public boolean canHandle(HttpServletRequest request, HttpServletResponse response) {
+    public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         return true;
     }
     

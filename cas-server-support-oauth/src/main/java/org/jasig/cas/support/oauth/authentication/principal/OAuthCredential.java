@@ -40,11 +40,11 @@ public final class OAuthCredential implements Credential {
     }
     
     public org.scribe.up.credential.OAuthCredential getCredential() {
-        return credential;
+        return this.credential;
     }
     
     public UserProfile getUserProfile() {
-        return userProfile;
+        return this.userProfile;
     }
     
     public void setUserProfile(final UserProfile userProfile) {

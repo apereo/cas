@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.services;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.mock.MockService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 
@@ -41,11 +41,11 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class RegisteredServiceImplTests {
 
-    private RegisteredServiceImpl service;
+    private final RegisteredServiceImpl service;
 
-    private String serviceToMatch;
+    private final String serviceToMatch;
 
-    private boolean expected;
+    private final boolean expected;
 
 
     @Parameterized.Parameters
@@ -86,12 +86,12 @@ public class RegisteredServiceImplTests {
     @Test
     public void testMatches() throws Exception {
         final Service testService;
-        if (serviceToMatch == null) {
+        if (this.serviceToMatch == null) {
             testService = null;
         } else {
-            testService = new MockService(serviceToMatch);
+            testService = new MockService(this.serviceToMatch);
         }
-        assertEquals(expected, service.matches(testService));
+        assertEquals(this.expected, this.service.matches(testService));
     }
 
 

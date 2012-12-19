@@ -29,7 +29,7 @@ public class DefaultRandomStringGeneratorTests extends TestCase {
 
     private static final int LENGTH = 35;
 
-    private RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
+    private final RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
         LENGTH);
 
     public void testMaxLength() {

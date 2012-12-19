@@ -35,7 +35,7 @@ public class MockService implements Service {
     /** MockService.java */
     private static final long serialVersionUID = 117438127028057173L;
     private boolean loggedOut = false;
-    private String id;
+    private final String id;
     
     public MockService(final String id) {
         this.id = id;
@@ -45,7 +45,7 @@ public class MockService implements Service {
         return null;
     }
 
-    public Response getResponse(String ticketId) {
+    public Response getResponse(final String ticketId) {
         return null;
     }
 
@@ -65,7 +65,7 @@ public class MockService implements Service {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
     
     public boolean matches(final Service service) {

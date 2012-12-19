@@ -51,8 +51,8 @@ public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
         final boolean success;
         DirContext ctxt = null;
         try {
-            ctxt = poolingContextSource.getReadOnlyContext();
-            success = poolingContextSource.getDirContextValidator().validateDirContext(DirContextType.READ_ONLY, ctxt);
+            ctxt = this.poolingContextSource.getReadOnlyContext();
+            success = this.poolingContextSource.getDirContextValidator().validateDirContext(DirContextType.READ_ONLY, ctxt);
         } finally {
             if (ctxt != null) {
                 ctxt.close();
@@ -64,12 +64,12 @@ public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
 
     /** {@inheritDoc} */
     protected int getIdleCount() {
-        return poolingContextSource.getNumIdle();
+        return this.poolingContextSource.getNumIdle();
     }
 
 
     /** {@inheritDoc} */
     protected int getActiveCount() {
-        return poolingContextSource.getNumActive();
+        return this.poolingContextSource.getNumActive();
     }
 }

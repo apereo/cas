@@ -26,7 +26,7 @@ public class UnauthorizedServiceExceptionTests extends TestCase {
     private static final String CODE = "service.not.authorized";
     
     public void testGetCode() {
-        UnauthorizedServiceException e = new UnauthorizedServiceException();
+        final UnauthorizedServiceException e = new UnauthorizedServiceException();
         assertEquals(CODE, e.getMessage());
     }
 

@@ -39,7 +39,7 @@ import org.springframework.core.io.Resource;
  */
 public class MockWebServer {
     /** Request handler. */
-    private Worker worker;
+    private final Worker worker;
 
     /** Controls the worker thread. */
     private Thread workerThread;

@@ -80,7 +80,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                 new Object[] {request.getRemoteAddr(), userToUse, this.authenticationFailureCode, this.applicationCode, cutoff.getTime()},
                 new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
                 new RowMapper<Timestamp>() {
-                    public Timestamp mapRow(ResultSet resultSet, int i) throws SQLException {
+                    public Timestamp mapRow(final ResultSet resultSet, final int i) throws SQLException {
                         return resultSet.getTimestamp(1);
                     }
                 });

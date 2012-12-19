@@ -30,7 +30,7 @@ import java.security.cert.X509Certificate;
 public class X509CertificateCredentialsToSerialNumberPrincipalResolverTests
     extends AbstractX509CertificateTests {
 
-    private X509CertificateSerialNumberPrincipalResolver resolver = new X509CertificateSerialNumberPrincipalResolver();
+    private final X509CertificateSerialNumberPrincipalResolver resolver = new X509CertificateSerialNumberPrincipalResolver();
     
     public void testResolvePrincipalInternal() {
         final X509CertificateCredential c = new X509CertificateCredential(new X509Certificate[] {VALID_CERTIFICATE});

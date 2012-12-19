@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class PasswordPolicyEnforcementAction extends AbstractAction {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private PasswordPolicyEnforcer passwordPolicyEnforcer;

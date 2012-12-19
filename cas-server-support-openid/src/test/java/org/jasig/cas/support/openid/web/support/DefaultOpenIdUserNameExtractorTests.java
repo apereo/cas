@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  */
 public class DefaultOpenIdUserNameExtractorTests extends TestCase {
 
-    private DefaultOpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
+    private final DefaultOpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
     public void testExtractionSuccessful() {
         assertEquals("scootman28", this.extractor

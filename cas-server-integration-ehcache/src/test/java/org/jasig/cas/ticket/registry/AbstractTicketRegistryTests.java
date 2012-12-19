@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import junit.framework.TestCase;
-
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
@@ -33,48 +31,65 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jboss.cache.Cache;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.junit.Before;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
- * Test case to test the DefaultTicketRegistry based on test cases to test all
- * Ticket Registries.
+ * <p>Duplication of {@link AbstractTicketRegistryTests} provided in 
+ * cas-server-core module.</p>
+ * <p> Modifications :</p>
+ * <ul>
+ * <li>Inline methods {@link #getAuthentication()} and 
+ * {@link #getService()} as {@link #getAuthentication()} and 
+ * {@link #getService()}</li>
+ * </ul>
  * 
  * @author Scott Battaglia
- * @author Marc-Antoine Garrigue
- * @version $Revision$ $Date$
+ * @version $Revision: 42053 $ $Date: 2007-06-10 15:17:55 +0200 (Sun, 10 Jun 2007) $
+ * @since 3.0
  */
-public final class JBossCacheTicketRegistryTests extends TestCase {
-    
-    private static final String APPLICATION_CONTEXT_FILE_NAME = "jbossTestContext.xml";
+public abstract class AbstractTicketRegistryTests  {
 
-    private static final String APPLICATION_CONTEXT_CACHE_BEAN_NAME = "ticketRegistry";
-
-    private JBossCacheTicketRegistry registry;
-    
-    private Cache<String, Ticket> treeCache;
-    
     private static final int TICKETS_IN_REGISTRY = 10;
 
-    private TicketRegistry ticketRegistry;
-
-    protected void setUp() throws Exception {
-        super.setUp();
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+    private TicketRegistry ticketRegistry = null;
+    
+    @Before
+    public void setUp() throws Exception {   
         this.ticketRegistry = this.getNewTicketRegistry();
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    /**
+     * Abstract method to retrieve a new ticket registry. Implementing classes
+     * return the TicketRegistry they wish to test.
+     * 
+     * @return the TicketRegistry we wish to test
+     */
+    public abstract TicketRegistry getNewTicketRegistry() throws Exception;
+    
+    public static Service getService() {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", "test");
+        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
     }
-
-    protected Authentication getAuthentication() {
+    
+    public static Authentication getAuthentication() {
         final Principal principal = new SimplePrincipal("test");
         final HandlerResult hr = new HandlerResult(new AuthenticationHandler() {
             public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
@@ -91,158 +106,161 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }, principal);
         return new ImmutableAuthentication(principal, null, Collections.singletonMap(hr, principal), null);
     }
-
-    public TicketRegistry getNewTicketRegistry() throws Exception {
-        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-            APPLICATION_CONTEXT_FILE_NAME);
-        this.registry = (JBossCacheTicketRegistry) context
-            .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
-
-        this.treeCache = (Cache<String, Ticket>) context.getBean("cache");
-        this.treeCache.removeNode("/ticket");
-        
-        return this.registry;
-    }
-    
     /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add
      * the ticket and return. Failure upon any exception.
      */
+    @Test
     public void testAddTicketToCache() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(), new NeverExpiresExpirationPolicy()));
+                getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testGetNullTicket() {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
     }
 
+    @Test
     public void testGetNonExistingTicket() {
         try {
-            this.ticketRegistry.getTicket("FALALALALALAL",
-                TicketGrantingTicket.class);
+            this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
     }
 
+    @Test
     public void testGetExistingTicketWithProperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(), new NeverExpiresExpirationPolicy()));
+                getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testGetExistingTicketWithInproperClass() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(), new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
-        } catch (ClassCastException e) {
-            return;
-        }
-        fail("ClassCastException expected.");
+      try {
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(), new NeverExpiresExpirationPolicy()));
+        this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
+      } catch (ClassCastException e) {
+        return;
+      }
+      fail("ClassCastException expected.");
     }
 
+    @Test
     public void testGetNullTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket(null);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
     }
 
+    @Test
     public void testGetNonExistingTicketWithoutClass() {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Exception caught.  None expected.");
         }
     }
 
+    @Test
     public void testGetExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(), new NeverExpiresExpirationPolicy()));
+                getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(), new NeverExpiresExpirationPolicy()));
-            assertTrue("Ticket was not deleted.", this.ticketRegistry
-                .deleteTicket("TEST"));
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(), new NeverExpiresExpirationPolicy()));
+            assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testDeleteNonExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(), new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry
-                .deleteTicket("TEST1"));
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(), new NeverExpiresExpirationPolicy()));
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testDeleteNullTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                getAuthentication(), new NeverExpiresExpirationPolicy()));
+                getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry
                 .deleteTicket(null));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testGetTicketsIsZero() {
         try {
             assertEquals("The size of the empty registry is not zero.",
                 this.ticketRegistry.getTickets().size(), 0);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
 
+    @Test
     public void testGetTicketsFromRegistryEqualToTicketsAdded() {
         final Collection<Ticket> tickets = new ArrayList<Ticket>();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", "test");
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                 "TEST" + i, getAuthentication(),
                 new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket(
-                "tests" + i, SimpleWebApplicationServiceImpl.createServiceFrom(request),
-                new NeverExpiresExpirationPolicy(), false);
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, getService(), new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
             this.ticketRegistry.addTicket(st);
         }
-
+        
         try {
             final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
@@ -255,6 +273,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
                 }
             }
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }

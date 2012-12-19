@@ -39,15 +39,15 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     private transient Pattern servicePattern;
     
     public void setServiceId(final String id) {
-        servicePattern = createPattern(id);
-        serviceId = id;
+        this.servicePattern = createPattern(id);
+        this.serviceId = id;
     }
 
     public boolean matches(final Service service) {
-        if (servicePattern == null) {
-            servicePattern = createPattern(serviceId);
+        if (this.servicePattern == null) {
+            this.servicePattern = createPattern(this.serviceId);
         }
-        return service != null && servicePattern.matcher(service.getId()).matches();
+        return service != null && this.servicePattern.matcher(service.getId()).matches();
     }
 
     protected AbstractRegisteredService newInstance() {

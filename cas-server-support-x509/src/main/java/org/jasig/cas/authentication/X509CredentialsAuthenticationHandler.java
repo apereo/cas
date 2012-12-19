@@ -131,7 +131,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
 
            // getBasicConstraints returns pathLenContraint which is
            // >=0 when this is a CA cert and -1 when it's not
-           int pathLength = certificate.getBasicConstraints();
+           final int pathLength = certificate.getBasicConstraints();
            if (pathLength < 0) {
                this.log.debug("Found valid client certificate");
                clientCert = certificate;
@@ -155,7 +155,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
    /**
     * @param maxPathLength The maxPathLength to set.
     */
-   public void setMaxPathLength(int maxPathLength) {
+   public void setMaxPathLength(final int maxPathLength) {
        this.maxPathLength = maxPathLength;
    }
 
@@ -169,14 +169,14 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
    /**
     * @param checkKeyUsage The checkKeyUsage to set.
     */
-   public void setCheckKeyUsage(boolean checkKeyUsage) {
+   public void setCheckKeyUsage(final boolean checkKeyUsage) {
        this.checkKeyUsage = checkKeyUsage;
    }
 
    /**
     * @param requireKeyUsage The requireKeyUsage to set.
     */
-   public void setRequireKeyUsage(boolean requireKeyUsage) {
+   public void setRequireKeyUsage(final boolean requireKeyUsage) {
        this.requireKeyUsage = requireKeyUsage;
    }
 
@@ -200,7 +200,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
        cert.checkValidity();
        this.revocationChecker.check(cert);
 
-       int pathLength = cert.getBasicConstraints();
+       final int pathLength = cert.getBasicConstraints();
        if (pathLength < 0) {
            if (!isCertificateAllowed(cert)) {
                throw new GeneralSecurityException(

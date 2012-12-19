@@ -52,7 +52,7 @@ public class EhCacheStatistics implements CacheStatistics {
     public EhCacheStatistics(final Cache cache) {
         this.cache = cache;
         if (cache.getCacheConfiguration().getMaxBytesLocalDisk() > 0) {
-            useBytes = true;
+            this.useBytes = true;
         }
     }
 
@@ -62,18 +62,18 @@ public class EhCacheStatistics implements CacheStatistics {
      * @return Memory size.
      */
     public long getSize() {
-        final LiveCacheStatistics statistics = cache.getLiveCacheStatistics();
+        final LiveCacheStatistics statistics = this.cache.getLiveCacheStatistics();
         // Store component sizes on each call to avoid recalculating
         // sizes in other methods that need them
-        if (useBytes) {
-            diskSize = statistics.getLocalDiskSizeInBytes();
-            heapSize = statistics.getLocalHeapSizeInBytes();
+        if (this.useBytes) {
+            this.diskSize = statistics.getLocalDiskSizeInBytes();
+            this.heapSize = statistics.getLocalHeapSizeInBytes();
         } else {
-            diskSize = cache.getDiskStoreSize();
-            heapSize = cache.getMemoryStoreSize();
+            this.diskSize = this.cache.getDiskStoreSize();
+            this.heapSize = this.cache.getMemoryStoreSize();
         }
-        offHeapSize = statistics.getLocalOffHeapSizeInBytes();
-        return heapSize;
+        this.offHeapSize = statistics.getLocalOffHeapSizeInBytes();
+        return this.heapSize;
     }
 
     /**
@@ -82,15 +82,15 @@ public class EhCacheStatistics implements CacheStatistics {
      * @return Heap memory capacity.
      */
     public long getCapacity() {
-        final CacheConfiguration config = cache.getCacheConfiguration();
-        if (useBytes) {
+        final CacheConfiguration config = this.cache.getCacheConfiguration();
+        if (this.useBytes) {
             return config.getMaxBytesLocalDisk();
         }
         return config.getMaxElementsOnDisk();
     }
 
     public long getEvictions() {
-        return cache.getLiveCacheStatistics().getEvictedCount();
+        return this.cache.getLiveCacheStatistics().getEvictedCount();
     }
 
     public int getPercentFree() {
@@ -102,7 +102,7 @@ public class EhCacheStatistics implements CacheStatistics {
     }
 
     public String getName() {
-        return cache.getName();
+        return this.cache.getName();
     }
 
     public void toString(final StringBuilder builder) {
@@ -111,16 +111,16 @@ public class EhCacheStatistics implements CacheStatistics {
         }
         final int free = getPercentFree();
         final Formatter formatter = new Formatter(builder);
-        if (useBytes) {
-            formatter.format("%.2f", heapSize / 1048510.0);
+        if (this.useBytes) {
+            formatter.format("%.2f", this.heapSize / 1048510.0);
             builder.append("MB heap, ");
-            formatter.format("%.2f", diskSize / 1048510.0);
+            formatter.format("%.2f", this.diskSize / 1048510.0);
             builder.append("MB disk, ");
         } else {
-            builder.append(heapSize).append(" items in heap, ");
-            builder.append(diskSize).append(" items on disk, ");
+            builder.append(this.heapSize).append(" items in heap, ");
+            builder.append(this.diskSize).append(" items on disk, ");
         }
-        formatter.format("%.2f", offHeapSize / 1048510.0);
+        formatter.format("%.2f", this.offHeapSize / 1048510.0);
         builder.append("MB off-heap, ");
         builder.append(free).append("% free, ");
         builder.append(getEvictions()).append(" evictions");

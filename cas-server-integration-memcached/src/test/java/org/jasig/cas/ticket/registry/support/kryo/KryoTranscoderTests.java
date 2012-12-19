@@ -47,11 +47,11 @@ public class KryoTranscoderTests {
     private final KryoTranscoder transcoder;
     
     public KryoTranscoderTests(final int bufferSize) {
-        transcoder = new KryoTranscoder(bufferSize);
-        transcoder.setSerializerMap(Collections.<Class<?>, Serializer>singletonMap(
+        this.transcoder = new KryoTranscoder(bufferSize);
+        this.transcoder.setSerializerMap(Collections.<Class<?>, Serializer>singletonMap(
                 MockServiceTicket.class,
-                new FieldSerializer(transcoder.getKryo(), MockServiceTicket.class)));
-        transcoder.initialize();
+                new FieldSerializer(this.transcoder.getKryo(), MockServiceTicket.class)));
+        this.transcoder.initialize();
     }
 
     @Parameterized.Parameters
@@ -70,7 +70,7 @@ public class KryoTranscoderTests {
     public void testEncodeDecode() throws Exception {
         final ServiceTicket expected =
                 new MockServiceTicket("ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK");
-        assertEquals(expected, transcoder.decode(transcoder.encode(expected)));
+        assertEquals(expected, this.transcoder.decode(this.transcoder.encode(expected)));
     }
     
     static class MockServiceTicket implements ServiceTicket {
@@ -90,16 +90,16 @@ public class KryoTranscoderTests {
             return false;
         }
 
-        public boolean isValidFor(Service service) {
+        public boolean isValidFor(final Service service) {
             return false;
         }
 
-        public TicketGrantingTicket grantTicketGrantingTicket(String id, Authentication authentication, ExpirationPolicy expirationPolicy) {
+        public TicketGrantingTicket grantTicketGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
             return null;
         }
 
         public String getId() {
-            return id;
+            return this.id;
         }
 
         public boolean isExpired() {
@@ -119,7 +119,7 @@ public class KryoTranscoderTests {
         }
         
         public boolean equals(final Object other) {
-            return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
+            return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(this.id);
         }
     }
 }

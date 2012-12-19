@@ -119,7 +119,7 @@ public abstract class AbstractAuthentication implements Authentication, Serializ
         if (o == this) {
             return true;
         }
-        Authentication a = (Authentication) o;
+        final Authentication a = (Authentication) o;
         return this.principal.equals(a.getPrincipal())
                 && this.authenticatedDate.isEqual(a.getAuthenticatedDate().getTime())
                 && this.attributes.equals(a.getAttributes())

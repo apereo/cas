@@ -59,8 +59,8 @@ public class MemCacheTicketRegistryTests {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
-        registryBean = beanName;
-        binaryProtocol = binary;
+        this.registryBean = beanName;
+        this.binaryProtocol = binary;
     }
 
     @Parameterized.Parameters
@@ -81,8 +81,8 @@ public class MemCacheTicketRegistryTests {
         }
         Assume.assumeTrue(environmentOk);
 
-        context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
-        registry = context.getBean(registryBean, MemCacheTicketRegistry.class);
+        this.context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
+        this.registry = this.context.getBean(this.registryBean, MemCacheTicketRegistry.class);
     }
 
     @Test
@@ -90,12 +90,12 @@ public class MemCacheTicketRegistryTests {
         final String id = "ST-1234567890ABCDEFGHIJKL-crud";
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
         when(ticket.getId()).thenReturn(id);
-        registry.addTicket(ticket);
-        final ServiceTicket ticketFromRegistry = (ServiceTicket) registry.getTicket(id);
+        this.registry.addTicket(ticket);
+        final ServiceTicket ticketFromRegistry = (ServiceTicket) this.registry.getTicket(id);
         Assert.assertNotNull(ticketFromRegistry);
         Assert.assertEquals(id, ticketFromRegistry.getId());
-        registry.deleteTicket(id);
-        Assert.assertNull(registry.getTicket(id));
+        this.registry.deleteTicket(id);
+        Assert.assertNull(this.registry.getTicket(id));
     }
 
     @Test
@@ -103,11 +103,11 @@ public class MemCacheTicketRegistryTests {
         final String id = "ST-1234567890ABCDEFGHIJKL-exp";
         final ServiceTicket ticket = mock(ServiceTicket.class, withSettings().serializable());
         when(ticket.getId()).thenReturn(id);
-        registry.addTicket(ticket);
-        Assert.assertNotNull((ServiceTicket) registry.getTicket(id));
+        this.registry.addTicket(ticket);
+        Assert.assertNotNull((ServiceTicket) this.registry.getTicket(id));
         // Sleep a little longer than service ticket expiry defined in Spring context
         Thread.sleep(2100);
-        Assert.assertNull((ServiceTicket) registry.getTicket(id));
+        Assert.assertNull((ServiceTicket) this.registry.getTicket(id));
     }
 
     private boolean isMemcachedListening() {

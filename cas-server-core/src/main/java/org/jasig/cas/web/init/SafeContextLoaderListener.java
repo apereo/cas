@@ -94,7 +94,7 @@ public final class SafeContextLoaderListener implements ServletContextListener {
             t.printStackTrace();
 
             // log it to the ServletContext
-            ServletContext context = sce.getServletContext();
+            final ServletContext context = sce.getServletContext();
             context.log(message, t);
 
             /*

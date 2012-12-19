@@ -33,7 +33,7 @@ import org.jasig.cas.util.AopUtils;
  */
 public final class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
 
-    private final String PREFIX = "supplied credentials: [";
+    private static final String PREFIX = "supplied credentials: [";
 
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
         return new String[] { resolveFromInternal(joinPoint) };
@@ -47,7 +47,7 @@ public final class CredentialsAsFirstParameterResourceResolver implements AuditR
         final Credential[] credentials = (Credential [])AopUtils.unWrapJoinPoint(joinPoint).getArgs()[0];
         final StringBuilder sb = new StringBuilder(PREFIX);
         int i = 0;
-        for (Credential c : credentials) {
+        for (final Credential c : credentials) {
             sb.append(c);
             if (i++ > 0) {
                 sb.append(", ");

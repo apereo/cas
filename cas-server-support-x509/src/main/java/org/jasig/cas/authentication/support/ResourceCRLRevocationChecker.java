@@ -61,7 +61,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
 
     /** Handles fetching CRL data. */
-    private CRLFetcher fetcher;
+    private final CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
     private final Map<X500Principal, X509CRL> crlIssuerMap =
@@ -155,7 +155,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
         private final Log logger = LogFactory.getLog(getClass());
 
         /** Array of resources pointing to CRL data. */
-        private List<Resource> resources;
+        private final List<Resource> resources;
 
         /**
          * Creates a new instance using the specified resources for CRL data.
@@ -168,7 +168,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
                 throw new IllegalArgumentException("CRL resources cannot be null.");
             }
             this.resources = new ArrayList<Resource>();
-            for (Resource r : crls) {
+            for (final Resource r : crls) {
                 if (r != null) {
                    this.resources.add(r); 
                 }
@@ -185,7 +185,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
          * data, false otherwise.
          */
         public void fetch(final boolean throwOnError) {
-            for (Resource r : this.resources) {
+            for (final Resource r : this.resources) {
                 this.logger.debug("Fetching CRL data from " + r);
                 try {
                     addCrl(CertUtils.fetchCRL(r));

@@ -50,7 +50,7 @@ public class AbstractX509CertificateTests extends TestCase {
          */
         private static final long serialVersionUID = -4449243195531417769L;
 
-        private boolean valid;
+        private final boolean valid;
 
         protected CasX509Certificate(final boolean valid) {
             this.valid = valid;
@@ -63,7 +63,7 @@ public class AbstractX509CertificateTests extends TestCase {
             }
         }
 
-        public void checkValidity(Date arg0)
+        public void checkValidity(final Date arg0)
             throws CertificateExpiredException, CertificateNotYetValidException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
@@ -145,7 +145,7 @@ public class AbstractX509CertificateTests extends TestCase {
             return null;
         }
 
-        public byte[] getExtensionValue(String arg0) {
+        public byte[] getExtensionValue(final String arg0) {
             return null;
         }
 
@@ -169,13 +169,13 @@ public class AbstractX509CertificateTests extends TestCase {
             return "CasX509Certficate";
         }
 
-        public void verify(PublicKey arg0, String arg1)
+        public void verify(final PublicKey arg0, final String arg1)
             throws CertificateException, NoSuchAlgorithmException,
             InvalidKeyException, NoSuchProviderException, SignatureException {
             // nothing to do right now
         }
 
-        public void verify(PublicKey arg0) throws CertificateException,
+        public void verify(final PublicKey arg0) throws CertificateException,
             NoSuchAlgorithmException, InvalidKeyException,
             NoSuchProviderException, SignatureException {
             // nothing to do right now

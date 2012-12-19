@@ -53,7 +53,7 @@ public class BindTestConfig {
     /**
      * @param existsCredential The existsCredential to set.
      */
-    public void setExistsCredential(String existsCredential) {
+    public void setExistsCredential(final String existsCredential) {
         this.existsCredential = existsCredential;
     }
 
@@ -69,7 +69,7 @@ public class BindTestConfig {
     /**
      * @param existsSuccessPassword The existsSuccessPassword to set.
      */
-    public void setExistsSuccessPassword(String existsSuccessPassword) {
+    public void setExistsSuccessPassword(final String existsSuccessPassword) {
         this.existsSuccessPassword = existsSuccessPassword;
     }
 
@@ -85,7 +85,7 @@ public class BindTestConfig {
     /**
      * @param existsFailurePassword The existsFailurePassword to set.
      */
-    public void setExistsFailurePassword(String existsFailurePassword) {
+    public void setExistsFailurePassword(final String existsFailurePassword) {
         this.existsFailurePassword = existsFailurePassword;
     }
 
@@ -101,7 +101,7 @@ public class BindTestConfig {
     /**
      * @param notExistsCredential The notExistsCredential to set.
      */
-    public void setNotExistsCredential(String notExistsCredential) {
+    public void setNotExistsCredential(final String notExistsCredential) {
         this.notExistsCredential = notExistsCredential;
     }
 

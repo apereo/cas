@@ -39,7 +39,7 @@ public final class TimeoutExpirationPolicySerializer extends SimpleSerializer<Ti
     }
 
     public void write(final ByteBuffer buffer, final TimeoutExpirationPolicy policy) {
-        buffer.putLong((Long) fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
+        buffer.putLong((Long) this.fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
     }
 
     public TimeoutExpirationPolicy read(final ByteBuffer buffer) {

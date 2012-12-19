@@ -66,7 +66,7 @@ public class OpenIdSingleSignOnActionTests extends TestCase {
     
     private AuthenticationManager authenticationManager;
     
-    private CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
+    private final CentralAuthenticationServiceImpl impl = new CentralAuthenticationServiceImpl();
     
     protected void setUp() throws Exception {
         this.ticketRegistry = new DefaultTicketRegistry();
@@ -103,7 +103,7 @@ public class OpenIdSingleSignOnActionTests extends TestCase {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        Event event = this.action.execute(context);
+        final Event event = this.action.execute(context);
         
         assertNotNull(event);
         

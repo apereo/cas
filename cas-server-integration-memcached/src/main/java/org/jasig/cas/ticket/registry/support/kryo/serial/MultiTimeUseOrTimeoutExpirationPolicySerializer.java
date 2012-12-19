@@ -39,8 +39,8 @@ public final class MultiTimeUseOrTimeoutExpirationPolicySerializer extends Simpl
     }
 
     public void write(final ByteBuffer buffer, final MultiTimeUseOrTimeoutExpirationPolicy policy) {
-        buffer.putInt((Integer) fieldHelper.getFieldValue(policy, "numberOfUses"));
-        buffer.putLong((Long) fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
+        buffer.putInt((Integer) this.fieldHelper.getFieldValue(policy, "numberOfUses"));
+        buffer.putLong((Long) this.fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
     }
 
     public MultiTimeUseOrTimeoutExpirationPolicy read(final ByteBuffer buffer) {

@@ -131,7 +131,7 @@ public class X509CertificateSubjectPrinciplalResolver
     {
         private int currentIndex;
         private String name;
-        private String[] values;
+        private final String[] values;
         
         public AttributeContext(final String name, final String[] values) {
             this.values = values;

@@ -57,7 +57,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     private String messageBeginPrefix = constructMessagePrefix();
 
-    protected Event doExecute(RequestContext context) {
+    protected Event doExecute(final RequestContext context) {
         final HttpServletRequest request = WebUtils
             .getHttpServletRequest(context);
         final HttpServletResponse response = WebUtils

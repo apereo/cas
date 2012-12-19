@@ -107,7 +107,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
             return;
         }
 
-        for (Credential credential : credentials) {
+        for (final Credential credential : credentials) {
             final Set<ConstraintViolation<Credential>> errors = this.validator.validate(credential);
             if (!errors.isEmpty()) {
                 throw new IllegalArgumentException("Error validating credential: " + errors.toString());

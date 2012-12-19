@@ -34,7 +34,7 @@ import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
  */
 public class RememberMeAuthenticationMetaDataPopulatorTests extends TestCase {
     
-    private RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
+    private final RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
 
     public void testWithTrueRememberMeCredentials() {
         final MutableAuthentication auth = TestUtils.newMutableAuthentication(TestUtils.getPrincipal());

@@ -40,7 +40,7 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 public final class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @NotNull
-    private Map<String,String> credentialCache;
+    private final Map<String,String> credentialCache;
 
     public CacheCredentialsMetaDataPopulator(final Map<String,String> credentialCache) {
         this.credentialCache = credentialCache;

@@ -54,7 +54,7 @@ public final class DigestPasswordEncoder implements PasswordEncoder {
         }
 
         try {
-            MessageDigest messageDigest = MessageDigest
+            final MessageDigest messageDigest = MessageDigest
                 .getInstance(this.encodingAlgorithm);
 
             if (StringUtils.hasText(this.characterEncoding)) {
@@ -80,7 +80,7 @@ public final class DigestPasswordEncoder implements PasswordEncoder {
      * @param bytes the raw bytes from the digest.
      * @return the formatted bytes.
      */
-    private String getFormattedText(byte[] bytes) {
+    private String getFormattedText(final byte[] bytes) {
         final StringBuilder buf = new StringBuilder(bytes.length * 2);
 
         for (int j = 0; j < bytes.length; j++) {

@@ -35,7 +35,7 @@ public final class X509CertificateCredential implements Credential {
     private static final long serialVersionUID = 7579713688326827121L;
 
     /** The collection of certificates sent with the request. */
-    private X509Certificate[] certificates;
+    private final X509Certificate[] certificates;
     
     /** The certificate that we actually use. */
     private X509Certificate certificate;

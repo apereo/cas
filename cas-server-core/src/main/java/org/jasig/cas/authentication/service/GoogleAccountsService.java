@@ -211,8 +211,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final char[] chars = new char[40];
 
         for (int i = 0; i < bytes.length; i++) {
-          int left = (bytes[i] >> 4) & 0x0f;
-          int right = bytes[i] & 0x0f;
+          final int left = (bytes[i] >> 4) & 0x0f;
+          final int right = bytes[i] & 0x0f;
           chars[i * 2] = charMapping[left];
           chars[i * 2 + 1] = charMapping[right];
         }

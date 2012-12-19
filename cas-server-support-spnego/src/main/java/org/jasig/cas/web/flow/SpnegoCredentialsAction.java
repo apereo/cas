@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.web.flow;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import jcifs.util.Base64;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.SpnegoCredential;
@@ -25,9 +28,6 @@ import org.jasig.cas.util.SpnegoConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
@@ -120,7 +120,7 @@ public final class SpnegoCredentialsAction extends
             logger.debug("Unable to obtain the output token required.");
         }
 
-        if ((spnegoCredentials.getPrincipal() == null) && send401OnAuthenticationFailure) {
+        if ((spnegoCredentials.getPrincipal() == null) && this.send401OnAuthenticationFailure) {
             logger.debug("Setting HTTP Status to 401");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
