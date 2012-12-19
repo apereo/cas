@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.ticket;
 
-import java.security.GeneralSecurityException;
-
 import junit.framework.TestCase;
 
 public class InvalidTicketExceptionTests extends TestCase {
@@ -27,12 +25,5 @@ public class InvalidTicketExceptionTests extends TestCase {
     public void testCodeNoThrowable() {
         final TicketException t = new InvalidTicketException();
         assertEquals("INVALID_TICKET", t.getCode());
-    }
-
-    public void testCodeWithThrowable() {
-        final GeneralSecurityException a = new GeneralSecurityException();
-        final TicketException t = new InvalidTicketException(a);
-
-        assertEquals(a.toString(), t.getCode());
     }
 }
