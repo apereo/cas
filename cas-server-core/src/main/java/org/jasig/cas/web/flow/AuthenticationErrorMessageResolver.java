@@ -62,7 +62,7 @@ public class AuthenticationErrorMessageResolver implements ErrorMessageResolver 
             final AggregateSecurityException aggregate = (AggregateSecurityException) e;
             if (aggregate.getErrors() != null && aggregate.getErrors().length > 0) {
                 final GeneralSecurityException first = aggregate.getErrors()[0];
-                final Message message = MESSAGE_MAP.get(first);
+                final Message message = MESSAGE_MAP.get(first.getClass());
                 if (message != null) {
                     return message;
                 }

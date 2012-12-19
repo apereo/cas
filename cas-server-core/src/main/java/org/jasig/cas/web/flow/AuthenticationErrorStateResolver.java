@@ -55,7 +55,7 @@ public class AuthenticationErrorStateResolver implements ErrorStateResolver {
         if (e instanceof AggregateSecurityException) {
             final AggregateSecurityException aggregate = (AggregateSecurityException) e;
             if (aggregate.getErrors() != null && aggregate.getErrors().length > 0) {
-                final String view = STATE_MAP.get(aggregate.getErrors()[0]);
+                final String view = STATE_MAP.get(aggregate.getErrors()[0].getClass());
                 if (view != null) {
                     return view;
                 }

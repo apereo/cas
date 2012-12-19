@@ -43,7 +43,7 @@ public class LdapPasswordPolicyErrorMessageResolver implements ErrorMessageResol
 
     @Override
     public Message resolve(final Throwable e) {
-        final Message message = MESSAGE_MAP.get(e);
+        final Message message = MESSAGE_MAP.get(e.getClass());
         if (message != null) {
             return message;
         }
