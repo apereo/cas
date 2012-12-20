@@ -41,6 +41,6 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
     }
 
     protected CacheStatistics[] getStatistics() {
-        return new EhCacheStatistics[] { new EhCacheStatistics(cache) };
+        return new EhCacheStatistics[] { new EhCacheStatistics(this.cache) };
     }
 }

@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.web.support;
 
-import static org.junit.Assert.fail;
-
+import java.security.GeneralSecurityException;
 import javax.sql.DataSource;
 
+import com.github.inspektr.common.web.ClientInfo;
+import com.github.inspektr.common.web.ClientInfoHolder;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import com.github.inspektr.common.web.ClientInfo;
-import com.github.inspektr.common.web.ClientInfoHolder;
+import static org.junit.Assert.fail;
 
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
@@ -64,18 +63,19 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     
     @Before
     public void setUp() throws Exception {
-        new JdbcTemplate(dataSource).execute("CREATE TABLE COM_AUDIT_TRAIL ( "
-                                             + "AUD_USER      VARCHAR(100)  NOT NULL, "
-                                             + "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, "
-                                             + "AUD_SERVER_IP VARCHAR(15)    NOT NULL, "
-                                             + "AUD_RESOURCE  VARCHAR(100)  NOT NULL, "
-                                             + "AUD_ACTION    VARCHAR(100)  NOT NULL, "
-                                             + "APPLIC_CD     VARCHAR(5)    NOT NULL, "
-                                             + "AUD_DATE      TIMESTAMP      NOT NULL)");
+        new JdbcTemplate(this.dataSource).execute(
+                "CREATE TABLE COM_AUDIT_TRAIL ( " +
+                "AUD_USER      VARCHAR(100)  NOT NULL, " +
+                "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, " +
+                "AUD_SERVER_IP VARCHAR(15)    NOT NULL, " +
+                "AUD_RESOURCE  VARCHAR(100)  NOT NULL, " +
+                "AUD_ACTION    VARCHAR(100)  NOT NULL, " +
+                "APPLIC_CD     VARCHAR(5)    NOT NULL, " +
+                "AUD_DATE      TIMESTAMP      NOT NULL)");
     }
     
     protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
-        return throttle;
+        return this.throttle;
     }
     
     @Override
@@ -86,7 +86,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
-        MockRequestContext context = new MockRequestContext();
+        final MockRequestContext context = new MockRequestContext();
         context.setCurrentEvent(new Event("", "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
@@ -94,8 +94,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         getThrottle().preHandle(request, response, null);
         
         try {
-            authenticationManager.authenticate(badCredentials(username));
-        } catch (AuthenticationException e) {
+            this.authenticationManager.authenticate(badCredentials(username));
+        } catch (GeneralSecurityException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;
         }
@@ -103,8 +103,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         return null;
     }
     
-    private UsernamePasswordCredentials badCredentials(final String username) {
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
+    private UsernamePasswordCredential badCredentials(final String username) {
+        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         credentials.setUsername(username);
         credentials.setPassword("badpassword");
         return credentials;

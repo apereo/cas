@@ -21,7 +21,7 @@ package org.jasig.cas.web.support;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.service.WebApplicationService;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

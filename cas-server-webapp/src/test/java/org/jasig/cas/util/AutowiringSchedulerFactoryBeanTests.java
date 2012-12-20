@@ -39,10 +39,10 @@ public class AutowiringSchedulerFactoryBeanTests extends TestCase {
 
 
     protected void setUp() throws Exception {
-        context = new ClassPathXmlApplicationContext(new String[] {
+        this.context = new ClassPathXmlApplicationContext(new String[] {
             "applicationContext.xml"});
 
-        this.scheduler = (Scheduler) context.getBean("autowiringSchedulerFactoryBean");
+        this.scheduler = (Scheduler) this.context.getBean("autowiringSchedulerFactoryBean");
         this.scheduler.start();
 
     }

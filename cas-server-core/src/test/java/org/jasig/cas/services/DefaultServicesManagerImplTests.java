@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.service.Service;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -171,7 +171,7 @@ public class DefaultServicesManagerImplTests  {
          * Comment for <code>serialVersionUID</code>
          */
         private static final long serialVersionUID = 6572142033945243669L;
-        private String id;
+        private final String id;
 
         protected SimpleService(final String id) {
             this.id = id;
@@ -185,15 +185,15 @@ public class DefaultServicesManagerImplTests  {
             return this.id;
         }
 
-        public void setPrincipal(Principal principal) {
+        public void setPrincipal(final Principal principal) {
             // nothing to do
         }
 
-        public boolean logOutOfService(String sessionIdentifier) {
+        public boolean logOutOfService(final String sessionIdentifier) {
             return false;
         }
         
-        public boolean matches(Service service) {
+        public boolean matches(final Service service) {
             return true;
         }
     }

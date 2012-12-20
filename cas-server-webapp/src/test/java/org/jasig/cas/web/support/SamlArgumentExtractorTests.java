@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import junit.framework.TestCase;

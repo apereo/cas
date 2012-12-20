@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 public class DefaultUniqueTicketIdGeneratorTests extends TestCase {
 
     public void testUniqueGenerationOfTicketIds() {
-        DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
             10);
 
         assertNotSame(generator.getNewTicketId("TEST"), generator
@@ -37,7 +37,7 @@ public class DefaultUniqueTicketIdGeneratorTests extends TestCase {
     
     public void testSuffix() {
         final String SUFFIX = "suffix";
-        DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
         
         assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
     }

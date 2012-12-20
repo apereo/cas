@@ -18,39 +18,60 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.ObjectStreamField;
+import java.io.Serializable;
+import java.security.GeneralSecurityException;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
+import org.joda.time.Instant;
 
 /**
- * Mutable implementation of Authentication interface.
- * <p>
- * Instanciators of the MutableAuthentication class must take care that the map
- * they provide is serializable (i.e. HashMap).
- * 
+ * Provides a mutable implementation of an authentication event that supports property changes.
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0.3
  */
-public final class MutableAuthentication extends AbstractAuthentication {
+public final class MutableAuthentication extends AbstractAuthentication implements Serializable {
 
-    /** Unique Id for serialization. */
-    private static final long serialVersionUID = -4415875344376642246L;
+    /** Serialization support. */
+    private static final long serialVersionUID = -4195570482629389829L;
+    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
 
-    /** The date/time this authentication object became valid. */
-    private final Date authenticatedDate;
 
-    public MutableAuthentication(final Principal principal) {
-        this(principal, new Date());
-    }
-    
-    public MutableAuthentication(final Principal principal, final Date date) {
-        super(principal, new HashMap<String, Object>());
-        this.authenticatedDate = date;
+    public MutableAuthentication() {
+        setAttributes(new LinkedHashMap<String, Object>());
+        setSuccesses(new LinkedHashMap<HandlerResult, Principal>());
+        setFailures(new LinkedHashMap<String, GeneralSecurityException>());
     }
 
-    public Date getAuthenticatedDate() {
-        return this.authenticatedDate;
+    /**
+     * Creates a new mutable clone of the given authentication.
+     *
+     * @param source Source to clone.
+     */
+    public MutableAuthentication(final Authentication source) {
+        setPrincipal(source.getPrincipal());
+        setAttributes(clone(source.getAttributes()));
+        setSuccesses(clone(source.getSuccesses()));
+        setFailures(clone(source.getFailures()));
+    }
+
+    @Override
+    public void setPrincipal(final Principal principal) {
+        super.setPrincipal(principal);
+    }
+
+    public void setAuthenticatedDate(final Date date) {
+        setAuthenticatedDate(new Instant(date.getTime()));
+    }
+
+    private <K, V> Map<K, V> clone(final Map<K, V> map) {
+        if (map != null && !map.isEmpty()) {
+            return new LinkedHashMap<K, V>(map);
+        }
+        return new LinkedHashMap<K, V>();
     }
 }

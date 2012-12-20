@@ -24,7 +24,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import com.esotericsoftware.kryo.Kryo;
-import org.jasig.cas.authentication.principal.GoogleAccountsService;
+import org.jasig.cas.authentication.service.GoogleAccountsService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
 /**
@@ -75,8 +75,8 @@ public final class GoogleAccountsServiceSerializer extends AbstractWebApplicatio
 
     public void write(final ByteBuffer buffer, final GoogleAccountsService service) {
         super.write(buffer, service);
-        kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "requestId"));
-        kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "relayState"));
+        this.kryo.writeObject(buffer, this.fieldHelper.getFieldValue(service, "requestId"));
+        this.kryo.writeObject(buffer, this.fieldHelper.getFieldValue(service, "relayState"));
     }
 
     protected GoogleAccountsService createService(
@@ -85,8 +85,8 @@ public final class GoogleAccountsServiceSerializer extends AbstractWebApplicatio
             final String originalUrl,
             final String artifactId) {
 
-        final String requestId = kryo.readObject(buffer, String.class);
-        final String relayState = kryo.readObject(buffer, String.class);
+        final String requestId = this.kryo.readObject(buffer, String.class);
+        final String relayState = this.kryo.readObject(buffer, String.class);
         try {
             final GoogleAccountsService service = (GoogleAccountsService) CONSTRUCTOR.newInstance(
                     id,
@@ -94,9 +94,9 @@ public final class GoogleAccountsServiceSerializer extends AbstractWebApplicatio
                     artifactId,
                     relayState,
                     requestId,
-                    privateKey,
-                    publicKey,
-                    alternateUsername);
+                    this.privateKey,
+                    this.publicKey,
+                    this.alternateUsername);
             return service;
         } catch (final Exception e) {
             throw new IllegalStateException("Error creating SamlService", e);

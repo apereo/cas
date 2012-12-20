@@ -18,9 +18,27 @@
  */
 package org.jasig.cas;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.*;
+import org.jasig.cas.authentication.MutableAuthentication;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.service.Service;
+import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -29,11 +47,6 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.validation.BindException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Scott Battaglia
@@ -60,47 +73,64 @@ public final class TestUtils {
     
     public static final String CONST_GOOD_URL = "https://github.com/";
 
+    public static final AuthenticationHandler AUTHENTICATION_HANDLER = new AuthenticationHandler() {
+        @Override
+        public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+            return new HandlerResult(this);
+        }
+
+        @Override
+        public boolean supports(final Credential credential) {
+            return credential instanceof UsernamePasswordCredential;
+        }
+
+        @Override
+        public String getName() {
+            return "TestUtils.AUTHENTICATION_HANDLER";
+        }
+    };
+
     private TestUtils() {
         // do not instanciate
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword() {
+    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword() {
         return getCredentialsWithSameUsernameAndPassword(CONST_USERNAME);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword(
+    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(
         final String username) {
         return getCredentialsWithDifferentUsernameAndPassword(username,
-            username);
+                username);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword() {
+    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword() {
         return getCredentialsWithDifferentUsernameAndPassword(CONST_USERNAME,
             CONST_PASSWORD);
     }
 
-    public static UsernamePasswordCredentials getCredentialsWithDifferentUsernameAndPassword(
+    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(
         final String username, final String password) {
         // noinspection LocalVariableOfConcreteClass
-        final UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials();
+        final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
         usernamePasswordCredentials.setUsername(username);
         usernamePasswordCredentials.setPassword(password);
 
         return usernamePasswordCredentials;
     }
 
-    public static HttpBasedServiceCredentials getHttpBasedServiceCredentials() {
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_GOOD_URL);
     }
 
-    public static HttpBasedServiceCredentials getBadHttpBasedServiceCredentials() {
+    public static HttpBasedServiceCredential getBadHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_BAD_URL);
     }
 
-    public static HttpBasedServiceCredentials getHttpBasedServiceCredentials(
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
         final String url) {
         try {
-            return new HttpBasedServiceCredentials(new URL(url));
+            return new HttpBasedServiceCredential(new URL(url));
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException();
         }
@@ -114,6 +144,10 @@ public final class TestUtils {
         return new SimplePrincipal(name);
     }
 
+    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+        return new SimplePrincipal(name, attributes);
+    }
+
     public static Service getService() {
         return getService(CONST_USERNAME);
     }
@@ -125,15 +159,15 @@ public final class TestUtils {
     }
 
     public static Authentication getAuthentication() {
-        return new ImmutableAuthentication(getPrincipal());
+        return newImmutableAuthentication(getPrincipal());
     }
 
     public static Authentication getAuthenticationWithService() {
-        return new ImmutableAuthentication(getService());
+        return newImmutableAuthentication(getService());
     }
 
     public static Authentication getAuthentication(final String name) {
-        return new ImmutableAuthentication(getPrincipal(name));
+        return newImmutableAuthentication(getPrincipal(name));
     }
 
     public static Assertion getAssertion(final boolean fromNewLogin) {
@@ -186,5 +220,18 @@ public final class TestUtils {
                     CONST_CREDENTIALS));
 
         return context;
+    }
+
+    public static ImmutableAuthentication newImmutableAuthentication(final Principal p) {
+        final HandlerResult hr = new HandlerResult(AUTHENTICATION_HANDLER, p);
+        return new ImmutableAuthentication(p, null, Collections.singletonMap(hr, p), null);
+    }
+
+    public static MutableAuthentication newMutableAuthentication(final Principal p) {
+        final HandlerResult hr = new HandlerResult(AUTHENTICATION_HANDLER, p);
+        final MutableAuthentication auth = new MutableAuthentication();
+        auth.setPrincipal(p);
+        auth.getSuccesses().put(hr, p);
+        return auth;
     }
 }

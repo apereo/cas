@@ -73,12 +73,12 @@
     p:userDn=""
     p:password="">
     <property name="authenticationStrategy">
-      <bean class="org.jasig.cas.adaptors.ldap.DigestMd5DirContextAuthenticationStrategy" />
+      <bean class="org.jasig.cas.authentication.support.DigestMd5DirContextAuthenticationStrategy" />
     </property>
   </bean>
   
   <bean id="bindAuthHandler"
-    class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+    class="org.jasig.cas.authentication.BindLdapAuthenticationHandler"
     p:filter="uid=%u"
     p:searchBase="ou=people,dc=rutgers,dc=edu"
     p:contextSource-ref="contextSource"
@@ -86,7 +86,7 @@
   />
   
   <bean id="bindTestConfig"
-    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    class="org.jasig.cas.authentication.BindTestConfig"
     p:existsCredential="battags"
     p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
     p:existsFailurePassword="ThisIsObviouslyNotMyRealPassword"
@@ -94,13 +94,13 @@
   />
 
   <bean id="fastBindAuthHandler"
-    class="org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler"
+    class="org.jasig.cas.authentication.FastBindLdapAuthenticationHandler"
     p:filter="%u"
     p:contextSource-ref="contextSource"
   />
     
   <bean id="fastBindTestConfig"
-    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    class="org.jasig.cas.authentication.BindTestConfig"
     p:existsCredential="battags"
     p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
     p:existsFailurePassword="ThisIsObviouslyNotMyRealPassword"
@@ -108,32 +108,32 @@
   />
   
   <bean id="saslMd5FastBindAuthHandler"
-    class="org.jasig.cas.adaptors.ldap.FastBindLdapAuthenticationHandler"
+    class="org.jasig.cas.authentication.FastBindLdapAuthenticationHandler"
     p:filter="uid=%u,ou=people,dc=rutgers,dc=edu"
     p:contextSource-ref="saslMd5ContextSource"
   />
     
   <bean id="saslMd5FastBindTestConfig"
-    class="org.jasig.cas.adaptors.ldap.BindTestConfig"
+    class="org.jasig.cas.authentication.BindTestConfig"
     p:existsCredential="battags"
     p:existsSuccessPassword="ThisIsObviouslyNotMyRealPassword"
   />
 
   <bean id="ldapResolver"
-    class="org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver"
+    class="org.jasig.cas.authentication.LDAPAttributePrincipalResolver"
     p:filter="rutgersEduIID=%u"
     p:principalAttributeName="uid"
     p:searchBase="ou=people,dc=rutgers,dc=edu"
     p:contextSource-ref="contextSource">
-    <property name="credentialsToPrincipalResolver">
+    <property name="principalResolver">
       <bean
-        class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver">
+        class="org.jasig.cas.authentication.UsernamePasswordPrincipalResolver">
       </bean>
     </property>
   </bean>
   
   <bean id="resolverTestConfig"
-    class="org.jasig.cas.authentication.principal.ResolverTestConfig"
+    class="org.jasig.cas.authentication.ResolverTestConfig"
     p:existsCredential="SRB54"
     p:existsPrincipal="battags"
     p:notExistsCredential="SRB"

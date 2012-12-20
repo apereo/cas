@@ -30,7 +30,7 @@
         // Look for details of authorization failure in well-known request attributes.
         final String[] keys = new String[] {WebUtils.CAS_ACCESS_DENIED_REASON, WebAttributes.AUTHENTICATION_EXCEPTION};
         Object detail = null;
-        for (String key : keys) {
+        for (final String key : keys) {
             detail = request.getAttribute(key);
             if (detail == null) {
                 detail = request.getSession().getAttribute(key);

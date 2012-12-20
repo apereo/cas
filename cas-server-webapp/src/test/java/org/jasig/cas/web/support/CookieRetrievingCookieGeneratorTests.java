@@ -20,7 +20,7 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.Cookie;
 
-import org.jasig.cas.authentication.principal.RememberMeCredentials;
+import org.jasig.cas.authentication.RememberMeCredential;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -48,7 +48,7 @@ public final class CookieRetrievingCookieGeneratorTests extends TestCase {
     
     public void testCookieAddWithRememberMe() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(RememberMeCredentials.REQUEST_PARAMETER_REMEMBER_ME, "true");
+        request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
        this.g.addCookie(request, response, "test");

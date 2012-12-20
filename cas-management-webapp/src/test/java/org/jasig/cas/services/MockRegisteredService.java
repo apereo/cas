@@ -19,17 +19,17 @@
 
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 
 public class MockRegisteredService extends AbstractRegisteredService {
     private static final long serialVersionUID = 4036877894594884813L;
 
-    public boolean matches(Service service) {
+    public boolean matches(final Service service) {
         return true;
     }
 
     @Override
-    public void setServiceId(String id) {
+    public void setServiceId(final String id) {
         this.serviceId = id;
     }
 

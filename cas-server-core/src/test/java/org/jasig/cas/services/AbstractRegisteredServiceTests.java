@@ -18,13 +18,16 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.authentication.service.Service;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link AbstractRegisteredService}.
@@ -33,11 +36,11 @@ import static org.junit.Assert.*;
  */
 public class AbstractRegisteredServiceTests {
 
-    private AbstractRegisteredService r = new AbstractRegisteredService() {
+    private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
         public void setServiceId(final String id) {
-            serviceId = id;
+            this.serviceId = id;
         }
 
         protected AbstractRegisteredService newInstance() {
@@ -94,7 +97,7 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void testEquals() throws Exception {
-        assertTrue(r.equals(r.clone()));
+        assertTrue(this.r.equals(this.r.clone()));
         assertFalse(new RegisteredServiceImpl().equals(null));
         assertFalse(new RegisteredServiceImpl().equals(new Object()));
     }

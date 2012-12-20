@@ -35,7 +35,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
         currencyTimeLimit = 15)
 public final class ServicesManagerMBean extends AbstractServicesManagerMBean<ServicesManager> {
 
-    public ServicesManagerMBean(ServicesManager servicesManager) {
+    public ServicesManagerMBean(final ServicesManager servicesManager) {
         super(servicesManager);
     }
 }

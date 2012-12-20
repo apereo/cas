@@ -237,21 +237,21 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 		return hash;
 	}
 
-	protected String decrypt(final String value, String hashedKey) {
+	protected String decrypt(final String value, final String hashedKey) {
 		if (value == null)
 			return null;
 
 		try {
 			final Cipher cipher = getCipherObject();
 
-			byte[] ivByteArray = algorithmParametersHashMap.get(hashedKey).getIV();
-			IvParameterSpec ivSpec = new IvParameterSpec(ivByteArray);
+			final byte[] ivByteArray = this.algorithmParametersHashMap.get(hashedKey).getIV();
+			final IvParameterSpec ivSpec = new IvParameterSpec(ivByteArray);
 
 			cipher.init(Cipher.DECRYPT_MODE, this.key, ivSpec);
 
-			byte[] valueByteArray = value.getBytes();
-			byte[] decrypted64ByteValue = new Base64().decode(valueByteArray);
-			byte[] decryptedByteArray = cipher.doFinal(decrypted64ByteValue);
+			final byte[] valueByteArray = value.getBytes();
+			final byte[] decrypted64ByteValue = new Base64().decode(valueByteArray);
+			final byte[] decryptedByteArray = cipher.doFinal(decrypted64ByteValue);
 
 			return new String(decryptedByteArray);
 
@@ -264,21 +264,21 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 		return encrypt(value, null);
 	}
 
-	protected String encrypt(final String value, String hashedKey) {
+	protected String encrypt(final String value, final String hashedKey) {
 		if (value == null)
 			return null;
 
 		try {
 			final Cipher cipher = getCipherObject();
 			cipher.init(Cipher.ENCRYPT_MODE, this.key);
-			AlgorithmParameters params = cipher.getParameters();
+			final AlgorithmParameters params = cipher.getParameters();
 
 			if (hashedKey != null)
-				algorithmParametersHashMap.put(hashedKey, params.getParameterSpec(IvParameterSpec.class));
+                this.algorithmParametersHashMap.put(hashedKey, params.getParameterSpec(IvParameterSpec.class));
 
-			byte[] valueByteArray = value.getBytes();
-			byte[] encryptedByteArray = cipher.doFinal(valueByteArray);
-			byte[] encrypted64ByteValue = new Base64().encode(encryptedByteArray);
+			final byte[] valueByteArray = value.getBytes();
+			final byte[] encryptedByteArray = cipher.doFinal(valueByteArray);
+			final byte[] encrypted64ByteValue = new Base64().encode(encryptedByteArray);
 
 			return new String(encrypted64ByteValue);
 
@@ -334,7 +334,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 	private static String getFormattedText(final byte[] bytes) {
 		final StringBuilder buf = new StringBuilder(bytes.length * 2);
 
-		for (byte b : bytes) {
+		for (final byte b : bytes) {
 			buf.append(HEX_DIGITS[(b >> 4) & 0x0f]);
 			buf.append(HEX_DIGITS[b & 0x0f]);
 		}
@@ -345,17 +345,17 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 		return Cipher.getInstance(CIPHER_ALGORITHM);
 	}
 
-	private static Key getSecretKey(String secretKeyAlgorithm, String secretKey, String salt) throws Exception {
+	private static Key getSecretKey(final String secretKeyAlgorithm, final String secretKey, final String salt) throws Exception {
 
-		SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
-		KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), char2byte(salt), 65536, 128);
-		SecretKey tmp = factory.generateSecret(spec);
-		SecretKey secret = new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
+		final SecretKeyFactory factory = SecretKeyFactory.getInstance(SECRET_KEY_FACTORY_ALGORITHM);
+		final KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), char2byte(salt), 65536, 128);
+		final SecretKey tmp = factory.generateSecret(spec);
+		final SecretKey secret = new SecretKeySpec(tmp.getEncoded(), secretKeyAlgorithm);
 
 		return secret;
 	}
 
 	public String getSecretKeyAlgorithm() {
-		return secretKeyAlgorithm;
+		return this.secretKeyAlgorithm;
 	}
 }

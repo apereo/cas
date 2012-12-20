@@ -96,7 +96,7 @@
         <section>
             <title>SSO Participant</title>
             <para>Registrations can specify that the registered service is forbidden to participate in CAS single sign-on.
-            The application can still use CAS for authentication, but users will always be prompted to present credentials
+            The application can still use CAS for authentication, but users will always be prompted to present credential
             (e.g. present username and password) to log in to the service and will never be transparently autheticated
             on the basis of an established CAS single sign-on session.</para>
         </section>

@@ -21,9 +21,7 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

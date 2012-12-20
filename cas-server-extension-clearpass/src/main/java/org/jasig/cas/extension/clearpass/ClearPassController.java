@@ -80,8 +80,8 @@ public final class ClearPassController extends AbstractController {
         return returnError("No authentication information provided.");
     }
     
-    protected ModelAndView returnError(String description) {
-        ModelAndView mv=new ModelAndView(this.failureView);
+    protected ModelAndView returnError(final String description) {
+        final ModelAndView mv=new ModelAndView(this.failureView);
         mv.addObject(MODEL_FAILURE_DESCRIPTION, description);
         return(mv);
     }

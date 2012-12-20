@@ -28,7 +28,7 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
 
-  <!-- Credentials Cache implementation -->
+  <!-- Credential Cache implementation -->
   <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
         p:configLocation="classpath:ehcacheClearPass.xml" 
         p:shared="false"
@@ -87,7 +87,7 @@
   <!--
     NOTE:
     A bean named clearPassProxyList must be defined in deployerConfigContext.xml that defines
-    the list of proxying services authorized to obtain clearpass credentials.
+    the list of proxying services authorized to obtain clearpass credential.
   -->
   <bean id="casValidationFilter" class="org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter">
     <property name="serverName" value="${server.name}"/>

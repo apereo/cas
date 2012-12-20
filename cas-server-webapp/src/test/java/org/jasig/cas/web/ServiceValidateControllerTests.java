@@ -52,7 +52,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
 
     @Before
     public void onSetUp() throws Exception {
-        StaticApplicationContext context = new StaticApplicationContext();
+        final StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController
@@ -106,7 +106,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
             .getId());
         request.addParameter("ticket", sId);
@@ -152,7 +152,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
 
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
             .getId());
         request.addParameter("ticket", sId);
@@ -171,7 +171,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
             .getId());
         request.addParameter("ticket", sId);
@@ -192,7 +192,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
             .getId());
         request.addParameter("ticket", sId);
@@ -214,7 +214,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         final String sId = getCentralAuthenticationService()
             .grantServiceTicket(tId, TestUtils.getService());
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
             .getId());
         request.addParameter("ticket", sId);

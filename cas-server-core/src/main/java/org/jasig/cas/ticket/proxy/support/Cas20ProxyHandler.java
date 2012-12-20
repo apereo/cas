@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
@@ -56,9 +56,9 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     @NotNull
     private HttpClient httpClient;
 
-    public String handle(final Credentials credentials,
+    public String handle(final Credential credential,
         final String proxyGrantingTicketId) {
-        final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;
+        final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
         final String proxyIou = this.uniqueTicketIdGenerator
             .getNewTicketId(PGTIOU_PREFIX);
         final String serviceCredentialsAsString = serviceCredentials.getCallbackUrl().toExternalForm();

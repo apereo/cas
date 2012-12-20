@@ -46,7 +46,7 @@ public class EhCacheMonitorTests {
 
     @Test
     public void testObserve() throws Exception {
-        CacheStatus status = monitor.observe();
+        CacheStatus status = this.monitor.observe();
         CacheStatistics stats = status.getStatistics()[0];
         assertEquals(100, stats.getCapacity());
         assertEquals(0, stats.getSize());
@@ -54,9 +54,9 @@ public class EhCacheMonitorTests {
 
         // Fill cache 95% full, which is above 10% free WARN threshold
         for (int i = 0; i < 95; i++) {
-            cache.put(new Element("key" + i, "value" + i));
+            this.cache.put(new Element("key" + i, "value" + i));
         }
-        status = monitor.observe();
+        status = this.monitor.observe();
         stats = status.getStatistics()[0];
         assertEquals(100, stats.getCapacity());
         assertEquals(95, stats.getSize());
@@ -64,9 +64,9 @@ public class EhCacheMonitorTests {
 
         // Exceed the capacity and force evictions which should report WARN status
         for (int i = 95; i < 110; i++) {
-            cache.put(new Element("key" + i, "value" + i));
+            this.cache.put(new Element("key" + i, "value" + i));
         }
-        status = monitor.observe();
+        status = this.monitor.observe();
         stats = status.getStatistics()[0];
         assertEquals(100, stats.getCapacity());
         assertEquals(100, stats.getSize());

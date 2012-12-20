@@ -114,7 +114,7 @@
     <!--
         WARNING: Setting the flow package to DEBUG will display
         the parameters posted to the login servlet including
-        cleartext authentication credentials
+        cleartext authentication credential
     -->
     <logger name="org.jasig.cas.web.flow" additivity="true">
         <level value="INFO" />

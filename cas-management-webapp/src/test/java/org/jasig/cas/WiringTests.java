@@ -39,12 +39,12 @@ public class WiringTests {
 
     @Before
     public void setUp() {
-        applicationContext = new XmlWebApplicationContext();
-        applicationContext.setConfigLocations(new String[]{
+        this.applicationContext = new XmlWebApplicationContext();
+        this.applicationContext.setConfigLocations(new String[]{
                 "file:src/main/webapp/WEB-INF/cas-management-servlet.xml",
                 "file:src/main/webapp/WEB-INF/managementConfigContext.xml",
                 "file:src/main/webapp/WEB-INF/spring-configuration/*.xml"});
-        applicationContext.setServletContext(new MockServletContext(new ResourceLoader() {
+        this.applicationContext.setServletContext(new MockServletContext(new ResourceLoader() {
             @Override
             public Resource getResource(final String location) {
                 return new FileSystemResource("src/main/webapp" + location);
@@ -55,11 +55,11 @@ public class WiringTests {
                 return getClassLoader();
             }
         }));
-        applicationContext.refresh();
+        this.applicationContext.refresh();
     }
 
     @Test
     public void testWiring() throws Exception {
-        assertTrue(applicationContext.getBeanDefinitionCount() > 0);
+        assertTrue(this.applicationContext.getBeanDefinitionCount() > 0);
     }
 }

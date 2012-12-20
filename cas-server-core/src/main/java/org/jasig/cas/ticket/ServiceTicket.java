@@ -19,7 +19,7 @@
 package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 
 /**
  * Interface for a Service Ticket. A service ticket is used to grant access to a

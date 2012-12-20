@@ -39,7 +39,7 @@ public final class HardTimeoutExpirationPolicySerializer extends SimpleSerialize
     }
 
     public void write(final ByteBuffer buffer, final HardTimeoutExpirationPolicy policy) {
-        buffer.putLong((Long) fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
+        buffer.putLong((Long) this.fieldHelper.getFieldValue(policy, "timeToKillInMilliSeconds"));
     }
 
     public HardTimeoutExpirationPolicy read(final ByteBuffer buffer) {

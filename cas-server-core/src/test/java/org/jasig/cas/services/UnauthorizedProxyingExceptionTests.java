@@ -26,7 +26,7 @@ public class UnauthorizedProxyingExceptionTests extends TestCase {
     private static final String CODE = "service.not.authorized.proxy";
     
     public void testGetCode() {
-        UnauthorizedProxyingException e = new UnauthorizedProxyingException();
+        final UnauthorizedProxyingException e = new UnauthorizedProxyingException();
         assertEquals(CODE, e.getMessage());
     }
 

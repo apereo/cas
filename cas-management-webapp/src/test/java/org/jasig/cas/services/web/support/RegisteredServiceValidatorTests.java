@@ -21,7 +21,7 @@ package org.jasig.cas.services.web.support;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -103,15 +103,15 @@ public class RegisteredServiceValidatorTests extends TestCase {
             this.returnValue = returnValue;
         }
 
-        public RegisteredService delete(long id) {
+        public RegisteredService delete(final long id) {
             return null;
         }
 
-        public RegisteredService findServiceBy(long id) {
+        public RegisteredService findServiceBy(final long id) {
             return null;
         }
 
-        public RegisteredService findServiceBy(Service service) {
+        public RegisteredService findServiceBy(final Service service) {
             return null;
         }
 

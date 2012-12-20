@@ -18,17 +18,17 @@
  */
 package org.jasig.cas.web.support;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.webflow.execution.RequestContext;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
@@ -62,7 +62,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
 
     public void afterPropertiesSet() throws Exception {
-        this.thresholdRate = (double) failureThreshold / (double) failureRangeInSeconds;
+        this.thresholdRate = (double) this.failureThreshold / (double) this.failureRangeInSeconds;
     }
 
 
@@ -75,7 +75,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
         if (exceedsThreshold(request)) {
             recordThrottle(request);
-            response.sendError(403, "Access Denied for user [" + request.getParameter(usernameParameter) + " from IP Address [" + request.getRemoteAddr() + "]");
+            response.sendError(403, "Access Denied for user [" + request.getParameter(this.usernameParameter) + " from IP Address [" + request.getRemoteAddr() + "]");
             return false;
         }
 
@@ -88,7 +88,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
+        final RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
         
         if (context == null || context.getCurrentEvent() == null) {
             return;
@@ -133,7 +133,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     protected void recordThrottle(final HttpServletRequest request) {
         log.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
-                new Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
+                new Object[] {request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds});
     }
 
     protected abstract void recordSubmissionFailure(HttpServletRequest request);

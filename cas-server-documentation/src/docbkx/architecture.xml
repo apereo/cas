@@ -196,7 +196,7 @@
           <section>
               <title>Authentication Handlers</title>
               <para>
-              The AuthenticationHandler interface describes the contract by which users present credentials for
+              The AuthenticationHandler interface describes the contract by which users present credential for
                   validation and simply return a boolean true/false value for success/failure. Authentication handlers
                   are the integration point with identity management systems including directories and databases.
               </para>

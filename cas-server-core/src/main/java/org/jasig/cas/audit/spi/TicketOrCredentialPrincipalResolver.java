@@ -18,9 +18,11 @@
  */
 package org.jasig.cas.audit.spi;
 
-import org.aspectj.lang.JoinPoint;
+import javax.validation.constraints.NotNull;
+
 import com.github.inspektr.common.spi.PrincipalResolver;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.aspectj.lang.JoinPoint;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -31,10 +33,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * PrincipalResolver that can retrieve the username from either the Ticket or from the Credentials.
+ * PrincipalResolver that can retrieve the username from either the Ticket or from the Credential.
  * 
  * @author Scott Battaglia
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
@@ -63,28 +63,31 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     }
     
     protected String resolveFromInternal(final JoinPoint joinPoint) {
+        String principal = UNKNOWN_USER;
         final Object arg1 = joinPoint.getArgs()[0];
-        if (arg1 instanceof Credentials) {
-           return arg1.toString();
+        if (arg1.getClass().isArray() && Credential.class.isAssignableFrom(arg1.getClass().getComponentType())) {
+            final Credential[] credentials = (Credential[]) arg1;
+            if (credentials.length > 0) {
+                principal = credentials[0].toString();
+            }
         } else if (arg1 instanceof String) {
             final Ticket ticket = this.ticketRegistry.getTicket((String) arg1);
             if (ticket instanceof ServiceTicket) {
                 final ServiceTicket serviceTicket = (ServiceTicket) ticket;
-                return serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId();
+                principal = serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId();
             } else if (ticket instanceof TicketGrantingTicket) {
                 final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-                return tgt.getAuthentication().getPrincipal().getId();
+                principal = tgt.getAuthentication().getPrincipal().getId();
             }
         } else {
             final SecurityContext securityContext = SecurityContextHolder.getContext();
             if (securityContext != null) {
                 final Authentication authentication = securityContext.getAuthentication();
-
                 if (authentication != null) {
-                    return ((UserDetails) authentication.getPrincipal()).getUsername();
+                    principal = ((UserDetails) authentication.getPrincipal()).getUsername();
                 }
             }
         }
-        return UNKNOWN_USER;
+        return principal;
     }
 }

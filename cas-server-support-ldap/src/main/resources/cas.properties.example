@@ -35,7 +35,7 @@ ldap.authentication.server.urls=ldap://1.1.1.1
 #Ldap Base DNs based on the context for query execution (i.e.
 ldap.authentication.basedn=cn=users,dc=school,dc=edu
 
-#Manager credentials to bind (i.e. cn=manager,cn=users,dc=school,dc=edu/password)
+#Manager credential to bind (i.e. cn=manager,cn=users,dc=school,dc=edu/password)
 ldap.authentication.manager.userdn=
 ldap.authentication.manager.password=
 

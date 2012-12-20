@@ -18,12 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.ObjectStreamField;
+import java.io.Serializable;
+import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jasig.cas.authentication.principal.Principal;
+import org.joda.time.Instant;
 
 /**
  * Default implementation of Authentication interface. ImmutableAuthentication
@@ -34,18 +36,15 @@ import org.jasig.cas.authentication.principal.Principal;
  * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.0
  */
-public final class ImmutableAuthentication extends AbstractAuthentication {
+public final class ImmutableAuthentication extends AbstractAuthentication implements Serializable {
 
-    /** UID for serializing. */
-    private static final long serialVersionUID = 3906647483978365235L;
-    
-    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
+    /** Serialization support. */
+    private static final long serialVersionUID = 3205758251560522665L;
+    private static final ObjectStreamField[] serialPersistentFields = new ObjectStreamField[0];
 
-    /** The date/time this authentication object became valid. */
-    final Date authenticatedDate;
 
     /**
      * Constructor that accepts both a principal and a map.
@@ -54,25 +53,76 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
      * @param attributes Authentication attributes map.
      * @throws IllegalArgumentException if the principal is null.
      */
-    public ImmutableAuthentication(final Principal principal,
-        final Map<String, Object> attributes) {
-        super(principal, attributes == null || attributes.isEmpty()
-            ? EMPTY_MAP : Collections.unmodifiableMap(attributes));
-
-        this.authenticatedDate = new Date();
+    public ImmutableAuthentication(
+            final Principal principal,
+            final Map<String, Object> attributes,
+            final Map<HandlerResult, Principal> successes,
+            final Map<String, GeneralSecurityException> failures) {
+        setPrincipal(principal);
+        setSuccesses(successes);
+        setAttributes(attributes);
+        setFailures(failures);
     }
 
     /**
-     * Constructor that assumes there are no additional authentication
-     * attributes.
-     * 
-     * @param principal the Principal representing the authenticated entity.
+     * Creates a new immutable clone of the given authentication.
+     *
+     * @param source Source to clone.
      */
-    public ImmutableAuthentication(final Principal principal) {
-        this(principal, null);
+    public ImmutableAuthentication(final Authentication source) {
+        setAuthenticatedDate(new Instant(source.getAuthenticatedDate()));
+        setPrincipal(source.getPrincipal());
+        setAttributes(clone(source.getAttributes()));
+        setSuccesses(clone(source.getSuccesses()));
+        setFailures(clone(source.getFailures()));
     }
 
-    public Date getAuthenticatedDate() {
-        return new Date(this.authenticatedDate.getTime());
+    @Override
+    protected void setSuccesses(final Map<HandlerResult, Principal> successes) {
+        if (successes == null || successes.isEmpty()) {
+            super.setSuccesses(Collections.<HandlerResult, Principal>emptyMap());
+        } else {
+            super.setSuccesses(successes);
+        }
+    }
+
+    @Override
+    public Map<HandlerResult, Principal> getSuccesses() {
+        return Collections.unmodifiableMap(super.getSuccesses());
+    }
+
+    @Override
+    protected void setFailures(final Map<String, GeneralSecurityException> failures) {
+        if (failures == null || failures.isEmpty()) {
+            super.setFailures(Collections.<String, GeneralSecurityException>emptyMap());
+        } else {
+            super.setFailures(failures);
+        }
+    }
+
+    @Override
+    public Map<String, GeneralSecurityException> getFailures() {
+        return Collections.unmodifiableMap(super.getFailures());
+    }
+
+    @Override
+    protected void setAttributes(final Map<String, Object> attributes) {
+        if (attributes == null || attributes.isEmpty()) {
+            super.setAttributes(Collections.<String, Object>emptyMap());
+        } else {
+            super.setAttributes(attributes);
+        }
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(super.getAttributes());
+    }
+
+    private <K, V> Map<K, V> clone(final Map<K, V> map) {
+        if (map != null && !map.isEmpty()) {
+            return new LinkedHashMap<K, V>(map);
+        }
+        return Collections.<K, V>emptyMap();
     }
 }

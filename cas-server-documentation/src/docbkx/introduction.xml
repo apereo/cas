@@ -55,7 +55,7 @@
         authenticate to services within the SSO domain. The CAS implementation
         uses a secure SSO session identifier (ticket-granting ticket in CAS
         protocol parlance), shared exclusively with the CAS server, to generate
-        one-time-use credentials (service tickets in CAS protocol parlance) that
+        one-time-use credential (service tickets in CAS protocol parlance) that
         are used to access services within the SSO domain. Passing the "master
         key" session identifier exclusively between the user's browser and CAS
         server dramatically limits the potential for man-in-the-middle attacks

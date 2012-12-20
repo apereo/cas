@@ -39,7 +39,7 @@ public final class DefaultRandomStringGenerator implements
     private static final int DEFAULT_MAX_RANDOM_LENGTH = 35;
 
     /** An instance of secure random to ensure randomness is secure. */
-    private SecureRandom randomizer = new SecureRandom();
+    private final SecureRandom randomizer = new SecureRandom();
 
     /** The maximum length the random string can be. */
     private final int maximumRandomLength;

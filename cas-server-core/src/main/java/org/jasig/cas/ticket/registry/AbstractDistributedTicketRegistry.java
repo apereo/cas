@@ -21,7 +21,7 @@ package org.jasig.cas.ticket.registry;
 import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -82,7 +82,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         public final boolean isExpired() {
-            if (!callback) {
+            if (!this.callback) {
                 return this.ticket.isExpired();
             }
 
@@ -94,7 +94,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         public final TicketGrantingTicket getGrantingTicket() {
             final TicketGrantingTicket old = this.ticket.getGrantingTicket();
 
-            if (old == null || !callback) {
+            if (old == null || !this.callback) {
                 return old;
             }
 

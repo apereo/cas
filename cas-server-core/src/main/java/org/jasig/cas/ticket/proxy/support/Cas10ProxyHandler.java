@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 
 /**
@@ -31,7 +31,7 @@ import org.jasig.cas.ticket.proxy.ProxyHandler;
  */
 public final class Cas10ProxyHandler implements ProxyHandler {
 
-    public String handle(final Credentials credentials,
+    public String handle(final Credential credential,
         final String proxyGrantingTicketId) {
         return null;
     }

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.support.PasswordPolicyEnforcer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

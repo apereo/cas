@@ -20,7 +20,7 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.service.WebApplicationService;
 
 /**
  * Strategy interface for retrieving services and tickets from the request.

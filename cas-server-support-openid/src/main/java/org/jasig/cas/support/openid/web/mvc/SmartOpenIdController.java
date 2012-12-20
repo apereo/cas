@@ -19,6 +19,13 @@
 
 package org.jasig.cas.support.openid.web.mvc;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.web.DelegateController;
 import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
@@ -26,12 +33,6 @@ import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Generates an association to an openid association request.
@@ -43,7 +44,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     private static final long serialVersionUID = -594058549445950430L;
 
-    private Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     private ServerManager serverManager;
 
@@ -61,14 +62,14 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     @NotNull
     private String failureView = DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME;
 
-    public Map<String, String> getAssociationResponse(HttpServletRequest request) {
-        ParameterList parameters = new ParameterList(request.getParameterMap());
+    public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
+        final ParameterList parameters = new ParameterList(request.getParameterMap());
 
-        String mode = parameters.hasParameter("openid.mode") ?
+        final String mode = parameters.hasParameter("openid.mode") ?
                 parameters.getParameterValue("openid.mode") : null;
         Message response = null;
         if (mode != null && mode.equals("associate")) {
-            response = serverManager.associationResponse(parameters);
+            response = this.serverManager.associationResponse(parameters);
         }
         final Map<String, String> responseParams = new HashMap<String, String>();
         if (response != null) {
@@ -80,15 +81,15 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Map<String, String> parameters = new HashMap<String, String>();
         parameters.putAll(getAssociationResponse(request));
-        return new ModelAndView(successView, "parameters", parameters);
+        return new ModelAndView(this.successView, "parameters", parameters);
     }
 
     @Override
-    public boolean canHandle(HttpServletRequest request, HttpServletResponse response) {
-        String openIdMode = request.getParameter("openid.mode");
+    public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
+        final String openIdMode = request.getParameter("openid.mode");
         if (openIdMode != null && openIdMode.equals("associate")) {
             logger.info("Handling request. openid.mode : "+openIdMode);
             return true;
@@ -97,16 +98,16 @@ public class SmartOpenIdController extends DelegateController implements Seriali
         return false;
     }
 
-    public void setSuccessView(String successView) {
+    public void setSuccessView(final String successView) {
         this.successView = successView;
     }
 
-    public void setFailureView(String failureView) {
+    public void setFailureView(final String failureView) {
         this.failureView = failureView;
     }
 
     @NotNull
-    public void setServerManager(ServerManager serverManager) {
+    public void setServerManager(final ServerManager serverManager) {
         this.serverManager = serverManager;
     }
 }

@@ -58,7 +58,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         this.request = new MockHttpServletRequest();
        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
         this.serviceRegistryDao = new InMemoryServiceRegistryDaoImpl();
-        this.serviceManager = new DefaultServicesManagerImpl(serviceRegistryDao);
+        this.serviceManager = new DefaultServicesManagerImpl(this.serviceRegistryDao);
         this.serviceManager.reload();
         
         this.warnCookieGenerator.setCookieName("test");
@@ -89,7 +89,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         impl.setEnabled(true);
         this.serviceManager.save(impl);
         this.logoutController.setFollowServiceRedirects(true);
-        assertTrue(this.logoutController.handleRequestInternal(request,
+        assertTrue(this.logoutController.handleRequestInternal(this.request,
             new MockHttpServletResponse()).getView() instanceof RedirectView);
     }
 
@@ -97,7 +97,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
     public void logoutForServiceWithNoFollowRedirects() throws Exception {
         this.request.addParameter("service", "TestService");
         this.logoutController.setFollowServiceRedirects(false);
-        assertTrue(!(this.logoutController.handleRequestInternal(request,
+        assertTrue(!(this.logoutController.handleRequestInternal(this.request,
             new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
@@ -109,15 +109,15 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         impl.setName("FooBar");
         this.serviceManager.save(impl);
         this.logoutController.setFollowServiceRedirects(true);
-        assertTrue(!(this.logoutController.handleRequestInternal(request,
+        assertTrue(!(this.logoutController.handleRequestInternal(this.request,
             new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
     @Test
     public void testLogoutCookie() throws Exception {
-        Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
+        final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
-        assertNotNull(this.logoutController.handleRequestInternal(request,
+        assertNotNull(this.logoutController.handleRequestInternal(this.request,
             new MockHttpServletResponse()));
     }
 }

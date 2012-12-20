@@ -131,11 +131,11 @@ public final class EhcacheBackedMap implements Map<String,String> {
                this.element = element;
         }
         public String getKey() {
-            return (String) element.getKey();
+            return (String) this.element.getKey();
         }
 
         public String getValue() {
-            return (String) element.getValue();
+            return (String) this.element.getValue();
         }
 
         public String setValue(final String value) {

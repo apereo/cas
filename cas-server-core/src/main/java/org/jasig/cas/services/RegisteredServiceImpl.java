@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -47,7 +47,7 @@ public class RegisteredServiceImpl extends AbstractRegisteredService {
     }
 
     public boolean matches(final Service service) {
-        return service != null && PATH_MATCHER.match(serviceId.toLowerCase(), service.getId().toLowerCase());
+        return service != null && PATH_MATCHER.match(this.serviceId.toLowerCase(), service.getId().toLowerCase());
     }
 
     protected AbstractRegisteredService newInstance() {

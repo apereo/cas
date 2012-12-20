@@ -34,17 +34,14 @@ import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.principal.SamlService;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.service.SamlService;
+import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.support.kryo.serial.HardTimeoutExpirationPolicySerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.ImmutableAuthenticationSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.MultiTimeUseOrTimeoutExpirationPolicySerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.MutableAuthenticationSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SamlServiceSerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.SimplePrincipalSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.TimeoutExpirationPolicySerializer;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
@@ -88,7 +85,7 @@ public class KryoTranscoder implements Transcoder<Object> {
      * @param initialBufferSize Initial size for buffer holding encoded object data.
      */
     public KryoTranscoder(final int initialBufferSize) {
-        bufferSize = initialBufferSize;
+        this.bufferSize = initialBufferSize;
     }
 
 
@@ -104,43 +101,43 @@ public class KryoTranscoder implements Transcoder<Object> {
 
     public void initialize() {
         // Register types we know about and do not require external configuration
-        kryo.register(ArrayList.class);
-        kryo.register(Date.class, new DateSerializer());
-        kryo.register(HardTimeoutExpirationPolicy.class, new HardTimeoutExpirationPolicySerializer(fieldHelper));
-        kryo.register(HashMap.class);
-        kryo.register(ImmutableAuthentication.class, new ImmutableAuthenticationSerializer(kryo, fieldHelper));
-        kryo.register(
+        this.kryo.register(ArrayList.class);
+        this.kryo.register(Date.class, new DateSerializer());
+        this.kryo.register(HardTimeoutExpirationPolicy.class, new HardTimeoutExpirationPolicySerializer(this.fieldHelper));
+        this.kryo.register(HashMap.class);
+        this.kryo.register(ImmutableAuthentication.class);
+        this.kryo.register(
                 MultiTimeUseOrTimeoutExpirationPolicy.class,
-                new MultiTimeUseOrTimeoutExpirationPolicySerializer(fieldHelper));
-        kryo.register(MutableAuthentication.class, new MutableAuthenticationSerializer(kryo, fieldHelper));
-        kryo.register(
+                new MultiTimeUseOrTimeoutExpirationPolicySerializer(this.fieldHelper));
+        this.kryo.register(MutableAuthentication.class);
+        this.kryo.register(
                 NeverExpiresExpirationPolicy.class,
-                new FieldSerializer(kryo, NeverExpiresExpirationPolicy.class));
-        kryo.register(
+                new FieldSerializer(this.kryo, NeverExpiresExpirationPolicy.class));
+        this.kryo.register(
                 RememberMeDelegatingExpirationPolicy.class,
-                new FieldSerializer(kryo, RememberMeDelegatingExpirationPolicy.class));
-        kryo.register(SamlService.class, new SamlServiceSerializer(kryo, fieldHelper));
-        kryo.register(ServiceTicketImpl.class);
-        kryo.register(SimplePrincipal.class, new SimplePrincipalSerializer(kryo));
-        kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer(kryo));
-        kryo.register(TicketGrantingTicketImpl.class);
-        kryo.register(
+                new FieldSerializer(this.kryo, RememberMeDelegatingExpirationPolicy.class));
+        this.kryo.register(SamlService.class, new SamlServiceSerializer(this.kryo, this.fieldHelper));
+        this.kryo.register(ServiceTicketImpl.class);
+        this.kryo.register(SimplePrincipal.class);
+        this.kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer(this.kryo));
+        this.kryo.register(TicketGrantingTicketImpl.class);
+        this.kryo.register(
                 ThrottledUseAndTimeoutExpirationPolicy.class,
-                new FieldSerializer(kryo, ThrottledUseAndTimeoutExpirationPolicy.class));
-        kryo.register(
+                new FieldSerializer(this.kryo, ThrottledUseAndTimeoutExpirationPolicy.class));
+        this.kryo.register(
                 TicketGrantingTicketExpirationPolicy.class,
-                new FieldSerializer(kryo, TicketGrantingTicketExpirationPolicy.class));
-        kryo.register(TimeoutExpirationPolicy.class, new TimeoutExpirationPolicySerializer(fieldHelper));
+                new FieldSerializer(this.kryo, TicketGrantingTicketExpirationPolicy.class));
+        this.kryo.register(TimeoutExpirationPolicy.class, new TimeoutExpirationPolicySerializer(this.fieldHelper));
 
         // Register other types
-        if (serializerMap != null) {
-            for (final Class<?> clazz : serializerMap.keySet()) {
-                kryo.register(clazz, serializerMap.get(clazz));
+        if (this.serializerMap != null) {
+            for (final Class<?> clazz : this.serializerMap.keySet()) {
+                this.kryo.register(clazz, this.serializerMap.get(clazz));
             }
         }
 
         // Catchall for any classes not explicitly registered
-        kryo.setRegistrationOptional(true);
+        this.kryo.setRegistrationOptional(true);
     }
 
 
@@ -162,7 +159,7 @@ public class KryoTranscoder implements Transcoder<Object> {
 
 
     public Object decode(final CachedData d) {
-        return kryo.readClassAndObject(ByteBuffer.wrap(d.getData()));
+        return this.kryo.readClassAndObject(ByteBuffer.wrap(d.getData()));
     }
 
 
@@ -182,7 +179,7 @@ public class KryoTranscoder implements Transcoder<Object> {
      * @return Underlying Kryo instance.
      */
     public Kryo getKryo() {
-        return kryo;
+        return this.kryo;
     }
 
 
@@ -197,10 +194,10 @@ public class KryoTranscoder implements Transcoder<Object> {
     private byte[] encodeToBytes(final Object o) {
         int factor = 1;
         byte[] result = null;
-        ByteBuffer buffer = Kryo.getContext().getBuffer(bufferSize * factor);
+        ByteBuffer buffer = Kryo.getContext().getBuffer(this.bufferSize * factor);
         while (result == null) {
             try {
-                kryo.writeClassAndObject(buffer, o);
+                this.kryo.writeClassAndObject(buffer, o);
                 result = new byte[buffer.flip().limit()];
                 buffer.get(result);
             } catch (final SerializationException e) {
@@ -209,7 +206,7 @@ public class KryoTranscoder implements Transcoder<Object> {
                     rootCause = rootCause.getCause();
                 }
                 if (rootCause instanceof BufferOverflowException) {
-                    buffer = ByteBuffer.allocate(bufferSize * ++factor);
+                    buffer = ByteBuffer.allocate(this.bufferSize * ++factor);
                     logger.warn("Buffer overflow while encoding " + o);
                 } else {
                     throw e;

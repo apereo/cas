@@ -38,7 +38,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
-        MockRequestContext context = new MockRequestContext();
+        final MockRequestContext context = new MockRequestContext();
         context.setCurrentEvent(new Event("", "error"));
         request.setAttribute("flowRequestContext", context);
         getThrottle().preHandle(request, response, null);

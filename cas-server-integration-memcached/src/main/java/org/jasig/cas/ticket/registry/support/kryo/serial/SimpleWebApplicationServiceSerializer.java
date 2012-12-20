@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serialize.SimpleSerializer;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.util.HttpClient;
 
 /**
@@ -39,10 +39,10 @@ public final class SimpleWebApplicationServiceSerializer extends SimpleSerialize
     }
 
     public void write(final ByteBuffer buffer, final SimpleWebApplicationServiceImpl service) {
-        kryo.writeObjectData(buffer, service.getId());
+        this.kryo.writeObjectData(buffer, service.getId());
     }
 
     public SimpleWebApplicationServiceImpl read(final ByteBuffer buffer) {
-        return new SimpleWebApplicationServiceImpl(kryo.readObjectData(buffer, String.class), new HttpClient());
+        return new SimpleWebApplicationServiceImpl(this.kryo.readObjectData(buffer, String.class), new HttpClient());
     }
 }

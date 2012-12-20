@@ -18,16 +18,15 @@
  */
 package org.jasig.cas.extension.clearpass.integration.uportal;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.util.AssertionHolder;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.jasig.cas.extension.clearpass.integration.uportal.PasswordCachingCasAssertionSecurityContext;
 import org.junit.Test;
 import org.mockito.Matchers;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by IntelliJ IDEA.
@@ -67,8 +66,8 @@ public class PasswordCachingCasAssertionSecurityContextTests {
 		}
 
 		@Override
-		protected String retrieveResponseFromServer(String url, String encoding) {
-			return response;
+		protected String retrieveResponseFromServer(final String url, final String encoding) {
+			return this.response;
 		}
 	}
 }

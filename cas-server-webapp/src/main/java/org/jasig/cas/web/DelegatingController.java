@@ -19,13 +19,13 @@
 
 package org.jasig.cas.web;
 
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * Delegating controller.
@@ -55,7 +55,7 @@ public class DelegatingController extends AbstractController {
      * @throws Exception if an error occurs during request handling
      */
     protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        for (DelegateController delegate : delegates) {
+        for (final DelegateController delegate : this.delegates) {
             if (delegate.canHandle(request, response)) {
                 return delegate.handleRequest(request, response);
             }
@@ -76,7 +76,7 @@ public class DelegatingController extends AbstractController {
      * @param delegates the delegate controllers to set
      */
     @NotNull
-    public void setDelegates(List<DelegateController> delegates) {
+    public void setDelegates(final List<DelegateController> delegates) {
         this.delegates = delegates;
     }
 

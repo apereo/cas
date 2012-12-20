@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.ticket.support;
 
+import java.util.concurrent.TimeUnit;
+
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.springframework.util.Assert;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
@@ -53,7 +53,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
 
     }
 
-    public MultiTimeUseOrTimeoutExpirationPolicy(int numberOfUses, long timeToKill, TimeUnit timeUnit) {
+    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKill, final TimeUnit timeUnit) {
         this(numberOfUses, timeUnit.toMillis(timeToKill));
     }
 

@@ -24,9 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
-import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.service.WebApplicationService;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketValidationException;
@@ -98,11 +98,11 @@ public class ServiceValidateController extends DelegateController {
      * @return the credentials or null if there was an error or no credentials
      * provided.
      */
-    protected Credentials getServiceCredentialsFromRequest(final HttpServletRequest request) {
+    protected Credential getServiceCredentialsFromRequest(final HttpServletRequest request) {
         final String pgtUrl = request.getParameter("pgtUrl");
         if (StringUtils.hasText(pgtUrl)) {
             try {
-                return new HttpBasedServiceCredentials(new URL(pgtUrl));
+                return new HttpBasedServiceCredential(new URL(pgtUrl));
             } catch (final Exception e) {
                 logger.error("Error constructing pgtUrl", e);
             }
@@ -127,18 +127,18 @@ public class ServiceValidateController extends DelegateController {
         }
 
         try {
-            final Credentials serviceCredentials = getServiceCredentialsFromRequest(request);
+            final Credential serviceCredential = getServiceCredentialsFromRequest(request);
             String proxyGrantingTicketId = null;
 
             // XXX should be able to validate AND THEN use
-            if (serviceCredentials != null) {
+            if (serviceCredential != null) {
                 try {
                     proxyGrantingTicketId = this.centralAuthenticationService
                         .delegateTicketGrantingTicket(serviceTicketId,
-                            serviceCredentials);
+                                serviceCredential);
                 } catch (final TicketException e) {
                     logger.error("TicketException generating ticket for: "
-                        + serviceCredentials, e);
+                        + serviceCredential, e);
                 }
             }
 
@@ -161,8 +161,8 @@ public class ServiceValidateController extends DelegateController {
             final ModelAndView success = new ModelAndView(this.successView);
             success.addObject(MODEL_ASSERTION, assertion);
 
-            if (serviceCredentials != null && proxyGrantingTicketId != null) {
-                final String proxyIou = this.proxyHandler.handle(serviceCredentials, proxyGrantingTicketId);
+            if (serviceCredential != null && proxyGrantingTicketId != null) {
+                final String proxyIou = this.proxyHandler.handle(serviceCredential, proxyGrantingTicketId);
                 success.addObject(MODEL_PROXY_GRANTING_TICKET_IOU, proxyIou);
             }
 
@@ -206,7 +206,7 @@ public class ServiceValidateController extends DelegateController {
      * {@inheritDoc}
      */
     @Override
-    public boolean canHandle(HttpServletRequest request, HttpServletResponse response) {
+    public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         return true;
     }
     

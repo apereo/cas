@@ -18,15 +18,22 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.authentication.SimplePrincipal;
+import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -68,11 +75,25 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
     }
 
     protected Authentication getAuthentication() {
-        return new ImmutableAuthentication(new SimplePrincipal("test"));
+        final Principal principal = new SimplePrincipal("test");
+        final HandlerResult hr = new HandlerResult(new AuthenticationHandler() {
+            public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+                return new HandlerResult(this, principal);
+            }
+
+            public boolean supports(final Credential credential) {
+                return true;
+            }
+
+            public String getName() {
+                return "TestAuthenticationHandler";
+            }
+        }, principal);
+        return new ImmutableAuthentication(principal, null, Collections.singletonMap(hr, principal), null);
     }
 
     public TicketRegistry getNewTicketRegistry() throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+        final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
             APPLICATION_CONTEXT_FILE_NAME);
         this.registry = (JBossCacheTicketRegistry) context
             .getBean(APPLICATION_CONTEXT_CACHE_BEAN_NAME);
@@ -223,7 +244,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
         }
 
         try {
-            Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
+            final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals(
                 "The size of the registry is not the same as the collection.",
                 ticketRegistryTickets.size(), tickets.size());

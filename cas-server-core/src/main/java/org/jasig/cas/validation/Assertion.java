@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 
 /**
  * Return from CentralAuthenticationService.validateServiceTicket(String,

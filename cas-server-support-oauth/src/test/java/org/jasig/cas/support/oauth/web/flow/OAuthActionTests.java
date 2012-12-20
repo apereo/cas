@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.service.Service;
+import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.junit.Test;

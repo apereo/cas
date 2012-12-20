@@ -54,13 +54,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
 
     protected void updateTicket(final Ticket ticket) {
-        entityManager.merge(ticket);
+        this.entityManager.merge(ticket);
         log.debug("Updated ticket [{}].", ticket);
     }
 
     @Transactional(readOnly = false)
     public void addTicket(final Ticket ticket) {
-        entityManager.persist(ticket);
+        this.entityManager.persist(ticket);
         log.debug("Added ticket [{}] to registry.", ticket);
     }
 
@@ -84,12 +84,12 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     }
     
     private void deleteTicketAndChildren(final Ticket ticket) {
-        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
+        final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = this.entityManager
             .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class)
             .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .setParameter("id", ticket.getId())
             .getResultList();
-        final List<ServiceTicketImpl> serviceTicketImpls = entityManager
+        final List<ServiceTicketImpl> serviceTicketImpls = this.entityManager
 	        .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class)
 	        .setParameter("id", ticket.getId())
 	        .getResultList();
@@ -111,7 +111,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
                 final Date creationDate = new Date(ticket.getCreationTime());
                 log.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
              }
-            entityManager.remove(ticket);
+            this.entityManager.remove(ticket);
         } catch (final Exception e) {
             log.error("Error removing {} from registry.", ticket, e);
         }
@@ -125,10 +125,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     private Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-                return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
+                return this.entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
             }
             
-            return entityManager.find(ServiceTicketImpl.class, ticketId);
+            return this.entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
             log.error("Error getting ticket {} from registry.", ticketId, e);
         }
@@ -137,10 +137,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Transactional(readOnly=true)
     public Collection<Ticket> getTickets() {
-        final List<TicketGrantingTicketImpl> tgts = entityManager
+        final List<TicketGrantingTicketImpl> tgts = this.entityManager
             .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
             .getResultList();
-        final List<ServiceTicketImpl> sts = entityManager
+        final List<ServiceTicketImpl> sts = this.entityManager
             .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
             .getResultList();
         
@@ -162,12 +162,12 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Transactional(readOnly=true)
     public int sessionCount() {
-        return countToInt(entityManager.createQuery("select count(t) from TicketGrantingTicketImpl t").getSingleResult());
+        return countToInt(this.entityManager.createQuery("select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Transactional(readOnly=true)
     public int serviceTicketCount() {
-        return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
+        return countToInt(this.entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
     }
 
     private int countToInt(final Object result) {

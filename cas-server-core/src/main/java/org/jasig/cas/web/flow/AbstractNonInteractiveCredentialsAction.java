@@ -20,8 +20,8 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
- * credentials such as client certificates, NTLM, etc.
+ * credential such as client certificates, NTLM, etc.
  * 
  * @author Scott Battaglia
  * @version $Revision$ $Date$
@@ -51,9 +51,9 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     }
 
     protected final Event doExecute(final RequestContext context) {
-        final Credentials credentials = constructCredentialsFromRequest(context);
+        final Credential credential = constructCredentialsFromRequest(context);
 
-        if (credentials == null) {
+        if (credential == null) {
             return error();
         }
         
@@ -68,7 +68,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
                 final String serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicketId,
                         service,
-                        credentials);
+                            credential);
                 WebUtils.putServiceTicketInRequestScope(context,
                     serviceTicketId);
                 return result("warn");
@@ -76,7 +76,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
                 if (e.getCause() != null
                     && AuthenticationException.class.isAssignableFrom(e
                         .getCause().getClass())) {
-                    onError(context, credentials);
+                    onError(context, credential);
                     return error();
                 }
                 this.centralAuthenticationService
@@ -84,7 +84,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
                 if (logger.isDebugEnabled()) {
                     logger
                         .debug(
-                            "Attempted to generate a ServiceTicket using renew=true with different credentials",
+                            "Attempted to generate a ServiceTicket using renew=true with different credential",
                             e);
                 }
             }
@@ -94,11 +94,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             WebUtils.putTicketGrantingTicketInRequestScope(
                 context,
                 this.centralAuthenticationService
-                    .createTicketGrantingTicket(credentials));
-            onSuccess(context, credentials);
+                    .createTicketGrantingTicket(credential));
+            onSuccess(context, credential);
             return success();
         } catch (final TicketException e) {
-            onError(context, credentials);
+            onError(context, credential);
             return error();
         }
     }
@@ -113,10 +113,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
      * returning an error event.
      * 
      * @param context the context for this specific request.
-     * @param credentials the credentials for this request.
+     * @param credential the credential for this request.
      */
     protected void onError(final RequestContext context,
-        final Credentials credentials) {
+        final Credential credential) {
         // default implementation does nothing
     }
 
@@ -125,21 +125,21 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
      * returning a success event.
      * 
      * @param context the context for this specific request.
-     * @param credentials the credentials for this request.
+     * @param credential the credential for this request.
      */
     protected void onSuccess(final RequestContext context,
-        final Credentials credentials) {
+        final Credential credential) {
         // default implementation does nothing
     }
 
     /**
-     * Abstract method to implement to construct the credentials from the
+     * Abstract method to implement to construct the credential from the
      * request object.
      * 
      * @param context the context for this request.
-     * @return the constructed credentials or null if none could be constructed
+     * @return the constructed credential or null if none could be constructed
      * from the request.
      */
-    protected abstract Credentials constructCredentialsFromRequest(
+    protected abstract Credential constructCredentialsFromRequest(
         final RequestContext context);
 }

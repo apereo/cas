@@ -40,7 +40,7 @@
 		<property name="username2" value="scott.battaglia" />
 		<property name="bad.password" value="bad.password" />
 
-		<webtest name="Incorrect credentials">
+		<webtest name="Incorrect credential">
 			&config;
 			<steps>
 				&getLoginFormWithoutService;
@@ -53,7 +53,7 @@
 			</steps>
 		</webtest>
 
-		<webtest name="Correct credentials, no service">
+		<webtest name="Correct credential, no service">
 			&config;
 			<steps>
 				&getLoginFormWithoutService;
@@ -83,7 +83,7 @@
 			</steps>
 		</webtest>
 
-		<webtest name="Correct credentials with service, Gateway with service">
+		<webtest name="Correct credential with service, Gateway with service">
 			&config;
 			<steps>
 				&getLoginFormWithService;
@@ -98,7 +98,7 @@
 			</steps>
 		</webtest>
 
-		<webtest name="Correct credentials with warn and service, service with warn, service with gateway and warn">
+		<webtest name="Correct credential with warn and service, service with warn, service with gateway and warn">
 			&config;
 			<steps>
 				&getLoginFormWithService;
@@ -117,7 +117,7 @@
 			</steps>
 		</webtest>
 
-		<webtest name="No credentials, gateway">
+		<webtest name="No credential, gateway">
 			&config;
 			<steps>
 				<invoke description="Go to login page with service and gateway" url="/login?gateway=true&amp;service=http://foo.bar/" />

@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import static org.junit.Assert.*;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -30,13 +28,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -53,6 +49,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Unit test for {@link JpaLockingStrategy}.
@@ -93,7 +95,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * @throws Exception On setup errors.
      */
     public void afterPropertiesSet() throws Exception {
-        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "locks");
+        JdbcTestUtils.deleteFromTables(this.simpleJdbcTemplate, "locks");
     }
 
     /**
@@ -209,7 +211,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
 
     private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final int ttl) {
         final JpaLockingStrategy lock = new JpaLockingStrategy();
-        lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
+        lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(this.factory);
         lock.setApplicationId(appId);
         lock.setUniqueId(uniqueId);
         lock.setLockTimeout(ttl);
@@ -220,7 +222,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
     }
     
     private String getOwner(final String appId) {
-        final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList("SELECT unique_id FROM locks WHERE application_id=?", appId);
+        final List<Map<String, Object>> results = this.simpleJdbcTemplate.queryForList("SELECT unique_id FROM locks WHERE application_id=?", appId);
         if (results.size() == 0) {
             return null;
         }
@@ -234,7 +236,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
 
         int lockCount = 0;
-        for (Future<Boolean> result : executor.invokeAll(lockers)) {
+        for (final Future<Boolean> result : executor.invokeAll(lockers)) {
             if (result.get()) {
                 lockCount++;
             }
@@ -246,7 +248,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             releasers.add(new Releaser(locks[i]));
         }
         int releaseCount = 0;
-        for (Future<Boolean> result : executor.invokeAll(lockers)) {
+        for (final Future<Boolean> result : executor.invokeAll(lockers)) {
             if (result.get()) {
                 releaseCount++;
             }
@@ -258,21 +260,21 @@ public class JpaLockingStrategyTests implements InitializingBean {
         private JpaLockingStrategy jpaLock;
         
         public TransactionalLockInvocationHandler(final JpaLockingStrategy lock) {
-            jpaLock = lock;
+            this.jpaLock = lock;
         }
         
         public JpaLockingStrategy getLock() {
-            return jpaLock;
+            return this.jpaLock;
         }
 
         /** {@inheritDoc} */
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
+            return new TransactionTemplate(JpaLockingStrategyTests.this.txManager).execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(final TransactionStatus status) {
                     try {
-                        final Object result = method.invoke(jpaLock, args);
-                        jpaLock.entityManager.flush();
-                        logger.debug("Performed {} on {}", method.getName(), jpaLock);
+                        final Object result = method.invoke(TransactionalLockInvocationHandler.this.jpaLock, args);
+                        TransactionalLockInvocationHandler.this.jpaLock.entityManager.flush();
+                        logger.debug("Performed {} on {}", method.getName(), TransactionalLockInvocationHandler.this.jpaLock);
                         return result;
                         // Force result of transaction to database
                     } catch (Exception e) {
@@ -290,15 +292,15 @@ public class JpaLockingStrategyTests implements InitializingBean {
         
         public Locker(final LockingStrategy l)
         {
-            lock = l;
+            this.lock = l;
         }
 
         /** {@inheritDoc} */
         public Boolean call() throws Exception {
             try {
-                return lock.acquire();
+                return this.lock.acquire();
             } catch (Exception e) {
-                logger.debug("{} failed to acquire lock", lock, e);
+                logger.debug("{} failed to acquire lock", this.lock, e);
                 return false;
             }
         }
@@ -311,16 +313,16 @@ public class JpaLockingStrategyTests implements InitializingBean {
         
         public Releaser(final LockingStrategy l)
         {
-            lock = l;
+            this.lock = l;
         }
 
         /** {@inheritDoc} */
         public Boolean call() throws Exception {
             try {
-	            lock.release();
+                this.lock.release();
 	            return true;
             } catch (Exception e) {
-                logger.debug("{} failed to release lock", lock, e);
+                logger.debug("{} failed to release lock", this.lock, e);
                 return false;
             }
         }

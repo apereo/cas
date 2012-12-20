@@ -19,7 +19,7 @@
 package org.jasig.cas.mock;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -49,11 +49,11 @@ public class MockServiceTicket implements ServiceTicket {
         this.service = service;
         this.id = id;
         this.parent = parent;
-        created = new Date();
+        this.created = new Date();
     }
     
     public Service getService() {
-        return service;
+        return this.service;
     }
 
     public boolean isFromNewLogin() {
@@ -72,7 +72,7 @@ public class MockServiceTicket implements ServiceTicket {
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public boolean isExpired() {
@@ -80,11 +80,11 @@ public class MockServiceTicket implements ServiceTicket {
     }
 
     public TicketGrantingTicket getGrantingTicket() {
-        return parent;
+        return this.parent;
     }
 
     public long getCreationTime() {
-        return created.getTime();
+        return this.created.getTime();
     }
 
     public int getCountOfUses() {

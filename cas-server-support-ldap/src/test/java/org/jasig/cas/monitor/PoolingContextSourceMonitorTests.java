@@ -46,23 +46,23 @@ public class PoolingContextSourceMonitorTests {
     
     private PoolingContextSourceMonitor monitor;
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Before
     public void setUp() throws Exception {
-        monitor = new PoolingContextSourceMonitor(poolingContextSource);
-        monitor.setExecutor(executor);
+        this.monitor = new PoolingContextSourceMonitor(this.poolingContextSource);
+        this.monitor.setExecutor(this.executor);
     }
 
     @Test
     public void testObserveOK() throws Exception {
-        monitor.setMaxWait(5000);
-        assertEquals(StatusCode.OK, monitor.observe().getCode());
+        this.monitor.setMaxWait(5000);
+        assertEquals(StatusCode.OK, this.monitor.observe().getCode());
     }
 
     @Test
     public void testObserveWarn() throws Exception {
-        monitor.setMaxWait(5);
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
+        this.monitor.setMaxWait(5);
+        assertEquals(StatusCode.WARN, this.monitor.observe().getCode());
     }
 }

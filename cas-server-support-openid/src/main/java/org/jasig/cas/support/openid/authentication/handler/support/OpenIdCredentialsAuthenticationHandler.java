@@ -18,14 +18,22 @@
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.Principal;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-
-import javax.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * Ensures that the OpenId provided matches with the existing
@@ -35,34 +43,44 @@ import javax.validation.constraints.NotNull;
  * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public final class OpenIdCredentialsAuthenticationHandler implements
-    AuthenticationHandler {
+public final class OpenIdCredentialsAuthenticationHandler implements AuthenticationHandler {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private TicketRegistry ticketRegistry;
 
+    private String name;
 
 
-    public boolean authenticate(final Credentials credentials)
-        throws AuthenticationException {
-        final OpenIdCredentials c = (OpenIdCredentials) credentials;
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+        final OpenIdCredential c = (OpenIdCredential) credential;
 
-        boolean result = false;
-        final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry
-                .getTicket(c.getTicketGrantingTicketId(),
-                        TicketGrantingTicket.class);
+        final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry.getTicket(
+                c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
-            result = false;
-        } else {
-            result = t.getAuthentication().getPrincipal().getId().equals(
-                    c.getUsername());
+            throw new CredentialExpiredException();
         }
-        return result;
+        logger.debug("Attempting to authenticate {}", c.getUsername());
+        final Principal ticketPrincipal = t.getAuthentication().getPrincipal();
+        if (ticketPrincipal.getId().equals(c.getUsername())) {
+            return new HandlerResult(this, ticketPrincipal);
+        }
+        throw new FailedLoginException();
     }
 
-    public boolean supports(final Credentials credentials) {
-        return credentials instanceof OpenIdCredentials;
+    public boolean supports(final Credential credential) {
+        return credential instanceof OpenIdCredential;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return StringUtils.hasText(this.name) ? this.name : getClass().getSimpleName();
     }
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {

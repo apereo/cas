@@ -97,7 +97,7 @@ public final class SamlUtils {
         throw new RuntimeException("Error signing SAML Response: Null document");
     }
 
-    public static Document constructDocumentFromXmlString(String xmlString) {
+    public static Document constructDocumentFromXmlString(final String xmlString) {
         try {
             final SAXBuilder builder = new SAXBuilder();
             return builder
@@ -107,8 +107,7 @@ public final class SamlUtils {
         }
     }
 
-    private static Element signSamlElement(Element element, PrivateKey privKey,
-        PublicKey pubKey) {
+    private static Element signSamlElement(final Element element, final PrivateKey privKey, final PublicKey pubKey) {
         try {
             final String providerName = System.getProperty("jsr105Provider",
                 JSR_105_PROVIDER);
@@ -125,7 +124,7 @@ public final class SamlUtils {
                 null, null);
 
             // Create the SignatureMethod based on the type of key
-            SignatureMethod signatureMethod;
+            final SignatureMethod signatureMethod;
             if (pubKey instanceof DSAPublicKey) {
                 signatureMethod = sigFactory.newSignatureMethod(
                     SignatureMethod.DSA_SHA1, null);
@@ -158,17 +157,17 @@ public final class SamlUtils {
             // Convert the JDOM document to w3c (Java XML signature API requires
             // w3c
             // representation)
-            org.w3c.dom.Element w3cElement = toDom(element);
+            final org.w3c.dom.Element w3cElement = toDom(element);
 
             // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
             // location of the resulting XMLSignature's parent element
-            DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
+            final DOMSignContext dsc = new DOMSignContext(privKey, w3cElement);
 
-            org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
+            final org.w3c.dom.Node xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
             dsc.setNextSibling(xmlSigInsertionPoint);
 
             // Marshal, generate (and sign) the enveloped signature
-            XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
+            final XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
                 keyInfo);
             signature.sign(dsc);
 
@@ -180,7 +179,7 @@ public final class SamlUtils {
         }
     }
 
-    private static Node getXmlSignatureInsertLocation(org.w3c.dom.Element elem) {
+    private static Node getXmlSignatureInsertLocation(final org.w3c.dom.Element elem) {
         org.w3c.dom.Node insertLocation = null;
         org.w3c.dom.NodeList nodeList = elem.getElementsByTagNameNS(
             SAML_PROTOCOL_NS_URI_V20, "Extensions");

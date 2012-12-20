@@ -67,7 +67,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(SafeDispatcherServlet.class);
 
     /** The actual DispatcherServlet to which we will delegate to. */
-    private DispatcherServlet delegate = new DispatcherServlet();
+    private final DispatcherServlet delegate = new DispatcherServlet();
 
     /** Boolean to determine if the application deployed successfully. */
     private boolean initSuccess = true;
@@ -100,7 +100,7 @@ public final class SafeDispatcherServlet extends HttpServlet {
             t.printStackTrace();
 
             // log it to the ServletContext
-            ServletContext context = config.getServletContext();
+            final ServletContext context = config.getServletContext();
             context.log(message, t);
 
             /*

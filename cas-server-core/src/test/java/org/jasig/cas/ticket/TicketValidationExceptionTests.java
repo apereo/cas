@@ -19,7 +19,7 @@
 package org.jasig.cas.ticket;
 
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 
 import junit.framework.TestCase;
 
@@ -34,7 +34,7 @@ public class TicketValidationExceptionTests extends TestCase {
 
     private static final String CODE = "INVALID_SERVICE";
     
-    private Service service = TestUtils.getService();
+    private final Service service = TestUtils.getService();
     
     
     public void testThrowableConstructor() {

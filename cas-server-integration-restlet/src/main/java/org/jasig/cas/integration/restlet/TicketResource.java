@@ -23,8 +23,8 @@ import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.ticket.TicketException;
 import org.restlet.Request;
 import org.restlet.data.Form;
@@ -63,7 +63,7 @@ public class TicketResource extends ServerResource {
     @Post
     public final void acceptRepresentation(final Representation entity)  {
         log.debug("Obtaining credentials...");
-        final Credentials c = obtainCredentials();
+        final Credential c = obtainCredentials();
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
@@ -87,8 +87,8 @@ public class TicketResource extends ServerResource {
         return Status.SUCCESS_CREATED;
     }
     
-    protected Credentials obtainCredentials() {
-        final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
+    protected Credential obtainCredentials() {
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
         final RestletWebRequest webRequest = new RestletWebRequest(getRequest());
         
@@ -127,11 +127,11 @@ public class TicketResource extends ServerResource {
             this.request = request;
         }
 
-        public boolean checkNotModified(String s) {
+        public boolean checkNotModified(final String s) {
             return false;
         }
 
-        public boolean checkNotModified(long lastModifiedTimestamp) {
+        public boolean checkNotModified(final long lastModifiedTimestamp) {
             return false;
         }
 
@@ -139,7 +139,7 @@ public class TicketResource extends ServerResource {
             return this.request.getResourceRef().getPath();
         }
 
-        public String getDescription(boolean includeClientInfo) {
+        public String getDescription(final boolean includeClientInfo) {
             return null;
         }
 
@@ -147,7 +147,7 @@ public class TicketResource extends ServerResource {
             return LocaleContextHolder.getLocale();
         }
 
-        public String getParameter(String paramName) {
+        public String getParameter(final String paramName) {
             return this.form.getFirstValue(paramName);
         }
 
@@ -161,7 +161,7 @@ public class TicketResource extends ServerResource {
             return conversion;
         }
 
-        public String[] getParameterValues(String paramName) {
+        public String[] getParameterValues(final String paramName) {
             return this.form.getValuesArray(paramName);
         }
 
@@ -177,15 +177,15 @@ public class TicketResource extends ServerResource {
             return this.request.isConfidential();
         }
 
-        public boolean isUserInRole(String role) {
+        public boolean isUserInRole(final String role) {
             return false;
         }
 
-        public Object getAttribute(String name, int scope) {
+        public Object getAttribute(final String name, final int scope) {
             return null;
         }
 
-        public String[] getAttributeNames(int scope) {
+        public String[] getAttributeNames(final int scope) {
             return null;
         }
 
@@ -197,16 +197,16 @@ public class TicketResource extends ServerResource {
             return null;
         }
 
-        public void registerDestructionCallback(String name, Runnable callback,
-            int scope) {
+        public void registerDestructionCallback(final String name, final Runnable callback,
+            final int scope) {
             // nothing to do
         }
 
-        public void removeAttribute(String name, int scope) {
+        public void removeAttribute(final String name, final int scope) {
             // nothing to do
         }
 
-        public void setAttribute(String name, Object value, int scope) {
+        public void setAttribute(final String name, final Object value, final int scope) {
             // nothing to do
         }
 
@@ -214,7 +214,7 @@ public class TicketResource extends ServerResource {
             return null;
         }
 
-        public String[] getHeaderValues(String s) {
+        public String[] getHeaderValues(final String s) {
             return new String[0];
         }
 
@@ -226,7 +226,7 @@ public class TicketResource extends ServerResource {
             return null;
         }
 
-        public Object resolveReference(String s) {
+        public Object resolveReference(final String s) {
             return null;
         }
     }

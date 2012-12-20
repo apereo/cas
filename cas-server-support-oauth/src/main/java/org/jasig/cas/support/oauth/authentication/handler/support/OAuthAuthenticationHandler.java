@@ -18,15 +18,19 @@
  */
 package org.jasig.cas.support.oauth.authentication.handler.support;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
+import org.jasig.cas.support.oauth.authentication.principal.OAuthCredential;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
 
@@ -42,13 +46,13 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     private OAuthConfiguration configuration;
     
     @Override
-    public boolean supports(final Credentials credentials) {
-        return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
+    public boolean supports(final Credential credential) {
+        return credential != null && (OAuthCredential.class.isAssignableFrom(credential.getClass()));
     }
     
     @Override
-    protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
-        final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, IOException {
+        final OAuthCredential oauthCredentials = (OAuthCredential) credential;
         log.debug("credential : {}", oauthCredentials);
         
         final String providerType = oauthCredentials.getCredential().getProviderType();
@@ -64,10 +68,10 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
             oauthCredentials.setUserProfile(userProfile);
-            return true;
-        } else {
-            return false;
+            return new HandlerResult(this, new SimplePrincipal(userProfile.getId()));
         }
+        log.info("Failed to authenticate {}", userProfile);
+        throw new FailedLoginException();
     }
     
     public void setConfiguration(final OAuthConfiguration configuration) {

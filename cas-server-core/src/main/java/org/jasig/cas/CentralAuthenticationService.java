@@ -18,8 +18,8 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 
@@ -47,14 +47,14 @@ import org.jasig.cas.validation.Assertion;
 public interface CentralAuthenticationService {
 
     /**
-     * Create a TicketGrantingTicket based on opaque credentials supplied by the
+     * Create a TicketGrantingTicket based on opaque credential supplied by the
      * caller.
      * 
-     * @param credentials The credentials to create the ticket for
+     * @param credentials One or more credentials to authenticate.
      * @return The String identifier of the ticket (may not be null).
      * @throws TicketException if ticket cannot be created
      */
-    String createTicketGrantingTicket(Credentials credentials)
+    String createTicketGrantingTicket(Credential ... credentials)
         throws TicketException;
 
     /**
@@ -70,19 +70,18 @@ public interface CentralAuthenticationService {
 
     /**
      * Grant a ServiceTicket for a Service *if* the principal resolved from the
-     * credentials matches the principal associated with the
+     * credential matches the principal associated with the
      * TicketGrantingTicket.
      * 
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
-     * @param credentials the Credentials to present to receive the
-     * ServiceTicket
+     * @param credentials One or more credentials to authenticate.
      * @return the ServiceTicket for target Service.
      * @throws TicketException if the ticket could not be created.
      */
-    String grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service, final Credentials credentials)
-        throws TicketException;
+    String grantServiceTicket(
+            final String ticketGrantingTicketId, final Service service, final Credential ... credentials)
+            throws TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -92,8 +91,7 @@ public interface CentralAuthenticationService {
      * @return ServiceTicket if valid for the service
      * @throws TicketException if there was an error validating the ticket.
      */
-    Assertion validateServiceTicket(final String serviceTicketId,
-        final Service service) throws TicketException;
+    Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException;
 
     /**
      * Destroy a TicketGrantingTicket. This has the effect of invalidating any
@@ -109,12 +107,12 @@ public interface CentralAuthenticationService {
      * 
      * @param serviceTicketId The service ticket that will delegate to a
      * TicketGrantingTicket
-     * @param credentials The credentials of the service that wishes to have a
-     * TicketGrantingTicket delegated to it.
+     * @param credentials One or more credentials to authenticate.
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy
      * authentication.
      * @throws TicketException if there was an error creating the ticket
      */
-    String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials credentials) throws TicketException;
+    String delegateTicketGrantingTicket(
+            final String serviceTicketId, final Credential ... credentials)
+            throws TicketException;
 }

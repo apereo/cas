@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.services.web;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -61,7 +61,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
         final RegisteredService rService = this.servicesManager.findServiceBy(service);
 
         // retrieve the user agent string from the request
-        String userAgent = request.getHeader("User-Agent");
+        final String userAgent = request.getHeader("User-Agent");
 
         if (userAgent == null) {
             return getDefaultThemeName();

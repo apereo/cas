@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.web.bind.CredentialsBinder;
 import org.junit.Before;
 import org.junit.Test;
@@ -237,14 +237,14 @@ public class AuthenticationViaFormActionTests extends
 
         final CredentialsBinder cb = new CredentialsBinder(){
 
-            public void bind(HttpServletRequest request, Credentials credentials) {
-                ((UsernamePasswordCredentials) credentials)
+            public void bind(final HttpServletRequest request, final Credential credentials) {
+                ((UsernamePasswordCredential) credentials)
                     .setUsername("test2");
-                ((UsernamePasswordCredentials) credentials)
+                ((UsernamePasswordCredential) credentials)
                     .setPassword("test2");
             }
 
-            public boolean supports(Class<?> clazz) {
+            public boolean supports(final Class<?> clazz) {
                 return true;
             }
 
@@ -254,7 +254,7 @@ public class AuthenticationViaFormActionTests extends
 
  //       assertEquals(
  //           "test2",
- //           ((UsernamePasswordCredentials) context
+ //           ((UsernamePasswordCredential) context
  //               .getFlowScope().get(
  //                   "credentials")).getUsername());
 
@@ -265,7 +265,7 @@ public class AuthenticationViaFormActionTests extends
         final CredentialsBinder c = new CredentialsBinder(){
 
             public void bind(final HttpServletRequest request,
-                final Credentials credentials) {
+                final Credential credentials) {
                 // nothing to do here
             }
 

@@ -29,8 +29,8 @@ import junit.framework.TestCase;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.authentication.SamlAuthenticationMetaDataPopulator;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.support.SamlAuthenticationMetaDataPopulator;
+import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -64,7 +64,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         attributes.put("testAttributeCollection", Arrays.asList(new String[] {"tac1", "tac2"}));
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
         
-        final MutableAuthentication authentication = new MutableAuthentication(principal);
+        final MutableAuthentication authentication = TestUtils.newMutableAuthentication(principal);
         authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD, SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authentication.getAttributes().put("testSamlAttribute", "value");
         
@@ -97,7 +97,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal");
         
-        final MutableAuthentication authentication = new MutableAuthentication(principal);
+        final MutableAuthentication authentication = TestUtils.newMutableAuthentication(principal);
         authentication.getAttributes().put(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD, SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authentication.getAttributes().put("testSamlAttribute", "value");
         
@@ -125,7 +125,7 @@ public class Saml10SuccessResponseViewTests extends TestCase {
         attributes.put("testAttribute", "testValue");
         final SimplePrincipal principal = new SimplePrincipal("testPrincipal", attributes);
         
-        final MutableAuthentication authentication = new MutableAuthentication(principal);
+        final MutableAuthentication authentication = TestUtils.newMutableAuthentication(principal);
         final List<Authentication> authentications = new ArrayList<Authentication>();
         authentications.add(authentication);
         

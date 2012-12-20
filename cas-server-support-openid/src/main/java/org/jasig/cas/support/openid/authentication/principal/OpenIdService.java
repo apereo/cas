@@ -24,8 +24,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
-import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.authentication.service.AbstractWebApplicationService;
+import org.jasig.cas.authentication.service.Response;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.openid4java.association.Association;
@@ -53,7 +53,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
     private static final String CONST_PARAM_SERVICE = "openid.return_to";
 
-    private String identity;
+    private final String identity;
 
     private final String artifactId;
 
@@ -82,17 +82,17 @@ public final class OpenIdService extends AbstractWebApplicationService {
         final Map<String, String> parameters = new HashMap<String, String>();
         if (ticketId != null) {
 
-            ServerManager manager = (ServerManager)ApplicationContextProvider.getApplicationContext().getBean("serverManager");
-            CentralAuthenticationService cas = (CentralAuthenticationService)ApplicationContextProvider.getApplicationContext().getBean("centralAuthenticationService");
+            final ServerManager manager = (ServerManager)ApplicationContextProvider.getApplicationContext().getBean("serverManager");
+            final CentralAuthenticationService cas = (CentralAuthenticationService)ApplicationContextProvider.getApplicationContext().getBean("centralAuthenticationService");
             boolean associated = false;
             boolean associationValid = true;
             try {
-                AuthRequest authReq = AuthRequest.createAuthRequest(requestParameters, manager.getRealmVerifier());
-                Map parameterMap = authReq.getParameterMap();
+                final AuthRequest authReq = AuthRequest.createAuthRequest(this.requestParameters, manager.getRealmVerifier());
+                final Map parameterMap = authReq.getParameterMap();
                 if (parameterMap != null && parameterMap.size() > 0) {
-                    String assocHandle = (String)parameterMap.get("openid.assoc_handle");
+                    final String assocHandle = (String)parameterMap.get("openid.assoc_handle");
                     if (assocHandle != null) {
-                        Association association = manager.getSharedAssociations().load(assocHandle);
+                        final Association association = manager.getSharedAssociations().load(assocHandle);
                         if (association != null) {
                             associated = true;
                             if (association.hasExpired()) {
@@ -123,7 +123,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
             // We sign directly (final 'true') because we don't add extensions
             // response message can be either a DirectError or an AuthSuccess here. Anyway, handling is the same : send the response message
-            Message response = manager.authResponse(requestParameters,
+            final Message response = manager.authResponse(this.requestParameters,
                     this.identity,
                     this.identity,
                     successFullAuthentication,
@@ -154,7 +154,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
         final String id = cleanupUrl(service);
         final String artifactId = request.getParameter("openid.assoc_handle");
-        ParameterList paramList = new ParameterList(request.getParameterMap());
+        final ParameterList paramList = new ParameterList(request.getParameterMap());
 
         return new OpenIdService(id, service, artifactId, openIdIdentity,
             signature, paramList);

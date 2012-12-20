@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.service.Service;
 
 /**
  * Exception to alert that there was an error validating the ticket.

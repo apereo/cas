@@ -19,6 +19,8 @@
 package org.jasig.cas.services.web.support;
 
 import java.util.Set;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.services.RegisteredService;
@@ -26,9 +28,6 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  * RegisteredServiceValidator ensures that a new RegisteredService does not have
@@ -89,7 +88,7 @@ public final class RegisteredServiceValidator implements Validator {
                 errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
                         "This attribute is not available for this service.");
             } else {
-                Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
+                final Set<String> availableAttributes = this.personAttributeDao.getPossibleUserAttributeNames();
                 if (availableAttributes != null) {
                     if (!availableAttributes.contains(r.getUsernameAttribute())) {
                         errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
@@ -108,7 +107,7 @@ public final class RegisteredServiceValidator implements Validator {
         this.maxDescriptionLength = maxLength;
     }
     
-    public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
+    public void setPersonAttributeDao(final IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
     }
 }

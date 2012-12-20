@@ -45,10 +45,10 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
     private AbstractController profileController;
     
     public void afterPropertiesSet() throws Exception {
-        authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
-        callbackAuthorizeController = new OAuth20CallbackAuthorizeController();
-        accessTokenController = new OAuth20AccessTokenController(servicesManager, ticketRegistry, timeout);
-        profileController = new OAuth20ProfileController(ticketRegistry);
+        this.authorizeController = new OAuth20AuthorizeController(this.servicesManager, this.loginUrl);
+        this.callbackAuthorizeController = new OAuth20CallbackAuthorizeController();
+        this.accessTokenController = new OAuth20AccessTokenController(this.servicesManager, this.ticketRegistry, this.timeout);
+        this.profileController = new OAuth20ProfileController(this.ticketRegistry);
     }
     
     @Override
@@ -58,25 +58,25 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
         // authorize
         if (OAuthConstants.AUTHORIZE_URL.equals(method)) {
             
-            return authorizeController.handleRequest(request, response);
+            return this.authorizeController.handleRequest(request, response);
         }
         
         // callback on authorize
         else if (OAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
             
-            return callbackAuthorizeController.handleRequest(request, response);
+            return this.callbackAuthorizeController.handleRequest(request, response);
         }
         
         // get access token
         else if (OAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
             
-            return accessTokenController.handleRequest(request, response);
+            return this.accessTokenController.handleRequest(request, response);
         }
         
         // get profile
         else if (OAuthConstants.PROFILE_URL.equals(method)) {
             
-            return profileController.handleRequest(request, response);
+            return this.profileController.handleRequest(request, response);
         }
         
         // else error
