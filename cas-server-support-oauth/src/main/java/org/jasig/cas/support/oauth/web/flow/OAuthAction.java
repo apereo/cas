@@ -68,7 +68,6 @@ public final class OAuthAction extends AbstractAction {
                        final ProvidersDefinition providersDefinition) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.providersDefinition = providersDefinition;
-        this.providersDefinition.init();
     }
     
     @Override
