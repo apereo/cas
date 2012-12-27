@@ -77,6 +77,7 @@ public final class OAuthActionTests {
         providers.add(facebookProvider);
         providers.add(twitterProvider);
         providersDefinition.setProviders(providers);
+        providersDefinition.init();
         return providersDefinition;
     }
     
