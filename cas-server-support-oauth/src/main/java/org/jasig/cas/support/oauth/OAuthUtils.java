@@ -20,12 +20,10 @@ package org.jasig.cas.support.oauth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.scribe.up.provider.OAuthProvider;
 import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,21 +118,5 @@ public final class OAuthUtils {
             sb.append(OAuthEncoder.encode(value));
         }
         return sb.toString();
-    }
-    
-    /**
-     * Return the provider for the given type or null if no provider was found.
-     * 
-     * @param providers
-     * @param type
-     * @return the provider for the given type or null if no provider was found
-     */
-    public static OAuthProvider getProviderByType(final List<OAuthProvider> providers, final String type) {
-        for (final OAuthProvider provider : providers) {
-            if (provider != null && type.equals(provider.getType())) {
-                return provider;
-            }
-        }
-        return null;
     }
 }
