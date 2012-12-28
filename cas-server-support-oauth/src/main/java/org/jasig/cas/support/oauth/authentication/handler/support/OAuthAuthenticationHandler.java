@@ -24,11 +24,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
-import org.jasig.cas.support.oauth.OAuthConfiguration;
-import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
 import org.scribe.up.profile.UserProfile;
 import org.scribe.up.provider.OAuthProvider;
+import org.scribe.up.provider.ProvidersDefinition;
 
 /**
  * This handler authenticates OAuth credentials : it uses them to get the user profile returned by the provider for an authenticated user.
@@ -39,7 +38,11 @@ import org.scribe.up.provider.OAuthProvider;
 public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     
     @NotNull
-    private OAuthConfiguration configuration;
+    private final ProvidersDefinition providersDefinition;
+    
+    public OAuthAuthenticationHandler(final ProvidersDefinition providersDefinition) {
+        this.providersDefinition = providersDefinition;
+    }
     
     @Override
     public boolean supports(final Credentials credentials) {
@@ -55,7 +58,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         log.debug("providerType : {}", providerType);
         
         // get provider
-        final OAuthProvider provider = OAuthUtils.getProviderByType(this.configuration.getProviders(), providerType);
+        final OAuthProvider provider = this.providersDefinition.findProvider(providerType);
         log.debug("provider : {}", provider);
         
         // get user profile
@@ -68,9 +71,5 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
         } else {
             return false;
         }
-    }
-    
-    public void setConfiguration(final OAuthConfiguration configuration) {
-        this.configuration = configuration;
     }
 }

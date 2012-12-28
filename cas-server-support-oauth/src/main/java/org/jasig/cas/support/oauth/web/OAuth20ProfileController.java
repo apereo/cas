@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.profile.CasWrapperProfile;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
@@ -47,6 +46,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 public final class OAuth20ProfileController extends AbstractController {
     
     private static Logger log = LoggerFactory.getLogger(OAuth20ProfileController.class);
+    
+    private static final String ID = "id";
+    
+    private static final String ATTRIBUTES = "attributes";
     
     private final TicketRegistry ticketRegistry;
     
@@ -92,8 +95,8 @@ public final class OAuth20ProfileController extends AbstractController {
         // generate profile : identifier + attributes
         final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeStringField(CasWrapperProfile.ID, principal.getId());
-        jsonGenerator.writeArrayFieldStart(CasWrapperProfile.ATTRIBUTES);
+        jsonGenerator.writeStringField(ID, principal.getId());
+        jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
         final Map<String, Object> attributes = principal.getAttributes();
         for (final String key : attributes.keySet()) {
             jsonGenerator.writeStartObject();
