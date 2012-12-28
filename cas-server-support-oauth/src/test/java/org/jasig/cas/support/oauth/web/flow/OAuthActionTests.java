@@ -29,10 +29,10 @@ import java.util.List;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.junit.Test;
 import org.scribe.up.provider.OAuthProvider;
+import org.scribe.up.provider.ProvidersDefinition;
 import org.scribe.up.provider.impl.FacebookProvider;
 import org.scribe.up.provider.impl.TwitterProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -64,20 +64,21 @@ public final class OAuthActionTests {
     
     private final static String MY_METHOD = "POST";
     
-    private OAuthConfiguration newConfiguration() {
+    private ProvidersDefinition newProvidersDefinition() {
         final FacebookProvider facebookProvider = new FacebookProvider();
         facebookProvider.setKey(MY_KEY);
         facebookProvider.setSecret(MY_SECRET);
         final TwitterProvider twitterProvider = new TwitterProvider();
         twitterProvider.setKey(MY_KEY);
         twitterProvider.setSecret(MY_SECRET);
-        final OAuthConfiguration oAuthConfiguration = new OAuthConfiguration();
-        oAuthConfiguration.setLoginUrl(MY_LOGIN_URL);
+        final ProvidersDefinition providersDefinition = new ProvidersDefinition();
+        providersDefinition.setBaseUrl(MY_LOGIN_URL);
         final List<OAuthProvider> providers = new ArrayList<OAuthProvider>();
         providers.add(facebookProvider);
         providers.add(twitterProvider);
-        oAuthConfiguration.setProviders(providers);
-        return oAuthConfiguration;
+        providersDefinition.setProviders(providers);
+        providersDefinition.init();
+        return providersDefinition;
     }
     
     @Test
@@ -97,8 +98,8 @@ public final class OAuthActionTests {
         mockRequestContext.setExternalContext(servletExternalContext);
         mockRequestContext.getFlowScope().put(OAuthConstants.SERVICE, new SimpleWebApplicationServiceImpl(MY_SERVICE));
         
-        final OAuthAction oAuthAction = new OAuthAction();
-        oAuthAction.setConfiguration(newConfiguration());
+        final OAuthAction oAuthAction = new OAuthAction(mock(CentralAuthenticationService.class),
+                                                        newProvidersDefinition());
         final Event event = oAuthAction.execute(mockRequestContext);
         assertEquals("error", event.getId());
         assertEquals(MY_THEME, mockSession.getAttribute(OAuthConstants.THEME));
@@ -106,14 +107,16 @@ public final class OAuthActionTests {
         assertEquals(MY_METHOD, mockSession.getAttribute(OAuthConstants.METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         assertTrue(((String) flowScope.get("FacebookProviderUrl"))
-            .startsWith("https://www.facebook.com/dialog/oauth?client_id=my_key&redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3Foauth_provider%3DFacebookProvider&state="));
-        assertEquals("/oauth10login?oauth_provider=TwitterProvider", flowScope.get("TwitterProviderUrl"));
+            .startsWith("https://www.facebook.com/dialog/oauth?client_id=my_key&redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"
+                        + ProvidersDefinition.DEFAULT_PROVIDER_TYPE_PARAMETER + "%3DFacebookProvider&state="));
+        assertEquals("/oauth10login?" + ProvidersDefinition.DEFAULT_PROVIDER_TYPE_PARAMETER + "=TwitterProvider",
+                     flowScope.get("TwitterProviderUrl"));
     }
     
     @Test
     public void testFinishAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setParameter(OAuthConstants.OAUTH_PROVIDER, "FacebookProvider");
+        mockRequest.setParameter(ProvidersDefinition.DEFAULT_PROVIDER_TYPE_PARAMETER, "FacebookProvider");
         
         final MockHttpSession mockSession = new MockHttpSession();
         mockSession.setAttribute(OAuthConstants.THEME, MY_THEME);
@@ -129,11 +132,8 @@ public final class OAuthActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
         
-        final CentralAuthenticationService centralAuthenticationService = mock(CentralAuthenticationService.class);
-        
-        final OAuthAction oAuthAction = new OAuthAction();
-        oAuthAction.setConfiguration(newConfiguration());
-        oAuthAction.setCentralAuthenticationService(centralAuthenticationService);
+        final OAuthAction oAuthAction = new OAuthAction(mock(CentralAuthenticationService.class),
+                                                        newProvidersDefinition());
         final Event event = oAuthAction.execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(OAuthConstants.THEME));
