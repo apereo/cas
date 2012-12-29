@@ -33,6 +33,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -45,7 +49,6 @@ import org.springframework.util.Assert;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class HttpClient implements Serializable, DisposableBean {
@@ -77,6 +80,19 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     private boolean followRedirects = true;
 
+    /**
+     * The socket factory to be used when verifying the validity of the endpoint.
+     * 
+     * @see #setSSLSocketFactory(SSLSocketFactory)
+     */
+    private SSLSocketFactory sslSocketFactory = null;
+    
+    /**
+     * The hostname verifier to be used when verifying the validity of the endpoint.
+     * 
+     * @see #setHostnameVerifier(HostnameVerifier)
+     */
+    private HostnameVerifier hostnameVerifier = null;
 
     /**
      * Note that changing this executor will affect all httpClients.  While not ideal, this change was made because certain ticket registries
@@ -130,6 +146,18 @@ public final class HttpClient implements Serializable, DisposableBean {
             connection.setConnectTimeout(this.connectionTimeout);
             connection.setReadTimeout(this.readTimeout);
             connection.setInstanceFollowRedirects(this.followRedirects);
+            
+            if (connection instanceof HttpsURLConnection) {
+                final HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
+                
+                if (this.sslSocketFactory != null) {
+                    httpsConnection.setSSLSocketFactory(this.sslSocketFactory);
+                }
+                
+                if (this.hostnameVerifier != null) {
+                    httpsConnection.setHostnameVerifier(this.hostnameVerifier);
+                }
+            }
 
             connection.connect();
 
@@ -137,22 +165,18 @@ public final class HttpClient implements Serializable, DisposableBean {
 
             for (final int acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Response code from server matched " + responseCode + ".");
-                    }
+                    log.debug("Response code from server matched {}.", responseCode);
                     return true;
                 }
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Response Code did not match any of the acceptable response codes.  Code returned was " + responseCode);
-            }
+            log.debug("Response Code did not match any of the acceptable response codes. Code returned was {}", responseCode);
 
             // if the response code is an error and we don't find that error acceptable above:
             if (responseCode == 500) {
                 is = connection.getInputStream();
                 final String value = IOUtils.toString(is);
-                log.error(String.format("There was an error contacting the endpoint: %s; The error was:\n%s", url.toExternalForm(), value));
+                log.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(), value);
             }
         } catch (final IOException e) {
             log.error(e.getMessage(),e);
@@ -192,6 +216,26 @@ public final class HttpClient implements Serializable, DisposableBean {
         this.followRedirects = follow;
     }
 
+    /**
+     * Set the SSL socket factory be used by the URL when submitting 
+     * request to check for URL endpoint validity
+     * @param factory
+     * @see #isValidEndPoint(URL)
+     */
+    public void setSSLSocketFactory(final SSLSocketFactory factory) {
+        this.sslSocketFactory = factory;
+    }
+    
+    /**
+     * Set the hostname verifier be used by the URL when submitting 
+     * request to check for URL endpoint validity
+     * @param verifier
+     * @see #isValidEndPoint(URL)
+     */
+    public void setHostnameVerifier(final HostnameVerifier verifier) {
+        this.hostnameVerifier = verifier;
+    }
+    
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
     }
