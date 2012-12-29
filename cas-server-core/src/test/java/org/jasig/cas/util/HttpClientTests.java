@@ -18,30 +18,76 @@
  */
 package org.jasig.cas.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.junit.Test;
 
 /**
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
- *
  */
-public class HttpClientTests extends TestCase {
+public class HttpClientTests  {
 
-    private HttpClient httpClient;
-
-    protected void setUp() throws Exception {
-        this.httpClient = new HttpClient();
-        this.httpClient.setConnectionTimeout(1000);
-        this.httpClient.setReadTimeout(1000);
+    private HttpClient getHttpClient() {
+        final HttpClient httpClient = new HttpClient();
+        httpClient.setConnectionTimeout(1000);
+        httpClient.setReadTimeout(1000);
+        return httpClient;
     }
     
+    @Test
     public void testOkayUrl() {
-        assertTrue(this.httpClient.isValidEndPoint("http://www.jasig.org"));
+        assertTrue(this.getHttpClient().isValidEndPoint("http://www.jasig.org"));
     }
     
+    @Test
     public void testBadUrl() {
-        assertFalse(this.httpClient.isValidEndPoint("http://www.jasig.org/scottb.html"));
+        assertFalse(this.getHttpClient().isValidEndPoint("http://www.jasig.org/scottb.html"));
+    }
+    
+    @Test
+    public void testInvalidHttpsUrl() {
+        final HttpClient client = this.getHttpClient();
+        assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
+    }
+    
+    @Test
+    public void testBypassedInvalidHttpsUrl() throws Exception {
+        final HttpClient client = this.getHttpClient();
+        client.setSSLSocketFactory(this.getFriendlyToAllSSLSocketFactory());
+        client.setHostnameVerifier(this.getFriendlyToAllHostnameVerifier());
+        client.setAcceptableCodes(new int[] {200, 403});
+        assertTrue(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
+    }
+
+    private HostnameVerifier getFriendlyToAllHostnameVerifier() {
+        final HostnameVerifier hv = new HostnameVerifier() {
+            @Override
+            public boolean verify(final String hostname, final SSLSession session) { return true; }
+        };
+        return hv;
+    }
+    
+    private SSLSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
+        final TrustManager trm = new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() { return null; }
+            public void checkClientTrusted(final X509Certificate[] certs, final String authType) {}
+            public void checkServerTrusted(final X509Certificate[] certs, final String authType) {}
+        };
+        
+        final SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, new TrustManager[] { trm }, null);
+        return sc.getSocketFactory();
+        
     }
 }
