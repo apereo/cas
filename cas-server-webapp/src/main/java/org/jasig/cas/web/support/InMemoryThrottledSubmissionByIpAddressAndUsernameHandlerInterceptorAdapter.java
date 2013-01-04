@@ -35,9 +35,9 @@ public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInter
         final String username = request.getParameter(getUsernameParameter());
 
         if (username == null) {
-            return request.getRemoteAddr();
+            return getRemoteAddr(request);
         }
 
-        return request.getRemoteAddr() + ";" + username.toLowerCase();
+        return getRemoteAddr(request) + ";" + username.toLowerCase();
     }
 }

@@ -40,6 +40,11 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
     private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<String, Date>();
+	private String IPAddressParam;
+	
+	public void setIPAddressParam(String IPAddressParam) {
+		this.IPAddressParam = IPAddressParam;
+	}
 
     @Override
     protected final boolean exceedsThreshold(final HttpServletRequest request) {
@@ -75,6 +80,22 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         }
         log.debug("Done decrementing count for throttler.");
     }
+	
+	/**
+     * Gets the IP address of a request, using either the standard getRemoteAddr() or
+	 * if IPAddressParam is non-null use getHeader(IPAddressParam)
+     *
+     * @param request The HttpServletRequest
+	 
+     * @return The value of either getRemoteAddr() or the configured header value. If the header vaule is null returns getRemoteAddr
+	 *		   to avoid the possibility of returning null
+     */
+	protected String getRemoteAddr(final HttpServletRequest request) {
+		if(IPAddressParam==null) 
+			return request.getRemoteAddr();
+		else 
+			return (request.getHeader(IPAddressParam)!=null) ? request.getHeader(IPAddressParam):request.getRemoteAddr();					
+	}
 
     /**
      * Computes the instantaneous rate in between two given dates corresponding to two submissions.
