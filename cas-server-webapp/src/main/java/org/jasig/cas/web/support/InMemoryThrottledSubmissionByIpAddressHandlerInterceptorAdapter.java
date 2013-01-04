@@ -32,6 +32,6 @@ public final class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapt
 
     @Override
     protected String constructKey(final HttpServletRequest request) {
-        return request.getRemoteAddr();
+        return getRemoteAddr(request);
     }
 }
