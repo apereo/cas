@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
+import com.github.inspektr.common.web.ClientInfoHolder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
