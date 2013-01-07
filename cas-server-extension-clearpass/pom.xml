@@ -38,7 +38,6 @@
 
 	<build>
 		<plugins>
-			
 			<!-- 
 			<plugin>
 				<groupId>com.atlassian.maven.plugins</groupId>
@@ -78,14 +77,14 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
 			<version>${project.version}</version>
-            <scope>compile</scope>
+      <scope>compile</scope>
 		</dependency>
 		
 		<dependency>
-	      <groupId>net.sf.ehcache</groupId>
-	      <artifactId>ehcache-core</artifactId>
-          <scope>compile</scope>
-	    </dependency>  
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
+      <scope>compile</scope>
+	  </dependency>  
     
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
@@ -102,7 +101,4 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-
-
 </project>
-
