@@ -34,12 +34,10 @@
 	<properties>
 		<ehcache.version>2.6.0</ehcache.version>
 		<cas.client.version>3.2.1</cas.client.version>
-		<uportal.version>3.2.4</uportal.version>
 	</properties>
 
 	<build>
 		<plugins>
-			
 			<!-- 
 			<plugin>
 				<groupId>com.atlassian.maven.plugins</groupId>
@@ -79,12 +77,14 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
 			<version>${project.version}</version>
+      <scope>compile</scope>
 		</dependency>
 		
 		<dependency>
-	      <groupId>net.sf.ehcache</groupId>
-	      <artifactId>ehcache-core</artifactId>
-	    </dependency>  
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-core</artifactId>
+      <scope>compile</scope>
+	  </dependency>  
     
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
@@ -100,28 +100,5 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.jasig.portal</groupId>
-			<artifactId>uportal-impl</artifactId>
-			<version>${uportal.version}</version>
-			<scope>provided</scope>
-			<type>jar</type>
-
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-annotations</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-jcl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
-
-
 </project>
-
