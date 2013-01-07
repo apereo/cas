@@ -18,9 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 /**
  * Authentication managers employ various strategies to authenticate one or more credentials.
  *
@@ -39,14 +36,14 @@ public interface AuthenticationManager {
      * succeed. The credential must be resolved into a principal by some means as part of authentication. Implementers
      * SHOULD treat failure to resolve a principal as an authentication failure.
      *
+     *
      * @param credentials One or more credentials to authenticate.
      *
      * @return An authentication containing a resolved principal on success.
      *
-     * @throws GeneralSecurityException On authentication failures where the root cause is security related,
-     * e.g. invalid credentials.
-     * @throws IOException On authentication failures caused by IO errors (e.g. socket errors communicating with remote
-     * authentication sources).
+     * @throws AuthenticationException When one or more credentials failed to validate such that security policy
+     * was not satisfied.
+     * @throws PrincipalException When there is a problem resolving a principal on successful authentication.
      */
-    Authentication authenticate(final Credential ... credentials) throws GeneralSecurityException, IOException;
+    Authentication authenticate(final Credential ... credentials) throws AuthenticationException, PrincipalException;
 }

@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
@@ -53,7 +52,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     private String includePattern = null;
 
     protected final HandlerResult doAuthentication(final Credential credential)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
 
         final SpnegoCredential ntlmCredentials = (SpnegoCredential) credential;
         final byte[] src = ntlmCredentials.getInitToken();

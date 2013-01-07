@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.util.regex.Pattern;
@@ -54,7 +53,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
      */
     private boolean isNTLMallowed = false;
 
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, IOException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final Principal principal;
         final byte[] nextToken;

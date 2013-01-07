@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Authentication manager that employs a simple "allow any" strategy to authenticate a set of credentials.
- * The {@link #authenticate(Credential...)} method returns immediately upon the
+ * The {@link AuthenticationManager#authenticate(Credential...)} method returns immediately upon the
  * first credential that is successfully authenticated by any of the configured {@link AuthenticationHandler}s.
  * Credentials are evaluated in the order given against each of the configured handlers. Only handlers for which
  * {@link AuthenticationHandler#supports(Credential)} returns true attempt to
@@ -60,9 +61,10 @@ public class AnyAuthenticationManger extends AbstractAuthenticationManager {
 
     @Override
     protected boolean isSatisfied(
-            final List<Credential> credentials,
-            final List<Credential> authenticated,
+            final Collection<Credential> credentials,
+            final Map<Credential, HandlerResult> successes,
+            final Map<Credential, HandlerError> failures,
             final Authentication authentication) {
-        return authentication.getSuccesses().size() > 0;
+        return successes.size() > 0;
     }
 }

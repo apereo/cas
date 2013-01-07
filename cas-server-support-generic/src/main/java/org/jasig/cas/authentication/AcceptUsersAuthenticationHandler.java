@@ -18,17 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.Map;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.authentication.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.SimplePrincipal;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -54,7 +48,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     private Map<String, String> users;
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String cachedPassword = this.users.get(transformedUsername);
 

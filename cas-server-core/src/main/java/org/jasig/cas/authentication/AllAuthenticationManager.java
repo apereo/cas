@@ -18,12 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Authentication manager that employs a simple "allow all" strategy to authenticate a set of credentials.
- * The {@link #authenticate(Credential...)} succeeds if and only if all given
+ * The {@link AuthenticationManager#authenticate(Credential...)} succeeds if and only if all given
  * credentials are authenticated.
  *
  * @author Marvin S. Addison
@@ -56,9 +57,10 @@ public class AllAuthenticationManager extends AbstractAuthenticationManager {
 
     @Override
     protected boolean isSatisfied(
-            final List<Credential> credentials,
-            final List<Credential> authenticated,
+            final Collection<Credential> credentials,
+            final Map<Credential, HandlerResult> successes,
+            final Map<Credential, HandlerError> failures,
             final Authentication authentication) {
-        return credentials.size() == authentication.getSuccesses().size();
+        return credentials.size() == successes.size();
     }
 }

@@ -54,7 +54,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private Resource fileName;
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
 
         BufferedReader bufferedReader = null;
         try {
@@ -74,6 +74,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 }
                 line = bufferedReader.readLine();
             }
+        } catch (final IOException e) {
+            throw new PreventedException(e);
         } finally {
             try {
                 if (bufferedReader != null) {

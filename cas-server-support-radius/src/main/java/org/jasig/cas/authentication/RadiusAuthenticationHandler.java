@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import javax.security.auth.login.FailedLoginException;
@@ -54,7 +53,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     private boolean failoverOnAuthenticationFailure;
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
 
         for (final RadiusServer radiusServer : this.servers) {
             try {
@@ -68,7 +67,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             } catch (Exception e) {
                 log.debug("Authenticating {} failed with error {}", credential.getUsername(), e);
                 if (!this.failoverOnException) {
-                    throw new IOException("RADIUS authentication failed with error " + e);
+                    throw new PreventedException(e);
                 } else {
                     log.info("Trying next RadiusServer because failoverOnException=true.");
                 }

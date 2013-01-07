@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 /**
@@ -33,6 +32,7 @@ public interface AuthenticationHandler {
     /**
      * Determines whether the given credential is authentic.
      *
+     *
      * @param credential The credential to authenticate.
      *
      * @return A handler result successful authentication that contains information from the authentication source.
@@ -41,9 +41,9 @@ public interface AuthenticationHandler {
      *
      * @throws GeneralSecurityException On authentication failures where the root cause is security related,
      * e.g. invalid credential.
-     * @throws IOException On authentication failures caused by IO errors (e.g. socket errors).
+     * @throws PreventedException On errors that prevented authentication from occurring.
      */
-    HandlerResult authenticate(Credential credential) throws GeneralSecurityException, IOException;
+    HandlerResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
 
 
     /**

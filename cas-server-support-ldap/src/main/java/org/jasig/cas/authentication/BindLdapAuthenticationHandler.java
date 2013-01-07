@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +80,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
     private boolean allowMultipleAccounts;
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
 
         final List<String> cns = new ArrayList<String>();
         
@@ -129,7 +128,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
                 log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
                 throw handleLdapError(e);
             } catch (final Exception e) {
-                throw new IOException("Unexpected error on LDAP bind.", e);
+                throw new PreventedException(e);
             } finally {
                 LdapUtils.closeContext(test);
             }

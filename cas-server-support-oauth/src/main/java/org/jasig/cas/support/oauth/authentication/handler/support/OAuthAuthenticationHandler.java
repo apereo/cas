@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.oauth.authentication.handler.support;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
@@ -27,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.support.oauth.OAuthConfiguration;
 import org.jasig.cas.support.oauth.OAuthUtils;
@@ -51,7 +51,7 @@ public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessi
     }
     
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, IOException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final OAuthCredential oauthCredentials = (OAuthCredential) credential;
         log.debug("credential : {}", oauthCredentials);
         

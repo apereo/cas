@@ -18,7 +18,6 @@
  */
 package org.jasig.cas;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -33,6 +32,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.MutableAuthentication;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -75,7 +75,7 @@ public final class TestUtils {
 
     public static final AuthenticationHandler AUTHENTICATION_HANDLER = new AuthenticationHandler() {
         @Override
-        public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+        public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
             return new HandlerResult(this);
         }
 

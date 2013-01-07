@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.validation.constraints.NotNull;
 
@@ -58,16 +57,18 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler implemen
     /**
      * Method to execute after authentication occurs.
      * 
+     *
      * @param credential Successfully authenticated credential.
      * @param result Result produced by the authentication handler that authenticated the credential.
      *
      * @return Handler result provided or a modified version thereof.
      *
-     * @throws GeneralSecurityException When authentication should fail for security reasons.
-     * @throws IOException When authentication fails for reasons other than security.
+     * @throws GeneralSecurityException On authentication failures where the root cause is security related,
+     * e.g. invalid credential.
+     * @throws PreventedException On errors that prevented authentication from occurring.
      */
     protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result)
-        throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
         return result;
     }
     
@@ -83,7 +84,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler implemen
     }
 
     public final HandlerResult authenticate(final Credential credential)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
 
         if (!preAuthenticate(credential)) {
             throw new GeneralSecurityException("Pre-authentication failed.");
@@ -92,5 +93,5 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler implemen
     }
 
     protected abstract HandlerResult doAuthentication(Credential credential)
-            throws GeneralSecurityException, IOException;
+            throws GeneralSecurityException, PreventedException;
 }

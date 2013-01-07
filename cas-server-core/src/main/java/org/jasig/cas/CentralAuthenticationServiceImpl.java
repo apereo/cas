@@ -18,8 +18,6 @@
  */
 package org.jasig.cas;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -229,10 +227,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 if (!(authentication.getPrincipal().equals(originalAuthentication.getPrincipal()) && authentication.getAttributes().equals(originalAuthentication.getAttributes()))) {
                     throw new TicketCreationException();
                 }
-            } catch (final GeneralSecurityException e) {
+            } catch (Exception e) {
                 throw new TicketCreationException(e);
-            } catch (final IOException e) {
-                throw new RuntimeException("Authentication failed due to an IO error.", e);
             }
         }
 
@@ -324,10 +320,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
             return ticketGrantingTicket.getId();
-        } catch (final GeneralSecurityException e) {
+        } catch (Exception e) {
             throw new TicketCreationException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException("Authentication failed due to an IO error.", e);
         }
     }
 
@@ -484,10 +478,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
             return ticketGrantingTicket.getId();
-        } catch (final GeneralSecurityException e) {
+        } catch (Exception e) {
             throw new TicketCreationException(e);
-        } catch (final IOException e) {
-            throw new RuntimeException("Authentication failed due to an IO error.", e);
         }
     }
 

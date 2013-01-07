@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
@@ -114,7 +113,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
    }
 
    protected final HandlerResult doAuthentication(final Credential credential)
-           throws GeneralSecurityException, IOException {
+           throws GeneralSecurityException, PreventedException {
 
        final X509CertificateCredential x509Credentials = (X509CertificateCredential) credential;
        final X509Certificate[] certificates = x509Credentials.getCertificates();

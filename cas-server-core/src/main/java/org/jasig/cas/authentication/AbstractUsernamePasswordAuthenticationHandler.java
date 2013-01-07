@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.validation.constraints.NotNull;
 
@@ -70,7 +69,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * subclasses do not need to cast.
      */
     protected final HandlerResult doAuthentication(final Credential credential)
-        throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
         return authenticateUsernamePasswordInternal((UsernamePasswordCredential) credential);
     }
 
@@ -78,15 +77,17 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * Abstract convenience method that assumes the credential passed in are a
      * subclass of UsernamePasswordCredential.
      * 
+     *
      * @param credential Username/password credential to authenticate.
      *
      * @return Authentication handler result on authentication success.
      *
-     * @throws GeneralSecurityException When authentication should fail for security reasons.
-     * @throws IOException When authentication fails for reasons other than security.
+     * @throws GeneralSecurityException On authentication failures where the root cause is security related,
+     * e.g. invalid credential.
+     * @throws PreventedException On errors that prevented authentication from occurring.
      */
     protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential)
-            throws GeneralSecurityException, IOException;
+            throws GeneralSecurityException, PreventedException;
 
     /**
      * Method to return the PasswordEncoder to be used to encode passwords.

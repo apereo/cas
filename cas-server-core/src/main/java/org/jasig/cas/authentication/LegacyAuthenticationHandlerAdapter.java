@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
@@ -43,7 +42,7 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
     }
 
     @Override
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
             if (this.legacyHandler.authenticate(credential)) {
                 return this.result;

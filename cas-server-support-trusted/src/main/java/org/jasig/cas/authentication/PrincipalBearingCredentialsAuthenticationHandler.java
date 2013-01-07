@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -39,7 +41,7 @@ public final class PrincipalBearingCredentialsAuthenticationHandler implements A
 
     private String name;
 
-    public HandlerResult authenticate(final Credential credential) {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         log.debug("Trusting credential {}", credential);
         return new HandlerResult(this);
     }

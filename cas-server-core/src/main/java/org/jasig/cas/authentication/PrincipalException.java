@@ -19,33 +19,19 @@
 package org.jasig.cas.authentication;
 
 /**
- * Describes an error condition where multiple distinct principals have been resolved during authentication.
+ * Describes a generic principal resolution failure condition. This class is abstract to require a concrete
+ * subclass for each specific cause.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class MixedPrincipalException extends PrincipalException {
+public abstract class PrincipalException extends Exception {
 
-    private static final long serialVersionUID = 6382808957959980797L;
+    private static final long serialVersionUID = 4557481605060568728L;
 
-    private final Principal first;
+    protected PrincipalException() {}
 
-    private final Principal second;
-
-    public MixedPrincipalException(final Principal a, final Principal b) {
-        this.first = a;
-        this.second = b;
-    }
-
-    public Principal getFirst() {
-        return this.first;
-    }
-
-    public Principal getSecond() {
-        return this.second;
-    }
-
-    public String getMessage() {
-        return "Mixed principals: " + this.first + ", " + this.second;
+    protected PrincipalException(final String message) {
+        super(message);
     }
 }

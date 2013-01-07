@@ -18,15 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
-import javax.security.auth.login.LoginException;
-
 /**
  * Describes a case where a principal could not be resolved.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class UnresolvedPrincipalException extends LoginException {
+public class UnresolvedPrincipalException extends PrincipalException {
 
     private static final long serialVersionUID = -2543841844879568545L;
 

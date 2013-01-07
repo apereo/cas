@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
@@ -27,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -53,7 +53,7 @@ public final class OpenIdCredentialsAuthenticationHandler implements Authenticat
     private String name;
 
 
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         final OpenIdCredential c = (OpenIdCredential) credential;
 
         final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry.getTicket(

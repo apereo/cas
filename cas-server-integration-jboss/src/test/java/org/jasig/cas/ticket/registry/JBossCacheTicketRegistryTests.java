@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +30,7 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.Principal;
 import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.service.SimpleWebApplicationServiceImpl;
@@ -77,7 +77,7 @@ public final class JBossCacheTicketRegistryTests extends TestCase {
     protected Authentication getAuthentication() {
         final Principal principal = new SimplePrincipal("test");
         final HandlerResult hr = new HandlerResult(new AuthenticationHandler() {
-            public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, IOException {
+            public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
                 return new HandlerResult(this, principal);
             }
 

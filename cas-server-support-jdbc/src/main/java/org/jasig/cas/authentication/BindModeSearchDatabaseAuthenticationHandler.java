@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -40,7 +39,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-        throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
 

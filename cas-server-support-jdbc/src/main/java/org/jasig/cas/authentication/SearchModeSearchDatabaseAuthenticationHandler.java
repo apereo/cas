@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -54,11 +54,16 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
     private String sql;
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String encyptedPassword = getPasswordEncoder().encode(credentials.getPassword());
 
-        final int count = getJdbcTemplate().queryForInt(this.sql, transformedUsername, encyptedPassword);
+        final int count;
+        try {
+            count = getJdbcTemplate().queryForInt(this.sql, transformedUsername, encyptedPassword);
+        } catch (final DataAccessException e) {
+            throw new PreventedException(e);
+        }
         if (count > 0) {
             return new HandlerResult(this, new SimplePrincipal(transformedUsername));
         }

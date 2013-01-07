@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.naming.directory.DirContext;
 
@@ -37,7 +36,7 @@ import org.springframework.security.core.AuthenticationException;
 public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordAuthenticationHandler {
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
         DirContext dirContext = null;
         try {
             final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
@@ -49,7 +48,7 @@ public class FastBindLdapAuthenticationHandler extends AbstractLdapUsernamePassw
             log.info("Failed to authenticate user {} with error {}", credentials.getUsername(), e.getMessage());
             throw handleLdapError(e);
         } catch (final Exception e) {
-            throw new IOException("Unexpected error on LDAP bind.", e);
+            throw new PreventedException(e);
         } finally {
             if (dirContext != null) {
                 LdapUtils.closeContext(dirContext);

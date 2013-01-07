@@ -18,34 +18,35 @@
  */
 package org.jasig.cas.authentication;
 
+import java.io.Serializable;
+
 /**
- * Describes an error condition where multiple distinct principals have been resolved during authentication.
+ * Provides a simple container to associate an error produced by {@link AuthenticationHandler} with the name
+ * of the handler that produced it.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class MixedPrincipalException extends PrincipalException {
+public class HandlerError implements Serializable {
 
-    private static final long serialVersionUID = 6382808957959980797L;
+    private static final long serialVersionUID = 5091450022750204486L;
 
-    private final Principal first;
+    /** Error produced by an authentication handler failure. */
+    private Exception error;
 
-    private final Principal second;
+    /** Name of handler. */
+    private String handlerName;
 
-    public MixedPrincipalException(final Principal a, final Principal b) {
-        this.first = a;
-        this.second = b;
+    public HandlerError(final Exception error, final String handlerName) {
+        this.error = error;
+        this.handlerName = handlerName;
     }
 
-    public Principal getFirst() {
-        return this.first;
+    public Exception getError() {
+        return error;
     }
 
-    public Principal getSecond() {
-        return this.second;
-    }
-
-    public String getMessage() {
-        return "Mixed principals: " + this.first + ", " + this.second;
+    public String getHandlerName() {
+        return handlerName;
     }
 }

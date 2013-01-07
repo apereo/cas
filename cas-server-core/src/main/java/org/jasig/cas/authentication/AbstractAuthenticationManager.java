@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +50,7 @@ import org.springframework.util.Assert;
  *     <li>Check whether the security policy (e.g. any, all) is satisfied</li>
  * </ul>
  *
- * It is an error condition to fail to resolve a principal or resolve multiple principals with distict IDs
+ * It is an error condition to fail to resolve a principal or resolve multiple principals with distict IDs.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
@@ -104,7 +104,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         resourceResolverName="AUTHENTICATION_RESOURCE_RESOLVER")
     @Profiled(tag = "AUTHENTICATE", logFailuresSeparately = false)
     public final Authentication authenticate(final Credential ... credentials)
-            throws GeneralSecurityException, IOException {
+            throws AuthenticationException, PrincipalException {
 
         Authentication authentication = authenticateInternal(credentials);
         final Principal principal = authentication.getPrincipal();
@@ -141,25 +141,25 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     }
 
     /**
-     * Follows the same contract as {@link #authenticate(Credential...)}.
+     * Follows the same contract as {@link AuthenticationManager#authenticate(Credential...)}.
      *
      * @param credentials One or more credentials to authenticate.
      *
      * @return An authentication containing a resolved principal and metadata about successful and failed
      * authentications. There SHOULD be a record of each attempted authentication, whether success or failure.
      *
-     * @throws GeneralSecurityException On authentication failures where the root cause is security related,
-     * e.g. invalid credentials.
-     * @throws IOException On authentication failures caused by IO errors (e.g. socket errors communicating with remote
-     * authentication sources).
+     * @throws AuthenticationException When one or more credentials failed to validate such that security policy
+     * was not satisfied.
      */
-    protected final Authentication authenticateInternal(final Credential... credentials)
-            throws GeneralSecurityException, IOException {
+    protected final Authentication authenticateInternal(final Credential ... credentials)
+            throws AuthenticationException {
 
         final MutableAuthentication authentication = new MutableAuthentication();
         final List<Credential> credentialList = Arrays.asList(credentials);
-        final List<Credential> authenticatedList = new ArrayList<Credential>(credentials.length);
-        final List<GeneralSecurityException> errors = new ArrayList<GeneralSecurityException>(credentials.length);
+        final Map<Credential, HandlerResult> successes =
+                new LinkedHashMap<Credential, HandlerResult>(credentials.length);
+        final Map<Credential, HandlerError> failures =
+                new LinkedHashMap<Credential, HandlerError>(credentials.length);
         boolean found;
         Principal principal;
         PrincipalResolver resolver;
@@ -171,7 +171,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
                     try {
                         final HandlerResult result = handler.authenticate(credential);
                         log.info("{} successfully authenticated {}", handler.getName(), credential);
-                        authenticatedList.add(credential);
+                        successes.put(credential, result);
                         resolver = this.handlerResolverMap.get(handler);
                         if (resolver == null) {
                             principal = result.getPrincipal();
@@ -186,24 +186,28 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
                         }
                         authentication.setPrincipal(principal);
                         authentication.getSuccesses().put(result, principal);
-                        if (isSatisfied(credentialList, authenticatedList,  authentication)) {
+                        if (isSatisfied(credentialList, successes, failures, authentication)) {
                             return authentication;
                         }
                     } catch (final GeneralSecurityException e) {
                         log.info("{} failed authenticating {}", handler.getName(), credential);
+                        failures.put(credential, new HandlerError(e, handler.getName()));
                         authentication.getFailures().put(handler.getName(), e);
+                    } catch (final PreventedException e) {
+                        failures.put(credential, new HandlerError(e, handler.getName()));
+                        // Abort authentication immediately when authentication is prevented
+                        throw new AuthenticationException(successes, failures);
                     }
                 }
             }
             if (!found) {
-                errors.add(new UnsupportedCredentialException(credential));
+                failures.put(credential, new HandlerError(new UnsupportedCredentialException(credential), null));
                 log.warn(
                         "Cannot find authentication handler that supports {}, which suggests a configuration problem.",
                         credential);
             }
         }
-        errors.addAll(authentication.getFailures().values());
-        throw new AggregateSecurityException(errors);
+        throw new AuthenticationException(successes, failures);
     }
 
 
@@ -231,13 +235,17 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * Determines whether the given authentication satisfies the security policy imposed by the authentication
      * manager.
      *
-     * @param credentials List of all provided credentials.
-     * @param authenticated List of authenticated credentials.
+     * @param credentials Collection of all provided credentials.
+     * @param successes Map of information about successful credentials.
+     * @param failures Map of information about failed credentials.
      * @param authentication Authentication to evaluate.
      *
      * @return True if authentication satisfies security policy, false otherwise.
      */
     protected abstract boolean isSatisfied(
-            List<Credential> credentials, List<Credential> authenticated, Authentication authentication);
+            Collection<Credential> credentials,
+            Map<Credential, HandlerResult> successes,
+            Map<Credential, HandlerError> failures,
+            Authentication authentication);
 
 }

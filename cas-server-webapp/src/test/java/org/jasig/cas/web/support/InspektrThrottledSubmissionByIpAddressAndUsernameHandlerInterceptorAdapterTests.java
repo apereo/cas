@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.web.support;
 
-import java.security.GeneralSecurityException;
 import javax.sql.DataSource;
 
 import com.github.inspektr.common.web.ClientInfo;
 import com.github.inspektr.common.web.ClientInfoHolder;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Before;
@@ -92,10 +92,10 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         
         getThrottle().preHandle(request, response, null);
-        
+
         try {
             this.authenticationManager.authenticate(badCredentials(username));
-        } catch (GeneralSecurityException e) {
+        } catch (AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;
         }

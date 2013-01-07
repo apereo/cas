@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -71,7 +70,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-        throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
 
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         log.debug("Attempting to authenticate {}", transformedUsername);

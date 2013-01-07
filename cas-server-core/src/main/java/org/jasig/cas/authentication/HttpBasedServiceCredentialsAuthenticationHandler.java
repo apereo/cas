@@ -18,16 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.SimplePrincipal;
 import org.jasig.cas.authentication.service.HttpBasedServiceCredential;
 import org.jasig.cas.util.HttpClient;
 import org.slf4j.Logger;
@@ -62,7 +57,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler
     @NotNull
     private HttpClient httpClient;
 
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, IOException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final URL endpoint = ((HttpBasedServiceCredential) credential).getCallbackUrl();
         if (this.requireSecure && !endpoint.getProtocol().equals(PROTOCOL_HTTPS)) {
             throw new LoginException("URL has http scheme but configuration requires https.");

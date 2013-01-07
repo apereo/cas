@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
 /**
@@ -43,7 +43,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private String sql;
 
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String password = credentials.getPassword();
         final String encryptedPassword = this.getPasswordEncoder().encode(
@@ -57,6 +57,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final IncorrectResultSizeDataAccessException e) {
             log.debug("{} not found", transformedUsername);
             throw new AccountNotFoundException();
+        } catch (final DataAccessException e) {
+            throw new PreventedException(e);
         }
         log.info("Failed to authenticate {}", transformedUsername);
         throw new FailedLoginException();

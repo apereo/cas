@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.security.auth.login.LoginException;
 
@@ -44,7 +43,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
     }
 
     public HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credentials)
-            throws GeneralSecurityException, IOException {
+            throws GeneralSecurityException, PreventedException {
 
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
