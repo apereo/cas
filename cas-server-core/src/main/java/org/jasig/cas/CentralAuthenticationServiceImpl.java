@@ -205,7 +205,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throw new UnauthorizedServiceException();
         }
 
-        if (!registeredService.isSsoEnabled() && hasCredentials(credentials)
+        if (!registeredService.isSsoEnabled() && !hasCredentials(credentials)
             && ticketGrantingTicket.getCountOfUses() > 0) {
             log.warn("ServiceManagement: Service Not Allowed to use SSO.  Service [" + service.getId() + "]");
             throw new UnauthorizedSsoServiceException();
