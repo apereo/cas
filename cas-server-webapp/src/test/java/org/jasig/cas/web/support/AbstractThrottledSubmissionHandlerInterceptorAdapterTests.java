@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.web.support;
 
+import com.github.inspektr.common.web.ClientInfo;
+import com.github.inspektr.common.web.ClientInfoHolder;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +41,21 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     protected static final int FAILURE_THRESHOLD = 10;
 
+    protected static final String IP_ADDRESS = "1.2.3.4";
+
+    protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Before
+    public void setUp() throws Exception {
+        ClientInfoHolder.setClientInfo(CLIENT_INFO);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        ClientInfoHolder.setClientInfo(null);
+    }
 
     @Test
     public void testThrottle() throws Exception {

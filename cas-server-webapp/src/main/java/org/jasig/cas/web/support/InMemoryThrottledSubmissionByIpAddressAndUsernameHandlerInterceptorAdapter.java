@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.support;
 
+import com.github.inspektr.common.web.ClientInfoHolder;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -38,6 +40,6 @@ public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInter
             return request.getRemoteAddr();
         }
 
-        return request.getRemoteAddr() + ";" + username.toLowerCase();
+        return ClientInfoHolder.getClientInfo().getClientIpAddress() + ";" + username.toLowerCase();
     }
 }
