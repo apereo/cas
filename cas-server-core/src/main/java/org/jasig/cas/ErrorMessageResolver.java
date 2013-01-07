@@ -21,8 +21,8 @@ package org.jasig.cas;
 /**
  * Resolves a {@link Message} from an exception.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author Marvin S. Addison
+ * @since 4.0
  */
 public interface ErrorMessageResolver {
 

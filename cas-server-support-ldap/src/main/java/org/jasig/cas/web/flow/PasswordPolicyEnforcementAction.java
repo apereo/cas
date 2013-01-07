@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class PasswordPolicyEnforcementAction extends AbstractAction {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private PasswordPolicyEnforcer passwordPolicyEnforcer;
@@ -79,7 +79,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction {
         try {
             reqCtx.getMessageContext().addMessage(new CasMessageResolver(this.errorMessageResolver.resolve(e)));
         } catch (final Exception fe) {
-            logger.error(fe.getMessage(), fe);
+            log.error(fe.getMessage(), fe);
         }
     }
 
@@ -90,7 +90,7 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
 
-        logger.debug("Checking account status for password...");
+        log.debug("Checking account status for password...");
 
         final String ticket = context.getRequestScope().getString("serviceTicketId");
         final UsernamePasswordCredential credentials = (UsernamePasswordCredential) context.getFlowScope().get("credentials");
@@ -106,28 +106,28 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction {
 
             if (userId == null && ticket != null) {
                 returnedEvent = success();
-                logger.debug("Received service ticket {} but no user id. Skipping password enforcement.", ticket);
+                log.debug("Received service ticket {} but no user id. Skipping password enforcement.", ticket);
             } else {
-                logger.debug("Retrieving number of days to password expiration date for user {}", userId);
+                log.debug("Retrieving number of days to password expiration date for user {}", userId);
 
                 final long daysToExpirationDate =
                         getPasswordPolicyEnforcer().getNumberOfDaysToPasswordExpirationDate(userId);
                 if (daysToExpirationDate == -1) {
                     returnedEvent = success();
-                    this.logger.debug("Password for {} is not expiring", userId);
+                    log.debug("Password for {} is not expiring", userId);
                 } else {
                     returnedEvent = warning();
-                    this.logger.debug("Password for {} is expiring in {} days", userId, daysToExpirationDate);
+                    log.debug("Password for {} is expiring in {} days", userId, daysToExpirationDate);
                     context.getFlowScope().put("expireDays", daysToExpirationDate);
                 }
 
             }
         } catch (final LdapPasswordPolicyEnforcementException e) {
-            this.logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             populateErrorsInstance(e, context);
             returnedEvent = error();
         } finally {
-            this.logger.debug("Switching to event id {} for user {}", returnedEvent.getId(), userId);
+            log.debug("Switching to event id {} for user {}", returnedEvent.getId(), userId);
         }
 
         return returnedEvent;

@@ -59,7 +59,7 @@ import org.springframework.util.Assert;
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnings, etc. */
-    protected final Logger log = LoggerFactory.getLogger(AbstractAuthenticationManager.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
