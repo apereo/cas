@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.support;
 
+import com.github.inspektr.common.web.ClientInfoHolder;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -32,6 +34,6 @@ public final class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapt
 
     @Override
     protected String constructKey(final HttpServletRequest request) {
-        return request.getRemoteAddr();
+        return ClientInfoHolder.getClientInfo().getClientIpAddress();
     }
 }
