@@ -16,25 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.web.flow;
+package org.jasig.cas.authentication;
 
-import org.springframework.webflow.execution.Event;
+import javax.security.auth.login.CredentialException;
 
 /**
- * Maps exceptions onto Webflow events that can be used for state transitions.
+ * Describes an error condition where the password credential is invalid since it is required to be changed
+ * before subsequent use. This is distinct from {@link javax.security.auth.login.CredentialExpiredException} in
+ * that it describes a situation where the password must be changed for some reason other than expiration in the
+ * natural password lifecycle.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public interface ErrorStateResolver {
+public class PasswordChangeRequiredException extends CredentialException {
 
-    /**
-     * Resolves a Webflow event from an exception.
-     *
-     *
-     * @param e Error.
-     *
-     * @return Event resolved from exception. SHOULD NOT be null.
-     */
-    Event resolve(Throwable e);
+    private static final long serialVersionUID = -4077350009933491142L;
+
+    public PasswordChangeRequiredException() {
+        super();
+    }
+
+    public PasswordChangeRequiredException(final String msg) {
+        super(msg);
+    }
 }

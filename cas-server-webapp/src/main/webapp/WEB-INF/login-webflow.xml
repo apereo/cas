@@ -145,12 +145,19 @@
     -->
     <transition on="success" to="sendTicketGrantingTicket" />
     <transition on="error" to="generateLoginTicket" />
+    <transition on="failed" to="generateLoginTicket" />
     <transition on="accountDisabled" to="casAccountDisabledView" />
-    <transition on="mustChangePassword" to="casMustChangePassView" />
+    <transition on="accountExpired" to="casAccountLockedView" />
     <transition on="accountLocked" to="casAccountLockedView" />
+    <transition on="accountNotFound" to="generateLoginTicket" />
     <transition on="badHours" to="casBadHoursView" />
     <transition on="badWorkstation" to="casBadWorkstationView" />
+    <transition on="mixedPrincipal" to="casExpiredPassView" />
+    <transition on="mustChangePassword" to="casMustChangePassView" />
     <transition on="passwordExpired" to="casExpiredPassView" />
+    <transition on="principalError" to="generateLoginTicket" />
+    <transition on="unresolvedPrincipal" to="generateLoginTicket" />
+    <transition on="unsupportedCredential" to="generateLoginTicket" />
   </action-state>
 
   <action-state id="sendTicketGrantingTicket">

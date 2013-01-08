@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.security.GeneralSecurityException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -26,8 +25,8 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ErrorMessageResolver;
 import org.jasig.cas.Message;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.service.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.bind.CredentialsBinder;
@@ -35,9 +34,9 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -52,6 +51,12 @@ import org.springframework.webflow.execution.RequestContext;
 public class AuthenticationViaFormAction {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final Event success = new Event(this, "success");
+
+    private final Event warn = new Event(this, "warn");
+
+    private final Event error = new Event(this, "error");
 
     /**
      * Binder that allows additional binding of form object beyond Spring
@@ -80,7 +85,7 @@ public class AuthenticationViaFormAction {
         }
     }
     
-    public final String submit(final RequestContext context, final Credential credentials, final MessageContext messageContext) throws Exception {
+    public final Event submit(final RequestContext context, final Credential credentials, final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
@@ -88,7 +93,7 @@ public class AuthenticationViaFormAction {
             this.logger.warn("Invalid login ticket " + providedLoginTicket);
             final String code = "INVALID_TICKET";
             messageContext.addMessage(CasMessageResolver.error(new Message(code, code, providedLoginTicket)));
-            return "error";
+            return this.warn;
         }
 
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
@@ -99,9 +104,9 @@ public class AuthenticationViaFormAction {
                 final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
-                return "warn";
+                return this.warn;
             } catch (final TicketException e) {
-                if (isCauseGeneralSecurityException(e)) {
+                if (isCauseAuthenticationException(e)) {
                     populateErrorsInstance(e.getCause(), messageContext);
                     return this.errorStateResolver.resolve(e.getCause());
                 }
@@ -114,14 +119,14 @@ public class AuthenticationViaFormAction {
         try {
             WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
-            return "success";
+            return this.success;
         } catch (final TicketException e) {
-            if (isCauseGeneralSecurityException(e)) {
+            if (isCauseAuthenticationException(e)) {
                 populateErrorsInstance(e.getCause(), messageContext);
                 return this.errorStateResolver.resolve(e.getCause());
             }
             populateErrorsInstance(e, messageContext);
-            return "error";
+            return this.error;
         }
     }
 
@@ -151,8 +156,8 @@ public class AuthenticationViaFormAction {
         }
     }
 
-    private boolean isCauseGeneralSecurityException(final TicketException e) {
-        return e.getCause() != null && GeneralSecurityException.class.isAssignableFrom(e.getCause().getClass());
+    private boolean isCauseAuthenticationException(final TicketException e) {
+        return e.getCause() != null && AuthenticationException.class.equals(e.getCause().getClass());
     }
 
     public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {

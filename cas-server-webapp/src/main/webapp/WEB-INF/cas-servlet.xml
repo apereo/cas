@@ -214,8 +214,8 @@
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:errorMessageResolver-ref="webflowErrorMessageResolver"
-        p:errorStateResolver-ref="webflowErrorStateResolver"/>
+        p:errorMessageResolver-ref="authenticationErrorMessageResolver"
+        p:errorStateResolver-ref="authenticationErrorStateResolver"/>
 
   <bean id="generateServiceTicketAction" class="org.jasig.cas.web.flow.GenerateServiceTicketAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
@@ -240,7 +240,8 @@
   <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
 
-  <bean id="webflowErrorMessageResolver" class="org.jasig.cas.web.flow.AuthenticationErrorMessageResolver" />
+  <bean id="authenticationErrorMessageResolver" class="org.jasig.cas.web.flow.AuthenticationErrorMessageResolver" />
 
-  <bean id="webflowErrorStateResolver" class="org.jasig.cas.web.flow.AuthenticationErrorStateResolver" />
+  <bean id="authenticationErrorStateResolver" class="org.jasig.cas.web.flow.AuthenticationErrorStateResolver"
+        p:source-ref="authenticationViaFormAction" />
 </beans>

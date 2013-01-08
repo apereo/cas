@@ -18,20 +18,8 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.LoginException;
-
 import org.jasig.cas.ErrorMessageResolver;
 import org.jasig.cas.Message;
-import org.jasig.cas.authentication.AccountDisabledException;
-import org.jasig.cas.authentication.AggregateSecurityException;
-import org.jasig.cas.authentication.InvalidLoginLocationException;
-import org.jasig.cas.authentication.InvalidLoginTimeException;
-import org.jasig.cas.authentication.UnsupportedCredentialException;
 
 /**
  * Maps exceptions that arise from default {@link org.jasig.cas.authentication.AuthenticationManager} components onto
@@ -40,37 +28,19 @@ import org.jasig.cas.authentication.UnsupportedCredentialException;
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class AuthenticationErrorMessageResolver implements ErrorMessageResolver {
+public class AuthenticationErrorMessageResolver
+        extends AbstractAuthenticationErrorResolver<Message> implements ErrorMessageResolver {
 
     private static final Message CREDENTIAL_BAD = new Message("error.authentication.credential.bad");
 
-    private static final Map<Class<? extends Throwable>, Message> MESSAGE_MAP =
-            new HashMap<Class<? extends Throwable>, Message>();
-
-    static {
-        MESSAGE_MAP.put(AccountDisabledException.class, new Message("screen.accountdisabled.heading"));
-        MESSAGE_MAP.put(AccountLockedException.class, new Message("screen.accountlocked.heading"));
-        MESSAGE_MAP.put(CredentialExpiredException.class, new Message("screen.expiredpass.heading"));
-        MESSAGE_MAP.put(InvalidLoginLocationException.class, new Message("screen.badworkstation.heading"));
-        MESSAGE_MAP.put(InvalidLoginTimeException.class, new Message("screen.badhours.heading"));
-        MESSAGE_MAP.put(UnsupportedCredentialException.class, new Message("error.authentication.credential.unsupported"));
+    @Override
+    protected Message getDefault() {
+        return CREDENTIAL_BAD;
     }
 
     @Override
-    public Message resolve(final Throwable e) {
-        if (e instanceof AggregateSecurityException) {
-            final AggregateSecurityException aggregate = (AggregateSecurityException) e;
-            if (aggregate.getErrors() != null && aggregate.getErrors().length > 0) {
-                final GeneralSecurityException first = aggregate.getErrors()[0];
-                final Message message = MESSAGE_MAP.get(first.getClass());
-                if (message != null) {
-                    return message;
-                }
-                if (first instanceof LoginException) {
-                    return CREDENTIAL_BAD;
-                }
-            }
-        }
-        return new Message(e.getMessage());
+    protected Message convertErrorCode(final String code) {
+        // TODO: Translate code into message bundle string for detailed messages
+        return CREDENTIAL_BAD;
     }
 }

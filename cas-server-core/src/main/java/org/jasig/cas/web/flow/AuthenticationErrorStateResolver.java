@@ -18,49 +18,38 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.CredentialExpiredException;
-
-import org.jasig.cas.authentication.AccountDisabledException;
-import org.jasig.cas.authentication.AggregateSecurityException;
-import org.jasig.cas.authentication.InvalidLoginLocationException;
-import org.jasig.cas.authentication.InvalidLoginTimeException;
+import org.springframework.webflow.execution.Event;
 
 /**
  * Maps exceptions that arise from default {@link org.jasig.cas.authentication.AuthenticationManager} components onto
- * Webflow state names.
+ * Webflow events.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
-public class AuthenticationErrorStateResolver implements ErrorStateResolver {
+public class AuthenticationErrorStateResolver
+        extends AbstractAuthenticationErrorResolver<Event> implements ErrorStateResolver {
 
-    private static final String DEFAULT_STATE = "error";
+    private static final String DEFAULT_STATE_ID = "error";
 
-    private static final Map<Class<? extends Throwable>, String> STATE_MAP =
-            new HashMap<Class<? extends Throwable>, String>();
+    private Object source;
 
-    static {
-        STATE_MAP.put(AccountDisabledException.class, "accountDisabled");
-        STATE_MAP.put(AccountLockedException.class, "accountLocked");
-        STATE_MAP.put(CredentialExpiredException.class, "passwordExpired");
-        STATE_MAP.put(InvalidLoginLocationException.class, "badWorkstation");
-        STATE_MAP.put(InvalidLoginTimeException.class, "badHours");
+    /**
+     * Sets the source used for creating events.
+     *
+     * @param source Event source.
+     */
+    public void setSource(final Object source) {
+        this.source = source;
     }
 
     @Override
-    public String resolve(final Throwable e) {
-        if (e instanceof AggregateSecurityException) {
-            final AggregateSecurityException aggregate = (AggregateSecurityException) e;
-            if (aggregate.getErrors() != null && aggregate.getErrors().length > 0) {
-                final String view = STATE_MAP.get(aggregate.getErrors()[0].getClass());
-                if (view != null) {
-                    return view;
-                }
-            }
-        }
-        return DEFAULT_STATE;
+    protected Event getDefault() {
+        return new Event(this.source, DEFAULT_STATE_ID);
+    }
+
+    @Override
+    protected Event convertErrorCode(final String code) {
+        return new Event(this.source, code);
     }
 }
