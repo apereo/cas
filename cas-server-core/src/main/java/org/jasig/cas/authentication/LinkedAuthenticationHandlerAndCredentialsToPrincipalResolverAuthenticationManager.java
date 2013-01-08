@@ -51,8 +51,7 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
     protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
         boolean foundOneThatWorks = false;
         String handlerName;
-        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR; 
-        
+
         for (final AuthenticationHandler authenticationHandler : this.linkedHandlers.keySet()) {
             if (!authenticationHandler.supports(credentials)) {
                 continue;
@@ -65,11 +64,12 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
             try {
                 authenticated = authenticationHandler.authenticate(credentials);
             } catch (AuthenticationException e) {
-                authException = e;
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } catch (Exception e) {
+                throw e;
+            } catch (RuntimeException e) {
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } 
+                throw e;
+            }
 
             if (authenticated) {
                 log.info("{} successfully authenticated {}", handlerName, credentials);
@@ -80,7 +80,7 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
         }
 
         if (foundOneThatWorks) {
-            throw authException;
+            throw BadCredentialsAuthenticationException.ERROR;
         }
 
         throw UnsupportedCredentialsException.ERROR;

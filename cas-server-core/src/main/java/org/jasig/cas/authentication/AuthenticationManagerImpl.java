@@ -85,8 +85,6 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         AuthenticationHandler authenticatedClass = null;
         String handlerName;
         
-        AuthenticationException unAuthSupportedHandlerException = BadCredentialsAuthenticationException.ERROR; 
-     
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
@@ -101,19 +99,19 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
                         break;
                     }
                 } catch (AuthenticationException e) {
-                    unAuthSupportedHandlerException = e;
                     logAuthenticationHandlerError(handlerName, credentials, e);
-                } catch (Exception e) {
+                    throw e;
+                } catch (RuntimeException e) {
                     logAuthenticationHandlerError(handlerName, credentials, e);
+                    throw e;
                 }
             }
         }
 
         if (!authenticated) {
             if (foundSupported) {
-                throw unAuthSupportedHandlerException;
+                throw BadCredentialsAuthenticationException.ERROR;
             }
-
             throw UnsupportedCredentialsException.ERROR;
         }
 
