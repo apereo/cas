@@ -113,8 +113,18 @@
 	    		<groupId>org.springframework</groupId>
           <artifactId>spring-webmvc</artifactId>
 	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>cglib</groupId>
+          <artifactId>cglib-full</artifactId>
+	    	</exclusion>
 	    </exclusions>
 	</dependency>
+  <dependency>
+      <groupId>cglib</groupId>
+	    <artifactId>cglib-nodep</artifactId>
+	    <version>2.2.2</version>
+      <scope>runtime</scope>
+  </dependency>
 	
 	<dependency>
 	    <groupId>net.sf.sojo</groupId>
