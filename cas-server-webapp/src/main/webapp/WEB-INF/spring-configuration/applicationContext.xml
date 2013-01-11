@@ -123,7 +123,7 @@
         </property>
         <property name="exceptionHandler">
 	        <list>
-	        	<bean class="org.springframework.web.servlet.view.json.exception.ExceptionMessageExceptionHandler" />
+	        	<bean class="org.jasig.cas.web.view.HtmlEscapedExceptionMessageExceptionHandler" />
 	            <bean class="org.springframework.web.servlet.view.json.exception.StackTraceExceptionHandler" />
 	        </list>
         </property>
