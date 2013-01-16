@@ -63,12 +63,8 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
                         
             try {
                 authenticated = authenticationHandler.authenticate(credentials);
-            } catch (AuthenticationException e) {
-                logAuthenticationHandlerError(handlerName, credentials, e);
-                throw e;
-            } catch (RuntimeException e) {
-                logAuthenticationHandlerError(handlerName, credentials, e);
-                throw e;
+            } catch (final Exception e) {
+                handleError(handlerName, credentials, e);
             }
 
             if (authenticated) {
