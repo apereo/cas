@@ -98,12 +98,8 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
                         authenticated = true;
                         break;
                     }
-                } catch (AuthenticationException e) {
-                    logAuthenticationHandlerError(handlerName, credentials, e);
-                    throw e;
-                } catch (RuntimeException e) {
-                    logAuthenticationHandlerError(handlerName, credentials, e);
-                    throw e;
+                } catch (final Exception e) {
+                    handleError(handlerName, credentials, e);
                 }
             }
         }
