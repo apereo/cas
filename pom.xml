@@ -226,9 +226,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.2</version>
         <executions>
           <execution>
-            <id>enforce-versions</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
@@ -240,9 +241,20 @@
                 <requireJavaVersion>
                   <version>${jdk.version}</version>
                 </requireJavaVersion>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>cglib:cglib</exclude>
+                    <exclude>cglib:cglib-full</exclude>
+                  </excludes>
+                  <includes>
+                    <include>cglib:cglib:provided</include>
+                    <include>cglib:cglib-full:provided</include>
+                  </includes>
+                  <searchTransitive>true</searchTransitive>
+                </bannedDependencies>
               </rules>
             </configuration>
-        </execution>
+          </execution>
         </executions>
       </plugin>
       <!--
