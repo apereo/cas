@@ -369,10 +369,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final Principal principal = authentication.getPrincipal();
            
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
-            Map<String, Object> attributesToRelease = null;
+            Map<String, Object> attributesToRelease =  new HashMap<String, Object>();
             
             if (!registeredService.isIgnoreAttributes()) {
-                attributesToRelease = new HashMap<String, Object>();
                 for (final String attribute : registeredService.getAllowedAttributes()) {
                     final Object value = principal.getAttributes().get(attribute);
 
@@ -381,7 +380,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     }
                 }
             } else {
-                attributesToRelease = new HashMap<String, Object>(principal.getAttributes());
+                attributesToRelease.putAll(principal.getAttributes());
             }
             
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
