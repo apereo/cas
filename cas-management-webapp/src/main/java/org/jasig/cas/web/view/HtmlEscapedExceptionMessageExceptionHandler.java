@@ -15,11 +15,9 @@ import java.util.Map;
 * @since 4.0.0
 */
 public final class HtmlEscapedExceptionMessageExceptionHandler implements JsonExceptionHandler {
-
-    public static final String MESSAGE_MODEL_KEY = "exception.message";
-
+    
     @NotNull
-    private String modelKey = MESSAGE_MODEL_KEY;
+    private String modelKey = "exception.message";
 
     @Override
     public void triggerException(final Exception e, final Map model, final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) throws Exception {
