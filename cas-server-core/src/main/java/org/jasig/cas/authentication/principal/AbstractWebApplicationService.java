@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(SamlService.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractWebApplicationService.class);
     
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
     

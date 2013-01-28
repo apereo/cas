@@ -84,7 +84,6 @@
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-        <prop key="/samlValidate">samlValidateController</prop>
         <prop key="/openid/*">openIdProviderController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
@@ -168,14 +167,6 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
         p:argumentExtractor-ref="casArgumentExtractor"/>
-
-  <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
-        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="samlArgumentExtractor"
-        p:successView="casSamlServiceSuccessView"
-        p:failureView="casSamlServiceFailureView"/>
 
   <bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController"
         p:proxyHandler-ref="proxy10Handler"
