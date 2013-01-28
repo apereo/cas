@@ -131,11 +131,6 @@
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
-    <url-pattern>/samlValidate</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
     <url-pattern>/proxy</url-pattern>
   </servlet-mapping>
 
