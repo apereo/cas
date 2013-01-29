@@ -22,13 +22,14 @@ package org.jasig.cas.support.saml.web.view;
 import java.lang.reflect.Field;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import javax.xml.namespace.QName;
 
-import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;

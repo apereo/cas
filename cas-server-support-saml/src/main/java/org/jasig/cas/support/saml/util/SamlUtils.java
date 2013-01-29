@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.util;
+package org.jasig.cas.support.saml.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
@@ -70,18 +70,6 @@ public final class SamlUtils {
 
     private SamlUtils() {
         // nothing to do
-    }
-
-    public static String getCurrentDateAndTime() {
-        return getFormattedDateAndTime(new Date());
-    }
-
-    public static String getFormattedDateAndTime(final Date date) {
-        final DateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'");
-        // Google Does not set this.
-        // dateFormat.setTimeZone(UTC_TIME_ZONE);
-        return dateFormat.format(date);
     }
 
     public static String signSamlResponse(final String samlResponse,

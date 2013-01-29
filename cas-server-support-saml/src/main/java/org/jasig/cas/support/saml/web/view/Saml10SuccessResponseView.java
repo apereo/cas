@@ -21,13 +21,14 @@ package org.jasig.cas.support.saml.web.view;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.RememberMeCredentials;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.joda.time.DateTime;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Attribute;

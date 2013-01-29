@@ -21,12 +21,12 @@ package org.jasig.cas.support.saml.web.support;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
+import junit.framework.TestCase;
+
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import junit.framework.TestCase;
 
 /**
  * 

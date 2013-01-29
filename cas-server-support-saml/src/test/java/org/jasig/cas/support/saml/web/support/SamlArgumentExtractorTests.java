@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.support.saml.web.support;
 
+import junit.framework.TestCase;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import junit.framework.TestCase;
 
 /**
  * 

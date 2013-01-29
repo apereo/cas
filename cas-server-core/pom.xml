@@ -75,13 +75,6 @@
         </dependency>
 
         <dependency>
-            <groupId>jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>1.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <scope>compile</scope>
@@ -162,26 +155,6 @@
             <artifactId>javassist</artifactId>
             <scope>test</scope>
             <version>3.12.1.GA</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.santuario</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>1.4.3</version>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-          <groupId>javax.xml</groupId>
-          <artifactId>xmldsig</artifactId>
-          <version>1.0</version>
-          <scope>compile</scope>
         </dependency>
 
         <dependency>
