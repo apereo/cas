@@ -18,19 +18,20 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.interfaces.DSAPrivateKey;
+import java.security.interfaces.DSAPublicKey;
+import java.util.zip.DeflaterOutputStream;
+
 import junit.framework.TestCase;
+
 import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
-import java.util.zip.DeflaterOutputStream;
 
 /**
  * 

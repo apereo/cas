@@ -18,14 +18,6 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.util.SamlUtils;
-import org.jdom.Document;
-import org.springframework.util.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -40,7 +32,15 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.codec.binary.Base64;
+import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.support.saml.util.SamlUtils;
+import org.jasig.cas.util.SamlDateUtils;
+import org.jdom.Document;
+import org.springframework.util.StringUtils;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -195,11 +195,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);
         samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());
-        samlResponse = samlResponse.replace("<ISSUE_INSTANT>", SamlUtils
+        samlResponse = samlResponse.replace("<ISSUE_INSTANT>", SamlDateUtils
             .getCurrentDateAndTime());
-        samlResponse = samlResponse.replace("<AUTHN_INSTANT>", SamlUtils
+        samlResponse = samlResponse.replace("<AUTHN_INSTANT>", SamlDateUtils
             .getCurrentDateAndTime());
-        samlResponse = samlResponse.replaceAll("<NOT_ON_OR_AFTER>", SamlUtils
+        samlResponse = samlResponse.replaceAll("<NOT_ON_OR_AFTER>", SamlDateUtils
             .getFormattedDateAndTime(c.getTime()));
         samlResponse = samlResponse.replace("<ASSERTION_ID>", createID());
         samlResponse = samlResponse.replaceAll("<ACS_URL>", getId());
