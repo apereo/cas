@@ -20,13 +20,13 @@ package org.jasig.cas.support.saml.web.support;
 
 import java.util.Arrays;
 
+import junit.framework.TestCase;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import junit.framework.TestCase;
 
 /**
  * 

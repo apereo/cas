@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.MutableAuthentication;

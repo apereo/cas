@@ -24,8 +24,8 @@ import java.security.PublicKey;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.web.support.AbstractSingleSignOutEnabledArgumentExtractor;
 
 /**
