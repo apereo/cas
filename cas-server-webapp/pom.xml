@@ -92,16 +92,6 @@
     </dependency>
 
     <dependency>
-	    	<exclusion>
-	    		<groupId>cglib</groupId>
-          <artifactId>cglib-full</artifactId>
-	    	</exclusion>
-  <dependency>
-      <groupId>cglib</groupId>
-	    <artifactId>cglib-nodep</artifactId>
-	    <version>2.2.2</version>
-      <scope>runtime</scope>
-  </dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <version>1.1.2</version>
