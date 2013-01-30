@@ -41,4 +41,21 @@
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl">
         <constructor-arg index="0" ref="serviceRegistryDao"/>
     </bean>
+    
+    <!-- Spring-Json View provides a JsonExceptionResolver exceptions thrown during a controller action -->
+    <bean id="ajaxExceptionResolver" class="org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver">
+        <property name="exceptionView" value="jsonView" />
+        <property name="errorHandler">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.error.HttpStatusError" p:errorCode="412"/>
+                <bean class="org.springframework.web.servlet.view.json.error.ModelFlagError"/>
+            </list>
+        </property>
+        <property name="exceptionHandler">
+            <list>
+                <bean class="org.jasig.cas.web.view.HtmlEscapedExceptionMessageExceptionHandler" />
+                <bean class="org.springframework.web.servlet.view.json.exception.StackTraceExceptionHandler" />
+            </list>
+        </property>
+    </bean>
 </beans>
