@@ -95,7 +95,7 @@
 	    <groupId>net.sf.spring-json</groupId>
 	    <artifactId>spring-json</artifactId>
 	    <version>1.3.1</version>
-	    <scope>runtime</scope>
+	    <scope>compile</scope>
 	    <exclusions>
 	    	<exclusion>
 		    	<groupId>net.sf.sojo</groupId>
