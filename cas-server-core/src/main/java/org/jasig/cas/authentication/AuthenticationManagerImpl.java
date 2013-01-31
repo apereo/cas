@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -92,18 +92,14 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
                 foundSupported = true;
                 handlerName = authenticationHandler.getClass().getName();
                 try {
-                    if (!authenticationHandler.authenticate(credentials)) {
-                        log.info("{} failed to authenticate {}", handlerName, credentials);
-                    } else {
-                        log.info("{} successfully authenticated {}", handlerName, credentials);
-                        authenticatedClass = authenticationHandler;
-                        authenticated = true;
-                        break;
-                    }
-                } catch (AuthenticationException e) {
-                    unAuthSupportedHandlerException = e;
+                    authenticationHandler.authenticate(credentials);
+                    log.info("{} successfully authenticated {}", handlerName, credentials);
+                    authenticatedClass = authenticationHandler;
+                    authenticated = true;
+                    break;
+                } catch (final GeneralSecurityException e) {
                     logAuthenticationHandlerError(handlerName, credentials, e);
-                } catch (Exception e) {
+                } catch (final PreventedException e) {
                     logAuthenticationHandlerError(handlerName, credentials, e);
                 }
             }

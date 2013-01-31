@@ -23,12 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
-
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl;
-import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
+import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
+import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
@@ -37,7 +37,6 @@ import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredent
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentials;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredentialsToPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
-import org.jasig.cas.support.openid.web.flow.OpenIdSingleSignOnAction;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -79,7 +78,7 @@ public class OpenIdSingleSignOnActionTests extends TestCase {
         final DirectAuthenticationHandlerMappingHolder holder = new DirectAuthenticationHandlerMappingHolder();
         final OpenIdCredentialsAuthenticationHandler handler = new OpenIdCredentialsAuthenticationHandler();
         handler.setTicketRegistry(this.ticketRegistry);
-        holder.setAuthenticationHandler(handler);
+        holder.setAuthenticationHandler(new LegacyAuthenticationHandlerAdapter(handler));
         holder.setCredentialsToPrincipalResolver(new OpenIdCredentialsToPrincipalResolver());
         
         this.authenticationManager.setCredentialsMapping(credentialsMapping);

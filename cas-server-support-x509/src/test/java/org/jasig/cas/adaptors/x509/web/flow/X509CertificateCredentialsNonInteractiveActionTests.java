@@ -27,9 +27,9 @@ import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentialsToSerialNumberPrincipalResolver;
-import org.jasig.cas.adaptors.x509.web.flow.X509CertificateCredentialsNonInteractiveAction;
+import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManagerImpl;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
+import org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
@@ -60,8 +60,11 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
 
         final X509CredentialsAuthenticationHandler a = new X509CredentialsAuthenticationHandler();
         a.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
-        
-        authenticationManager.setAuthenticationHandlers(Arrays.asList(new AuthenticationHandler[] {a}));
+
+        final AuthenticationHandler[] handlers = new AuthenticationHandler[] {
+                new LegacyAuthenticationHandlerAdapter(a),
+        };
+        authenticationManager.setAuthenticationHandlers(Arrays.asList(handlers));
         authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new X509CertificateCredentialsToSerialNumberPrincipalResolver()}));
         
         centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());

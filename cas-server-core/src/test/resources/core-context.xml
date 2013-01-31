@@ -53,7 +53,7 @@
         <property name="servicesManager"
         ref="servicesManager" />
 	</bean>
-    
+
     <bean id="attributeRepository"
 		class="org.jasig.services.persondir.support.StubPersonAttributeDao">
 		<property name="backingMap">
@@ -70,7 +70,7 @@
     	class="org.jasig.cas.services.DefaultServicesManagerImpl">
     	<constructor-arg index="0" ref="serviceRegistryDao" />
     </bean>
-    
+
     <bean id="serviceRegistryDao" 	class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
     	<property name="registeredServices">
             <list>
@@ -80,7 +80,7 @@
                     <property name="serviceId" value="test$" />
                     <property name="evaluationOrder" value="1" />
                 </bean>
-                
+
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="1" />
                     <property name="name" value="Test Default Service" />
@@ -88,7 +88,7 @@
                     <property name="evaluationOrder" value="2" />
                     <property name="usernameAttribute" value="(default)" />
                 </bean>
-                
+
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="2" />
                     <property name="name" value="EduPerson Test Service" />
@@ -97,7 +97,7 @@
                     <property name="usernameAttribute" value="eduPersonAffiliation" />
                     <property name="ignoreAttributes" value="true" />
                 </bean>
-                
+
                 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
                     <property name="id" value="3" />
                     <property name="name" value="EduPerson Test Invalid Service" />
@@ -111,7 +111,7 @@
                     </property>
                 </bean>
             </list>
-            
+
         </property>
     </bean>
 	
@@ -172,22 +172,29 @@
 	<bean
 		id="httpBasedServiceCredentialsToPrincipalResolver"
 		class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
-		
-	<bean
-		id="httpBasedServiceCredentialsAuthenticationHandler"
-		class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
-		<property name="httpClient">
-			<bean class="org.jasig.cas.util.HttpClient" />
-		</property>
+
+	<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter"
+				id="httpBasedServiceCredentialsAuthenticationHandler">
+		<constructor-arg>
+			<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
+				<property name="httpClient">
+					<bean class="org.jasig.cas.util.HttpClient" />
+				</property>
+			</bean>
+		</constructor-arg>
 	</bean>
-	
-	<bean
-		id="simpleTestUsernamePasswordAuthenticationHandler"
-		class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />		
-		
+
+	<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter"
+				id="simpleTestUsernamePasswordAuthenticationHandler">
+		<constructor-arg>
+			<bean
+				class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+		</constructor-arg>
+	</bean>
+
 	<bean
 		id="authenticationMetaDataPopulator"
 		class="org.jasig.cas.mock.MockAuthenticationMetaDataPopulator" />
 
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
+  <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
 </beans>
