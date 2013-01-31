@@ -18,14 +18,13 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
-import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.perf4j.aop.Profiled;
@@ -61,11 +60,9 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         log.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
 
         Authentication authentication = new MutableAuthentication(p);
-
-        if (pair.getFirst()instanceof NamedAuthenticationHandler) {
-            final NamedAuthenticationHandler a = (NamedAuthenticationHandler) pair.getFirst();
-            authentication.getAttributes().put(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, a.getName());
-        }
+        authentication.getAttributes().put(
+                AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
+                pair.getFirst().getName());
 
         for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator : this.authenticationMetaDataPopulators) {
             authentication = authenticationMetaDataPopulator
@@ -101,7 +98,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param e The exception that has occurred during authentication attempt.
      */
     protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
-        if (e instanceof AuthenticationException) {
+        if (e instanceof GeneralSecurityException) {
             // CAS-1181 Log common authentication failures at INFO without stack trace
             log.info("{} failed authenticating {}", handlerName, credentials);
         } else {

@@ -116,8 +116,13 @@
 					| This is the authentication handler that authenticates services by means of callback via SSL, thereby validating
 					| a server side SSL certificate.
 					+-->
-				<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-					p:httpClient-ref="httpClient" />
+				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
+					<constructor-arg>
+						<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
+							p:httpClient-ref="httpClient" />
+					</constructor-arg>
+				</bean>
+
 				<!--
 					| This is the authentication handler declaration that every CAS deployer will need to change before deploying CAS 
 					| into production.  The default SimpleTestUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredentials
@@ -125,8 +130,11 @@
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
 					+-->
-				<bean 
-					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
+					<constructor-arg>
+						<bean	class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+					</constructor-arg>
+				</bean>
 			</list>
 		</property>
 	</bean>

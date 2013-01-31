@@ -93,11 +93,16 @@
 					| This is the authentication handler that authenticates services by means of callback via SSL, thereby validating
 					| a server side SSL certificate.
 					+-->
-				<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
-				    <property name="httpClient">
-				        <bean class="org.jasig.cas.util.HttpClient" />
-				    </property>
+				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
+					<constructor-arg>
+						<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler">
+								<property name="httpClient">
+										<bean class="org.jasig.cas.util.HttpClient" />
+								</property>
+						</bean>
+					</constructor-arg>
 				</bean>
+
 				<!--
 					| This is the authentication handler declaration that every CAS deployer will need to change before deploying CAS 
 					| into production.  The default SimpleTestUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredentials
@@ -105,57 +110,64 @@
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
 					+-->
-				<bean
-					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
+					<constructor-arg>
+						<bean class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+					</constructor-arg>
+				</bean>
 
-                <!--
-                    X.509 authentication handler example.
-                 -->
-        		<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
-					<property name="trustedIssuerDnPattern"
-							  value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
-					<property name="subjectDnPattern"
-							  value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
-					<property name="checkKeyUsage" value="true" />
-					<property name="requireKeyUsage" value="true" />
-					<property name="maxPathLength" value="2147483647" />
-					<property name="maxPathLengthAllowUnspecified" value="true" />
-					<property name="revocationChecker">
-						<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker">
-							<constructor-arg>
-								<!-- Cache CRL fetches for 6h -->
-								<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
-	                                p:cacheName="CRLCache"
-	                                p:eternal="false"
-	                                p:overflowToDisk="false"
-									p:maxElementsInMemory="100"
-									p:timeToLive="21600"
-									p:timeToIdle="21600">
-									<property name="cacheManager">
-									    <bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+				<!--
+					 | X.509 authentication handler example.
+					-->
+				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
+					<constructor-arg>
+						<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
+							<property name="trustedIssuerDnPattern"
+										value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
+							<property name="subjectDnPattern"
+										value="CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US" />
+							<property name="checkKeyUsage" value="true" />
+							<property name="requireKeyUsage" value="true" />
+							<property name="maxPathLength" value="2147483647" />
+							<property name="maxPathLengthAllowUnspecified" value="true" />
+							<property name="revocationChecker">
+								<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker">
+									<constructor-arg>
+										<!-- Cache CRL fetches for 6h -->
+										<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean"
+																			p:cacheName="CRLCache"
+																			p:eternal="false"
+																			p:overflowToDisk="false"
+											p:maxElementsInMemory="100"
+											p:timeToLive="21600"
+											p:timeToIdle="21600">
+											<property name="cacheManager">
+													<bean class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+											</property>
+										</bean>
+									</constructor-arg>
+									<property name="unavailableCRLPolicy">
+											<!--
+												Default is to trigger authentication failure on unavailable CRL data.
+												Use org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy
+												to allow auth on unavailable CRL data.
+											-->
+										<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
 									</property>
-								</bean>
-							</constructor-arg>
-							<property name="unavailableCRLPolicy">
-							    <!--
-							      Default is to trigger authentication failure on unavailable CRL data.
-							      Use org.jasig.cas.adaptors.x509.authentication.handler.support.AllowRevocationPolicy
-							      to allow auth on unavailable CRL data.
-							    -->
-								<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.DenyRevocationPolicy" />
-							</property>
-							<property name="expiredCRLPolicy">
-								<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy">
-								    <!--
-								        Allow expired CRL data up to 48h after expiration.
-								        Set to 0 to prevent expired CRL data.
-								    -->
-								    <property name="threshold" value="172800" />
+									<property name="expiredCRLPolicy">
+										<bean class="org.jasig.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicy">
+												<!--
+														Allow expired CRL data up to 48h after expiration.
+														Set to 0 to prevent expired CRL data.
+												-->
+												<property name="threshold" value="172800" />
+										</bean>
+									</property>
 								</bean>
 							</property>
 						</bean>
-					</property>
-        		</bean>
+					</constructor-arg>
+				</bean>
 			</list>
 		</property>
 	</bean>

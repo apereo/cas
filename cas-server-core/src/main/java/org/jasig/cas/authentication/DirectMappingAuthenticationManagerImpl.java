@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
@@ -58,16 +58,16 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         final String handlerName = d.getAuthenticationHandler().getClass().getSimpleName();
         boolean authenticated = false;
         
-        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR; 
-        
+        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR;
+
         try {
-            authenticated = d.getAuthenticationHandler().authenticate(credentials);
-        } catch (AuthenticationException e) {
-            authException = e;
+            d.getAuthenticationHandler().authenticate(credentials);
+            authenticated = true;
+        } catch (final GeneralSecurityException e) {
             logAuthenticationHandlerError(handlerName, credentials, e);
-        } catch (Exception e) {
+        } catch (final PreventedException e) {
             logAuthenticationHandlerError(handlerName, credentials, e);
-        } 
+        }
 
         if (!authenticated) {
             log.info("{} failed to authenticate {}", handlerName, credentials);
