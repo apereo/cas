@@ -96,8 +96,11 @@
 					| This is the authentication handler that authenticates services by means of callback via SSL, thereby validating
 					| a server side SSL certificate.
 					+-->
-				<bean
-					class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
+					<constructor-arg>
+						<bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler" />
+					</constructor-arg>
+				</bean>
 
 				<!--
 					| This is the authentication handler declaration that every CAS deployer will need to change before deploying CAS 
@@ -106,13 +109,16 @@
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
 					+-->
-				<bean
-					class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler">
-					<property name="filter" value="uid=%u" />
-					<property name="searchBase" value="ou=people,dc=rutgers,dc=edu" /> 
-					<property
-						name="contextSource"
-						ref="contextSource" />
+				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
+					<constructor-arg>
+						<bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler">
+							<property name="filter" value="uid=%u" />
+							<property name="searchBase" value="ou=people,dc=rutgers,dc=edu" />
+							<property
+								name="contextSource"
+								ref="contextSource" />
+						</bean>
+					</constructor-arg>
 				</bean>
 			</list>
 		</property>

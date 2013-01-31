@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -61,15 +61,15 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
             foundOneThatWorks = true;
             boolean authenticated = false;
             handlerName = authenticationHandler.getClass().getName();
-                        
+
             try {
-                authenticated = authenticationHandler.authenticate(credentials);
-            } catch (AuthenticationException e) {
-                authException = e;
+                authenticationHandler.authenticate(credentials);
+                authenticated = true;
+            } catch (final GeneralSecurityException e) {
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } catch (Exception e) {
+            } catch (final PreventedException e) {
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } 
+            }
 
             if (authenticated) {
                 log.info("{} successfully authenticated {}", handlerName, credentials);

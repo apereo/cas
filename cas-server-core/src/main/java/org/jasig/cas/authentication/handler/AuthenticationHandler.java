@@ -21,23 +21,16 @@ package org.jasig.cas.authentication.handler;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
- * Validate Credentials support for AuthenticationManagerImpl.
- * <p>
- * Determines that Credentials are valid. Password-based credentials may be
- * tested against an external LDAP, Kerberos, JDBC source. Certificates may be
- * checked against a list of CA's and do the usual chain validation.
- * Implementations must be parameterized with their sources of information.
- * <p>
- * Callers to this class should first call supports to determine if the
- * AuthenticationHandler can authenticate the credentials provided.
- * 
+ * Deprecated interface for authenticating user-supplied credentials. This component has
+ * been superseded by {@link org.jasig.cas.authentication.AuthenticationHandler} as of
+ * CAS 4.0.
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ * @see org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter
+ * @see org.jasig.cas.authentication.AuthenticationHandler
  */
+@Deprecated
 public interface AuthenticationHandler {
 
     /**
