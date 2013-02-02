@@ -38,9 +38,11 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 	<!--
 		| This bean declares our AuthenticationManager.  The CentralAuthenticationService service bean
 		| declared in applicationContext.xml picks up this AuthenticationManager by reference to its id, 
@@ -146,6 +148,20 @@
 		</property>
 	</bean>
 	
+    <!--  
+        Attribute filters are used by CAS ensure each registered service complies with the 
+        attribute release policy configured in the service registry configuration. 
+    -->
+    <util:list id="attributeFiltersList" value-type="org.jasig.cas.services.RegisteredServiceAttributeFilter"
+               list-class="java.util.ArrayList"> 
+        <bean class="org.jasig.cas.services.support.RegisteredServiceDefaultAttributeFilter" />
+        
+        <!-- 
+        Here is a sample regex attribute filter that only allows for attributes whose length is 3
+        <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" p:pattern="^\w{3}$" />
+         -->
+    </util:list>
+    
 	<!-- 
 	Sample, in-memory data store for the ServiceRegistry. A real implementation
 	would probably want to replace this with the JPA-backed ServiceRegistry DAO
@@ -179,7 +195,7 @@
                     -->
                 </list>
             </property>
-        </bean>
+  </bean>
 
   <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
   

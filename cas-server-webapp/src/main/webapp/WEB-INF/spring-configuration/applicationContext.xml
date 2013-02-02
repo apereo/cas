@@ -94,7 +94,8 @@
           p:ticketRegistry-ref="ticketRegistry"
           p:servicesManager-ref="servicesManager"
           p:persistentIdGenerator-ref="persistentIdGenerator"
-          p:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"/>
+          p:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"
+          p:attributeFilters-ref="attributeFiltersList"/>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 
