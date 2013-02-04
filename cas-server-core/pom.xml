@@ -187,6 +187,10 @@
               <groupId>org.slf4j</groupId>
               <artifactId>log4j-over-slf4j</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>joda-time</groupId>
+              <artifactId>joda-time</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
 
@@ -224,6 +228,12 @@
             <version>${commons.io.version}</version>
             <scope>compile</scope>
             <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <scope>compile</scope>
         </dependency>
             
         <dependency>
