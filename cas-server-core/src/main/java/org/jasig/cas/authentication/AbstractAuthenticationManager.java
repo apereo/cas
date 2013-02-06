@@ -26,6 +26,7 @@ import com.github.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.AuthenticationHandler;
 import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
+import org.jasig.cas.authentication.handler.UncategorizedAuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.perf4j.aop.Profiled;
@@ -57,7 +58,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         // we can only get here if the above method doesn't throw an exception. And if it doesn't, then the pair must not be null.
         final Principal p = pair.getSecond();
-        log.info("Authenticated {} with credential {}.", p, credentials);
+        log.info("{} authenticated {} with credential {}.", pair.getFirst(), p, credentials);
         log.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
 
         Authentication authentication = new MutableAuthentication(p);
@@ -94,19 +95,24 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
 
     /**
-     * Logs authentication handler errors.
+     * Handles an authentication error raised by an {@link AuthenticationHandler}.
      * 
      * @param handlerName The class name of the authentication handler.
      * @param credentials Client credentials subject to authentication. 
      * @param e The exception that has occurred during authentication attempt.
      */
-    protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
+    protected void handleError(final String handlerName, final Credentials credentials, final Exception e)
+            throws AuthenticationException {
         if (e instanceof AuthenticationException) {
             // CAS-1181 Log common authentication failures at INFO without stack trace
             log.info("{} failed authenticating {}", handlerName, credentials);
-        } else {
-            log.error("{} threw error authenticating {}", handlerName, credentials, e);
+            throw (AuthenticationException) e;
         }
+        log.error("{} threw error authenticating {}", handlerName, credentials, e);
+        throw new UncategorizedAuthenticationException(e.getClass().getName(), e) {
+            // Anonymous inner class allows us to throw uncategorized authentication error
+            // since base class is abstract.
+        };
     }
 
 
