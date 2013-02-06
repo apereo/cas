@@ -33,29 +33,47 @@ import org.slf4j.LoggerFactory;
  *  
  * If the registered service is set to ignore the attribute release policy, the filter
  * will release all principal attributes. 
+ * <p>
+ * Various flavors of {@link RegisteredServiceRegexAttributeFilter} would need to extend this class
+ * and override the {@link #filterInternal(String, Map, RegisteredService)} method. 
  * 
  * @author Misagh Moayyed
  * @since 4.0.0
+ * @see RegisteredServiceRegexAttributeFilter
  */
-public final class RegisteredServiceDefaultAttributeFilter implements RegisteredServiceAttributeFilter {
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
+public class RegisteredServiceDefaultAttributeFilter implements RegisteredServiceAttributeFilter {
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Override
-    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
-        if (registeredService.isIgnoreAttributes()) {
-            log.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.", registeredService);
-            return givenAttributes;
-        }
-        
+    public final Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
         final Map<String, Object> attributes = new HashMap<String, Object>();
-        for (final String attribute : registeredService.getAllowedAttributes()) {
-            final Object value = givenAttributes.get(attribute);
+        
+        if (registeredService.isIgnoreAttributes()) {
+            log.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.", registeredService.getName());
+            attributes.putAll(givenAttributes);
+        }
+        else {
+            for (final String attribute : registeredService.getAllowedAttributes()) {
+                final Object value = givenAttributes.get(attribute);
 
-            if (value != null) {
-                log.debug("Found attribute [{}] in the list of allows attributes for service [{}]", attribute, registeredService);
-                attributes.put(attribute, value);
+                if (value != null) {
+                    log.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute, registeredService.getName());
+                    attributes.put(attribute, value);
+                }
             }
         }
-        return attributes;        
+        return filterInternal(principalId, attributes, registeredService);        
+    }
+    
+    /**
+     * Process any additional filtering.
+     * 
+     * @param principalId
+     * @param givenAttributes
+     * @param registeredService
+     * @return
+     */
+    protected Map<String, Object> filterInternal(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
+        return givenAttributes;
     }
 }
