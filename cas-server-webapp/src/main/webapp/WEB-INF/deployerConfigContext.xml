@@ -36,6 +36,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
@@ -158,7 +159,7 @@
         
         <!-- 
         Here is a sample regex attribute filter that only allows for attributes whose length is 3
-        <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" p:pattern="^\w{3}$" />
+        <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:pattern="^\w{3}$" />
          -->
     </util:list>
     
