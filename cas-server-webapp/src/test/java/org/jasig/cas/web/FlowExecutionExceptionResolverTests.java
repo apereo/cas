@@ -18,33 +18,40 @@
  */
 package org.jasig.cas.web;
 
+import static org.junit.Assert.*;
+
+
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.webflow.conversation.impl.BadlyFormattedConversationIdException;
 import org.springframework.webflow.execution.FlowExecutionKey;
+import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
-
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
+public class FlowExecutionExceptionResolverTests {
 
-    private NoSuchFlowExecutionExceptionResolver resolver;
+    private FlowExecutionExceptionResolver resolver;
 
-    protected void setUp() throws Exception {
-        this.resolver = new NoSuchFlowExecutionExceptionResolver();
+    @Before
+    public void setUp() throws Exception {
+        this.resolver = new FlowExecutionExceptionResolver();
     }
 
+    @Test
     public void testNullPointerException() {
         assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
             new MockHttpServletResponse(), null, new NullPointerException()));
     }
 
+    @Test
     public void testNoSuchFlowExecutionException() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
@@ -73,6 +80,20 @@ public class NoSuchFlowExecutionExceptionResolverTests extends TestCase {
             .getUrl());
     }
     
+    @Test
+    public void testBadlyFormattedExecutionException() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("test");
+        request.setQueryString("execution=e2s1<iframe src=javascript:alert(26748)");
+        ModelAndView model = (this.resolver.resolveException(request,
+            new MockHttpServletResponse(), null,
+            new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
+
+        assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())
+                .getUrl());
+    }
+    
+    @Test
     public void testNoSuchFlowExecutionExeptionWithQueryString() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
