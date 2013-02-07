@@ -30,6 +30,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.conversation.impl.BadlyFormattedConversationIdException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
+import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 /**
@@ -82,15 +83,9 @@ public class FlowExecutionExceptionResolverTests {
     
     @Test
     public void testBadlyFormattedExecutionException() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("test");
-        request.setQueryString("execution=e2s1<iframe src=javascript:alert(26748)");
-        ModelAndView model = (this.resolver.resolveException(request,
-            new MockHttpServletResponse(), null,
-            new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
-
-        assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())
-                .getUrl());
+        assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
+                   new MockHttpServletResponse(), null, 
+                   new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
     }
     
     @Test
@@ -122,5 +117,4 @@ public class FlowExecutionExceptionResolverTests {
         assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())
             .getUrl());
     }
-
 }
