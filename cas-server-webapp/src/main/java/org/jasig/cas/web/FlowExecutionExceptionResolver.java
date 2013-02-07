@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 
 /**
@@ -62,8 +63,13 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
          * Since FlowExecutionRepositoryException is a common ancestor to these exceptions and other 
          * error cases we would likely want to hide from the user, it seems reasonable to check for
          * FlowExecutionRepositoryException.
+         * 
+         * BadlyFormattedFlowExecutionKeyException is specifically ignored by this handler
+         * because redirecting to the requested URI with this exception may cause an infinite
+         * redirect loop (i.e. when invalid "execution" parameter exists as part of the query string
          */
-        if (!(exception instanceof FlowExecutionRepositoryException)) {
+        if (!(exception instanceof FlowExecutionRepositoryException) || 
+              exception instanceof BadlyFormattedFlowExecutionKeyException) {
             log.debug("Ignoring the received exception due to a type mismatch", exception);
             return null;
         }
