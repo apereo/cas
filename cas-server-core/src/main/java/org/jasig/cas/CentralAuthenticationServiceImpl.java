@@ -32,6 +32,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -56,7 +57,6 @@ import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +87,6 @@ import java.util.Map;
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
- * @version $Revision: 1.16 $ $Date: 2007/04/24 18:11:36 $
  * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
@@ -137,6 +136,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
 
+    /** A list of attribute filters that impose validation rules over the attribute release policy */
+    @NotNull
+    private List<RegisteredServiceAttributeFilter> attributeFilters;
+    
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
      * and removes it from the TicketRegistry.
@@ -367,32 +370,21 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final List<Authentication> chainedAuthenticationsList = serviceTicket.getGrantingTicket().getChainedAuthentications();
             final Authentication authentication = chainedAuthenticationsList.get(chainedAuthenticationsList.size() - 1);
             final Principal principal = authentication.getPrincipal();
-           
-            final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
-            final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
             
-            if (!registeredService.isIgnoreAttributes()) {
-                for (final String attribute : registeredService.getAllowedAttributes()) {
-                    final Object value = principal.getAttributes().get(attribute);
-
-                    if (value != null) {
-                        attributesToRelease.put(attribute, value);
-                    }
-                }
-            } else {
-                attributesToRelease.putAll(principal.getAttributes());
+            Map<String, Object> attributesToRelease = principal.getAttributes();
+            for (final RegisteredServiceAttributeFilter filter : this.attributeFilters) {
+                attributesToRelease = filter.filter(principal.getId(), attributesToRelease, registeredService);
             }
             
+            final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
-            final MutableAuthentication mutableAuthentication = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate());
-            mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
-
+            final Authentication authToUse = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate(), 
+                                                                       authentication.getAttributes());
             final List<Authentication> authentications = new ArrayList<Authentication>();
-
             for (int i = 0; i < chainedAuthenticationsList.size() - 1; i++) {
                 authentications.add(serviceTicket.getGrantingTicket().getChainedAuthentications().get(i));
             }
-            authentications.add(mutableAuthentication);
+            authentications.add(authToUse);
 
             return new ImmutableAssertionImpl(authentications, serviceTicket.getService(), serviceTicket.isFromNewLogin());
         } finally {
@@ -432,7 +424,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         } else {
             if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) &&
                  principal.getAttributes().containsKey(serviceUsernameAttribute)) {
-                principalId = principal.getAttributes().get(serviceUsernameAttribute).toString();
+                principalId = principal.getAttributes().get(registeredService.getUsernameAttribute()).toString();
             } else {
                 principalId = principal.getId();
                 final Object[] errorLogParameters = new Object[] { principalId, registeredService.getUsernameAttribute(),
@@ -548,5 +540,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public void setPersistentIdGenerator(
         final PersistentIdGenerator persistentIdGenerator) {
         this.persistentIdGenerator = persistentIdGenerator;
+    }
+    
+    public void setAttributeFilters(final List<RegisteredServiceAttributeFilter> filters) {
+        this.attributeFilters = filters;
     }
 }
