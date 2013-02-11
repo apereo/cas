@@ -22,9 +22,6 @@ import java.util.Arrays;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
@@ -63,7 +60,7 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
     }
 
     @Test
-    public void testNoHandlerFound() throws AuthenticationException {
+    public void testNoHandlerFound() throws Exception {
         try {
             getAuthenticationManager().authenticate(new Credentials(){
 
@@ -71,12 +68,12 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
                 // there is nothing to do here
             });
             fail("Authentication should have failed.");
-        } catch (UnsupportedCredentialsException e) {
+        } catch (AuthenticationException e) {
             return;
         }
     }
 
-    @Test(expected=UnsupportedCredentialsException.class)
+    @Test(expected=AuthenticationException.class)
     public void testNoResolverFound() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();
@@ -86,7 +83,7 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
         manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
     }
 
-    @Test(expected = BadCredentialsAuthenticationException.class)
+    @Test(expected = AuthenticationException.class)
     public void testResolverReturnsNull() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
         HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler();

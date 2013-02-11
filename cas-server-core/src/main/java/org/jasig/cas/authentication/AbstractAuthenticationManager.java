@@ -24,7 +24,6 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import com.github.inspektr.audit.annotation.Audit;
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Principal;
 import org.perf4j.aop.Profiled;
@@ -86,8 +85,10 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @param credentials the credentials to check
      * @return the pair of authentication handler and principal.  CANNOT be NULL.
      * @throws AuthenticationException if there is an error authenticating.
+     * @throws PrincipalException On principal resolution errors.
      */
-    protected abstract Pair<AuthenticationHandler,Principal> authenticateAndObtainPrincipal(Credentials credentials) throws AuthenticationException;
+    protected abstract Pair<AuthenticationHandler,Principal> authenticateAndObtainPrincipal(Credentials credentials)
+            throws AuthenticationException;
 
 
     /**

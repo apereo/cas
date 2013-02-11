@@ -18,17 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
+import java.util.Collections;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
 
 /**
  * Authentication Manager that provides a direct mapping between credentials
@@ -49,34 +46,36 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials)
+            throws AuthenticationException, PrincipalException {
         final Class< ? extends Credentials> credentialsClass = credentials.getClass();
         final DirectAuthenticationHandlerMappingHolder d = this.credentialsMapping.get(credentialsClass);
 
-        Assert.notNull(d, "no mapping found for: " + credentialsClass.getName());
-
-        final String handlerName = d.getAuthenticationHandler().getClass().getSimpleName();
-        boolean authenticated = false;
-        
-        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR;
-
-        try {
-            d.getAuthenticationHandler().authenticate(credentials);
-            authenticated = true;
-        } catch (final GeneralSecurityException e) {
-            logAuthenticationHandlerError(handlerName, credentials, e);
-        } catch (final PreventedException e) {
-            logAuthenticationHandlerError(handlerName, credentials, e);
+        if (d == null) {
+            log.debug("No mapping found for: {}", credentialsClass.getName());
+            throw new AuthenticationException();
         }
 
-        if (!authenticated) {
+        final String handlerName = d.getAuthenticationHandler().getName();
+        final HandlerResult result;
+        try {
+            result = d.getAuthenticationHandler().authenticate(credentials);
+        } catch (final Exception e) {
+            logAuthenticationHandlerError(handlerName, credentials, e);
             log.info("{} failed to authenticate {}", handlerName, credentials);
-            throw authException;
+            throw new AuthenticationException(
+                    Collections.singletonMap(handlerName, e),
+                    Collections.<String, HandlerResult>emptyMap());
         }
         log.info("{} successfully authenticated {}", handlerName, credentials);
 
         final Principal p = d.getCredentialsToPrincipalResolver().resolvePrincipal(credentials);
-
+        if (p == null) {
+            throw new PrincipalException(
+                    "Resolver failed to resolve principal.",
+                    Collections.<String, Exception>emptyMap(),
+                    Collections.singletonMap(handlerName, result));
+        }
         return new Pair<AuthenticationHandler,Principal>(d.getAuthenticationHandler(), p);
     }
 

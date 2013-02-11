@@ -18,14 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
@@ -48,41 +46,42 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
     }
 
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
-        boolean foundOneThatWorks = false;
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials)
+            throws AuthenticationException {
+
+        final Map<String, Exception> errorMap = new LinkedHashMap<String, Exception>();
         String handlerName;
-        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR; 
-        
         for (final AuthenticationHandler authenticationHandler : this.linkedHandlers.keySet()) {
             if (!authenticationHandler.supports(credentials)) {
                 continue;
             }
 
-            foundOneThatWorks = true;
-            boolean authenticated = false;
-            handlerName = authenticationHandler.getClass().getName();
-
+            handlerName = authenticationHandler.getName();
+            HandlerResult result = null;
             try {
-                authenticationHandler.authenticate(credentials);
-                authenticated = true;
-            } catch (final GeneralSecurityException e) {
+                result = authenticationHandler.authenticate(credentials);
+            } catch (final Exception e) {
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } catch (final PreventedException e) {
-                logAuthenticationHandlerError(handlerName, credentials, e);
+                errorMap.put(handlerName, e);
             }
 
-            if (authenticated) {
+            if (result != null) {
                 log.info("{} successfully authenticated {}", handlerName, credentials);
                 final Principal p = this.linkedHandlers.get(authenticationHandler).resolvePrincipal(credentials);
+                if (p == null) {
+                    throw new PrincipalException(
+                            "Resolver failed to resolve principal.",
+                            errorMap,
+                            Collections.singletonMap(handlerName, result));
+                }
                 return new Pair<AuthenticationHandler,Principal>(authenticationHandler, p);
             }
             log.info("{} failed to authenticate {}", handlerName, credentials);
         }
 
-        if (foundOneThatWorks) {
-            throw authException;
+        if (!errorMap.isEmpty()) {
+            throw new AuthenticationException(errorMap);
         }
-
-        throw UnsupportedCredentialsException.ERROR;
+        throw new AuthenticationException();
     }
 }

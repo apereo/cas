@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
@@ -52,10 +53,11 @@ public interface CentralAuthenticationService {
      * 
      * @param credentials The credentials to create the ticket for
      * @return The String identifier of the ticket (may not be null).
+     * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if ticket cannot be created
      */
     String createTicketGrantingTicket(Credentials credentials)
-        throws TicketException;
+        throws AuthenticationException, TicketException;
 
     /**
      * Grant a ServiceTicket for a Service.
@@ -73,16 +75,18 @@ public interface CentralAuthenticationService {
      * credentials matches the principal associated with the
      * TicketGrantingTicket.
      * 
+     *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
      * @param credentials the Credentials to present to receive the
      * ServiceTicket
      * @return the ServiceTicket for target Service.
+     * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if the ticket could not be created.
      */
     String grantServiceTicket(final String ticketGrantingTicketId,
         final Service service, final Credentials credentials)
-        throws TicketException;
+        throws AuthenticationException, TicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -113,8 +117,9 @@ public interface CentralAuthenticationService {
      * TicketGrantingTicket delegated to it.
      * @return TicketGrantingTicket that can grant ServiceTickets that proxy
      * authentication.
+     * @throws AuthenticationException on errors authenticating the credentials
      * @throws TicketException if there was an error creating the ticket
      */
     String delegateTicketGrantingTicket(final String serviceTicketId,
-        final Credentials credentials) throws TicketException;
+        final Credentials credentials) throws AuthenticationException, TicketException;
 }

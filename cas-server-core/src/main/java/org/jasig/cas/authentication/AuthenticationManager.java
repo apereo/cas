@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 
 /**
@@ -46,11 +45,12 @@ public interface AuthenticationManager {
      * an AuthenticationException is thrown.
      * 
      * @param credentials The credentials provided for authentication.
+     *
      * @return fully populated Authentication object.
+     *
      * @throws AuthenticationException if unable to determine validity of
      * credentials or there is an extenuating circumstance related to
      * credentials (i.e. Account locked).
      */
-    Authentication authenticate(final Credentials credentials)
-        throws AuthenticationException;
+    Authentication authenticate(final Credentials credentials) throws AuthenticationException;
 }

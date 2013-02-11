@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
@@ -75,7 +74,7 @@ public class DirectMappingAuthenticationManagerImplTests extends TestCase {
         try {
             this.manager.authenticate(c);
             fail();
-        } catch (final BadCredentialsAuthenticationException e) {
+        } catch (final AuthenticationException e) {
             return;
         }
     }
@@ -86,8 +85,9 @@ public class DirectMappingAuthenticationManagerImplTests extends TestCase {
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.cnn.com"));
             this.manager.authenticate(c);
             fail("Exception expected.");
-        } catch (final IllegalArgumentException e) {
-            return;
+        } catch (final AuthenticationException e) {
+            assertEquals(0, e.getHandlerErrors().size());
+            assertEquals(0, e.getHandlerSuccesses().size());
         }
     }
 }

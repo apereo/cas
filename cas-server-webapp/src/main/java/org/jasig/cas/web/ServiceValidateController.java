@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -32,8 +33,8 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
-import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -136,9 +137,10 @@ public class ServiceValidateController extends DelegateController {
                     proxyGrantingTicketId = this.centralAuthenticationService
                         .delegateTicketGrantingTicket(serviceTicketId,
                             serviceCredentials);
+                } catch (final AuthenticationException e) {
+                    logger.info("Failed to authenticate " + serviceCredentials);
                 } catch (final TicketException e) {
-                    logger.error("TicketException generating ticket for: "
-                        + serviceCredentials, e);
+                    logger.error("TicketException generating ticket for: " + serviceCredentials, e);
                 }
             }
 
