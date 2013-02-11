@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.web.flow;
 
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
@@ -28,8 +30,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
@@ -72,21 +72,12 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
                 WebUtils.putServiceTicketInRequestScope(context,
                     serviceTicketId);
                 return result("warn");
+            } catch (final AuthenticationException e) {
+                onError(context, credentials);
+                return error();
             } catch (final TicketException e) {
-                if (e.getCause() != null
-                    && AuthenticationException.class.isAssignableFrom(e
-                        .getCause().getClass())) {
-                    onError(context, credentials);
-                    return error();
-                }
-                this.centralAuthenticationService
-                    .destroyTicketGrantingTicket(ticketGrantingTicketId);
-                if (logger.isDebugEnabled()) {
-                    logger
-                        .debug(
-                            "Attempted to generate a ServiceTicket using renew=true with different credentials",
-                            e);
-                }
+                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
+                logger.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
             }
         }
 
@@ -97,7 +88,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
                     .createTicketGrantingTicket(credentials));
             onSuccess(context, credentials);
             return success();
-        } catch (final TicketException e) {
+        } catch (final Exception e) {
             onError(context, credentials);
             return error();
         }
