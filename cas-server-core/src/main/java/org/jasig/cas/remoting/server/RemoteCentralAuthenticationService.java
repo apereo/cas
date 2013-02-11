@@ -18,16 +18,19 @@
  */
 package org.jasig.cas.remoting.server;
 
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
-
-import javax.validation.*;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
 
 /**
  * Wrapper implementation around a CentralAuthenticationService that does
@@ -60,7 +63,9 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if the Credentials are null or if given
      * invalid credentials.
      */
-    public String createTicketGrantingTicket(final Credentials credentials) throws TicketException {
+    public String createTicketGrantingTicket(final Credentials credentials)
+            throws AuthenticationException, TicketException {
+
         Assert.notNull(credentials, "credentials cannot be null");
         checkForErrors(credentials);
 
@@ -74,7 +79,10 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     /**
      * @throws IllegalArgumentException if given invalid credentials
      */
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws TicketException {
+    public String grantServiceTicket(
+            final String ticketGrantingTicketId, final Service service, final Credentials credentials)
+            throws AuthenticationException, TicketException {
+
         checkForErrors(credentials);
 
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
@@ -91,7 +99,9 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     /**
      * @throws IllegalArgumentException if the credentials are invalid.
      */
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials) throws TicketException {
+    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials)
+            throws AuthenticationException, TicketException {
+
         checkForErrors(credentials);
 
         return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);

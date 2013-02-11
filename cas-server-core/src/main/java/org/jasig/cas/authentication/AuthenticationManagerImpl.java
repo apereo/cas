@@ -18,14 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
@@ -79,42 +77,42 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
     private List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers;
 
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials)
+            throws AuthenticationException {
+
         boolean foundSupported = false;
-        boolean authenticated = false;
+        final Map<String, Exception> errorMap = new LinkedHashMap<String, Exception>();
+        final Map<String, HandlerResult> successMap = new LinkedHashMap<String, HandlerResult>();
+        HandlerResult authenticatedResult = null;
         AuthenticationHandler authenticatedClass = null;
         String handlerName;
-        
-        AuthenticationException unAuthSupportedHandlerException = BadCredentialsAuthenticationException.ERROR; 
-     
+
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
-                handlerName = authenticationHandler.getClass().getName();
+                handlerName = authenticationHandler.getName();
                 try {
-                    authenticationHandler.authenticate(credentials);
+                    authenticatedResult = authenticationHandler.authenticate(credentials);
+                    successMap.put(handlerName, authenticatedResult);
                     log.info("{} successfully authenticated {}", handlerName, credentials);
                     authenticatedClass = authenticationHandler;
-                    authenticated = true;
                     break;
-                } catch (final GeneralSecurityException e) {
+                } catch (final Exception e) {
                     logAuthenticationHandlerError(handlerName, credentials, e);
-                } catch (final PreventedException e) {
-                    logAuthenticationHandlerError(handlerName, credentials, e);
+                    errorMap.put(handlerName, e);
                 }
             }
         }
 
-        if (!authenticated) {
-            if (foundSupported) {
-                throw unAuthSupportedHandlerException;
+        if (authenticatedResult == null) {
+            if (errorMap.size() > 0) {
+                throw new AuthenticationException(errorMap);
             }
 
-            throw UnsupportedCredentialsException.ERROR;
+            throw new AuthenticationException();
         }
 
         foundSupported = false;
-
         for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver : this.credentialsToPrincipalResolvers) {
             if (credentialsToPrincipalResolver.supports(credentials)) {
                 final Principal principal = credentialsToPrincipalResolver.resolvePrincipal(credentials);
@@ -127,15 +125,11 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         }
 
         if (foundSupported) {
-            if (log.isDebugEnabled()) {
-                log.debug("CredentialsToPrincipalResolver found but no principal returned.");
-            }
-
-            throw BadCredentialsAuthenticationException.ERROR;
+            throw new PrincipalException("Resolver found but no principal returned.", errorMap, successMap);
         }
 
-        log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
-        throw UnsupportedCredentialsException.ERROR;
+        throw new PrincipalException(
+                "Resolver not found for " + credentials.getClass().getName(), errorMap, successMap);
     }
 
     /**
