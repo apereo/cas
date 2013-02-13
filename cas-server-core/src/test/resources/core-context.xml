@@ -184,13 +184,8 @@
 		</constructor-arg>
 	</bean>
 
-	<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter"
-				id="simpleTestUsernamePasswordAuthenticationHandler">
-		<constructor-arg>
-			<bean
-				class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
-		</constructor-arg>
-	</bean>
+	<bean class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler"
+				id="simpleTestUsernamePasswordAuthenticationHandler"/>
 
 	<bean
 		id="authenticationMetaDataPopulator"
