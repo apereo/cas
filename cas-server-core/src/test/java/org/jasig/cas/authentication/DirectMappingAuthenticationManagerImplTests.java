@@ -48,8 +48,7 @@ public class DirectMappingAuthenticationManagerImplTests extends TestCase {
         this.manager.setAuthenticationMetaDataPopulators(populators);
         
         final DirectAuthenticationHandlerMappingHolder d = new DirectAuthenticationHandlerMappingHolder();
-        d.setAuthenticationHandler(
-                new LegacyAuthenticationHandlerAdapter(new SimpleTestUsernamePasswordAuthenticationHandler()));
+        d.setAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
         d.setCredentialsToPrincipalResolver(new UsernamePasswordCredentialsToPrincipalResolver());
         
         mappings.put(UsernamePasswordCredentials.class, d);

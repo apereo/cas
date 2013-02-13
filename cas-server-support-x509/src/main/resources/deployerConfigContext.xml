@@ -110,11 +110,7 @@
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
 					+-->
-				<bean class="org.jasig.cas.authentication.LegacyAuthenticationHandlerAdapter">
-					<constructor-arg>
-						<bean class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
-					</constructor-arg>
-				</bean>
+				<bean class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
 
 				<!--
 					 | X.509 authentication handler example.
