@@ -18,7 +18,23 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import java.security.GeneralSecurityException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.FailedLoginException;
+
+import org.jasig.cas.authentication.AccountDisabledException;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.InvalidLoginLocationException;
+import org.jasig.cas.authentication.InvalidLoginTimeException;
+import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -27,33 +43,74 @@ import org.springframework.util.StringUtils;
  * production environment and is only designed to facilitate unit testing and
  * load testing.
  * 
- * @author Scott Battaglia
+ * @author Scott Battagliaa
+ * @author Marvin S. Addison
  * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class SimpleTestUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public final class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
+    /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
+    private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<String, Exception>();
 
-    public SimpleTestUsernamePasswordAuthenticationHandler() {
-        log
-            .warn(this.getClass().getName()
-                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+    /** Instance of logging for subclasses. */
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    /** Map of special usernames to exceptions that are raised when a user with that name attempts authentication. */
+    private Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
+
+
+    static {
+        DEFAULT_USERNAME_ERROR_MAP.put("accountDisabled", new AccountDisabledException("Account disabled"));
+        DEFAULT_USERNAME_ERROR_MAP.put("accountLocked", new AccountLockedException("Account locked"));
+        DEFAULT_USERNAME_ERROR_MAP.put("badHours", new InvalidLoginTimeException("Invalid logon hours"));
+        DEFAULT_USERNAME_ERROR_MAP.put("badWorkstation", new InvalidLoginLocationException("Invalid workstation"));
+        DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
 
-    public boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
-        final String username = credentials.getUsername();
-        final String password = credentials.getPassword();
+    public SimpleTestUsernamePasswordAuthenticationHandler() {
+        log.warn(
+                "{} is only to be used in a testing environment.  NEVER enable this in a production environment.",
+                getName());
+    }
 
-        if (StringUtils.hasText(username) && StringUtils.hasText(password)
-            && username.equals(getPasswordEncoder().encode(password))) {
-            log
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
-            return true;
+    public void setUsernameErrorMap(final Map<String, Exception> map) {
+        this.usernameErrorMap = map;
+    }
+
+    @Override
+    public final HandlerResult authenticate(final Credentials credential)
+            throws GeneralSecurityException, PreventedException {
+
+        final UsernamePasswordCredentials passwordCredential = (UsernamePasswordCredentials) credential;
+        final String username = passwordCredential.getUsername();
+        final String password = passwordCredential.getPassword();
+
+        final Exception exception = this.usernameErrorMap.get(username);
+        if (exception instanceof GeneralSecurityException) {
+            throw (GeneralSecurityException) exception;
+        } else if (exception instanceof PreventedException) {
+            throw (PreventedException) exception;
+        } else if (exception instanceof RuntimeException) {
+            throw (RuntimeException) exception;
+        } else if (exception != null) {
+            log.debug("Cannot throw checked exception {} since it is not declared by method signature.", exception);
         }
 
-        log.debug("User [" + username + "] failed authentication");
+        if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
+            log.debug("User [{}] was successfully authenticated.", username);
+            return new HandlerResult(this);
+        }
+        log.debug("User [{}] failed authentication", username);
+        throw new FailedLoginException();
+    }
 
-        return false;
+    @Override
+    public boolean supports(final Credentials credential) {
+        return credential instanceof UsernamePasswordCredentials;
+    }
+
+    @Override
+    public String getName() {
+        return getClass().getSimpleName();
     }
 }
