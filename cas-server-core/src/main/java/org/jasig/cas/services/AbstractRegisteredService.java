@@ -44,6 +44,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
+import javax.persistence.Transient;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -100,6 +101,13 @@ public abstract class AbstractRegisteredService
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
+    /** 
+     * The attribute filter instance that is responsible for determining the collection of attributes
+     * available for release based on this registered service and the filter's policy.
+     */
+    @Transient
+    private RegisteredServiceAttributeFilter attributeFilter = null;
+    
     /**
      * Name of the user attribute that this service expects as the value of the username payload in the
      * validate responses.
@@ -329,4 +337,12 @@ public abstract class AbstractRegisteredService
     }
 
     protected abstract AbstractRegisteredService newInstance();
+    
+    public final void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
+        this.attributeFilter = filter;
+    }
+    
+    public RegisteredServiceAttributeFilter getAttributeFilter() {
+        return this.attributeFilter;
+    }
 }

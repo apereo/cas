@@ -36,6 +36,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
@@ -167,6 +168,8 @@
                     Use the following definition instead of the above to further restrict access
                     to services within your domain (including subdomains).
                     Note that example.com must be replaced with the domain you wish to permit.
+                    This example also demonstrates the configuration of an attribute filter
+                    that only allows for attributes whose length is 3.
                     -->
                     <!--
                     <bean class="org.jasig.cas.services.RegexRegisteredService">
@@ -175,6 +178,9 @@
                         <property name="description" value="Allows HTTP(S) and IMAP(S) protocols on example.com" />
                         <property name="serviceId" value="^(https?|imaps?)://([A-Za-z0-9_-]+\.)*example\.com/.*" />
                         <property name="evaluationOrder" value="0" />
+                        <property name="attributeFilter">
+                          <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter" c:regex="^\w{3}$" /> 
+                        </property>
                     </bean>
                     -->
                 </list>
