@@ -110,7 +110,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         final RegisteredService r = this.services.get(id);
         
         try {
-            return r == null ? null : (RegisteredService) r.clone();
+            return r == null ? null : r.clone();
         } catch (final CloneNotSupportedException e) {
             return r;
         }
