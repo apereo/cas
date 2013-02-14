@@ -34,16 +34,13 @@ import org.slf4j.LoggerFactory;
  *  
  * If the registered service is set to ignore the attribute release policy, the filter
  * will release all principal attributes. 
- * <p>
- * Various flavors of {@link RegisteredServiceRegexAttributeFilter} would need to extend this class
- * and override the {@link #filterInternal(String, Map, RegisteredService)} method. 
  * 
  * @author Misagh Moayyed
  * @since 4.0.0
  * @see RegisteredServiceRegexAttributeFilter
  */
-public class RegisteredServiceDefaultAttributeFilter implements RegisteredServiceAttributeFilter {
-    protected final Logger log = LoggerFactory.getLogger(this.getClass());
+public final class RegisteredServiceDefaultAttributeFilter implements RegisteredServiceAttributeFilter {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Override
     public final Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
@@ -63,18 +60,7 @@ public class RegisteredServiceDefaultAttributeFilter implements RegisteredServic
                 }
             }
         }
-        return Collections.unmodifiableMap(filterInternal(principalId, attributes, registeredService));        
+        return Collections.unmodifiableMap(attributes);        
     }
     
-    /**
-     * Process any additional filtering.
-     * 
-     * @param principalId
-     * @param givenAttributes
-     * @param registeredService
-     * @return
-     */
-    protected Map<String, Object> filterInternal(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
-        return givenAttributes;
-    }
 }

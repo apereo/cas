@@ -27,6 +27,9 @@ import java.util.regex.Pattern;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAttributeFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -35,7 +38,9 @@ import org.jasig.cas.services.RegisteredService;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class RegisteredServiceRegexAttributeFilter extends RegisteredServiceDefaultAttributeFilter {
+public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    
     public RegisteredServiceRegexAttributeFilter(final String regex) {
         this.pattern = Pattern.compile(regex);
     }
@@ -44,6 +49,8 @@ public class RegisteredServiceRegexAttributeFilter extends RegisteredServiceDefa
     private Pattern pattern;
 
     /**
+     * {@inheritDoc}
+     * 
      * Given attribute values may be an extension of {@link Collection}, {@link Map} or an array. 
      * <ul>
      * <li>The filtering operation is non-recursive. </li>
@@ -56,7 +63,7 @@ public class RegisteredServiceRegexAttributeFilter extends RegisteredServiceDefa
      */
     @Override
     @SuppressWarnings("unchecked")
-    public final Map<String, Object> filterInternal(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
+    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
         for (final String attributeName : givenAttributes.keySet()) {
             final Object attributeValue = givenAttributes.get(attributeName);
