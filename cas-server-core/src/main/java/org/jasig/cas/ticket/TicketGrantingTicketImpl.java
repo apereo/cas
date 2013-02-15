@@ -54,7 +54,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     private static final long serialVersionUID = -5197946718924166491L;
 
     @Transient
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
