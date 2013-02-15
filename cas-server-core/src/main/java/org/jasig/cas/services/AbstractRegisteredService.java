@@ -284,7 +284,7 @@ public abstract class AbstractRegisteredService
         }
     }
     
-    public Object clone() throws CloneNotSupportedException {
+    public RegisteredService clone() throws CloneNotSupportedException {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
         return clone;
