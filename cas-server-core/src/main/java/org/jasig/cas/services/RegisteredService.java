@@ -28,7 +28,6 @@ import org.jasig.cas.authentication.principal.Service;
  * interface.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public interface RegisteredService extends Cloneable, Serializable {    
@@ -147,5 +146,5 @@ public interface RegisteredService extends Cloneable, Serializable {
      */
     boolean matches(final Service service);
     
-    Object clone() throws CloneNotSupportedException;
+    RegisteredService clone() throws CloneNotSupportedException;
 }
