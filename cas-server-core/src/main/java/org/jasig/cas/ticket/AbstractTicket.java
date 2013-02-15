@@ -32,7 +32,12 @@ import org.springframework.util.Assert;
  * an abstract class, it cannnot be instanciated. It is recommended that
  * implementations of the Ticket interface extend the AbstractTicket as it
  * handles common functionality amongst different ticket types (such as state
- * updating).
+ * updating).  
+ * 
+ * AbstractTicket does not provide a protected Logger instance to
+ * avoid instantiating many such Loggers at runtime (there will be many instances
+ * of subclasses of AbstractTicket in a typical running CAS server).  Instead 
+ * subclasses should use static Logger instances.
  * 
  * @author Scott Battaglia
  * @since 3.0
