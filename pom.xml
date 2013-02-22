@@ -377,6 +377,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <exclude>**/*.crl</exclude>
             <exclude>**/*.key</exclude>
             <exclude>**/.gitignore</exclude>
+            <exclude>**/.eclipse/**</exclude>
+            <exclude>**/.idea/**</exclude>
             <exclude>**/overlays/**</exclude>
             <exclude>src/licensing/**</exclude>
             <exclude>**/testCA/**</exclude>
