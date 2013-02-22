@@ -32,7 +32,7 @@ This project includes:
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
-  dom4j under dom4j
+  dom4j under BSD License
   ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
   guice under Apache License, Version 2.0
   Hamcrest Core under BSD style
@@ -55,7 +55,6 @@ This project includes:
   JSR 105 - Java(TM) XML Digital Signature API under JDL license
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
-  Log4j Implemented Over SLF4J under Apache Software Licenses
   Mockito under The MIT License
   Not Yet Commons SSL under Apache License v2
   Objenesis under MIT License
@@ -87,7 +86,7 @@ This project includes:
   spring-tx under The Apache Software License, Version 2.0
   spring-web under The Apache Software License, Version 2.0
   spring-webmvc under The Apache Software License, Version 2.0
-  stax-api under Sun Binary Code License
+  Streaming API for XML under Sun Binary Code License
   Transaction 1.1 API under lgpl
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
