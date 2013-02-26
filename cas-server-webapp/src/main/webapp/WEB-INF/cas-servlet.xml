@@ -79,7 +79,6 @@
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-        <prop key="/openid/*">openIdProviderController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
         <prop key="/statistics">statisticsController</prop>
@@ -99,11 +98,6 @@
   </bean>
 
   <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
-
-  <bean
-      id="openIdProviderController"
-      class="org.jasig.cas.web.OpenIdProviderController"
-      p:loginUrl="${cas.loginUrl}"/>
 
   <bean
       id="serviceLogoutViewController"
