@@ -107,21 +107,5 @@
     <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
     <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
     
-    <!-- Spring-Json View provides a JsonExceptionResolver exceptions thrown during a controller action -->
-    <bean id="jsonExceptionResolver" class="org.springframework.web.servlet.view.json.exception.JsonExceptionResolver">
-        <property name="exceptionView" value="jsonView" />
-        <property name="errorHandler">
-	        <list>
-	        	<bean class="org.springframework.web.servlet.view.json.error.HttpStatusError" p:errorCode="412"/>
-	            <bean class="org.springframework.web.servlet.view.json.error.ModelFlagError"/>
-	        </list>
-        </property>
-        <property name="exceptionHandler">
-	        <list>
-	        	<bean class="org.springframework.web.servlet.view.json.exception.ExceptionMessageExceptionHandler" />
-	            <bean class="org.springframework.web.servlet.view.json.exception.StackTraceExceptionHandler" />
-	        </list>
-        </property>
-    </bean>
-        
+            
 </beans>
