@@ -24,18 +24,16 @@
   <c:set var="ticketArg"  value="ticket=${serviceTicketId}"/>
 </c:if>
 
-<div class="errors">
-  <p>
-    <c:if test="${expireDays == 0}">
-      <h2><spring:message code="screen.warnpass.heading.today" /></h2>
-    </c:if>
-    <c:if test="${expireDays == 1}">
-      <h2><spring:message code="screen.warnpass.heading.tomorrow" /></h2>
-    </c:if>
-    <c:if test="${expireDays > 1}">
-      <h2><spring:message code="screen.warnpass.heading.other" arguments="${expireDays}" /></h2>
-    </c:if>
-  </p>
+<div id="msg" class="errors">
+  <c:if test="${expireDays == 0}">
+    <h2><spring:message code="screen.warnpass.heading.today" /></h2>
+  </c:if>
+  <c:if test="${expireDays == 1}">
+    <h2><spring:message code="screen.warnpass.heading.tomorrow" /></h2>
+  </c:if>
+  <c:if test="${expireDays > 1}">
+    <h2><spring:message code="screen.warnpass.heading.other" arguments="${expireDays}" /></h2>
+  </c:if>
 
   <p>
   <spring:message code="screen.warnpass.message.line1" arguments="${passwordPolicyUrl}"  />
