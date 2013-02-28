@@ -146,11 +146,6 @@
 
   <servlet-mapping>
     <servlet-name>cas</servlet-name>
-    <url-pattern>/openid/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>cas</servlet-name>
     <url-pattern>/status</url-pattern>
   </servlet-mapping>
 
