@@ -20,6 +20,7 @@ package org.jasig.cas.authentication;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.jasig.cas.authentication.principal.Principal;
 
@@ -30,7 +31,6 @@ import org.jasig.cas.authentication.principal.Principal;
  * they provide is serializable (i.e. HashMap).
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.3
  */
 public final class MutableAuthentication extends AbstractAuthentication {
@@ -46,10 +46,14 @@ public final class MutableAuthentication extends AbstractAuthentication {
     }
     
     public MutableAuthentication(final Principal principal, final Date date) {
-        super(principal, new HashMap<String, Object>());
-        this.authenticatedDate = date;
+        this(principal, date, new HashMap<String, Object>());
     }
 
+    public MutableAuthentication(final Principal principal, final Date date, final Map<String,Object> authenticationAttributes) {
+        super(principal, authenticationAttributes);
+        this.authenticatedDate = date;
+    }
+    
     public Date getAuthenticatedDate() {
         return this.authenticatedDate;
     }

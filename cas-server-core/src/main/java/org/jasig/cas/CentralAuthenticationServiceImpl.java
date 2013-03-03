@@ -32,10 +32,12 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
+import org.jasig.cas.services.support.RegisteredServiceDefaultAttributeFilter;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -137,6 +139,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
 
+    /** The default attribute filter to match principal attributes against that of a registered service **/
+    private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
+    
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
      * and removes it from the TicketRegistry.
@@ -342,12 +347,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
-            log.warn("ServiceManagement: Service does not exist is not enabled, and thus not allowed to validate tickets.   Service: [" + service.getId() + "]");
+            log.warn("ServiceManagement: Service [{}] does not exist or is not enabled, and thus not allowed to validate tickets.", service.getId());
             throw new UnauthorizedServiceException("Service not allowed to validate tickets.");
         }
 
         if (serviceTicket == null) {
-            log.info("ServiceTicket [" + serviceTicketId + "] does not exist.");
+            log.info("ServiceTicket [{}] does not exist.", serviceTicketId);
             throw new InvalidTicketException();
         }
 
@@ -359,7 +364,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 }
 
                 if (!serviceTicket.isValidFor(service)) {
-                    log.error("ServiceTicket [" + serviceTicketId + "] with service [" + serviceTicket.getService().getId() + " does not match supplied service [" + service + "]");
+                    log.error("ServiceTicket [{}] with service [{}] does not match supplied service [{}]", 
+                            serviceTicketId, serviceTicket.getService().getId(), service);
                     throw new TicketValidationException(serviceTicket.getService());
                 }
             }
@@ -367,32 +373,21 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final List<Authentication> chainedAuthenticationsList = serviceTicket.getGrantingTicket().getChainedAuthentications();
             final Authentication authentication = chainedAuthenticationsList.get(chainedAuthenticationsList.size() - 1);
             final Principal principal = authentication.getPrincipal();
-           
-            final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
-            final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
-            
-            if (!registeredService.isIgnoreAttributes()) {
-                for (final String attribute : registeredService.getAllowedAttributes()) {
-                    final Object value = principal.getAttributes().get(attribute);
-
-                    if (value != null) {
-                        attributesToRelease.put(attribute, value);
-                    }
-                }
-            } else {
-                attributesToRelease.putAll(principal.getAttributes());
+                       
+            Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(), principal.getAttributes(), registeredService);
+            if (registeredService.getAttributeFilter() != null) {
+                attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(), attributesToRelease, registeredService);
             }
             
+            final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
-            final MutableAuthentication mutableAuthentication = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate());
-            mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
-
+            final Authentication authToUse = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate(), 
+                                                                       authentication.getAttributes());
             final List<Authentication> authentications = new ArrayList<Authentication>();
-
             for (int i = 0; i < chainedAuthenticationsList.size() - 1; i++) {
                 authentications.add(serviceTicket.getGrantingTicket().getChainedAuthentications().get(i));
             }
-            authentications.add(mutableAuthentication);
+            authentications.add(authToUse);
 
             return new ImmutableAssertionImpl(authentications, serviceTicket.getService(), serviceTicket.isFromNewLogin());
         } finally {
