@@ -28,6 +28,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -43,13 +44,11 @@ import org.springframework.util.Assert;
  * specified as object creation.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/02/20 14:41:04 $
  * @since 3.0
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
-public final class TicketGrantingTicketImpl extends AbstractTicket implements
-    TicketGrantingTicket {
+public final class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
@@ -83,7 +82,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements
      * @throws IllegalArgumentException if the Authentication object is null
      */
     public TicketGrantingTicketImpl(final String id,
-        final TicketGrantingTicketImpl ticketGrantingTicket,
+        final TicketGrantingTicket ticketGrantingTicket,
         final Authentication authentication, final ExpirationPolicy policy) {
         super(id, ticketGrantingTicket, policy);
 
