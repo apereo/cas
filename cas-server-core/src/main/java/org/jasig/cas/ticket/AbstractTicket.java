@@ -24,6 +24,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
 /**
@@ -48,7 +49,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     private static final long serialVersionUID = -8506442397878267555L;
 
     /** The ExpirationPolicy this ticket will be following. */
-    // XXX removed final
     @Lob
     @Column(name="EXPIRATION_POLICY", nullable=false)
     private ExpirationPolicy expirationPolicy;
@@ -59,8 +59,8 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     private String id;
 
     /** The TicketGrantingTicket this is associated with. */
-    @ManyToOne
-    private TicketGrantingTicketImpl ticketGrantingTicket;
+    @ManyToOne(targetEntity=TicketGrantingTicketImpl.class)
+    private TicketGrantingTicket ticketGrantingTicket;
 
     /** The last time this ticket was used. */
     @Column(name="LAST_TIME_USED")
@@ -91,7 +91,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * @param expirationPolicy the expiration policy for the ticket.
      * @throws IllegalArgumentException if the id or expiration policy is null.
      */
-    public AbstractTicket(final String id, final TicketGrantingTicketImpl ticket,
+    public AbstractTicket(final String id, final TicketGrantingTicket ticket,
         final ExpirationPolicy expirationPolicy) {
         Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
         Assert.notNull(id, "id cannot be null");
@@ -142,10 +142,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     public final int hashCode() {
-        return 34 ^ this.getId().hashCode();
+        return this.getId().hashCode();
     }
 
     public final String toString() {
-        return this.id;
+        return this.getId();
     }
 }
