@@ -35,7 +35,6 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * method is to use the Jasig CAS Client for Java and its proxy authentication features.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 1.0
  */
 public final class ClearPassController extends AbstractController {
@@ -70,27 +69,28 @@ public final class ClearPassController extends AbstractController {
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final String userName = request.getRemoteUser();
 
-        log.debug("Handling clearPass request for user " + userName);
+        log.debug("Handling clearPass request for user [{}]", userName);
 
         if (userName != null) {
             final String password = this.credentialsCache.get(userName);
+            log.debug("Retrieved user credentials successfully from clearPass. Credentials will be provided to the requesting service.");
             return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
         }
 
-        return returnError("No authentication information provided.");
+        return returnError("No username was provided to clearPass.");
     }
     
-    protected ModelAndView returnError(String description) {
-        ModelAndView mv=new ModelAndView(this.failureView);
+    protected ModelAndView returnError(final String description) {
+        final ModelAndView mv = new ModelAndView(this.failureView);
         mv.addObject(MODEL_FAILURE_DESCRIPTION, description);
         return(mv);
     }
 
     public void setSuccessView(final String successView) {
-		this.successView = successView;
-	}
+		    this.successView = successView;
+    }
 
-	public void setFailureView(final String failureView) {
-		this.failureView = failureView;
-	}
+    public void setFailureView(final String failureView) {
+        this.failureView = failureView;
+    }
 }
