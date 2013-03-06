@@ -162,7 +162,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticket == null) {
-            log.debug("Ticket-grant ticket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
+            log.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
             return;
         }
 
@@ -187,14 +187,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticketGrantingTicket == null) {
-            log.debug("Ticket-grant ticket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
+            log.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
             throw new InvalidTicketException(ticketGrantingTicketId);
         }
 
         synchronized (ticketGrantingTicket) {
             if (ticketGrantingTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
-                log.debug("Ticket-grant ticket [{}] has expired and is now deleted from the ticket registry.", ticketGrantingTicketId);
+                log.debug("TicketGrantingTicket[{}] has expired and is now deleted from the ticket registry.", ticketGrantingTicketId);
                 throw new InvalidTicketException(ticketGrantingTicketId);
             }
         }
@@ -208,7 +208,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         if (!registeredService.isSsoEnabled() && credentials == null
             && ticketGrantingTicket.getCountOfUses() > 0) {
-            log.warn("ServiceManagement: Service is [{}] not allowed to use SSO.", service.getId());
+            log.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
 
@@ -301,7 +301,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
-                log.debug("Service ticket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
+                log.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
                 throw new InvalidTicketException(serviceTicketId);
             }
 
@@ -347,8 +347,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
-            log.warn("ServiceManagement: Service [{}] does not exist or is not enabled, and thus not allowed to validate tickets.", service.getId());
-            throw new UnauthorizedServiceException("Service is not allowed to validate tickets.");
+            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled, and thus not allowed to validate tickets.", 
+                                             service.getId());
+            log.warn(msg);
+            throw new UnauthorizedServiceException(msg);
         }
 
         if (serviceTicket == null) {
@@ -359,7 +361,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         try {
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
-                    log.info("Service ticket [{}] has expired.", serviceTicketId);
+                    log.info("ServiceTicket [{}] has expired.", serviceTicketId);
                     throw new InvalidTicketException(serviceTicketId);
                 }
 
