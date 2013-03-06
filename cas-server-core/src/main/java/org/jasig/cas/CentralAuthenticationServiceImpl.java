@@ -160,7 +160,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         if (log.isDebugEnabled()) {
             log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
         }
-        final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticket = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticket == null) {
             return;
@@ -186,7 +186,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket = this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticketGrantingTicket == null) {
             throw new InvalidTicketException();
@@ -296,10 +296,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
         try {
             final Authentication authentication = this.authenticationManager
-                .authenticate(credentials);
+                    .authenticate(credentials);
 
-            final ServiceTicket serviceTicket;
-            serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+            final ServiceTicket serviceTicket = this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
                 throw new InvalidTicketException();
@@ -322,8 +321,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
-            return ticketGrantingTicket.getId();
-        } catch (final AuthenticationException e) {
+            return ticketGrantingTicket.getId();        } 
+        catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
         }
     }
@@ -342,7 +341,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final ServiceTicket serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket = this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
