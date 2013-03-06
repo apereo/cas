@@ -120,9 +120,7 @@ public class ServiceValidateController extends DelegateController {
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
 
         if (service == null || serviceTicketId == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Could not process request; Service: %s, Service Ticket Id: %s", service, serviceTicketId));
-            }
+            logger.debug(String.format("Could not process request; Service: %s, Service Ticket Id: %s", service, serviceTicketId));
             return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);
         }
 
@@ -137,8 +135,7 @@ public class ServiceValidateController extends DelegateController {
                         .delegateTicketGrantingTicket(serviceTicketId,
                             serviceCredentials);
                 } catch (final TicketException e) {
-                    logger.error("TicketException generating ticket for: "
-                        + serviceCredentials, e);
+                    logger.error("TicketException generating ticket for: " + serviceCredentials, e);
                 }
             }
 
@@ -167,7 +164,8 @@ public class ServiceValidateController extends DelegateController {
             }
 
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Successfully validated service ticket: %s", serviceTicketId));
+                logger.debug(String.format("Successfully validated service ticket [%s] for service [%s]", 
+                        serviceTicketId, service.getId()));
             }
 
             return success;
