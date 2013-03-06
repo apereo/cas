@@ -90,7 +90,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
         
         final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
-        assertEquals(attrs.size(), 3);
+        assertEquals(attrs.size(), 7);
         
         assertFalse(attrs.containsKey("phone"));
         assertFalse(attrs.containsKey("givenName"));
