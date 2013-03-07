@@ -321,7 +321,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
-            return ticketGrantingTicket.getId();        } 
+            return ticketGrantingTicket.getId();        
+        } 
         catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
         }

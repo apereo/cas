@@ -56,7 +56,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 + " when we were expecting " + clazz);
         }
 
-        return (T)ticket;
+        return (T) ticket;
     }
     
     public int sessionCount() {
