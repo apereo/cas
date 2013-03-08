@@ -232,7 +232,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 if (!(authentication.getPrincipal().equals(originalAuthentication.getPrincipal()) && authentication.getAttributes().equals(originalAuthentication.getAttributes()))) {
                     throw new TicketCreationException();
                 }
-            } catch (final AuthenticationException e) {
+            } 
+            catch (final AuthenticationException e) {
                 throw new TicketCreationException(e);
             }
         }
