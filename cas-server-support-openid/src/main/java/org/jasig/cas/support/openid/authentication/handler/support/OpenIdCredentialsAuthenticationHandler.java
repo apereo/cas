@@ -32,7 +32,6 @@ import javax.validation.constraints.NotNull;
  * TicketGrantingTicket. Otherwise, fail authentication.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class OpenIdCredentialsAuthenticationHandler implements
@@ -48,9 +47,7 @@ public final class OpenIdCredentialsAuthenticationHandler implements
         final OpenIdCredentials c = (OpenIdCredentials) credentials;
 
         boolean result = false;
-        final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry
-                .getTicket(c.getTicketGrantingTicketId(),
-                        TicketGrantingTicket.class);
+        final TicketGrantingTicket t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
             result = false;
