@@ -32,7 +32,7 @@ This project includes:
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
-  dom4j under dom4j
+  dom4j under BSD License
   ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
   Hamcrest Core under BSD style
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
@@ -41,6 +41,7 @@ This project includes:
   Inspektr - Common API under Apache 2.0 License
   Jasig CAS Core under Apache 2
   Jasig CAS Memcached Integration under Apache 2
+  Jasig CAS SAML Support under Apache 2
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   jaxb-api under Commons Development and Distribution License, Version 1.0
@@ -54,7 +55,6 @@ This project includes:
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
   kryo under BSD style
-  Log4j Implemented Over SLF4J under Apache Software Licenses
   minlog under BSD style
   Mockito under The MIT License
   Not Yet Commons SSL under Apache License v2
@@ -82,13 +82,12 @@ This project includes:
   spring-jdbc under The Apache Software License, Version 2.0
   spring-orm under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
-  spring-security-crypto under The Apache Software License, Version 2.0
   spring-test under The Apache Software License, Version 2.0
   spring-tx under The Apache Software License, Version 2.0
   spring-web under The Apache Software License, Version 2.0
   spring-webmvc under The Apache Software License, Version 2.0
   spymemcached under The MIT License
-  stax-api under Sun Binary Code License
+  Streaming API for XML under Sun Binary Code License
   Transaction 1.1 API under lgpl
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
