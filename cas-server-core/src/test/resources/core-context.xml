@@ -133,7 +133,7 @@
 			name="authenticationHandlers">
 			<list>
 				<ref
-					local="simpleTestUsernamePasswordAuthenticationHandler" />
+					local="matchingUsernamePasswordAuthenticationHandler" />
 				<ref
 					local="httpBasedServiceCredentialsAuthenticationHandler" />
 <!--				<bean
@@ -182,8 +182,8 @@
 	</bean>
 	
 	<bean
-		id="simpleTestUsernamePasswordAuthenticationHandler"
-		class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />		
+		id="matchingUsernamePasswordAuthenticationHandler"
+		class="org.jasig.cas.authentication.handler.support.MatchingUsernamePasswordAuthenticationHandler" />		
 		
 	<bean
 		id="authenticationMetaDataPopulator"

@@ -31,7 +31,7 @@ import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl;
 import org.jasig.cas.authentication.DirectMappingAuthenticationManagerImpl.DirectAuthenticationHandlerMappingHolder;
 import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.handler.support.MatchingUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
@@ -52,7 +52,7 @@ public class DirectMappingAuthenticationManagerImplTests extends TestCase {
         this.manager.setAuthenticationMetaDataPopulators(populators);
         
         final DirectAuthenticationHandlerMappingHolder d = new DirectAuthenticationHandlerMappingHolder();
-        d.setAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
+        d.setAuthenticationHandler(new MatchingUsernamePasswordAuthenticationHandler());
         d.setCredentialsToPrincipalResolver(new UsernamePasswordCredentialsToPrincipalResolver());
         
         mappings.put(UsernamePasswordCredentials.class, d);
