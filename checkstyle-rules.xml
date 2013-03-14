@@ -30,14 +30,16 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="ParameterName"/>
     <module name="StaticVariableName"/>
     <module name="TypeName"/>
-    <module name="AvoidStarImport"/>
+    <module name="AvoidStarImport">
+        <property name="allowStaticMemberImports" value="true" />
+    </module>
     <module name="IllegalImport"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>
     <module name="MethodLength"/>
     <module name="ParameterNumber"/>
     <module name="LineLength">
-      <property name="max" value="150"/>
+      <property name="max" value="120"/>
       <property name="tabWidth" value="4"/>
     </module>
     <module name="EmptyForIteratorPad"/>
@@ -62,7 +64,7 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="HiddenField"/>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
-    <module name="MagicNumber"/>
+    <!-- <module name="MagicNumber"/> -->
     <module name="MissingSwitchDefault"/>
     <module name="RedundantThrows">
       <property name="suppressLoadErrors" value="true"/>
@@ -80,7 +82,7 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="UpperEll"/>
   </module>
   <!-- <module name="JavadocPackage"/> -->
-  <!-- <module name="NewlineAtEndOfFile"/> -->
+  <module name="NewlineAtEndOfFile"/> 
   <module name="Translation"/>
   <module name="FileLength"/>
   <module name="FileTabCharacter"/>
@@ -107,10 +109,10 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <property name="message" value="All testcase must use annotations (@Test) instead of extending junit.framework.TestCase"/>
   </module>
   <module name="RegexpSingleline">
-    <metadata name="net.sf.eclipsecs.core.comment" value="Parameterized log messages"/>
-    <property name="severity" value="error"/>
+    <metadata name="net.sf.eclipsecs.core.comment" value="Checking for logging level"/>
+    <property name="severity" value="warning"/>
     <property name="format" value="log\.is\w+Enabled\("/>
-    <property name="message" value="Parameterized log messages are preferred. "/>
+    <property name="message" value="If the construction of the log message is cheap, consider not checking for logging levels."/>
   </module>
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Space instead of tabs"/>
@@ -122,6 +124,12 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <metadata name="net.sf.eclipsecs.core.comment" value="Space after cast"/>
     <property name="severity" value="error"/>
     <property name="format" value="\(\w+\)\w+"/>
-    <property name="message" value="No spaces after cast. "/>
+    <property name="message" value="There are no spaces after cast."/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Parameteric log messages"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="log\.\w+\(((\&quot;.+\&quot;\s*\+)|(.*\s*\+\s*\&quot;))"/>
+    <property name="message" value="Avoid string concatenation for constructing log messages. Use parametric messages instead"/>
   </module>
 </module>
