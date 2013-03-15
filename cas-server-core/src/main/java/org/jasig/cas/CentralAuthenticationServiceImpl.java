@@ -159,7 +159,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         if (log.isDebugEnabled()) {
             log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
         }
-        final TicketGrantingTicket ticket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticket =  this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticket == null) {
             return;
@@ -185,7 +185,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(ticketGrantingTicketId, "ticketGrantingticketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket =  this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
 
         if (ticketGrantingTicket == null) {
             throw new InvalidTicketException();
@@ -294,7 +294,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(credentials, "credentials cannot be null");
 
         try {
-            final ServiceTicket serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+            final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
                 throw new InvalidTicketException();
@@ -339,7 +339,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
         Assert.notNull(service, "service cannot be null");
 
-        final ServiceTicket serviceTicket = (ServiceTicket) this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
