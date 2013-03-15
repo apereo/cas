@@ -158,10 +158,6 @@
           </webResources>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.jasig.maven</groupId>
-        <artifactId>maven-translate-plugin</artifactId>
-      </plugin>
     </plugins>
   </build>
 </project>
