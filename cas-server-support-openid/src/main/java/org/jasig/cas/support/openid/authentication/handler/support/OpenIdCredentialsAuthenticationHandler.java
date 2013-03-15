@@ -48,8 +48,7 @@ public final class OpenIdCredentialsAuthenticationHandler implements
         final OpenIdCredentials c = (OpenIdCredentials) credentials;
 
         boolean result = false;
-        final TicketGrantingTicket t = (TicketGrantingTicket) this.ticketRegistry
-                .getTicket(c.getTicketGrantingTicketId(),
+        final TicketGrantingTicket t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(),
                         TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
