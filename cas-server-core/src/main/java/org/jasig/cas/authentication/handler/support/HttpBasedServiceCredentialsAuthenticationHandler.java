@@ -60,9 +60,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
         if (this.requireSecure
             && !serviceCredentials.getCallbackUrl().getProtocol().equals(
                 PROTOCOL_HTTPS)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Authentication failed because url was not secure.");
-            }
+            log.warn("Authentication failed because url was not secure.");
             return false;
         }
         log
