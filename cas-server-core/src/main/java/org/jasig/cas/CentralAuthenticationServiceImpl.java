@@ -58,7 +58,6 @@ import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -296,9 +295,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         Assert.notNull(credentials, "credentials cannot be null");
 
         try {
-            final Authentication authentication = this.authenticationManager
-                    .authenticate(credentials);
-
             final ServiceTicket serviceTicket = this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
             if (serviceTicket == null || serviceTicket.isExpired()) {
@@ -313,6 +309,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 log.warn("ServiceManagement: Service Attempted to Proxy, but is not allowed.  Service: [" + serviceTicket.getService().getId() + "]");
                 throw new UnauthorizedProxyingException();
             }
+
+            final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
             final TicketGrantingTicket ticketGrantingTicket = serviceTicket
                 .grantTicketGrantingTicket(
