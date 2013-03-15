@@ -231,8 +231,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 if (!(authentication.getPrincipal().equals(originalAuthentication.getPrincipal()) && authentication.getAttributes().equals(originalAuthentication.getAttributes()))) {
                     throw new TicketCreationException();
                 }
-            } 
-            catch (final AuthenticationException e) {
+            } catch (final AuthenticationException e) {
                 throw new TicketCreationException(e);
             }
         }
@@ -246,7 +245,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 .getNewTicketId(ServiceTicket.PREFIX), service,
                 this.serviceTicketExpirationPolicy, credentials != null);
 
-        this.serviceTicketRegistry.addTicket(serviceTicket);
+        this.serviceTicketRegistry.addTicket;
 
         if (log.isInfoEnabled()) {
             final List<Authentication> authentications = serviceTicket.getGrantingTicket().getChainedAuthentications();
@@ -320,9 +319,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
-            return ticketGrantingTicket.getId();        
-        } 
-        catch (final AuthenticationException e) {
+            return ticketGrantingTicket.getId();
+        } catch (final AuthenticationException e) {
             throw new TicketCreationException(e);
         }
     }
@@ -356,7 +354,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         }
 
         try {
-            synchronized (serviceTicket) {
+            synchronized ({
                 if (serviceTicket.isExpired()) {
                     log.info("ServiceTicket [" + serviceTicketId + "] has expired.");
                     throw new InvalidTicketException();
