@@ -41,8 +41,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
      * @throws ClassCastException if class does not match requested ticket
      * class.
      */
-    public final Ticket getTicket(final String ticketId,
-        final Class<? extends Ticket> clazz) {
+    public final <T extends Ticket> T getTicket(String ticketId, Class<? extends Ticket> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
 
         final Ticket ticket = this.getTicket(ticketId);
@@ -57,7 +56,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 + " when we were expecting " + clazz);
         }
 
-        return ticket;
+        return (T) ticket;
     }
     
     public int sessionCount() {
