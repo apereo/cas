@@ -98,7 +98,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
                 return old;
             }
 
-            return (TicketGrantingTicket) this.ticketRegistry.getTicket(old.getId(), Ticket.class);
+            return this.ticketRegistry.getTicket(old.getId(), Ticket.class);
         }
 
         public final long getCreationTime() {
