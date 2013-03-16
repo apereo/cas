@@ -18,26 +18,32 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public final class DefaultPasswordEncoderTests extends TestCase {
+public final class DefaultPasswordEncoderTests {
     
     private final PasswordEncoder passwordEncoder = new DefaultPasswordEncoder("MD5");
 
+    @Test
     public void testNullPassword() {
         assertEquals(null, this.passwordEncoder.encode(null));
     }
 
+    @Test
     public void testMd5Hash() {
         assertEquals("1f3870be274f6c49b3e31a0c6728957f", this.passwordEncoder
             .encode("apple"));
     }
     
+    @Test
     public void testSha1Hash() {
         final PasswordEncoder pe = new DefaultPasswordEncoder("SHA1");
         
@@ -47,6 +53,7 @@ public final class DefaultPasswordEncoderTests extends TestCase {
         
     }
     
+    @Test
     public void testSha1Hash2() {
         final PasswordEncoder pe = new DefaultPasswordEncoder("SHA1");
         
@@ -56,6 +63,7 @@ public final class DefaultPasswordEncoderTests extends TestCase {
         
     }
     
+    @Test
     public void testInvalidEncodingType() {
         final PasswordEncoder pe = new DefaultPasswordEncoder("scott");
         try {

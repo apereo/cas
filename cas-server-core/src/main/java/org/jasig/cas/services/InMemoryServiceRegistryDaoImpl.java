@@ -26,7 +26,6 @@ import java.util.List;
  * Default In Memory Service Registry Dao for test/demonstration purposes.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
@@ -35,7 +34,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
     
-    public boolean delete(RegisteredService registeredService) {
+    public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
     }
 

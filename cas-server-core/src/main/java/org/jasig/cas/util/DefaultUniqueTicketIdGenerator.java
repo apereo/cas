@@ -27,7 +27,7 @@ package org.jasig.cas.util;
  * </p>
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class DefaultUniqueTicketIdGenerator implements

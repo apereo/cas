@@ -21,7 +21,7 @@ package org.jasig.cas.authentication.handler;
 
 /**
  * @author Howard Gilbert
- * @version $Revision$ $Date$
+
  * @since 3.3.6
  */
 public interface PrincipalNameTransformer {

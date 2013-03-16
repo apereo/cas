@@ -76,7 +76,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20; 
@@ -144,7 +144,7 @@ public class JpaTicketRegistryTests {
                 assertNotNull(result.get());
             }
         } catch (Exception e) {
-            logger.debug("testConcurrentServiceTicketGeneration produced an error", e);
+            log.debug("testConcurrentServiceTicketGeneration produced an error", e);
             fail("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();

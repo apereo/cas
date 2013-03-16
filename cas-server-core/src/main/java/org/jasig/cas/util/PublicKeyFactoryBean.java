@@ -32,7 +32,6 @@ import javax.validation.constraints.NotNull;
  * FactoryBean for creating a public key from a file.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public class PublicKeyFactoryBean extends AbstractFactoryBean {

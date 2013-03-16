@@ -37,5 +37,6 @@ public interface RegisteredServiceAttributeFilter {
      * @param svc the registered service for which attributes are to be released
      * @return a map that contains the filtered attributes. 
      */
-    Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService svc);
+    Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, 
+            final RegisteredService svc);
 }

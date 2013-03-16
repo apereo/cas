@@ -18,18 +18,21 @@
  */
 package org.jasig.cas.services;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
+import org.junit.Test;
 
-public class UnauthorizedServiceExceptionTests extends TestCase {
+public class UnauthorizedServiceExceptionTests {
 
     private static final String CODE = "service.not.authorized";
     
+    @Test
     public void testGetCode() {
         UnauthorizedServiceException e = new UnauthorizedServiceException();
         assertEquals(CODE, e.getMessage());
     }
 
+    @Test
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
         final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE);
@@ -37,6 +40,7 @@ public class UnauthorizedServiceExceptionTests extends TestCase {
         assertEquals(MESSAGE, e.getMessage());
     }
     
+    @Test
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();

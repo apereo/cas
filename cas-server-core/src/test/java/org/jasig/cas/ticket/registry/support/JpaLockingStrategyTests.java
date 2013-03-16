@@ -66,7 +66,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaLockingStrategyTests implements InitializingBean {
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Number of clients contending for lock in concurrent test. */
     private static final int CONCURRENT_SIZE = 13;
@@ -107,12 +107,12 @@ public class JpaLockingStrategyTests implements InitializingBean {
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
         try {
-	        assertTrue(lock.acquire());
-	        assertEquals(uniqueId, getOwner(appId));
-	        lock.release();
-	        assertNull(getOwner(appId));
+            assertTrue(lock.acquire());
+            assertEquals(uniqueId, getOwner(appId));
+            lock.release();
+            assertNull(getOwner(appId));
         } catch (Exception e) {
-            logger.debug("testAcquireAndRelease produced an error", e);
+            log.debug("testAcquireAndRelease produced an error", e);
             fail("testAcquireAndRelease failed");
         }
     }
@@ -137,7 +137,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             lock.release();
             assertNull(getOwner(appId));
         } catch (Exception e) {
-            logger.debug("testLockExpiration produced an error", e);
+            log.debug("testLockExpiration produced an error", e);
             fail("testLockExpiration failed");
         }
     }
@@ -151,13 +151,13 @@ public class JpaLockingStrategyTests implements InitializingBean {
         final String uniqueId = appId + "-1";
         final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
         try {
-	        assertTrue(lock.acquire());
-	        assertEquals(uniqueId, getOwner(appId));
-	        assertFalse(lock.acquire());
-	        lock.release();
-	        assertNull(getOwner(appId));
+            assertTrue(lock.acquire());
+            assertEquals(uniqueId, getOwner(appId));
+            assertFalse(lock.acquire());
+            lock.release();
+            assertNull(getOwner(appId));
         } catch (Exception e) {
-            logger.debug("testNonReentrantBehavior produced an error", e);
+            log.debug("testNonReentrantBehavior produced an error", e);
             fail("testNonReentrantBehavior failed.");
         }
     }
@@ -172,7 +172,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         try {
             testConcurrency(executor, getConcurrentLocks("concurrent-new"));
         } catch (Exception e) {
-            logger.debug("testConcurrentAcquireAndRelease produced an error", e);
+            log.debug("testConcurrentAcquireAndRelease produced an error", e);
             fail("testConcurrentAcquireAndRelease failed.");
         } finally {
             executor.shutdownNow();
@@ -192,7 +192,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         try {
             testConcurrency(executor, locks);
         } catch (Exception e) {
-            logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
+            log.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
             fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
         } finally {
             executor.shutdownNow();
@@ -220,7 +220,8 @@ public class JpaLockingStrategyTests implements InitializingBean {
     }
     
     private String getOwner(final String appId) {
-        final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList("SELECT unique_id FROM locks WHERE application_id=?", appId);
+        final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList(
+                "SELECT unique_id FROM locks WHERE application_id=?", appId);
         if (results.size() == 0) {
             return null;
         }
@@ -272,7 +273,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
                     try {
                         final Object result = method.invoke(jpaLock, args);
                         jpaLock.entityManager.flush();
-                        logger.debug("Performed {} on {}", method.getName(), jpaLock);
+                        log.debug("Performed {} on {}", method.getName(), jpaLock);
                         return result;
                         // Force result of transaction to database
                     } catch (Exception e) {
@@ -288,8 +289,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         
         private LockingStrategy lock;
         
-        public Locker(final LockingStrategy l)
-        {
+        public Locker(final LockingStrategy l) {
             lock = l;
         }
 
@@ -298,7 +298,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             try {
                 return lock.acquire();
             } catch (Exception e) {
-                logger.debug("{} failed to acquire lock", lock, e);
+                log.debug("{} failed to acquire lock", lock, e);
                 return false;
             }
         }
@@ -309,18 +309,17 @@ public class JpaLockingStrategyTests implements InitializingBean {
         
         private LockingStrategy lock;
         
-        public Releaser(final LockingStrategy l)
-        {
+        public Releaser(final LockingStrategy l) {
             lock = l;
         }
 
         /** {@inheritDoc} */
         public Boolean call() throws Exception {
             try {
-	            lock.release();
-	            return true;
+                lock.release();
+                return true;
             } catch (Exception e) {
-                logger.debug("{} failed to release lock", lock, e);
+                log.debug("{} failed to release lock", lock, e);
                 return false;
             }
         }

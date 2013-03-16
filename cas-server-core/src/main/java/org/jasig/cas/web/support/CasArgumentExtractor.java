@@ -28,7 +28,6 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * one is configured that you can override.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class CasArgumentExtractor extends AbstractSingleSignOutEnabledArgumentExtractor {

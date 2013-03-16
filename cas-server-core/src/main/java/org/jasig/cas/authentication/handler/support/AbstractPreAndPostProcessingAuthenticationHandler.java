@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  * and after authentication.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler

@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Mock ticket-granting ticket;
+ * Mock ticket-granting ticket.
  *
  * @author Marvin S. Addison
  * @version $Revision: $

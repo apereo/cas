@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Scott Battaglia
  * @author Arnaud Lesueur
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class Response {
@@ -40,7 +39,7 @@ public final class Response {
         Pattern.compile("[\\x00-\\x19\\x7F]+");
     
     /** Log instance. */
-    protected static final Logger LOG = LoggerFactory.getLogger(Response.class);
+    protected static final Logger log = LoggerFactory.getLogger(Response.class);
 
     public static enum ResponseType {
         POST, REDIRECT
@@ -52,7 +51,7 @@ public final class Response {
 
     private final Map<String, String> attributes;
 
-    protected Response(ResponseType responseType, final String url, final Map<String, String> attributes) {
+    protected Response(final ResponseType responseType, final String url, final Map<String, String> attributes) {
         this.responseType = responseType;
         this.url = url;
         this.attributes = attributes;
@@ -128,7 +127,7 @@ public final class Response {
         }
         m.appendTail(sb);
         if (hasNonPrintable) {
-            LOG.warn("The following redirect URL has been sanitized and may be sign of attack:\n" + url);
+            log.warn("The following redirect URL has been sanitized and may be sign of attack:\n{}", url);
         }
         return sb.toString();
     }

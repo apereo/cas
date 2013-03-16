@@ -23,14 +23,15 @@ package org.jasig.cas.authentication.handler;
  * username/password and the combination is wrong.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class BadUsernameOrPasswordAuthenticationException extends
     BadCredentialsAuthenticationException {
 
     /** Static instance of BadUsernameOrPasswordAuthenticationException. */
-    public static final BadUsernameOrPasswordAuthenticationException ERROR = new BadUsernameOrPasswordAuthenticationException();
+    public static final BadUsernameOrPasswordAuthenticationException ERROR = 
+            new BadUsernameOrPasswordAuthenticationException();
 
     /** Unique ID for serializing. */
     private static final long serialVersionUID = 3977861752513837361L;

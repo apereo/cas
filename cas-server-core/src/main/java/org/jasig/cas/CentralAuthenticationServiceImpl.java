@@ -71,8 +71,8 @@ import java.util.Map;
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
  * of available tickets.</li>
- * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for TGTs and ST in order to store them
- * in different locations (i.e. long term memory or short-term)</li>
+ * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for 
+ * TGTs and ST in order to store them in different locations (i.e. long term memory or short-term)</li>
  * <li> <code>authenticationManager</code> - The service that will handle
  * authentication.</li>
  * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
@@ -88,7 +88,6 @@ import java.util.Map;
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
- * @version $Revision: 1.16 $ $Date: 2007/04/24 18:11:36 $
  * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
@@ -118,7 +117,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /** Map to contain the mappings of service->UniqueTicketIdGenerators */
+    /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
     @NotNull
     private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
@@ -130,7 +129,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
-    /** Implementation of Service Manager */
+    /** Implementation of Service Manager. */
     @NotNull
     private ServicesManager servicesManager;
 
@@ -138,7 +137,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
 
-    /** The default attribute filter to match principal attributes against that of a registered service **/
+    /** The default attribute filter to match principal attributes against that of a registered service. **/
     private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
     
     /**
@@ -399,11 +398,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * 
      * <ul>
      *  <li> If the service is marked to allow anonymous access, a persistent id is returned. </li>
-     *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default principal id is returned.</li>
-     *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed attributes for the service, 
-     *      the corresponding attribute value will be returned.
+     *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default 
+     *  principal id is returned.</li>
+     *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed 
+     *  attributes for the service, the corresponding attribute value will be returned.
      *  </li>
-     *   <li>Otherwise, the default principal's id is returned as the username attribute with an additional warning.</li>
+     *   <li>Otherwise, the default principal's id is returned as the username attribute 
+     *   with an additional warning.</li>
      * </ul>
      * 
      * @param principal The principal object to be validated and constructed
@@ -412,7 +413,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * 
      * @return The principal id to use for the requesting registered service
      */
-    private String determinePrincipalIdForRegisteredService(final Principal principal, final RegisteredService registeredService, 
+    private String determinePrincipalIdForRegisteredService(final Principal principal, 
+                                                            final RegisteredService registeredService, 
                                                             final ServiceTicket serviceTicket) {
         String principalId = null;
         final String serviceUsernameAttribute = registeredService.getUsernameAttribute();
@@ -422,8 +424,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         } else if (StringUtils.isBlank(serviceUsernameAttribute)) {
             principalId = principal.getId();
         } else {
-            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) &&
-                 principal.getAttributes().containsKey(serviceUsernameAttribute)) {
+            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) 
+                    && principal.getAttributes().containsKey(serviceUsernameAttribute)) {
                 principalId = principal.getAttributes().get(serviceUsernameAttribute).toString();
             } else {
                 principalId = principal.getId();

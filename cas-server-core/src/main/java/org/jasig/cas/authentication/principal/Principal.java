@@ -32,7 +32,6 @@ import java.util.Map;
  * </p>
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/04/19 20:13:01 $
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.
@@ -41,8 +40,7 @@ import java.util.Map;
 public interface Principal extends Serializable {
 
     /**
-     * Returns the unique id for the Principal
-     * @return the unique id for the Principal.
+     * @return the unique id for the Principal
      */
     String getId();
     

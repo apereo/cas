@@ -23,14 +23,14 @@ package org.jasig.cas.services;
  * allowed to.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public class UnauthorizedSsoServiceException extends
     UnauthorizedServiceException {
 
     /**
-     * Comment for <code>serialVersionUID</code>
+     * Comment for <code>serialVersionUID</code>.
      */
     private static final long serialVersionUID = 8909291297815558561L;
 

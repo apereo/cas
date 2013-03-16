@@ -29,7 +29,6 @@ import javax.validation.constraints.NotNull;
  * Generates PersistentIds based on the Shibboleth algorithm.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2007/04/20 19:39:31 $
  * @since 3.1
  */
 public final class ShibbolethCompatiblePersistentIdGenerator implements

@@ -28,7 +28,6 @@ package org.jasig.cas.authentication.principal;
  * </p>
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.2 $ $Date: 2007/01/22 20:35:26 $
  * @since 3.0
  * @see org.jasig.cas.authentication.principal.SimplePrincipal
  */
@@ -43,6 +42,7 @@ public final class UsernamePasswordCredentialsToPrincipalResolver extends
     /**
      * Return true if Credentials are UsernamePasswordCredentials, false
      * otherwise.
+     * @return true, if the credentials are supported by this resolver
      */
     public boolean supports(final Credentials credentials) {
         return credentials != null

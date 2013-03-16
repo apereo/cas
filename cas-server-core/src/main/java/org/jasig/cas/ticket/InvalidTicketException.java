@@ -22,7 +22,6 @@ package org.jasig.cas.ticket;
  * TicketException to alert that a Ticket was not found or that it is expired.
  * 
  * @author Scott Battaglia
- * @version $Revison$ $Date$
  * @since 3.0
  */
 public class InvalidTicketException extends TicketException {

@@ -53,7 +53,7 @@ import org.springframework.web.context.ContextLoaderListener;
  * "exceptionCaughtByListener".
  * 
  * @author Andrew Petro
- * @version $Revision$ $Date$
+
  * @see ContextLoaderListener
  */
 public final class SafeContextLoaderListener implements ServletContextListener {

@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.services;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.inspektr.audit.annotation.Audit;
@@ -35,7 +39,6 @@ import javax.validation.constraints.NotNull;
  * disabled and will not prevent any service from using CAS.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
@@ -64,7 +67,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * @param serviceRegistryDao the Service Registry Dao.
      * @param defaultAttributes the list of default attributes to use.
      */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao, final List<String> defaultAttributes) {
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao, 
+            final List<String> defaultAttributes) {
         this.serviceRegistryDao = serviceRegistryDao;
         this.disabledRegisteredService = constructDefaultRegisteredService(defaultAttributes);
         
@@ -72,7 +76,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     @Transactional(readOnly = false)
-    @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER", resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+    @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER", 
+            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
         if (r == null) {
@@ -129,7 +134,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     @Transactional(readOnly = false)
-    @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER", resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER", 
+            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
@@ -142,10 +148,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
     
     private void load() {
-        final ConcurrentHashMap<Long, RegisteredService> localServices = new ConcurrentHashMap<Long, RegisteredService>();
+        final ConcurrentHashMap<Long, RegisteredService> localServices = 
+                new ConcurrentHashMap<Long, RegisteredService>();
                 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            log.debug("Adding registered service " + r.getServiceId());
+            log.debug("Adding registered service {}", r.getServiceId());
             localServices.put(r.getId(), r);
         }
         

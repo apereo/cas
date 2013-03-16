@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.principal.Service;
  * and services that have been registered with CAS.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public interface ServicesManager {

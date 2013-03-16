@@ -24,7 +24,8 @@ import java.util.Date;
 
 public final class CalendarUtils {
     
-    public static final String[] WEEKDAYS = new String[] {"UNDEFINED", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    public static final String[] WEEKDAYS = new String[] {"UNDEFINED", "Sunday", "Monday", 
+                                    "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
     
     private CalendarUtils() {
         // nothing to do

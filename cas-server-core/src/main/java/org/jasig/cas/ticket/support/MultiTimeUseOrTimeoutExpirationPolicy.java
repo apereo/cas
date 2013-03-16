@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  * certain time period for a ticket to exist.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class MultiTimeUseOrTimeoutExpirationPolicy implements
@@ -38,7 +37,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
     /** Serializable Unique ID. */
     private static final long serialVersionUID = 3257844372614558261L;
 
-    /** The time to kill in millseconds. */
+    /** The time to kill in milliseconds. */
     private final long timeToKillInMilliSeconds;
 
     /** The maximum number of uses before expiration. */
@@ -53,7 +52,8 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
 
     }
 
-    public MultiTimeUseOrTimeoutExpirationPolicy(int numberOfUses, long timeToKill, TimeUnit timeUnit) {
+    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKill, 
+            final TimeUnit timeUnit) {
         this(numberOfUses, timeUnit.toMillis(timeToKill));
     }
 

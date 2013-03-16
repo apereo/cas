@@ -43,19 +43,21 @@ public final class RegisteredServiceDefaultAttributeFilter implements Registered
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Override
-    public final Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
+    public final Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, 
+            final RegisteredService registeredService) {
         final Map<String, Object> attributes = new HashMap<String, Object>();
         
         if (registeredService.isIgnoreAttributes()) {
-            log.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.", registeredService.getName());
+            log.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.", 
+                    registeredService.getName());
             attributes.putAll(givenAttributes);
-        }
-        else {
+        } else {
             for (final String attribute : registeredService.getAllowedAttributes()) {
                 final Object value = givenAttributes.get(attribute);
 
                 if (value != null) {
-                    log.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute, registeredService.getName());
+                    log.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute, 
+                            registeredService.getName());
                     attributes.put(attribute, value);
                 }
             }

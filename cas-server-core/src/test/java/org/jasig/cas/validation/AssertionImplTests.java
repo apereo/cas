@@ -18,23 +18,24 @@
  */
 package org.jasig.cas.validation;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class AssertionImplTests extends TestCase {
+public class AssertionImplTests {
 
+    @Test
     public void testGettersForChainedPrincipals() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
@@ -49,6 +50,7 @@ public class AssertionImplTests extends TestCase {
             .getChainedAuthentications().size());
     }
 
+    @Test
     public void testGetterFalseForNewLogin() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
@@ -60,6 +62,7 @@ public class AssertionImplTests extends TestCase {
         assertFalse(assertion.isFromNewLogin());
     }
 
+    @Test
     public void testGetterTrueForNewLogin() {
         final List<Authentication> list = new ArrayList<Authentication>();
 
@@ -71,6 +74,7 @@ public class AssertionImplTests extends TestCase {
         assertTrue(assertion.isFromNewLogin());
     }
 
+    @Test
     public void testEqualsWithNull() {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
@@ -81,6 +85,7 @@ public class AssertionImplTests extends TestCase {
         assertFalse(assertion.equals(null));
     }
 
+    @Test
     public void testEqualsWithInvalidObject() {
         final List<Authentication> list = new ArrayList<Authentication>();
         list.add(TestUtils.getAuthentication());
@@ -91,6 +96,7 @@ public class AssertionImplTests extends TestCase {
         assertFalse(assertion.equals("test"));
     }
 
+    @Test
     public void testEqualsWithValidObject() {
         final List<Authentication> list = new ArrayList<Authentication>();
         final List<Authentication> list1 = new ArrayList<Authentication>();
@@ -107,6 +113,7 @@ public class AssertionImplTests extends TestCase {
         assertTrue(assertion.equals(assertion1));
     }
 
+    @Test
     public void testGetService() {
         final Service service = TestUtils.getService();
 

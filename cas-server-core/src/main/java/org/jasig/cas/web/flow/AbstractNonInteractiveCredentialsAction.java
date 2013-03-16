@@ -36,7 +36,7 @@ import javax.validation.constraints.NotNull;
  * credentials such as client certificates, NTLM, etc.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0.4
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends

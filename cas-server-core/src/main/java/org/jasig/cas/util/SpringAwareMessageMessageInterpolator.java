@@ -31,12 +31,13 @@ import java.util.Locale;
  * Configures the {@link javax.validation.Validator} to check the Spring Messages.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.4
  */
 public final class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 
-    private MessageInterpolator defaultMessageInterpolator = Validation.byDefaultProvider().configure().getDefaultMessageInterpolator();
+    private MessageInterpolator defaultMessageInterpolator = 
+            Validation.byDefaultProvider().configure().getDefaultMessageInterpolator();
 
     private MessageSource messageSource;
 
@@ -50,7 +51,9 @@ public final class SpringAwareMessageMessageInterpolator implements MessageInter
 
     public String interpolate(final String s, final Context context, final Locale locale) {
         try {
-            return this.messageSource.getMessage(s, context.getConstraintDescriptor().getAttributes().values().toArray(new Object[context.getConstraintDescriptor().getAttributes().size()]), locale);
+            return this.messageSource.getMessage(s, 
+                    context.getConstraintDescriptor().getAttributes().values().toArray(
+                    new Object[context.getConstraintDescriptor().getAttributes().size()]), locale);
         } catch (final NoSuchMessageException e) {
             return this.defaultMessageInterpolator.interpolate(s, context, locale);
         }

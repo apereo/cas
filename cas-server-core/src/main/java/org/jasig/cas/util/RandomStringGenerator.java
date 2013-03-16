@@ -22,7 +22,7 @@ package org.jasig.cas.util;
  * Interface to return a random String.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public interface RandomStringGenerator {

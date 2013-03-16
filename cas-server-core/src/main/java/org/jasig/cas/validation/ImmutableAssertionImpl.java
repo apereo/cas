@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  * number of attributes required to conform to the CAS 2 protocol.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class ImmutableAssertionImpl implements Assertion {
@@ -86,7 +86,8 @@ public final class ImmutableAssertionImpl implements Assertion {
         
         final Assertion a = (Assertion) o;
         
-        return this.service.equals(a.getService()) && this.fromNewLogin == a.isFromNewLogin() && this.principals.equals(a.getChainedAuthentications());
+        return this.service.equals(a.getService()) && this.fromNewLogin == a.isFromNewLogin() 
+                && this.principals.equals(a.getChainedAuthentications());
     }
 
     public int hashCode() {

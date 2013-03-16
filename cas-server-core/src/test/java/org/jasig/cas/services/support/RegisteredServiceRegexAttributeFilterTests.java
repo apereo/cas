@@ -74,7 +74,8 @@ public class RegisteredServiceRegexAttributeFilterTests {
         
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-        when(this.registeredService.getAllowedAttributes()).thenReturn(Arrays.asList("givenName", "uid", "phone", "memberOf", "mapAttribute"));
+        when(this.registeredService.getAllowedAttributes()).thenReturn(
+                Arrays.asList("givenName", "uid", "phone", "memberOf", "mapAttribute"));
     }
 
     @Test

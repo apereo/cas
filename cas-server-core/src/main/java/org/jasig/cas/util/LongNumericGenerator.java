@@ -22,7 +22,7 @@ package org.jasig.cas.util;
  * Interface to guaranteed to return a long.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public interface LongNumericGenerator extends NumericGenerator {

@@ -18,45 +18,51 @@
  */
 package org.jasig.cas.validation;
 
-import org.jasig.cas.TestUtils;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date: 2007-01-22 15:35:37 -0500 (Mon, 22 Jan
- * 2007) $
  * @since 3.0
  */
-public class Cas20WithoutProxyingValidationSpecificationTests extends TestCase {
+public class Cas20WithoutProxyingValidationSpecificationTests {
 
     private Cas20WithoutProxyingValidationSpecification validationSpecification;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
     }
 
+    @Test
     public void testSatisfiesSpecOfTrue() {
         assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils
             .getAssertion(true)));
     }
 
+    @Test
     public void testNotSatisfiesSpecOfTrue() {
         this.validationSpecification.setRenew(true);
         assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils
             .getAssertion(false)));
     }
 
+    @Test
     public void testSatisfiesSpecOfFalse() {
         assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils
             .getAssertion(false)));
     }
 
+    @Test
     public void testDoesNotSatisfiesSpecOfFalse() {
         assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils
             .getAssertion(false, new String[] {"test2"})));
     }
 
+    @Test
     public void testSettingRenew() {
         final Cas20WithoutProxyingValidationSpecification validation = new Cas20WithoutProxyingValidationSpecification(
             true);

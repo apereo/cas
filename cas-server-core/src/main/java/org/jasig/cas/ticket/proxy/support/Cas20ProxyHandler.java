@@ -37,7 +37,6 @@ import javax.validation.constraints.NotNull;
  * </p>
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class Cas20ProxyHandler implements ProxyHandler {
@@ -52,7 +51,7 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     @NotNull
     private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    /** Instance of Apache Commons HttpClient */
+    /** Instance of Apache Commons HttpClient. */
     @NotNull
     private HttpClient httpClient;
 
@@ -80,17 +79,11 @@ public final class Cas20ProxyHandler implements ProxyHandler {
         stringBuffer.append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
-            if (log.isDebugEnabled()) {
-                log.debug("Sent ProxyIou of " + proxyIou + " for service: "
-                    + serviceCredentials.toString());
-            }
+            log.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
             return proxyIou;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Failed to send ProxyIou of " + proxyIou
-                + " for service: " + serviceCredentials.toString());
-        }
+        log.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
         return null;
     }
 

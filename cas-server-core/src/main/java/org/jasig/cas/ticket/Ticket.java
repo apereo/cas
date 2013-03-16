@@ -24,7 +24,7 @@ import java.io.Serializable;
  * Interface for the generic concept of a ticket.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public interface Ticket extends Serializable {
@@ -41,6 +41,7 @@ public interface Ticket extends Serializable {
      * collaborate with <i>ExpirationPolicy </i> strategy.
      * 
      * @see org.jasig.cas.ticket.ExpirationPolicy
+     * @return true, if the ticket is expired
      */
     boolean isExpired();
 

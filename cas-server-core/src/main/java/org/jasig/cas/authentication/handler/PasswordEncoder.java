@@ -28,7 +28,7 @@ package org.jasig.cas.authentication.handler;
  * with a one way hash function which makes them almost impossible to decode.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.

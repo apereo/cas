@@ -29,7 +29,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * common.
  * 
  * @author Scott Battatglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public interface ArgumentExtractor {

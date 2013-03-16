@@ -24,7 +24,7 @@ import java.util.List;
  * Registry of all RegisteredServices.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public interface ServiceRegistryDao {

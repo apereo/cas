@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.handler.*;
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
+import org.jasig.cas.authentication.handler.PasswordEncoder;
+import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
+import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
@@ -29,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * check for UsernamePasswordCredentials.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.

@@ -25,7 +25,9 @@ import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
 
-import javax.validation.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
@@ -43,7 +45,7 @@ import java.util.Set;
  * </ul>
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {
@@ -67,14 +69,16 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
     }
 
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) 
+            throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
 
     /**
      * @throws IllegalArgumentException if given invalid credentials
      */
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, final Credentials credentials) throws TicketException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, 
+            final Credentials credentials) throws TicketException {
         checkForErrors(credentials);
 
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
@@ -91,7 +95,8 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     /**
      * @throws IllegalArgumentException if the credentials are invalid.
      */
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credentials credentials) throws TicketException {
+    public String delegateTicketGrantingTicket(final String serviceTicketId, 
+            final Credentials credentials) throws TicketException {
         checkForErrors(credentials);
 
         return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
