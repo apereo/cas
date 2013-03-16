@@ -26,11 +26,10 @@ package org.jasig.cas.ticket;
  */
 public class InvalidTicketException extends TicketException {
 
+    private static final long serialVersionUID = 9141891414482490L;
+
     private String ticketId = null;
     
-    /** The Unique Serializable ID. */
-    private static final long serialVersionUID = 3256723974594508849L;
-
     /** The code description. */
     private static final String CODE = "INVALID_TICKET";
 
