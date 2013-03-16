@@ -28,7 +28,7 @@ import org.springframework.util.StringUtils;
  * load testing.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler extends
@@ -46,13 +46,11 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(getPasswordEncoder().encode(password))) {
-            log
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
+            log.debug("User [{}] was successfully authenticated.", username);
             return true;
         }
 
-        log.debug("User [" + username + "] failed authentication");
+        log.debug("User [{}] failed authentication", username);
 
         return false;
     }

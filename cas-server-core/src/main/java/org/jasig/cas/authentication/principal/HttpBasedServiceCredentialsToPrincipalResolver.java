@@ -24,7 +24,6 @@ package org.jasig.cas.authentication.principal;
  * callbackUrl as the unique Id.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.5 $ $Date: 2007/02/27 19:31:58 $
  * @since 3.0
  */
 public final class HttpBasedServiceCredentialsToPrincipalResolver implements
@@ -33,6 +32,7 @@ public final class HttpBasedServiceCredentialsToPrincipalResolver implements
     /**
      * Method to return a simple Service Principal with the identifier set to be
      * the callback url.
+     * @return the resolved principal object
      */
     public Principal resolvePrincipal(final Credentials credentials) {
         final HttpBasedServiceCredentials serviceCredentials = (HttpBasedServiceCredentials) credentials;

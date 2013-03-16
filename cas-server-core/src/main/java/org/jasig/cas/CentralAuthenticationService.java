@@ -38,7 +38,7 @@ import org.jasig.cas.validation.Assertion;
  * @author William G. Thompson, Jr.
  * @author Dmitry Kopylenko
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.

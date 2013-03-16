@@ -18,21 +18,22 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import org.jasig.cas.authentication.principal.Response.ResponseType;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * 
  * @author Scott Battaglia
  * @author Arnaud Lesueur
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
-public class SimpleWebApplicationServiceImplTests extends TestCase {
+public class SimpleWebApplicationServiceImplTests {
 
+    @Test
     public void testResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
@@ -43,6 +44,7 @@ public class SimpleWebApplicationServiceImplTests extends TestCase {
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
     }
     
+    @Test
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://www.cnn.com/;jsession=test");
@@ -51,6 +53,7 @@ public class SimpleWebApplicationServiceImplTests extends TestCase {
         assertEquals("http://www.cnn.com/", impl.getId());
     }
     
+    @Test
     public void testResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
@@ -62,6 +65,7 @@ public class SimpleWebApplicationServiceImplTests extends TestCase {
         assertFalse(response.getUrl().contains("ticket="));
     }
     
+    @Test
     public void testResponseWithNoTicketAndNoParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/");
@@ -74,6 +78,7 @@ public class SimpleWebApplicationServiceImplTests extends TestCase {
         assertEquals("http://foo.com/",response.getUrl());
     }
     
+    @Test
     public void testResponseWithNoTicketAndOneParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/?param=test");

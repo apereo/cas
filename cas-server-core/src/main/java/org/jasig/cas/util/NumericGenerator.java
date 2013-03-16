@@ -22,7 +22,7 @@ package org.jasig.cas.util;
  * Interface to return a new sequential number for each call.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public interface NumericGenerator {

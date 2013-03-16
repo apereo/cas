@@ -23,14 +23,15 @@ package org.jasig.cas.authentication.handler;
  * as Locked account.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class BlockedCredentialsAuthenticationException extends
     AuthenticationException {
 
     /** Static instance of BlockedCredentialsAuthenticationException. */
-    public static final BlockedCredentialsAuthenticationException ERROR = new BlockedCredentialsAuthenticationException();
+    public static final BlockedCredentialsAuthenticationException ERROR = 
+            new BlockedCredentialsAuthenticationException();
 
     /** Unique ID for serialization. */
     private static final long serialVersionUID = 3544669598642420017L;

@@ -27,7 +27,7 @@ import org.jasig.cas.ticket.TicketState;
  * as long as the particular CAS Universe exists.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class NeverExpiresExpirationPolicy implements ExpirationPolicy {

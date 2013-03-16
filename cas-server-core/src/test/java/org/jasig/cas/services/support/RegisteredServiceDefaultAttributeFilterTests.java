@@ -65,7 +65,8 @@ public class RegisteredServiceDefaultAttributeFilterTests {
         
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-        when(this.registeredService.getAllowedAttributes()).thenReturn(Arrays.asList("uid", "givenName", "memberOf", "isNotAllowed"));
+        when(this.registeredService.getAllowedAttributes()).thenReturn(Arrays.asList("uid", 
+                "givenName", "memberOf", "isNotAllowed"));
     }
 
     @Test

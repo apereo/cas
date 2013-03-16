@@ -29,7 +29,6 @@ import org.springframework.util.Assert;
  * map of attributes.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/04/19 20:13:01 $
  * @since 3.1
  */
 public class SimplePrincipal implements Principal {

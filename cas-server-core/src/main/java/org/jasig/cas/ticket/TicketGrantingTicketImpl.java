@@ -28,7 +28,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -53,7 +52,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
@@ -129,7 +128,8 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         for (final Entry<String, Service> entry : this.services.entrySet()) {
 
             if (!entry.getValue().logOutOfService(entry.getKey())) {
-                LOG.warn("Logout message not sent to [" + entry.getValue().getId() + "]; Continuing processing...");   
+                log.warn("Logout message not sent to [[]]; Continuing processing...",
+                        entry.getValue().getId());   
             }
         }
     }
@@ -171,4 +171,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         
         return ticket.getId().equals(this.getId());
     }
+    
+    
 }

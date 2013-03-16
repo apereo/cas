@@ -34,7 +34,7 @@ import org.springframework.util.Assert;
  * can be anything.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 @Entity

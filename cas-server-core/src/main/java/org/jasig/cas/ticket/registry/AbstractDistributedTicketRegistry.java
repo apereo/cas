@@ -32,7 +32,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * distributed ticket registries.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRegistry {
@@ -63,7 +63,8 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         private final boolean callback;
 
-        protected TicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, final T ticket, final boolean callback) {
+        protected TicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
+                final T ticket, final boolean callback) {
             this.ticketRegistry = ticketRegistry;
             this.ticket = ticket;
             this.callback = callback;
@@ -120,11 +121,13 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
     }
 
-    private static final class ServiceTicketDelegator extends TicketDelegator<ServiceTicket> implements ServiceTicket {
+    private static final class ServiceTicketDelegator extends TicketDelegator<ServiceTicket> 
+                           implements ServiceTicket {
 
         private static final long serialVersionUID = 8160636219307822967L;
 
-        protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, final ServiceTicket serviceTicket, final boolean callback) {
+        protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, 
+                final ServiceTicket serviceTicket, final boolean callback) {
             super(ticketRegistry, serviceTicket, callback);
         }
 
@@ -143,18 +146,22 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return b;
         }
 
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-            final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id, authentication, expirationPolicy);
+        public TicketGrantingTicket grantTicketGrantingTicket(final String id, 
+                final Authentication authentication, final ExpirationPolicy expirationPolicy) {
+            final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id, 
+                    authentication, expirationPolicy);
             updateTicket();
             return t;
         }
     }
 
-    private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket> implements TicketGrantingTicket {
+    private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket> 
+            implements TicketGrantingTicket {
 
         private static final long serialVersionUID = 3946038899057626741L;
 
-        protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
+        protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, 
+                final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
             super(ticketRegistry, ticketGrantingTicket, callback);
         }
 
@@ -162,8 +169,10 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return getTicket().getAuthentication();
         }
 
-        public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
-            final ServiceTicket t = this.getTicket().grantServiceTicket(id, service, expirationPolicy, credentialsProvided);
+        public ServiceTicket grantServiceTicket(final String id, final Service service, 
+                final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
+            final ServiceTicket t = this.getTicket().grantServiceTicket(id, service, 
+                    expirationPolicy, credentialsProvided);
             updateTicket();
             return t;
         }

@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
  * a connection does the heavy process of authenticating.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class HttpBasedServiceCredentialsAuthenticationHandler implements AuthenticationHandler {
@@ -51,7 +51,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
     /** Log instance. */
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    /** Instance of Apache Commons HttpClient */
+    /** Instance of Apache Commons HttpClient. */
     @NotNull
     private HttpClient httpClient;
 
@@ -60,9 +60,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
         if (this.requireSecure
             && !serviceCredentials.getCallbackUrl().getProtocol().equals(
                 PROTOCOL_HTTPS)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Authentication failed because url was not secure.");
-            }
+            log.debug("Authentication failed because url was not secure.");
             return false;
         }
         log

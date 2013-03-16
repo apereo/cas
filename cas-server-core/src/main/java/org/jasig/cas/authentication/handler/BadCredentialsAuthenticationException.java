@@ -25,7 +25,7 @@ package org.jasig.cas.authentication.handler;
  * (BadUsernamePassowrdCredentials).
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class BadCredentialsAuthenticationException extends

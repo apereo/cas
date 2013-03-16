@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @Entity
 @DiscriminatorValue("regex")
 public class RegexRegisteredService extends AbstractRegisteredService {
-    /** Serialization version marker */
+
     private static final long serialVersionUID = -8258660210826975771L;
 
     private transient Pattern servicePattern;

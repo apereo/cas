@@ -24,7 +24,7 @@ package org.jasig.cas;
  * manifest attribute from the jar file.
  *
  * @author Dmitriy Kopylenko
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class CasVersion {

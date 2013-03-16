@@ -63,7 +63,6 @@ import javax.persistence.Transient;
 public abstract class AbstractRegisteredService
         implements RegisteredService, Comparable<RegisteredService>, Serializable {
 
-    /** Serialization version marker  */
     private static final long serialVersionUID = 7645279151115635245L;
 
     @Id
@@ -159,7 +158,7 @@ public abstract class AbstractRegisteredService
         return this.ssoEnabled;
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (o == null) { 
             return false; 
         }

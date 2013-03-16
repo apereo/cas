@@ -37,7 +37,6 @@ import org.springframework.webflow.test.MockRequestContext;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public class AuthenticationViaFormActionTests extends
@@ -237,14 +236,14 @@ public class AuthenticationViaFormActionTests extends
 
         final CredentialsBinder cb = new CredentialsBinder(){
 
-            public void bind(HttpServletRequest request, Credentials credentials) {
+            public void bind(final HttpServletRequest request, final Credentials credentials) {
                 ((UsernamePasswordCredentials) credentials)
                     .setUsername("test2");
                 ((UsernamePasswordCredentials) credentials)
                     .setPassword("test2");
             }
 
-            public boolean supports(Class<?> clazz) {
+            public boolean supports(final Class<?> clazz) {
                 return true;
             }
 

@@ -29,15 +29,15 @@ import org.jasig.cas.authentication.RootCasException;
 public abstract class TicketException extends RootCasException {
     private static final long serialVersionUID = -5128676415951733624L;
     
-    public TicketException(String code, Throwable throwable) {
+    public TicketException(final String code, final Throwable throwable) {
       super(code, throwable);
     }
   
-    public TicketException(String code) {
+    public TicketException(final String code) {
       super(code);
     }
   
-    public TicketException(String code, String msg) {
+    public TicketException(final String code, final String msg) {
       super(code, msg);
     }
 }

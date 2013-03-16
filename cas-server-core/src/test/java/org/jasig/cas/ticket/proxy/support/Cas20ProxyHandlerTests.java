@@ -18,40 +18,46 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
+import static org.junit.Assert.*;
+
 import java.net.URL;
 
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public class Cas20ProxyHandlerTests extends TestCase {
+public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.handler = new Cas20ProxyHandler();
         this.handler.setHttpClient(new HttpClient());
         this.handler.setUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
     }
 
+    @Test
     public void testValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(
             new URL("http://www.rutgers.edu/")), "proxyGrantingTicketId"));
     }
 
+    @Test
     public void testValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredentials(
             new URL("http://www.rutgers.edu/?test=test")),
             "proxyGrantingTicketId"));
     }
 
+    @Test
     public void testNonValidProxyTicket() throws Exception {
         final HttpClient httpClient = new HttpClient();
         httpClient.setAcceptableCodes(new int[] {900});

@@ -26,7 +26,6 @@ import javax.validation.constraints.Size;
  * may provide in order to prove the authenticity of who they say they are.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.2 $ $Date: 2007/01/22 20:35:26 $
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.
@@ -81,13 +80,22 @@ public class UsernamePasswordCredentials implements Credentials {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { 
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         UsernamePasswordCredentials that = (UsernamePasswordCredentials) o;
 
-        if (password != null ? !password.equals(that.password) : that.password != null) return false;
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
+        if (password != null ? !password.equals(that.password) : that.password != null) { 
+            return false;
+        }
+        
+        if (username != null ? !username.equals(that.username) : that.username != null) { 
+            return false;
+        }
 
         return true;
     }

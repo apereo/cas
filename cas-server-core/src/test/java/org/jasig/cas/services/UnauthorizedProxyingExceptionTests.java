@@ -18,18 +18,21 @@
  */
 package org.jasig.cas.services;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
+import org.junit.Test;
 
-public class UnauthorizedProxyingExceptionTests extends TestCase {
+public class UnauthorizedProxyingExceptionTests {
 
     private static final String CODE = "service.not.authorized.proxy";
     
+    @Test
     public void testGetCode() {
         UnauthorizedProxyingException e = new UnauthorizedProxyingException();
         assertEquals(CODE, e.getMessage());
     }
 
+    @Test
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE);
@@ -37,6 +40,7 @@ public class UnauthorizedProxyingExceptionTests extends TestCase {
         assertEquals(MESSAGE, e.getMessage());
     }
     
+    @Test
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();

@@ -32,10 +32,12 @@ import org.springframework.webflow.execution.RequestContext;
  * Common utilities for the web tier.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public final class WebUtils {
+
+    private WebUtils() {}
 
     /** Request attribute that contains message key describing details of authorization failure.*/
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";

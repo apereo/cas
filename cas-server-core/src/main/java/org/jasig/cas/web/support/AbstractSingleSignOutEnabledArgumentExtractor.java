@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * Abstract class for handling the enabling and disabling of Single Sign Out features.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1.2
  *
  */
@@ -64,7 +63,7 @@ public abstract class AbstractSingleSignOutEnabledArgumentExtractor implements
         if (service == null) {
             log.debug("Extractor did not generate service.");
         } else {
-            log.debug("Extractor generated service for: " + service.getId());
+            log.debug("Extractor generated service for: {}", service.getId());
         }
         
         return service;

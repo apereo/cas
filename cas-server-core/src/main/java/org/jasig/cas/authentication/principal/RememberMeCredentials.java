@@ -23,7 +23,6 @@ package org.jasig.cas.authentication.principal;
  * to implement this class.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.2.1
  *
  */

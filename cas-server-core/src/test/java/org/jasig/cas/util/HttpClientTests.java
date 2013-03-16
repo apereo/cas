@@ -44,23 +44,23 @@ public class HttpClientTests  {
         httpClient.setReadTimeout(1000);
         return httpClient;
     }
-    
+
     @Test
     public void testOkayUrl() {
         assertTrue(this.getHttpClient().isValidEndPoint("http://www.jasig.org"));
     }
-    
+
     @Test
     public void testBadUrl() {
         assertFalse(this.getHttpClient().isValidEndPoint("http://www.jasig.org/scottb.html"));
     }
-    
+
     @Test
     public void testInvalidHttpsUrl() {
         final HttpClient client = this.getHttpClient();
         assertFalse(client.isValidEndPoint("https://static.ak.connect.facebook.com"));
     }
-    
+
     @Test
     public void testBypassedInvalidHttpsUrl() throws Exception {
         final HttpClient client = this.getHttpClient();
@@ -77,17 +77,15 @@ public class HttpClientTests  {
         };
         return hv;
     }
-    
+
     private SSLSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
         final TrustManager trm = new X509TrustManager() {
             public X509Certificate[] getAcceptedIssuers() { return null; }
             public void checkClientTrusted(final X509Certificate[] certs, final String authType) {}
             public void checkServerTrusted(final X509Certificate[] certs, final String authType) {}
         };
-        
         final SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, new TrustManager[] { trm }, null);
         return sc.getSocketFactory();
-        
     }
 }

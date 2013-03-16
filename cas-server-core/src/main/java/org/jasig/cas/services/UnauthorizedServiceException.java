@@ -22,7 +22,7 @@ package org.jasig.cas.services;
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class UnauthorizedServiceException extends RuntimeException {
