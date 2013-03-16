@@ -33,13 +33,12 @@ import org.slf4j.LoggerFactory;
  * Abstract implementation of a WebApplicationService.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/04/19 20:13:01 $
  * @since 3.1
  *
  */
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(AbstractWebApplicationService.class);
+    protected static final Logger log = LoggerFactory.getLogger(AbstractWebApplicationService.class);
     
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
     
@@ -150,7 +149,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             return true;
         }
 
-        LOG.debug("Sending logout request for: " + getId());
+        log.debug("Sending logout request for: {}", getId());
 
         final String logoutRequest = "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""
             + GENERATOR.getNewTicketId("LR")

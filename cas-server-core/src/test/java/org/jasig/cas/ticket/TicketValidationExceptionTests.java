@@ -18,25 +18,25 @@
  */
 package org.jasig.cas.ticket;
 
+import static org.junit.Assert.*;
+
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
-public class TicketValidationExceptionTests extends TestCase {
+public class TicketValidationExceptionTests {
 
     private static final String CODE = "INVALID_SERVICE";
     
     private Service service = TestUtils.getService();
     
-    
+    @Test
     public void testThrowableConstructor() {
         final TicketValidationException t = new TicketValidationException(this.service);
         

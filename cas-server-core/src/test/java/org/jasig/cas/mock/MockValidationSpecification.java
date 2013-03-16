@@ -26,18 +26,17 @@ import org.jasig.cas.validation.ValidationSpecification;
  * constructor on a ValidationSpecification.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class MockValidationSpecification implements ValidationSpecification {
 
     private boolean test;
 
-    public MockValidationSpecification(boolean test) {
+    public MockValidationSpecification(final boolean test) {
         this.test = test;
     }
 
-    public boolean isSatisfiedBy(Assertion assertion) {
+    public boolean isSatisfiedBy(final Assertion assertion) {
         return this.test;
     }
 }

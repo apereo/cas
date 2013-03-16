@@ -19,7 +19,6 @@
 
 package org.jasig.cas.util;
 
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -29,7 +28,7 @@ public class ApplicationContextProvider implements ApplicationContextAware{
     public static ApplicationContext getApplicationContext() {
         return context;
     }
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.context = context;
+    public void setApplicationContext(final ApplicationContext ctx) {
+        this.context = ctx;
     }
 }

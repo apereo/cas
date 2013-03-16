@@ -29,7 +29,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * You should only expose either this class or the {@link org.jasig.cas.services.jmx.ServicesManagerMBean}, but not both.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.4.4
  */
 @ManagedResource(objectName = "CAS:name=JasigCasServicesManagerMBean",

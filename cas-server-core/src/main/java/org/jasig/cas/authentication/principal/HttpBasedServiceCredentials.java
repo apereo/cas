@@ -28,7 +28,6 @@ import org.springframework.util.Assert;
  * application.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/04/24 13:01:51 $
  * @since 3.0
  */
 public class HttpBasedServiceCredentials implements Credentials {
@@ -39,7 +38,7 @@ public class HttpBasedServiceCredentials implements Credentials {
     /** The callbackURL to check that identifies the application. */
     private final URL callbackUrl;
 
-    /** String form of callbackUrl; */
+    /** String form of callbackUrl. */
     private final String callbackUrlAsString;
 
     /**
@@ -82,18 +81,23 @@ public class HttpBasedServiceCredentials implements Credentials {
     }
 
     public boolean equals(final Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }    
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         final HttpBasedServiceCredentials other = (HttpBasedServiceCredentials) obj;
         if (this.callbackUrlAsString == null) {
-            if (other.callbackUrlAsString != null)
+            if (other.callbackUrlAsString != null) {
                 return false;
-        } else if (!this.callbackUrlAsString.equals(other.callbackUrlAsString))
+            }
+        } else if (!this.callbackUrlAsString.equals(other.callbackUrlAsString)) {
             return false;
+        }
         return true;
     }
     

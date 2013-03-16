@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.principal.Service;
  * use ticket.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public interface ServiceTicket extends Ticket {

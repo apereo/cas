@@ -46,7 +46,8 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     }
 
     public List<RegisteredService> load() {
-        return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        return this.entityManager.createQuery("select r from AbstractRegisteredService r", 
+                RegisteredService.class).getResultList();
     }
 
     public RegisteredService save(final RegisteredService registeredService) {

@@ -32,7 +32,6 @@ import static org.junit.Assert.*;
 /**
  * 
  * @author battags
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.0
  *
  */
@@ -154,7 +153,8 @@ public class DefaultServicesManagerImplTests  {
         this.defaultServicesManagerImpl.save(r3);
         this.defaultServicesManagerImpl.save(r2);
         
-        final List<RegisteredService> allServices = new ArrayList<RegisteredService>(this.defaultServicesManagerImpl.getAllServices());
+        final List<RegisteredService> allServices = new ArrayList<RegisteredService>(
+                this.defaultServicesManagerImpl.getAllServices());
         
         //We expect the 3 newly added services, plus the one added in setUp()
         assertEquals(4, allServices.size());
@@ -168,7 +168,7 @@ public class DefaultServicesManagerImplTests  {
     protected class SimpleService implements Service {
         
         /**
-         * Comment for <code>serialVersionUID</code>
+         * Comment for <code>serialVersionUID</code>.
          */
         private static final long serialVersionUID = 6572142033945243669L;
         private String id;
@@ -176,7 +176,7 @@ public class DefaultServicesManagerImplTests  {
         protected SimpleService(final String id) {
             this.id = id;
         }
-        
+
         public Map<String, Object> getAttributes() {
             return null;
         }
@@ -185,15 +185,15 @@ public class DefaultServicesManagerImplTests  {
             return this.id;
         }
 
-        public void setPrincipal(Principal principal) {
+        public void setPrincipal(final Principal principal) {
             // nothing to do
         }
 
-        public boolean logOutOfService(String sessionIdentifier) {
+        public boolean logOutOfService(final String sessionIdentifier) {
             return false;
         }
-        
-        public boolean matches(Service service) {
+
+        public boolean matches(final Service service) {
             return true;
         }
     }

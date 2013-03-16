@@ -85,14 +85,16 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     
     private void deleteTicketAndChildren(final Ticket ticket) {
         final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
-            .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class)
+            .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", 
+                    TicketGrantingTicketImpl.class)
             .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .setParameter("id", ticket.getId())
             .getResultList();
         final List<ServiceTicketImpl> serviceTicketImpls = entityManager
-	        .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class)
-	        .setParameter("id", ticket.getId())
-	        .getResultList();
+                .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", 
+                        ServiceTicketImpl.class)
+                .setParameter("id", ticket.getId())
+                .getResultList();
         
         for (final ServiceTicketImpl s : serviceTicketImpls) {
             removeTicket(s);
@@ -162,7 +164,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Transactional(readOnly=true)
     public int sessionCount() {
-        return countToInt(entityManager.createQuery("select count(t) from TicketGrantingTicketImpl t").getSingleResult());
+        return countToInt(entityManager.createQuery(
+                "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Transactional(readOnly=true)

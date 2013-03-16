@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * clients from consuming resources by doing constant redirects.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0.5
  */
 public final class ThrottledUseAndTimeoutExpirationPolicy implements
@@ -58,18 +58,13 @@ public final class ThrottledUseAndTimeoutExpirationPolicy implements
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState.getCountOfUses() == 0
             && (System.currentTimeMillis() - ticketState.getLastTimeUsed() < this.timeToKillInMilliSeconds)) {
-            if (log.isDebugEnabled()) {
-                log
-                    .debug("Ticket is not expired due to a count of zero and the time being less than the timeToKillInMilliseconds");
-            }
+            log.debug("Ticket is not expired due to a count of zero and the time being less "
+                    + "than the timeToKillInMilliseconds");
             return false;
         }
 
         if ((System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds)) {
-            if (log.isDebugEnabled()) {
-                log
-                    .debug("Ticket is expired due to the time being greater than the timeToKillInMilliseconds");
-            }
+            log.debug("Ticket is expired due to the time being greater than the timeToKillInMilliseconds");
             return true;
         }
 

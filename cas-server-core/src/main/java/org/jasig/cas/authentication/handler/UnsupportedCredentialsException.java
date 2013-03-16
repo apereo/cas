@@ -24,7 +24,7 @@ package org.jasig.cas.authentication.handler;
  * do with the credentials presented.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class UnsupportedCredentialsException extends

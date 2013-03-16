@@ -52,7 +52,7 @@ import org.springframework.web.servlet.DispatcherServlet;
  * attribute under the key "exceptionCaughtByServlet".
  * 
  * @author Andrew Petro
- * @version $Revision$ $Date$
+
  * @see DispatcherServlet
  */
 public final class SafeDispatcherServlet extends HttpServlet {

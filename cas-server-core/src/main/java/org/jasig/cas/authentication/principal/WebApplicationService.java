@@ -22,7 +22,6 @@ package org.jasig.cas.authentication.principal;
  * Represents a service using CAS that comes from the web.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/02/27 19:31:58 $
  * @since 3.1
  */
 public interface WebApplicationService extends Service {

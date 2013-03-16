@@ -34,7 +34,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * 
  * @author Dmitriy Kopylenko
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class ImmutableAuthentication extends AbstractAuthentication {
@@ -45,7 +45,7 @@ public final class ImmutableAuthentication extends AbstractAuthentication {
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
 
     /** The date/time this authentication object became valid. */
-    final Date authenticatedDate;
+    private final Date authenticatedDate;
 
     /**
      * Constructor that accepts both a principal and a map.

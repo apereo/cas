@@ -18,19 +18,21 @@
  */
 package org.jasig.cas.ticket.support;
 
+import static org.junit.Assert.*;
+
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class TimeoutExpirationPolicyTests extends TestCase {
+public class TimeoutExpirationPolicyTests {
 
     private static final long TIMEOUT = 5000;
 
@@ -38,23 +40,26 @@ public class TimeoutExpirationPolicyTests extends TestCase {
 
     private Ticket ticket;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
         this.ticket = new TicketGrantingTicketImpl("test", TestUtils
             .getAuthentication(), this.expirationPolicy);
 
-        super.setUp();
     }
 
+    @Test
     public void testTicketIsNull() {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
+    @Test
     public void testTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
 
+    @Test
     public void testTicketIsExpired() {
         try {
             Thread.sleep(TIMEOUT + 10); // this failed when it was only +1...not

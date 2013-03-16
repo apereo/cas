@@ -32,12 +32,12 @@ import java.security.NoSuchAlgorithmException;
  * 
  * @author Scott Battaglia
  * @author Stephen More
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class DefaultPasswordEncoder implements PasswordEncoder {
 
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', 
+                                                '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     @NotNull
     private final String encodingAlgorithm;
@@ -80,7 +80,7 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
      * @param bytes the raw bytes from the digest.
      * @return the formatted bytes.
      */
-    private String getFormattedText(byte[] bytes) {
+    private String getFormattedText(final byte[] bytes) {
         final StringBuilder buf = new StringBuilder(bytes.length * 2);
 
         for (int j = 0; j < bytes.length; j++) {

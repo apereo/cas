@@ -23,7 +23,7 @@ package org.jasig.cas.authentication.handler;
  * is not.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class BadPasswordAuthenticationException extends

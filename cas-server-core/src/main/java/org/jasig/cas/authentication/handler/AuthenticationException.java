@@ -34,7 +34,7 @@ public abstract class AuthenticationException extends RootCasException {
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
 
-     /** The error type that provides additional info about the nature of the exception cause **/
+     /** The error type that provides additional info about the nature of the exception cause. **/
     private String type = "error";
 
     public AuthenticationException(final String code) {
@@ -61,7 +61,7 @@ public abstract class AuthenticationException extends RootCasException {
     }
 
     /**
-     * Method to return the error type of this exception
+     * Method to return the error type of this exception.
      *
      * @return the String identifier for the cause of this error.
      */

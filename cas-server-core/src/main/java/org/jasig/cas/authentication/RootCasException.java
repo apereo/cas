@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.ticket.TicketException;
 import org.springframework.util.Assert;
 
 /**
@@ -28,8 +26,8 @@ import org.springframework.util.Assert;
  * mapped inside an external resource bundle for internationalization of error messages. 
  * 
  * @author Misagh Moayyed
- * @see AuthenticationException
- * @see TicketException
+ * @see org.jasig.cas.authentication.handler.AuthenticationException
+ * @see org.jasig.cas.ticket.TicketException
  * @since 4.0.0
  */
 public abstract class RootCasException extends Exception {
@@ -82,7 +80,7 @@ public abstract class RootCasException extends Exception {
   public final String getCode() {
       final Throwable cause = this.getCause();
       if (cause != null && (cause instanceof RootCasException)) {
-        return ((RootCasException)cause).getCode();
+        return ((RootCasException) cause).getCode();
       }
       return this.code;
   }

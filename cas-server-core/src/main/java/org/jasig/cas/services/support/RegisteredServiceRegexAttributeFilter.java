@@ -55,15 +55,19 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * <ul>
      * <li>The filtering operation is non-recursive. </li>
      * <li>Multi-valued attributes such as those of type {@link Collection} and
-     * {@link Map} are expected to allow casting to <code>Map&lt;String, String&gt;</code> or <code>Collection&lt;String&gt;</code>.
+     * {@link Map} are expected to allow casting to <code>Map&lt;String, String&gt;</code> 
+     * or <code>Collection&lt;String&gt;</code>.
      * Values that are of type array are expected to allow casting to <code>String[]</code>.
      * </li>
-     * <li>Multi-valued attributes are always put back into the final released collection of attributes as <code>String[]</code>.</li> 
-     * <li>If the final filtered collection is empty, it will not be put into the collection of attributes.</li> 
+     * <li>Multi-valued attributes are always put back into the final released collection of 
+     * attributes as <code>String[]</code>.</li> 
+     * <li>If the final filtered collection is empty, it will not be put into the collection of attributes.</li>
+     * </ul>
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
+    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
+            final RegisteredService registeredService) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
         for (final String attributeName : givenAttributes.keySet()) {
             final Object attributeValue = givenAttributes.get(attributeName);
@@ -71,7 +75,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             log.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             if (attributeValue != null) {
                 if (attributeValue instanceof Collection) {
-                    final String[] filteredAttributes = filterArrayAttributes(((Collection<String>) attributeValue).toArray(new String[] {}), attributeName);
+                    final String[] filteredAttributes = 
+                            filterArrayAttributes(((Collection<String>) attributeValue).toArray(
+                                    new String[] {}), attributeName);
                     if (filteredAttributes.length > 0) {
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
@@ -81,7 +87,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
                 } else if (attributeValue instanceof Map) {
-                    final Map<String, String> filteredAttributes = filterMapAttributes((Map<String, String>) attributeValue);
+                    final Map<String, String> filteredAttributes = 
+                            filterMapAttributes((Map<String, String>) attributeValue);
                     if (filteredAttributes.size() > 0) {
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
@@ -92,7 +99,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             }
         }
         
-        log.debug("Total number of attributes received is {} and total number of attributes filtered and released is {}",
+        log.debug("Received {} attributes. Filtered and released {}",
                   givenAttributes.size(), attributesToRelease.size());
         return attributesToRelease;
     }

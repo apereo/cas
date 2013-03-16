@@ -29,13 +29,11 @@ import javax.validation.constraints.NotNull;
  * is true or not.
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.2.1
  *
  */
 public final class RememberMeDelegatingExpirationPolicy implements ExpirationPolicy {
     
-    /** Unique Id for Serialization */
     private static final long serialVersionUID = -575145836880428365L;
 
     @NotNull
@@ -44,8 +42,9 @@ public final class RememberMeDelegatingExpirationPolicy implements ExpirationPol
     @NotNull
     private ExpirationPolicy sessionExpirationPolicy;
 
-    public boolean isExpired(TicketState ticketState) {
-        final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+    public boolean isExpired(final TicketState ticketState) {
+        final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().
+                get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
         
         if (b == null || b.equals(Boolean.FALSE)) {
             return this.sessionExpirationPolicy.isExpired(ticketState);

@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
  * provided and the authentication handler used to authenticate the user.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthenticationManager {
@@ -49,7 +49,8 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(
+            final Credentials credentials) throws AuthenticationException {
         final Class< ? extends Credentials> credentialsClass = credentials.getClass();
         final DirectAuthenticationHandlerMappingHolder d = this.credentialsMapping.get(credentialsClass);
 

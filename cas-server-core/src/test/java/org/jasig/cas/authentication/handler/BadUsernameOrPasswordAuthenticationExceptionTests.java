@@ -18,34 +18,40 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision: 39552 $ $Date: 2007-01-22 15:35:37 -0500 (Mon, 22 Jan 2007) $
  * @since 3.1
  */
-public final class BadUsernameOrPasswordAuthenticationExceptionTests extends TestCase {
+public final class BadUsernameOrPasswordAuthenticationExceptionTests {
     
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword";
 
+    @Test
     public void testGetCode() {
         AuthenticationException e = new BadUsernameOrPasswordAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
     
+    @Test
     public void testThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
-        final BadUsernameOrPasswordAuthenticationException e = new BadUsernameOrPasswordAuthenticationException(r);
+        final BadUsernameOrPasswordAuthenticationException e =
+                new BadUsernameOrPasswordAuthenticationException(r);
         
         assertEquals(CODE, e.getCode());
         assertEquals(r, e.getCause());
     }
     
+    @Test
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
-        final BadUsernameOrPasswordAuthenticationException e = new BadUsernameOrPasswordAuthenticationException(MESSAGE);
+        final BadUsernameOrPasswordAuthenticationException e =
+                new BadUsernameOrPasswordAuthenticationException(MESSAGE);
         
         assertEquals(MESSAGE, e.getCode());
     }
@@ -53,8 +59,9 @@ public final class BadUsernameOrPasswordAuthenticationExceptionTests extends Tes
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
-        final BadUsernameOrPasswordAuthenticationException e = new BadUsernameOrPasswordAuthenticationException(MESSAGE, r);
-        
+        final BadUsernameOrPasswordAuthenticationException e =
+                new BadUsernameOrPasswordAuthenticationException(MESSAGE, r);
+
         assertEquals(MESSAGE, e.getCode());
         assertEquals(r, e.getCause());
     }

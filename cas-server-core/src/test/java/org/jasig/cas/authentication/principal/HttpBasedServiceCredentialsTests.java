@@ -18,30 +18,34 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import static org.junit.Assert.*;
+
 import java.net.URL;
 
 import org.jasig.cas.TestUtils;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class HttpBasedServiceCredentialsTests extends TestCase {
+public final class HttpBasedServiceCredentialsTests {
 
+    @Test
     public void testProperUrl() {
         assertEquals(TestUtils.CONST_GOOD_URL, TestUtils
             .getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
     }
     
+    @Test
     public void testEqualsWithNull() throws Exception {
         final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.cnn.com"));
         
         assertFalse(c.equals(null));
     }
     
+    @Test
     public void testEqualsWithFalse() throws Exception {
         final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.cnn.com"));
         final HttpBasedServiceCredentials c2 = new HttpBasedServiceCredentials(new URL("http://www.msn.com"));
@@ -50,6 +54,7 @@ public final class HttpBasedServiceCredentialsTests extends TestCase {
         assertFalse(c.equals(new Object()));
     }
     
+    @Test
     public void testEqualsWithTrue() throws Exception {
         final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(new URL("http://www.cnn.com"));
         final HttpBasedServiceCredentials c2 = new HttpBasedServiceCredentials(new URL("http://www.cnn.com"));

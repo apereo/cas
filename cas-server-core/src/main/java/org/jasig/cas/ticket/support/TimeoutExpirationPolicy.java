@@ -29,7 +29,7 @@ import org.jasig.cas.ticket.TicketState;
  * amount of time, the ticket will be expired.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class TimeoutExpirationPolicy implements ExpirationPolicy {

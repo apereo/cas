@@ -24,7 +24,11 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
-import org.jasig.cas.ticket.*;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
 import java.util.List;
@@ -37,7 +41,7 @@ import org.mockito.ArgumentMatcher;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests with the help of Mockito framework
+ * Unit tests with the help of Mockito framework.
  *
  * @author Dmitriy Kopylenko
  */
@@ -69,7 +73,8 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
 
         final TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
         when(tgtMock.isExpired()).thenReturn(false);
-        when(tgtMock.grantServiceTicket(anyString(), any(Service.class), any(ExpirationPolicy.class), anyBoolean())).thenReturn(stMock);
+        when(tgtMock.grantServiceTicket(anyString(), any(Service.class), 
+                any(ExpirationPolicy.class), anyBoolean())).thenReturn(stMock);
         final List<Authentication> authnListMock = mock(List.class);
         when(authnListMock.size()).thenReturn(2);  
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);

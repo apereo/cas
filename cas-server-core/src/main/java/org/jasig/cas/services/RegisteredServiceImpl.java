@@ -30,7 +30,7 @@ import javax.persistence.Entity;
  * 
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 @Entity

@@ -24,7 +24,7 @@ package org.jasig.cas.validation;
  * validation is occurring from a new login.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public abstract class AbstractCasProtocolValidationSpecification implements

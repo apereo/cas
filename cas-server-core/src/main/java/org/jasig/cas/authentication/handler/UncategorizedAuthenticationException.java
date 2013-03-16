@@ -23,7 +23,7 @@ package org.jasig.cas.authentication.handler;
  * going on.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public abstract class UncategorizedAuthenticationException extends

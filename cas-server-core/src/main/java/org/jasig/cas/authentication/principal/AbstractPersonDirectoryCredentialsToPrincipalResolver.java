@@ -33,7 +33,6 @@ import javax.validation.constraints.NotNull;
 /**
  * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
@@ -45,14 +44,12 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
 
     private boolean returnNullIfNoAttributes = false;
     
-    /** Repository of principal attributes to be retrieved */
+    /** Repository of principal attributes to be retrieved. */
     @NotNull
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
 
     public final Principal resolvePrincipal(final Credentials credentials) {
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to resolve a principal...");
-        }
+        log.debug("Attempting to resolve a principal...");
 
         final String principalId = extractPrincipalId(credentials);
         
@@ -60,10 +57,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
             return null;
         }
         
-        if (log.isDebugEnabled()) {
-            log.debug("Creating SimplePrincipal for ["
-                + principalId + "]");
-        }
+        log.debug("Creating SimplePrincipal for [{}]", principalId);
 
         final IPersonAttributes personAttributes = this.attributeRepository.getPerson(principalId);
         final Map<String, List<Object>> attributes;
@@ -81,9 +75,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
         if (attributes == null) {
             return null;
         }
-        
         final Map<String, Object> convertedAttributes = new HashMap<String, Object>();
-        
         for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
             final String key = entry.getKey();
             final Object value = entry.getValue().size() == 1 ? entry.getValue().get(0) : entry.getValue();
