@@ -119,7 +119,8 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
 
         foundSupported = false;
 
-        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver : this.credentialsToPrincipalResolvers) {
+        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver 
+                : this.credentialsToPrincipalResolvers) {
             if (credentialsToPrincipalResolver.supports(credentials)) {
                 final Principal principal = credentialsToPrincipalResolver.resolvePrincipal(credentials);
                 log.info("Resolved principal {}", principal);
