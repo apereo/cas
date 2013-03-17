@@ -58,7 +58,8 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     
     private final HttpClient httpClient;
     
-    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId, final HttpClient httpClient) {
+    protected AbstractWebApplicationService(final String id, final String originalUrl, 
+            final String artifactId, final HttpClient httpClient) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
