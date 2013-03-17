@@ -71,7 +71,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             authentication.getAttributes().put(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, a.getName());
         }
 
-        for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator : this.authenticationMetaDataPopulators) {
+        for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator
+                : this.authenticationMetaDataPopulators) {
             authentication = authenticationMetaDataPopulator
                 .populateAttributes(authentication, credentials);
         }
