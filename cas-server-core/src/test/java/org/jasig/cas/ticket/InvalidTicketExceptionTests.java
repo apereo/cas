@@ -26,13 +26,13 @@ import junit.framework.TestCase;
 public class InvalidTicketExceptionTests extends TestCase {
 
     public void testCodeNoThrowable() {
-        TicketException t = new InvalidTicketException();
+        TicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
     public void testCodeWithThrowable() {
         AuthenticationException a = new BadCredentialsAuthenticationException();
-        TicketException t = new InvalidTicketException(a);
+        TicketException t = new InvalidTicketException(a, "InvalidTicketId");
 
         assertEquals(a.toString(), t.getCode());
     }
