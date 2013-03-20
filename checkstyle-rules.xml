@@ -6,29 +6,32 @@
 -->
 <!--
     Checkstyle-Configuration: CAS
-    Description: Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. 
-                 The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
+    Description: 
+Checkstyle configuration based on Sun's converntions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
-  <property name="charset" value="UTF-8"/>
   <property name="severity" value="warning"/>
+  <property name="charset" value="UTF-8"/>
   <module name="TreeWalker">
-    <property name="tabWidth" value="4" />
-
+    <property name="tabWidth" value="4"/>
     <module name="JavadocMethod">
-      <property name="suppressLoadErrors" value="true"/>
       <property name="severity" value="info"/>
+      <property name="suppressLoadErrors" value="true"/>
     </module>
-    <module name="JavadocType"/>
+    <module name="JavadocType">
+      <property name="severity" value="error"/>
+      <property name="scope" value="public"/>
+      <property name="allowMissingParamTags" value="true" />
+    </module>
     <module name="JavadocVariable">
         <property name="severity" value="info"/>
     </module>
     <module name="JavadocStyle">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="ConstantName">
-        <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)|(log)" />
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
+      <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)|(log)"/>
     </module>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
@@ -39,17 +42,17 @@
     <module name="StaticVariableName"/>
     <module name="TypeName"/>
     <module name="AvoidStarImport">
-        <property name="allowStaticMemberImports" value="true" />
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
+      <property name="allowStaticMemberImports" value="true"/>
     </module>
     <module name="IllegalImport">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="RedundantImport">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="UnusedImports">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="MethodLength"/>
     <module name="ParameterNumber"/>
@@ -59,7 +62,7 @@
     </module>
     <module name="EmptyForIteratorPad"/>
     <module name="MethodParamPad">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="NoWhitespaceAfter"/>
     <module name="NoWhitespaceBefore"/>
@@ -67,35 +70,25 @@
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
     <module name="WhitespaceAfter"/>
-    
-    <!-- <module name="WhitespaceAround"/> -->
-    
     <module name="ModifierOrder">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="RedundantModifier"/>
     <module name="AvoidNestedBlocks"/>
     <module name="EmptyBlock">
-         <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="LeftCurly">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="NeedBraces">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="RightCurly"/>
-    <!-- <module name="AvoidInlineConditionals"/> -->
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
-    <!--
-    <module name="HiddenField">
-        <property name="ignoreSetter" value="true" />
-    </module>
-    -->
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
-    <!-- <module name="MagicNumber"/> -->
     <module name="MissingSwitchDefault"/>
     <module name="RedundantThrows">
       <property name="suppressLoadErrors" value="true"/>
@@ -103,33 +96,31 @@
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
     <module name="DesignForExtension">
-        <property name="severity" value="info"/>
+      <property name="severity" value="info"/>
     </module>
-    
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
     <module name="VisibilityModifier">
-        <property name="protectedAllowed" value="true"/>
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
+      <property name="protectedAllowed" value="true"/>
     </module>
     <module name="ArrayTypeStyle"/>
     <module name="FinalParameters">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="TodoComment"/>
     <module name="UpperEll"/>
   </module>
-  <!-- <module name="JavadocPackage"/> -->
   <module name="NewlineAtEndOfFile">
-      <property name="fileExtensions" value="java, xml, properties, txt"/>
-  </module> 
+    <property name="fileExtensions" value="java, xml, properties, txt"/>
+  </module>
   <module name="Translation"/>
   <module name="FileLength"/>
   <module name="FileTabCharacter"/>
   <module name="RegexpSingleline">
-    <property name="format" value=".\s+$"/>
     <property name="severity" value="info"/>
+    <property name="format" value=".\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
   </module>
   <module name="RegexpSingleline">
@@ -178,6 +169,10 @@
     <metadata name="net.sf.eclipsecs.core.comment" value="JavaDoc @version tag"/>
     <property name="severity" value="error"/>
     <property name="format" value="@version\s+.+(\$Revision|\$Date)"/>
-    <property name="message" value="Invalid JavaDoc @version tag." />
+    <property name="message" value="Invalid JavaDoc @version tag."/>
   </module>
+  <module name="SuppressionFilter">
+    <property name="file" value="${checkstyle.suppressions.file}"/>
+  </module>
+  <module name="SuppressionFilter"/>
 </module>

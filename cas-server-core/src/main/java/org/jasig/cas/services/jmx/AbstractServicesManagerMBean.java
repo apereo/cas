@@ -37,7 +37,6 @@ import java.util.List;
  *
  * @author <a href="mailto:tobias.trelle@proximity.de">Tobias Trelle</a>
  * @author Scott Battaglia
-
  * @since 3.4.4
  */
 public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {

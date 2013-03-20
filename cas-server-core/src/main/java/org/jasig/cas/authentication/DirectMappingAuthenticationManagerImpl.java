@@ -35,7 +35,6 @@ import org.springframework.util.Assert;
  * provided and the authentication handler used to authenticate the user.
  * 
  * @author Scott Battaglia
-
  * @since 3.1
  */
 public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthenticationManager {
@@ -86,6 +85,9 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         this.credentialsMapping = credentialsMapping;
     }
     
+    /**
+     * Holder for authentication mappings that links credentials and handlers.
+     */
     public static final class DirectAuthenticationHandlerMappingHolder {
 
         private AuthenticationHandler authenticationHandler;

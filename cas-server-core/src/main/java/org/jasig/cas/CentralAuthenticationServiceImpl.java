@@ -155,10 +155,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
-        }
-        final TicketGrantingTicket ticket =  this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        log.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
+        final TicketGrantingTicket ticket = this.ticketRegistry.getTicket(ticketGrantingTicketId, 
+                                            TicketGrantingTicket.class);
 
         if (ticket == null) {
             log.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);

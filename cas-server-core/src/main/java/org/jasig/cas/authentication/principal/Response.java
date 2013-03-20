@@ -41,6 +41,7 @@ public final class Response {
     /** Log instance. */
     protected static final Logger log = LoggerFactory.getLogger(Response.class);
 
+    /** An enumeration of different response types. **/
     public static enum ResponseType {
         POST, REDIRECT
     }

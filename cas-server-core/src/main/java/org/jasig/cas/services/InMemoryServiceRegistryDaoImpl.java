@@ -68,9 +68,9 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     }
 
     /**
-     * This isn't super-fast but I don't expect thousands of services.
+     * This isn't super-fast but we don't expect thousands of services.
      *
-     * @return
+     * @return the highest service id in the list of registered services
      */
     private long findHighestId() {
         long id = 0;

@@ -69,6 +69,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * Method automatically handles conversion to UsernamePasswordCredentials
      * and delegates to abstract authenticateUsernamePasswordInternal so
      * subclasses do not need to cast.
+     * @return true if credentials are authentic, false otherwise. 
      */
     protected final boolean doAuthentication(final Credentials credentials)
         throws AuthenticationException {
