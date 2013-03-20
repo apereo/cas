@@ -28,7 +28,6 @@ import org.jasig.cas.authentication.principal.Service;
  * Simple mock implementation of a service principal.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  *
  */
 public class MockService implements Service {

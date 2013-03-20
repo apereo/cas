@@ -32,7 +32,6 @@ import java.util.Date;
  * Mock service ticket.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public class MockServiceTicket implements ServiceTicket {
     private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
