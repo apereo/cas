@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -38,15 +38,15 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 
     /** A HashMap to contain the tickets. */
     private final Map<String, Ticket> cache;
-    
+
     public DefaultTicketRegistry() {
         this.cache = new ConcurrentHashMap<String, Ticket>();
     }
-    
+
     /**
      * Creates a new, empty registry with the specified initial capacity, load
      * factor, and concurrency level.
-     * 
+     *
      * @param initialCapacity - the initial capacity. The implementation
      * performs internal sizing to accommodate this many elements.
      * @param loadFactor - the load factor threshold, used to control resizing.
@@ -59,7 +59,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
     public DefaultTicketRegistry(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
         this.cache = new ConcurrentHashMap<String, Ticket>(initialCapacity, loadFactor, concurrencyLevel);
     }
-    
+
     /**
      * @throws IllegalArgumentException if the Ticket is null.
      */

@@ -32,9 +32,9 @@ import static org.junit.Assert.assertEquals;
  * @since 3.5.0
  */
 public class AbstractPoolMonitorTests {
-    
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    
+
     @Test
     public void testObserveOK() throws Exception {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {

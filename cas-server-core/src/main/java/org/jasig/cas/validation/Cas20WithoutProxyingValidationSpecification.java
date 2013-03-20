@@ -24,7 +24,7 @@ package org.jasig.cas.validation;
  * renew=true and if requested, succeeding only if ticket validation is
  * occurring from a new login. Additionally, this specification will not accept
  * proxied authentications.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0

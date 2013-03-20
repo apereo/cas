@@ -157,7 +157,7 @@ public class AuthenticationViaFormActionTests extends
         request.addParameter("service", "test");
         request.addParameter("username", "test");
         request.addParameter("password", "test");
-        
+
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
         context.getFlowScope().put("service", TestUtils.getService("test"));

@@ -22,7 +22,7 @@ package org.jasig.cas.authentication.principal;
  * Marker interface for Services. Services are generally either remote
  * applications utilizing CAS or applications that principals wish to gain
  * access to. In most cases this will be some form of web application.
- * 
+ *
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @since 3.0
@@ -31,10 +31,10 @@ package org.jasig.cas.authentication.principal;
  * </p>
  */
 public interface Service extends Principal {
-    
+
     void setPrincipal(Principal principal);
-    
+
     boolean logOutOfService(String sessionIdentifier);
-    
+
     boolean matches(Service service);
 }

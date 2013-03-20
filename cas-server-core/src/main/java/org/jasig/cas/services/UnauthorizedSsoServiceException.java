@@ -21,7 +21,7 @@ package org.jasig.cas.services;
 /**
  * Exception thrown when a service attempts to use SSO when it should not be
  * allowed to.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.1

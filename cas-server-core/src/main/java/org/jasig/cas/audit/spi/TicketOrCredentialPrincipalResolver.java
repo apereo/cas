@@ -35,13 +35,13 @@ import javax.validation.constraints.NotNull;
 
 /**
  * PrincipalResolver that can retrieve the username from either the Ticket or from the Credentials.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1.2
  *
  */
 public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
-    
+
     @NotNull
     private final TicketRegistry ticketRegistry;
 
@@ -60,7 +60,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     public String resolve() {
         return UNKNOWN_USER;
     }
-    
+
     protected String resolveFromInternal(final JoinPoint joinPoint) {
         final Object arg1 = joinPoint.getArgs()[0];
         if (arg1 instanceof Credentials) {

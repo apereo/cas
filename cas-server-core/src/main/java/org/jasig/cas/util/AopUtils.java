@@ -31,7 +31,7 @@ import org.aspectj.lang.JoinPoint;
 public final class AopUtils {
 
     private AopUtils() {}
-    
+
     /**
      * Unwraps a join point that may be nested due to layered proxies.
      *

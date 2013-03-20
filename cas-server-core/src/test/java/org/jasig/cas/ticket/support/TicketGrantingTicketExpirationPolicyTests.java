@@ -49,7 +49,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
         this.expirationPolicy = new TicketGrantingTicketExpirationPolicy();
         this.expirationPolicy.setMaxTimeToLiveInSeconds(HARD_TIMEOUT_SECONDS);
         this.expirationPolicy.setTimeToKillInSeconds(SLIDING_TIMEOUT_SECONDS);
-        this.ticketGrantingTicket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), 
+        this.ticketGrantingTicket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 this.expirationPolicy);
     }
 

@@ -57,7 +57,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * CredentialsToPrincipal resolvers that know how to process the credentials
  * provided.
  * </ul>
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  * @see org.jasig.cas.authentication.handler.AuthenticationHandler
@@ -85,7 +85,7 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         AuthenticationHandler authenticatedClass = null;
         String handlerName;
 
-        AuthenticationException unAuthSupportedHandlerException = BadCredentialsAuthenticationException.ERROR; 
+        AuthenticationException unAuthSupportedHandlerException = BadCredentialsAuthenticationException.ERROR;
 
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
@@ -119,7 +119,7 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
 
         foundSupported = false;
 
-        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver 
+        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver
                 : this.credentialsToPrincipalResolvers) {
             if (credentialsToPrincipalResolver.supports(credentials)) {
                 final Principal principal = credentialsToPrincipalResolver.resolvePrincipal(credentials);

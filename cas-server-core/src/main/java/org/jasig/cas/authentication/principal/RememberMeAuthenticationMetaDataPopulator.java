@@ -24,7 +24,7 @@ import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 /**
  * Determines if the credentials provided are for Remember Me Services and then sets the appropriate
  * Authentication attribute if remember me services have been requested.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.2.1
  *
@@ -37,11 +37,11 @@ public final class RememberMeAuthenticationMetaDataPopulator implements
         if (credentials instanceof RememberMeCredentials) {
             final RememberMeCredentials r = (RememberMeCredentials) credentials;
             if (r.isRememberMe()) {
-                authentication.getAttributes().put(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, 
+                authentication.getAttributes().put(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME,
                         Boolean.TRUE);
             }
         }
-        
+
         return authentication;
     }
 }

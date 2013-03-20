@@ -44,11 +44,11 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
-    
+
     @NotNull
     @PersistenceContext
     private EntityManager entityManager;
-        
+
     @NotNull
     private String ticketGrantingTicketPrefix = "TGT";
 
@@ -67,46 +67,46 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @Transactional(readOnly = false)
     public boolean deleteTicket(final String ticketId) {
         final Ticket ticket = getRawTicket(ticketId);
-        
+
         if (ticket == null) {
             return false;
         }
-        
+
         if (ticket instanceof ServiceTicket) {
             removeTicket(ticket);
             log.debug("Deleted ticket [{}] from the registry.", ticket);
             return true;
         }
-        
+
         deleteTicketAndChildren(ticket);
         log.debug("Deleted ticket [{}] and its children from the registry.", ticket);
         return true;
     }
-    
+
     private void deleteTicketAndChildren(final Ticket ticket) {
         final List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = entityManager
-            .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", 
+            .createQuery("select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id",
                     TicketGrantingTicketImpl.class)
             .setLockMode(LockModeType.PESSIMISTIC_WRITE)
             .setParameter("id", ticket.getId())
             .getResultList();
         final List<ServiceTicketImpl> serviceTicketImpls = entityManager
-                .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", 
+                .createQuery("select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id",
                         ServiceTicketImpl.class)
                 .setParameter("id", ticket.getId())
                 .getResultList();
-        
+
         for (final ServiceTicketImpl s : serviceTicketImpls) {
             removeTicket(s);
         }
-        
+
         for (final TicketGrantingTicketImpl t : ticketGrantingTicketImpls) {
             deleteTicketAndChildren(t);
         }
-        
+
         removeTicket(ticket);
     }
-    
+
     private void removeTicket(final Ticket ticket) {
         try {
             if (log.isDebugEnabled()) {
@@ -118,18 +118,18 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
             log.error("Error removing {} from registry.", ticket, e);
         }
     }
-    
+
     @Transactional(readOnly=true)
     public Ticket getTicket(final String ticketId) {
         return getProxiedTicketInstance(getRawTicket(ticketId));
     }
-    
+
     private Ticket getRawTicket(final String ticketId) {
         try {
             if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
             }
-            
+
             return entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
             log.error("Error getting ticket {} from registry.", ticketId, e);
@@ -145,14 +145,14 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         final List<ServiceTicketImpl> sts = entityManager
             .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
             .getResultList();
-        
+
         final List<Ticket> tickets = new ArrayList<Ticket>();
         tickets.addAll(tgts);
         tickets.addAll(sts);
-        
+
         return tickets;
     }
-    
+
     public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
         this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
     }

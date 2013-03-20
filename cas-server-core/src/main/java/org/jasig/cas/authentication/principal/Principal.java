@@ -30,7 +30,7 @@ import java.util.Map;
  * meaningful to the View layer but are generally transparent to the rest of
  * CAS.
  * </p>
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  * <p>
@@ -43,9 +43,9 @@ public interface Principal extends Serializable {
      * @return the unique id for the Principal
      */
     String getId();
-    
+
     /**
-     * 
+     *
      * @return the map of configured attributes for this principal
      */
     Map<String, Object> getAttributes();

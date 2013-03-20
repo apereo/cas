@@ -27,7 +27,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * <p>
  * These are the two things the CAS protocol and the SAML protocol have in
  * common.
- * 
+ *
  * @author Scott Battatglia
 
  * @since 3.1
@@ -35,7 +35,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
 public interface ArgumentExtractor {
     /**
      * Retrieve the service from the request.
-     * 
+     *
      * @param request the request context.
      * @return the fully formed Service or null if it could not be found.
      */

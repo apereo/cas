@@ -21,7 +21,7 @@ package org.jasig.cas.util;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
- 
+
 
 /**
  * @author Scott Battaglia

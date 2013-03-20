@@ -19,14 +19,14 @@
 package org.jasig.cas.authentication.handler;
 
 /**
- * Offers AuthenticationHandlers a way to identify themselves by a 
+ * Offers AuthenticationHandlers a way to identify themselves by a
  * user-configured name.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.2.1
  *
  */
 public interface NamedAuthenticationHandler extends AuthenticationHandler {
-    
+
     String getName();
 }

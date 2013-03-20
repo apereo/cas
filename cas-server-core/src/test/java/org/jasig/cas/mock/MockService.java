@@ -32,11 +32,11 @@ import org.jasig.cas.authentication.principal.Service;
  *
  */
 public class MockService implements Service {
-   
+
     private static final long serialVersionUID = 117438127028057173L;
     private boolean loggedOut = false;
     private String id;
-    
+
     public MockService(final String id) {
         this.id = id;
     }
@@ -53,7 +53,7 @@ public class MockService implements Service {
         this.loggedOut = true;
         return false;
     }
-    
+
     public boolean isLoggedOut() {
         return this.loggedOut;
     }
@@ -67,7 +67,7 @@ public class MockService implements Service {
     public String getId() {
         return id;
     }
-    
+
     public boolean matches(final Service service) {
         return true;
     }

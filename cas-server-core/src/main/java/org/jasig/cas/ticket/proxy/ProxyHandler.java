@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.Credentials;
  * generic flow for all authentication is similar the actions taken for proxying
  * are different. One can swap in/out implementations but keep the flow of
  * events the same.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -37,7 +37,7 @@ public interface ProxyHandler {
 
     /**
      * Method to actually process the proxy request.
-     * 
+     *
      * @param credentials The credentials of the item that will be proxying.
      * @param proxyGrantingTicketId The ticketId for the ProxyGrantingTicket (in
      * CAS 3 this is a TicketGrantingTicket)

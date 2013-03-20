@@ -49,7 +49,7 @@ public class TicketGrantingTicketImplTests {
         assertFalse(t.equals(new Object()));
         assertTrue(t.equals(t));
     }
-    
+
     @Test(expected=Exception.class)
     public void testNullAuthentication() {
         new TicketGrantingTicketImpl("test", null, null,
@@ -96,7 +96,7 @@ public class TicketGrantingTicketImplTests {
 
         assertEquals(principals, t.getChainedAuthentications());
     }
-    
+
     @Test
     public void testCheckCreationTime() {
         Authentication authentication = TestUtils.getAuthentication();

@@ -119,7 +119,7 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
   <module name="FileLength"/>
   <module name="FileTabCharacter"/>
   <module name="RegexpSingleline">
-    <property name="severity" value="info"/>
+    <property name="severity" value="error"/>
     <property name="format" value=".\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
   </module>

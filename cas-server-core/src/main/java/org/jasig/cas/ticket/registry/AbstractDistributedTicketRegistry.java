@@ -30,13 +30,13 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 /**
  * Abstract Implementation that handles some of the commonalities between
  * distributed ticket registries.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.1
  */
 public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRegistry {
-    
+
     protected abstract void updateTicket(final Ticket ticket);
 
     protected abstract boolean needsCallback();
@@ -121,12 +121,12 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
     }
 
-    private static final class ServiceTicketDelegator extends TicketDelegator<ServiceTicket> 
+    private static final class ServiceTicketDelegator extends TicketDelegator<ServiceTicket>
                            implements ServiceTicket {
 
         private static final long serialVersionUID = 8160636219307822967L;
 
-        protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, 
+        protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final ServiceTicket serviceTicket, final boolean callback) {
             super(ticketRegistry, serviceTicket, callback);
         }
@@ -146,21 +146,21 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return b;
         }
 
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id, 
+        public TicketGrantingTicket grantTicketGrantingTicket(final String id,
                 final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-            final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id, 
+            final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id,
                     authentication, expirationPolicy);
             updateTicket();
             return t;
         }
     }
 
-    private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket> 
+    private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket>
             implements TicketGrantingTicket {
 
         private static final long serialVersionUID = 3946038899057626741L;
 
-        protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, 
+        protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
             super(ticketRegistry, ticketGrantingTicket, callback);
         }
@@ -169,9 +169,9 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return getTicket().getAuthentication();
         }
 
-        public ServiceTicket grantServiceTicket(final String id, final Service service, 
+        public ServiceTicket grantServiceTicket(final String id, final Service service,
                 final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
-            final ServiceTicket t = this.getTicket().grantServiceTicket(id, service, 
+            final ServiceTicket t = this.getTicket().grantServiceTicket(id, service,
                     expirationPolicy, credentialsProvided);
             updateTicket();
             return t;

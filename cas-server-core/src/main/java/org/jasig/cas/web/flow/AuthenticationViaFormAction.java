@@ -43,7 +43,7 @@ import org.springframework.webflow.execution.RequestContext;
  * Action to authenticate credentials and retrieve a TicketGrantingTicket for
  * those credentials. If there is a request for renew, then it also generates
  * the Service Ticket required.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0.4
  */
@@ -71,7 +71,7 @@ public class AuthenticationViaFormAction {
             this.credentialsBinder.bind(request, credentials);
         }
     }
-    
+
     public final String submit(final RequestContext context, final Credentials credentials,
             final MessageContext messageContext) throws Exception {
         // Validate login ticket
@@ -87,7 +87,7 @@ public class AuthenticationViaFormAction {
 
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
-        if (StringUtils.hasText(context.getRequestParameters().get("renew")) && ticketGrantingTicketId != null 
+        if (StringUtils.hasText(context.getRequestParameters().get("renew")) && ticketGrantingTicketId != null
                 && service != null) {
 
             try {
@@ -101,14 +101,14 @@ public class AuthenticationViaFormAction {
                     populateErrorsInstance(e, messageContext);
                     return getAuthenticationExceptionEventId(e);
                 }
-                
+
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 log.debug("Attempted to generate a ServiceTicket using renew=true with different credentials", e);
             }
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInRequestScope(context, 
+            WebUtils.putTicketGrantingTicketInRequestScope(context,
                     this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
             return "success";
@@ -129,9 +129,9 @@ public class AuthenticationViaFormAction {
           messageContext.addMessage(messageBuilder.build());
       } catch (final NoSuchMessageException ex) {
           /*
-           * If no message is mapped to the exception code, use the default exception code of 
-           * BadCredentialsAuthenticationException. Displaying the exception message itself back to the 
-           * client may expose sensitive credential and error data.   
+           * If no message is mapped to the exception code, use the default exception code of
+           * BadCredentialsAuthenticationException. Displaying the exception message itself back to the
+           * client may expose sensitive credential and error data.
            */
           final String defaultCode = BadCredentialsAuthenticationException.CODE;
           log.debug("Could not locate the message based on the exception code. Reverting back to default exception code [{}]", defaultCode);
@@ -151,7 +151,7 @@ public class AuthenticationViaFormAction {
             this.warnCookieGenerator.removeCookie(response);
         }
     }
-    
+
     private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
         return (AuthenticationException) e.getCause();
     }
@@ -189,7 +189,7 @@ public class AuthenticationViaFormAction {
     public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
-    
+
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }

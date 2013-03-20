@@ -25,7 +25,7 @@ import org.junit.Test;
 public class UnauthorizedProxyingExceptionTests {
 
     private static final String CODE = "service.not.authorized.proxy";
-    
+
     @Test
     public void testGetCode() {
         UnauthorizedProxyingException e = new UnauthorizedProxyingException();
@@ -36,16 +36,16 @@ public class UnauthorizedProxyingExceptionTests {
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE);
-        
+
         assertEquals(MESSAGE, e.getMessage());
     }
-    
+
     @Test
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE, r);
-        
+
         assertEquals(MESSAGE, e.getMessage());
         assertEquals(r, e.getCause());
     }

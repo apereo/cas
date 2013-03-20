@@ -23,7 +23,7 @@ import java.security.SecureRandom;
 /**
  * Implementation of the RandomStringGenerator that allows you to define the
  * length of the random part.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -71,7 +71,7 @@ public final class DefaultRandomStringGenerator implements
         final byte[] random = new byte[this.maximumRandomLength];
 
         this.randomizer.nextBytes(random);
-        
+
         return random;
     }
 

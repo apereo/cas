@@ -29,7 +29,7 @@ import org.junit.Test;
 
 /**
  * Tests for RememberMeDelegatingExpirationPolicy.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.2.1
  *
@@ -53,9 +53,9 @@ public final class RememberMeDelegatingExpirationPolicyTests {
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
         assertTrue(t.isExpired());
-        
+
     }
-    
+
     @Test
     public void testTicketExpirationWithoutRememberMe() {
         final MutableAuthentication authentication = new MutableAuthentication(TestUtils.getPrincipal());
@@ -63,7 +63,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
         assertFalse(t.isExpired());
-        
+
     }
-    
+
 }

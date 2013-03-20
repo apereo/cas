@@ -38,7 +38,7 @@ import java.io.Serializable;
  * that should not be logged.
  * <p>
  * Credentials objects that are included in CAS do NOT expose any confidential information.
- * 
+ *
  * @author William G. Thompson, Jr.
  * @since 3.0
  * <p>

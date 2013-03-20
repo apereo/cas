@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * Implementation of an expiration policy that adds the concept of saying that a
  * ticket can only be used once every X millseconds to prevent misconfigured
  * clients from consuming resources by doing constant redirects.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0.5

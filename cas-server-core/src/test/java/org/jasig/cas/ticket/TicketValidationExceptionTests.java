@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  *
@@ -33,13 +33,13 @@ import org.junit.Test;
 public class TicketValidationExceptionTests {
 
     private static final String CODE = "INVALID_SERVICE";
-    
+
     private Service service = TestUtils.getService();
-    
+
     @Test
     public void testThrowableConstructor() {
         final TicketValidationException t = new TicketValidationException(this.service);
-        
+
         assertSame(CODE, t.getCode());
         assertEquals(this.service, t.getOriginalService());
     }

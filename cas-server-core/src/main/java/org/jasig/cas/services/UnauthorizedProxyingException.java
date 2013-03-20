@@ -20,7 +20,7 @@ package org.jasig.cas.services;
 
 /**
  * Exception thrown when a service attempts to proxy when it is not allowed to.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */

@@ -51,7 +51,7 @@ public abstract class AuthenticationException extends RootCasException {
      */
     public AuthenticationException(final String code, final String msg, final String type) {
         this(code, msg);
-        
+
         Assert.hasLength(type, "The exception type cannot be blank");
         this.type = type;
     }

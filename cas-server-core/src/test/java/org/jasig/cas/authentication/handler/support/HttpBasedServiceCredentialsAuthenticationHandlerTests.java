@@ -62,7 +62,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
         assertFalse(this.authenticationHandler.authenticate(TestUtils
             .getHttpBasedServiceCredentials("http://www.jasig.org")));
     }
-    
+
     public void testAcceptsNonHttpsCredentials() {
         this.authenticationHandler.setHttpClient(new HttpClient());
         this.authenticationHandler.setRequireSecure(false);
@@ -74,7 +74,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests extends
         assertFalse(this.authenticationHandler.authenticate(TestUtils
             .getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu")));
     }
-    
+
     public void testNoAcceptableStatusCodeButOneSet() throws Exception {
         final HttpClient httpClient = new HttpClient();
         httpClient.setAcceptableCodes(new int[] {900});

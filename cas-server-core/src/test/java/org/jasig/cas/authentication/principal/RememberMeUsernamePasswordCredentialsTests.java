@@ -24,20 +24,20 @@ import org.junit.Test;
 
 /**
  * Tests for RememberMeUsernamePasswordCredentials.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.2.1
  *
  */
 public final class RememberMeUsernamePasswordCredentialsTests  {
-    
+
     @Test
     public void testGettersAndSetters() {
         final RememberMeUsernamePasswordCredentials c = new RememberMeUsernamePasswordCredentials();
         c.setPassword("password");
         c.setUsername("username");
         c.setRememberMe(true);
-        
+
         assertEquals("username", c.getUsername());
         assertEquals("password", c.getPassword());
         assertTrue(c.isRememberMe());

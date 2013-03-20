@@ -48,7 +48,7 @@ import org.springframework.util.Assert;
  * java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"<br />
  * java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"<br />
  * java.naming.security.credentials="password" Attribute="uid" startTLS="true"; };<br />
- * 
+ *
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
 
  * @since 3.0.5
@@ -65,9 +65,9 @@ public class JaasAuthenticationHandler extends
     /** The realm that contains the login module information. */
     @NotNull
     private String realm = DEFAULT_REALM;
-    
+
     public JaasAuthenticationHandler() {
-        Assert.notNull(Configuration.getConfiguration(), 
+        Assert.notNull(Configuration.getConfiguration(),
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
@@ -114,7 +114,7 @@ public class JaasAuthenticationHandler extends
 
         /**
          * Constuctor accepts name and password to be used for authentication.
-         * 
+         *
          * @param userName name to be used for authentication
          * @param password Password to be used for authentication
          */

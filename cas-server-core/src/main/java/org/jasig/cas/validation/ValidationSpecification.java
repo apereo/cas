@@ -21,7 +21,7 @@ package org.jasig.cas.validation;
 /**
  * An interface to impose restrictions and requirements on validations (e.g.
  * renew=true).
- * 
+ *
  * @author William G. Thompson, Jr.
 
  * @since 3.0
