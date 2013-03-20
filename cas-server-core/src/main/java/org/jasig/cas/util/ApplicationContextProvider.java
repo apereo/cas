@@ -22,6 +22,10 @@ package org.jasig.cas.util;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * An implementation of {@link ApplicationContextAware} that statically
+ * holds the application context.
+ */
 public class ApplicationContextProvider implements ApplicationContextAware{
     private static ApplicationContext context = null;
 

@@ -145,9 +145,13 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return true if they match, false otherwise.
      */
     boolean matches(final Service service);
-    
+
     RegisteredService clone() throws CloneNotSupportedException;
-    
-    /** An instance of the attribute filter that imposes validation rules over the attribute release policy. */
+
+    /**
+     * An instance of the attribute filter that imposes validation rules over
+     * the attribute release policy.
+     * @return An instance of an attribute filter for this service
+     */
     RegisteredServiceAttributeFilter getAttributeFilter();
 }

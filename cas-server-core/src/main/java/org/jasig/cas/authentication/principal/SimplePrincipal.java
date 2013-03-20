@@ -60,7 +60,7 @@ public class SimplePrincipal implements Principal {
     }
 
     /**
-     * Returns an immutable map.
+     * @return An immutable map of principal attributes
      */
     public Map<String, Object> getAttributes() {
         return this.attributes;
