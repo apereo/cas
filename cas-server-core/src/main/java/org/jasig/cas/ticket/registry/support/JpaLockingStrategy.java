@@ -216,7 +216,6 @@ public class JpaLockingStrategy implements LockingStrategy {
      * Describes a database lock.
      *
      * @author Marvin S. Addison
-     * @version $Revision: $
      *
      */
     @Entity

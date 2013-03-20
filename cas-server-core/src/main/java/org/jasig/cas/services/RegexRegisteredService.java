@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
  * Mutable registered service that uses Java regular expressions for service matching.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 @Entity
 @DiscriminatorValue("regex")

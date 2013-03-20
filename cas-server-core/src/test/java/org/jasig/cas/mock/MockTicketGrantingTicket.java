@@ -36,7 +36,6 @@ import java.util.List;
  * Mock ticket-granting ticket.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public class MockTicketGrantingTicket implements TicketGrantingTicket {
 

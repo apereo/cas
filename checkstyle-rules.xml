@@ -168,7 +168,7 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="JavaDoc @version tag"/>
     <property name="severity" value="error"/>
-    <property name="format" value="@version\s+.+(\$Revision|\$Date)"/>
+    <property name="format" value="@version\s+(.+)*(\$Revision|\$Date)"/>
     <property name="message" value="Invalid JavaDoc @version tag."/>
   </module>
   <module name="SuppressionFilter">
