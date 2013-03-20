@@ -21,7 +21,9 @@ package org.jasig.cas.util;
 import java.util.Calendar;
 import java.util.Date;
 
-
+/**
+ * Utility class for calendar functions.
+ */
 public final class CalendarUtils {
     
     public static final String[] WEEKDAYS = new String[] {"UNDEFINED", "Sunday", "Monday", 

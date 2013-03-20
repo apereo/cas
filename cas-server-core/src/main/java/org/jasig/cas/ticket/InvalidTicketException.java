@@ -54,7 +54,7 @@ public class InvalidTicketException extends TicketException {
     }
     
     /**
-     * Returns the ticket id that causes this exception
+     * Returns the ticket id that causes this exception.
      * @return the ticket id
      * @see InvalidTicketException#ticketId
      */
