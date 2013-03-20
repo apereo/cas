@@ -83,20 +83,20 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     /**
      * The socket factory to be used when verifying the validity of the endpoint.
-     * 
+     *
      * @see #setSSLSocketFactory(SSLSocketFactory)
      */
     private SSLSocketFactory sslSocketFactory = null;
-    
+
     /**
      * The hostname verifier to be used when verifying the validity of the endpoint.
-     * 
+     *
      * @see #setHostnameVerifier(HostnameVerifier)
      */
     private HostnameVerifier hostnameVerifier = null;
 
     /**
-     * Note that changing this executor will affect all httpClients.  While not ideal, this change 
+     * Note that changing this executor will affect all httpClients.  While not ideal, this change
      * was made because certain ticket registries
      * were persisting the HttpClient and thus getting serializable exceptions.
      * @param executorService
@@ -107,7 +107,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     }
 
     /**
-     * Sends a message to a particular endpoint.  Option of sending it without 
+     * Sends a message to a particular endpoint.  Option of sending it without
      * waiting to ensure a response was returned.
      * <p>
      * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
@@ -118,7 +118,7 @@ public final class HttpClient implements Serializable, DisposableBean {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      */
     public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message, 
+        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message,
                 this.readTimeout, this.connectionTimeout, this.followRedirects));
 
         if (async) {
@@ -150,14 +150,14 @@ public final class HttpClient implements Serializable, DisposableBean {
             connection.setConnectTimeout(this.connectionTimeout);
             connection.setReadTimeout(this.readTimeout);
             connection.setInstanceFollowRedirects(this.followRedirects);
-            
+
             if (connection instanceof HttpsURLConnection) {
                 final HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
-                
+
                 if (this.sslSocketFactory != null) {
                     httpsConnection.setSSLSocketFactory(this.sslSocketFactory);
                 }
-                
+
                 if (this.hostnameVerifier != null) {
                     httpsConnection.setHostnameVerifier(this.hostnameVerifier);
                 }
@@ -196,7 +196,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     /**
      * Set the acceptable HTTP status codes that we will use to determine if the
      * response from the URL was correct.
-     * 
+     *
      * @param acceptableCodes an array of status code integers.
      */
     public final void setAcceptableCodes(final int[] acceptableCodes) {
@@ -229,7 +229,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     public void setSSLSocketFactory(final SSLSocketFactory factory) {
         this.sslSocketFactory = factory;
     }
-    
+
     /**
      * Set the hostname verifier be used by the URL when submitting
      * request to check for URL endpoint validity.
@@ -239,7 +239,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     public void setHostnameVerifier(final HostnameVerifier verifier) {
         this.hostnameVerifier = verifier;
     }
-    
+
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
     }

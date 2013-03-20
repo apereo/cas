@@ -71,7 +71,7 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
     }
 
     public void afterPropertiesSet() throws Exception {
-        Assert.isTrue((maxTimeToLiveInMilliSeconds >= timeToKillInMilliSeconds), 
+        Assert.isTrue((maxTimeToLiveInMilliSeconds >= timeToKillInMilliSeconds),
                 "maxTimeToLiveInMilliSeconds must be greater than or equal to timeToKillInMilliSeconds.");
     }
 

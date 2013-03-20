@@ -43,13 +43,13 @@ public class RegisteredServiceDefaultAttributeFilterTests {
 
     private RegisteredServiceAttributeFilter filter;
     private Map<String, Object> givenAttributesMap = null;
-     
+
     @Mock
     private RegisteredService registeredService;
-    
+
     public RegisteredServiceDefaultAttributeFilterTests() {
        this.filter = new RegisteredServiceDefaultAttributeFilter();
-       
+
        this.givenAttributesMap = new HashMap<String, Object>();
        this.givenAttributesMap.put("uid", "loggedInTestUid");
        this.givenAttributesMap.put("phone", "1234567890");
@@ -58,14 +58,14 @@ public class RegisteredServiceDefaultAttributeFilterTests {
        this.givenAttributesMap.put("employeeId", "E1234");
        this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
     }
-    
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        
+
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-        when(this.registeredService.getAllowedAttributes()).thenReturn(Arrays.asList("uid", 
+        when(this.registeredService.getAllowedAttributes()).thenReturn(Arrays.asList("uid",
                 "givenName", "memberOf", "isNotAllowed"));
     }
 
@@ -73,13 +73,13 @@ public class RegisteredServiceDefaultAttributeFilterTests {
     public void testDefaultFilter() {
         when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
         Map<String, Object> map = this.filter.filter("uid", this.givenAttributesMap, this.registeredService);
-        assertEquals(map.size(), 3); 
-        
+        assertEquals(map.size(), 3);
+
         when(this.registeredService.isIgnoreAttributes()).thenReturn(true);
         map = this.filter.filter("uid", this.givenAttributesMap, this.registeredService);
         assertEquals(map.size(), this.givenAttributesMap.size());
         assertEquals(map, this.givenAttributesMap);
-        
+
         @SuppressWarnings("unchecked")
         final List<String> memberOfAttr = (List<String>) map.get("memberOf");
         assertEquals(memberOfAttr.size(), ((List<?>)this.givenAttributesMap.get("memberOf")).size());

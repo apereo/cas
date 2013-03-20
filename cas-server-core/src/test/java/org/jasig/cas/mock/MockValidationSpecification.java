@@ -24,7 +24,7 @@ import org.jasig.cas.validation.ValidationSpecification;
 /**
  * Class to test the Runtime exception thrown when there is no default
  * constructor on a ValidationSpecification.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */

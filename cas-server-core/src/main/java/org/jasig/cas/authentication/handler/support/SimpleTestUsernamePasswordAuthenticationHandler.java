@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
  * the username and password match. This class should never be enabled in a
  * production environment and is only designed to facilitate unit testing and
  * load testing.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0

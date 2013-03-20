@@ -24,7 +24,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.AopUtils;
 
 /**
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1.2
  *

@@ -23,7 +23,7 @@ package org.jasig.cas.validation;
  * the Cas10ProtocolValidationSpecification, checking for the presence of
  * renew=true and if requested, succeeding only if ticket validation is
  * occurring from a new login.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0

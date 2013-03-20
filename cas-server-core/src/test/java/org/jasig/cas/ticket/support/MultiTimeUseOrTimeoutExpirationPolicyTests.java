@@ -40,7 +40,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     private static final long TIMEOUT_MILLISECONDS = 5000L;
 
     private static final int NUMBER_OF_USES = 5;
-    
+
     private static final int TIMEOUT_BUFFER = 100;
 
     private ExpirationPolicy expirationPolicy;

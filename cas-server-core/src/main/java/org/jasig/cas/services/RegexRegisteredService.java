@@ -37,7 +37,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     private static final long serialVersionUID = -8258660210826975771L;
 
     private transient Pattern servicePattern;
-    
+
     public void setServiceId(final String id) {
         servicePattern = createPattern(id);
         serviceId = id;

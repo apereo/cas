@@ -21,7 +21,7 @@ package org.jasig.cas.authentication.principal;
 /**
  * Generates a unique consistant Id based on the principal, a service, and some
  * algorithm.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -30,7 +30,7 @@ public interface PersistentIdGenerator {
     /**
      * Generates a PersistentId based on some algorithm plus the principal and
      * service.
-     * 
+     *
      * @param principal the principal to generate the id for.
      * @param service the service to generate the id for.
      * @return the generated persistent id.

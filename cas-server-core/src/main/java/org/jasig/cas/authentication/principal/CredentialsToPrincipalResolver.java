@@ -42,7 +42,7 @@ package org.jasig.cas.authentication.principal;
  * as needed, and will be available to the View layer, but it is transparent to
  * most CAS processing.
  * </p>
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  * <p>
@@ -57,7 +57,7 @@ public interface CredentialsToPrincipalResolver {
      * Turn Credentials into a Principal object by analyzing the information
      * provided in the Credentials and constructing a Principal object based on
      * that information or information derived from the Credentials object.
-     * 
+     *
      * @param credentials from which to resolve Principal
      * @return resolved Principal, or null if the principal could not be resolved.
      */
@@ -66,7 +66,7 @@ public interface CredentialsToPrincipalResolver {
     /**
      * Determine if a credentials type is supported by this resolver. This is
      * checked before calling resolve principal.
-     * 
+     *
      * @param credentials The credentials to check if we support.
      * @return true if we support these credentials, false otherwise.
      */

@@ -26,7 +26,7 @@ import org.junit.Test;
 public class UnauthorizedSsoServiceExceptionTests {
 
     private static final String CODE = "service.not.authorized.sso";
-    
+
     @Test
     public void testGetCode() {
         UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException();
@@ -37,16 +37,16 @@ public class UnauthorizedSsoServiceExceptionTests {
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
         final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE);
-        
+
         assertEquals(MESSAGE, e.getMessage());
     }
-    
+
     @Test
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnauthorizedSsoServiceException e = new UnauthorizedSsoServiceException(MESSAGE, r);
-        
+
         assertEquals(MESSAGE, e.getMessage());
         assertEquals(r, e.getCause());
     }

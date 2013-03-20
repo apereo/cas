@@ -44,14 +44,14 @@ public class MockServiceTicket implements ServiceTicket {
     private final Service service;
 
     private final TicketGrantingTicket parent;
-    
+
     public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
         this.service = service;
         this.id = id;
         this.parent = parent;
         created = new Date();
     }
-    
+
     public Service getService() {
         return service;
     }

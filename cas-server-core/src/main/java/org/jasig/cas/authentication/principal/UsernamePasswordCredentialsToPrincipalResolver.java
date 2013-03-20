@@ -26,7 +26,7 @@ package org.jasig.cas.authentication.principal;
  * Implementation extracts the username from the Credentials provided and
  * constructs a new SimplePrincipal with the unique id set to the username.
  * </p>
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  * @see org.jasig.cas.authentication.principal.SimplePrincipal

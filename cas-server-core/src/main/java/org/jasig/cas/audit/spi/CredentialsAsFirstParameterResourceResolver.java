@@ -25,7 +25,7 @@ import org.jasig.cas.util.AopUtils;
 
 /**
  * Converts the Credentials object into a String resource identifier.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1.2
  *

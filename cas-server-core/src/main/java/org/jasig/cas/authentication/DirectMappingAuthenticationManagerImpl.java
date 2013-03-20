@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
 /**
  * Authentication Manager that provides a direct mapping between credentials
  * provided and the authentication handler used to authenticate the user.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -57,9 +57,9 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
 
         final String handlerName = d.getAuthenticationHandler().getClass().getSimpleName();
         boolean authenticated = false;
-        
-        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR; 
-        
+
+        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR;
+
         try {
             authenticated = d.getAuthenticationHandler().authenticate(credentials);
         } catch (AuthenticationException e) {
@@ -67,7 +67,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
             logAuthenticationHandlerError(handlerName, credentials, e);
         } catch (Exception e) {
             logAuthenticationHandlerError(handlerName, credentials, e);
-        } 
+        }
 
         if (!authenticated) {
             log.info("{} failed to authenticate {}", handlerName, credentials);
@@ -84,7 +84,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
     }
-    
+
     /**
      * Holder for authentication mappings that links credentials and handlers.
      */

@@ -53,7 +53,7 @@ import javax.validation.constraints.NotNull;
  * <ul>
  * <li>ticketRegistry - CAS ticket registry.</li>
  * </ul>
- * 
+ *
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @version $Revision$
@@ -79,7 +79,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
-     */ 
+     */
     public void clean() {
         log.info("Beginning ticket cleanup.");
         log.debug("Attempting to acquire ticket cleanup lock.");

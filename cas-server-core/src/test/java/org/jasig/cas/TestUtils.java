@@ -54,7 +54,7 @@ public final class TestUtils {
 
     private static final String CONST_CREDENTIALS = "credentials";
 
-    private static final String CONST_WEBFLOW_BIND_EXCEPTION = 
+    private static final String CONST_WEBFLOW_BIND_EXCEPTION =
             "org.springframework.validation.BindException.credentials";
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
@@ -62,7 +62,7 @@ public final class TestUtils {
     public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
-    
+
     public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {

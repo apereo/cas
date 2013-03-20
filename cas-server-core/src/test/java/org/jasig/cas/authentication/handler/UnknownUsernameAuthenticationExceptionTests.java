@@ -29,37 +29,37 @@ import org.junit.Test;
 public final class UnknownUsernameAuthenticationExceptionTests {
 
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword.username";
-    
+
     @Test
     public void testGetCode() {
         AuthenticationException e = new UnknownUsernameAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
-    
+
     @Test
     public void testThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final UnknownUsernameAuthenticationException e = new UnknownUsernameAuthenticationException(r);
-        
+
         assertEquals(CODE, e.getCode());
         assertEquals(r, e.getCause());
     }
-    
+
     @Test
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
         final UnknownUsernameAuthenticationException e = new UnknownUsernameAuthenticationException(MESSAGE);
-        
+
         assertEquals(MESSAGE, e.getCode());
     }
-    
+
     @Test
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final UnknownUsernameAuthenticationException e = new UnknownUsernameAuthenticationException(MESSAGE, r);
-        
+
         assertEquals(MESSAGE, e.getCode());
         assertEquals(r, e.getCause());
     }

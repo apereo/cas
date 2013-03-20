@@ -24,7 +24,7 @@ import javax.validation.constraints.Size;
 /**
  * UsernamePasswordCredentials respresents the username and password that a user
  * may provide in order to prove the authenticity of who they say they are.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  * <p>
@@ -80,7 +80,7 @@ public class UsernamePasswordCredentials implements Credentials {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) { 
+        if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
@@ -89,11 +89,11 @@ public class UsernamePasswordCredentials implements Credentials {
 
         UsernamePasswordCredentials that = (UsernamePasswordCredentials) o;
 
-        if (password != null ? !password.equals(that.password) : that.password != null) { 
+        if (password != null ? !password.equals(that.password) : that.password != null) {
             return false;
         }
-        
-        if (username != null ? !username.equals(that.username) : that.username != null) { 
+
+        if (username != null ? !username.equals(that.username) : that.username != null) {
             return false;
         }
 

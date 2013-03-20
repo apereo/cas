@@ -30,7 +30,7 @@ import org.junit.Test;
 
 /**
  * Test of the simple username/password handler.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -82,27 +82,27 @@ public final class SimpleTestUsernamePasswordHandlerTests {
             ae.printStackTrace();
         }
     }
-    
+
     @Test
     public void testAlternateClass() {
         this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
         assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
     }
-    
+
     @Test
     public void testAlternateClassWithSubclassSupport() {
         this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
         this.authenticationHandler.setSupportSubClasses(true);
         assertTrue(this.authenticationHandler.supports(new ExtendedCredentials()));
     }
-    
+
     @Test
     public void testAlternateClassWithNoSubclassSupport() {
         this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
         this.authenticationHandler.setSupportSubClasses(false);
         assertFalse(this.authenticationHandler.supports(new ExtendedCredentials()));
     }
-    
+
     protected class ExtendedCredentials extends UsernamePasswordCredentials {
 
         private static final long serialVersionUID = 406992293105518363L;

@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.Service;
  * Interface for a Service Ticket. A service ticket is used to grant access to a
  * specific service for a principal. A Service Ticket is generally a one-time
  * use ticket.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -37,7 +37,7 @@ public interface ServiceTicket extends Ticket {
 
     /**
      * Retrieve the service this ticket was given for.
-     * 
+     *
      * @return the server.
      */
     Service getService();
@@ -45,7 +45,7 @@ public interface ServiceTicket extends Ticket {
     /**
      * Determine if this ticket was created at the same time as a
      * TicketGrantingTicket.
-     * 
+     *
      * @return true if it is, false otherwise.
      */
     boolean isFromNewLogin();
@@ -55,7 +55,7 @@ public interface ServiceTicket extends Ticket {
     /**
      * Method to grant a TicketGrantingTicket from this service to the
      * authentication. Analogous to the ProxyGrantingTicket.
-     * 
+     *
      * @param id The unique identifier for this ticket.
      * @param authentication The Authentication we wish to grant a ticket for.
      * @return The ticket granting ticket.

@@ -26,7 +26,7 @@ package org.jasig.cas.authentication.handler;
  * <p>
  * PasswordEncoders are useful because often the stored passwords are encoded
  * with a one way hash function which makes them almost impossible to decode.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -39,7 +39,7 @@ public interface PasswordEncoder {
     /**
      * Method that actually performs the transformation of the plaintext
      * password into the encrypted password.
-     * 
+     *
      * @param password the password to translate
      * @return the transformed version of the password
      */

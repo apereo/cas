@@ -80,7 +80,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
         getCentralAuthenticationService().destroyTicketGrantingTicket(
                 serviceTicketId);
-          
+
     }
 
     @Test
@@ -260,60 +260,60 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().validateServiceTicket("test",
                 TestUtils.getService());
     }
-    
+
     @Test
     public void testValidateServiceTicketWithoutUsernameAttribute() throws TicketException {
         UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
         final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, 
+        final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket,
                 TestUtils.getService());
-            
-        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, 
+
+        final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket,
                 TestUtils.getService());
         final Authentication auth = assertion.getChainedAuthentications().get(0);
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
-    
+
     @Test
     public void testValidateServiceTicketWithDefaultUsernameAttribute() throws TicketException {
         UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
         final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        
+
         Service svc = TestUtils.getService("testDefault");
         final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
-            
+
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
         final Authentication auth = assertion.getChainedAuthentications().get(0);
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }
-    
+
     @Test
     public void testValidateServiceTicketWithUsernameAttribute() throws TicketException {
         UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
         final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        
+
         Service svc = TestUtils.getService("eduPersonTest");
         final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
-            
+
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
         final Authentication auth = assertion.getChainedAuthentications().get(0);
         assertEquals(auth.getPrincipal().getId(), "developer");
     }
-    
+
     @Test
     public void testValidateServiceTicketWithInvalidUsernameAttribute() throws TicketException {
         UsernamePasswordCredentials cred =  TestUtils.getCredentialsWithSameUsernameAndPassword();
         final String ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
-        
+
         Service svc = TestUtils.getService("eduPersonTestInvalid");
         final String serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket, svc);
-            
+
         final Assertion assertion = getCentralAuthenticationService().validateServiceTicket(serviceTicket, svc);
         final Authentication auth = assertion.getChainedAuthentications().get(0);
-        
+
         /*
          * The attribute specified for this service is not allows in the list of returned attributes.
-         * Therefore, we expect the default to be returned. 
+         * Therefore, we expect the default to be returned.
          */
         assertEquals(auth.getPrincipal().getId(), cred.getUsername());
     }

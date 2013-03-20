@@ -30,7 +30,7 @@ import org.junit.Test;
 public final class PlainTextPasswordEncoderTests {
 
     private static final String CONST_TO_ENCODE = "CAS IS COOL";
-    
+
     private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     @Test

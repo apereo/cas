@@ -125,7 +125,7 @@ public class ServiceTicketImplTests {
 
         assertEquals(a, t1.getAuthentication());
     }
-    
+
     @Test
     public void testTicketGrantingTicketGrantedTwice() {
         Authentication a = TestUtils.getAuthentication();
@@ -138,7 +138,7 @@ public class ServiceTicketImplTests {
             this.uniqueTicketIdGenerator
                 .getNewTicketId(TicketGrantingTicket.PREFIX), a,
             new NeverExpiresExpirationPolicy());
-        
+
         try {
             s.grantTicketGrantingTicket(this.uniqueTicketIdGenerator
                 .getNewTicketId(TicketGrantingTicket.PREFIX), a,

@@ -32,7 +32,7 @@ import javax.net.ssl.X509TrustManager;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */

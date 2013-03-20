@@ -50,7 +50,7 @@ import org.springframework.web.servlet.DispatcherServlet;
  * The exception thrown by the underlying Spring DispatcherServlet init() and
  * caught in the SafeDispatcherServlet init() is exposed as a Servlet Context
  * attribute under the key "exceptionCaughtByServlet".
- * 
+ *
  * @author Andrew Petro
 
  * @see DispatcherServlet

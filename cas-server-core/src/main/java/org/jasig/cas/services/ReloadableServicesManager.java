@@ -21,7 +21,7 @@ package org.jasig.cas.services;
 /**
  * Interface to allow for ServicesManagers to attempt to reload their list of
  * services.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */

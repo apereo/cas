@@ -22,7 +22,7 @@ package org.jasig.cas.authentication.handler;
  * The exception thrown when a Handler does not know how to determine the
  * validity of the credentials based on the fact that it does not know what to
  * do with the credentials presented.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -50,7 +50,7 @@ public final class UnsupportedCredentialsException extends
     /**
      * Constructor that allows for the chaining of exceptions. Defaults to the
      * default code provided for this exception.
-     * 
+     *
      * @param throwable the chained exception.
      */
     public UnsupportedCredentialsException(final Throwable throwable) {
