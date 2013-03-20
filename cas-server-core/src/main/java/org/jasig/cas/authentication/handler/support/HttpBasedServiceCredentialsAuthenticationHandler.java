@@ -35,7 +35,7 @@ import javax.validation.constraints.NotNull;
  * This class is concerned with ensuring that the protocol is HTTPS and that a
  * response is returned. The SSL handshake that occurs automatically by opening
  * a connection does the heavy process of authenticating.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -88,7 +88,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
 
     /**
      * Set whether a secure url is required or not.
-     * 
+     *
      * @param requireSecure true if its required, false if not. Default is true.
      */
     public void setRequireSecure(final boolean requireSecure) {

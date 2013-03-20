@@ -25,7 +25,7 @@ package org.jasig.cas.util;
  * <p>
  * Tickets are of the form [PREFIX]-[SEQUENCE NUMBER]-[RANDOM STRING]-[SUFFIX]
  * </p>
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -57,7 +57,7 @@ public final class DefaultUniqueTicketIdGenerator implements
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
      * maximum length for the random portion.
-     * 
+     *
      * @param maxLength the maximum length of the random string used to generate
      * the id.
      */
@@ -69,7 +69,7 @@ public final class DefaultUniqueTicketIdGenerator implements
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
      * including a {@link DefaultLongNumericGenerator} with a starting value of
      * 1.
-     * 
+     *
      * @param suffix the value to append at the end of the unique id to ensure
      * uniqueness across JVMs.
      */
@@ -87,7 +87,7 @@ public final class DefaultUniqueTicketIdGenerator implements
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
      * maximum length for the random portion.
-     * 
+     *
      * @param maxLength the maximum length of the random string used to generate
      * the id.
      * @param suffix the value to append at the end of the unique id to ensure

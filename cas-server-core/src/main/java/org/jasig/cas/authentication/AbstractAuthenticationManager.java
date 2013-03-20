@@ -44,7 +44,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
-    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = 
+    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<AuthenticationMetaDataPopulator>();
 
     @Audit(
@@ -57,7 +57,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         final Pair<AuthenticationHandler, Principal> pair = authenticateAndObtainPrincipal(credentials);
 
         /*
-         *  we can only get here if the above method doesn't throw an exception. And if it doesn't, 
+         *  we can only get here if the above method doesn't throw an exception. And if it doesn't,
          *  then the pair must not be null.
          */
         final Principal p = pair.getSecond();
@@ -90,7 +90,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     }
 
     /**
-     * Follows the same rules as the "authenticate" method (i.e. should only return a fully populated 
+     * Follows the same rules as the "authenticate" method (i.e. should only return a fully populated
      * object, or throw an exception)
      *
      * @param credentials the credentials to check
@@ -103,12 +103,12 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
     /**
      * Logs authentication handler errors.
-     * 
+     *
      * @param handlerName The class name of the authentication handler.
-     * @param credentials Client credentials subject to authentication. 
+     * @param credentials Client credentials subject to authentication.
      * @param e The exception that has occurred during authentication attempt.
      */
-    protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, 
+    protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials,
             final Exception e) {
         if (e instanceof AuthenticationException) {
             // CAS-1181 Log common authentication failures at INFO without stack trace

@@ -32,13 +32,13 @@ import org.springframework.util.Assert;
  * an abstract class, it cannnot be instanciated. It is recommended that
  * implementations of the Ticket interface extend the AbstractTicket as it
  * handles common functionality amongst different ticket types (such as state
- * updating).  
- * 
+ * updating).
+ *
  * AbstractTicket does not provide a protected Logger instance to
  * avoid instantiating many such Loggers at runtime (there will be many instances
- * of subclasses of AbstractTicket in a typical running CAS server).  Instead 
+ * of subclasses of AbstractTicket in a typical running CAS server).  Instead
  * subclasses should use static Logger instances.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -76,7 +76,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     /** The number of times this was used. */
     @Column(name="NUMBER_OF_TIMES_USED")
     private int countOfUses;
-    
+
     protected AbstractTicket() {
         // nothing to do
     }
@@ -84,7 +84,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     /**
      * Constructs a new Ticket with a unique id, a possible parent Ticket (can
      * be null) and a specified Expiration Policy.
-     * 
+     *
      * @param id the unique identifier for the ticket
      * @param ticket the parent TicketGrantingTicket
      * @param expirationPolicy the expiration policy for the ticket.
@@ -133,8 +133,8 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     public final boolean isExpired() {
-        return this.expirationPolicy.isExpired(this) 
-                || (getGrantingTicket() != null && getGrantingTicket().isExpired()) 
+        return this.expirationPolicy.isExpired(this)
+                || (getGrantingTicket() != null && getGrantingTicket().isExpired())
                 || isExpiredInternal();
     }
 

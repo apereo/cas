@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * FactoryBean for creating a public key from a file.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -38,7 +38,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean {
 
     @NotNull
     private Resource resource;
-    
+
     @NotNull
     private String algorithm;
 
@@ -58,12 +58,12 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean {
     public Class getObjectType() {
         return PublicKey.class;
     }
-    
+
 
     public void setLocation(final Resource resource) {
         this.resource = resource;
     }
-    
+
     public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
     }

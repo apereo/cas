@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Common utilities for the web tier.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.1
@@ -76,7 +76,7 @@ public final class WebUtils {
 
         return null;
     }
-    
+
     public static WebApplicationService getService(
         final List<ArgumentExtractor> argumentExtractors,
         final RequestContext context) {
@@ -98,7 +98,7 @@ public final class WebUtils {
         final RequestContext context) {
         final String tgtFromRequest = (String) context.getRequestScope().get("ticketGrantingTicketId");
         final String tgtFromFlow = (String) context.getFlowScope().get("ticketGrantingTicketId");
-        
+
         return tgtFromRequest != null ? tgtFromRequest : tgtFromFlow;
 
     }
@@ -112,18 +112,18 @@ public final class WebUtils {
         final RequestContext context) {
         return context.getRequestScope().getString("serviceTicketId");
     }
-    
+
     public static void putLoginTicket(final RequestContext context, final String ticket) {
         context.getFlowScope().put("loginTicket", ticket);
     }
-    
+
     public static String getLoginTicketFromFlowScope(final RequestContext context) {
         // Getting the saved LT destroys it in support of one-time-use
         // See section 3.5.1 of http://www.jasig.org/cas/protocol
         final String lt = (String) context.getFlowScope().remove("loginTicket");
         return lt != null ? lt : "";
     }
-    
+
     public static String getLoginTicketFromRequest(final RequestContext context) {
        return context.getRequestParameters().get("lt");
     }

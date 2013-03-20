@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 public class JpaLockingStrategy implements LockingStrategy {
-    
+
     /** Default lock timeout is 1 hour. */
     public static final int DEFAULT_LOCK_TIMEOUT = 3600;
 
@@ -105,7 +105,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         }
         this.lockTimeout = seconds;
     }
-    
+
 
     /** {@inheritDoc} */
     @Transactional(readOnly = false)
@@ -117,7 +117,7 @@ public class JpaLockingStrategy implements LockingStrategy {
             log.debug("{} failed querying for {} lock.", new Object[] {uniqueId, applicationId, e});
             return false;
         }
-        
+
         boolean result = false;
         if (lock != null) {
             final Date expDate = lock.getExpirationDate();
@@ -143,7 +143,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     @Transactional(readOnly = false)
     public void release() {
         final Lock lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
-      
+
         if (lock == null) {
             return;
         }
@@ -208,7 +208,7 @@ public class JpaLockingStrategy implements LockingStrategy {
                 log.info("{} could not obtain {} lock.", uniqueId, applicationId);
             }
         }
-        return success; 
+        return success;
     }
 
 
@@ -226,7 +226,7 @@ public class JpaLockingStrategy implements LockingStrategy {
         @Id
         @Column(name="application_id")
         private String applicationId;
-        
+
         /** Database column name that holds unique identifier. */
         @Column(name="unique_id")
         private String uniqueId;

@@ -36,7 +36,7 @@ import java.util.Locale;
  */
 public final class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 
-    private MessageInterpolator defaultMessageInterpolator = 
+    private MessageInterpolator defaultMessageInterpolator =
             Validation.byDefaultProvider().configure().getDefaultMessageInterpolator();
 
     private MessageSource messageSource;
@@ -51,7 +51,7 @@ public final class SpringAwareMessageMessageInterpolator implements MessageInter
 
     public String interpolate(final String s, final Context context, final Locale locale) {
         try {
-            return this.messageSource.getMessage(s, 
+            return this.messageSource.getMessage(s,
                     context.getConstraintDescriptor().getAttributes().values().toArray(
                     new Object[context.getConstraintDescriptor().getAttributes().size()]), locale);
         } catch (final NoSuchMessageException e) {

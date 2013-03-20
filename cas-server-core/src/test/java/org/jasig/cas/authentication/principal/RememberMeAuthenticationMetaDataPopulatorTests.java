@@ -26,13 +26,13 @@ import org.jasig.cas.authentication.MutableAuthentication;
 import org.junit.Test;
 
 /**
- * 
+ *
  * @author Scott Battaglia
  * @since 3.2.1
  *
  */
 public class RememberMeAuthenticationMetaDataPopulatorTests {
-    
+
     private RememberMeAuthenticationMetaDataPopulator p  = new RememberMeAuthenticationMetaDataPopulator();
 
     @Test
@@ -46,7 +46,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
         assertEquals(Boolean.TRUE, auth2.getAttributes().get(
                 RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
-    
+
     @Test
     public void testWithFalseRememberMeCredentials() {
         final Authentication auth = new MutableAuthentication(TestUtils.getPrincipal());
@@ -59,8 +59,8 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void testWithoutRememberMeCredentials() {
-        final Authentication auth = new MutableAuthentication(TestUtils.getPrincipal());        
-        final Authentication auth2 = this.p.populateAttributes(auth, 
+        final Authentication auth = new MutableAuthentication(TestUtils.getPrincipal());
+        final Authentication auth2 = this.p.populateAttributes(auth,
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
 
         assertNull(auth2.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));

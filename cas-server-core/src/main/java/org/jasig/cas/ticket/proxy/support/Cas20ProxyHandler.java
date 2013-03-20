@@ -35,7 +35,7 @@ import javax.validation.constraints.NotNull;
  * The default behavior as defined in the CAS 2 Specification is to callback the
  * URL provided and give it a pgtIou and a pgtId.
  * </p>
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */

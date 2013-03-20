@@ -36,10 +36,10 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
         final Principal p = TestUtils.getPrincipal();
         final Service s = TestUtils.getService();
-        
+
         final String value = generator.generate(p, s);
-        
-        assertNotNull(value); 
+
+        assertNotNull(value);
     }
 
 }

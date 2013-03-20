@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
  * The Credentials representing an HTTP-based service. HTTP-based services (such
  * as web applications) are often represented by the URL entry point of the
  * application.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -45,7 +45,7 @@ public class HttpBasedServiceCredentials implements Credentials {
      * Constructor that takes the URL of the HTTP-based service and creates the
      * Credentials object. Caches the value of URL.toExternalForm so updates to
      * the URL will not be reflected in a call to toString().
-     * 
+     *
      * @param callbackUrl the URL representing the service
      * @throws IllegalArgumentException if the callbackUrl is null.
      */
@@ -84,7 +84,7 @@ public class HttpBasedServiceCredentials implements Credentials {
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        }    
+        }
         if (obj == null) {
             return false;
         }
@@ -101,6 +101,6 @@ public class HttpBasedServiceCredentials implements Credentials {
         }
         return true;
     }
-    
-    
+
+
 }

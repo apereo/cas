@@ -43,7 +43,7 @@ import java.util.Set;
  * <ul>
  * <li>centralAuthenticationService - the service layer we are delegating to.</li>
  * </ul>
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0
@@ -69,7 +69,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
     }
 
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) 
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
             throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
@@ -77,7 +77,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     /**
      * @throws IllegalArgumentException if given invalid credentials
      */
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service, 
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service,
             final Credentials credentials) throws TicketException {
         checkForErrors(credentials);
 
@@ -95,7 +95,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
     /**
      * @throws IllegalArgumentException if the credentials are invalid.
      */
-    public String delegateTicketGrantingTicket(final String serviceTicketId, 
+    public String delegateTicketGrantingTicket(final String serviceTicketId,
             final Credentials credentials) throws TicketException {
         checkForErrors(credentials);
 
@@ -106,7 +106,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         if (credentials == null) {
             return;
         }
-        
+
         final Set<ConstraintViolation<Credentials>> errors = this.validator.validate(credentials);
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
@@ -115,7 +115,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
 
     /**
      * Set the CentralAuthenticationService.
-     * 
+     *
      * @param centralAuthenticationService The CentralAuthenticationService to
      * set.
      */
@@ -126,7 +126,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
 
     /**
      * Set the list of validators.
-     * 
+     *
      * @param validator The array of validators to use.
      */
     public void setValidator(final Validator validator) {

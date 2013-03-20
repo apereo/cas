@@ -78,11 +78,11 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
     @Test(expected=UnsupportedCredentialsException.class)
     public void testNoResolverFound() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-        HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new 
+        HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = new
                 HttpBasedServiceCredentialsAuthenticationHandler();
         authenticationHandler.setHttpClient(new HttpClient());
         manager.setAuthenticationHandlers(Arrays.asList((AuthenticationHandler) authenticationHandler));
-        manager.setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver) 
+        manager.setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver)
                 new UsernamePasswordCredentialsToPrincipalResolver()));
             manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
     }
@@ -90,17 +90,17 @@ public class AuthenticationManagerImplTests extends AbstractCentralAuthenticatio
     @Test(expected = BadCredentialsAuthenticationException.class)
     public void testResolverReturnsNull() throws Exception {
         AuthenticationManagerImpl manager = new AuthenticationManagerImpl();
-        HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler = 
+        HttpBasedServiceCredentialsAuthenticationHandler authenticationHandler =
                 new HttpBasedServiceCredentialsAuthenticationHandler();
         authenticationHandler.setHttpClient(new HttpClient());
         manager
             .setAuthenticationHandlers(Arrays.asList((AuthenticationHandler) authenticationHandler));
         manager
-            .setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver) 
+            .setCredentialsToPrincipalResolvers(Arrays.asList((CredentialsToPrincipalResolver)
                     new TestCredentialsToPrincipalResolver()));
             manager.authenticate(TestUtils.getHttpBasedServiceCredentials());
     }
-    
+
     protected class TestCredentialsToPrincipalResolver implements CredentialsToPrincipalResolver {
 
         public Principal resolvePrincipal(final Credentials credentials) {

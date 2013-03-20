@@ -27,7 +27,7 @@ import org.springframework.util.Assert;
 /**
  * Simple implementation of a AttributePrincipal that exposes an unmodifiable
  * map of attributes.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */

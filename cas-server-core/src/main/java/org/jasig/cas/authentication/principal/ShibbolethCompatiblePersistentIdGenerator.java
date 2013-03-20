@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -35,7 +35,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements
     PersistentIdGenerator {
 
     private static final byte CONST_SEPARATOR = (byte) '!';
-    
+
     @NotNull
     private byte[] salt;
 

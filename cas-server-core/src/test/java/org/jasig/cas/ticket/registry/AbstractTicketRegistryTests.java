@@ -50,7 +50,7 @@ public abstract class AbstractTicketRegistryTests  {
     /**
      * Abstract method to retrieve a new ticket registry. Implementing classes
      * return the TicketRegistry they wish to test.
-     * 
+     *
      * @return the TicketRegistry we wish to test
      */
     public abstract TicketRegistry getNewTicketRegistry() throws Exception;
@@ -205,7 +205,7 @@ public abstract class AbstractTicketRegistryTests  {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
                 "TEST" + i, TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, TestUtils.getService(), 
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, TestUtils.getService(),
                     new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);

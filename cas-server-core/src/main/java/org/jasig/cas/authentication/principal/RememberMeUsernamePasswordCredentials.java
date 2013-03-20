@@ -20,23 +20,23 @@ package org.jasig.cas.authentication.principal;
 
 /**
  * Handles both remember me services and username and password.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.2.1
  *
  */
 public class RememberMeUsernamePasswordCredentials extends
     UsernamePasswordCredentials implements RememberMeCredentials {
-    
+
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -9178853167397038282L;
-    
+
     private boolean rememberMe;
 
     public final boolean isRememberMe() {
         return this.rememberMe;
     }
-    
+
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

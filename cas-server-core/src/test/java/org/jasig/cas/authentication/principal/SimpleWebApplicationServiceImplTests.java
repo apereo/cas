@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * 
+ *
  * @author Scott Battaglia
  * @author Arnaud Lesueur
  * @since 3.1
@@ -38,52 +38,52 @@ public class SimpleWebApplicationServiceImplTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
         final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
-        
+
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
     }
-    
+
     @Test
     public void testResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://www.cnn.com/;jsession=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
-        
+
         assertEquals("http://www.cnn.com/", impl.getId());
     }
-    
+
     @Test
     public void testResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
-        
+
         final Response response = impl.getResponse(null);
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
     }
-    
+
     @Test
     public void testResponseWithNoTicketAndNoParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
-        
+
         final Response response = impl.getResponse(null);
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
         assertEquals("http://foo.com/",response.getUrl());
     }
-    
+
     @Test
     public void testResponseWithNoTicketAndOneParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/?param=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
-        
+
         final Response response = impl.getResponse(null);
         assertNotNull(response);
         assertEquals(ResponseType.REDIRECT, response.getResponseType());

@@ -45,14 +45,14 @@ public final class CustomBeanValidationPostProcessor extends BeanValidationPostP
         configuration.traversableResolver(new TraversableResolver() {
 
             @Override
-            public boolean isReachable(final Object traversableObject, final Node traversableProperty, 
+            public boolean isReachable(final Object traversableObject, final Node traversableProperty,
                     final Class<?> rootBeanType,
                     final Path pathToTraversableObject, final ElementType elementType) {
                 return true;
             }
 
             @Override
-            public boolean isCascadable(final Object traversableObject, final Node traversableProperty, 
+            public boolean isCascadable(final Object traversableObject, final Node traversableProperty,
                     final Class<?> rootBeanType,
                     final Path pathToTraversableObject, final ElementType elementType) {
                 return true;

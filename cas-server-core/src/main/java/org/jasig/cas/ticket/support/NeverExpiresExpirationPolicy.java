@@ -25,7 +25,7 @@ import org.jasig.cas.ticket.TicketState;
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
  * expired. Use this policy when you want a Ticket to live forever, or at least
  * as long as the particular CAS Universe exists.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0

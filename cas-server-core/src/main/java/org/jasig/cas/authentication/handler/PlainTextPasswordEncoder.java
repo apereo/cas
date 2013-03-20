@@ -21,7 +21,7 @@ package org.jasig.cas.authentication.handler;
 /**
  * Default password encoder for the case where no password encoder is needed.
  * Encoding results in the same password that was passed in.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0

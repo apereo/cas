@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotNull;
 
 /**
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  *
@@ -43,7 +43,7 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private boolean returnNullIfNoAttributes = false;
-    
+
     /** Repository of principal attributes to be retrieved. */
     @NotNull
     private IPersonAttributeDao attributeRepository = new StubPersonAttributeDao(new HashMap<String, List<Object>>());
@@ -52,11 +52,11 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
         log.debug("Attempting to resolve a principal...");
 
         final String principalId = extractPrincipalId(credentials);
-        
+
         if (principalId == null) {
             return null;
         }
-        
+
         log.debug("Creating SimplePrincipal for [{}]", principalId);
 
         final IPersonAttributes personAttributes = this.attributeRepository.getPerson(principalId);
@@ -83,15 +83,15 @@ public abstract class AbstractPersonDirectoryCredentialsToPrincipalResolver
         }
         return new SimplePrincipal(principalId, convertedAttributes);
     }
-    
+
     /**
      * Extracts the id of the user from the provided credentials.
-     * 
+     *
      * @param credentials the credentials provided by the user.
      * @return the username, or null if it could not be resolved.
      */
     protected abstract String extractPrincipalId(Credentials credentials);
-    
+
     public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
     }

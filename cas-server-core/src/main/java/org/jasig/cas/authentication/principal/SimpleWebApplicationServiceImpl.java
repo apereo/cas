@@ -29,7 +29,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * Represents a service which wishes to use the CAS protocol.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -47,7 +47,7 @@ public final class SimpleWebApplicationServiceImpl extends
     private final ResponseType responseType;
 
     private static final long serialVersionUID = 8334068957483758042L;
-    
+
     public SimpleWebApplicationServiceImpl(final String id) {
         this(id, id, null, null, null);
     }
@@ -62,7 +62,7 @@ public final class SimpleWebApplicationServiceImpl extends
         super(id, originalUrl, artifactId, httpClient);
         this.responseType = responseType;
     }
-    
+
     public static SimpleWebApplicationServiceImpl createServiceFrom(final HttpServletRequest request) {
         return createServiceFrom(request, null);
     }

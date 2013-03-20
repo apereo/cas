@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * The default numeric generator for generating long values. Implementation
  * allows for wrapping (to restart count) if the maximum is reached.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0

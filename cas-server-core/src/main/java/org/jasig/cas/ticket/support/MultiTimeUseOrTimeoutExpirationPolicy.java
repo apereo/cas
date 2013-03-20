@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
  * certain time period for a ticket to exist.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -52,7 +52,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements
 
     }
 
-    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKill, 
+    public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKill,
             final TimeUnit timeUnit) {
         this(numberOfUses, timeUnit.toMillis(timeToKill));
     }

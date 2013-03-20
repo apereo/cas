@@ -73,12 +73,12 @@ public class JpaLockingStrategyTests implements InitializingBean {
 
     @Autowired
     private PlatformTransactionManager txManager;
-    
+
     @Autowired
     private EntityManagerFactory factory;
-    
+
     private JdbcTemplate simpleJdbcTemplate;
-    
+
     /**
      * Set the dataSource.
      */
@@ -86,7 +86,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
     public void setDataSource(final DataSource dataSource) {
         this.simpleJdbcTemplate = new JdbcTemplate(dataSource);
     }
-    
+
     /**
      * One-time test initialization.
      *
@@ -178,7 +178,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             executor.shutdownNow();
         }
     }
-    
+
     /**
      * Test concurrent acquire/release semantics for existing lock.
      */
@@ -198,7 +198,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
             executor.shutdownNow();
         }
     }
-    
+
     private LockingStrategy[] getConcurrentLocks(final String appId) {
         final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
         for (int i = 1; i <= locks.length; i++) {
@@ -218,7 +218,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
                new Class[] {LockingStrategy.class},
                new TransactionalLockInvocationHandler(lock));
     }
-    
+
     private String getOwner(final String appId) {
         final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList(
                 "SELECT unique_id FROM locks WHERE application_id=?", appId);
@@ -227,7 +227,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
         return (String) results.get(0).get("unique_id");
     }
-    
+
     private void testConcurrency(final ExecutorService executor, final LockingStrategy[] locks) throws Exception {
         final List<Locker> lockers = new ArrayList<Locker>(locks.length);
         for (int i = 0; i < locks.length; i++) {
@@ -254,14 +254,14 @@ public class JpaLockingStrategyTests implements InitializingBean {
         }
         assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
     }
-    
+
     class TransactionalLockInvocationHandler implements InvocationHandler {
         private JpaLockingStrategy jpaLock;
-        
+
         public TransactionalLockInvocationHandler(final JpaLockingStrategy lock) {
             jpaLock = lock;
         }
-        
+
         public JpaLockingStrategy getLock() {
             return jpaLock;
         }
@@ -282,13 +282,13 @@ public class JpaLockingStrategyTests implements InitializingBean {
                 }
             });
         }
-        
+
     }
 
     class Locker implements Callable<Boolean> {
-        
+
         private LockingStrategy lock;
-        
+
         public Locker(final LockingStrategy l) {
             lock = l;
         }
@@ -303,12 +303,12 @@ public class JpaLockingStrategyTests implements InitializingBean {
             }
         }
     }
-    
+
 
     class Releaser implements Callable<Boolean> {
-        
+
         private LockingStrategy lock;
-        
+
         public Releaser(final LockingStrategy l) {
             lock = l;
         }

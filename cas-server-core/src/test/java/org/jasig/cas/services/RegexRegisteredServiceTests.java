@@ -37,13 +37,13 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
-    
+
     private RegexRegisteredService service;
-    
+
     private String serviceToMatch;
 
     private boolean expected;
-    
+
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {

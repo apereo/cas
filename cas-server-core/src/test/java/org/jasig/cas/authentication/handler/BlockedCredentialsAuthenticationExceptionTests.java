@@ -27,7 +27,7 @@ import org.junit.Test;
  * @since 3.1
  */
 public final class BlockedCredentialsAuthenticationExceptionTests {
-    
+
     private static final String CODE = "error.authentication.credentials.blocked";
 
     @Test
@@ -36,30 +36,30 @@ public final class BlockedCredentialsAuthenticationExceptionTests {
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
-    
+
     @Test
     public void testThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(r);
-        
+
         assertEquals(CODE, e.getCode());
         assertEquals(r, e.getCause());
     }
-    
+
     @Test
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE);
-        
+
         assertEquals(MESSAGE, e.getCode());
     }
-    
+
     @Test
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final BlockedCredentialsAuthenticationException e = new BlockedCredentialsAuthenticationException(MESSAGE, r);
-        
+
         assertEquals(MESSAGE, e.getCode());
         assertEquals(r, e.getCause());
     }

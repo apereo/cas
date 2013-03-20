@@ -21,7 +21,7 @@ package org.jasig.cas.ticket.registry;
 
 /**
  * Strategy interface to denote the start of cleaning the registry.
- * 
+ *
  * @author Scott Battaglia
 
  * @since 3.0

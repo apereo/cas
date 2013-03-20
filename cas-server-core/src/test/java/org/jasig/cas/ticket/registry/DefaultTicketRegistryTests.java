@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 /**
  * Test case to test the DefaultTicketRegistry based on test cases to test all
  * Ticket Registries.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -32,7 +32,7 @@ public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return new DefaultTicketRegistry();
     }
-    
+
     public void testOtherConstructor() {
         assertNotNull(new DefaultTicketRegistry(10, 10F, 5));
     }
