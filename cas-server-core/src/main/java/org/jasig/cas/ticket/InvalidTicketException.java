@@ -26,17 +26,20 @@ package org.jasig.cas.ticket;
  */
 public class InvalidTicketException extends TicketException {
 
-    /** The Unique Serializable ID. */
-    private static final long serialVersionUID = 3256723974594508849L;
+    private static final long serialVersionUID = 9141891414482490L;
 
+    private String ticketId = null;
+    
     /** The code description. */
     private static final String CODE = "INVALID_TICKET";
 
     /**
      * Constructs a InvalidTicketException with the default exception code.
+     * @param ticketId the ticket id that originally caused this exception to be thrown. 
      */
-    public InvalidTicketException() {
+    public InvalidTicketException(final String ticketId) {
         super(CODE);
+        this.ticketId = ticketId;
     }
 
     /**
@@ -44,8 +47,19 @@ public class InvalidTicketException extends TicketException {
      * the original exception that was thrown.
      * 
      * @param throwable the chained exception
+     * @param ticketId the ticket id that originally caused this exception to be thrown. 
      */
-    public InvalidTicketException(final Throwable throwable) {
+    public InvalidTicketException(final Throwable throwable, final String ticketId) {
         super(CODE, throwable);
+    }
+    
+    /**
+     * Returns the ticket id that causes this exception
+     * @return the ticket id
+     * @see InvalidTicketException#ticketId
+     */
+    @Override
+    public String getMessage() {
+        return this.ticketId;
     }
 }
