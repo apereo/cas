@@ -56,7 +56,6 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.0
  * @see JpaLockingStrategy
  * @see NoOpLockingStrategy

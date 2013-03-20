@@ -58,7 +58,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * Unit test for {@link JpaLockingStrategy}.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
