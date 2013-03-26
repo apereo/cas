@@ -30,7 +30,7 @@
 	| file is among those declared in the context parameter "contextConfigLocation".
 	|
 	| By far the most common change you will need to make in this file is to change the last bean
-	| declaration to replace the default SimpleTestUsernamePasswordAuthenticationHandler with
+	| declaration to replace the default MatchingUsernamePasswordAuthenticationHandler with
 	| one implementing your approach for authenticating usernames and passwords.
 	+-->
 <beans>
@@ -101,7 +101,7 @@
 
 				<!--
 					| This is the authentication handler declaration that every CAS deployer will need to change before deploying CAS 
-					| into production.  The default SimpleTestUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredentials
+					| into production.  The default MatchingUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredentials
 					| where the username equals the password.  You will need to replace this with an AuthenticationHandler that implements your
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.

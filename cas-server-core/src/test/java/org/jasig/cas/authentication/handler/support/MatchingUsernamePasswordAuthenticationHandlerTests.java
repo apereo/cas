@@ -21,81 +21,79 @@ package org.jasig.cas.authentication.handler.support;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.handler.support.MatchingUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 /**
  * Test of the simple username/password handler
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class SimpleTestUsernamePasswordHandlerTests extends TestCase {
+public final class MatchingUsernamePasswordAuthenticationHandlerTests {
 
-    private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
+    private MatchingUsernamePasswordAuthenticationHandler authenticationHandler;
 
-    protected void setUp() throws Exception {
-        this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        this.authenticationHandler
-            .setPasswordEncoder(new PlainTextPasswordEncoder());
+    @Before
+    public void setUp() throws Exception {
+        this.authenticationHandler = new MatchingUsernamePasswordAuthenticationHandler();
+        this.authenticationHandler.setPasswordEncoder(new PlainTextPasswordEncoder());
     }
 
+    @Test
     public void testSupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(TestUtils
             .getCredentialsWithSameUsernameAndPassword()));
     }
 
+    @Test
     public void testDoesntSupportBadUserCredentials() {
         assertFalse(this.authenticationHandler.supports(TestUtils
             .getHttpBasedServiceCredentials()));
     }
 
+    @Test
     public void testValidUsernamePassword() throws AuthenticationException {
         assertTrue(this.authenticationHandler.authenticate(TestUtils
             .getCredentialsWithSameUsernameAndPassword()));
     }
 
-    public void testInvalidUsernamePassword() {
-        try {
-            assertFalse(this.authenticationHandler.authenticate(TestUtils
+    @Test
+    public void testInvalidUsernamePassword() throws AuthenticationException {
+        assertFalse(this.authenticationHandler.authenticate(TestUtils
                 .getCredentialsWithDifferentUsernameAndPassword()));
-        } catch (AuthenticationException ae) {
-            // this is okay
-        }
     }
 
-    public void testNullUsernamePassword() {
-        try {
-            assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getCredentialsWithSameUsernameAndPassword(null)));
-        } catch (AuthenticationException ae) {
-            // this is okay
-        }
+    @Test
+    public void testNullUsernamePassword() throws AuthenticationException {
+        assertFalse(this.authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword(null)));
     }
     
+    @Test
     public void testAlternateClass() {
         this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
         assertTrue(this.authenticationHandler.supports(new UsernamePasswordCredentials()));
     }
     
+    @Test
     public void testAlternateClassWithSubclassSupport() {
         this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
         this.authenticationHandler.setSupportSubClasses(true);
         assertTrue(this.authenticationHandler.supports(new ExtendedCredentials()));
     }
     
+    @Test
     public void testAlternateClassWithNoSubclassSupport() {
         this.authenticationHandler.setClassToSupport(UsernamePasswordCredentials.class);
         this.authenticationHandler.setSupportSubClasses(false);
         assertFalse(this.authenticationHandler.supports(new ExtendedCredentials()));
     }
-    
-    protected class ExtendedCredentials extends UsernamePasswordCredentials {
-
+   
+    private class ExtendedCredentials extends UsernamePasswordCredentials {
         private static final long serialVersionUID = 406992293105518363L;
-        // nothing to see here
     }
 }

@@ -28,16 +28,13 @@ import org.springframework.util.StringUtils;
  * load testing.
  * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class SimpleTestUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public final class MatchingUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
-    public SimpleTestUsernamePasswordAuthenticationHandler() {
-        log
-            .warn(this.getClass().getName()
-                + " is only to be used in a testing environment.  NEVER enable this in a production environment.");
+    public MatchingUsernamePasswordAuthenticationHandler() {
+        log.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
+                  this.getClass().getName());
     }
 
     public boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) {
@@ -46,13 +43,11 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(getPasswordEncoder().encode(password))) {
-            log
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
+            log.debug("User [{}] was successfully authenticated.", username);
             return true;
         }
 
-        log.debug("User [" + username + "] failed authentication");
+        log.debug("User [{}] failed authentication", username);
 
         return false;
     }
