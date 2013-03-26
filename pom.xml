@@ -398,7 +398,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <configuration>
                 <consoleOutput>true</consoleOutput>
                 <configLocation>/checkstyle-rules.xml</configLocation>
-                <suppressionsFile>../checkstyle-suppressions.xml</suppressionsFile>
+                <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>false</failsOnError>
             </configuration>
             <executions>
