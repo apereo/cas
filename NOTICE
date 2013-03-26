@@ -140,30 +140,31 @@ This project includes:
   SLF4J API Module under MIT License
   SLF4J LOG4J-12 Binding under MIT License
   SOJO under The Apache Software License, Version 2.0
+  Spring AOP under The Apache Software License, Version 2.0
+  Spring Beans under The Apache Software License, Version 2.0
   Spring Binding under Apache License, Version 2.0
+  Spring Context under The Apache Software License, Version 2.0
+  Spring Context Support under The Apache Software License, Version 2.0
+  Spring Core under The Apache Software License, Version 2.0
+  Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
   Spring JavaScript under Apache License, Version 2.0
   Spring JavaScript Resources under Apache License, Version 2.0
+  Spring JDBC under The Apache Software License, Version 2.0
   Spring Json View under The Apache Software License, Version 2.0
   Spring LDAP Core under Apache License, Version 2.0
   Spring LDAP Java 5 support under Apache License, Version 2.0
+  Spring Object/Relational Mapping under The Apache Software License, Version 2.0
+  Spring TestContext Framework under The Apache Software License, Version 2.0
+  Spring Transaction under The Apache Software License, Version 2.0
+  Spring Web under The Apache Software License, Version 2.0
   Spring Web Flow under Apache License, Version 2.0
-  spring-aop under The Apache Software License, Version 2.0
+  Spring Web MVC under The Apache Software License, Version 2.0
   spring-asm under Apache License, Version 2.0
-  spring-beans under The Apache Software License, Version 2.0
-  spring-context under The Apache Software License, Version 2.0
-  spring-context-support under The Apache Software License, Version 2.0
-  spring-core under The Apache Software License, Version 2.0
   spring-expression under Apache License, Version 2.0
-  spring-jdbc under The Apache Software License, Version 2.0
-  spring-orm under The Apache Software License, Version 2.0
   spring-security-cas under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  spring-test under The Apache Software License, Version 2.0
-  spring-tx under The Apache Software License, Version 2.0
-  spring-web under The Apache Software License, Version 2.0
-  spring-webmvc under The Apache Software License, Version 2.0
   spymemcached under The MIT License
   standard under Apache License, Version 2.0
   StAX API under The Apache Software License, Version 2.0
