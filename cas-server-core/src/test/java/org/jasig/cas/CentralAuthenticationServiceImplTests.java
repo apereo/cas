@@ -192,7 +192,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().grantServiceTicket(
             ticketGrantingTicket, TestUtils.getService(),
-            TestUtils.getCredentialsWithSameUsernameAndPassword("test1"));
+            TestUtils.getCredentialsWithSameUsernameAndPassword("test"));
     }
 
     @Test
