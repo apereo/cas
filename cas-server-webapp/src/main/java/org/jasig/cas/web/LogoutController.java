@@ -36,9 +36,8 @@ import org.springframework.web.servlet.view.RedirectView;
  * single sign on. This controller implements the idea of the ESUP Portail's
  * Logout patch to allow for redirecting to a url on logout. It also exposes a
  * log out link to the view via the WebConstants.LOGOUT constant.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class LogoutController extends AbstractController {
@@ -47,11 +46,11 @@ public final class LogoutController extends AbstractController {
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
-    /** CookieGenerator for TGT Cookie */
+    /** CookieGenerator for TGT Cookie. */
     @NotNull
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    /** CookieGenerator for Warn Cookie */
+    /** CookieGenerator for Warn Cookie. */
     @NotNull
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
@@ -67,11 +66,12 @@ public final class LogoutController extends AbstractController {
      * service request parameter.
      */
     private boolean followServiceRedirects;
-    
+
     public LogoutController() {
         setCacheSeconds(0);
     }
 
+    @Override
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
