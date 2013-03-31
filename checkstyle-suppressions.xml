@@ -6,5 +6,6 @@
     <suppress checks="JavadocMethod" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocType" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocVariable" files="(.*Tests*|Mock.*|Test.*)\.java"/>
+    <suppress checks="DesignForExtension" files="(.*Tests*|Mock.*|Test.*)\.java"/>
 </suppressions>
         

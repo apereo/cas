@@ -41,9 +41,8 @@ import org.springframework.webflow.execution.RequestContext;
  * <p>
  * Note: As of CAS 3.1, this is a required class that retrieves and exposes the
  * values in the two cookies for subclasses to use.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class InitialFlowSetupAction extends AbstractAction {
@@ -64,6 +63,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
     /** Boolean to note whether we've set the values on the generators or not. */
     private boolean pathPopulated = false;
 
+    @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         if (!this.pathPopulated) {
