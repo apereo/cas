@@ -18,10 +18,10 @@ import org.springframework.web.servlet.view.json.exception.JsonExceptionResolver
 public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     private String ajaxRequestHeaderName ="x-requested-with";
     private String ajaxRequestHeaderValue = "XMLHttpRequest";
-    
+
     public void setAjaxRequestHeaderName(final String ajaxRequestHeaderName) {
         this.ajaxRequestHeaderName = ajaxRequestHeaderName;
     }
@@ -31,7 +31,8 @@ public class AjaxAwareJsonExceptionResolver extends JsonExceptionResolver {
     }
 
     @Override
-    public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response, final Object handler, final Exception ex) {      
+    public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
+            final Object handler, final Exception ex) {
         final String contentType = request.getHeader(this.ajaxRequestHeaderName);
         if (contentType.equals(this.ajaxRequestHeaderValue)) {
             log.debug("Handling exception {} for ajax request indicated by header {}", ex.getClass().getName(), this.ajaxRequestHeaderName);
