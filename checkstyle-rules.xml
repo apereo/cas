@@ -174,5 +174,4 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>
   </module>
-  <module name="SuppressionFilter"/>
 </module>

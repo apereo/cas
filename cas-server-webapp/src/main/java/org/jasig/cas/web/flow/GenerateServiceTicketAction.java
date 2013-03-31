@@ -32,17 +32,17 @@ import javax.validation.constraints.NotNull;
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and
  * Service.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public final class GenerateServiceTicketAction extends AbstractAction {
-    
+
     /** Instance of CentralAuthenticationService. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
+    @Override
     protected Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);

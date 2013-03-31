@@ -34,7 +34,6 @@ import javax.validation.constraints.NotNull;
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.3.5
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
@@ -44,7 +43,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private static final int DEFAULT_FAILURE_RANGE_IN_SECONDS = 60;
 
     private static final String DEFAULT_USERNAME_PARAMETER = "username";
-    
+
     private static final String SUCCESSFUL_AUTHENTICATION_EVENT = "success";
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -61,6 +60,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private double thresholdRate;
 
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         this.thresholdRate = (double) failureThreshold / (double) failureRangeInSeconds;
     }
@@ -89,11 +89,11 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         }
 
         RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
-        
+
         if (context == null || context.getCurrentEvent() == null) {
             return;
         }
-        
+
         // User successfully authenticated
         if (SUCCESSFUL_AUTHENTICATION_EVENT.equals(context.getCurrentEvent().getId())) {
             return;
