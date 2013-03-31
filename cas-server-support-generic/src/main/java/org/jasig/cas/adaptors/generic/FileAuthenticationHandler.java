@@ -36,13 +36,11 @@ import javax.validation.constraints.NotNull;
  * there is a match, the user is authenticated. Note that the default password
  * translator is a plaintext password translator and the default separator is
  * "::" (without quotes).
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class FileAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler {
+public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
     private static final String DEFAULT_SEPARATOR = "::";
@@ -83,8 +81,8 @@ public class FileAuthenticationHandler extends
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
-            } catch (IOException e) {
-                log.error(e.getMessage(),e);
+            } catch (final IOException e) {
+                log.error(e.getMessage(), e);
             }
         }
 

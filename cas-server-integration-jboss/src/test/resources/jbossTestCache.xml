@@ -95,7 +95,7 @@
                  being broken with multicast (even after disabling media sense)
                  set the loopback attribute to true -->
                 <UDP mcast_addr="228.1.2.3" mcast_port="48866"
-                    ip_ttl="64" ip_mcast="true" 
+                    ip_ttl="64" ip_mcast="true"
                     mcast_send_buf_size="150000" mcast_recv_buf_size="80000"
                     ucast_send_buf_size="150000" ucast_recv_buf_size="80000"
                     loopback="false"/>
@@ -151,8 +151,7 @@
           class loader, e.g., inside an application server. Default is "false".
        -->
         <attribute name="UseMarshalling">false</attribute>
-        
-		<attribute name="StateTransferVersion">130</attribute>
+        <attribute name="StateTransferVersion">130</attribute>
 
         <!--attribute name="CacheLoaderConfiguration">
             <config>
