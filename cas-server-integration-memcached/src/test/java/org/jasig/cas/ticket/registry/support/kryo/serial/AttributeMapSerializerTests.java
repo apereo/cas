@@ -38,14 +38,12 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link AttributeMapSerializer} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 @RunWith(Parameterized.class)
 public class AttributeMapSerializerTests {
     private final Log logger = LogFactory.getLog(getClass());
-  
     private final Map<String, Object> attributes;
-    
+
     public AttributeMapSerializerTests(final Map<String, Object> attributes) {
         this.attributes = attributes;
     }
@@ -80,7 +78,7 @@ public class AttributeMapSerializerTests {
 
         return params;
     }
-    
+
     @Test
     public void testReadWrite() throws Exception {
         final Kryo kryo = new Kryo();
@@ -93,7 +91,7 @@ public class AttributeMapSerializerTests {
         printBuffer(buffer);
         Assert.assertEquals(this.attributes, serializer.read(buffer));
     }
-    
+
     private void printBuffer(final ByteBuffer buffer) {
         final byte[] bytes = new byte[buffer.limit()];
         buffer.get(bytes);
