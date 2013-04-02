@@ -28,7 +28,6 @@ import static org.junit.Assert.*;
  * Unit test for {@link BindLdapAuthenticationHandler} class.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  * @since 3.0
  *
  */
@@ -42,7 +41,6 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setUsername(this.bindTestConfig.getExistsCredential());
         c.setPassword(this.bindTestConfig.getExistsSuccessPassword());
-        
         assertTrue(this.bindAuthHandler.authenticate(c));
     }
 
@@ -51,7 +49,6 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setUsername(this.bindTestConfig.getExistsCredential());
         c.setPassword(this.bindTestConfig.getExistsFailurePassword());
-        
         assertFalse(this.bindAuthHandler.authenticate(c));
     }
 
@@ -60,7 +57,6 @@ public class BindLdapAuthenticationHandlerTests extends AbstractJUnit4SpringCont
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setUsername(this.bindTestConfig.getNotExistsCredential());
         c.setPassword("");
-        
         assertFalse(this.bindAuthHandler.authenticate(c));
     }
 }

@@ -34,7 +34,7 @@ import org.springframework.ldap.pool.factory.PoolingContextSource;
  */
 public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Pool to observe. */
     @NotNull
@@ -47,6 +47,7 @@ public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
 
 
     /** {@inheritDoc} */
+    @Override
     protected StatusCode checkPool() throws Exception {
         final boolean success;
         DirContext ctxt = null;
@@ -63,12 +64,14 @@ public class PoolingContextSourceMonitor extends AbstractPoolMonitor {
 
 
     /** {@inheritDoc} */
+    @Override
     protected int getIdleCount() {
         return poolingContextSource.getNumIdle();
     }
 
 
     /** {@inheritDoc} */
+    @Override
     protected int getActiveCount() {
         return poolingContextSource.getNumActive();
     }
