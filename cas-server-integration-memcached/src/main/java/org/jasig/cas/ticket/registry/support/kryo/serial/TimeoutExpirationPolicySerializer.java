@@ -28,7 +28,6 @@ import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
  * Serializer for {@link TimeoutExpirationPolicy} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public final class TimeoutExpirationPolicySerializer extends SimpleSerializer<TimeoutExpirationPolicy> {
 

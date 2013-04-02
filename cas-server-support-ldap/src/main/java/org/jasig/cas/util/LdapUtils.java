@@ -31,14 +31,13 @@ import org.springframework.ldap.core.LdapEncoder;
 
 /**
  * Utilities related to LDAP functions.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class LdapUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(LdapUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
 
     private LdapUtils() {
         // private constructor so that no one can instantiate.
@@ -47,13 +46,13 @@ public final class LdapUtils {
     /**
      * Utility method to replace the placeholders in the filter with the proper
      * values from the userName.
-     * 
+     *
      * @param filter
      * @param userName
      * @return the filtered string populated with the username
      */
     public static String getFilterWithValues(final String filter,
-        final String userName) {
+            final String userName) {
         final Map<String, String> properties = new HashMap<String, String>();
         final String[] userDomain;
         String newFilter = filter;
@@ -71,7 +70,7 @@ public final class LdapUtils {
 
             for (int i = 0; i < dcArray.length; i++) {
                 properties.put("%" + (i + 1), dcArray[dcArray.length
-                    - 1 - i]);
+                                                      - 1 - i]);
             }
         }
 
@@ -86,7 +85,7 @@ public final class LdapUtils {
     /**
      * Close the given context and ignore any thrown exception. This is useful
      * for typical finally blocks in manual Ldap statements.
-     * 
+     *
      * @param context the Ldap context to close
      */
     public static void closeContext(final DirContext context) {
@@ -94,7 +93,7 @@ public final class LdapUtils {
             try {
                 context.close();
             } catch (NamingException ex) {
-                logger.warn("Could not close context", ex);
+                log.warn("Could not close context", ex);
             }
         }
     }
