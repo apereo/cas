@@ -27,10 +27,10 @@ import javax.persistence.Entity;
 
 /**
  * Mutable registered service that uses Ant path patterns for service matching.
- * 
+ *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
+
  * @since 3.1
  */
 @Entity

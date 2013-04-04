@@ -26,7 +26,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  * Supports the basic {@link org.jasig.cas.services.ServicesManager}.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.4.4
  */
 
@@ -35,7 +34,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
         currencyTimeLimit = 15)
 public final class ServicesManagerMBean extends AbstractServicesManagerMBean<ServicesManager> {
 
-    public ServicesManagerMBean(ServicesManager servicesManager) {
+    public ServicesManagerMBean(final ServicesManager servicesManager) {
         super(servicesManager);
     }
 }

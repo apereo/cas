@@ -34,15 +34,13 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link X509CertificateCredentialsToSubjectPrinciplalResolver}.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
- *
  */
 @RunWith(Parameterized.class)
 public class X509CertificateCredentialsToSubjectPrinciplalResolverTests {
-    
+
     private X509Certificate certificate;
-    private X509CertificateCredentialsToSubjectPrinciplalResolver resolver;
-    private String expected;
+    private final X509CertificateCredentialsToSubjectPrinciplalResolver resolver;
+    private final String expected;
 
     /**
      * Creates a new test instance with the given parameters.
@@ -52,15 +50,15 @@ public class X509CertificateCredentialsToSubjectPrinciplalResolverTests {
      * @param expectedResult
      */
     public X509CertificateCredentialsToSubjectPrinciplalResolverTests(
-        final String certPath,
-        final String descriptor,
-        final String expectedResult) {
-       
+            final String certPath,
+            final String descriptor,
+            final String expectedResult) {
+
         this.resolver = new X509CertificateCredentialsToSubjectPrinciplalResolver();
         this.resolver.setDescriptor(descriptor);
         try {
-	        this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-		            new FileInputStream(certPath));
+            this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
+                    new FileInputStream(certPath));
         } catch (Exception e) {
             Assert.fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
         }
@@ -73,51 +71,50 @@ public class X509CertificateCredentialsToSubjectPrinciplalResolverTests {
      * @return  Test parameter data.
      */
     @Parameters
-    public static Collection<Object[]> getTestParameters()
-    {
-      final Collection<Object[]> params = new ArrayList<Object[]>();
-      
-      // Test case #1
-      // Use CN for principal ID
-      params.add(new Object[] {
-          "target/test-classes/x509-ctop-resolver-hizzy.crt",
-          "$CN",
-          "Hizzogarthington I.S. Pleakinsense"
-      });
-      
-      // Test case #2
-      // Use email address for principal ID
-      params.add(new Object[] {
-          "target/test-classes/x509-ctop-resolver-hizzy.crt",
-          "$EMAILADDRESS",
-          "hizzy@vt.edu"
-      });
-      
-      // Test case #2
-      // Use combination of ou and cn for principal ID
-      params.add(new Object[] {
-          "target/test-classes/x509-ctop-resolver-hizzy.crt",
-          "$OU $CN",
-          "Middleware Hizzogarthington I.S. Pleakinsense"
-      });
+    public static Collection<Object[]> getTestParameters() {
+        final Collection<Object[]> params = new ArrayList<Object[]>();
 
-      // Test case #3
-      // Use combination of serial number and cn for principal ID
-      params.add(new Object[] {
-          "target/test-classes/x509-ctop-resolver-gazzo.crt",
-          "$CN:$SERIALNUMBER",
-          "Gazzaloddi P. Wishwashington:271828183"
-      });
+        // Test case #1
+        // Use CN for principal ID
+        params.add(new Object[] {
+                "target/test-classes/x509-ctop-resolver-hizzy.crt",
+                "$CN",
+                "Hizzogarthington I.S. Pleakinsense"
+        });
 
-      // Test case #4
-      // Build principal ID from multivalued attributes
-      params.add(new Object[] {
-          "target/test-classes/x509-ctop-resolver-jacky.crt",
-          "$UID@$DC.$DC",
-          "jacky@vt.edu"
-      });
-      
-      return params;
+        // Test case #2
+        // Use email address for principal ID
+        params.add(new Object[] {
+                "target/test-classes/x509-ctop-resolver-hizzy.crt",
+                "$EMAILADDRESS",
+                "hizzy@vt.edu"
+        });
+
+        // Test case #2
+        // Use combination of ou and cn for principal ID
+        params.add(new Object[] {
+                "target/test-classes/x509-ctop-resolver-hizzy.crt",
+                "$OU $CN",
+                "Middleware Hizzogarthington I.S. Pleakinsense"
+        });
+
+        // Test case #3
+        // Use combination of serial number and cn for principal ID
+        params.add(new Object[] {
+                "target/test-classes/x509-ctop-resolver-gazzo.crt",
+                "$CN:$SERIALNUMBER",
+                "Gazzaloddi P. Wishwashington:271828183"
+        });
+
+        // Test case #4
+        // Build principal ID from multivalued attributes
+        params.add(new Object[] {
+                "target/test-classes/x509-ctop-resolver-jacky.crt",
+                "$UID@$DC.$DC",
+                "jacky@vt.edu"
+        });
+
+        return params;
     }
 
     @Test

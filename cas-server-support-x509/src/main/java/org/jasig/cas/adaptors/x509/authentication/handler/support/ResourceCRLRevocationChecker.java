@@ -31,9 +31,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
@@ -44,29 +44,27 @@ import org.springframework.core.io.Resource;
  * chains) that are expected to be presented to {@link X509CredentialsAuthenticationHandler}.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.7
  *
  */
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
-    implements InitializingBean {
-   
+            implements InitializingBean {
+
     /** Default refresh interval is 1 hour. */
     public static final int DEFAULT_REFRESH_INTERVAL = 3600;
 
     /** Executor responsible for refreshing CRL data. */
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-   
+
     /** CRL refresh interval in seconds. */
     private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
 
     /** Handles fetching CRL data. */
-    private CRLFetcher fetcher;
+    private final CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
     private final Map<X500Principal, X509CRL> crlIssuerMap =
-        Collections.synchronizedMap(new HashMap<X500Principal, X509CRL>());
-
+            Collections.synchronizedMap(new HashMap<X500Principal, X509CRL>());
 
     /**
      * Creates a new instance using the specified resource for CRL data.
@@ -86,35 +84,37 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     public ResourceCRLRevocationChecker(final Resource[] crls) {
         this.fetcher = new CRLFetcher(crls);
     }
-    
+
     /**
      * Sets the interval at which CRL data should be reloaded from CRL resources.
-     * 
+     *
      * @param seconds Refresh interval in seconds; MUST be positive integer.
      */
     public void setRefreshInterval(final int seconds) {
         if (seconds > 0) {
-	        this.refreshInterval = seconds;
+            this.refreshInterval = seconds;
         } else {
             throw new IllegalArgumentException("Refresh interval must be positive integer.");
         }
     }
 
     /** Initializes the process that periodically fetches CRL data. */
+    @Override
     public void afterPropertiesSet() throws Exception {
         // Fetch CRL data synchronously and throw exception to abort if any fail
         this.fetcher.fetch(true);
-        
+
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = new Runnable() {
+            @Override
             public void run() {
                 getFetcher().fetch(false);
             }
         };
         this.scheduler.scheduleAtFixedRate(
-            scheduledFetcher, this.refreshInterval, this.refreshInterval, TimeUnit.SECONDS);
+                scheduledFetcher, this.refreshInterval, this.refreshInterval, TimeUnit.SECONDS);
     }
-    
+
     /**
      * @return Returns the CRL fetcher component.
      */
@@ -129,13 +129,14 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      */
     protected void addCrl(final X509CRL crl) {
         final X500Principal issuer = crl.getIssuerX500Principal();
-        this.log.debug("Adding CRL for issuer " + issuer);
+        log.debug("Adding CRL for issuer {}", issuer);
         this.crlIssuerMap.put(issuer, crl);
     }
 
     /**
      * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
      */
+    @Override
     protected X509CRL getCRL(final X509Certificate cert) {
         return this.crlIssuerMap.get(cert.getIssuerX500Principal());
     }
@@ -152,10 +153,10 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      */
     protected class CRLFetcher {
         /** Logger instance. */
-        private final Log logger = LogFactory.getLog(getClass());
+        private final Logger log = LoggerFactory.getLogger(getClass());
 
         /** Array of resources pointing to CRL data. */
-        private List<Resource> resources;
+        private final List<Resource> resources;
 
         /**
          * Creates a new instance using the specified resources for CRL data.
@@ -170,7 +171,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
             this.resources = new ArrayList<Resource>();
             for (Resource r : crls) {
                 if (r != null) {
-                   this.resources.add(r); 
+                    this.resources.add(r);
                 }
             }
             if (this.resources.size() == 0) {
@@ -186,12 +187,12 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
          */
         public void fetch(final boolean throwOnError) {
             for (Resource r : this.resources) {
-                this.logger.debug("Fetching CRL data from " + r);
+                log.debug("Fetching CRL data from {}", r);
                 try {
                     addCrl(CertUtils.fetchCRL(r));
                 } catch (Exception e) {
                     if (throwOnError) {
-	                    throw new RuntimeException("Error fetching CRL from " + r, e);
+                        throw new RuntimeException("Error fetching CRL from " + r, e);
                     }
                 }
             }

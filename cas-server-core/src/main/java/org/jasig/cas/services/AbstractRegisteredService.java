@@ -63,7 +63,6 @@ import javax.persistence.Transient;
 public abstract class AbstractRegisteredService
         implements RegisteredService, Comparable<RegisteredService>, Serializable {
 
-    /** Serialization version marker  */
     private static final long serialVersionUID = 7645279151115635245L;
 
     @Id
@@ -101,20 +100,20 @@ public abstract class AbstractRegisteredService
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
-    /** 
+    /**
      * The attribute filter instance that is responsible for determining the collection of attributes
      * available for release based on this registered service and the filter's policy.
      */
     @Transient
     private RegisteredServiceAttributeFilter attributeFilter = null;
-    
+
     /**
      * Name of the user attribute that this service expects as the value of the username payload in the
      * validate responses.
      */
     @Column(name = "username_attr", nullable = true, length = 256)
     private String usernameAttribute = null;
-      
+
     public boolean isAnonymousAccess() {
         return this.anonymousAccess;
     }
@@ -159,15 +158,15 @@ public abstract class AbstractRegisteredService
         return this.ssoEnabled;
     }
 
-    public boolean equals(Object o) {
-        if (o == null) { 
-            return false; 
+    public boolean equals(final Object o) {
+        if (o == null) {
+            return false;
         }
-        
+
         if (this == o)  {
             return true;
         }
-        
+
         if (!(o instanceof AbstractRegisteredService)) {
             return false;
         }
@@ -266,12 +265,12 @@ public abstract class AbstractRegisteredService
 
     /**
      * Sets the name of the user attribute to use as the username when providing usernames to this registered service.
-     * 
+     *
      * <p>Note: The username attribute will have no affect on services that are marked for anonymous access.
-     * 
-     * @param username attribute to release for this service that may be one of the following values: 
+     *
+     * @param username attribute to release for this service that may be one of the following values:
      * <ul>
-     *  <li>name of the attribute this service prefers to consume as username</li>. 
+     *  <li>name of the attribute this service prefers to consume as username</li>.
      *  <li><code>null</code> to enforce default CAS behavior</li>
      * </ul>
      * @see #isAnonymousAccess()
@@ -283,7 +282,7 @@ public abstract class AbstractRegisteredService
           this.usernameAttribute = username;
         }
     }
-    
+
     public RegisteredService clone() throws CloneNotSupportedException {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
@@ -312,9 +311,9 @@ public abstract class AbstractRegisteredService
     }
 
     /**
-     * Compares this instance with the <code>other</code> registered service based on 
+     * Compares this instance with the <code>other</code> registered service based on
      * evaluation order, name. The name comparison is case insensitive.
-     * 
+     *
      * @see #getEvaluationOrder()
      */
     public int compareTo(final RegisteredService other) {
@@ -337,11 +336,11 @@ public abstract class AbstractRegisteredService
     }
 
     protected abstract AbstractRegisteredService newInstance();
-    
+
     public final void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
         this.attributeFilter = filter;
     }
-    
+
     public RegisteredServiceAttributeFilter getAttributeFilter() {
         return this.attributeFilter;
     }

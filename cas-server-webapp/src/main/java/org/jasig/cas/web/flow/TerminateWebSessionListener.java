@@ -21,9 +21,6 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,16 +30,17 @@ import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Listener to expire web session as soon as the webflow is ended. The goal is to decrease memory consumption by deleting as soon as
+ * Listener to expire web session as soon as the webflow is ended. The goal is to decrease memory
+ * consumption by deleting as soon as
  * possible the web sessions created mainly for login process.
- * 
+ *
  * @author Jerome Leleu
  * @author Marvin S. Addison
  * @since 3.5.1
  */
 public final class TerminateWebSessionListener extends FlowExecutionListenerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(TerminateWebSessionListener.class);
+    private static final Logger log = LoggerFactory.getLogger(TerminateWebSessionListener.class);
 
     @Min(0)
     private int timeToDieInSeconds = 2;
@@ -56,7 +54,7 @@ public final class TerminateWebSessionListener extends FlowExecutionListenerAdap
         final HttpSession webSession = request.getSession(false);
 
         if (webSession != null) {
-            logger.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
+            log.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
             // set the web session to die in timeToDieInSeconds
             webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
         }

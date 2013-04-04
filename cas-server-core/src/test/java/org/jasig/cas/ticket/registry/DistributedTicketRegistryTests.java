@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import static org.junit.Assert.*;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,35 +30,37 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
-public class DistributedTicketRegistryTests extends TestCase {
-    
-    private TestDistributedTicketRegistry ticketRegistry;
-    
-    public boolean wasTicketUpdated = false;
+public class DistributedTicketRegistryTests {
 
-    protected void setUp() throws Exception {
+    private TestDistributedTicketRegistry ticketRegistry;
+
+    private boolean wasTicketUpdated = false;
+
+    @Before
+    public void setUp() throws Exception {
         this.ticketRegistry = new TestDistributedTicketRegistry();
         this.wasTicketUpdated = false;
     }
 
+    @Test
     public void testProxiedInstancesEqual() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
-        
+
         final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
         assertEquals(t, returned);
         assertEquals(returned, t);
-        
+
         assertEquals(t.getCreationTime(), returned.getCreationTime());
         assertEquals(t.getAuthentication(), returned.getAuthentication());
         assertEquals(t.getCountOfUses(), returned.getCountOfUses());
@@ -65,14 +69,15 @@ public class DistributedTicketRegistryTests extends TestCase {
         assertEquals(t.getChainedAuthentications(), returned.getChainedAuthentications());
         assertEquals(t.isExpired(), returned.isExpired());
         assertEquals(t.isRoot(), returned.isRoot());
-        
-        final ServiceTicket s = t.grantServiceTicket("stest", TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
+
+        final ServiceTicket s = t.grantServiceTicket("stest", TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(), false);
         this.ticketRegistry.addTicket(s);
-        
+
         final ServiceTicket sreturned = (ServiceTicket) this.ticketRegistry.getTicket("stest");
         assertEquals(s, sreturned);
         assertEquals(sreturned, s);
-        
+
         assertEquals(s.getCreationTime(), sreturned.getCreationTime());
         assertEquals(s.getCountOfUses(), sreturned.getCountOfUses());
         assertEquals(s.getGrantingTicket(), sreturned.getGrantingTicket());
@@ -81,33 +86,38 @@ public class DistributedTicketRegistryTests extends TestCase {
         assertEquals(s.getService(), sreturned.getService());
         assertEquals(s.isFromNewLogin(), sreturned.isFromNewLogin());
     }
-    
+
+    @Test
     public void testUpdateOfRegistry() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
         final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
-        
-        final ServiceTicket s = returned.grantServiceTicket("test2", TestUtils.getService(), new NeverExpiresExpirationPolicy(), true);
-        
+
+        final ServiceTicket s = returned.grantServiceTicket("test2", TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(), true);
+
         this.ticketRegistry.addTicket(s);
         final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
-        assertNotNull(s2.grantTicketGrantingTicket("ff", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
-        
+        assertNotNull(s2.grantTicketGrantingTicket("ff", TestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
+
         assertTrue(s2.isValidFor(TestUtils.getService()));
         assertTrue(this.wasTicketUpdated);
-        
+
         returned.expire();
         assertTrue(t.isExpired());
     }
-    
+
+    @Test
     public void testTicketDoesntExist() {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
     }
-    
+
     protected class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
 
         private Map<String, Ticket> tickets = new HashMap<String, Ticket>();
-        
+
         protected void updateTicket(final Ticket ticket) {
             DistributedTicketRegistryTests.this.wasTicketUpdated = true;
         }

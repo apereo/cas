@@ -27,10 +27,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.webflow.conversation.impl.BadlyFormattedConversationIdException;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
-import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
 /**
@@ -49,72 +47,74 @@ public class FlowExecutionExceptionResolverTests {
     @Test
     public void testNullPointerException() {
         assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
-            new MockHttpServletResponse(), null, new NullPointerException()));
+                new MockHttpServletResponse(), null, new NullPointerException()));
     }
 
     @Test
     public void testNoSuchFlowExecutionException() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
-        ModelAndView model = (this.resolver.resolveException(request,
-            new MockHttpServletResponse(), null,
-            new NoSuchFlowExecutionException(new FlowExecutionKey(){
-            
-                private static final long serialVersionUID = 1443616250214416520L;
+        ModelAndView model = this.resolver.resolveException(request,
+                new MockHttpServletResponse(), null,
+                new NoSuchFlowExecutionException(new FlowExecutionKey(){
 
-                public String toString() {
-                    return "test";
-                }
+                    private static final long serialVersionUID = 1443616250214416520L;
 
-                @Override
-                public boolean equals(Object o) {
-                    return true;
-                }
+                    @Override
+                    public String toString() {
+                        return "test";
+                    }
 
-                @Override
-                public int hashCode() {
-                    return 0;
-                }
-            }, new RuntimeException())));
+                    @Override
+                    public boolean equals(final Object o) {
+                        return true;
+                    }
+
+                    @Override
+                    public int hashCode() {
+                        return 0;
+                    }
+                }, new RuntimeException()));
 
         assertEquals(request.getRequestURI(), ((RedirectView) model.getView())
-            .getUrl());
+                .getUrl());
     }
-    
+
     @Test
     public void testBadlyFormattedExecutionException() {
         assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
-                   new MockHttpServletResponse(), null, 
-                   new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
+                new MockHttpServletResponse(), null,
+                new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
     }
-    
+
     @Test
     public void testNoSuchFlowExecutionExeptionWithQueryString() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRequestURI("test");
         request.setQueryString("test=test");
-        ModelAndView model = (this.resolver.resolveException(request,
-            new MockHttpServletResponse(), null,
-            new NoSuchFlowExecutionException(new FlowExecutionKey(){
-                
-                private static final long serialVersionUID = -4750073902540974152L;
+        ModelAndView model = this.resolver.resolveException(request,
+                new MockHttpServletResponse(), null,
+                new NoSuchFlowExecutionException(new FlowExecutionKey(){
 
-                public String toString() {
-                    return "test";
-                }
+                    private static final long serialVersionUID = -4750073902540974152L;
 
-                @Override
-                public boolean equals(Object o) {
-                    return true;
-                }
+                    @Override
+                    public String toString() {
+                        return "test";
+                    }
 
-                @Override
-                public int hashCode() {
-                    return 0;
-                }
-            }, new RuntimeException())));
+                    @Override
+                    public boolean equals(final Object o) {
+                        return true;
+                    }
+
+                    @Override
+                    public int hashCode() {
+                        return 0;
+                    }
+                }, new RuntimeException()));
 
         assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())
-            .getUrl());
+                .getUrl());
     }
 }

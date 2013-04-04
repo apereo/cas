@@ -71,8 +71,8 @@ public class PoolStatus extends Status {
     public int getActiveCount() {
         return this.activeCount;
     }
-    
-    
+
+
     private static String buildDescription(final String desc, final int active, final int idle) {
         final StringBuilder sb = new StringBuilder();
         if (desc != null) {

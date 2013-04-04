@@ -18,35 +18,38 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
+import org.junit.Test;
+
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public final class HttpBasedServiceCredentialsToPrincipalResolverTests extends
-    TestCase {
+public final class HttpBasedServiceCredentialsToPrincipalResolverTests {
 
     private CredentialsToPrincipalResolver resolver = new HttpBasedServiceCredentialsToPrincipalResolver();
 
+    @Test
     public void testInValidSupportsCredentials() {
-        assertFalse(this.resolver.supports(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
+        assertFalse(this.resolver.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
+    @Test
     public void testNullSupportsCredentials() {
         assertFalse(this.resolver.supports(null));
     }
 
+    @Test
     public void testValidSupportsCredentials() {
         assertTrue(this.resolver.supports(TestUtils
             .getHttpBasedServiceCredentials()));
     }
 
+    @Test
     public void testValidCredentials() {
         assertEquals(this.resolver.resolvePrincipal(
             TestUtils.getHttpBasedServiceCredentials()).getId(), TestUtils

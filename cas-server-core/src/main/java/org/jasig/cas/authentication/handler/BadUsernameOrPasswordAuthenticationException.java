@@ -21,16 +21,17 @@ package org.jasig.cas.authentication.handler;
 /**
  * Exception to throw when we know the credentials provided were
  * username/password and the combination is wrong.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class BadUsernameOrPasswordAuthenticationException extends
     BadCredentialsAuthenticationException {
 
     /** Static instance of BadUsernameOrPasswordAuthenticationException. */
-    public static final BadUsernameOrPasswordAuthenticationException ERROR = new BadUsernameOrPasswordAuthenticationException();
+    public static final BadUsernameOrPasswordAuthenticationException ERROR =
+            new BadUsernameOrPasswordAuthenticationException();
 
     /** Unique ID for serializing. */
     private static final long serialVersionUID = 3977861752513837361L;
@@ -49,7 +50,7 @@ public class BadUsernameOrPasswordAuthenticationException extends
     /**
      * Constructor that allows for the chaining of exceptions. Defaults to the
      * default code provided for this exception.
-     * 
+     *
      * @param throwable the chained exception.
      */
     public BadUsernameOrPasswordAuthenticationException(
@@ -61,7 +62,7 @@ public class BadUsernameOrPasswordAuthenticationException extends
      * Constructor that allows for providing a custom error code for this class.
      * Error codes are often used to resolve exceptions into messages. Providing
      * a custom error code allows the use of a different message.
-     * 
+     *
      * @param code the custom code to use with this exception.
      */
     public BadUsernameOrPasswordAuthenticationException(final String code) {
@@ -71,7 +72,7 @@ public class BadUsernameOrPasswordAuthenticationException extends
     /**
      * Constructor that allows for chaining of exceptions and a custom error
      * code.
-     * 
+     *
      * @param code the custom error code to use in message resolving.
      * @param throwable the chained exception.
      */

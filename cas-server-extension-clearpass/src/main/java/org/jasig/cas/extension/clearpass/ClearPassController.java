@@ -40,17 +40,17 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class ClearPassController extends AbstractController {
 
-    private final static Logger log = LoggerFactory.getLogger(ClearPassController.class);
-    
-	// view if clearpass request fails
+    private static final Logger log = LoggerFactory.getLogger(ClearPassController.class);
+
+    // view if clearpass request fails
     private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
 
     // view if clearpass request succeeds
     private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
-    
+
     // key under which clearpass will be placed into the model
     private static final String MODEL_CLEARPASS = "credentials";
-    
+
     // key under which failure descriptions are placed into the model
     private static final String MODEL_FAILURE_DESCRIPTION = "description";
 
@@ -59,7 +59,7 @@ public final class ClearPassController extends AbstractController {
 
     @NotNull
     private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
-    
+
     @NotNull
     private final Map<String, String> credentialsCache;
 
@@ -67,36 +67,38 @@ public final class ClearPassController extends AbstractController {
         this.credentialsCache = credentialsCache;
     }
 
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @Override
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         final String userName = request.getRemoteUser();
 
         log.debug("Handling clearPass request for user [{}]", userName);
-        
+
         if (StringUtils.isBlank(userName)) {
             return returnError("No username was provided to clearPass.");
         }
-        
+
         if (!this.credentialsCache.containsKey(userName)) {
             return returnError("Password could not be found in cache for user " + userName);
         }
-        
+
         final String password = this.credentialsCache.get(userName);
         if (StringUtils.isBlank(password)) {
             return returnError("Password is null or blank");
         }
-        
-        log.debug("Retrieved user credentials successfully from clearPass. Credentials will be provided to the requesting service.");
+
+        log.debug("Retrieved credentials will be provided to the requesting service.");
         return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
     }
-    
+
     protected ModelAndView returnError(final String description) {
         final ModelAndView mv = new ModelAndView(this.failureView);
         mv.addObject(MODEL_FAILURE_DESCRIPTION, description);
-        return(mv);
+        return mv;
     }
 
     public void setSuccessView(final String successView) {
-		    this.successView = successView;
+        this.successView = successView;
     }
 
     public void setFailureView(final String failureView) {

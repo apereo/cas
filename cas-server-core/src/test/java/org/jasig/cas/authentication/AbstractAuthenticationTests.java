@@ -18,24 +18,25 @@
  */
 package org.jasig.cas.authentication;
 
+import static org.junit.Assert.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jasig.cas.TestUtils;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public abstract class AbstractAuthenticationTests extends TestCase {
+public abstract class AbstractAuthenticationTests {
 
     protected Authentication authentication;
 
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
+    @Test
     public final void testGetters() {
         assertEquals("Principals are not equal", TestUtils.getPrincipal(),
             this.authentication.getPrincipal());
@@ -43,11 +44,13 @@ public abstract class AbstractAuthenticationTests extends TestCase {
             this.authentication.getAttributes(), this.attributes);
     }
 
+    @Test
     public final void testNullHashMap() {
         assertNotNull("Attributes are null.", TestUtils.getAuthentication()
             .getAttributes());
     }
 
+    @Test
     public final void testEquals() {
         assertTrue("Authentications are not equal", this.authentication
             .equals(this.authentication));

@@ -25,7 +25,6 @@ import java.security.GeneralSecurityException;
  * Implements a deny policy by throwing an exception.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
@@ -36,11 +35,12 @@ public final class DenyRevocationPolicy implements RevocationPolicy<Void> {
      * whatever process invoked application of this policy.
      *
      * @param nothing SHOULD be null; ignored in all cases.
-     * 
+     *
      * @throws GeneralSecurityException Thrown in all cases.
      *
      * @see org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy#apply(java.lang.Object)
      */
+    @Override
     public void apply(final Void nothing) throws GeneralSecurityException {
         throw new GeneralSecurityException("Aborting since DenyRevocationPolicy is in effect.");
     }

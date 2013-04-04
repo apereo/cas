@@ -34,7 +34,6 @@ import org.opensaml.saml2.binding.artifact.SAML2ArtifactType0004;
  * Default to SAML 1.1 Compliance.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
@@ -72,6 +71,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     /**
      * We ignore prefixes for SAML compliance.
      */
+    @Override
     public String getNewTicketId(final String prefix) {
         if (saml2compliant) {
             return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), sourceIdDigest).base64Encode();

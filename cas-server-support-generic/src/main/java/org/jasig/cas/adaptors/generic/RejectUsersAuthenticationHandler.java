@@ -36,9 +36,8 @@ import javax.validation.constraints.NotNull;
  * and any AuthenticationManager checking the RejectUsersAuthenticationHandler
  * should not continue checking other Authentication Handlers on the failure of
  * RejectUsersAuthenticationHandler to authenticate someone.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class RejectUsersAuthenticationHandler extends
@@ -48,7 +47,8 @@ public class RejectUsersAuthenticationHandler extends
     @NotNull
     private List<String> users;
 
-    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
+            throws AuthenticationException {
 
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
 
@@ -61,7 +61,7 @@ public class RejectUsersAuthenticationHandler extends
 
     /**
      * Set the Collection of usernames which we will fail to authenticate.
-     * 
+     *
      * @param users The Collection of usernames we should not authenticate.
      */
     public final void setUsers(final List<String> users) {

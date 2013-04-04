@@ -61,6 +61,7 @@ public class EhCacheStatistics implements CacheStatistics {
      *
      * @return Memory size.
      */
+    @Override
     public long getSize() {
         final LiveCacheStatistics statistics = cache.getLiveCacheStatistics();
         // Store component sizes on each call to avoid recalculating
@@ -81,6 +82,7 @@ public class EhCacheStatistics implements CacheStatistics {
      *
      * @return Heap memory capacity.
      */
+    @Override
     public long getCapacity() {
         final CacheConfiguration config = cache.getCacheConfiguration();
         if (useBytes) {
@@ -89,10 +91,12 @@ public class EhCacheStatistics implements CacheStatistics {
         return config.getMaxElementsOnDisk();
     }
 
+    @Override
     public long getEvictions() {
         return cache.getLiveCacheStatistics().getEvictedCount();
     }
 
+    @Override
     public int getPercentFree() {
         final long capacity = getCapacity();
         if (capacity == 0) {
@@ -101,10 +105,12 @@ public class EhCacheStatistics implements CacheStatistics {
         return (int) ((capacity - getSize()) * 100 / capacity);
     }
 
+    @Override
     public String getName() {
         return cache.getName();
     }
 
+    @Override
     public void toString(final StringBuilder builder) {
         if (getName() != null) {
             builder.append(getName()).append(':');

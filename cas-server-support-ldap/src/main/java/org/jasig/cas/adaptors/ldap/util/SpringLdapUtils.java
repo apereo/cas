@@ -22,10 +22,10 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.DirContextOperations;
 
 /**
- * A basic LDAP Utility class
+ * A basic LDAP Utility class.
  *
  * @author Siegfried Puchbauer, SPP (http://www.spp.at)
- * 
+ *
  */
 public final class SpringLdapUtils {
 
@@ -35,32 +35,36 @@ public final class SpringLdapUtils {
     public static final String LDAP_BOOLEAN_FALSE = "FALSE";
 
     /**
-     * Reads a Boolean value from the DirContextAdapter
+     * Reads a Boolean value from the DirContextAdapter.
      *
      * @param ctx       the DirContextAdapter
      * @param attribute the attribute name
-     * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
+     * @return <code>true</code> if the attribute's value matches (case-insensitive)
+     * <code>"true"</code>, otherwise false
      */
     public static Boolean getBoolean(final DirContextOperations ctx, final String attribute) {
         return getBoolean(ctx, attribute, false);
     }
 
     /**
-     * Reads a Boolean value from the DirContextAdapter
+     * Reads a Boolean value from the DirContextAdapter.
      *
      * @param ctx       the DirContextAdapter
      * @param attribute the attribute name
      * @param nullValue the value which sould be returing in case of a null value
-     * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
+     * @return <code>true</code> if the attribute's value matches (case-insensitive)
+     * <code>"true"</code>, otherwise false
      */
     public static Boolean getBoolean(final DirContextOperations ctx, final String attribute, final Boolean nullValue) {
         final String v = ctx.getStringAttribute(attribute);
-        if (v != null) return v.equalsIgnoreCase(LDAP_BOOLEAN_TRUE);
+        if (v != null) {
+            return v.equalsIgnoreCase(LDAP_BOOLEAN_TRUE);
+        }
         return nullValue;
     }
 
     /**
-     * Sets the attribute <code>attribute</code> to the boolean value
+     * Sets the attribute <code>attribute</code> to the boolean value.
      *
      * @param ctx       the DirContextAdapter
      * @param attribute the attribute name
@@ -71,7 +75,8 @@ public final class SpringLdapUtils {
     }
 
     /**
-     * Checks if the <code>objectclass</code> Attribute of the DirContext contains the given objectclass
+     * Checks if the <code>objectclass</code> Attribute of the DirContext contains
+     * the given objectclass.
      *
      * @param ctx         the DirContextAdaper to check
      * @param objectclass the objectclass value to look for (case does not matter)
@@ -79,12 +84,13 @@ public final class SpringLdapUtils {
      */
     public static boolean containsObjectClass(final DirContextAdapter ctx, final String objectclass) {
         final String[] objectclasses = ctx.getStringAttributes(OBJECTCLASS_ATTRIBUTE);
-        if (objectclasses == null || objectclasses.length == 0)
+        if (objectclasses == null || objectclasses.length == 0) {
             return false;
-        for (int i = 0; i < objectclasses.length; i++) {
-            final String ocls = objectclasses[i];
-            if (ocls.equalsIgnoreCase(objectclass))
+        }
+        for (final String ocls : objectclasses) {
+            if (ocls.equalsIgnoreCase(objectclass)) {
                 return true;
+            }
         }
         return false;
     }

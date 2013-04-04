@@ -30,41 +30,42 @@ import org.scribe.up.provider.OAuthProvider;
 import org.scribe.up.provider.ProvidersDefinition;
 
 /**
- * This handler authenticates OAuth credentials : it uses them to get the user profile returned by the provider for an authenticated user.
- * 
+ * This handler authenticates OAuth credentials : it uses them to get the
+ * user profile returned by the provider for an authenticated user.
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuthAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    
+
     @NotNull
     private final ProvidersDefinition providersDefinition;
-    
+
     public OAuthAuthenticationHandler(final ProvidersDefinition providersDefinition) {
         this.providersDefinition = providersDefinition;
     }
-    
+
     @Override
     public boolean supports(final Credentials credentials) {
-        return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
+        return credentials != null && OAuthCredentials.class.isAssignableFrom(credentials.getClass());
     }
-    
+
     @Override
     protected boolean doAuthentication(final Credentials credentials) throws AuthenticationException {
         final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
         log.debug("credential : {}", oauthCredentials);
-        
+
         final String providerType = oauthCredentials.getCredential().getProviderType();
         log.debug("providerType : {}", providerType);
-        
+
         // get provider
         final OAuthProvider provider = this.providersDefinition.findProvider(providerType);
         log.debug("provider : {}", provider);
-        
+
         // get user profile
         final UserProfile userProfile = provider.getUserProfile(oauthCredentials.getCredential());
         log.debug("userProfile : {}", userProfile);
-        
+
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
             oauthCredentials.setUserProfile(userProfile);
             return true;

@@ -30,9 +30,9 @@ import org.jasig.cas.authentication.principal.Credentials;
  * <p>
  * Callers to this class should first call supports to determine if the
  * AuthenticationHandler can authenticate the credentials provided.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.
@@ -42,7 +42,7 @@ public interface AuthenticationHandler {
 
     /**
      * Method to determine if the credentials supplied are valid.
-     * 
+     *
      * @param credentials The credentials to validate.
      * @return true if valid, return false otherwise.
      * @throws AuthenticationException An AuthenticationException can contain
@@ -56,7 +56,7 @@ public interface AuthenticationHandler {
      * provided. It may be a simple check of the Credentials class or something
      * more complicated such as scanning the information contained in the
      * Credentials object.
-     * 
+     *
      * @param credentials The credentials to check.
      * @return true if the handler supports the Credentials, false othewrise.
      */

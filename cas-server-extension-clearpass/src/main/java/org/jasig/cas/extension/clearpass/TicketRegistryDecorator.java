@@ -33,12 +33,11 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
  * Decorator that captures tickets and attempts to map them.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 1.0.7
  */
 public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
-    /** The real instance of the ticket registry that is to be decorated */
+    /** The real instance of the ticket registry that is to be decorated. */
     @NotNull
     private final TicketRegistry ticketRegistry;
 
@@ -48,10 +47,10 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
     /**
      * Constructs an instance of the decorator wrapping the real ticket registry instance inside.
-     * 
+     *
      * @param actualTicketRegistry The real instance of the ticket registry that is to be decorated
      * @param cache Map instance where credentials are stored.
-     * 
+     *
      * @see EhcacheBackedMap
      */
     public TicketRegistryDecorator(final TicketRegistry actualTicketRegistry, final Map<String, String> cache) {
@@ -59,6 +58,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         this.cache = cache;
     }
 
+    @Override
     public void addTicket(final Ticket ticket) {
         if (ticket instanceof TicketGrantingTicket) {
             final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) ticket;
@@ -73,10 +73,12 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         this.ticketRegistry.addTicket(ticket);
     }
 
+    @Override
     public Ticket getTicket(final String ticketId) {
         return this.ticketRegistry.getTicket(ticketId);
     }
 
+    @Override
     public boolean deleteTicket(final String ticketId) {
         final String userName = this.cache.get(ticketId);
 
@@ -88,23 +90,28 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         return this.ticketRegistry.deleteTicket(ticketId);
     }
 
+    @Override
     public Collection<Ticket> getTickets() {
         return this.ticketRegistry.getTickets();
     }
 
+    @Override
     public int sessionCount() {
         if (this.ticketRegistry instanceof TicketRegistryState) {
-          return ((TicketRegistryState)this.ticketRegistry).sessionCount();
+            return ((TicketRegistryState) this.ticketRegistry).sessionCount();
         }
-        log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        log.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.",
+                this.ticketRegistry.getClass().getName());
         return super.sessionCount();
     }
 
+    @Override
     public int serviceTicketCount() {
         if (this.ticketRegistry instanceof TicketRegistryState) {
-          return ((TicketRegistryState)this.ticketRegistry).serviceTicketCount();
+            return ((TicketRegistryState) this.ticketRegistry).serviceTicketCount();
         }
-        log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.", this.ticketRegistry.getClass().getName());
+        log.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.",
+                this.ticketRegistry.getClass().getName());
         return super.serviceTicketCount();
     }
 }
