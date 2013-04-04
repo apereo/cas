@@ -57,9 +57,8 @@ import org.jasig.cas.authentication.principal.Principal;
  * CredentialsToPrincipal resolvers that know how to process the credentials
  * provided.
  * </ul>
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  * @see org.jasig.cas.authentication.handler.AuthenticationHandler
  * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver
@@ -79,14 +78,15 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
     private List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers;
 
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(
+            final Credentials credentials) throws AuthenticationException {
         boolean foundSupported = false;
         boolean authenticated = false;
         AuthenticationHandler authenticatedClass = null;
         String handlerName;
-        
-        AuthenticationException unAuthSupportedHandlerException = BadCredentialsAuthenticationException.ERROR; 
-     
+
+        AuthenticationException unAuthSupportedHandlerException = BadCredentialsAuthenticationException.ERROR;
+
         for (final AuthenticationHandler authenticationHandler : this.authenticationHandlers) {
             if (authenticationHandler.supports(credentials)) {
                 foundSupported = true;
@@ -119,10 +119,11 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
 
         foundSupported = false;
 
-        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver : this.credentialsToPrincipalResolvers) {
+        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver
+                : this.credentialsToPrincipalResolvers) {
             if (credentialsToPrincipalResolver.supports(credentials)) {
                 final Principal principal = credentialsToPrincipalResolver.resolvePrincipal(credentials);
-                log.info("Resolved principal " + principal);
+                log.info("Resolved principal {}", principal);
                 foundSupported = true;
                 if (principal != null) {
                     return new Pair<AuthenticationHandler,Principal>(authenticatedClass, principal);
@@ -131,14 +132,11 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         }
 
         if (foundSupported) {
-            if (log.isDebugEnabled()) {
-                log.debug("CredentialsToPrincipalResolver found but no principal returned.");
-            }
-
+            log.debug("CredentialsToPrincipalResolver found but no principal returned.");
             throw BadCredentialsAuthenticationException.ERROR;
         }
 
-        log.error("CredentialsToPrincipalResolver not found for " + credentials.getClass().getName());
+        log.error("CredentialsToPrincipalResolver not found for {}", credentials.getClass().getName());
         throw UnsupportedCredentialsException.ERROR;
     }
 

@@ -18,17 +18,20 @@
  */
 package org.jasig.cas.web.view;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -38,33 +41,36 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  */
-public class Cas10ResponseViewTests extends TestCase {
+public class Cas10ResponseViewTests {
 
     private final Cas10ResponseView view = new Cas10ResponseView();
 
     private Map<String, Object> model;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.model = new HashMap<String,Object>();
         List<Authentication> list = new ArrayList<Authentication>();
         list.add(new ImmutableAuthentication(new SimplePrincipal("test")));
         this.model.put("assertion", new ImmutableAssertionImpl(list,
-            TestUtils.getService("TestService"), true));
+                TestUtils.getService("TestService"), true));
     }
 
+    @Test
     public void testSuccessView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         this.view.setSuccessResponse(true);
         this.view.render(this.model, new MockHttpServletRequest(), response
-            );
+                );
         assertEquals("yes\ntest\n", response.getContentAsString());
     }
 
+    @Test
     public void testFailureView() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         this.view.setSuccessResponse(false);
         this.view.render(this.model, new MockHttpServletRequest(),
-            response);
+                response);
         assertEquals("no\n\n", response.getContentAsString());
     }
 }

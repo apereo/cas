@@ -27,12 +27,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Unit test for {@link InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:/inMemoryThrottledSubmissionContext.xml"})
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests
-        extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
+extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     private InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;

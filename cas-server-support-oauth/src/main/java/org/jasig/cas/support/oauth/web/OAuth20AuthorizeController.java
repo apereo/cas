@@ -35,36 +35,37 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is in charge of responding to the authorize call in OAuth protocol. It stores the callback url and redirects user to the
+ * This controller is in charge of responding to the authorize
+ * call in OAuth protocol. It stores the callback url and redirects user to the
  * login page with the callback service.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuth20AuthorizeController extends AbstractController {
-    
+
     private static Logger log = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
-    
+
     private final String loginUrl;
-    
+
     private final ServicesManager servicesManager;
-    
+
     public OAuth20AuthorizeController(final ServicesManager servicesManager, final String loginUrl) {
         this.servicesManager = servicesManager;
         this.loginUrl = loginUrl;
     }
-    
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
-        
+            throws Exception {
+
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
         log.debug("clientId : {}", clientId);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
         log.debug("redirect_uri : {}", redirectUri);
         final String state = request.getParameter(OAuthConstants.STATE);
         log.debug("state : {}", state);
-        
+
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
             log.error("missing clientId");
@@ -75,7 +76,7 @@ public final class OAuth20AuthorizeController extends AbstractController {
             log.error("missing redirectUri");
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
-        
+
         // name of the CAS service
         final Collection<RegisteredService> services = servicesManager.getAllServices();
         RegisteredService service = null;
@@ -89,30 +90,30 @@ public final class OAuth20AuthorizeController extends AbstractController {
             log.error("Unknown clientId : {}", clientId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
-        
+
         final String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
             log.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
-        
+
         // keep info in session
         final HttpSession session = request.getSession();
         session.setAttribute(OAuthConstants.OAUTH20_CALLBACKURL, redirectUri);
         session.setAttribute(OAuthConstants.OAUTH20_SERVICE_NAME, service.getTheme());
         session.setAttribute(OAuthConstants.OAUTH20_STATE, state);
-        
+
         final String callbackAuthorizeUrl = request.getRequestURL().toString()
-            .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+                .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         log.debug("callbackAuthorizeUrl : {}", callbackAuthorizeUrl);
-        
+
         final String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE,
-                                                                   callbackAuthorizeUrl);
+                callbackAuthorizeUrl);
         log.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
     }
-    
+
     static void setLogger(final Logger aLogger) {
         log = aLogger;
     }

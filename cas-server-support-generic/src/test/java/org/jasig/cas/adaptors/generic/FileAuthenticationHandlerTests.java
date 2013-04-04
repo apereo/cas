@@ -18,36 +18,37 @@
  */
 package org.jasig.cas.adaptors.generic;
 
+import static org.junit.Assert.*;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import junit.framework.TestCase;
-
-import org.jasig.cas.adaptors.generic.FileAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.handler.UnsupportedCredentialsException;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Scott Battaglia
- * @version $Id: FileAuthenticationHandlerTests.java,v 1.3 2005/02/27 05:49:26
- * sbattaglia Exp $
  */
-public class FileAuthenticationHandlerTests extends TestCase {
+public class FileAuthenticationHandlerTests  {
 
     private FileAuthenticationHandler authenticationHandler;
 
     /**
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         this.authenticationHandler = new FileAuthenticationHandler();
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication.txt"));
+        this.authenticationHandler.setFileName(
+                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication.txt"));
 
     }
 
+    @Test
     public void testSupportsProperUserCredentials() {
         UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -62,6 +63,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         }
     }
 
+    @Test
     public void testDoesntSupportBadUserCredentials() {
         try {
             final HttpBasedServiceCredentials c = new HttpBasedServiceCredentials(
@@ -72,6 +74,7 @@ public class FileAuthenticationHandlerTests extends TestCase {
         }
     }
 
+    @Test
     public void testAuthenticatesUserInFileWithDefaultSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -85,62 +88,49 @@ public class FileAuthenticationHandlerTests extends TestCase {
         }
     }
 
-    public void testFailsUserNotInFileWithDefaultSeparator() {
+    @Test
+    public void testFailsUserNotInFileWithDefaultSeparator() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testFailsNullUserName() {
+    @Test
+    public void testFailsNullUserName() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername(null);
         c.setPassword("user");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testFailsNullUserNameAndPassword() {
+    @Test
+    public void testFailsNullUserNameAndPassword() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername(null);
         c.setPassword(null);
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testFailsNullPassword() {
+    @Test
+    public void testFailsNullPassword() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername("scott");
         c.setPassword(null);
 
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
+    @Test
     public void testAuthenticatesUserInFileWithCommaSeparator() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
+        this.authenticationHandler.setFileName(
+                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("scott");
@@ -153,49 +143,41 @@ public class FileAuthenticationHandlerTests extends TestCase {
         }
     }
 
-    public void testFailsUserNotInFileWithCommaSeparator() {
+    @Test
+    public void testFailsUserNotInFileWithCommaSeparator() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
+        this.authenticationHandler.setFileName(
+                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("fds");
         c.setPassword("rutgers");
-
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testFailsGoodUsernameBadPassword() {
+    @Test
+    public void testFailsGoodUsernameBadPassword() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
-        this.authenticationHandler.setFileName(new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
+        this.authenticationHandler.setFileName(
+                new ClassPathResource("org/jasig/cas/adaptors/generic/authentication2.txt"));
         this.authenticationHandler.setSeparator(",");
 
         c.setUsername("scott");
         c.setPassword("rutgers1");
 
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testAuthenticateNoFileName() {
+    @Test
+    public void testAuthenticateNoFileName() throws Exception {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         this.authenticationHandler.setFileName(new ClassPathResource("fff"));
 
         c.setUsername("scott");
         c.setPassword("rutgers");
 
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (Exception e) {
-            // this is good
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 }

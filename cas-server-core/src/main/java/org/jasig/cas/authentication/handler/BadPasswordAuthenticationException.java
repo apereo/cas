@@ -21,9 +21,9 @@ package org.jasig.cas.authentication.handler;
 /**
  * The exception to throw when we know the username is correct but the password
  * is not.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class BadPasswordAuthenticationException extends
@@ -49,7 +49,7 @@ public class BadPasswordAuthenticationException extends
     /**
      * Constructor that allows for the chaining of exceptions. Defaults to the
      * default code provided for this exception.
-     * 
+     *
      * @param throwable the chained exception.
      */
     public BadPasswordAuthenticationException(final Throwable throwable) {
@@ -60,7 +60,7 @@ public class BadPasswordAuthenticationException extends
      * Constructor that allows for providing a custom error code for this class.
      * Error codes are often used to resolve exceptions into messages. Providing
      * a custom error code allows the use of a different message.
-     * 
+     *
      * @param code the custom code to use with this exception.
      */
     public BadPasswordAuthenticationException(final String code) {
@@ -70,7 +70,7 @@ public class BadPasswordAuthenticationException extends
     /**
      * Constructor that allows for chaining of exceptions and a custom error
      * code.
-     * 
+     *
      * @param code the custom error code to use in message resolving.
      * @param throwable the chained exception.
      */

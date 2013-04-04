@@ -27,24 +27,24 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.2.1
  *
  */
 public final class RemoteAddressNonInteractiveCredentialsAction extends
-    AbstractNonInteractiveCredentialsAction {
+                AbstractNonInteractiveCredentialsAction {
 
+    @Override
     protected Credentials constructCredentialsFromRequest(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final String remoteAddress = request.getRemoteAddr();
-        
+
         if (StringUtils.hasText(remoteAddress)) {
             return new RemoteAddressCredentials(remoteAddress);
         }
-        
+
         logger.debug("No remote address found.");
-        return null;    
+        return null;
     }
 }

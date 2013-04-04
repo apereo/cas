@@ -18,28 +18,34 @@
  */
 package org.jasig.cas.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public class DefaultRandomStringGeneratorTests extends TestCase {
+public class DefaultRandomStringGeneratorTests {
 
     private static final int LENGTH = 35;
 
     private RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
         LENGTH);
 
+    @Test
     public void testMaxLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getMaxLength());
     }
 
+    @Test
     public void testMinLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getMinLength());
     }
 
+    @Test
     public void testRandomString() {
         assertNotSame(this.randomStringGenerator.getNewString(),
             this.randomStringGenerator.getNewString());

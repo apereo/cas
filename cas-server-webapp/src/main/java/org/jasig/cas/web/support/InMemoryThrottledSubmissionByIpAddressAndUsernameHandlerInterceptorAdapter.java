@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
  * a local campus wireless network.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.3.5
  */
 public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {

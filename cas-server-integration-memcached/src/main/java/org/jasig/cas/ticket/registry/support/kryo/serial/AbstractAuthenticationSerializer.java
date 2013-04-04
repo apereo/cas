@@ -31,7 +31,6 @@ import org.jasig.cas.authentication.principal.Principal;
  * Serializer for classes that extend {@link org.jasig.cas.authentication.AbstractAuthentication}.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public abstract class AbstractAuthenticationSerializer<T extends Authentication> extends SimpleSerializer<T> {
 

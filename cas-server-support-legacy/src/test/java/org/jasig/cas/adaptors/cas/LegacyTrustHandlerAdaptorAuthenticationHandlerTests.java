@@ -19,31 +19,26 @@
 
 package org.jasig.cas.adaptors.cas;
 
+import static org.junit.Assert.*;
+
 import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockTrustHandler;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import junit.framework.TestCase;
 
 /**
  * Testcase for LegacyTrustAdaptorAuthenticationHandler.
- * 
- * @version $Revision$ $Date$
  */
-public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
-    TestCase {
+public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests {
 
     private LegacyTrustHandlerAdaptorAuthenticationHandler legacyTrustAdaptor;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         this.legacyTrustAdaptor = new LegacyTrustHandlerAdaptorAuthenticationHandler();
         this.legacyTrustAdaptor.setTrustHandler(new MockTrustHandler());
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     /**
@@ -51,25 +46,20 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
      * supports an instance of LegacyCasTrustedCredentials, and does not support
      * an instance of LegacyCasCredentials.
      */
+    @Test
     public void testSupports() {
-
         assertFalse(this.legacyTrustAdaptor.supports(null));
-
         LegacyCasTrustedCredentials goodCred = new LegacyCasTrustedCredentials();
-
         assertTrue(this.legacyTrustAdaptor.supports(goodCred));
-
         LegacyCasCredentials badCred = new LegacyCasCredentials();
-
         assertFalse(this.legacyTrustAdaptor.supports(badCred));
-
     }
 
     /**
      * Test a successful authentication.
-     * 
      * @throws AuthenticationException as one failure modality
      */
+    @Test
     public void testAuthenticate() {
         LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
 
@@ -91,9 +81,9 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
 
     /**
      * Test an unsuccessful authentication.
-     * 
      * @throws AuthenticationException - as one failure modality
      */
+    @Test
     public void testAuthenticateFails() {
         LegacyCasTrustedCredentials trustedCredentials = new LegacyCasTrustedCredentials();
 
@@ -116,9 +106,9 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests extends
     /**
      * Test that throws UnsupportedCredentialsException for an unsupported
      * credential.
-     * 
      * @throws AuthenticationException
      */
+    @Test
     public void testAuthenticateUnsupported() {
         LegacyCasCredentials badCredentials = new LegacyCasCredentials();
         assertFalse(this.legacyTrustAdaptor.supports(badCredentials));

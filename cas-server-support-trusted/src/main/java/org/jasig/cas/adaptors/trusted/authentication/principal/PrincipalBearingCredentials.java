@@ -32,14 +32,12 @@ import org.springframework.util.Assert;
  * web-servicey calls to CAS. Rather, the code constructing these Credentials
  * must be trusted to perform appropriate authentication before issuing these
  * credentials.
- * 
+ *
  * @author Andrew Petro
- * @version $Revision$ $Date$
  * @since 3.0.5
  */
 public final class PrincipalBearingCredentials implements Credentials {
 
-    /** Unique id for serialization */
     private static final long serialVersionUID = -3779730112251585974L;
 
     /** The trusted principal. */
@@ -52,13 +50,14 @@ public final class PrincipalBearingCredentials implements Credentials {
 
     /**
      * Get the previously authenticated Principal.
-     * 
+     *
      * @return authenticated Principal
      */
     public Principal getPrincipal() {
         return this.principal;
     }
 
+    @Override
     public String toString() {
         return "[name: " + this.principal.toString() + "]";
     }

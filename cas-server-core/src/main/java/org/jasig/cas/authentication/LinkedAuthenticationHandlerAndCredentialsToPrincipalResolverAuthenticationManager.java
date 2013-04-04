@@ -31,28 +31,32 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
- * Ensures that all authentication handlers are tried, but if one is tried, the associated CredentialsToPrincipalResolver is used.
+ * Ensures that all authentication handlers are tried, but if one is tried,
+ * the associated CredentialsToPrincipalResolver is used.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.3.5
  */
-public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager extends AbstractAuthenticationManager {
+public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager
+            extends AbstractAuthenticationManager {
 
     @NotNull
     @Size(min = 1)
     private final Map<AuthenticationHandler, CredentialsToPrincipalResolver> linkedHandlers;
 
-    public LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager(final Map<AuthenticationHandler,CredentialsToPrincipalResolver> linkedHandlers) {
-        this.linkedHandlers = linkedHandlers; 
+    public LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager(
+            final Map<AuthenticationHandler,CredentialsToPrincipalResolver> linkedHandlers) {
+        this.linkedHandlers = linkedHandlers;
     }
 
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials) throws AuthenticationException {
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(
+            final Credentials credentials) throws AuthenticationException {
         boolean foundOneThatWorks = false;
         String handlerName;
-        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR; 
-        
+        AuthenticationException authException = BadCredentialsAuthenticationException.ERROR;
+
         for (final AuthenticationHandler authenticationHandler : this.linkedHandlers.keySet()) {
             if (!authenticationHandler.supports(credentials)) {
                 continue;
@@ -61,7 +65,7 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
             foundOneThatWorks = true;
             boolean authenticated = false;
             handlerName = authenticationHandler.getClass().getName();
-                        
+
             try {
                 authenticated = authenticationHandler.authenticate(credentials);
             } catch (AuthenticationException e) {
@@ -69,7 +73,7 @@ public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthent
                 logAuthenticationHandlerError(handlerName, credentials, e);
             } catch (Exception e) {
                 logAuthenticationHandlerError(handlerName, credentials, e);
-            } 
+            }
 
             if (authenticated) {
                 log.info("{} successfully authenticated {}", handlerName, credentials);

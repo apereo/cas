@@ -28,16 +28,15 @@ import java.util.regex.Pattern;
  * Mutable registered service that uses Java regular expressions for service matching.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 @Entity
 @DiscriminatorValue("regex")
 public class RegexRegisteredService extends AbstractRegisteredService {
-    /** Serialization version marker */
+
     private static final long serialVersionUID = -8258660210826975771L;
 
     private transient Pattern servicePattern;
-    
+
     public void setServiceId(final String id) {
         servicePattern = createPattern(id);
         serviceId = id;

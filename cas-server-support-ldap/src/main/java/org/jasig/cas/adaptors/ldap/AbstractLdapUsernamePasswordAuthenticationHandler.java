@@ -33,52 +33,54 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class to handle common LDAP functionality.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.3
  */
 public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
-    AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+        AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     /** LdapTemplate to execute ldap queries. */
     @NotNull
     private LdapTemplate ldapTemplate;
-    
-    /** Instance of ContextSource */
+
+    /** Instance of ContextSource. */
     @NotNull
     private ContextSource contextSource;
 
     /** The filter path to the uid of the user. */
     @NotNull
     private String filter;
-    
-    /** List of error definitions and their types, based on which the user will be directed to a given view in the flow **/
+
+    /**
+     * List of error definitions and their types, based on
+     * which the user will be directed to a given view in the flow.
+     **/
     private List<LdapErrorDefinition> ldapErrorDefinitions;
-    
+
     /** Whether the LdapTemplate should ignore partial results. */
     private boolean ignorePartialResultException = false;
 
     /**
      * Method to set the datasource and generate a JdbcTemplate.
-     * 
+     *
      * @param contextSource the datasource to use.
      */
     public final void setContextSource(final ContextSource contextSource) {
         this.contextSource = contextSource;
     }
-    
+
     public final void setIgnorePartialResultException(final boolean ignorePartialResultException) {
         this.ignorePartialResultException = ignorePartialResultException;
     }
-    
+
     public void setLdapErrorDefinitions(final List<LdapErrorDefinition> ldapErrorDefs) {
         this.ldapErrorDefinitions = ldapErrorDefs;
     }
 
     /**
-     * Method to return the LdapTemplate
-     * 
+     * Method to return the LdapTemplate.
+     *
      * @return a fully created LdapTemplate.
      */
     protected final LdapTemplate getLdapTemplate() {
@@ -93,6 +95,7 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
         return this.filter;
     }
 
+    @Override
     public final void afterPropertiesSet() throws Exception {
         Assert.isTrue(this.filter.contains("%u") || this.filter.contains("%U"), "filter must contain %u or %U");
 
@@ -123,34 +126,33 @@ public abstract class AbstractLdapUsernamePasswordAuthenticationHandler extends
     public final void setFilter(final String filter) {
         this.filter = filter;
     }
-    
+
     /**
-     * Available ONLY for subclasses that would want to customize how ldap error codes are handled
+     * Available ONLY for subclasses that would want to customize how ldap error codes are handled.
      *
      * @param e The ldap exception that occurred.
      * @return an instance of {@link AuthenticationException}
      */
     protected AuthenticationException handleLdapError(final Exception e) {
         if (this.ldapErrorDefinitions == null || this.ldapErrorDefinitions.size() == 0) {
-            if (this.log.isDebugEnabled())
-                this.log.debug("No error definitions are defined. Throwing error " + e.getMessage());
+            log.debug("No error definitions are defined. Throwing error {}", e.getMessage());
             return BadCredentialsAuthenticationException.ERROR;
         }
 
-        if (this.log.isDebugEnabled())
-            this.log.debug("Handling error: " + e.getMessage());
+        log.debug("Handling error: {}", e.getMessage());
 
-        for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions)
+        for (final LdapErrorDefinition ldapErrorDef : this.ldapErrorDefinitions) {
             if (ldapErrorDef.matches(e.getMessage())) {
-                if (this.log.isDebugEnabled())
-                    this.log.debug("Found error type " + ldapErrorDef.getType() +  ". Throwing error for " + e.getMessage());
+                log.debug("Found error type {}. Throwing error for {}",
+                        ldapErrorDef.getType(), e.getMessage());
 
-                return new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE, e.getMessage(), ldapErrorDef.getType());
+                return new LdapAuthenticationException(BadCredentialsAuthenticationException.CODE,
+                        e.getMessage(), ldapErrorDef.getType());
 
             }
+        }
 
-        if (this.log.isDebugEnabled())
-            this.log.debug("No error definition could be matched against the error. Throwing default error for " + e.getMessage());
+        log.debug("No error definition could be matched against the error. Throwing default error for {}", e.getMessage());
 
         return BadCredentialsAuthenticationException.ERROR;
     }

@@ -31,32 +31,34 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.5
  *
  */
 public final class JBossCacheFactoryBean implements FactoryBean, InitializingBean, DisposableBean {
-    
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     private Cache<String, Ticket> cache;
-    
+
     private Resource configLocation;
 
+    @Override
     public Object getObject() throws Exception {
         return this.cache;
     }
 
+    @Override
     public Class<Cache> getObjectType() {
         return Cache.class;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         final CacheFactory<String, Ticket> cf = new DefaultCacheFactory<String, Ticket>();
         this.cache = cf.createCache(this.configLocation.getInputStream());
@@ -67,6 +69,7 @@ public final class JBossCacheFactoryBean implements FactoryBean, InitializingBea
         this.configLocation = configLocation;
     }
 
+    @Override
     public void destroy() throws Exception {
         log.info("Shutting down TreeCache service.");
         this.cache.destroy();

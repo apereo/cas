@@ -37,7 +37,6 @@ import java.util.Map;
  *
  * @author Marvin S. Addison
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.3.4
  **/
 public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean implements ApplicationContextAware, InitializingBean {
@@ -50,10 +49,7 @@ public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean i
         final Map<String,Trigger> triggers = this.applicationContext.getBeansOfType(Trigger.class);
         super.setTriggers(triggers.values().toArray(new Trigger[triggers.size()]));
 
-        if (log.isDebugEnabled()) {
-            log.debug("Autowired the following triggers defined in application context: " + triggers.keySet().toString());
-        }
-
+        log.debug("Autowired the following triggers defined in application context: {}", triggers.keySet().toString());
         super.afterPropertiesSet();
     }
 

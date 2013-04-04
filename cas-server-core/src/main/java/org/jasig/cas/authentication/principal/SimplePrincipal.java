@@ -27,9 +27,8 @@ import org.springframework.util.Assert;
 /**
  * Simple implementation of a AttributePrincipal that exposes an unmodifiable
  * map of attributes.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/04/19 20:13:01 $
  * @since 3.1
  */
 public class SimplePrincipal implements Principal {
@@ -61,7 +60,7 @@ public class SimplePrincipal implements Principal {
     }
 
     /**
-     * Returns an immutable map.
+     * @return An immutable map of principal attributes
      */
     public Map<String, Object> getAttributes() {
         return this.attributes;
