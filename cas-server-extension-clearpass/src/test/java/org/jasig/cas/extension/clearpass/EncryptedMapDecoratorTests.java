@@ -37,16 +37,17 @@ import org.junit.Test;
  */
 public class EncryptedMapDecoratorTests {
 
-    private Map<String, String>		map;
+    private Map<String, String> map;
 
-    private EncryptedMapDecorator	decorator;
+    private EncryptedMapDecorator decorator;
 
     private CacheManager cacheManager;
 
     @Before
     public void setUp() throws Exception {
         try {
-            this.cacheManager = new CacheManager(this.getClass().getClassLoader().getResourceAsStream("ehcacheClearPass.xml"));
+            this.cacheManager = new CacheManager(this.getClass().getClassLoader()
+                    .getResourceAsStream("ehcacheClearPass.xml"));
             final Cache cache = this.cacheManager.getCache("clearPassCache");
             this.map = new EhcacheBackedMap(cache);
             this.decorator = new EncryptedMapDecorator(map);

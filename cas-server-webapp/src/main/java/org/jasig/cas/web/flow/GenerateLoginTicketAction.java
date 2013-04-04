@@ -20,10 +20,10 @@ package org.jasig.cas.web.flow;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 
@@ -40,15 +40,14 @@ public class GenerateLoginTicketAction {
     private static final String PREFIX = "LT";
 
     /** Logger instance. */
-    private final Log logger = LogFactory.getLog(getClass());
-
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private UniqueTicketIdGenerator ticketIdGenerator;
 
     public final String generate(final RequestContext context) {
         final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
-        this.logger.debug("Generated login ticket " + loginTicket);
+        log.debug("Generated login ticket {}", loginTicket);
         WebUtils.putLoginTicket(context, loginTicket);
         return "generated";
     }

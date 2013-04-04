@@ -7,7 +7,7 @@
 <!--
     Checkstyle-Configuration: CAS
     Description: 
-Checkstyle configuration based on Sun's converntions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
+Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -43,7 +43,6 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="TypeName"/>
     <module name="AvoidStarImport">
       <property name="severity" value="error"/>
-      <property name="allowStaticMemberImports" value="true"/>
     </module>
     <module name="IllegalImport">
       <property name="severity" value="error"/>
@@ -119,7 +118,9 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
   </module>
   <module name="Translation"/>
   <module name="FileLength"/>
-  <module name="FileTabCharacter"/>
+  <module name="FileTabCharacter">
+      <property name="severity" value="error"/>
+  </module>
   <module name="RegexpSingleline">
     <property name="severity" value="error"/>
     <property name="format" value=".\s+$"/>
