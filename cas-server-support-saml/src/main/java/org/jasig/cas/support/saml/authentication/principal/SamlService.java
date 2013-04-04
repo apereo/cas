@@ -24,12 +24,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -42,7 +42,7 @@ import org.springframework.util.StringUtils;
  */
 public final class SamlService extends AbstractWebApplicationService {
 
-    private static final Log log = LogFactory.getLog(SamlService.class);
+    private static final Logger log = LoggerFactory.getLogger(SamlService.class);
 
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
@@ -124,12 +124,10 @@ public final class SamlService extends AbstractWebApplicationService {
             requestId = null;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Attempted to extract Request from HttpServletRequest. Results:");
-            log.debug(String.format("Request Body: %s", requestBody));
-            log.debug(String.format("Extracted ArtifactId: %s", artifactId));
-            log.debug(String.format("Extracted Request Id: %s", requestId));
-        }
+        log.debug("Attempted to extract Request from HttpServletRequest. Results:");
+        log.debug(String.format("Request Body: %s", requestBody));
+        log.debug(String.format("Extracted ArtifactId: %s", artifactId));
+        log.debug(String.format("Extracted Request Id: %s", requestId));
 
         return new SamlService(id, service, artifactId, httpClient, requestId);
     }
