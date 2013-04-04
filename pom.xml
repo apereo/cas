@@ -506,7 +506,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       
       <dependency>
         <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache-core</artifactId>
+        <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
       </dependency>  
 
@@ -969,7 +969,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.9.0</mockito.version>
-    <ehcache.version>2.6.5</ehcache.version>
+    <ehcache.version>2.7.0</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.1</joda-time.version>
 	
