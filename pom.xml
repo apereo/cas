@@ -232,6 +232,33 @@
     </pluginManagement>
     
     <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.10</version>
+            <configuration>
+                <consoleOutput>true</consoleOutput>
+                <configLocation>/checkstyle-rules.xml</configLocation>
+                <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                <failsOnError>true</failsOnError>
+            </configuration>
+            <executions>
+                <execution>
+                   <id>checkstyle</id>
+                   <goals>
+                       <goal>checkstyle</goal>
+                   </goals>
+                   <phase>compile</phase>
+                </execution>
+            </executions>
+            <dependencies>
+               <dependency>
+                  <groupId>com.puppycrawl.tools</groupId>
+                  <artifactId>checkstyle</artifactId>
+                  <version>${checkstyle.version}</version>
+               </dependency>
+            </dependencies>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -898,7 +925,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9</version>
+		    <version>2.9</version>
             <configuration>
               <charset>${project.reporting.outputEncoding}</charset>
               <encoding>${project.reporting.outputEncoding}</encoding>
@@ -912,33 +939,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
                 </goals>
               </execution>
             </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.10</version>
-            <configuration>
-                <consoleOutput>true</consoleOutput>
-                <configLocation>/checkstyle-rules.xml</configLocation>
-                <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
-                <failsOnError>true</failsOnError>
-            </configuration>
-            <executions>
-                <execution>
-                   <id>checkstyle</id>
-                   <goals>
-                       <goal>checkstyle</goal>
-                   </goals>
-                   <phase>compile</phase>
-                </execution>
-            </executions>
-            <dependencies>
-               <dependency>
-                  <groupId>checkstyle</groupId>
-                  <artifactId>checkstyle</artifactId>
-                  <version>5.0</version>
-               </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>
@@ -965,6 +965,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <commons.codec.version>1.4</commons.codec.version>
     <log4j.version>1.2.15</log4j.version>
     <junit.version>4.10</junit.version>
+    <checkstyle.version>5.6</checkstyle.version>
     <commons.lang.version>2.5</commons.lang.version>
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.0</commons.io.version>
