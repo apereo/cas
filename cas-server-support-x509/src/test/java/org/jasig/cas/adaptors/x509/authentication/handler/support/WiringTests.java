@@ -30,7 +30,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Verifies Spring IOC wiring for X.509 beans.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */

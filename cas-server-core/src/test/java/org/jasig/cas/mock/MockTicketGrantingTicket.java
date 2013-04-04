@@ -33,36 +33,35 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Mock ticket-granting ticket;
+ * Mock ticket-granting ticket.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
-    
+
     private final String id;
-    
+
     private final Authentication authentication;
-    
+
     private final Date created;
-    
+
     private int usageCount;
 
     private boolean expired;
-            
+
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         authentication = new ImmutableAuthentication(new SimplePrincipal(principal));
         created = new Date();
     }
-    
+
     public Authentication getAuthentication() {
         return authentication;
     }
-    
+
     public ServiceTicket grantServiceTicket(final Service service) {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true);
     }

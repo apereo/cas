@@ -29,7 +29,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * <p>
  * Instanciators of the MutableAuthentication class must take care that the map
  * they provide is serializable (i.e. HashMap).
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0.3
  */
@@ -44,16 +44,17 @@ public final class MutableAuthentication extends AbstractAuthentication {
     public MutableAuthentication(final Principal principal) {
         this(principal, new Date());
     }
-    
+
     public MutableAuthentication(final Principal principal, final Date date) {
         this(principal, date, new HashMap<String, Object>());
     }
 
-    public MutableAuthentication(final Principal principal, final Date date, final Map<String,Object> authenticationAttributes) {
+    public MutableAuthentication(final Principal principal, final Date date,
+            final Map<String,Object> authenticationAttributes) {
         super(principal, authenticationAttributes);
         this.authenticatedDate = date;
     }
-    
+
     public Date getAuthenticatedDate() {
         return this.authenticatedDate;
     }

@@ -29,7 +29,6 @@ import org.jasig.cas.util.HttpClient;
  * Serializer for {@link SimpleWebApplicationServiceImpl} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public final class SimpleWebApplicationServiceSerializer extends SimpleSerializer<SimpleWebApplicationServiceImpl> {
     protected final Kryo kryo;

@@ -70,8 +70,9 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
             reqCtx.getMessageContext().addMessage(new MessageBuilder().error().code(code).defaultText(code).build());
         } catch (final Exception fe) {
 
-            if (this.logger.isErrorEnabled())
+            if (this.logger.isErrorEnabled()) {
                 this.logger.error(fe.getMessage(), fe);
+            }
 
         }
     }
@@ -83,8 +84,9 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
 
-        if (this.logger.isDebugEnabled())
+        if (this.logger.isDebugEnabled()) {
             this.logger.debug("Checking account status for password...");
+        }
 
         final String ticket = context.getRequestScope().getString("serviceTicketId");
         final UsernamePasswordCredentials credentials = (UsernamePasswordCredentials) context.getFlowScope().get("credentials");
@@ -98,8 +100,9 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
             if (userId == null && ticket == null) {
                 msgToLog = "No user principal or service ticket available.";
 
-                if (this.logger.isErrorEnabled())
+                if (this.logger.isErrorEnabled()) {
                     this.logger.error(msgToLog);
+                }
 
                 throw new LdapPasswordPolicyEnforcementException(BadCredentialsAuthenticationException.CODE, msgToLog);
             }
@@ -108,14 +111,16 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
 
                 returnedEvent = success();
 
-                if (this.logger.isDebugEnabled())
+                if (this.logger.isDebugEnabled()) {
                     this.logger.debug("Received service ticket " + ticket
                             + " but no user id. This is not a login attempt, so skip password enforcement.");
+                }
 
             } else {
 
-                if (this.logger.isDebugEnabled())
+                if (this.logger.isDebugEnabled()) {
                     this.logger.debug("Retrieving number of days to password expiration date for user " + userId);
+                }
 
                 final long daysToExpirationDate = getPasswordPolicyEnforcer().getNumberOfDaysToPasswordExpirationDate(userId);
 
@@ -123,29 +128,33 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
 
                     returnedEvent = success();
 
-                    if (this.logger.isDebugEnabled())
+                    if (this.logger.isDebugEnabled()) {
                         this.logger.debug("Password for " + userId + " is not expiring");
+                    }
                 } else {
                     returnedEvent = warning();
 
-                    if (this.logger.isDebugEnabled())
+                    if (this.logger.isDebugEnabled()) {
                         this.logger.debug("Password for " + userId + " is expiring in " + daysToExpirationDate + " days");
+                    }
 
                     context.getFlowScope().put("expireDays", daysToExpirationDate);
                 }
 
             }
         } catch (final LdapAuthenticationException e) {
-            if (this.logger.isErrorEnabled())
+            if (this.logger.isErrorEnabled()) {
                 this.logger.error(e.getMessage(), e);
+            }
 
             populateErrorsInstance(e, context);
             returnedEvent = error();
         } finally {
 
 
-            if (this.logger.isDebugEnabled())
+            if (this.logger.isDebugEnabled()) {
                 this.logger.debug("Switching to flow event id " + returnedEvent.getId() + " for user " + userId);
+            }
         }
 
         return returnedEvent;
@@ -155,7 +164,8 @@ public final class PasswordPolicyEnforcementAction extends AbstractAction implem
     protected void initAction() throws Exception {
         Assert.notNull(getPasswordPolicyEnforcer(), "password policy enforcer cannot be null");
 
-        if (this.logger.isDebugEnabled())
+        if (this.logger.isDebugEnabled()) {
             this.logger.debug("Initialized the action with password policy enforcer " + getPasswordPolicyEnforcer().getClass().getName());
+        }
     }
 }

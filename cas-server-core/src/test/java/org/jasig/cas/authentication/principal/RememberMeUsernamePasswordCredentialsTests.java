@@ -18,24 +18,26 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
- * Tests for RememberMeUsernamePasswordCredentials
- * 
+ * Tests for RememberMeUsernamePasswordCredentials.
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.2.1
  *
  */
-public final class RememberMeUsernamePasswordCredentialsTests extends TestCase {
-    
+public final class RememberMeUsernamePasswordCredentialsTests  {
+
+    @Test
     public void testGettersAndSetters() {
         final RememberMeUsernamePasswordCredentials c = new RememberMeUsernamePasswordCredentials();
         c.setPassword("password");
         c.setUsername("username");
         c.setRememberMe(true);
-        
+
         assertEquals("username", c.getUsername());
         assertEquals("password", c.getPassword());
         assertTrue(c.isRememberMe());

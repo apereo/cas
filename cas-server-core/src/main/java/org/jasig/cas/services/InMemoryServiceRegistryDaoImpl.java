@@ -24,18 +24,17 @@ import java.util.List;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
 public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
-    
+
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
-    
-    public boolean delete(RegisteredService registeredService) {
+
+    public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
     }
 
@@ -45,7 +44,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
                 return r;
             }
         }
-        
+
         return null;
     }
 
@@ -60,7 +59,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
         this.registeredServices.remove(registeredService);
         this.registeredServices.add(registeredService);
-        
+
         return registeredService;
     }
 
@@ -69,9 +68,9 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     }
 
     /**
-     * This isn't super-fast but I don't expect thousands of services.
+     * This isn't super-fast but we don't expect thousands of services.
      *
-     * @return
+     * @return the highest service id in the list of registered services
      */
     private long findHighestId() {
         long id = 0;

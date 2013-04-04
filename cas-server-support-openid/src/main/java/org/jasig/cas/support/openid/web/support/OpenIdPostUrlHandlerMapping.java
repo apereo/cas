@@ -23,9 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 /**
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
@@ -36,13 +35,13 @@ public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
         if ("POST".equals(request.getMethod())
                 && (
-                    ("check_authentication".equals(request.getParameter("openid.mode")))
-                    || ("associate".equals(request.getParameter("openid.mode")))
-                   )
-          ) {
+                        "check_authentication".equals(request.getParameter("openid.mode"))
+                        || "associate".equals(request.getParameter("openid.mode"))
+                        )
+                ) {
             return super.lookupHandler(urlPath, request);
         }
-        
+
         return null;
     }
 }

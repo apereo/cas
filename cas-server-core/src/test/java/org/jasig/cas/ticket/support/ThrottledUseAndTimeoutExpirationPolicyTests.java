@@ -18,18 +18,19 @@
  */
 package org.jasig.cas.ticket.support;
 
+import static org.junit.Assert.*;
+
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
+public class ThrottledUseAndTimeoutExpirationPolicyTests  {
 
     private static final long TIMEOUT = 5000;
 
@@ -37,7 +38,8 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
 
     private TicketGrantingTicket ticket;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.expirationPolicy = new ThrottledUseAndTimeoutExpirationPolicy();
         this.expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         this.expirationPolicy.setTimeInBetweenUsesInMilliSeconds(1000);
@@ -45,13 +47,14 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
         this.ticket = new TicketGrantingTicketImpl("test", TestUtils
             .getAuthentication(), this.expirationPolicy);
 
-        super.setUp();
     }
 
+    @Test
     public void testTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
-    
+
+    @Test
     public void testTicketIsExpired() {
         try {
             Thread.sleep(TIMEOUT + 100);
@@ -60,7 +63,8 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
             fail(e.getMessage());
         }
     }
-    
+
+    @Test
     public void testTicketUsedButWithTimeout() {
         try {
             this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
@@ -70,7 +74,8 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests extends TestCase {
             fail(e.getMessage());
         }
     }
-    
+
+    @Test
     public void testNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false);
         assertTrue(this.ticket.isExpired());

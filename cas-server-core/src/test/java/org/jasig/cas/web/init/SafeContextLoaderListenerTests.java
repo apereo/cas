@@ -20,17 +20,17 @@ package org.jasig.cas.web.init;
 
 import javax.servlet.ServletContextEvent;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockServletContext;
-import junit.framework.TestCase;
 
 /**
- * Testcase for SafeContextLoaderListener.
- * 
+ * Test case for SafeContextLoaderListener.
+ *
  * @author Andrew Petro
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class SafeContextLoaderListenerTests extends TestCase {
+public class SafeContextLoaderListenerTests {
 
     private MockServletContext servletContext;
 
@@ -38,16 +38,18 @@ public class SafeContextLoaderListenerTests extends TestCase {
 
     private SafeContextLoaderListener listener;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.listener = new SafeContextLoaderListener();
         this.servletContext = new MockServletContext();
         this.servletContextEvent = new ServletContextEvent(this.servletContext);
     }
 
     /**
-     * Test that SafeContextLoaderListener does not propogate exceptions thrown
+     * Test that SafeContextLoaderListener does not propagate exceptions thrown
      * by its delegate in contextInitialized().
      */
+    @Test
     public void testContextInitialized() {
         /*
          * this testcase relies upon the fact that ContextLoaderListener()
@@ -62,6 +64,7 @@ public class SafeContextLoaderListenerTests extends TestCase {
         this.listener.contextInitialized(this.servletContextEvent);
     }
 
+    @Test
     public void testContextDestroy() {
         this.listener.contextDestroyed(this.servletContextEvent);
     }

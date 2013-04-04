@@ -26,21 +26,22 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Abstract class for database authentication handlers.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0.3
  */
-public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
+            AbstractUsernamePasswordAuthenticationHandler {
 
     @NotNull
     private JdbcTemplate jdbcTemplate;
-    
+
     @NotNull
     private DataSource dataSource;
 
     /**
      * Method to set the datasource and generate a JdbcTemplate.
-     * 
+     *
      * @param dataSource the datasource to use.
      */
     public final void setDataSource(final DataSource dataSource) {
@@ -49,14 +50,14 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends 
     }
 
     /**
-     * Method to return the jdbcTemplate
-     * 
+     * Method to return the jdbcTemplate.
+     *
      * @return a fully created JdbcTemplate.
      */
     protected final JdbcTemplate getJdbcTemplate() {
         return this.jdbcTemplate;
     }
-    
+
     protected final DataSource getDataSource() {
         return this.dataSource;
     }

@@ -20,15 +20,14 @@ package org.jasig.cas.services;
 
 /**
  * Exception thrown when a service attempts to proxy when it is not allowed to.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public class UnauthorizedProxyingException extends UnauthorizedServiceException {
 
     /**
-     * Comment for <code>serialVersionUID</code>
+     * Comment for <code>serialVersionUID</code>.
      */
     private static final long serialVersionUID = -7307803750894078575L;
 
@@ -39,11 +38,11 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
         super(CODE);
     }
 
-    public UnauthorizedProxyingException(String message, Throwable cause) {
+    public UnauthorizedProxyingException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public UnauthorizedProxyingException(String message) {
+    public UnauthorizedProxyingException(final String message) {
         super(message);
     }
 }

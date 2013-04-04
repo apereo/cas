@@ -19,17 +19,20 @@
 
 package org.jasig.cas.util;
 
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+/**
+ * An implementation of {@link ApplicationContextAware} that statically
+ * holds the application context.
+ */
 public class ApplicationContextProvider implements ApplicationContextAware{
     private static ApplicationContext context = null;
 
     public static ApplicationContext getApplicationContext() {
         return context;
     }
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
-        this.context = context;
+    public void setApplicationContext(final ApplicationContext ctx) {
+        this.context = ctx;
     }
 }

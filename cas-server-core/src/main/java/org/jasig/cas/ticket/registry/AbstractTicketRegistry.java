@@ -58,15 +58,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
         return (T) ticket;
     }
-    
+
     public int sessionCount() {
-      log.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}", 
+      log.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
 
     public int serviceTicketCount() {
-      log.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}", 
+      log.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }

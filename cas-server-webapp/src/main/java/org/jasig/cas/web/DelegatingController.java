@@ -32,11 +32,10 @@ import java.util.List;
  * Tries to find a controller among its delegates, that can handle the current request.
  * If none is found, an error is generated.
  * @author Frederic Esnault
- * @version $Id$
  * @since 3.5
  */
 public class DelegatingController extends AbstractController {
-    List<DelegateController> delegates;
+    private List<DelegateController> delegates;
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_ERROR_VIEW_NAME = "casServiceFailureView";
 
@@ -54,6 +53,7 @@ public class DelegatingController extends AbstractController {
      * @return the model and view object
      * @throws Exception if an error occurs during request handling
      */
+    @Override
     protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         for (DelegateController delegate : delegates) {
             if (delegate.canHandle(request, response)) {
@@ -76,7 +76,7 @@ public class DelegatingController extends AbstractController {
      * @param delegates the delegate controllers to set
      */
     @NotNull
-    public void setDelegates(List<DelegateController> delegates) {
+    public void setDelegates(final List<DelegateController> delegates) {
         this.delegates = delegates;
     }
 

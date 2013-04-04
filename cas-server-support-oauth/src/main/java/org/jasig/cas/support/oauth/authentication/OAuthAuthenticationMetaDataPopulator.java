@@ -28,25 +28,28 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials;
 
 /**
- * This class is a meta data populator for OAuth authentication. As attributes are stored in OAuthCredentials (through user profile), they
- * are added to the returned principal. The provider type associated to the authentication is also added to the authentication attributes.
- * 
+ * This class is a meta data populator for OAuth authentication.
+ * As attributes are stored in OAuthCredentials (through user profile), they
+ * are added to the returned principal. The provider type associated to
+ * the authentication is also added to the authentication attributes.
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuthAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
-    
+
+    @Override
     public Authentication populateAttributes(final Authentication authentication, final Credentials credentials) {
         if (credentials instanceof OAuthCredentials) {
             OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
             final Principal simplePrincipal = new SimplePrincipal(authentication.getPrincipal().getId(),
-                                                                  oauthCredentials.getUserProfile().getAttributes());
+                    oauthCredentials.getUserProfile().getAttributes());
             final MutableAuthentication mutableAuthentication = new MutableAuthentication(simplePrincipal,
-                                                                                          authentication
-                                                                                              .getAuthenticatedDate());
+                    authentication
+                    .getAuthenticatedDate());
             mutableAuthentication.getAttributes().putAll(authentication.getAttributes());
             mutableAuthentication.getAttributes().put(OAuthConstants.PROVIDER_TYPE,
-                                                      oauthCredentials.getCredential().getProviderType());
+                    oauthCredentials.getCredential().getProviderType());
             return mutableAuthentication;
         }
         return authentication;

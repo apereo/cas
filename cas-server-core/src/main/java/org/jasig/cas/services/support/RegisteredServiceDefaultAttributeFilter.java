@@ -31,36 +31,38 @@ import org.slf4j.LoggerFactory;
  * The default filter that is responsible to make sure only the allowed attributes for a given
  * registered service are released. The allowed attributes are cross checked against
  * the list of principal attributes and those that are a match will be released.
- *  
+ *
  * If the registered service is set to ignore the attribute release policy, the filter
- * will release all principal attributes. 
- * 
+ * will release all principal attributes.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  * @see RegisteredServiceRegexAttributeFilter
  */
 public final class RegisteredServiceDefaultAttributeFilter implements RegisteredServiceAttributeFilter {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     @Override
-    public final Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
+    public final Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
+            final RegisteredService registeredService) {
         final Map<String, Object> attributes = new HashMap<String, Object>();
-        
+
         if (registeredService.isIgnoreAttributes()) {
-            log.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.", registeredService.getName());
+            log.debug("Service [{}] is set to ignore attribute release policy. Releasing all attributes.",
+                    registeredService.getName());
             attributes.putAll(givenAttributes);
-        }
-        else {
+        } else {
             for (final String attribute : registeredService.getAllowedAttributes()) {
                 final Object value = givenAttributes.get(attribute);
 
                 if (value != null) {
-                    log.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute, registeredService.getName());
+                    log.debug("Found attribute [{}] in the list of allowed attributes for service [{}]", attribute,
+                            registeredService.getName());
                     attributes.put(attribute, value);
                 }
             }
         }
-        return Collections.unmodifiableMap(attributes);        
+        return Collections.unmodifiableMap(attributes);
     }
-    
+
 }

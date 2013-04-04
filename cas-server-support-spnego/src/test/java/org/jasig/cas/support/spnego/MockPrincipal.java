@@ -23,21 +23,20 @@ import java.security.Principal;
 /**
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
- * @version $Id$
  * @since 3.1
- * 
  */
 public class MockPrincipal implements Principal {
 
-    private String principal;
+    private final String principal;
 
-	public MockPrincipal(String principal) {
-		super();
-		this.principal = principal;
-	}
+    public MockPrincipal(final String principal) {
+        super();
+        this.principal = principal;
+    }
 
-	public String getName() {
-		return this.principal;
-	}
+    @Override
+    public String getName() {
+        return this.principal;
+    }
 
 }

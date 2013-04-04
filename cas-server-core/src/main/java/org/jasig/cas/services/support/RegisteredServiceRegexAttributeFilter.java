@@ -33,37 +33,41 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
- * registered service are released. 
- * 
+ * registered service are released.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     public RegisteredServiceRegexAttributeFilter(final String regex) {
         this.pattern = Pattern.compile(regex);
     }
-    
+
     @NotNull
     private Pattern pattern;
 
     /**
      * {@inheritDoc}
-     * 
-     * Given attribute values may be an extension of {@link Collection}, {@link Map} or an array. 
+     *
+     * Given attribute values may be an extension of {@link Collection}, {@link Map} or an array.
      * <ul>
      * <li>The filtering operation is non-recursive. </li>
      * <li>Multi-valued attributes such as those of type {@link Collection} and
-     * {@link Map} are expected to allow casting to <code>Map&lt;String, String&gt;</code> or <code>Collection&lt;String&gt;</code>.
+     * {@link Map} are expected to allow casting to <code>Map&lt;String, String&gt;</code>
+     * or <code>Collection&lt;String&gt;</code>.
      * Values that are of type array are expected to allow casting to <code>String[]</code>.
      * </li>
-     * <li>Multi-valued attributes are always put back into the final released collection of attributes as <code>String[]</code>.</li> 
-     * <li>If the final filtered collection is empty, it will not be put into the collection of attributes.</li> 
+     * <li>Multi-valued attributes are always put back into the final released collection of
+     * attributes as <code>String[]</code>.</li>
+     * <li>If the final filtered collection is empty, it will not be put into the collection of attributes.</li>
+     * </ul>
      */
     @Override
     @SuppressWarnings("unchecked")
-    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes, final RegisteredService registeredService) {
+    public Map<String, Object> filter(final String principalId, final Map<String, Object> givenAttributes,
+            final RegisteredService registeredService) {
         final Map<String, Object> attributesToRelease = new HashMap<String, Object>();
         for (final String attributeName : givenAttributes.keySet()) {
             final Object attributeValue = givenAttributes.get(attributeName);
@@ -71,7 +75,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
             log.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             if (attributeValue != null) {
                 if (attributeValue instanceof Collection) {
-                    final String[] filteredAttributes = filterArrayAttributes(((Collection<String>) attributeValue).toArray(new String[] {}), attributeName);
+                    final String[] filteredAttributes =
+                            filterArrayAttributes(((Collection<String>) attributeValue).toArray(
+                                    new String[] {}), attributeName);
                     if (filteredAttributes.length > 0) {
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
@@ -81,7 +87,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
                 } else if (attributeValue instanceof Map) {
-                    final Map<String, String> filteredAttributes = filterMapAttributes((Map<String, String>) attributeValue);
+                    final Map<String, String> filteredAttributes =
+                            filterMapAttributes((Map<String, String>) attributeValue);
                     if (filteredAttributes.size() > 0) {
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
@@ -91,8 +98,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
                 }
             }
         }
-        
-        log.debug("Total number of attributes received is {} and total number of attributes filtered and released is {}",
+
+        log.debug("Received {} attributes. Filtered and released {}",
                   givenAttributes.size(), attributesToRelease.size());
         return attributesToRelease;
     }
@@ -108,11 +115,11 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         }
         return attributesToFilter;
     }
-    
+
     private boolean patternMatchesAttributeValue(final String value) {
         return this.pattern.matcher(value).matches();
     }
-    
+
     private String[] filterArrayAttributes(final String[] valuesToFilter, final String attributeName) {
         final Vector<String> vector = new Vector<String>(valuesToFilter.length);
         for (final String attributeValue : valuesToFilter) {
@@ -123,9 +130,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         }
         return vector.toArray(new String[] {});
     }
-    
+
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        log.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...", 
+        log.debug("The attribute value [{}] for attribute name {} matches the pattern {}. Releasing attribute...",
                 attributeValue, attributeName, this.pattern.pattern());
     }
 }

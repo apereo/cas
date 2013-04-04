@@ -28,7 +28,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -42,7 +41,7 @@ import org.springframework.util.Assert;
  * single-sign on access to any service that opts into single-sign on.
  * Expiration of a TicketGrantingTicket is controlled by the ExpirationPolicy
  * specified as object creation.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -53,7 +52,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -5197946718924166491L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
@@ -63,18 +62,18 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /** Flag to enforce manual expiration. */
     @Column(name="EXPIRED", nullable=false)
     private Boolean expired = false;
-    
+
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
     private final HashMap<String,Service> services = new HashMap<String, Service>();
-    
+
     public TicketGrantingTicketImpl() {
         // nothing to do
     }
 
     /**
      * Constructs a new TicketGrantingTicket.
-     * 
+     *
      * @param id the id of the Ticket
      * @param ticketGrantingTicket the parent ticket
      * @param authentication the Authentication request for this ticket
@@ -94,7 +93,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     /**
      * Constructs a new TicketGrantingTicket without a parent
      * TicketGrantingTicket.
-     * 
+     *
      * @param id the id of the Ticket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
@@ -116,20 +115,21 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
             expirationPolicy);
 
         updateState();
-        
+
         final List<Authentication> authentications = getChainedAuthentications();
         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
-        
+
         this.services.put(id, service);
 
         return serviceTicket;
     }
-    
+
     private void logOutOfServices() {
         for (final Entry<String, Service> entry : this.services.entrySet()) {
 
             if (!entry.getValue().logOutOfService(entry.getKey())) {
-                LOG.warn("Logout message not sent to [" + entry.getValue().getId() + "]; Continuing processing...");   
+                log.warn("Logout message not sent to [[]]; Continuing processing...",
+                        entry.getValue().getId());
             }
         }
     }
@@ -160,7 +160,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
         return Collections.unmodifiableList(list);
     }
-    
+
     public final boolean equals(final Object object) {
         if (object == null
             || !(object instanceof TicketGrantingTicket)) {
@@ -168,7 +168,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         }
 
         final Ticket ticket = (Ticket) object;
-        
+
         return ticket.getId().equals(this.getId());
     }
+
+
 }

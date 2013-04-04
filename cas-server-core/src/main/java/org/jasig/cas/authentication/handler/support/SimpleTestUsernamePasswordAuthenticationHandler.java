@@ -26,9 +26,9 @@ import org.springframework.util.StringUtils;
  * the username and password match. This class should never be enabled in a
  * production environment and is only designed to facilitate unit testing and
  * load testing.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler extends
@@ -46,13 +46,11 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler extends
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password)
             && username.equals(getPasswordEncoder().encode(password))) {
-            log
-                .debug("User [" + username
-                    + "] was successfully authenticated.");
+            log.debug("User [{}] was successfully authenticated.", username);
             return true;
         }
 
-        log.debug("User [" + username + "] failed authentication");
+        log.debug("User [{}] failed authentication", username);
 
         return false;
     }

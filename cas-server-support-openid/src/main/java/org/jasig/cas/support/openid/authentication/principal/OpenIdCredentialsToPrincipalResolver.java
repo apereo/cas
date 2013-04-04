@@ -24,18 +24,19 @@ import org.jasig.cas.authentication.principal.Credentials;
 /**
  * Implementation of CredentialsToPrincipalResolver that converts the OpenId
  * user name to a Principal.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class OpenIdCredentialsToPrincipalResolver extends
-    AbstractPersonDirectoryCredentialsToPrincipalResolver {
+AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
+    @Override
     protected String extractPrincipalId(final Credentials credentials) {
         return ((OpenIdCredentials) credentials).getUsername();
     }
 
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials instanceof OpenIdCredentials;
     }
