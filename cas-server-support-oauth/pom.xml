@@ -53,7 +53,13 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.0.6</version>
 		</dependency>
-    </dependencies>
+
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>1.0.2.RELEASE</version>
+		</dependency>
+	</dependencies>
 
   <properties>
     <cs.dir>${project.parent.basedir}</cs.dir>
