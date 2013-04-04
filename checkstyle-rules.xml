@@ -7,7 +7,7 @@
 <!--
     Checkstyle-Configuration: CAS
     Description: 
-Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
+Checkstyle configuration based on Sun's converntions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -21,10 +21,9 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="JavadocType">
       <property name="severity" value="error"/>
       <property name="scope" value="public"/>
-      <property name="allowMissingParamTags" value="true" />
     </module>
     <module name="JavadocVariable">
-        <property name="severity" value="info"/>
+      <property name="severity" value="info"/>
     </module>
     <module name="JavadocStyle">
       <property name="severity" value="error"/>
@@ -43,6 +42,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="TypeName"/>
     <module name="AvoidStarImport">
       <property name="severity" value="error"/>
+      <property name="allowStaticMemberImports" value="true"/>
     </module>
     <module name="IllegalImport">
       <property name="severity" value="error"/>
@@ -105,7 +105,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="protectedAllowed" value="true"/>
     </module>
     <module name="ArrayTypeStyle">
-        <property name="severity" value="error"/>
+      <property name="severity" value="error"/>
     </module>
     <module name="FinalParameters">
       <property name="severity" value="error"/>
@@ -119,7 +119,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   <module name="Translation"/>
   <module name="FileLength"/>
   <module name="FileTabCharacter">
-      <property name="severity" value="error"/>
+    <property name="severity" value="error"/>
   </module>
   <module name="RegexpSingleline">
     <property name="severity" value="error"/>
