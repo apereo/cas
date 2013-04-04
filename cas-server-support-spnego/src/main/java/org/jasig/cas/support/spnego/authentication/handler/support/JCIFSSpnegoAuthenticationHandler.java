@@ -34,17 +34,16 @@ import java.util.regex.Pattern;
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
  * support both NTLM and Kerberos. NTLM is disabled by default.
- * 
+ *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class JCIFSSpnegoAuthenticationHandler extends
-    AbstractPreAndPostProcessingAuthenticationHandler {
+        AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private Authentication authentication;
 
@@ -58,8 +57,9 @@ public final class JCIFSSpnegoAuthenticationHandler extends
      */
     private boolean isNTLMallowed = false;
 
+    @Override
     protected boolean doAuthentication(final Credentials credentials)
-        throws AuthenticationException {
+            throws AuthenticationException {
         final SpnegoCredentials spnegoCredentials = (SpnegoCredentials) credentials;
         Principal principal;
         byte[] nextToken;
@@ -76,41 +76,36 @@ public final class JCIFSSpnegoAuthenticationHandler extends
         }
         // evaluate jcifs response
         if (nextToken != null) {
-            logger.debug("Setting nextToken in credentials");
+            log.debug("Setting nextToken in credentials");
             spnegoCredentials.setNextToken(nextToken);
         } else {
-            logger.debug("nextToken is null");
+            log.debug("nextToken is null");
         }
 
         if (principal != null) {
             if (spnegoCredentials.isNtlm()) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("NTLM Credentials is valid for user ["
-                        + principal.getName() + "]");
-                }
+                log.debug("NTLM Credentials is valid for user [{}]", principal.getName());
                 spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                    .getName(), true));
+                        .getName(), true));
                 return this.isNTLMallowed;
             }
             // else => kerberos
-            if (logger.isDebugEnabled()) {
-                logger.debug("Kerberos Credentials is valid for user ["
-                    + principal.getName() + "]");
-            }
+            log.debug("Kerberos Credentials is valid for user [{}]", principal.getName());
             spnegoCredentials.setPrincipal(getSimplePrincipal(principal
-                .getName(), false));
+                    .getName(), false));
             return true;
 
         }
 
-        logger
-            .debug("Principal is null, the processing of the SPNEGO Token failed");
+        log
+        .debug("Principal is null, the processing of the SPNEGO Token failed");
         return false;
     }
 
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials != null
-            && SpnegoCredentials.class.equals(credentials.getClass());
+                && SpnegoCredentials.class.equals(credentials.getClass());
     }
 
     public void setAuthentication(final Authentication authentication) {
@@ -126,13 +121,14 @@ public final class JCIFSSpnegoAuthenticationHandler extends
     }
 
     protected SimplePrincipal getSimplePrincipal(final String name,
-        final boolean isNtlm) {
+            final boolean isNtlm) {
         if (this.principalWithDomainName) {
             return new SimplePrincipal(name);
         }
         if (isNtlm) {
-        	return Pattern.matches("\\S+\\\\\\S+", name) ? new SimplePrincipal
-        			(name.split("\\\\")[1]) : new SimplePrincipal(name);
+            return Pattern.matches("\\S+\\\\\\S+", name) ?
+                    new SimplePrincipal(name.split("\\\\")[1]) :
+                    new SimplePrincipal(name);
         }
         return new SimplePrincipal(name.split("@")[0]);
     }

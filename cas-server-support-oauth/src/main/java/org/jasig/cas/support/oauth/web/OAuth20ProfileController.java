@@ -37,37 +37,38 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
- * This controller returns a profile for the authenticated user (identifier + attributes), found with the access token (CAS granting
+ * This controller returns a profile for the authenticated user
+ * (identifier + attributes), found with the access token (CAS granting
  * ticket).
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuth20ProfileController extends AbstractController {
-    
+
     private static Logger log = LoggerFactory.getLogger(OAuth20ProfileController.class);
-    
+
     private static final String ID = "id";
-    
+
     private static final String ATTRIBUTES = "attributes";
-    
+
     private final TicketRegistry ticketRegistry;
-    
+
     public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
-    
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+            throws Exception {
         final String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         log.debug("accessToken : {}", accessToken);
-        
+
         final JsonFactory jsonFactory = new JsonFactory();
         final JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(response.getWriter());
-        
+
         response.setContentType("application/json");
-        
+
         // accessToken is required
         if (StringUtils.isBlank(accessToken)) {
             log.error("missing accessToken");
@@ -78,10 +79,10 @@ public final class OAuth20ProfileController extends AbstractController {
             response.flushBuffer();
             return null;
         }
-        
+
         // get ticket granting ticket
         final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry
-            .getTicket(accessToken);
+                .getTicket(accessToken);
         if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
             log.error("expired accessToken : {}", accessToken);
             jsonGenerator.writeStartObject();
@@ -91,7 +92,7 @@ public final class OAuth20ProfileController extends AbstractController {
             response.flushBuffer();
             return null;
         }
-        
+
         // generate profile : identifier + attributes
         final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
         jsonGenerator.writeStartObject();
@@ -109,7 +110,7 @@ public final class OAuth20ProfileController extends AbstractController {
         response.flushBuffer();
         return null;
     }
-    
+
     static void setLogger(final Logger aLogger) {
         log = aLogger;
     }

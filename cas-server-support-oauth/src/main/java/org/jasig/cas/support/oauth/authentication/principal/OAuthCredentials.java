@@ -24,30 +24,30 @@ import org.scribe.up.profile.UserProfile;
 
 /**
  * This class represents an OAuth credential and (after authentication) a user profile.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuthCredentials implements Credentials {
-    
+
     private static final long serialVersionUID = -5154254291704475264L;
-    
+
     private UserProfile userProfile;
-    
+
     private final OAuthCredential credential;
-    
+
     public OAuthCredentials(final OAuthCredential credential) {
         this.credential = credential;
     }
-    
+
     public OAuthCredential getCredential() {
         return credential;
     }
-    
+
     public UserProfile getUserProfile() {
         return userProfile;
     }
-    
+
     public void setUserProfile(final UserProfile userProfile) {
         this.userProfile = userProfile;
     }

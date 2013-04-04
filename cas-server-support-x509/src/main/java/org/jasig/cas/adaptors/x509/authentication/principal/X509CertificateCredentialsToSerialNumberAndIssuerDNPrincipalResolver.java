@@ -33,13 +33,12 @@ import java.security.cert.X509Certificate;
  * certificate. Note: comparison rules state the compare should be
  * case-insensitive. LDAP value description: EQUALITY distinguishedNameMatch
  * SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 [=distinguishedName]
- * 
+ *
  * @author Jan Van der Velpen
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver
-    extends AbstractX509CertificateCredentialsToPrincipalResolver {
+extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
     /** Prefix for Certificate Serial Number. */
     @NotNull
@@ -50,8 +49,8 @@ public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalR
     private String valueDelimiter = ", ";
 
     /**
-     * Sets a prefix for the certificate serialnumber (default: "SERIALNUMBER=")
-     * 
+     * Sets a prefix for the certificate serialnumber (default: "SERIALNUMBER=").
+     *
      * @param serialNumberPrefix The serialNumberPrefix to set.
      */
     public void setSerialNumberPrefix(final String serialNumberPrefix) {
@@ -59,19 +58,20 @@ public final class X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalR
     }
 
     /**
-     * Sets a delimiter to separate the two certificate properties in the string
+     * Sets a delimiter to separate the two certificate properties in the string.
      * (default: ", ")
-     * 
+     *
      * @param valueDelimiter The valueDelimiter to set.
      */
     public void setValueDelimiter(final String valueDelimiter) {
         this.valueDelimiter = valueDelimiter;
     }
 
+    @Override
     protected String resolvePrincipalInternal(
-        final X509Certificate certificate) {
+            final X509Certificate certificate) {
         return this.serialNumberPrefix
-            + certificate.getSerialNumber().toString() + this.valueDelimiter
-            + certificate.getIssuerDN().getName();
+                + certificate.getSerialNumber().toString() + this.valueDelimiter
+                + certificate.getIssuerDN().getName();
     }
 }
