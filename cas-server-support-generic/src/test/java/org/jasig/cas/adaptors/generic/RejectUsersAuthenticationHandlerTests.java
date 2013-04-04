@@ -75,7 +75,7 @@ public class RejectUsersAuthenticationHandlerTests {
         }
     }
 
-    @Test
+    @Test(expected=AuthenticationException.class)
     public void testFailsUserInMap() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 

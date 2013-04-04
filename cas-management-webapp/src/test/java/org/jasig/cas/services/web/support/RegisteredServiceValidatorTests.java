@@ -67,6 +67,7 @@ public class RegisteredServiceValidatorTests {
         checkId(true, 0, null);
     }
 
+    @Test
     public void testSupports() {
         assertTrue(this.validator.supports(RegisteredServiceImpl.class));
         assertFalse(this.validator.supports(Object.class));
@@ -86,7 +87,6 @@ public class RegisteredServiceValidatorTests {
         assertEquals(1, exception.getErrorCount());
     }
 
-    @Test
     protected void checkId(final boolean exists, final int expectedErrors, final String name) {
         this.validator.setServicesManager(new TestServicesManager(exists));
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();

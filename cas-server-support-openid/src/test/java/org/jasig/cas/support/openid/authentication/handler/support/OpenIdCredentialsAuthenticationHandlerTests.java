@@ -84,7 +84,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests {
         assertFalse(this.openIdCredentialsAuthenticationHandler.authenticate(c));
     }
 
-    @Test
     protected TicketGrantingTicket getTicketGrantingTicket() {
         final Authentication authentication = new MutableAuthentication(new SimplePrincipal("test"));
         return new TicketGrantingTicketImpl("test", authentication, new NeverExpiresExpirationPolicy());

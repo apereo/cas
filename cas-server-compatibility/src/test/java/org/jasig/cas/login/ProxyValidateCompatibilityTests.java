@@ -25,32 +25,32 @@ import java.io.IOException;
  * Compatibility tests for /proxyValidate .
  * Note that this extends Cas2ValidateCompatibilityTests, which provides
  * several tests that apply to both service validate and proxy validate.
- * 
- * @version $Revision$ $Date$
+ *
  * @since 3.0
  */
-public class ProxyValidateCompatibilityTests 
-	extends AbstractCas2ValidateCompatibilityTests {
+public class ProxyValidateCompatibilityTests
+extends AbstractCas2ValidateCompatibilityTests {
 
-	/**
-	 * @throws IOException
-	 */
-	public ProxyValidateCompatibilityTests() throws IOException {
-		super();
-	}
-	
-	/**
-	 * @throws IOException
-	 */
-	public ProxyValidateCompatibilityTests(String name) throws IOException {
-		super(name);
-	}
+    /**
+     * @throws IOException
+     */
+    public ProxyValidateCompatibilityTests() throws IOException {
+        super();
+    }
+
+    /**
+     * @throws IOException
+     */
+    public ProxyValidateCompatibilityTests(final String name) throws IOException {
+        super(name);
+    }
 
 
-	protected String getValidationPath() {
-		return "/proxyValidate";
-	}
-	
-	// TODO: add tests specific to /proxyValidate
+    @Override
+    protected String getValidationPath() {
+        return "/proxyValidate";
+    }
+
+    // TODO add tests specific to /proxyValidate
 
 }
