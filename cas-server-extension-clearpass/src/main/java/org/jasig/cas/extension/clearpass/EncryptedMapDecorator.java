@@ -40,8 +40,8 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Decorator for a map that will hash the key and encrypt the value.
@@ -62,7 +62,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
     private static final char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
             'e', 'f' };
 
-    private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private final Map<String, String> decoratedMap;
@@ -143,7 +143,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @param decoratedMap the map to decorate.  CANNOT be NULL.
      * @param hashAlgorithm the algorithm to use for hashing.  CANNOT BE NULL.
      * @param salt the salt, as a String. Gets converted to bytes.   CANNOT be NULL.
-     * @param encryptionAlgorithm the encryption algorithm. CANNOT BE NULL.
+     * @param secretKeyAlgorithm the encryption algorithm. CANNOT BE NULL.
      * @param secretKey the secret to use.  CANNOT be NULL.
      * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
      */
