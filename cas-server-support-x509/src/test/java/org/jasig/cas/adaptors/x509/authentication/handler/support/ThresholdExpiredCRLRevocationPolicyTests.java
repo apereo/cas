@@ -39,20 +39,19 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link ThresholdExpiredCRLRevocationPolicy} class.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.7
  *
  */
 @RunWith(Parameterized.class)
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /** Policy instance under test. */
-    private ThresholdExpiredCRLRevocationPolicy policy;
+    private final ThresholdExpiredCRLRevocationPolicy policy;
 
     /** CRL to test. */
-    private X509CRL crl;
+    private final X509CRL crl;
 
     /** Expected result of check; null for success */
-    private GeneralSecurityException expected;
+    private final GeneralSecurityException expected;
 
 
     /**
@@ -63,9 +62,9 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      * @param expected Expected result of policy application; null to indicate expected success.
      */
     public ThresholdExpiredCRLRevocationPolicyTests(
-        final ThresholdExpiredCRLRevocationPolicy policy,
-        final X509CRL crl,
-        final GeneralSecurityException expected) {
+            final ThresholdExpiredCRLRevocationPolicy policy,
+            final X509CRL crl,
+            final GeneralSecurityException expected) {
 
         this.policy = policy;
         this.expected = expected;
@@ -79,45 +78,44 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
      * @throws Exception if there is an exception getting the test parameters.
      */
     @Parameters
-    public static Collection<Object[]> getTestParameters() throws Exception
-    {
-      final Collection<Object[]> params = new ArrayList<Object[]>();
+    public static Collection<Object[]> getTestParameters() throws Exception {
+        final Collection<Object[]> params = new ArrayList<Object[]>();
 
-      final Date now = new Date();
-      final Date twoHoursAgo = new Date(now.getTime() - 7200000);
-      final Date oneHourAgo = new Date(now.getTime() - 3600000);
-      final Date halfHourAgo = new Date(now.getTime() - 1800000);
-      final X500Principal issuer = new X500Principal("CN=CAS");
-      
-      // Test case #1
-      // Expect expired for zero leniency on CRL expiring 1ms ago
-      final ThresholdExpiredCRLRevocationPolicy zeroThreshold = new ThresholdExpiredCRLRevocationPolicy();
-      zeroThreshold.setThreshold(0);
-      params.add(new Object[] {
-          zeroThreshold,
-          new MockX509CRL(issuer, oneHourAgo, new Date(now.getTime() - 1)),
-          new ExpiredCRLException("CN=CAS", new Date()),
-      });
-      
-      // Test case #2
-      // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
-      final ThresholdExpiredCRLRevocationPolicy oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy();
-      oneHourThreshold.setThreshold(3600);
-      params.add(new Object[] {
-          oneHourThreshold,
-          new MockX509CRL(issuer, twoHoursAgo, new Date(oneHourAgo.getTime() - 1)),
-          new ExpiredCRLException("CN=CAS", new Date()),
-      });
-      
-      // Test case #3
-      // Expect valid for 1h leniency on CRL expired 30m ago
-      params.add(new Object[] {
-          oneHourThreshold,
-          new MockX509CRL(issuer, twoHoursAgo, halfHourAgo),
-          null,
-      });
+        final Date now = new Date();
+        final Date twoHoursAgo = new Date(now.getTime() - 7200000);
+        final Date oneHourAgo = new Date(now.getTime() - 3600000);
+        final Date halfHourAgo = new Date(now.getTime() - 1800000);
+        final X500Principal issuer = new X500Principal("CN=CAS");
 
-      return params;
+        // Test case #1
+        // Expect expired for zero leniency on CRL expiring 1ms ago
+        final ThresholdExpiredCRLRevocationPolicy zeroThreshold = new ThresholdExpiredCRLRevocationPolicy();
+        zeroThreshold.setThreshold(0);
+        params.add(new Object[] {
+                zeroThreshold,
+                new MockX509CRL(issuer, oneHourAgo, new Date(now.getTime() - 1)),
+                new ExpiredCRLException("CN=CAS", new Date()),
+        });
+
+        // Test case #2
+        // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
+        final ThresholdExpiredCRLRevocationPolicy oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy();
+        oneHourThreshold.setThreshold(3600);
+        params.add(new Object[] {
+                oneHourThreshold,
+                new MockX509CRL(issuer, twoHoursAgo, new Date(oneHourAgo.getTime() - 1)),
+                new ExpiredCRLException("CN=CAS", new Date()),
+        });
+
+        // Test case #3
+        // Expect valid for 1h leniency on CRL expired 30m ago
+        params.add(new Object[] {
+                oneHourThreshold,
+                new MockX509CRL(issuer, twoHoursAgo, halfHourAgo),
+                null,
+        });
+
+        return params;
     }
 
     /**
@@ -138,8 +136,8 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
                 final Class<?> expectedClass = this.expected.getClass();
                 final Class<?> actualClass = e.getClass();
                 Assert.assertTrue(
-                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
-                    expectedClass.isAssignableFrom(actualClass));
+                        String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
+                        expectedClass.isAssignableFrom(actualClass));
             }
         }
     }

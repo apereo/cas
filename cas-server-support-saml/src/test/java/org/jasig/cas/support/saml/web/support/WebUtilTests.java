@@ -18,48 +18,48 @@
  */
 package org.jasig.cas.support.saml.web.support;
 
-import java.util.Arrays;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import java.util.Arrays;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
- *
  */
-public class WebUtilTests extends TestCase {
+public class WebUtilTests {
 
+    @Test
     public void testFindService() {
         final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
         final CasArgumentExtractor casArgumentExtractor = new CasArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
-            openIdArgumentExtractor, casArgumentExtractor};
+                openIdArgumentExtractor, casArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");
 
         final Service service = WebUtils.getService(Arrays
-            .asList(argumentExtractors), request);
+                .asList(argumentExtractors), request);
 
         assertEquals("test", service.getId());
     }
-    
+
+    @Test
     public void testFoundNoService() {
         final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
-            openIdArgumentExtractor};
+                openIdArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");
 
         final Service service = WebUtils.getService(Arrays
-            .asList(argumentExtractors), request);
+                .asList(argumentExtractors), request);
 
         assertNull(service);
     }

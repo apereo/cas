@@ -43,12 +43,12 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     private RegisteredServiceAttributeFilter filter;
     private Map<String, Object> givenAttributesMap = null;
-     
+
     @Mock
     private RegisteredService registeredService;
-    
+
     public RegisteredServiceRegexAttributeFilterTests() {
-        
+
        this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
        this.givenAttributesMap = new HashMap<String, Object>();
@@ -60,27 +60,28 @@ public class RegisteredServiceRegexAttributeFilterTests {
        this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
        this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
        this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
-       
+
        final Map<String,String> mapAttributes = new HashMap<String,String>();
        mapAttributes.put("uid", "loggedInTestUid");
        mapAttributes.put("phone", "890");
        mapAttributes.put("familyName", "Smith");
        this.givenAttributesMap.put("mapAttribute", mapAttributes);
     }
-    
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        
+
         when(this.registeredService.getName()).thenReturn("sample test service");
         when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-        when(this.registeredService.getAllowedAttributes()).thenReturn(Arrays.asList("givenName", "uid", "phone", "memberOf", "mapAttribute"));
+        when(this.registeredService.getAllowedAttributes()).thenReturn(
+                Arrays.asList("givenName", "uid", "phone", "memberOf", "mapAttribute"));
     }
 
     @Test
     public void testIgnoreAttributeReleaseToolFilter() {
         when(this.registeredService.isIgnoreAttributes()).thenReturn(true);
-        
+
         final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
         assertEquals(attrs.size(), 7);
     }
@@ -88,22 +89,22 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void testPatternFilter() {
         when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
-        
+
         final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
         assertEquals(attrs.size(), 7);
-        
+
         assertFalse(attrs.containsKey("phone"));
         assertFalse(attrs.containsKey("givenName"));
-       
+
         assertTrue(attrs.containsKey("uid"));
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
-        
+
         final Map<String, String> mapAttributes = (Map<String, String>)attrs.get("mapAttribute");
         assertTrue(mapAttributes.containsKey("uid"));
         assertTrue(mapAttributes.containsKey("familyName"));
         assertFalse(mapAttributes.containsKey("phone"));
-        
+
         final String[] arrayAttrs = (String[])attrs.get("memberOf");
         assertEquals(arrayAttrs.length, 2);
     }

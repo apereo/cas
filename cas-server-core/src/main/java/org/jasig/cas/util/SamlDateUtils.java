@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  * SAML date utilities.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */

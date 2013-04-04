@@ -26,13 +26,13 @@ import org.jasig.cas.web.support.AbstractSingleSignOutEnabledArgumentExtractor;
 
 /**
  * Retrieve the ticket and artifact based on the SAML 1.1 profile.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class SamlArgumentExtractor extends AbstractSingleSignOutEnabledArgumentExtractor {
 
+    @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
         return SamlService.createServiceFrom(request, getHttpClientIfSingleSignOutEnabled());
     }

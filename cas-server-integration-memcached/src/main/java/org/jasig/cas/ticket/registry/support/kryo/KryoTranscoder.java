@@ -62,15 +62,14 @@ import org.slf4j.LoggerFactory;
  * suited for efficient serialization of tickets.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public class KryoTranscoder implements Transcoder<Object> {
 
-    /** Kryo serializer */
+    /** Kryo serializer. */
     private final Kryo kryo = new Kryo();
 
     /** Logging instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Maximum size of single encoded object in bytes. */
     private final int bufferSize;
@@ -122,7 +121,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         try {
             kryo.register(SamlService.class, new SamlServiceSerializer(kryo, fieldHelper));
         } catch (NoClassDefFoundError e) {
-            logger.warn("SAML serialization won't be supported by Kryo : please check that the cas-server-support-saml module is in the classpath if necessary");
+            log.warn("SAML serialization won't be supported by Kryo : please check that the cas-server-support-saml module is in the classpath if necessary");
         }
         kryo.register(ServiceTicketImpl.class);
         kryo.register(SimplePrincipal.class, new SimplePrincipalSerializer(kryo));
@@ -214,7 +213,7 @@ public class KryoTranscoder implements Transcoder<Object> {
                 }
                 if (rootCause instanceof BufferOverflowException) {
                     buffer = ByteBuffer.allocate(bufferSize * ++factor);
-                    logger.warn("Buffer overflow while encoding " + o);
+                    log.warn("Buffer overflow while encoding {}", o);
                 } else {
                     throw e;
                 }

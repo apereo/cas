@@ -23,7 +23,6 @@ package org.jasig.cas.ticket.registry.support;
  * execution of some process.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.3.6
  *
  */

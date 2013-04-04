@@ -24,24 +24,22 @@ package org.jasig.cas.adaptors.ldap;
  * tests for arbitrary LDAP environment.
  *
  * @author marvin
- * @version $Revision$ $Date$
  * @since 3.0
  *
  */
 public class BindTestConfig {
     /** Name of credential that exists in target LDAP */
     private String existsCredential;
-   
+
     /** Correct password for test credential */
     private String existsSuccessPassword;
-    
+
     /** Incorrect password for test credential */
     private String existsFailurePassword;
-  
+
     /** A credential that does not exist in the target LDAP */
     private String notExistsCredential;
 
-    
     /**
      * @return Returns the existsCredential.
      */
@@ -49,15 +47,13 @@ public class BindTestConfig {
         return this.existsCredential;
     }
 
-    
     /**
      * @param existsCredential The existsCredential to set.
      */
-    public void setExistsCredential(String existsCredential) {
+    public void setExistsCredential(final String existsCredential) {
         this.existsCredential = existsCredential;
     }
 
-    
     /**
      * @return Returns the existsSuccessPassword.
      */
@@ -65,15 +61,13 @@ public class BindTestConfig {
         return this.existsSuccessPassword;
     }
 
-    
     /**
      * @param existsSuccessPassword The existsSuccessPassword to set.
      */
-    public void setExistsSuccessPassword(String existsSuccessPassword) {
+    public void setExistsSuccessPassword(final String existsSuccessPassword) {
         this.existsSuccessPassword = existsSuccessPassword;
     }
 
-    
     /**
      * @return Returns the existsFailurePassword.
      */
@@ -81,15 +75,13 @@ public class BindTestConfig {
         return this.existsFailurePassword;
     }
 
-    
     /**
      * @param existsFailurePassword The existsFailurePassword to set.
      */
-    public void setExistsFailurePassword(String existsFailurePassword) {
+    public void setExistsFailurePassword(final String existsFailurePassword) {
         this.existsFailurePassword = existsFailurePassword;
     }
 
-    
     /**
      * @return Returns the notExistsCredential.
      */
@@ -97,14 +89,10 @@ public class BindTestConfig {
         return this.notExistsCredential;
     }
 
-    
     /**
      * @param notExistsCredential The notExistsCredential to set.
      */
-    public void setNotExistsCredential(String notExistsCredential) {
+    public void setNotExistsCredential(final String notExistsCredential) {
         this.notExistsCredential = notExistsCredential;
     }
-
-
-
 }

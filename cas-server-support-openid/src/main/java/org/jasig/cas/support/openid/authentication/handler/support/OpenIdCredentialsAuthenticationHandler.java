@@ -30,9 +30,8 @@ import javax.validation.constraints.NotNull;
 /**
  * Ensures that the OpenId provided matches with the existing
  * TicketGrantingTicket. Otherwise, fail authentication.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class OpenIdCredentialsAuthenticationHandler implements
@@ -40,8 +39,6 @@ public final class OpenIdCredentialsAuthenticationHandler implements
 
     @NotNull
     private TicketRegistry ticketRegistry;
-
-
 
     public boolean authenticate(final Credentials credentials)
         throws AuthenticationException {

@@ -28,10 +28,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Adaptor class to adapt the legacy CAS TrustHandler to the new
- * AuthenticationHandler
- * 
+ * AuthenticationHandler.
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class LegacyTrustHandlerAdaptorAuthenticationHandler implements

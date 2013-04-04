@@ -42,6 +42,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -69,7 +70,7 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
-    @Size(min=1)
+    @Size(min = 1)
     private int[] acceptableCodes = DEFAULT_ACCEPTABLE_CODES;
 
     @Min(0)
@@ -82,20 +83,21 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     /**
      * The socket factory to be used when verifying the validity of the endpoint.
-     * 
+     *
      * @see #setSSLSocketFactory(SSLSocketFactory)
      */
     private SSLSocketFactory sslSocketFactory = null;
-    
+
     /**
      * The hostname verifier to be used when verifying the validity of the endpoint.
-     * 
+     *
      * @see #setHostnameVerifier(HostnameVerifier)
      */
     private HostnameVerifier hostnameVerifier = null;
 
     /**
-     * Note that changing this executor will affect all httpClients.  While not ideal, this change was made because certain ticket registries
+     * Note that changing this executor will affect all httpClients.  While not ideal, this change
+     * was made because certain ticket registries
      * were persisting the HttpClient and thus getting serializable exceptions.
      * @param executorService
      */
@@ -105,7 +107,8 @@ public final class HttpClient implements Serializable, DisposableBean {
     }
 
     /**
-     * Sends a message to a particular endpoint.  Option of sending it without waiting to ensure a response was returned.
+     * Sends a message to a particular endpoint.  Option of sending it without
+     * waiting to ensure a response was returned.
      * <p>
      * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
      *
@@ -115,7 +118,8 @@ public final class HttpClient implements Serializable, DisposableBean {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      */
     public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message, this.readTimeout, this.connectionTimeout, this.followRedirects));
+        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message,
+                this.readTimeout, this.connectionTimeout, this.followRedirects));
 
         if (async) {
             return true;
@@ -146,14 +150,14 @@ public final class HttpClient implements Serializable, DisposableBean {
             connection.setConnectTimeout(this.connectionTimeout);
             connection.setReadTimeout(this.readTimeout);
             connection.setInstanceFollowRedirects(this.followRedirects);
-            
+
             if (connection instanceof HttpsURLConnection) {
                 final HttpsURLConnection httpsConnection = (HttpsURLConnection) connection;
-                
+
                 if (this.sslSocketFactory != null) {
                     httpsConnection.setSSLSocketFactory(this.sslSocketFactory);
                 }
-                
+
                 if (this.hostnameVerifier != null) {
                     httpsConnection.setHostnameVerifier(this.hostnameVerifier);
                 }
@@ -192,7 +196,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     /**
      * Set the acceptable HTTP status codes that we will use to determine if the
      * response from the URL was correct.
-     * 
+     *
      * @param acceptableCodes an array of status code integers.
      */
     public final void setAcceptableCodes(final int[] acceptableCodes) {
@@ -217,25 +221,25 @@ public final class HttpClient implements Serializable, DisposableBean {
     }
 
     /**
-     * Set the SSL socket factory be used by the URL when submitting 
-     * request to check for URL endpoint validity
+     * Set the SSL socket factory be used by the URL when submitting
+     * request to check for URL endpoint validity.
      * @param factory
      * @see #isValidEndPoint(URL)
      */
     public void setSSLSocketFactory(final SSLSocketFactory factory) {
         this.sslSocketFactory = factory;
     }
-    
+
     /**
-     * Set the hostname verifier be used by the URL when submitting 
-     * request to check for URL endpoint validity
+     * Set the hostname verifier be used by the URL when submitting
+     * request to check for URL endpoint validity.
      * @param verifier
      * @see #isValidEndPoint(URL)
      */
     public void setHostnameVerifier(final HostnameVerifier verifier) {
         this.hostnameVerifier = verifier;
     }
-    
+
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
     }
@@ -252,7 +256,8 @@ public final class HttpClient implements Serializable, DisposableBean {
 
         private boolean followRedirects;
 
-        public MessageSender(final String url, final String message, final int readTimeout, final int connectionTimeout, final boolean followRedirects) {
+        public MessageSender(final String url, final String message, final int readTimeout,
+                final int connectionTimeout, final boolean followRedirects) {
             this.url = url;
             this.message = message;
             this.readTimeout = readTimeout;
@@ -264,9 +269,7 @@ public final class HttpClient implements Serializable, DisposableBean {
             HttpURLConnection connection = null;
             BufferedReader in = null;
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Attempting to access " + url);
-                }
+                log.debug("Attempting to access {}", url);
                 final URL logoutUrl = new URL(url);
                 final String output = "logoutRequest=" + URLEncoder.encode(message, "UTF-8");
 
@@ -286,28 +289,21 @@ public final class HttpClient implements Serializable, DisposableBean {
 
                 in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-                while (in.readLine() != null) {
-                    // nothing to do
+                boolean readInput = true;
+                while (readInput) {
+                    readInput =StringUtils.isNotBlank(in.readLine());
                 }
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Finished sending message to" + url);
-                }
+                log.debug("Finished sending message to {}", url);
                 return true;
             } catch (final SocketTimeoutException e) {
-                log.warn("Socket Timeout Detected while attempting to send message to [" + url + "].");
+                log.warn("Socket Timeout Detected while attempting to send message to [{}]", url);
                 return false;
             } catch (final Exception e) {
-                log.warn("Error Sending message to url endpoint [" + url + "].  Error is [" + e.getMessage() + "]");
+                log.warn("Error Sending message to url endpoint [{}]. Error is [{}]", url, e.getMessage());
                 return false;
             } finally {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (final IOException e) {
-                        // can't do anything
-                    }
-                }
+                IOUtils.closeQuietly(in);
                 if (connection != null) {
                     connection.disconnect();
                 }

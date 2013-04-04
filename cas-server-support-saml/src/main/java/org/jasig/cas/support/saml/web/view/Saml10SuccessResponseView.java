@@ -58,7 +58,7 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
  * Note that this class will currently not handle proxy authentication.
  * <p>
  * Note: This class currently expects a bean called "ServiceRegistry" to exist.
- * 
+ *
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.1
@@ -92,9 +92,8 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         final Authentication authentication = getAssertionFrom(model).getChainedAuthentications().get(0);
         final DateTime issuedAt = response.getIssueInstant();
         final Service service = getAssertionFrom(model).getService();
-        final boolean isRemembered = (
-                authentication.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME) == Boolean.TRUE
-                        && !getAssertionFrom(model).isFromNewLogin());
+        final boolean isRemembered = authentication.getAttributes().get(RememberMeCredentials.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME) == Boolean.TRUE
+                && !getAssertionFrom(model).isFromNewLogin();
 
         // Build up the SAML assertion containing AuthenticationStatement and AttributeStatement
         final Assertion assertion = newSamlObject(Assertion.class);
@@ -145,7 +144,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
         authnStatement.setAuthenticationInstant(new DateTime(authentication.getAuthenticatedDate()));
         authnStatement.setAuthenticationMethod(
                 authenticationMethod != null
-                        ? authenticationMethod
+                ? authenticationMethod
                         : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
         authnStatement.setSubject(newSubject(authentication.getPrincipal().getId()));
         return authnStatement;

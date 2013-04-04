@@ -28,20 +28,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Encapsulates a Response to send back for a particular service.
- * 
+ *
  * @author Scott Battaglia
  * @author Arnaud Lesueur
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class Response {
     /** Pattern to detect unprintable ASCII characters. */
     private static final Pattern NON_PRINTABLE =
         Pattern.compile("[\\x00-\\x19\\x7F]+");
-    
-    /** Log instance. */
-    protected static final Logger LOG = LoggerFactory.getLogger(Response.class);
 
+    /** Log instance. */
+    protected static final Logger log = LoggerFactory.getLogger(Response.class);
+
+    /** An enumeration of different response types. **/
     public static enum ResponseType {
         POST, REDIRECT
     }
@@ -52,7 +52,7 @@ public final class Response {
 
     private final Map<String, String> attributes;
 
-    protected Response(ResponseType responseType, final String url, final Map<String, String> attributes) {
+    protected Response(final ResponseType responseType, final String url, final Map<String, String> attributes) {
         this.responseType = responseType;
         this.url = url;
         this.attributes = attributes;
@@ -66,16 +66,16 @@ public final class Response {
         final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
         boolean isFirst = true;
         final String[] fragmentSplit = sanitizeUrl(url).split("#");
-        
+
         builder.append(fragmentSplit[0]);
-        
+
         for (final Map.Entry<String, String> entry : parameters.entrySet()) {
             if (entry.getValue() != null) {
                 if (isFirst) {
                     builder.append(url.contains("?") ? "&" : "?");
                     isFirst = false;
                 } else {
-                    builder.append("&");   
+                    builder.append("&");
                 }
                 builder.append(entry.getKey());
                 builder.append("=");
@@ -107,15 +107,15 @@ public final class Response {
     public String getUrl() {
         return this.url;
     }
- 
+
     /**
      * Sanitize a URL provided by a relying party by normalizing non-printable
      * ASCII character sequences into spaces.  This functionality protects
      * against CRLF attacks and other similar attacks using invisible characters
      * that could be abused to trick user agents.
-     * 
+     *
      * @param  url  URL to sanitize.
-     * 
+     *
      * @return  Sanitized URL string.
      */
     private static String sanitizeUrl(final String url) {
@@ -128,7 +128,7 @@ public final class Response {
         }
         m.appendTail(sb);
         if (hasNonPrintable) {
-            LOG.warn("The following redirect URL has been sanitized and may be sign of attack:\n" + url);
+            log.warn("The following redirect URL has been sanitized and may be sign of attack:\n{}", url);
         }
         return sb.toString();
     }

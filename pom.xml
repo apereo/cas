@@ -227,6 +227,7 @@
             </additionalClasspathElements>
           </configuration>
         </plugin>
+        
       </plugins>
     </pluginManagement>
     
@@ -391,25 +392,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           </excludes>
         </configuration>
       </plugin>
-      <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.10</version>
-            <configuration>
-                <consoleOutput>true</consoleOutput>
-                <configLocation>/checkstyle-rules.xml</configLocation>
-                <failsOnError>false</failsOnError>
-            </configuration>
-            <executions>
-                <execution>
-                   <id>checkstyle</id>
-                   <goals>
-                       <goal>checkstyle</goal>
-                   </goals>
-                   <phase>compile</phase>
-                </execution>
-            </executions>
-        </plugin>
     </plugins>
   </build>
 
@@ -930,6 +912,33 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
                 </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.10</version>
+            <configuration>
+                <consoleOutput>true</consoleOutput>
+                <configLocation>/checkstyle-rules.xml</configLocation>
+                <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                <failsOnError>true</failsOnError>
+            </configuration>
+            <executions>
+                <execution>
+                   <id>checkstyle</id>
+                   <goals>
+                       <goal>checkstyle</goal>
+                   </goals>
+                   <phase>compile</phase>
+                </execution>
+            </executions>
+            <dependencies>
+               <dependency>
+                  <groupId>checkstyle</groupId>
+                  <artifactId>checkstyle</artifactId>
+                  <version>5.0</version>
+               </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>

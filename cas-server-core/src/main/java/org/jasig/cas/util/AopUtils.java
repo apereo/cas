@@ -25,11 +25,12 @@ import org.aspectj.lang.JoinPoint;
  * Utility class to assist with AOP operations.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  * @since 3.4
  *
  */
 public final class AopUtils {
+
+    private AopUtils() {}
 
     /**
      * Unwraps a join point that may be nested due to layered proxies.

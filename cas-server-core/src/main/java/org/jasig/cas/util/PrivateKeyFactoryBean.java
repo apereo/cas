@@ -30,9 +30,8 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Factory Bean for creating a private key from a file.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
@@ -40,7 +39,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
 
     @NotNull
     private Resource location;
-    
+
     @NotNull
     private String algorithm;
 
@@ -65,7 +64,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
     public void setLocation(final Resource location) {
         this.location = location;
     }
-    
+
     public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
     }
