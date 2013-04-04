@@ -33,7 +33,6 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * Reports overall CAS health based on the observations of the configured {@link HealthCheckMonitor} instance.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public class HealthCheckController extends AbstractController {
 
@@ -55,6 +54,7 @@ public class HealthCheckController extends AbstractController {
 
 
     /** {@inheritDoc} */
+    @Override
     protected ModelAndView handleRequestInternal(
             final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {

@@ -40,19 +40,18 @@ import javax.security.auth.x500.X500Principal;
  * Mock implementation of X.509 CRL.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
 public class MockX509CRL extends X509CRL {
     /** Issuer name */
-    private X500Principal issuer;
- 
+    private final X500Principal issuer;
+
     /** Instant CRL was issued. */
-    private Date thisUpdate;
- 
+    private final Date thisUpdate;
+
     /** Instant on which next CRL update expected. */
-    private Date nextUpdate;
+    private final Date nextUpdate;
 
     /**
      * Creates a new instance with given parameters.
@@ -70,6 +69,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509Extension#getCriticalExtensionOIDs()
      */
+    @Override
     public Set<String> getCriticalExtensionOIDs() {
         return null;
     }
@@ -77,6 +77,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509Extension#getExtensionValue(java.lang.String)
      */
+    @Override
     public byte[] getExtensionValue(final String oid) {
         return null;
     }
@@ -84,6 +85,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509Extension#getNonCriticalExtensionOIDs()
      */
+    @Override
     public Set<String> getNonCriticalExtensionOIDs() {
         return null;
     }
@@ -91,6 +93,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509Extension#hasUnsupportedCriticalExtension()
      */
+    @Override
     public boolean hasUnsupportedCriticalExtension() {
         return false;
     }
@@ -98,6 +101,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getEncoded()
      */
+    @Override
     public byte[] getEncoded() throws CRLException {
         return null;
     }
@@ -121,6 +125,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getRevokedCertificate(java.math.BigInteger)
      */
+    @Override
     public X509CRLEntry getRevokedCertificate(final BigInteger serialNumber) {
         return null;
     }
@@ -128,6 +133,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getRevokedCertificates()
      */
+    @Override
     public Set< ? extends X509CRLEntry> getRevokedCertificates() {
         return null;
     }
@@ -135,6 +141,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getSigAlgName()
      */
+    @Override
     public String getSigAlgName() {
         return "SHA1";
     }
@@ -142,6 +149,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getSigAlgOID()
      */
+    @Override
     public String getSigAlgOID() {
         return "1.3.14.3.2.26";
     }
@@ -149,6 +157,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getSigAlgParams()
      */
+    @Override
     public byte[] getSigAlgParams() {
         return null;
     }
@@ -156,6 +165,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getSignature()
      */
+    @Override
     public byte[] getSignature() {
         return null;
     }
@@ -163,6 +173,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getTBSCertList()
      */
+    @Override
     public byte[] getTBSCertList() throws CRLException {
         return null;
     }
@@ -170,6 +181,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getThisUpdate()
      */
+    @Override
     public Date getThisUpdate() {
         return this.thisUpdate;
     }
@@ -177,6 +189,7 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#getVersion()
      */
+    @Override
     public int getVersion() {
         return 0;
     }
@@ -184,9 +197,10 @@ public class MockX509CRL extends X509CRL {
     /**
      * @see java.security.cert.X509CRL#verify(java.security.PublicKey)
      */
+    @Override
     public void verify(final PublicKey key) throws CRLException,
-        NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,
-        SignatureException {
+    NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,
+    SignatureException {
         // Do nothing to indicate valid signature
     }
 
@@ -195,8 +209,8 @@ public class MockX509CRL extends X509CRL {
      */
     @Override
     public void verify(final PublicKey key, final String sigProvider) throws CRLException,
-        NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,
-        SignatureException {
+    NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException,
+    SignatureException {
         // Do nothing to indicate valid signature
     }
 

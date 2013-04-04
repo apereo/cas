@@ -31,32 +31,32 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
  * This class is an intermediate controller called when the user wants to delegate authentication to an OAuth provider implementing OAuth
- * procotol v1.0. At this step, the authorization url is computed and the user is redirected to it.
- * 
+ * protocol v1.0. At this step, the authorization url is computed and the user is redirected to it.
+ *
  * @author Jerome Leleu
  * @since 3.5.1
  */
 public final class OAuth10LoginController extends AbstractController {
-    
+
     @NotNull
     private final ProvidersDefinition providersDefinition;
-    
+
     public OAuth10LoginController(final ProvidersDefinition providersDefinition) {
         this.providersDefinition = providersDefinition;
     }
-    
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
-        
+            throws Exception {
+
         // get provider type
         final String providerType = request.getParameter(this.providersDefinition.getProviderTypeParameter());
         // get provider
         final OAuthProvider provider = this.providersDefinition.findProvider(providerType);
-        
+
         // authorization url
         final String authorizationUrl = provider.getAuthorizationUrl(new HttpUserSession(request));
-        
+
         return OAuthUtils.redirectTo(authorizationUrl);
     }
 }

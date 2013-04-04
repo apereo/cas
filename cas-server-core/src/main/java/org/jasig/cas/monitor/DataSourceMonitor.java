@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
@@ -66,7 +65,7 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
     @Override
     protected StatusCode checkPool() throws Exception {
         return this.jdbcTemplate.query(this.validationQuery, new ResultSetExtractor<StatusCode>() {
-            public StatusCode extractData(final ResultSet rs) throws SQLException, DataAccessException {
+            public StatusCode extractData(final ResultSet rs) throws SQLException {
                 if (rs.next()) {
                     return StatusCode.OK;
                 }

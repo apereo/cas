@@ -22,9 +22,9 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 import java.util.Calendar;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Min;
 
@@ -34,14 +34,13 @@ import javax.validation.constraints.Min;
  * up to a threshold period of time but not afterward.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
 public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
 
-    /** Logger instance */
-    private final Log log = LogFactory.getLog(getClass());
+    /** Logger instance. */
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Default threshold is 48 hours. */
     private static final int DEFAULT_THRESHOLD = 172800;
@@ -61,6 +60,7 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
      *
      * @see org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationPolicy#apply(java.lang.Object)
      */
+    @Override
     public void apply(final X509CRL crl) throws GeneralSecurityException {
         final Calendar cutoff = Calendar.getInstance();
         if (CertUtils.isExpired(crl, cutoff.getTime())) {
@@ -69,14 +69,14 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
                 throw new ExpiredCRLException(crl.toString(), cutoff.getTime(), this.threshold);
             }
             log.info(
-                String.format("CRL expired on %s but is within threshold period, %s seconds.",
-                    crl.getNextUpdate(), this.threshold));
+                    String.format("CRL expired on %s but is within threshold period, %s seconds.",
+                            crl.getNextUpdate(), this.threshold));
         }
     }
-    
+
     /**
      * Sets the threshold period of time after which expired CRL data is rejected.
-     * 
+     *
      * @param threshold Number of seconds; MUST be non-negative integer.
      */
     public void setThreshold(final int threshold) {

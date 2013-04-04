@@ -30,7 +30,9 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
-import org.restlet.resource.*;
+import org.restlet.resource.Delete;
+import org.restlet.resource.Post;
+import org.restlet.resource.ServerResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,21 +41,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.NotNull;
 
 /**
- * Implementation of a Restlet resource for creating Service Tickets from a 
+ * Implementation of a Restlet resource for creating Service Tickets from a
  * TicketGrantingTicket, as well as deleting a TicketGrantingTicket.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.3
  *
  */
 public final class TicketGrantingTicketResource extends ServerResource {
-    
-    private final static Logger log = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
+    private static final Logger log = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
 
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     private String ticketGrantingTicketId;
 
     @Autowired

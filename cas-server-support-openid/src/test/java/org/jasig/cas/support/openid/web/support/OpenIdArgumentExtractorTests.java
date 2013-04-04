@@ -18,24 +18,26 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
-import org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor;
-import org.springframework.mock.web.MockHttpServletRequest;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public class OpenIdArgumentExtractorTests extends TestCase {
+public class OpenIdArgumentExtractorTests {
 
     private OpenIdArgumentExtractor extractor;
 
+    @Before
     public void setUp() throws Exception {
         this.extractor = new OpenIdArgumentExtractor();
     }
 
+    @Test
     public void testNoOpenIdServiceExists() {
         assertNull(this.extractor.extractService(new MockHttpServletRequest()));
     }

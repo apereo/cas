@@ -24,13 +24,13 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 
 /**
  * This class resolves the principal id regarding the OAuth credentials : it's the typed user identifier.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
-    implements CredentialsToPrincipalResolver {
-    
+implements CredentialsToPrincipalResolver {
+
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
         final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
@@ -38,12 +38,12 @@ public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDir
         log.debug("principalId : {}", principalId);
         return principalId;
     }
-    
+
     /**
      * Return true if Credentials are OAuthCredentials, false otherwise.
      */
     @Override
     public boolean supports(final Credentials credentials) {
-        return credentials != null && (OAuthCredentials.class.isAssignableFrom(credentials.getClass()));
+        return credentials != null && OAuthCredentials.class.isAssignableFrom(credentials.getClass());
     }
 }

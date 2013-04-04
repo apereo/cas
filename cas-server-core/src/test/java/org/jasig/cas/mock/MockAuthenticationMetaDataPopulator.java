@@ -25,8 +25,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 public class MockAuthenticationMetaDataPopulator implements
     AuthenticationMetaDataPopulator {
 
-    public Authentication populateAttributes(Authentication authentication,
-        Credentials credentials) {
+    public Authentication populateAttributes(final Authentication authentication,
+            final Credentials credentials) {
         return authentication;
     }
 

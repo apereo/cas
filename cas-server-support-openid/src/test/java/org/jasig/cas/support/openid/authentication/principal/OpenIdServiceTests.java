@@ -20,26 +20,27 @@ package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.util.ApplicationContextProvider;
+import org.junit.Before;
+import org.junit.Test;
 import org.openid4java.association.Association;
 import org.openid4java.server.ServerAssociationStore;
 import org.openid4java.server.ServerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
- *
  */
-public class OpenIdServiceTests extends TestCase {
+public class OpenIdServiceTests {
+
+    private static final Logger log = LoggerFactory.getLogger(OpenIdServiceTests.class);
 
     private OpenIdService openIdService;
     private ApplicationContext context;
@@ -48,8 +49,8 @@ public class OpenIdServiceTests extends TestCase {
     private ServerAssociationStore sharedAssociations;
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         request.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
         request.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");
         request.addParameter("openid.mode", "checkid_setup");
@@ -63,7 +64,8 @@ public class OpenIdServiceTests extends TestCase {
         contextProvider.setApplicationContext(context);
         cas = mock(CentralAuthenticationService.class);
     }
-    
+
+    @Test
     public void testGetResponse() {
         openIdService = OpenIdService.createServiceFrom(request);
         when(context.getBean("serverManager")).thenReturn(manager);
@@ -72,6 +74,7 @@ public class OpenIdServiceTests extends TestCase {
         try {
             verify(cas, never()).validateServiceTicket("test", openIdService);
         } catch (Exception e) {
+            log.debug("Exception during verification of service ticket", e);
         }
         assertNotNull(response);
 
@@ -83,6 +86,7 @@ public class OpenIdServiceTests extends TestCase {
         assertEquals("cancel", response2.getAttributes().get("openid.mode"));
     }
 
+    @Test
     public void testSmartModeGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
         openIdService = OpenIdService.createServiceFrom(request);
@@ -110,6 +114,7 @@ public class OpenIdServiceTests extends TestCase {
         assertEquals("http://openid.ja-sig.org/battags", response.getAttributes().get("openid.identity"));
     }
 
+    @Test
     public void testExpiredAssociationGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
         openIdService = OpenIdService.createServiceFrom(request);
@@ -136,7 +141,8 @@ public class OpenIdServiceTests extends TestCase {
         assertEquals(1, response.getAttributes().size());
         assertEquals("cancel", response.getAttributes().get("openid.mode"));
     }
-    
+
+    @Test
     public void testEquals() {
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addParameter("openid.identity", "http://openid.ja-sig.org/battags");

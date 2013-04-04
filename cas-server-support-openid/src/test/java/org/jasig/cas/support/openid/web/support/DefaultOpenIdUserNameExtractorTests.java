@@ -18,31 +18,34 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
- *
+
  */
-public class DefaultOpenIdUserNameExtractorTests extends TestCase {
+public class DefaultOpenIdUserNameExtractorTests {
 
-    private DefaultOpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
+    private final DefaultOpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
+    @Test
     public void testExtractionSuccessful() {
         assertEquals("scootman28", this.extractor
-            .extractLocalUsernameFromUri("http://test.com/scootman28"));
-    }
-    
-    public void testExtractionFailed() {
-        assertNull(this.extractor
-            .extractLocalUsernameFromUri("test.com"));
+                .extractLocalUsernameFromUri("http://test.com/scootman28"));
     }
 
+    @Test
+    public void testExtractionFailed() {
+        assertNull(this.extractor
+                .extractLocalUsernameFromUri("test.com"));
+    }
+
+    @Test
     public void testNull() {
         assertNull(this.extractor
-            .extractLocalUsernameFromUri(null));
+                .extractLocalUsernameFromUri(null));
     }
 }
