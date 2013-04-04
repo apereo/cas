@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -34,18 +34,17 @@ import edu.vt.middleware.crypt.util.CryptReader;
  * Base class for {@link RevocationChecker} unit tests.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
 public abstract class AbstractCRLRevocationCheckerTests {
-    
+
     /** Certificate to be tested */
-    private X509Certificate[] certificates;
+    private final X509Certificate[] certificates;
 
     /** Expected result of check; null for success */
-    private GeneralSecurityException expected;
-    
+    private final GeneralSecurityException expected;
+
 
     /**
      * Creates a new test instance with given parameters.
@@ -54,8 +53,8 @@ public abstract class AbstractCRLRevocationCheckerTests {
      * @param expected Expected result of check; null to indicate expected success.
      */
     public AbstractCRLRevocationCheckerTests(
-        final String[] certFiles,
-        final GeneralSecurityException expected) {
+            final String[] certFiles,
+            final GeneralSecurityException expected) {
 
         this.expected = expected;
         this.certificates = new X509Certificate[certFiles.length];
@@ -86,12 +85,12 @@ public abstract class AbstractCRLRevocationCheckerTests {
                 final Class<?> expectedClass = this.expected.getClass();
                 final Class<?> actualClass = e.getClass();
                 Assert.assertTrue(
-                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
-                    expectedClass.isAssignableFrom(actualClass));
+                        String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
+                        expectedClass.isAssignableFrom(actualClass));
             }
         }
     }
-    
+
     protected abstract RevocationChecker getChecker();
 
     private X509Certificate readCertificate(final String file) {
@@ -102,13 +101,7 @@ public abstract class AbstractCRLRevocationCheckerTests {
         } catch (Exception e) {
             throw new RuntimeException("Error reading certificate " + file, e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    // Ignore
-                }
-            }
+            IOUtils.closeQuietly(in);
         }
     }
 }

@@ -25,7 +25,6 @@ import java.util.Date;
  * Exception describing an expired CRL condition.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
@@ -34,17 +33,17 @@ public class ExpiredCRLException extends GeneralSecurityException {
     private static final long serialVersionUID = 5157864033250359972L;
 
     /** Identifier/name of CRL. */
-    private String id;
+    private final String id;
 
     /** CRL expiration date. */
-    private Date expirationDate;
+    private final Date expirationDate;
 
     /** Leniency of expiration. */
-    private int leniency;
+    private final int leniency;
 
     /**
      * Creates a new instance describing a CRL that expired on the given date.
-     * 
+     *
      * @param identifier Identifier or name that describes CRL.
      * @param expirationDate CRL expiration date.
      */
@@ -55,7 +54,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     /**
      * Creates a new instance describing a CRL that expired on a date that is
      * more than leniency seconds beyond its expiration date.
-     * 
+     *
      * @param identifier Identifier or name that describes CRL.
      * @param expirationDate CRL expiration date.
      * @param leniency Number of seconds beyond the expiration date at which
@@ -76,14 +75,14 @@ public class ExpiredCRLException extends GeneralSecurityException {
     public String getId() {
         return this.id;
     }
-    
+
     /**
      * @return Returns the expirationDate.
      */
     public Date getExpirationDate() {
         return this.expirationDate;
     }
-    
+
     /**
      * @return Returns the leniency.
      */
@@ -95,8 +94,8 @@ public class ExpiredCRLException extends GeneralSecurityException {
     @Override
     public String getMessage() {
         if (this.leniency > 0) {
-	        return String.format("CRL %s expired on %s and is beyond the leniency period of %s seconds.",
-	            this.id, this.expirationDate, this.leniency);
+            return String.format("CRL %s expired on %s and is beyond the leniency period of %s seconds.",
+                    this.id, this.expirationDate, this.leniency);
         }
         return String.format("CRL %s expired on %s", this.id, this.expirationDate);
     }

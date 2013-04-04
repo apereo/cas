@@ -18,36 +18,38 @@
  */
 package org.jasig.cas.support.saml.web.support;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
-public class SamlArgumentExtractorTests extends TestCase {
+public class SamlArgumentExtractorTests {
 
     private SamlArgumentExtractor extractor;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.extractor = new SamlArgumentExtractor();
-        super.setUp();
     }
-    
+
+    @Test
     public void testObtainService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "test");
         final Service service = this.extractor.extractService(request);
         assertEquals("test", service.getId());
     }
-    
+
+    @Test
     public void testServiceDoesNotExist() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         assertNull(this.extractor.extractService(request));
-    }  
+    }
 }
