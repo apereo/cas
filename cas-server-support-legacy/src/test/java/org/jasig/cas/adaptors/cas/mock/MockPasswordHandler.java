@@ -25,8 +25,6 @@ import edu.yale.its.tp.cas.auth.PasswordHandler;
 
 /**
  * Mock PasswordHandler implementation in support of testcases.
- * 
- * @version $Revision$ $Date$
  */
 public class MockPasswordHandler implements PasswordHandler {
 
@@ -41,8 +39,8 @@ public class MockPasswordHandler implements PasswordHandler {
 
     private String password;
 
-    public boolean authenticate(ServletRequest requestArg, String usernameArg,
-        String passwordArg) {
+    public boolean authenticate(final ServletRequest requestArg, final String usernameArg,
+        final String passwordArg) {
         this.request = requestArg;
         this.username = usernameArg;
         this.password = passwordArg;
@@ -52,7 +50,6 @@ public class MockPasswordHandler implements PasswordHandler {
     /**
      * Return the value this object will return on invocation of its interface
      * method.
-     * 
      * @return Returns the succeeed.
      */
     public boolean isSucceed() {
@@ -62,16 +59,14 @@ public class MockPasswordHandler implements PasswordHandler {
     /**
      * Set the value this object will return on invocation of its interface
      * method.
-     * 
      * @param succeeed The succeeed to set.
      */
-    public void setSucceed(boolean succeeed) {
+    public void setSucceed(final boolean succeeed) {
         this.succeed = succeeed;
     }
 
     /**
      * Get the username most recently presented to the interface method.
-     * 
      * @return Returns the password.
      */
     public String getPassword() {
@@ -80,7 +75,6 @@ public class MockPasswordHandler implements PasswordHandler {
 
     /**
      * Get the ServletRequest most recently presented to the interface method.
-     * 
      * @return Returns the request.
      */
     public ServletRequest getRequest() {
@@ -89,7 +83,6 @@ public class MockPasswordHandler implements PasswordHandler {
 
     /**
      * Get the username most recently presented to the interface method.
-     * 
      * @return Returns the username.
      */
     public String getUsername() {

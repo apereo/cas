@@ -20,6 +20,12 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.handler.AuthenticationException;
 
+/**
+ * An instance of an authentication exception that may occur
+ * during ldap authentication.
+ *
+ * @author Misagh Moayyed
+ */
 public class LdapAuthenticationException extends AuthenticationException {
 
     private static final long serialVersionUID = 1L;

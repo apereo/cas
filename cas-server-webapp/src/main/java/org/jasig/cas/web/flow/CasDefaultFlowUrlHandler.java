@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
  * webflow.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.4
  */
 public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {

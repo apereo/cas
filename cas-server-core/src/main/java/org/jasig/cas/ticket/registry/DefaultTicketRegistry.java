@@ -30,24 +30,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 
     /** A HashMap to contain the tickets. */
     private final Map<String, Ticket> cache;
-    
+
     public DefaultTicketRegistry() {
         this.cache = new ConcurrentHashMap<String, Ticket>();
     }
-    
+
     /**
      * Creates a new, empty registry with the specified initial capacity, load
      * factor, and concurrency level.
-     * 
+     *
      * @param initialCapacity - the initial capacity. The implementation
      * performs internal sizing to accommodate this many elements.
      * @param loadFactor - the load factor threshold, used to control resizing.
@@ -57,19 +56,17 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
      * threads. The implementation performs internal sizing to try to
      * accommodate this many threads.
      */
-    public DefaultTicketRegistry(int initialCapacity, final float loadFactor, final int concurrencyLevel) {
+    public DefaultTicketRegistry(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
         this.cache = new ConcurrentHashMap<String, Ticket>(initialCapacity, loadFactor, concurrencyLevel);
     }
-    
+
     /**
      * @throws IllegalArgumentException if the Ticket is null.
      */
     public void addTicket(final Ticket ticket) {
         Assert.notNull(ticket, "ticket cannot be null");
 
-        if (log.isDebugEnabled()) {
-            log.debug("Added ticket [" + ticket.getId() + "] to registry.");
-        }
+        log.debug("Added ticket [{}] to registry.", ticket.getId());
         this.cache.put(ticket.getId(), ticket);
     }
 
@@ -78,13 +75,11 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
             return null;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to retrieve ticket [" + ticketId + "]");
-        }
+        log.debug("Attempting to retrieve ticket [{}]", ticketId);
         final Ticket ticket = this.cache.get(ticketId);
 
         if (ticket != null) {
-            log.debug("Ticket [" + ticketId + "] found in registry.");
+            log.debug("Ticket [{}] found in registry.", ticketId);
         }
 
         return ticket;
@@ -94,10 +89,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         if (ticketId == null) {
             return false;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Removing ticket [" + ticketId + "] from registry");
-        }
-
+        log.debug("Removing ticket [{}] from registry", ticketId);
         return (this.cache.remove(ticketId) != null);
     }
 

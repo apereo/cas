@@ -18,19 +18,22 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import static org.junit.Assert.*;
+
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public abstract class AbstractRegistryCleanerTests extends TestCase {
+public abstract class AbstractRegistryCleanerTests {
 
     private RegistryCleaner registryCleaner;
 
@@ -39,8 +42,8 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
     /**
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         this.ticketRegistry = this.getNewTicketRegistry();
         this.registryCleaner = this.getNewRegistryCleaner(this.ticketRegistry);
     }
@@ -50,17 +53,20 @@ public abstract class AbstractRegistryCleanerTests extends TestCase {
 
     public abstract TicketRegistry getNewTicketRegistry();
 
+    @Test
     public void testCleanEmptyTicketRegistry() {
         this.registryCleaner.clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
+    @Test
     public void testCleanRegistryOfExpiredTicketsAllExpired() {
         populateRegistryWithExpiredTickets();
         this.registryCleaner.clean();
         assertTrue(this.ticketRegistry.getTickets().isEmpty());
     }
 
+    @Test
     public void testCleanRegistryOneNonExpired() {
         populateRegistryWithExpiredTickets();
         TicketGrantingTicket ticket = new TicketGrantingTicketImpl(

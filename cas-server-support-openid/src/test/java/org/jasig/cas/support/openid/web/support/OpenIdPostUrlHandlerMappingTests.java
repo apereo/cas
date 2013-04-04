@@ -18,29 +18,18 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
-import junit.framework.TestCase;
-import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.support.GenericWebApplicationContext;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
- *
  */
-public class OpenIdPostUrlHandlerMappingTests extends TestCase {
+public class OpenIdPostUrlHandlerMappingTests {
 
     private OpenIdPostUrlHandlerMapping handlerMapping;
 
     public void testTest() {
     }
 
- /*
+    /*
     protected void setUp() throws Exception {
         final GenericWebApplicationContext context = new GenericWebApplicationContext();
         context.refresh();
@@ -62,40 +51,40 @@ public class OpenIdPostUrlHandlerMappingTests extends TestCase {
     public void testNoMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
-        
+
         assertNull(this.handlerMapping.lookupHandler("/hello", request));
     }
-    
+
     public void testImproperMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
-        
+
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
-    
+
     public void testProperMatchWrongMethod() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("GET");
-        
+
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
-    
+
     public void testProperMatchCorrectMethodNoParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");
-        
+
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
-    
+
     public void testProperMatchCorrectMethodWithParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
         request.setMethod("POST");
         request.setParameter("openid.mode", "check_authentication");
-        
-        
+
+
         assertNotNull(this.handlerMapping.lookupHandler("/login", request));
     }*/
 }

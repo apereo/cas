@@ -31,28 +31,28 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This class tests the {@link OAuth20CallbackAuthorizeController} class.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.2
  */
 public final class OAuth20CallbackAuthorizeControllerTests {
-    
+
     private static final String CONTEXT = "/oauth2.0/";
-    
+
     private static final String SERVICE_TICKET = "ST-1";
-    
+
     private static final String REDIRECT_URI = "http://someurl";
-    
+
     private static final String SERVICE_NAME = "serviceName";
-    
+
     private static final String STATE = "state";
-    
+
     @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
-                                                                              "GET",
-                                                                              CONTEXT
-                                                                                  + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+                "GET",
+                CONTEXT
+                + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         mockRequest.addParameter(OAuthConstants.TICKET, SERVICE_TICKET);
         final MockHttpSession mockSession = new MockHttpSession();
         mockSession.putValue(OAuthConstants.OAUTH20_CALLBACKURL, REDIRECT_URI);
@@ -67,13 +67,13 @@ public final class OAuth20CallbackAuthorizeControllerTests {
         assertEquals(SERVICE_NAME, map.get("serviceName"));
         assertEquals(REDIRECT_URI + "?" + OAuthConstants.CODE + "=" + SERVICE_TICKET, map.get("callbackUrl"));
     }
-    
+
     @Test
     public void testOKWithState() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
-                                                                              "GET",
-                                                                              CONTEXT
-                                                                                  + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+                "GET",
+                CONTEXT
+                + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         mockRequest.addParameter(OAuthConstants.TICKET, SERVICE_TICKET);
         final MockHttpSession mockSession = new MockHttpSession();
         mockSession.putValue(OAuthConstants.OAUTH20_CALLBACKURL, REDIRECT_URI);
@@ -88,6 +88,6 @@ public final class OAuth20CallbackAuthorizeControllerTests {
         final Map<String, Object> map = modelAndView.getModel();
         assertEquals(SERVICE_NAME, map.get("serviceName"));
         assertEquals(REDIRECT_URI + "?" + OAuthConstants.CODE + "=" + SERVICE_TICKET + "&" + OAuthConstants.STATE + "="
-                     + STATE, map.get("callbackUrl"));
+                + STATE, map.get("callbackUrl"));
     }
 }

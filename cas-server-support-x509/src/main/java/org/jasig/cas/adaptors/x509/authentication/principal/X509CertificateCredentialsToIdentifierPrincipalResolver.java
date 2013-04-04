@@ -31,28 +31,28 @@ import java.util.regex.Pattern;
  * @author Anders Svensson
  * @author Scott Battaglia
  * @author Barry Silk
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 @Deprecated
-public final class X509CertificateCredentialsToIdentifierPrincipalResolver extends AbstractX509CertificateCredentialsToPrincipalResolver {
+public final class X509CertificateCredentialsToIdentifierPrincipalResolver
+        extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
     private static final String DEFAULT_IDENTIFIER = "$OU $CN";
 
     private final Pattern subjectRegex = Pattern.compile("([A-Z]+)=(?:\"(.+)\"|([\\w ]+))", 74);
 
-    /** The identifier meta data */
+    /** The identifier meta data. */
     @NotNull
     private String identifier = DEFAULT_IDENTIFIER;
 
+    @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         String username = this.identifier;
-        
-        if (log.isInfoEnabled()) {
-            log.info("Creating principal for: " + certificate.getSubjectDN().getName());
-        }
 
-        for (final Matcher regexMatcher = this.subjectRegex.matcher(certificate.getSubjectDN().getName()); regexMatcher.find();) {
+        log.info("Creating principal for: {}", certificate.getSubjectDN().getName());
+
+        for (final Matcher regexMatcher =
+                this.subjectRegex.matcher(certificate.getSubjectDN().getName()); regexMatcher.find();) {
             final String name = regexMatcher.group(1).trim();
             final String value;
 
@@ -61,21 +61,18 @@ public final class X509CertificateCredentialsToIdentifierPrincipalResolver exten
             } else {
                 value = regexMatcher.group(3);
             }
+            log.debug(String.format("Parsed: %s - %s", name, value));
 
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Parsed: %s - %s", name, value));
-	        }
-
-            username = username.replaceAll((new StringBuilder("\\$")).append(name).toString(), value);
+            username = username.replaceAll(new StringBuilder("\\$").append(name).toString(), value);
         }
-        
+
         if (this.identifier.equals(username)) {
             return null;
         }
 
         return username;
     }
-    
+
     public void setIdentifier(final String identifier) {
         this.identifier = identifier;
     }

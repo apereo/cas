@@ -10,18 +10,28 @@
 Checkstyle configuration based on Sun's converntions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
-  <property name="charset" value="UTF-8"/>
   <property name="severity" value="warning"/>
+  <property name="charset" value="UTF-8"/>
   <module name="TreeWalker">
-    <property name="tabWidth" value="4" />
-
+    <property name="tabWidth" value="4"/>
     <module name="JavadocMethod">
+      <property name="severity" value="info"/>
       <property name="suppressLoadErrors" value="true"/>
     </module>
-    <module name="JavadocType"/>
-    <module name="JavadocVariable"/>
-    <module name="JavadocStyle"/>
-    <module name="ConstantName"/>
+    <module name="JavadocType">
+      <property name="severity" value="error"/>
+      <property name="scope" value="public"/>
+    </module>
+    <module name="JavadocVariable">
+      <property name="severity" value="info"/>
+    </module>
+    <module name="JavadocStyle">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="ConstantName">
+      <property name="severity" value="error"/>
+      <property name="format" value="(^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$)|(log)"/>
+    </module>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
     <module name="MemberName"/>
@@ -31,11 +41,18 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="StaticVariableName"/>
     <module name="TypeName"/>
     <module name="AvoidStarImport">
-        <property name="allowStaticMemberImports" value="true" />
+      <property name="severity" value="error"/>
+      <property name="allowStaticMemberImports" value="true"/>
     </module>
-    <module name="IllegalImport"/>
-    <module name="RedundantImport"/>
-    <module name="UnusedImports"/>
+    <module name="IllegalImport">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="RedundantImport">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="UnusedImports">
+      <property name="severity" value="error"/>
+    </module>
     <module name="MethodLength"/>
     <module name="ParameterNumber"/>
     <module name="LineLength">
@@ -43,57 +60,76 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
       <property name="tabWidth" value="4"/>
     </module>
     <module name="EmptyForIteratorPad"/>
-    <module name="MethodParamPad"/>
+    <module name="MethodParamPad">
+      <property name="severity" value="error"/>
+    </module>
     <module name="NoWhitespaceAfter"/>
     <module name="NoWhitespaceBefore"/>
     <module name="OperatorWrap"/>
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
     <module name="WhitespaceAfter"/>
-    <module name="WhitespaceAround"/>
-    <module name="ModifierOrder"/>
+    <module name="ModifierOrder">
+      <property name="severity" value="error"/>
+    </module>
     <module name="RedundantModifier"/>
     <module name="AvoidNestedBlocks"/>
-    <module name="EmptyBlock"/>
-    <module name="LeftCurly"/>
-    <module name="NeedBraces"/>
+    <module name="EmptyBlock">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="LeftCurly">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="NeedBraces">
+      <property name="severity" value="error"/>
+    </module>
     <module name="RightCurly"/>
-    <!-- <module name="AvoidInlineConditionals"/> -->
     <module name="EmptyStatement"/>
     <module name="EqualsHashCode"/>
-    <module name="HiddenField"/>
     <module name="IllegalInstantiation"/>
     <module name="InnerAssignment"/>
-    <!-- <module name="MagicNumber"/> -->
     <module name="MissingSwitchDefault"/>
     <module name="RedundantThrows">
       <property name="suppressLoadErrors" value="true"/>
     </module>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
-    <module name="DesignForExtension"/>
+    <module name="DesignForExtension">
+      <property name="severity" value="info"/>
+    </module>
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
-    <module name="VisibilityModifier"/>
-    <module name="ArrayTypeStyle"/>
-    <module name="FinalParameters"/>
+    <module name="VisibilityModifier">
+      <property name="severity" value="error"/>
+      <property name="protectedAllowed" value="true"/>
+    </module>
+    <module name="ArrayTypeStyle">
+      <property name="severity" value="error"/>
+    </module>
+    <module name="FinalParameters">
+      <property name="severity" value="error"/>
+    </module>
     <module name="TodoComment"/>
     <module name="UpperEll"/>
   </module>
-  <!-- <module name="JavadocPackage"/> -->
-  <module name="NewlineAtEndOfFile"/> 
+  <module name="NewlineAtEndOfFile">
+    <property name="fileExtensions" value="java, xml, properties, txt"/>
+  </module>
   <module name="Translation"/>
   <module name="FileLength"/>
-  <module name="FileTabCharacter"/>
+  <module name="FileTabCharacter">
+    <property name="severity" value="error"/>
+  </module>
   <module name="RegexpSingleline">
-    <property name="format" value="\s+$"/>
+    <property name="severity" value="error"/>
+    <property name="format" value=".\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
   </module>
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;log&quot;"/>
     <property name="severity" value="error"/>
-    <property name="format" value="private\s+(static\s)*final\s+(static\s)*Logger\s+(LOGGER|logger|LOG)"/>
+    <property name="format" value="\s+(static\s)*(final\s)*(static\s)*Logger\s+(LOGGER|logger|LOG)"/>
     <property name="message" value="The Logger object must only be called &quot;log&quot;"/>
   </module>
   <module name="RegexpSingleline">
@@ -131,5 +167,20 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <property name="severity" value="error"/>
     <property name="format" value="log\.\w+\(((\&quot;.+\&quot;\s*\+)|(.*\s*\+\s*\&quot;))"/>
     <property name="message" value="Avoid string concatenation for constructing log messages. Use parametric messages instead"/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="JavaDoc @version tag"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="@version\s+(.+)*(\$Revision|\$Date)"/>
+    <property name="message" value="Invalid JavaDoc @version tag."/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Logging framework selection"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="LogFactory\.getLog"/>
+    <property name="message" value="CAS uses the slf4j logging framework."/>
+  </module>
+  <module name="SuppressionFilter">
+    <property name="file" value="${checkstyle.suppressions.file}"/>
   </module>
 </module>

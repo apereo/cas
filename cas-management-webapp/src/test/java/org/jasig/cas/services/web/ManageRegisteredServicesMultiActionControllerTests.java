@@ -36,18 +36,17 @@ import org.springframework.web.servlet.ModelAndView;
 import static org.junit.Assert.*;
 
 /**
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
 public class ManageRegisteredServicesMultiActionControllerTests {
-    
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    
+
     private ManageRegisteredServicesMultiActionController controller;
-    
+
     private ServicesManager servicesManager;
 
     @Before
@@ -55,7 +54,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, "foo");
     }
-    
+
     @Test
     public void testDeleteService() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
@@ -63,50 +62,50 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         r.setName("name");
         r.setServiceId("serviceId");
         r.setEvaluationOrder(1);
-        
+
         this.servicesManager.save(r);
-        
+
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("id", "1200");
-        
+
         final ModelAndView modelAndView = this.controller.deleteRegisteredService(request, new MockHttpServletResponse());
-        
+
         assertNotNull(modelAndView);
         assertNull(this.servicesManager.findServiceBy(1200));
         assertEquals("deleted", modelAndView.getModel().get("status"));
         assertEquals("name", modelAndView.getModelMap().get("serviceName"));
     }
-    
+
     public void testDeleteServiceNoService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("id", "1200");
-        
+
         final ModelAndView modelAndView = this.controller.deleteRegisteredService(request, new MockHttpServletResponse());
-        
+
         assertNotNull(modelAndView);
         assertNull(this.servicesManager.findServiceBy(1200));
         assertEquals("deleted", modelAndView.getModel().get("status"));
         assertEquals("", modelAndView.getModelMap().get("serviceName"));
     }
-    
+
     public void testManage() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
         r.setServiceId("test");
         r.setEvaluationOrder(2);
-        
+
         this.servicesManager.save(r);
-        
+
         final ModelAndView modelAndView = this.controller.manage(new MockHttpServletRequest(), new MockHttpServletResponse());
-        
+
         assertNotNull(modelAndView);
         assertEquals("manageServiceView", modelAndView.getViewName());
-        
+
         final Collection<?> c = (Collection<?>) modelAndView.getModel().get("services");
         assertTrue(c.contains(r));
     }
-    
+
     @Test
     public void updateEvaluationOrderOK() {
         RegisteredServiceImpl r = new RegisteredServiceImpl();
@@ -114,22 +113,22 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         r.setName("name");
         r.setServiceId("test");
         r.setEvaluationOrder(2);
-        
+
         this.servicesManager.save(r);
-        
+
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("id", String.valueOf(r.getId()));
         request.addParameter("evaluationOrder", "100");
-        
+
         final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
-        
+
         assertNotNull(modelAndView);
         assertEquals("jsonView", modelAndView.getViewName());
 
         RegisteredService result = this.servicesManager.findServiceBy(r.getId());
         assertEquals(result.getEvaluationOrder(), 100);
     }
-    
+
     @Test
     public void updateEvaluationOrderInvalidServiceId() {
         RegisteredServiceImpl r = new RegisteredServiceImpl();
@@ -137,21 +136,21 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         r.setName("name");
         r.setServiceId("test");
         r.setEvaluationOrder(2);
-        
+
         this.servicesManager.save(r);
-        
+
         try {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("id", "5000");
-        request.addParameter("evaluationOrder", "1000");
-        
-        this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.addParameter("id", "5000");
+            request.addParameter("evaluationOrder", "1000");
+
+            this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
         } catch (IllegalArgumentException e) {
             //Exception expected; service id cannot be found
             log.debug(e.getMessage(), e);
         }
     }
-    
+
     @Test
     public void updateEvaluationOrderInvalidEvalOrder() {
         RegisteredServiceImpl r = new RegisteredServiceImpl();
@@ -159,13 +158,13 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         r.setName("name");
         r.setServiceId("test");
         r.setEvaluationOrder(2);
-        
+
         this.servicesManager.save(r);
-        
+
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("id", "1000");
         request.addParameter("evaluationOrder", "TEST");
-        
+
         try {
             this.controller.updateRegisteredServiceEvaluationOrder(request, new MockHttpServletResponse());
         } catch (IllegalArgumentException e) {
@@ -173,5 +172,5 @@ public class ManageRegisteredServicesMultiActionControllerTests {
             log.debug(e.getMessage(), e);
         }
     }
-    
+
 }

@@ -25,7 +25,7 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class DefaultTicketRegistryCleanerTests extends

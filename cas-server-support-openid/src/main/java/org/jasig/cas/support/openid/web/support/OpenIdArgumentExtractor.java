@@ -26,14 +26,13 @@ import org.jasig.cas.web.support.ArgumentExtractor;
 
 /**
  * Constructs an OpenId Service.
- * 
- * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
- * @since 3.1
  *
+ * @author Scott Battaglia
+ * @since 3.1
  */
 public class OpenIdArgumentExtractor implements ArgumentExtractor {
 
+    @Override
     public WebApplicationService extractService(final HttpServletRequest request) {
         return OpenIdService.createServiceFrom(request);
     }

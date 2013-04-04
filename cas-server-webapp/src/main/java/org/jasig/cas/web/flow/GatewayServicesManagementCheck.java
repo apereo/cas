@@ -33,7 +33,6 @@ import javax.validation.constraints.NotNull;
  * Performs an authorization check for the gateway request if there is no Ticket Granting Ticket.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.4.5
  */
 public class GatewayServicesManagementCheck extends AbstractAction {

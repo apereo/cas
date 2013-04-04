@@ -30,7 +30,6 @@ import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
  * Serializer for {@link ImmutableAuthentication}.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public final class ImmutableAuthenticationSerializer extends AbstractAuthenticationSerializer<ImmutableAuthentication> {
 
