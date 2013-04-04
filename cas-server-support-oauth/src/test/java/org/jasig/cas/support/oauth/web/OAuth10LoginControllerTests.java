@@ -31,14 +31,14 @@ import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * This class tests the {@link OAuth10LoginController} class.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.2
  */
 public final class OAuth10LoginControllerTests {
-    
-    private final static String MY_LOGIN_URL = "http://casserver/login";
-    
+
+    private static final String MY_LOGIN_URL = "http://casserver/login";
+
     @Test
     public void testOK() throws Exception {
         // must be an OAuth 1.0 provider

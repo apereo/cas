@@ -105,7 +105,9 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
       <property name="severity" value="error"/>
       <property name="protectedAllowed" value="true"/>
     </module>
-    <module name="ArrayTypeStyle"/>
+    <module name="ArrayTypeStyle">
+        <property name="severity" value="error"/>
+    </module>
     <module name="FinalParameters">
       <property name="severity" value="error"/>
     </module>
@@ -170,6 +172,12 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <property name="severity" value="error"/>
     <property name="format" value="@version\s+(.+)*(\$Revision|\$Date)"/>
     <property name="message" value="Invalid JavaDoc @version tag."/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Logging framework selection"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="LogFactory\.getLog"/>
+    <property name="message" value="CAS uses the slf4j logging framework."/>
   </module>
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.suppressions.file}"/>

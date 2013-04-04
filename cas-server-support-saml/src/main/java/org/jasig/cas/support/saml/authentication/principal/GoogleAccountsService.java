@@ -35,90 +35,91 @@ import java.util.zip.InflaterInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.saml.util.SamlUtils;
 import org.jasig.cas.util.SamlDateUtils;
 import org.jdom.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
-    /**
-     * Comment for <code>serialVersionUID</code>
-     */
     private static final long serialVersionUID = 6678711809842282833L;
 
+    private static final Logger log = LoggerFactory.getLogger(GoogleAccountsService.class);
+
     private static Random random = new Random();
-    
-    private static final char[] charMapping = {
-      'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-      'p'};
+
+    private static final char[] CHAR_MAPPINGS = {
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+    'p'};
 
     private static final String CONST_PARAM_SERVICE = "SAMLRequest";
 
     private static final String CONST_RELAY_STATE = "RelayState";
 
     private static final String TEMPLATE_SAML_RESPONSE = "<samlp:Response ID=\"<RESPONSE_ID>\" IssueInstant=\"<ISSUE_INSTANT>\" Version=\"2.0\""
-        + " xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\""
-        + " xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\""
-        + " xmlns:xenc=\"http://www.w3.org/2001/04/xmlenc#\">"
-        + "<samlp:Status>"
-        + "<samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\" />"
-        + "</samlp:Status>"
-        + "<Assertion ID=\"<ASSERTION_ID>\""
-        + " IssueInstant=\"2003-04-17T00:46:02Z\" Version=\"2.0\""
-        + " xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\">"
-        + "<Issuer>https://www.opensaml.org/IDP</Issuer>"
-        + "<Subject>"
-        + "<NameID Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress\">"
-        + "<USERNAME_STRING>"
-        + "</NameID>"
-        + "<SubjectConfirmation Method=\"urn:oasis:names:tc:SAML:2.0:cm:bearer\">"
-        + "<SubjectConfirmationData Recipient=\"<ACS_URL>\" NotOnOrAfter=\"<NOT_ON_OR_AFTER>\" InResponseTo=\"<REQUEST_ID>\" />"
-        + "</SubjectConfirmation>"
-        + "</Subject>"
-        + "<Conditions NotBefore=\"2003-04-17T00:46:02Z\""
-        + " NotOnOrAfter=\"<NOT_ON_OR_AFTER>\">"
-        + "<AudienceRestriction>"
-        + "<Audience><ACS_URL></Audience>"
-        + "</AudienceRestriction>"
-        + "</Conditions>"
-        + "<AuthnStatement AuthnInstant=\"<AUTHN_INSTANT>\">"
-        + "<AuthnContext>"
-        + "<AuthnContextClassRef>"
-        + "urn:oasis:names:tc:SAML:2.0:ac:classes:Password"
-        + "</AuthnContextClassRef>"
-        + "</AuthnContext>"
-        + "</AuthnStatement>"
-        + "</Assertion></samlp:Response>";
+            + " xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\""
+            + " xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\""
+            + " xmlns:xenc=\"http://www.w3.org/2001/04/xmlenc#\">"
+            + "<samlp:Status>"
+            + "<samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\" />"
+            + "</samlp:Status>"
+            + "<Assertion ID=\"<ASSERTION_ID>\""
+            + " IssueInstant=\"2003-04-17T00:46:02Z\" Version=\"2.0\""
+            + " xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\">"
+            + "<Issuer>https://www.opensaml.org/IDP</Issuer>"
+            + "<Subject>"
+            + "<NameID Format=\"urn:oasis:names:tc:SAML:2.0:nameid-format:emailAddress\">"
+            + "<USERNAME_STRING>"
+            + "</NameID>"
+            + "<SubjectConfirmation Method=\"urn:oasis:names:tc:SAML:2.0:cm:bearer\">"
+            + "<SubjectConfirmationData Recipient=\"<ACS_URL>\" NotOnOrAfter=\"<NOT_ON_OR_AFTER>\" InResponseTo=\"<REQUEST_ID>\" />"
+            + "</SubjectConfirmation>"
+            + "</Subject>"
+            + "<Conditions NotBefore=\"2003-04-17T00:46:02Z\""
+            + " NotOnOrAfter=\"<NOT_ON_OR_AFTER>\">"
+            + "<AudienceRestriction>"
+            + "<Audience><ACS_URL></Audience>"
+            + "</AudienceRestriction>"
+            + "</Conditions>"
+            + "<AuthnStatement AuthnInstant=\"<AUTHN_INSTANT>\">"
+            + "<AuthnContext>"
+            + "<AuthnContextClassRef>"
+            + "urn:oasis:names:tc:SAML:2.0:ac:classes:Password"
+            + "</AuthnContextClassRef>"
+            + "</AuthnContext>"
+            + "</AuthnStatement>"
+            + "</Assertion></samlp:Response>";
 
     private final String relayState;
 
     private final PublicKey publicKey;
 
     private final PrivateKey privateKey;
-    
+
     private final String requestId;
 
     private final String alternateUserName;
 
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-        final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
+            final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
         this(id, id, null, relayState, requestId, privateKey, publicKey, alternateUserName);
     }
 
     protected GoogleAccountsService(final String id, final String originalUrl,
-        final String artifactId, final String relayState, final String requestId,
-        final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
+            final String artifactId, final String relayState, final String requestId,
+            final PrivateKey privateKey, final PublicKey publicKey, final String alternateUserName) {
         super(id, originalUrl, artifactId, null);
         this.relayState = relayState;
         this.privateKey = privateKey;
@@ -128,19 +129,19 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     public static GoogleAccountsService createServiceFrom(
-        final HttpServletRequest request, final PrivateKey privateKey,
-        final PublicKey publicKey, final String alternateUserName) {
+            final HttpServletRequest request, final PrivateKey privateKey,
+            final PublicKey publicKey, final String alternateUserName) {
         final String relayState = request.getParameter(CONST_RELAY_STATE);
 
         final String xmlRequest = decodeAuthnRequestXML(request
-            .getParameter(CONST_PARAM_SERVICE));
+                .getParameter(CONST_PARAM_SERVICE));
 
         if (!StringUtils.hasText(xmlRequest)) {
             return null;
         }
 
         final Document document = SamlUtils
-            .constructDocumentFromXmlString(xmlRequest);
+                .constructDocumentFromXmlString(xmlRequest);
 
         if (document == null) {
             return null;
@@ -150,14 +151,15 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String requestId = document.getRootElement().getAttributeValue("ID");
 
         return new GoogleAccountsService(assertionConsumerServiceUrl,
-            relayState, requestId, privateKey, publicKey, alternateUserName);
+                relayState, requestId, privateKey, publicKey, alternateUserName);
     }
 
+    @Override
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<String, String>();
         final String samlResponse = constructSamlResponse();
         final String signedResponse = SamlUtils.signSamlResponse(samlResponse,
-            this.privateKey, this.publicKey);
+                this.privateKey, this.publicKey);
         parameters.put("SAMLResponse", signedResponse);
         parameters.put("RelayState", this.relayState);
 
@@ -165,10 +167,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     /**
-     * Service does not support Single Log Out
-     * 
+     * Service does not support Single Log Out.
+     *
      * @see org.jasig.cas.authentication.principal.WebApplicationService#logOutOfService(java.lang.String)
      */
+    @Override
     public boolean logOutOfService(final String sessionIdentifier) {
         return false;
     }
@@ -192,22 +195,22 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
                 userId = attributeValue;
             }
         }
-        
+
         samlResponse = samlResponse.replace("<USERNAME_STRING>", userId);
         samlResponse = samlResponse.replace("<RESPONSE_ID>", createID());
         samlResponse = samlResponse.replace("<ISSUE_INSTANT>", SamlDateUtils
-            .getCurrentDateAndTime());
+                .getCurrentDateAndTime());
         samlResponse = samlResponse.replace("<AUTHN_INSTANT>", SamlDateUtils
-            .getCurrentDateAndTime());
+                .getCurrentDateAndTime());
         samlResponse = samlResponse.replaceAll("<NOT_ON_OR_AFTER>", SamlDateUtils
-            .getFormattedDateAndTime(c.getTime()));
+                .getFormattedDateAndTime(c.getTime()));
         samlResponse = samlResponse.replace("<ASSERTION_ID>", createID());
         samlResponse = samlResponse.replaceAll("<ACS_URL>", getId());
         samlResponse = samlResponse.replace("<REQUEST_ID>", this.requestId);
 
         return samlResponse;
     }
-    
+
     private static String createID() {
         final byte[] bytes = new byte[20]; // 160 bits
         random.nextBytes(bytes);
@@ -215,17 +218,17 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final char[] chars = new char[40];
 
         for (int i = 0; i < bytes.length; i++) {
-          int left = (bytes[i] >> 4) & 0x0f;
-          int right = bytes[i] & 0x0f;
-          chars[i * 2] = charMapping[left];
-          chars[i * 2 + 1] = charMapping[right];
+            int left = bytes[i] >> 4 & 0x0f;
+            int right = bytes[i] & 0x0f;
+            chars[i * 2] = CHAR_MAPPINGS[left];
+            chars[i * 2 + 1] = CHAR_MAPPINGS[right];
         }
 
         return String.valueOf(chars);
-      }
+    }
 
     private static String decodeAuthnRequestXML(
-        final String encodedRequestXmlString) {
+            final String encodedRequestXmlString) {
         if (encodedRequestXmlString == null) {
             return null;
         }
@@ -261,11 +264,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         } catch (final Exception e) {
             return null;
         } finally {
-            try {
-                iis.close();
-            } catch (final Exception e) {
-                // nothing to do
-            }
+            IOUtils.closeQuietly(iis);
         }
     }
 
@@ -281,11 +280,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     private static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
         final byte[] xmlMessageBytes = new byte[10000];
-        
+
         final byte[] extendedBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
         extendedBytes[bytes.length] = 0;
-        
+
         inflater.setInput(extendedBytes);
 
         try {
