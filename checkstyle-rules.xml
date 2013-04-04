@@ -7,7 +7,7 @@
 <!--
     Checkstyle-Configuration: CAS
     Description: 
-Checkstyle configuration based on Sun's converntions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
+Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
 -->
 <module name="Checker">
   <property name="severity" value="warning"/>
@@ -21,6 +21,7 @@ Checkstyle configuration based on Sun's converntions, compliant with CAS coding 
     <module name="JavadocType">
       <property name="severity" value="error"/>
       <property name="scope" value="public"/>
+      <property name="allowMissingParamTags" value="true" />
     </module>
     <module name="JavadocVariable">
       <property name="severity" value="info"/>
