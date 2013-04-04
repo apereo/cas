@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockPasswordHandler;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -34,7 +35,8 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests {
 
     private LegacyPasswordHandlerAdaptorAuthenticationHandler lphaah;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.lphaah = new LegacyPasswordHandlerAdaptorAuthenticationHandler();
         this.lphaah.setPasswordHandler(new MockPasswordHandler());
     }

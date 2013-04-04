@@ -64,7 +64,6 @@ public class X509CertificateCredentialsToIdentifierPrincipalResolverTests
         assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
     }
 
-    @Test
     private X509Certificate getTestCertificate() {
 
         final String validCert = "-----BEGIN CERTIFICATE-----\n"

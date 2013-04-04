@@ -24,6 +24,7 @@ import static org.junit.Assert.*;
 import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockTrustHandler;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -34,7 +35,8 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests {
 
     private LegacyTrustHandlerAdaptorAuthenticationHandler legacyTrustAdaptor;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.legacyTrustAdaptor = new LegacyTrustHandlerAdaptorAuthenticationHandler();
         this.legacyTrustAdaptor.setTrustHandler(new MockTrustHandler());
     }
@@ -46,17 +48,11 @@ public class LegacyTrustHandlerAdaptorAuthenticationHandlerTests {
      */
     @Test
     public void testSupports() {
-
         assertFalse(this.legacyTrustAdaptor.supports(null));
-
         LegacyCasTrustedCredentials goodCred = new LegacyCasTrustedCredentials();
-
         assertTrue(this.legacyTrustAdaptor.supports(goodCred));
-
         LegacyCasCredentials badCred = new LegacyCasCredentials();
-
         assertFalse(this.legacyTrustAdaptor.supports(badCred));
-
     }
 
     /**
