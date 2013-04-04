@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.services.web;
 
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,26 +30,26 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import junit.framework.TestCase;
-
 /**
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
-public class ServiceThemeResolverTests extends TestCase {
-    
+public class ServiceThemeResolverTests {
+
     private ServiceThemeResolver serviceThemeResolver;
-    
+
     private ServicesManager servicesManager;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
-        
+
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");
         this.serviceThemeResolver.setServicesManager(this.servicesManager);
@@ -56,30 +58,33 @@ public class ServiceThemeResolverTests extends TestCase {
         mobileBrowsers.put("Mozilla", "theme");
         this.serviceThemeResolver.setMobileBrowsers(mobileBrowsers);
     }
-    
+
+    @Test
     public void testGetServiceTheme() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setTheme("myTheme");
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId("myServiceId");
-        
+
         this.servicesManager.save(r);
-        
+
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
         System.out.println("1");
         assertEquals("myTheme", this.serviceThemeResolver.resolveThemeName(request));
     }
-    
+
+    @Test
     public void testGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
-    
+
+    @Test
     public void testGetDefaultServiceWithNoServicesManager() {
         this.serviceThemeResolver.setServicesManager(null);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -87,7 +92,7 @@ public class ServiceThemeResolverTests extends TestCase {
         request.addHeader("User-Agent", "Mozilla");
         assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
-    
-    
+
+
 
 }

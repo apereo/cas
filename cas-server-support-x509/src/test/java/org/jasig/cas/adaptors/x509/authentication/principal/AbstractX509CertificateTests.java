@@ -33,15 +33,13 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-public class AbstractX509CertificateTests extends TestCase {
+public abstract class AbstractX509CertificateTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(
-        true);
+            true);
 
     public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certificate(
-        false);
+            false);
 
     protected static class CasX509Certificate extends X509Certificate {
 
@@ -50,78 +48,94 @@ public class AbstractX509CertificateTests extends TestCase {
          */
         private static final long serialVersionUID = -4449243195531417769L;
 
-        private boolean valid;
+        private final boolean valid;
 
         protected CasX509Certificate(final boolean valid) {
             this.valid = valid;
         }
 
+        @Override
         public void checkValidity() throws CertificateExpiredException,
-            CertificateNotYetValidException {
+        CertificateNotYetValidException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
         }
 
-        public void checkValidity(Date arg0)
-            throws CertificateExpiredException, CertificateNotYetValidException {
+        @Override
+        public void checkValidity(final Date arg0)
+                throws CertificateExpiredException, CertificateNotYetValidException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
         }
 
+        @Override
         public int getBasicConstraints() {
             return -1;
         }
 
+        @Override
         public Principal getIssuerDN() {
             return new Principal(){
 
+                @Override
                 public String getName() {
                     return "CN=Jasig,DC=jasig,DC=org";
                 }
             };
         }
 
+        @Override
         public boolean[] getIssuerUniqueID() {
             return null;
         }
 
+        @Override
         public boolean[] getKeyUsage() {
             return null;
         }
 
+        @Override
         public Date getNotAfter() {
             return null;
         }
 
+        @Override
         public Date getNotBefore() {
             return null;
         }
 
+        @Override
         public BigInteger getSerialNumber() {
             return new BigInteger("500000");
         }
 
+        @Override
         public String getSigAlgName() {
             return null;
         }
 
+        @Override
         public String getSigAlgOID() {
             return null;
         }
 
+        @Override
         public byte[] getSigAlgParams() {
             return null;
         }
 
+        @Override
         public byte[] getSignature() {
             return null;
         }
 
+        @Override
         public Principal getSubjectDN() {
             return new Principal(){
 
+                @Override
                 public String getName() {
                     return "CN=CAS,DC=jasig,DC=org";
                 }
@@ -129,55 +143,67 @@ public class AbstractX509CertificateTests extends TestCase {
             };
         }
 
+        @Override
         public boolean[] getSubjectUniqueID() {
             return null;
         }
 
+        @Override
         public byte[] getTBSCertificate() throws CertificateEncodingException {
             return null;
         }
 
+        @Override
         public int getVersion() {
             return 0;
         }
 
+        @Override
         public Set<String> getCriticalExtensionOIDs() {
             return null;
         }
 
-        public byte[] getExtensionValue(String arg0) {
+        @Override
+        public byte[] getExtensionValue(final String arg0) {
             return null;
         }
 
+        @Override
         public Set<String> getNonCriticalExtensionOIDs() {
             return null;
         }
 
+        @Override
         public boolean hasUnsupportedCriticalExtension() {
             return false;
         }
 
+        @Override
         public byte[] getEncoded() throws CertificateEncodingException {
             return null;
         }
 
+        @Override
         public PublicKey getPublicKey() {
             return null;
         }
 
+        @Override
         public String toString() {
             return "CasX509Certficate";
         }
 
-        public void verify(PublicKey arg0, String arg1)
-            throws CertificateException, NoSuchAlgorithmException,
-            InvalidKeyException, NoSuchProviderException, SignatureException {
+        @Override
+        public void verify(final PublicKey arg0, final String arg1)
+                throws CertificateException, NoSuchAlgorithmException,
+                InvalidKeyException, NoSuchProviderException, SignatureException {
             // nothing to do right now
         }
 
-        public void verify(PublicKey arg0) throws CertificateException,
-            NoSuchAlgorithmException, InvalidKeyException,
-            NoSuchProviderException, SignatureException {
+        @Override
+        public void verify(final PublicKey arg0) throws CertificateException,
+        NoSuchAlgorithmException, InvalidKeyException,
+        NoSuchProviderException, SignatureException {
             // nothing to do right now
         }
     }

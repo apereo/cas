@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of the ServiceRegistryDao based on JPA.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -35,7 +35,7 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     @NotNull
     @PersistenceContext
     private EntityManager entityManager;
-  
+
     public boolean delete(final RegisteredService registeredService) {
       if (this.entityManager.contains(registeredService)) {
         this.entityManager.remove(registeredService);
@@ -46,18 +46,19 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     }
 
     public List<RegisteredService> load() {
-        return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        return this.entityManager.createQuery("select r from AbstractRegisteredService r",
+                RegisteredService.class).getResultList();
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
         final boolean isNew = registeredService.getId() == -1;
 
         final RegisteredService r = this.entityManager.merge(registeredService);
-        
+
         if (!isNew) {
           this.entityManager.persist(r);
         }
-        
+
         return r;
     }
 

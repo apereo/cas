@@ -84,7 +84,7 @@ public class HealthCheckMonitorTests {
         this.monitor.setMonitors(Collections.singleton(throwsUnchecked));
         assertEquals(StatusCode.ERROR, this.monitor.observe().getCode());
     }
-    
+
     private SessionMonitor newSessionMonitor() {
         final SessionMonitor sessionMonitor = new SessionMonitor();
         sessionMonitor.setTicketRegistry(new DefaultTicketRegistry());

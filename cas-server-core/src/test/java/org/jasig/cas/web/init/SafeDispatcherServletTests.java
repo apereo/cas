@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.init;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
@@ -25,6 +27,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,16 +36,14 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
-import junit.framework.TestCase;
 
 /**
  * Testcase for SafeDispatcherServlet.
- * 
+ *
  * @author Andrew Petro
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class SafeDispatcherServletTests extends TestCase {
+public class SafeDispatcherServletTests {
 
     private SafeDispatcherServlet safeServlet;
 
@@ -49,8 +51,8 @@ public class SafeDispatcherServletTests extends TestCase {
 
     private MockServletConfig mockConfig;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
 
         this.safeServlet = new SafeDispatcherServlet();
 
@@ -58,15 +60,12 @@ public class SafeDispatcherServletTests extends TestCase {
         this.mockConfig = new MockServletConfig(this.mockContext);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     /*
      * Test that SafeDispatcherServlet does not propogate exceptions generated
      * by its underlying DispatcherServlet on init() and that it stores the
      * exception into the ServletContext as the expected attribute name.
      */
+    @Test
     public void testInitServletConfig() {
 
         /*
@@ -94,6 +93,7 @@ public class SafeDispatcherServletTests extends TestCase {
      * Test that the SafeDispatcherServlet does not service requests when it has
      * failed init and instead throws an ApplicationContextException.
      */
+    @Test
     public void testService() throws ServletException, IOException {
         this.safeServlet.init(this.mockConfig);
 
@@ -110,6 +110,7 @@ public class SafeDispatcherServletTests extends TestCase {
         fail("Should have thrown ApplicationContextException since init() failed.");
     }
 
+    @Test
     public void testServiceSucceeds() {
         this.mockConfig = new MockServletConfig(this.mockContext, "cas");
         this.safeServlet.init(this.mockConfig);

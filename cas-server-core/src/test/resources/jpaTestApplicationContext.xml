@@ -27,7 +27,7 @@
                       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 
-  <!-- 
+  <!--
   NOTE:
   This bean supports testing JPA components on multiple platforms.
   In order to test a particular database platform, do the following:
@@ -35,7 +35,7 @@
    2. Copy the database driver jar to cas-server-core/target/test-lib/jdbc-driver.jar
    3. OPTIONAL: Set cas.jpa.concurrent system property to invoke concurrent tests
    4. Execute test goal as usual
-   -->  
+   -->
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
     p:location="file:database.properties"
     p:ignoreResourceNotFound="true"
@@ -63,7 +63,7 @@
     <value>org.jasig.cas.services</value>
     <value>org.jasig.cas.ticket</value>
   </util:list>
-  
+
   <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
     id="factoryBean"
     p:dataSource-ref="dataSource"
@@ -87,7 +87,7 @@
 
   <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
     p:entityManagerFactory-ref="factoryBean" />
-    
+
   <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
 
   <!--
@@ -95,7 +95,7 @@
     @PersistenceUnit and @PersistenceContext
   -->
   <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
-    
+
 </beans>
 
 

@@ -29,21 +29,21 @@ import org.springframework.webflow.execution.RequestContext;
  * Concrete implementation of AbstractNonInteractiveCredentialsAction that
  * obtains the X509 Certificates from the HttpServletRequest and places them in
  * the X509CertificateCredentials.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public final class X509CertificateCredentialsNonInteractiveAction extends
-    AbstractNonInteractiveCredentialsAction {
+AbstractNonInteractiveCredentialsAction {
 
     private static final String CERTIFICATE_REQUEST_ATTRIBUTE = "javax.servlet.request.X509Certificate";
 
+    @Override
     protected Credentials constructCredentialsFromRequest(
-        final RequestContext context) {
+            final RequestContext context) {
         final X509Certificate[] certificates = (X509Certificate[]) context
-            .getExternalContext().getRequestMap().get(
-                CERTIFICATE_REQUEST_ATTRIBUTE);
+                .getExternalContext().getRequestMap().get(
+                        CERTIFICATE_REQUEST_ATTRIBUTE);
 
         if (certificates == null || certificates.length == 0) {
             if (logger.isDebugEnabled()) {

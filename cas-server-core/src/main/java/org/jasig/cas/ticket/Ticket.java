@@ -22,16 +22,16 @@ import java.io.Serializable;
 
 /**
  * Interface for the generic concept of a ticket.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public interface Ticket extends Serializable {
 
     /**
      * Method to retrieve the id.
-     * 
+     *
      * @return the id
      */
     String getId();
@@ -39,25 +39,26 @@ public interface Ticket extends Serializable {
     /**
      * Determines if the ticket is expired. Most common implementations might
      * collaborate with <i>ExpirationPolicy </i> strategy.
-     * 
+     *
      * @see org.jasig.cas.ticket.ExpirationPolicy
+     * @return true, if the ticket is expired
      */
     boolean isExpired();
 
     /**
      * Method to retrieve the TicketGrantingTicket that granted this ticket.
-     * 
+     *
      * @return the ticket or null if it has no parent
      */
     TicketGrantingTicket getGrantingTicket();
 
     /**
      * Method to return the time the Ticket was created.
-     * 
+     *
      * @return the time the ticket was created.
      */
     long getCreationTime();
-    
+
     /**
      * @return the number of times this ticket was used.
      */

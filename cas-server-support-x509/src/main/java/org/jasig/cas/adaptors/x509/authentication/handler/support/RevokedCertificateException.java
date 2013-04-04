@@ -23,24 +23,27 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509CRLEntry;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Exception that describes a revoked X.509 certificate.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
 public class RevokedCertificateException extends GeneralSecurityException {
-   
-    /** Serialization marker */
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     private static final long serialVersionUID = 8827788431199129708L;
 
-    /** OID for reasonCode CRL extension */
+    /** OID for reasonCode CRL extension. */
     public static final String CRL_REASON_OID = "2.5.29.21";
-    
-    /** CRL revocation reason codes per RFC 3280 */ 
+
+    /** CRL revocation reason codes per RFC 3280. */
     public enum Reason {
         Unspecified,
         KeyCompromise,
@@ -52,7 +55,7 @@ public class RevokedCertificateException extends GeneralSecurityException {
         RemoveFromCRL,
         PrivilegeWithdrawn,
         AACompromise;
-        
+
         public static Reason fromCode(final int code) {
             for (int i = 0; i < Reason.values().length; i++) {
                 if (i == code) {
@@ -62,13 +65,13 @@ public class RevokedCertificateException extends GeneralSecurityException {
             throw new IllegalArgumentException("Unknown CRL reason code.");
         }
     }
-    
-    private Date revocationDate;
-    
-    private BigInteger serial;
-    
+
+    private final Date revocationDate;
+
+    private final BigInteger serial;
+
     private Reason reason;
-    
+
     public RevokedCertificateException(final Date revoked, final BigInteger serial) {
         this(revoked, serial, null);
     }
@@ -85,16 +88,16 @@ public class RevokedCertificateException extends GeneralSecurityException {
         if (entry.hasExtensions()) {
             try {
                 final int code = Integer.parseInt(
-                    new String(entry.getExtensionValue(CRL_REASON_OID), "ASCII"));
+                        new String(entry.getExtensionValue(CRL_REASON_OID), "ASCII"));
                 if (code < Reason.values().length) {
                     this.reason = Reason.fromCode(code);
                 }
             } catch (final Exception e) {
-                // Ignore invalid reason codes
+                log.trace("An exception occurred when resolving extension value: {}", e.getMessage());
             }
         }
     }
-    
+
     /**
      * @return Returns the revocationDate.
      */
@@ -108,20 +111,20 @@ public class RevokedCertificateException extends GeneralSecurityException {
     public BigInteger getSerial() {
         return this.serial;
     }
-    
+
     /**
      * @return Returns the reason.
      */
     public Reason getReason() {
         return this.reason;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getMessage() {
         if (this.reason != null) {
-	        return String.format("Certificate %s revoked on %s for reason %s",
-	            this.serial, this.revocationDate, this.reason);
+            return String.format("Certificate %s revoked on %s for reason %s",
+                    this.serial, this.revocationDate, this.reason);
         }
         return String.format("Certificate %s revoked on %s", this.serial, this.revocationDate);
     }

@@ -21,13 +21,13 @@ package org.jasig.cas.authentication.handler;
 
 /**
  * @author Howard Gilbert
- * @version $Revision$ $Date$
+
  * @since 3.3.6
  */
 public interface PrincipalNameTransformer {
 
     /**
-     * Transform the string typed into the login form into a tentative Principal Name to be 
+     * Transform the string typed into the login form into a tentative Principal Name to be
      * validated by a specific type of Authentication Handler.
      *
      * <p>The Principal Name eventually assigned by the CredentialsToPrincipalResolver may

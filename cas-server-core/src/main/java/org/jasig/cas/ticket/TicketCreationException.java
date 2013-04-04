@@ -20,9 +20,9 @@ package org.jasig.cas.ticket;
 
 /**
  * Exception thrown if there is an error creating a ticket.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class TicketCreationException extends TicketException {
@@ -43,7 +43,7 @@ public class TicketCreationException extends TicketException {
     /**
      * Constructs a TicketCreationException with the default exception code and
      * the original exception that was thrown.
-     * 
+     *
      * @param throwable the chained exception
      */
     public TicketCreationException(final Throwable throwable) {

@@ -97,6 +97,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         }
     }
 
+    @Override
     protected void renderMergedOutputModel(
             final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
@@ -125,7 +126,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             messageContext.setOutboundSAMLMessage(samlResponse);
             this.encoder.encode(messageContext);
         } catch (final Exception e) {
-            this.log.error("Error generating SAML response for service {}.", serviceId);
+            log.error("Error generating SAML response for service {}.", serviceId);
             throw e;
         }
     }

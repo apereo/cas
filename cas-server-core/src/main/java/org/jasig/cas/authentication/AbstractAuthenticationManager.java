@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.3.5
  */
 public abstract class AbstractAuthenticationManager implements AuthenticationManager {
@@ -44,7 +44,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
-    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators = new ArrayList<AuthenticationMetaDataPopulator>();
+    private List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
+            new ArrayList<AuthenticationMetaDataPopulator>();
 
     @Audit(
         action="AUTHENTICATION",
@@ -55,7 +56,10 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
 
         final Pair<AuthenticationHandler, Principal> pair = authenticateAndObtainPrincipal(credentials);
 
-        // we can only get here if the above method doesn't throw an exception. And if it doesn't, then the pair must not be null.
+        /*
+         *  we can only get here if the above method doesn't throw an exception. And if it doesn't,
+         *  then the pair must not be null.
+         */
         final Principal p = pair.getSecond();
         log.info("Authenticated {} with credential {}.", p, credentials);
         log.debug("Attribute map for {}: {}", p.getId(), p.getAttributes());
@@ -67,7 +71,8 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             authentication.getAttributes().put(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, a.getName());
         }
 
-        for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator : this.authenticationMetaDataPopulators) {
+        for (final AuthenticationMetaDataPopulator authenticationMetaDataPopulator
+                : this.authenticationMetaDataPopulators) {
             authentication = authenticationMetaDataPopulator
                 .populateAttributes(authentication, credentials);
         }
@@ -79,28 +84,32 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /**
      * @param authenticationMetaDataPopulators the authenticationMetaDataPopulators to set.
      */
-    public final void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators) {
+    public final void setAuthenticationMetaDataPopulators(
+            final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators) {
         this.authenticationMetaDataPopulators = authenticationMetaDataPopulators;
     }
 
     /**
-     * Follows the same rules as the "authenticate" method (i.e. should only return a fully populated object, or throw an exception)
+     * Follows the same rules as the "authenticate" method (i.e. should only return a fully populated
+     * object, or throw an exception)
      *
      * @param credentials the credentials to check
      * @return the pair of authentication handler and principal.  CANNOT be NULL.
      * @throws AuthenticationException if there is an error authenticating.
      */
-    protected abstract Pair<AuthenticationHandler,Principal> authenticateAndObtainPrincipal(Credentials credentials) throws AuthenticationException;
+    protected abstract Pair<AuthenticationHandler,Principal> authenticateAndObtainPrincipal(
+            final Credentials credentials) throws AuthenticationException;
 
 
     /**
      * Logs authentication handler errors.
-     * 
+     *
      * @param handlerName The class name of the authentication handler.
-     * @param credentials Client credentials subject to authentication. 
+     * @param credentials Client credentials subject to authentication.
      * @param e The exception that has occurred during authentication attempt.
      */
-    protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials, final Exception e) {
+    protected void logAuthenticationHandlerError(final String handlerName, final Credentials credentials,
+            final Exception e) {
         if (e instanceof AuthenticationException) {
             // CAS-1181 Log common authentication failures at INFO without stack trace
             log.info("{} failed authenticating {}", handlerName, credentials);

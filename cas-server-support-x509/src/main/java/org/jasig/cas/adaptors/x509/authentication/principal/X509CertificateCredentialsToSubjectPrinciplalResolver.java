@@ -33,7 +33,7 @@ import edu.vt.middleware.crypt.x509.types.AttributeType;
 /**
  * Credential to principal resolver that extracts one or more attribute values
  * from the certificate subject DN and combines them with intervening delimiters.
- * 
+ *
  * <p>
  * This class is a replacement for the following deprecated resolvers:
  * <ol>
@@ -41,14 +41,13 @@ import edu.vt.middleware.crypt.x509.types.AttributeType;
  * </ol>
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  * @since 3.4.4
  *
  */
 public class X509CertificateCredentialsToSubjectPrinciplalResolver
-    extends AbstractX509CertificateCredentialsToPrincipalResolver {
-   
-    /** Pattern used to extract attribute names from descriptor */
+extends AbstractX509CertificateCredentialsToPrincipalResolver {
+
+    /** Pattern used to extract attribute names from descriptor. */
     private static final Pattern ATTR_PATTERN = Pattern.compile("\\$(\\w+)");
 
     /** Descriptor representing an abstract format of the principal to be resolved.*/
@@ -90,7 +89,7 @@ public class X509CertificateCredentialsToSubjectPrinciplalResolver
      * </ul>
      * For a complete list of supported attributes, see
      * {@link edu.vt.middleware.crypt.x509.types.AttributeType}.
-     * 
+     *
      */
     public void setDescriptor(final String s) {
         this.descriptor = s;
@@ -99,14 +98,15 @@ public class X509CertificateCredentialsToSubjectPrinciplalResolver
     /**
      * Replaces placeholders in the descriptor with values extracted from attribute
      * values in relative distinguished name components of the DN.
-     * 
+     *
      * @param certificate X.509 certificate credential.
      * @return Resolved principal ID.
      * @see org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateCredentialsToPrincipalResolver#resolvePrincipalInternal(java.security.cert.X509Certificate)
      */
+    @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        this.log.debug("Resolving principal for " + certificate);
-        final StringBuffer sb = new StringBuffer ();
+        log.debug("Resolving principal for {}", certificate);
+        final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<String, AttributeContext>();
         String name;
@@ -116,8 +116,8 @@ public class X509CertificateCredentialsToSubjectPrinciplalResolver
             name = m.group(1);
             if (!attrMap.containsKey(name)) {
                 values = DNUtils.getAttributeValues(
-                    certificate.getSubjectX500Principal(),
-                    AttributeType.fromName(name));
+                        certificate.getSubjectX500Principal(),
+                        AttributeType.fromName(name));
                 attrMap.put(name, new AttributeContext(name, values));
             }
             context = attrMap.get(name);
@@ -126,17 +126,16 @@ public class X509CertificateCredentialsToSubjectPrinciplalResolver
         m.appendTail(sb);
         return sb.toString();
     }
-    
-    private static final class AttributeContext
-    {
+
+    private static final class AttributeContext {
         private int currentIndex;
         private String name;
-        private String[] values;
-        
+        private final String[] values;
+
         public AttributeContext(final String name, final String[] values) {
             this.values = values;
         }
-        
+
         public String nextValue() {
             if (this.currentIndex == this.values.length) {
                 throw new IllegalStateException("No values remaining for attribute " + this.name);

@@ -24,13 +24,13 @@ package org.jasig.cas;
  * manifest attribute from the jar file.
  *
  * @author Dmitriy Kopylenko
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class CasVersion {
 
     /**
-     * Private constructor for CasVersion. You should not be able to instanciate
+     * Private constructor for CasVersion. You should not be able to instantiate
      * this class.
      */
     private CasVersion() {
@@ -38,9 +38,8 @@ public final class CasVersion {
     }
 
     /**
-     * Return the full CAS version string.
-     * 
      * @see java.lang.Package#getImplementationVersion
+     * @return Return the full CAS version string.
      */
     public static String getVersion() {
         return CasVersion.class.getPackage().getImplementationVersion();

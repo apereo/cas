@@ -18,26 +18,27 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.principal;
 
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.5
- *
  */
-public class PrincipalBearingCredentialsTests extends TestCase {
+public class PrincipalBearingCredentialsTests {
 
-        private PrincipalBearingCredentials principalBearingCredentials;
-        
-        public void setUp() throws Exception {
-            this.principalBearingCredentials = new PrincipalBearingCredentials(new SimplePrincipal("test"));
-        }
-        
-        public void testGetOfPrincipal() {
-            assertEquals("test", this.principalBearingCredentials.getPrincipal().getId());
-        }
+    private PrincipalBearingCredentials principalBearingCredentials;
+
+    @Before
+    public void setUp() throws Exception {
+        this.principalBearingCredentials = new PrincipalBearingCredentials(new SimplePrincipal("test"));
+    }
+
+    @Test
+    public void testGetOfPrincipal() {
+        assertEquals("test", this.principalBearingCredentials.getPrincipal().getId());
+    }
 }

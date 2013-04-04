@@ -18,23 +18,31 @@
  */
 package org.jasig.cas.web;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.perf4j.log4j.GraphingStatisticsAppender;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.3.5
  */
 public final class StatisticsController extends AbstractController {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
 
@@ -97,7 +105,7 @@ public final class StatisticsController extends AbstractController {
                 }
             }
         } catch (final UnsupportedOperationException e) {
-            // this means the ticket registry doesn't support this information.
+            log.trace("The ticket registry doesn't support this information.");
         }
 
         final Collection<GraphingStatisticsAppender> appenders = GraphingStatisticsAppender.getAllGraphingStatisticsAppenders();
@@ -119,11 +127,10 @@ public final class StatisticsController extends AbstractController {
 
         final int value = calculations.remove();
         final double time = Math.floor(difference / value);
-        final double newDifference = difference - (time * value);
+        final double newDifference = difference - time * value;
         final String currentLabel = labels.remove();
         final String label = time == 0 || time > 1 ? currentLabel + "s" : currentLabel;
 
         return Integer.toString(new Double(time).intValue()) + " "+ label + " " + calculateUptime(newDifference, calculations, labels);
-        
     }
 }

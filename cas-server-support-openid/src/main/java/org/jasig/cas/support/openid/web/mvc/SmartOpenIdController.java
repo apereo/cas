@@ -31,19 +31,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Generates an association to an openid association request.
  * @author Frederic Esnault
- * @version $Id$
  * @since 3.5
  */
 public class SmartOpenIdController extends DelegateController implements Serializable {
 
     private static final long serialVersionUID = -594058549445950430L;
 
-    private Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
+    private final Logger log = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     private ServerManager serverManager;
 
@@ -57,56 +57,57 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     @NotNull
     private String successView = DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME;
 
-    /** The view to redirect to on a validation failure. Not used for now, the succes view may return failed association attemps. No need for another view. */
+    /** The view to redirect to on a validation failure. Not used for now,
+     *  the succes view may return failed association attemps. No need for another view. */
     @NotNull
     private String failureView = DEFAULT_ASSOCIATION_FAILURE_VIEW_NAME;
 
-    public Map<String, String> getAssociationResponse(HttpServletRequest request) {
+    public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
         ParameterList parameters = new ParameterList(request.getParameterMap());
 
         String mode = parameters.hasParameter("openid.mode") ?
                 parameters.getParameterValue("openid.mode") : null;
-        Message response = null;
-        if (mode != null && mode.equals("associate")) {
-            response = serverManager.associationResponse(parameters);
-        }
-        final Map<String, String> responseParams = new HashMap<String, String>();
-        if (response != null) {
-            responseParams.putAll(response.getParameterMap());
-        }
+                Message response = null;
+                if (mode != null && mode.equals("associate")) {
+                    response = serverManager.associationResponse(parameters);
+                }
+                final Map<String, String> responseParams = new HashMap<String, String>();
+                if (response != null) {
+                    responseParams.putAll(response.getParameterMap());
+                }
 
-        return responseParams;
+                return responseParams;
 
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Map<String, String> parameters = new HashMap<String, String>();
         parameters.putAll(getAssociationResponse(request));
         return new ModelAndView(successView, "parameters", parameters);
     }
 
     @Override
-    public boolean canHandle(HttpServletRequest request, HttpServletResponse response) {
+    public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         String openIdMode = request.getParameter("openid.mode");
         if (openIdMode != null && openIdMode.equals("associate")) {
-            logger.info("Handling request. openid.mode : "+openIdMode);
+            log.info("Handling request. openid.mode : {}", openIdMode);
             return true;
         }
-        logger.info("Cannot handle request. openid.mode : "+openIdMode);
+        log.info("Cannot handle request. openid.mode : {}", openIdMode);
         return false;
     }
 
-    public void setSuccessView(String successView) {
+    public void setSuccessView(final String successView) {
         this.successView = successView;
     }
 
-    public void setFailureView(String failureView) {
+    public void setFailureView(final String failureView) {
         this.failureView = failureView;
     }
 
     @NotNull
-    public void setServerManager(ServerManager serverManager) {
+    public void setServerManager(final ServerManager serverManager) {
         this.serverManager = serverManager;
     }
 }

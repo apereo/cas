@@ -18,19 +18,23 @@
  */
 package org.jasig.cas.ticket;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public class TicketCreationExceptionTests extends TestCase {
+public class TicketCreationExceptionTests {
 
+    @Test
     public void testNoParamConstructor() {
         new TicketCreationException();
     }
 
+    @Test
     public void testThrowableParamConstructor() {
         final Throwable THROWABLE = new Throwable();
         TicketCreationException t = new TicketCreationException(THROWABLE);
