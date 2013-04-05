@@ -20,13 +20,39 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     <description>
         This is the OAuth configuration XML file. It specifies the beans used by this package in conjunction with spring-security-oauth
     </description>
+	
+	<!-- Same thing for the token services -->
+	<bean id="tokenServices"
+		class="org.springframework.security.oauth2.provider.token.DefaultTokenServices"
+		p:token-store-ref="tokenStore" />
+	
+	<!-- Same thing for the token store, except we want invent our own tokens to match TGT and Service IDs -->
+	<!-- If the token store is in a DataSource from jdbc-support, access may not be synchronized. Handle this case eventually -->
+	<bean id="tokenStore" 
+		class="org.springframework.security.oauth2.provider.token.InMemoryTokenStore" />
+	
+	<oauth2:authorization-server 
+		client-details-service-ref="clientDetailsService"
+		token-services-ref="tokenServices">
+		<!-- Enables the authorization code grant type -->
+<!-- 		<oauth2:authorization-code -->
+<!-- 			authorization-code-services-ref="customizedAuthorizationCodeServices" -->
+<!-- 			/> -->
+		<!-- You can customize the user-approval-page and the approval-parameter-name here to match the cas login page -->
+		<oauth2:authorization-code/>
+	</oauth2:authorization-server>
 
+	<!-- For now, let's keep the client details in-memory. If CAS is clustered this will need to be stored off-site. -->
+	<oauth2:client-details-service id="clientDetailsService" />
             
 </beans>
