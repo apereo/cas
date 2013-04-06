@@ -29,7 +29,7 @@
 	| file is among those declared in the context parameter "contextConfigLocation".
 	|
 	| By far the most common change you will need to make in this file is to change the last bean
-	| declaration to replace the default SimpleTestUsernamePasswordAuthenticationHandler with
+	| declaration to replace the default authentication handler with
 	| one implementing your approach for authenticating usernames and passwords.
 	+-->
 
@@ -106,11 +106,11 @@
 		</property>
 
 		<!--
-			| Whereas CredentialsToPrincipalResolvers identify who it is some Credentials might authenticate, 
-			| AuthenticationHandlers actually authenticate credentials.  Here we declare the AuthenticationHandlers that
-			| authenticate the Principals that the CredentialsToPrincipalResolvers identified.  CAS will try these handlers in turn
-			| until it finds one that both supports the Credentials presented and succeeds in authenticating.
-			+-->
+		| Whereas CredentialsToPrincipalResolvers identify who it is some Credentials might authenticate, 
+		| AuthenticationHandlers actually authenticate credentials.  Here we declare the AuthenticationHandlers that
+		| authenticate the Principals that the CredentialsToPrincipalResolvers identified.  CAS will try these handlers in turn
+		| until it finds one that both supports the Credentials presented and succeeds in authenticating.
+		+-->
 		<property name="authenticationHandlers">
 			<list>
 				<!--
@@ -121,13 +121,19 @@
 					p:httpClient-ref="httpClient" />
 				<!--
 					| This is the authentication handler declaration that every CAS deployer will need to change before deploying CAS 
-					| into production.  The default SimpleTestUsernamePasswordAuthenticationHandler authenticates UsernamePasswordCredentials
-					| where the username equals the password.  You will need to replace this with an AuthenticationHandler that implements your
+					| into production. You will need to replace this with an AuthenticationHandler that implements your
 					| local authentication strategy.  You might accomplish this by coding a new such handler and declaring
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
+                    |
+                    | NOTE: username is case-sensitive.
 					+-->
-				<bean 
-					class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+				<bean class="org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler">
+                    <property name="users">
+                        <map>
+                            <entry key="CASUser" value="Mellon" />
+                        </map>
+                    </property>
+                </bean>
 			</list>
 		</property>
 	</bean>
