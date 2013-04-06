@@ -127,12 +127,12 @@
                     |
                     | NOTE: username is case-sensitive.
 					+-->
-				<bean class="org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler">
-                    <property name="users">
-                        <map>
-                            <entry key="CASUser" value="Mellon" />
-                        </map>
-                    </property>
+                <bean class="org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler">
+                  <property name="users">
+                    <map>
+                        <entry key="CASUser" value="Mellon" />
+                    </map>
+                  </property>
                 </bean>
 			</list>
 		</property>
