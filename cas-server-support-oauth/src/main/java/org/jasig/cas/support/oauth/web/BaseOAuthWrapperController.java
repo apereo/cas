@@ -38,33 +38,33 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @since 3.5.0
  */
 public abstract class BaseOAuthWrapperController extends AbstractController {
-    
+
     protected final Logger log = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
-    
+
     @NotNull
     protected String loginUrl;
-    
+
     @NotNull
     protected ServicesManager servicesManager;
-    
+
     @NotNull
     protected TicketRegistry ticketRegistry;
-    
+
     @NotNull
     protected long timeout;
-    
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
-        
+            throws Exception {
+
         final String method = getMethod(request);
         log.debug("method : {}", method);
         return internalHandleRequest(method, request, response);
     }
-    
+
     protected abstract ModelAndView internalHandleRequest(String method, HttpServletRequest request,
-                                                          HttpServletResponse response) throws Exception;
-    
+            HttpServletResponse response) throws Exception;
+
     /**
      * Return the method to call according to the url.
      * 
@@ -82,19 +82,19 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         }
         return method;
     }
-    
+
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
-    
+
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
     }
-    
+
     public void setLoginUrl(final String loginUrl) {
         this.loginUrl = loginUrl;
     }
-    
+
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
     }

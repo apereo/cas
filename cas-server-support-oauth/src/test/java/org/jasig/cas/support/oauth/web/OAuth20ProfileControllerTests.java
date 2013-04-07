@@ -43,23 +43,23 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @since 3.5.2
  */
 public final class OAuth20ProfileControllerTests {
-    
+
     private static final String CONTEXT = "/oauth2.0/";
-    
+
     private static final String ID = "1234";
-    
+
     private static final String TGT_ID = "TGT-1";
-    
+
     private static final String NAME = "attributeName";
-    
+
     private static final String VALUE = "attributeValue";
-    
+
     private static final String CONTENT_TYPE = "application/json";
-    
+
     @Test
     public void testNoAccessToken() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.PROFILE_URL);
+                + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
@@ -71,11 +71,11 @@ public final class OAuth20ProfileControllerTests {
         assertEquals("{\"error\":\"" + OAuthConstants.MISSING_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
         verify(logger).error("missing accessToken");
     }
-    
+
     @Test
     public void testNoTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.PROFILE_URL);
+                + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -91,11 +91,11 @@ public final class OAuth20ProfileControllerTests {
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
         verify(logger).error("expired accessToken : {}", TGT_ID);
     }
-    
+
     @Test
     public void testExpiredTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.PROFILE_URL);
+                + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -113,11 +113,11 @@ public final class OAuth20ProfileControllerTests {
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
         verify(logger).error("expired accessToken : {}", TGT_ID);
     }
-    
+
     @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.PROFILE_URL);
+                + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -139,6 +139,6 @@ public final class OAuth20ProfileControllerTests {
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"}]}",
-                     mockResponse.getContentAsString());
+                mockResponse.getContentAsString());
     }
 }

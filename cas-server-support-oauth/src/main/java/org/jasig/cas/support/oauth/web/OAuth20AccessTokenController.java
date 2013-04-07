@@ -43,26 +43,26 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @since 3.5.0
  */
 public final class OAuth20AccessTokenController extends AbstractController {
-    
+
     private static Logger log = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
-    
+
     private final ServicesManager servicesManager;
-    
+
     private final TicketRegistry ticketRegistry;
-    
+
     private final long timeout;
-    
+
     public OAuth20AccessTokenController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                        final long timeout) {
+            final long timeout) {
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
         this.timeout = timeout;
     }
-    
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
-        
+            throws Exception {
+
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
         log.debug("redirect_uri : {}", redirectUri);
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
@@ -71,7 +71,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
         log.debug("clientSecret : {}", clientSecret);
         final String code = request.getParameter(OAuthConstants.CODE);
         log.debug("code : {}", clientSecret);
-        
+
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
             log.error("missing clientId");
@@ -92,7 +92,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
             log.error("missing code");
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
-        
+
         // name of the CAS service
         final Collection<RegisteredService> services = servicesManager.getAllServices();
         RegisteredService service = null;
@@ -106,21 +106,21 @@ public final class OAuth20AccessTokenController extends AbstractController {
             log.error("Unknown clientId : {}", clientId);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
-        
+
         final String serviceId = service.getServiceId();
         // redirectUri should start with serviceId
         if (!StringUtils.startsWith(redirectUri, serviceId)) {
             log.error("Unsupported redirectUri : {} for serviceId : {}", redirectUri, serviceId);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
-        
+
         // description of the service should be the secret
         final String serviceDescription = service.getDescription();
         if (!StringUtils.equals(serviceDescription, clientSecret)) {
             log.error("Wrong client secret : {} for service description : {}", clientSecret, serviceDescription);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
-        
+
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
@@ -130,14 +130,14 @@ public final class OAuth20AccessTokenController extends AbstractController {
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
-        
+
         response.setContentType("text/plain");
-        final int expires = (int) (timeout - ((System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000));
+        final int expires = (int) (timeout - (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()) / 1000);
         final String text = "access_token=" + ticketGrantingTicket.getId() + "&expires=" + expires;
         log.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, 200);
     }
-    
+
     static void setLogger(final Logger aLogger) {
         log = aLogger;
     }
