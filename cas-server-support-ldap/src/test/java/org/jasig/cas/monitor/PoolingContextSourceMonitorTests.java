@@ -43,7 +43,6 @@ public class PoolingContextSourceMonitorTests {
 
     @Autowired
     private PoolingContextSource poolingContextSource;
-    
     private PoolingContextSourceMonitor monitor;
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();

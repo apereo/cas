@@ -37,7 +37,6 @@ import java.util.List;
  *
  * @author <a href="mailto:tobias.trelle@proximity.de">Tobias Trelle</a>
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.4.4
  */
 public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
@@ -45,8 +44,8 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
     @NotNull
     private T servicesManager;
 
-    protected AbstractServicesManagerMBean(final T servicesManager) {
-        this.servicesManager = servicesManager;
+    protected AbstractServicesManagerMBean(final T svcMgr) {
+        this.servicesManager = svcMgr;
     }
 
     protected final T getServicesManager() {

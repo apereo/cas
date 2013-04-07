@@ -28,7 +28,10 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -37,9 +40,8 @@ import java.util.regex.Pattern;
  * and attempt to match the URL provided to a Service Id. If the service is
  * found, the theme associated with it will be used. If not, these is associated
  * with the service or the service was not found, a default theme will be used.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class ServiceThemeResolver extends AbstractThemeResolver {

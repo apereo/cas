@@ -20,15 +20,12 @@ package org.jasig.cas.ticket.registry;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.cas.monitor.SessionMonitor;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -45,35 +42,36 @@ import org.springframework.core.style.ToStringCreator;
  * <ul>
  * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
  * <li>Monitoring : follow separately the number of TGT and ST.</li>
- * <ul>
+ * </ul>
  * </p>
- * 
+ *
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  * @author Adam Rybicki
  * @author Andrew Tillinghast
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
-   
-    private Cache serviceTicketsCache  = null;
-    
+
+    private Cache serviceTicketsCache = null;
+
     private Cache ticketGrantingTicketsCache = null;
-  
+
     /** @see #setSupportRegistryState(boolean)*/
     private boolean supportRegistryState = true;
-    
+
     public EhCacheTicketRegistry() {}
-    
+
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
-      super();
-      setServiceTicketsCache(serviceTicketsCache);
-      setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
+        super();
+        setServiceTicketsCache(serviceTicketsCache);
+        setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
     }
-    
+
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache, final boolean supportRegistryState) {
-      this(serviceTicketsCache, ticketGrantingTicketsCache);
-      setSupportRegistryState(supportRegistryState);
+        this(serviceTicketsCache, ticketGrantingTicketsCache);
+        setSupportRegistryState(supportRegistryState);
     }
-    
+
+    @Override
     public void addTicket(final Ticket ticket) {
         final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
@@ -86,14 +84,16 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
             throw new IllegalArgumentException("Invalid ticket type " + ticket);
         }
     }
-    
+
+    @Override
     public boolean deleteTicket(final String ticketId) {
         if (StringUtils.isBlank(ticketId)) {
             return false;
         }
         return this.serviceTicketsCache.remove(ticketId) || this.ticketGrantingTicketsCache.remove(ticketId);
     }
-    
+
+    @Override
     public Ticket getTicket(final String ticketId) {
         if (ticketId == null) {
             return null;
@@ -103,102 +103,112 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         if (element == null) {
             element = this.ticketGrantingTicketsCache.get(ticketId);
         }
-        return element == null ? null : getProxiedTicketInstance((Ticket)element.getObjectValue());
+        return element == null ? null : getProxiedTicketInstance((Ticket) element.getObjectValue());
     }
-    
+
+    @Override
     public Collection<Ticket> getTickets() {
-        final Collection<Element> serviceTickets = this.serviceTicketsCache.getAll(this.serviceTicketsCache.getKeysWithExpiryCheck()).values();
-        final Collection<Element> tgtTicketsTickets = this.ticketGrantingTicketsCache.getAll(this.ticketGrantingTicketsCache.getKeysWithExpiryCheck()).values();
-        
+        final Collection<Element> serviceTickets = this.serviceTicketsCache.getAll(
+                this.serviceTicketsCache.getKeysWithExpiryCheck()).values();
+        final Collection<Element> tgtTicketsTickets = this.ticketGrantingTicketsCache.getAll(
+                this.ticketGrantingTicketsCache.getKeysWithExpiryCheck()).values();
+
         final Collection<Ticket> allTickets = new HashSet<Ticket>(serviceTickets.size() + tgtTicketsTickets.size());
-        
+
         for (final Element ticket : serviceTickets) {
-            allTickets.add((Ticket)ticket.getObjectValue());
+            allTickets.add((Ticket) ticket.getObjectValue());
         }
 
         for (final Element ticket : tgtTicketsTickets) {
-          allTickets.add((Ticket)ticket.getObjectValue());
+            allTickets.add((Ticket) ticket.getObjectValue());
         }
-                
+
         return allTickets;
     }
-    
+
     public void setServiceTicketsCache(final Cache serviceTicketsCache) {
         this.serviceTicketsCache = serviceTicketsCache;
     }
-    
+
     public void setTicketGrantingTicketsCache(final Cache ticketGrantingTicketsCache) {
         this.ticketGrantingTicketsCache = ticketGrantingTicketsCache;
     }
-    
+
     @Override
     public String toString() {
         return new ToStringCreator(this).append("ticketGrantingTicketsCache", this.ticketGrantingTicketsCache)
-            .append("serviceTicketsCache", this.serviceTicketsCache).toString();
+                .append("serviceTicketsCache", this.serviceTicketsCache).toString();
     }
-    
+
     @Override
     protected void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
-    
+
     @Override
     protected boolean needsCallback(){
-    	  return false;
+        return false;
     }
 
-    /** 
+    /**
      * Flag to indicate whether this registry instance should participate in reporting its state with default value set to <code>true</code>.
-     * Based on the <a href="http://ehcache.org/apidocs/net/sf/ehcache/Ehcache.html#getKeysWithExpiryCheck()">EhCache documentation</a>, 
-     * determining the number of service tickets and the total session count from the cache can be considered an expensive operation with the 
-     * time taken as O(n), where n is the number of elements in the cache. 
-     * 
+     * Based on the <a href="http://ehcache.org/apidocs/net/sf/ehcache/Ehcache.html#getKeysWithExpiryCheck()">EhCache documentation</a>,
+     * determining the number of service tickets and the total session count from the cache can be considered an expensive operation with the
+     * time taken as O(n), where n is the number of elements in the cache.
+     *
      * <p>Therefore, the flag provides a level of flexibility such that depending on the cache and environment settings, reporting statistics
      * can be set to false and disabled.</p>
-     *  
+     *
      * @see #sessionCount()
      * @see #serviceTicketCount()
      * @see SessionMonitor
      */
     public void setSupportRegistryState(final boolean supportRegistryState) {
-      this.supportRegistryState = supportRegistryState;
+        this.supportRegistryState = supportRegistryState;
     }
-    
+
+    @Override
     public void afterPropertiesSet() throws Exception {
-      if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
-        throw new BeanInstantiationException(this.getClass(), "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties.");
-      }
-      
-      if (log.isDebugEnabled()) {
-        CacheConfiguration config = this.serviceTicketsCache.getCacheConfiguration();
-        log.debug("serviceTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
-        log.debug("serviceTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
-        log.debug("serviceTicketsCache.isOverflowToDisk={}", config.isOverflowToDisk());
-        log.debug("serviceTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
-        log.debug("serviceTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
-        log.debug("serviceTicketsCache.cacheManager={}", this.serviceTicketsCache.getCacheManager().getName());
-        
-        config = this.ticketGrantingTicketsCache.getCacheConfiguration();
-        log.debug("ticketGrantingTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
-        log.debug("ticketGrantingTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
-        log.debug("ticketGrantingTicketsCache.isOverflowToDisk={}", config.isOverflowToDisk());
-        log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
-        log.debug("ticketGrantingTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
-        log.debug("ticketGrantingTicketsCache.cacheManager={}", this.ticketGrantingTicketsCache.getCacheManager().getName());
-      } 
+        if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
+            throw new BeanInstantiationException(this.getClass(),
+                    "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties.");
+        }
+
+        if (log.isDebugEnabled()) {
+            CacheConfiguration config = this.serviceTicketsCache.getCacheConfiguration();
+            log.debug("serviceTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+            log.debug("serviceTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+            log.debug("serviceTicketsCache.isOverflowToDisk={}", config.isOverflowToDisk());
+            log.debug("serviceTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+            log.debug("serviceTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
+            log.debug("serviceTicketsCache.cacheManager={}", this.serviceTicketsCache.getCacheManager().getName());
+
+            config = this.ticketGrantingTicketsCache.getCacheConfiguration();
+            log.debug("ticketGrantingTicketsCache.maxElementsInMemory={}", config.getMaxEntriesLocalHeap());
+            log.debug("ticketGrantingTicketsCache.maxElementsOnDisk={}", config.getMaxElementsOnDisk());
+            log.debug("ticketGrantingTicketsCache.isOverflowToDisk={}", config.isOverflowToDisk());
+            log.debug("ticketGrantingTicketsCache.timeToLive={}", config.getTimeToLiveSeconds());
+            log.debug("ticketGrantingTicketsCache.timeToIdle={}", config.getTimeToIdleSeconds());
+            log.debug("ticketGrantingTicketsCache.cacheManager={}",
+                    this.ticketGrantingTicketsCache.getCacheManager().getName());
+        }
     }
 
     /**
      * @see Cache#getKeysWithExpiryCheck()
      */
+    @Override
     public int sessionCount() {
-        return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() , super.sessionCount());
+        return BooleanUtils.toInteger(this.supportRegistryState,
+                this.ticketGrantingTicketsCache.getKeysWithExpiryCheck().size() , super.sessionCount());
     }
 
     /**
      * @see Cache#getKeysWithExpiryCheck()
      */
+    @Override
     public int serviceTicketCount() {
-        return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck().size() , super.serviceTicketCount());
+        return BooleanUtils.toInteger(this.supportRegistryState,
+                this.serviceTicketsCache.getKeysWithExpiryCheck().size() , super.serviceTicketCount());
     }
 }

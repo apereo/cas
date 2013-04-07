@@ -18,72 +18,71 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
+import static org.junit.Assert.*;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.MutableAuthentication;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * 
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */
-public class SamlAuthenticationMetaDataPopulatorTests extends TestCase {
+public class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.populator = new SamlAuthenticationMetaDataPopulator();
-        super.setUp();
     }
-    
+
+    @Test
     public void testAuthenticationTypeFound() {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         final MutableAuthentication ma = new MutableAuthentication(TestUtils.getPrincipal());
-        
+
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
-        
-        assertEquals(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"), SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD);
+
+        assertEquals(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"),
+                SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD);
     }
-    
+
+    @Test
     public void testAuthenticationTypeNotFound() {
         final CustomCredentials credentials = new CustomCredentials();
         final MutableAuthentication ma = new MutableAuthentication(TestUtils.getPrincipal());
-        
+
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
-        
+
         assertNull(m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));
     }
-    
+
+    @Test
     public void testAuthenticationTypeFoundCustom() {
         final CustomCredentials credentials = new CustomCredentials();
-        
+
         final Map<String, String> added = new HashMap<String, String>();
         added.put(CustomCredentials.class.getName(), "FF");
-        
+
         this.populator.setUserDefinedMappings(added);
-        
+
         final MutableAuthentication ma = new MutableAuthentication(TestUtils.getPrincipal());
-        
+
         final Authentication m2 = this.populator.populateAttributes(ma, credentials);
-        
+
         assertEquals("FF", m2.getAttributes().get("samlAuthenticationStatementAuthMethod"));
     }
-    
-    protected class CustomCredentials implements Credentials {
 
-        /**
-         * Comment for <code>serialVersionUID</code>
-         */
+    protected class CustomCredentials implements Credentials {
         private static final long serialVersionUID = -3387599342233073148L;
-        // nothing to do
     }
 }

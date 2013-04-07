@@ -29,15 +29,14 @@ import javax.validation.constraints.NotNull;
  * database table with the provided encryption technique to see if the user
  * exists. This class defaults to a PasswordTranslator of
  * PlainTextPasswordTranslator.
- * 
+ *
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Revision$ $Date$
  * @since 3.0
  */
 
 public class SearchModeSearchDatabaseAuthenticationHandler extends
-    AbstractJdbcUsernamePasswordAuthenticationHandler implements InitializingBean {
+AbstractJdbcUsernamePasswordAuthenticationHandler implements InitializingBean {
 
     private static final String SQL_PREFIX = "Select count('x') from ";
 
@@ -52,19 +51,21 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends
 
     private String sql;
 
+    @Override
     protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String encyptedPassword = getPasswordEncoder().encode(credentials.getPassword());
 
         final int count = getJdbcTemplate().queryForInt(this.sql,
-           transformedUsername, encyptedPassword);
+                transformedUsername, encyptedPassword);
 
         return count > 0;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         this.sql = SQL_PREFIX + this.tableUsers + " Where " + this.fieldUser
-        + " = ? And " + this.fieldPassword + " = ?"; 
+                + " = ? And " + this.fieldPassword + " = ?";
     }
 
     /**

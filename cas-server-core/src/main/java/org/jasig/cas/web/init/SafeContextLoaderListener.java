@@ -51,9 +51,9 @@ import org.springframework.web.context.ContextLoaderListener;
  * <p>
  * The exception thrown is exposed in the Servlet Context under the key
  * "exceptionCaughtByListener".
- * 
+ *
  * @author Andrew Petro
- * @version $Revision$ $Date$
+
  * @see ContextLoaderListener
  */
 public final class SafeContextLoaderListener implements ServletContextListener {

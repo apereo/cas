@@ -28,15 +28,14 @@ import org.jasig.cas.authentication.principal.Service;
  * Simple mock implementation of a service principal.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  *
  */
 public class MockService implements Service {
-    /** MockService.java */
+
     private static final long serialVersionUID = 117438127028057173L;
     private boolean loggedOut = false;
     private String id;
-    
+
     public MockService(final String id) {
         this.id = id;
     }
@@ -45,7 +44,7 @@ public class MockService implements Service {
         return null;
     }
 
-    public Response getResponse(String ticketId) {
+    public Response getResponse(final String ticketId) {
         return null;
     }
 
@@ -53,7 +52,7 @@ public class MockService implements Service {
         this.loggedOut = true;
         return false;
     }
-    
+
     public boolean isLoggedOut() {
         return this.loggedOut;
     }
@@ -67,7 +66,7 @@ public class MockService implements Service {
     public String getId() {
         return id;
     }
-    
+
     public boolean matches(final Service service) {
         return true;
     }

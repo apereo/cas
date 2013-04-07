@@ -24,7 +24,7 @@ package org.jasig.cas.authentication.handler;
  *
  * @author Howard Gilbert
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.3.6
  */
 

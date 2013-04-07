@@ -27,7 +27,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * This class tests the {@link OAuth20WrapperController} class.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.2
  */

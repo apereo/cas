@@ -18,27 +18,28 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.TestUtils;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public class ShibbolethCompatiblePersistentIdGeneratorTests extends TestCase {
+public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
+    @Test
     public void testGenerator() {
         final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator();
         generator.setSalt("scottssalt");
 
         final Principal p = TestUtils.getPrincipal();
         final Service s = TestUtils.getService();
-        
+
         final String value = generator.generate(p, s);
-        
-        assertNotNull(value); 
+
+        assertNotNull(value);
     }
 
 }

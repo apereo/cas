@@ -20,7 +20,7 @@ package org.jasig.cas.ticket;
 
 /**
  * TicketException to alert that a Ticket was not found or that it is expired.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.0
  */
@@ -29,13 +29,13 @@ public class InvalidTicketException extends TicketException {
     private static final long serialVersionUID = 9141891414482490L;
 
     private String ticketId = null;
-    
+
     /** The code description. */
     private static final String CODE = "INVALID_TICKET";
 
     /**
      * Constructs a InvalidTicketException with the default exception code.
-     * @param ticketId the ticket id that originally caused this exception to be thrown. 
+     * @param ticketId the ticket id that originally caused this exception to be thrown.
      */
     public InvalidTicketException(final String ticketId) {
         super(CODE);
@@ -45,16 +45,16 @@ public class InvalidTicketException extends TicketException {
     /**
      * Constructs a InvalidTicketException with the default exception code and
      * the original exception that was thrown.
-     * 
+     *
      * @param throwable the chained exception
-     * @param ticketId the ticket id that originally caused this exception to be thrown. 
+     * @param ticketId the ticket id that originally caused this exception to be thrown.
      */
     public InvalidTicketException(final Throwable throwable, final String ticketId) {
         super(CODE, throwable);
     }
-    
+
     /**
-     * Returns the ticket id that causes this exception
+     * Returns the ticket id that causes this exception.
      * @return the ticket id
      * @see InvalidTicketException#ticketId
      */

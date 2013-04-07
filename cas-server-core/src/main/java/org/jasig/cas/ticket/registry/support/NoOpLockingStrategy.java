@@ -25,7 +25,6 @@ package org.jasig.cas.ticket.registry.support;
  * unnecessary or not possible.
  *
  * @author Marvin Addison
- * @version $Revision$
  * @since 3.3.6
  *
  */

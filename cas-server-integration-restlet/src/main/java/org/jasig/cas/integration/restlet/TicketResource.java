@@ -19,7 +19,12 @@
 package org.jasig.cas.integration.restlet;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
@@ -43,14 +48,13 @@ import org.springframework.web.context.request.WebRequest;
 
 /**
  * Handles the creation of Ticket Granting Tickets.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.3
- * 
+ *
  */
 public class TicketResource extends ServerResource {
-    
+
     private static final Logger log = LoggerFactory.getLogger(TicketResource.class);
 
     @Autowired
@@ -69,32 +73,31 @@ public class TicketResource extends ServerResource {
             getResponse().setStatus(determineStatus());
             final Reference ticket_ref = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
             getResponse().setLocationRef(ticket_ref);
-            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>" + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription() + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticket_ref + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>", MediaType.TEXT_HTML);        
+            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>" + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription() + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticket_ref + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>", MediaType.TEXT_HTML);
         } catch (final TicketException e) {
             log.error(e.getMessage(),e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         }
     }
-    
     /**
-     * Template method for determining which status to return on a successful ticket creation. 
+     * Template method for determining which status to return on a successful ticket creation.
      * This method exists for compatibility reasons with bad clients (i.e. Flash) that can't
      * process 201 with a Location header.
-     * 
+     *
      * @return the status to return.
      */
     protected Status determineStatus() {
         return Status.SUCCESS_CREATED;
     }
-    
+
     protected Credentials obtainCredentials() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         final WebRequestDataBinder binder = new WebRequestDataBinder(c);
         final RestletWebRequest webRequest = new RestletWebRequest(getRequest());
-        
+
         logFormRequest(new Form(getRequest().getEntity()));
         binder.bind(webRequest);
-        
+
         return c;
     }
 
@@ -115,42 +118,47 @@ public class TicketResource extends ServerResource {
             log.debug(StringUtils.join(pairs, ", "));
         }
     }
-    
+
     protected class RestletWebRequest implements WebRequest {
-        
         private final Form form;
-        
         private final Request request;
-        
+
         public RestletWebRequest(final Request request) {
             this.form = new Form(request.getEntity());
             this.request = request;
         }
 
-        public boolean checkNotModified(String s) {
+        @Override
+        public boolean checkNotModified(final String s) {
             return false;
         }
 
-        public boolean checkNotModified(long lastModifiedTimestamp) {
+        @Override
+        public boolean checkNotModified(final long lastModifiedTimestamp) {
             return false;
         }
 
+        @Override
         public String getContextPath() {
             return this.request.getResourceRef().getPath();
         }
 
-        public String getDescription(boolean includeClientInfo) {
+        @Override
+        public String getDescription(final boolean includeClientInfo) {
             return null;
         }
 
+        @Override
         public Locale getLocale() {
             return LocaleContextHolder.getLocale();
         }
 
-        public String getParameter(String paramName) {
+        @Override
+        public String getParameter(final String paramName) {
             return this.form.getFirstValue(paramName);
         }
 
+        @Override
         public Map<String, String[]> getParameterMap() {
             final Map<String, String[]> conversion = new HashMap<String,String[]>();
 
@@ -161,72 +169,88 @@ public class TicketResource extends ServerResource {
             return conversion;
         }
 
-        public String[] getParameterValues(String paramName) {
+        @Override
+        public String[] getParameterValues(final String paramName) {
             return this.form.getValuesArray(paramName);
         }
 
+        @Override
         public String getRemoteUser() {
             return null;
         }
 
+        @Override
         public Principal getUserPrincipal() {
             return null;
         }
 
+        @Override
         public boolean isSecure() {
             return this.request.isConfidential();
         }
 
-        public boolean isUserInRole(String role) {
+        @Override
+        public boolean isUserInRole(final String role) {
             return false;
         }
 
-        public Object getAttribute(String name, int scope) {
+        @Override
+        public Object getAttribute(final String name, final int scope) {
             return null;
         }
 
-        public String[] getAttributeNames(int scope) {
+        @Override
+        public String[] getAttributeNames(final int scope) {
             return null;
         }
 
+        @Override
         public String getSessionId() {
             return null;
         }
 
+        @Override
         public Object getSessionMutex() {
             return null;
         }
 
-        public void registerDestructionCallback(String name, Runnable callback,
-            int scope) {
+        @Override
+        public void registerDestructionCallback(final String name, final Runnable callback, final int scope) {
             // nothing to do
         }
 
-        public void removeAttribute(String name, int scope) {
+        @Override
+        public void removeAttribute(final String name, final int scope) {
             // nothing to do
         }
 
-        public void setAttribute(String name, Object value, int scope) {
+        @Override
+        public void setAttribute(final String name, final Object value, final int scope) {
             // nothing to do
         }
 
+        @Override
         public String getHeader(final String s) {
             return null;
         }
 
-        public String[] getHeaderValues(String s) {
+        @Override
+        public String[] getHeaderValues(final String s) {
             return new String[0];
         }
 
+        @Override
         public Iterator<String> getHeaderNames() {
             return null;
         }
 
+        @Override
         public Iterator<String> getParameterNames() {
             return null;
         }
 
-        public Object resolveReference(String s) {
+        @Override
+        public Object resolveReference(final String s) {
             return null;
         }
     }

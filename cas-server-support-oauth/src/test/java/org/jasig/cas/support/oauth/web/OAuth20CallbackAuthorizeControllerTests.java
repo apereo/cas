@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * This class tests the {@link OAuth20CallbackAuthorizeController} class.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.2
  */
@@ -49,7 +49,9 @@ public final class OAuth20CallbackAuthorizeControllerTests {
 
     @Test
     public void testOK() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
+                "GET",
+                CONTEXT
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         mockRequest.addParameter(OAuthConstants.TICKET, SERVICE_TICKET);
         final MockHttpSession mockSession = new MockHttpSession();
@@ -68,7 +70,9 @@ public final class OAuth20CallbackAuthorizeControllerTests {
 
     @Test
     public void testOKWithState() throws Exception {
-        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(
+                "GET",
+                CONTEXT
                 + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         mockRequest.addParameter(OAuthConstants.TICKET, SERVICE_TICKET);
         final MockHttpSession mockSession = new MockHttpSession();

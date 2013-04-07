@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTest {
@@ -45,7 +44,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     public void onSetUp() throws Exception {
         this.proxyController = new ProxyController();
         this.proxyController
-            .setCentralAuthenticationService(getCentralAuthenticationService());
+        .setCentralAuthenticationService(getCentralAuthenticationService());
 
         StaticApplicationContext context = new StaticApplicationContext();
         context.refresh();
@@ -55,9 +54,9 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Test
     public void testNoParams() throws Exception {
         assertEquals("INVALID_REQUEST", this.proxyController
-            .handleRequestInternal(new MockHttpServletRequest(),
-                new MockHttpServletResponse()).getModel()
-            .get("code"));
+                .handleRequestInternal(new MockHttpServletRequest(),
+                        new MockHttpServletResponse()).getModel()
+                        .get("code"));
     }
 
     @Test
@@ -67,37 +66,37 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         request.addParameter("targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
-            new MockHttpServletResponse()).getModel().containsKey(
-            "code"));
+                new MockHttpServletResponse()).getModel().containsKey(
+                        "code"));
     }
 
     @Test
     public void testExistingPGT() throws Exception {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
-            "ticketGrantingTicketId", TestUtils.getAuthentication(),
-            new NeverExpiresExpirationPolicy());
+                "ticketGrantingTicketId", TestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request
-            .addParameter("pgt", ticket.getId());
+        .addParameter("pgt", ticket.getId());
         request.addParameter(
-            "targetService", "testDefault");
+                "targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
-            new MockHttpServletResponse()).getModel().containsKey(
-            "ticket"));
+                new MockHttpServletResponse()).getModel().containsKey(
+                        "ticket"));
     }
-    
+
     @Test
     public void testNotAuthorizedPGT() throws Exception {
-      final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId", TestUtils.getAuthentication(),
-          new NeverExpiresExpirationPolicy());
-      getTicketRegistry().addTicket(ticket);
-      final MockHttpServletRequest request = new MockHttpServletRequest();
-      request.addParameter("pgt", ticket.getId());
-      request.addParameter("targetService", "service");
-  
-      final Map<String, Object> map = this.proxyController.handleRequestInternal(request,  new MockHttpServletResponse()).getModel();
-      assertTrue(!map.containsKey("ticket"));
+        final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId", TestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
+        getTicketRegistry().addTicket(ticket);
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("pgt", ticket.getId());
+        request.addParameter("targetService", "service");
+
+        final Map<String, Object> map = this.proxyController.handleRequestInternal(request,  new MockHttpServletResponse()).getModel();
+        assertTrue(!map.containsKey("ticket"));
     }
 }

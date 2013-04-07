@@ -30,7 +30,6 @@ import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
  * Serializer for {@link MutableAuthentication} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public final class MutableAuthenticationSerializer extends AbstractAuthenticationSerializer<MutableAuthentication> {
 
@@ -40,7 +39,7 @@ public final class MutableAuthenticationSerializer extends AbstractAuthenticatio
         super(kryo);
         this.fieldHelper = helper;
     }
-    
+
     protected MutableAuthentication createAuthentication(
             final Date authDate, final Principal principal, final Map<String, Object> attributes) {
         final MutableAuthentication auth = new MutableAuthentication(principal, authDate);

@@ -26,14 +26,14 @@ import org.jasig.cas.authentication.principal.Service;
 /**
  * Interface for a service that can be registered by the Services Management
  * interface.
- * 
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
-public interface RegisteredService extends Cloneable, Serializable {    
+public interface RegisteredService extends Cloneable, Serializable {
     /**
      * Is this application currently allowed to use CAS?
-     * 
+     *
      * @return true if it can use CAS, false otherwise.
      */
     boolean isEnabled();
@@ -46,17 +46,17 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return if we should use a pseudo random identifier instead of their real id
      */
     boolean isAnonymousAccess();
-    
+
     /**
      * Sets whether we should bother to read the attribute list or not.
-     * 
+     *
      * @return true if we should read it, false otherwise.
      */
     boolean isIgnoreAttributes();
 
     /**
      * Returns the list of allowed attributes.
-     * 
+     *
      * @return the list of attributes
      */
     List<String> getAllowedAttributes();
@@ -64,28 +64,28 @@ public interface RegisteredService extends Cloneable, Serializable {
     /**
      * Is this application allowed to take part in the proxying capabilities of
      * CAS?
-     * 
+     *
      * @return true if it can, false otherwise.
      */
     boolean isAllowedToProxy();
 
     /**
      * The unique identifier for this service.
-     * 
+     *
      * @return the unique identifier for this service.
      */
     String getServiceId();
 
     /**
      * The numeric identifier for this service.
-     * 
+     *
      * @return the numeric identifier for this service.
      */
     long getId();
 
     /**
      * Returns the name of the service.
-     * 
+     *
      * @return the name of the service.
      */
     String getName();
@@ -93,25 +93,25 @@ public interface RegisteredService extends Cloneable, Serializable {
     /**
      * Returns a short theme name. Services do not need to have unique theme
      * names.
-     * 
+     *
      * @return the theme name associated with this service.
      */
     String getTheme();
 
     /**
      * Does this application participate in the SSO session?
-     * 
+     *
      * @return true if it does, false otherwise.
      */
     boolean isSsoEnabled();
 
     /**
      * Returns the description of the service.
-     * 
+     *
      * @return the description of the service.
      */
     String getDescription();
-   
+
     /**
      * Gets the relative evaluation order of this service when determining
      * matches.
@@ -125,10 +125,10 @@ public interface RegisteredService extends Cloneable, Serializable {
      * matches.
      */
     void setEvaluationOrder(final int evaluationOrder);
-    
+
     /**
      * Get the name of the attribute this service prefers to consume as username.
-     * 
+     *
      * @return Either of the following values:
      * <ul>
      *  <li><code>String</code> representing the name of the attribute to consume as username</li>
@@ -136,18 +136,22 @@ public interface RegisteredService extends Cloneable, Serializable {
      * </ul>
      */
     public String getUsernameAttribute();
-    
+
     /**
      * Returns whether the service matches the registered service.
      * <p>Note, as of 3.1.2, matches are case insensitive.
-     * 
+     *
      * @param service the service to match.
      * @return true if they match, false otherwise.
      */
     boolean matches(final Service service);
-    
+
     RegisteredService clone() throws CloneNotSupportedException;
-    
-    /** An instance of the attribute filter that imposes validation rules over the attribute release policy */
+
+    /**
+     * An instance of the attribute filter that imposes validation rules over
+     * the attribute release policy.
+     * @return An instance of an attribute filter for this service
+     */
     RegisteredServiceAttributeFilter getAttributeFilter();
 }

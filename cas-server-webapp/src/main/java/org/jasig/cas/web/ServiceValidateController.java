@@ -47,9 +47,8 @@ import org.springframework.web.servlet.ModelAndView;
  * and (possibly) a chain of Proxy Principals. Store the Assertion in the Model
  * and chain to a View to generate the appropriate response (CAS 1, CAS 2 XML,
  * SAML, ...).
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class ServiceValidateController extends DelegateController {
@@ -93,7 +92,7 @@ public class ServiceValidateController extends DelegateController {
     /**
      * Overrideable method to determine which credentials to use to grant a
      * proxy granting ticket. Default is to use the pgtUrl.
-     * 
+     *
      * @param request the HttpServletRequest object.
      * @return the credentials or null if there was an error or no credentials
      * provided.
@@ -115,6 +114,7 @@ public class ServiceValidateController extends DelegateController {
         binder.setRequiredFields("renew");
     }
 
+    @Override
     protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
@@ -164,13 +164,14 @@ public class ServiceValidateController extends DelegateController {
             }
 
             if (logger.isDebugEnabled()) {
-                logger.debug(String.format("Successfully validated service ticket [%s] for service [%s]", 
+                logger.debug(String.format("Successfully validated service ticket [%s] for service [%s]",
                         serviceTicketId, service.getId()));
             }
 
             return success;
         } catch (final TicketValidationException e) {
-            return generateErrorView(e.getCode(), e.getCode(), new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
+            return generateErrorView(e.getCode(), e.getCode(),
+                    new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
         } catch (final TicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
                 new Object[] {serviceTicketId});
@@ -204,10 +205,10 @@ public class ServiceValidateController extends DelegateController {
      * {@inheritDoc}
      */
     @Override
-    public boolean canHandle(HttpServletRequest request, HttpServletResponse response) {
+    public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         return true;
     }
-    
+
     /**
      * @param centralAuthenticationService The centralAuthenticationService to
      * set.

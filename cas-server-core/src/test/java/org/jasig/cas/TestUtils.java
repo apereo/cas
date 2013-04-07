@@ -20,7 +20,12 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.principal.*;
+import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertionImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -37,7 +42,6 @@ import java.util.List;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.2
  */
 public final class TestUtils {
@@ -50,18 +54,19 @@ public final class TestUtils {
 
     private static final String CONST_CREDENTIALS = "credentials";
 
-    private static final String CONST_WEBFLOW_BIND_EXCEPTION = "org.springframework.validation.BindException.credentials";
+    private static final String CONST_WEBFLOW_BIND_EXCEPTION =
+            "org.springframework.validation.BindException.credentials";
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
 
     public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
 
     public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
-    
+
     public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {
-        // do not instanciate
+        // do not instantiate
     }
 
     public static UsernamePasswordCredentials getCredentialsWithSameUsernameAndPassword() {
