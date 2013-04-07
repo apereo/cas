@@ -32,9 +32,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @since 3.5.2
  */
 public class OAuth20WrapperControllerTests {
-    
+
     private static final String CONTEXT = "/oauth2.0/";
-    
+
     @Test
     public void testWrongMethod() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT + "wrongmethod");

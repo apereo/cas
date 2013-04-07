@@ -40,16 +40,16 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * @since 3.5.0
  */
 public final class OAuth20CallbackAuthorizeController extends AbstractController {
-    
+
     private final Logger log = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
-    
+
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+            throws Exception {
         // get CAS ticket
         final String ticket = request.getParameter(OAuthConstants.TICKET);
         log.debug("ticket : {}", ticket);
-        
+
         // retrieve callback url from session
         final HttpSession session = request.getSession();
         String callbackUrl = (String) session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL);
@@ -59,14 +59,14 @@ public final class OAuth20CallbackAuthorizeController extends AbstractController
         final String state = (String) session.getAttribute(OAuthConstants.OAUTH20_STATE);
         log.debug("state : {}", state);
         session.removeAttribute(OAuthConstants.OAUTH20_STATE);
-        
+
         // return callback url with code & state
         callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.CODE, ticket);
         if (state != null) {
             callbackUrl = OAuthUtils.addParameter(callbackUrl, OAuthConstants.STATE, state);
         }
         log.debug("callbackUrl : {}", callbackUrl);
-        
+
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put("callbackUrl", callbackUrl);
         // retrieve service name from session

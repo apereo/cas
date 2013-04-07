@@ -33,8 +33,8 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.OAuthUtils;
 import org.junit.Test;
-import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -49,31 +49,31 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 3.5.2
  */
 public final class OAuth20AuthorizeControllerTests {
-    
+
     private static final String CONTEXT = "/oauth2.0/";
-    
+
     private static final String CLIENT_ID = "1";
-    
+
     private static final String REDIRECT_URI = "http://someurl";
-    
+
     private static final String OTHER_REDIRECT_URI = "http://someotherurl";
-    
+
     private static final String CAS_SERVER = "casserver";
-    
+
     private static final String CAS_SCHEME = "https";
-    
+
     private static final int CAS_PORT = 443;
-    
+
     private static final String CAS_URL = CAS_SCHEME + "://" + CAS_SERVER + ":" + CAS_PORT;
-    
+
     private static final String SERVICE_NAME = "serviceName";
-    
+
     private static final String STATE = "state";
-    
+
     @Test
     public void testNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.AUTHORIZE_URL);
+                + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -84,11 +84,11 @@ public final class OAuth20AuthorizeControllerTests {
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
         verify(logger).error("missing clientId");
     }
-    
+
     @Test
     public void testNoRedirectUri() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.AUTHORIZE_URL);
+                + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
@@ -99,11 +99,11 @@ public final class OAuth20AuthorizeControllerTests {
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
         verify(logger).error("missing redirectUri");
     }
-    
+
     @Test
     public void testNoCasService() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.AUTHORIZE_URL);
+                + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -118,11 +118,11 @@ public final class OAuth20AuthorizeControllerTests {
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
         verify(logger).error("Unknown clientId : {}", CLIENT_ID);
     }
-    
+
     @Test
     public void testRedirectUriDoesNotStartWithServiceId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.AUTHORIZE_URL);
+                + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -142,11 +142,11 @@ public final class OAuth20AuthorizeControllerTests {
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
         verify(logger).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
     }
-    
+
     @Test
     public void testOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.AUTHORIZE_URL);
+                + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setServerName(CAS_SERVER);
@@ -172,15 +172,15 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(CAS_URL + "?service="
-                         + OAuthEncoder.encode(CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
-                     redirectView.getUrl());
+        assertEquals(
+                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
+                redirectView.getUrl());
     }
-    
+
     @Test
     public void testOKWithState() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
-                                                                                     + OAuthConstants.AUTHORIZE_URL);
+                + OAuthConstants.AUTHORIZE_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.STATE, STATE);
@@ -208,8 +208,8 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(CAS_URL + "?service="
-                         + OAuthEncoder.encode(CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
-                     redirectView.getUrl());
+        assertEquals(
+                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
+                redirectView.getUrl());
     }
 }
