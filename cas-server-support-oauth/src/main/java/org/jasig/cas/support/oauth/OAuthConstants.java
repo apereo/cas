@@ -20,61 +20,51 @@ package org.jasig.cas.support.oauth;
 
 /**
  * This class has the main constants for the OAuth implementation.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public interface OAuthConstants {
-    
-    public final static String PROVIDER_TYPE = "providerType";
-    
+
     public final static String REDIRECT_URI = "redirect_uri";
-    
+
     public final static String CLIENT_ID = "client_id";
-    
+
     public final static String CLIENT_SECRET = "client_secret";
-    
+
     public final static String CODE = "code";
-    
+
     public final static String SERVICE = "service";
-    
-    public final static String THEME = "theme";
-    
-    public final static String LOCALE = "locale";
-    
-    public final static String METHOD = "method";
-    
+
     public final static String TICKET = "ticket";
-    
+
     public final static String STATE = "state";
-    
+
     public final static String ACCESS_TOKEN = "access_token";
-    
+
     public final static String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
-    
+
     public final static String OAUTH20_SERVICE_NAME = "oauth20_service_name";
-    
+
     public final static String OAUTH20_STATE = "oauth20_state";
-    
+
     public final static String MISSING_ACCESS_TOKEN = "missing_accessToken";
-    
+
     public final static String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
-    
+
     public final static String CONFIRM_VIEW = "oauthConfirmView";
-    
+
     public final static String ERROR_VIEW = "viewServiceErrorView";
-    
+
     public final static String INVALID_REQUEST = "invalid_request";
-    
+
     public final static String INVALID_GRANT = "invalid_grant";
-    
+
     public final static String AUTHORIZE_URL = "authorize";
-    
+
     public final static String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
-    
+
     public final static String ACCESS_TOKEN_URL = "accessToken";
-    
+
     public final static String PROFILE_URL = "profile";
-    
-    public final static String OAUTH10_LOGIN_URL = "oauth10login";
 }
