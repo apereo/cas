@@ -76,20 +76,20 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
     /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Number of clients contending for operations in concurrent test. */
-    private static final int CONCURRENT_SIZE = 20; 
-    
+    private static final int CONCURRENT_SIZE = 20;
+
     private static UniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator(64);
-    
+
     private static ExpirationPolicy expirationPolicyTGT = new HardTimeoutExpirationPolicy(1000);
 
     private static ExpirationPolicy expirationPolicyST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 
     @Autowired
     private PlatformTransactionManager txManager;
-    
+
     @Autowired
     private JpaTicketRegistry jpaTicketRegistry;
 
@@ -110,8 +110,8 @@ public class JpaTicketRegistryTests {
         JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "SERVICETICKET");
         JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "TICKETGRANTINGTICKET");
     }
-    
-    
+
+
     @Test
     public void testTicketCreationAndDeletion() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
@@ -127,9 +127,9 @@ public class JpaTicketRegistryTests {
         assertNull(getTicketInTransaction(newTgt.getId()));
         assertNull(getTicketInTransaction(newSt.getId()));
     }
-    
+
     @Test
-    @IfProfileValue(name="cas.jpa.concurrent", value="true") 
+    @IfProfileValue(name="cas.jpa.concurrent", value="true")
     public void testConcurrentServiceTicketGeneration() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
@@ -144,14 +144,14 @@ public class JpaTicketRegistryTests {
                 assertNotNull(result.get());
             }
         } catch (Exception e) {
-            logger.debug("testConcurrentServiceTicketGeneration produced an error", e);
+            log.debug("testConcurrentServiceTicketGeneration produced an error", e);
             fail("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();
         }
     }
 
-   
+
     static TicketGrantingTicket newTGT() {
         final Principal principal = new SimplePrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
@@ -160,7 +160,7 @@ public class JpaTicketRegistryTests {
                 new ImmutableAuthentication(principal, null),
                 expirationPolicyTGT);
     }
-    
+
     static ServiceTicket newST(final TicketGrantingTicket parent) {
        return parent.grantServiceTicket(
                idGenerator.getNewTicketId("ST"),
@@ -168,7 +168,7 @@ public class JpaTicketRegistryTests {
                expirationPolicyST,
                false);
     }
-    
+
     void addTicketInTransaction(final Ticket ticket) {
         new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
             public Void doInTransaction(final TransactionStatus status) {
@@ -177,7 +177,7 @@ public class JpaTicketRegistryTests {
             }
         });
     }
-    
+
     void deleteTicketInTransaction(final String ticketId) {
         new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
             public Void doInTransaction(final TransactionStatus status) {
@@ -194,7 +194,7 @@ public class JpaTicketRegistryTests {
             }
         });
     }
-    
+
     ServiceTicket grantServiceTicketInTransaction(final TicketGrantingTicket parent) {
         return new TransactionTemplate(txManager).execute(new TransactionCallback<ServiceTicket>() {
             public ServiceTicket doInTransaction(final TransactionStatus status) {
@@ -206,9 +206,9 @@ public class JpaTicketRegistryTests {
     }
 
     class ServiceTicketGenerator implements Callable<String> {
-        
+
         private String parentTgtId;
-        
+
         public ServiceTicketGenerator(final String tgtId) {
             parentTgtId = tgtId;
         }
@@ -225,6 +225,6 @@ public class JpaTicketRegistryTests {
                 }
             });
         }
-        
+
     }
 }

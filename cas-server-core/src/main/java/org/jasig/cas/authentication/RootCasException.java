@@ -18,18 +18,16 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.ticket.TicketException;
 import org.springframework.util.Assert;
 
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides
  * unified logic around retrieval and configuration of exception codes that may be
- * mapped inside an external resource bundle for internationalization of error messages. 
- * 
+ * mapped inside an external resource bundle for internationalization of error messages.
+ *
  * @author Misagh Moayyed
- * @see AuthenticationException
- * @see TicketException
+ * @see org.jasig.cas.authentication.handler.AuthenticationException
+ * @see org.jasig.cas.ticket.TicketException
  * @since 4.0.0
  */
 public abstract class RootCasException extends Exception {
@@ -43,7 +41,7 @@ public abstract class RootCasException extends Exception {
    * Constructor that takes a <code>code</code> description of the error along with the exception
    * <code>msg</code> generally for logging purposes. These codes normally have a corresponding
    * entries in the messages file for the internationalization of error messages.
-   * 
+   *
    * @param code the code to describe what type of exception this is.
    */
   public RootCasException(final String code) {
@@ -53,7 +51,7 @@ public abstract class RootCasException extends Exception {
   /**
    * Constructs a new exception with the code identifying the exception
    * and the error message.
-   * 
+   *
    * @param code the code to describe what type of exception this is.
    * @param msg The error message associated with this exception for additional logging purposes.
    */
@@ -61,11 +59,11 @@ public abstract class RootCasException extends Exception {
       super(msg);
       initException(code);
   }
-  
+
   /**
    * Constructs a new exception with the code identifying the exception
    * and the original throwable.
-   * 
+   *
    * @param code the code to describe what type of exception this is.
    * @param throwable the original exception we are chaining.
    */
@@ -82,16 +80,16 @@ public abstract class RootCasException extends Exception {
   public final String getCode() {
       final Throwable cause = this.getCause();
       if (cause != null && (cause instanceof RootCasException)) {
-        return ((RootCasException)cause).getCode();
+        return ((RootCasException) cause).getCode();
       }
       return this.code;
   }
-  
+
   private void initException(final String code) {
       Assert.hasLength(code, "The exception code cannot be blank");
       this.code = code;
   }
-  
+
   @Override
   public String toString() {
     return this.getCode();

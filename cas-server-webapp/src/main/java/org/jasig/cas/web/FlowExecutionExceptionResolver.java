@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  * <p>
  * It will redirect back to the requested URI which should start a new workflow.
  * </p>
- * 
+ *
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.0
@@ -54,21 +54,22 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
 
     @NotNull
     private String modelKey = "exception.message";
-    
+
+    @Override
     public ModelAndView resolveException(final HttpServletRequest request,
         final HttpServletResponse response, final Object handler,
         final Exception exception) {
 
         /*
-         * Since FlowExecutionRepositoryException is a common ancestor to these exceptions and other 
+         * Since FlowExecutionRepositoryException is a common ancestor to these exceptions and other
          * error cases we would likely want to hide from the user, it seems reasonable to check for
          * FlowExecutionRepositoryException.
-         * 
+         *
          * BadlyFormattedFlowExecutionKeyException is specifically ignored by this handler
          * because redirecting to the requested URI with this exception may cause an infinite
          * redirect loop (i.e. when invalid "execution" parameter exists as part of the query string
          */
-        if (!(exception instanceof FlowExecutionRepositoryException) || 
+        if (!(exception instanceof FlowExecutionRepositoryException) ||
               exception instanceof BadlyFormattedFlowExecutionKeyException) {
             log.debug("Ignoring the received exception due to a type mismatch", exception);
             return null;
@@ -81,10 +82,10 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
         log.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
         final Map<String, Object> model = new HashMap<String, Object>();
         model.put(this.modelKey, StringEscapeUtils.escapeHtml(exception.getMessage()));
-        
+
         return new ModelAndView(new RedirectView(urlToRedirectTo), model);
     }
-    
+
     public void setModelKey(final String modelKey) {
         this.modelKey = modelKey;
     }

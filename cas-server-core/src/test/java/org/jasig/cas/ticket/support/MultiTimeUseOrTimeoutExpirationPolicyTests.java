@@ -18,52 +18,56 @@
  */
 package org.jasig.cas.ticket.support;
 
+import static org.junit.Assert.*;
+
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
+public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     private static final long TIMEOUT_SECONDS = 5L;
 
     private static final long TIMEOUT_MILLISECONDS = 5000L;
 
     private static final int NUMBER_OF_USES = 5;
-    
+
     private static final int TIMEOUT_BUFFER = 100;
 
     private ExpirationPolicy expirationPolicy;
 
     private TicketGrantingTicket ticket;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(
             NUMBER_OF_USES, TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
         this.ticket = new TicketGrantingTicketImpl("test", TestUtils
             .getAuthentication(), this.expirationPolicy);
 
-        super.setUp();
     }
 
+    @Test
     public void testTicketIsNull() {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
+    @Test
     public void testTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
 
+    @Test
     public void testTicketIsExpiredByTime() {
         try {
             Thread.sleep(TIMEOUT_MILLISECONDS + TIMEOUT_BUFFER);
@@ -73,10 +77,11 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests extends TestCase {
         }
     }
 
+    @Test
     public void testTicketIsExpiredByCount() {
-        for (int i = 0; i < NUMBER_OF_USES; i++)
+        for (int i = 0; i < NUMBER_OF_USES; i++) {
             this.ticket.grantServiceTicket("test", TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
-
+        }
         assertTrue(this.ticket.isExpired());
     }
 }

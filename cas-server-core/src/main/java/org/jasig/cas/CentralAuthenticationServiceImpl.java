@@ -71,8 +71,8 @@ import java.util.Map;
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
  * of available tickets.</li>
- * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for TGTs and ST in order to store them
- * in different locations (i.e. long term memory or short-term)</li>
+ * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for
+ * TGTs and ST in order to store them in different locations (i.e. long term memory or short-term)</li>
  * <li> <code>authenticationManager</code> - The service that will handle
  * authentication.</li>
  * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
@@ -88,7 +88,6 @@ import java.util.Map;
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
  * @author Dmitry Kopylenko
- * @version $Revision: 1.16 $ $Date: 2007/04/24 18:11:36 $
  * @since 3.0
  */
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
@@ -118,7 +117,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /** Map to contain the mappings of service->UniqueTicketIdGenerators */
+    /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
     @NotNull
     private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
@@ -130,7 +129,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
-    /** Implementation of Service Manager */
+    /** Implementation of Service Manager. */
     @NotNull
     private ServicesManager servicesManager;
 
@@ -138,9 +137,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private PersistentIdGenerator persistentIdGenerator = new ShibbolethCompatiblePersistentIdGenerator();
 
-    /** The default attribute filter to match principal attributes against that of a registered service **/
+    /** The default attribute filter to match principal attributes against that of a registered service. **/
     private RegisteredServiceAttributeFilter defaultAttributeFilter = new RegisteredServiceDefaultAttributeFilter();
-    
+
     /**
      * Implementation of destoryTicketGrantingTicket expires the ticket provided
      * and removes it from the TicketRegistry.
@@ -156,10 +155,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public void destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         Assert.notNull(ticketGrantingTicketId);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Removing ticket [" + ticketGrantingTicketId + "] from registry.");
-        }
-        final TicketGrantingTicket ticket =  this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+        log.debug("Removing ticket [{}] from registry.", ticketGrantingTicketId);
+        final TicketGrantingTicket ticket = this.ticketRegistry.getTicket(ticketGrantingTicketId,
+                                            TicketGrantingTicket.class);
 
         if (ticket == null) {
             log.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
@@ -217,7 +215,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         if(authns.size() > 1) {
             if (!registeredService.isAllowedToProxy()) {
                 final String message = String.
-                        format("ServiceManagement: Proxy attempt by service [%s] (registered service [%s]) is not allowed.", 
+                        format("ServiceManagement: Proxy attempt by service [%s] (registered service [%s]) is not allowed.",
                         service.getId(), registeredService.toString());
                 log.warn(message);
                 throw new UnauthorizedProxyingException(message);
@@ -345,7 +343,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null || !registeredService.isEnabled()) {
-            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled, and thus not allowed to validate tickets.", 
+            final String msg = String.format("ServiceManagement: Service [%s] does not exist or is not enabled, and thus not allowed to validate tickets.",
                                              service.getId());
             log.warn(msg);
             throw new UnauthorizedServiceException(msg);
@@ -364,7 +362,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 }
 
                 if (!serviceTicket.isValidFor(service)) {
-                    log.error("ServiceTicket [{}] with service [{}] does not match supplied service [{}]", 
+                    log.error("ServiceTicket [{}] with service [{}] does not match supplied service [{}]",
                             serviceTicketId, serviceTicket.getService().getId(), service);
                     throw new TicketValidationException(serviceTicket.getService());
                 }
@@ -373,15 +371,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final List<Authentication> chainedAuthenticationsList = serviceTicket.getGrantingTicket().getChainedAuthentications();
             final Authentication authentication = chainedAuthenticationsList.get(chainedAuthenticationsList.size() - 1);
             final Principal principal = authentication.getPrincipal();
-                       
+
             Map<String, Object> attributesToRelease = this.defaultAttributeFilter.filter(principal.getId(), principal.getAttributes(), registeredService);
             if (registeredService.getAttributeFilter() != null) {
                 attributesToRelease = registeredService.getAttributeFilter().filter(principal.getId(), attributesToRelease, registeredService);
             }
-            
+
             final String principalId = determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
             final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
-            final Authentication authToUse = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate(), 
+            final Authentication authToUse = new MutableAuthentication(modifiedPrincipal, authentication.getAuthenticatedDate(),
                                                                        authentication.getAttributes());
             final List<Authentication> authentications = new ArrayList<Authentication>();
             for (int i = 0; i < chainedAuthenticationsList.size() - 1; i++) {
@@ -398,24 +396,27 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
-     * Determines the principal id to use for a {@link RegisteredService} using the following rules: 
-     * 
+     * Determines the principal id to use for a {@link RegisteredService} using the following rules:
+     *
      * <ul>
      *  <li> If the service is marked to allow anonymous access, a persistent id is returned. </li>
-     *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default principal id is returned.</li>
-     *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed attributes for the service, 
-     *      the corresponding attribute value will be returned.
+     *  <li> If the {@link org.jasig.cas.services.RegisteredService#getUsernameAttribute()} is blank, then the default
+     *  principal id is returned.</li>
+     *  <li>If the service is set to ignore attributes, or the username attribute exists in the allowed
+     *  attributes for the service, the corresponding attribute value will be returned.
      *  </li>
-     *   <li>Otherwise, the default principal's id is returned as the username attribute with an additional warning.</li>
+     *   <li>Otherwise, the default principal's id is returned as the username attribute
+     *   with an additional warning.</li>
      * </ul>
-     * 
+     *
      * @param principal The principal object to be validated and constructed
-     * @param registeredService Requesting service for which a principal is being validated. 
+     * @param registeredService Requesting service for which a principal is being validated.
      * @param serviceTicket An instance of the service ticket used for validation
-     * 
+     *
      * @return The principal id to use for the requesting registered service
      */
-    private String determinePrincipalIdForRegisteredService(final Principal principal, final RegisteredService registeredService, 
+    private String determinePrincipalIdForRegisteredService(final Principal principal,
+                                                            final RegisteredService registeredService,
                                                             final ServiceTicket serviceTicket) {
         String principalId = null;
         final String serviceUsernameAttribute = registeredService.getUsernameAttribute();
@@ -425,8 +426,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         } else if (StringUtils.isBlank(serviceUsernameAttribute)) {
             principalId = principal.getId();
         } else {
-            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute)) &&
-                 principal.getAttributes().containsKey(serviceUsernameAttribute)) {
+            if ((registeredService.isIgnoreAttributes() || registeredService.getAllowedAttributes().contains(serviceUsernameAttribute))
+                    && principal.getAttributes().containsKey(serviceUsernameAttribute)) {
                 principalId = principal.getAttributes().get(serviceUsernameAttribute).toString();
             } else {
                 principalId = principal.getId();
@@ -438,8 +439,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             }
 
         }
-        
-        log.debug("Principal id to return for service [{}] is [{}]. The default principal id is [{}].", 
+
+        log.debug("Principal id to return for service [{}] is [{}]. The default principal id is [{}].",
                   new Object[] {registeredService.getName(), principal.getId(), principalId});
         return principalId;
     }

@@ -26,35 +26,35 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 @ContextConfiguration(locations = {
     "/core-context.xml"
 })
 public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJUnit4SpringContextTests {
-    
+
     @Autowired(required = true)
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired(required = true)
     private TicketRegistry ticketRegistry;
-    
+
     @Autowired(required = true)
     private AuthenticationManager authenticationManager;
-    
+
     public AuthenticationManager getAuthenticationManager() {
         return this.authenticationManager;
     }
-    
+
     public CentralAuthenticationService getCentralAuthenticationService() {
         return this.centralAuthenticationService;
     }
-    
+
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
-    
+
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
     }

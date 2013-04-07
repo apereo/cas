@@ -26,9 +26,7 @@ import java.security.cert.X509Certificate;
  * NO-OP implementation certificate revocation checker.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
- *
  */
 public final class NoOpRevocationChecker implements RevocationChecker {
 
@@ -41,6 +39,7 @@ public final class NoOpRevocationChecker implements RevocationChecker {
      *
      * @see org.jasig.cas.adaptors.x509.authentication.handler.support.RevocationChecker#check(java.security.cert.X509Certificate)
      */
+    @Override
     public void check(final X509Certificate certificate) throws GeneralSecurityException {
         // NO-OP
     }

@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -43,7 +43,6 @@ import static org.mockito.Mockito.withSettings;
  * Unit test for MemCacheTicketRegistry class.
  *
  * @author Middleware Services
- * @version $Revision: $
  */
 @RunWith(Parameterized.class)
 public class MemCacheTicketRegistryTests {
@@ -56,7 +55,7 @@ public class MemCacheTicketRegistryTests {
 
     private final boolean binaryProtocol;
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
         registryBean = beanName;
@@ -77,7 +76,7 @@ public class MemCacheTicketRegistryTests {
         // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
-            logger.warn("Aborting test since no memcached server is available on localhost.");
+            log.warn("Aborting test since no memcached server is available on localhost.");
         }
         Assume.assumeTrue(environmentOk);
 
@@ -118,13 +117,7 @@ public class MemCacheTicketRegistryTests {
         } catch (Exception e) {
             return false;
         } finally {
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    // Ignore errors on close
-                }
-            }
+            IOUtils.closeQuietly(socket);
         }
     }
 }

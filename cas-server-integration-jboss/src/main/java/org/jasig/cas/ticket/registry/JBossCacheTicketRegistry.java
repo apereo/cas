@@ -33,24 +33,23 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of TicketRegistry that is backed by a JBoss TreeCache.
- * 
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  *
  */
 public final class JBossCacheTicketRegistry extends AbstractDistributedTicketRegistry {
-    
+
     /** Indicator of what tree branch to put tickets in. */
     private static final String FQN_TICKET = "ticket";
 
     /** Instance of JBoss TreeCache. */
     @NotNull
     private Cache<String, Ticket> cache;
-    
-    
-    
-    protected void updateTicket(Ticket ticket) {
+
+
+
+    @Override
+    protected void updateTicket(final Ticket ticket) {
         try {
             this.cache.put(FQN_TICKET, ticket.getId(), ticket);
         } catch (final CacheException e) {
@@ -58,11 +57,10 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
         }
     }
 
+    @Override
     public void addTicket(final Ticket ticket) {
         try {
-            if (log.isDebugEnabled()){
-                log.debug("Adding ticket to registry for: " + ticket.getId());
-            }
+            log.debug("Adding ticket to registry for: {}", ticket.getId());
             this.cache.put(FQN_TICKET, ticket.getId(), ticket);
         } catch (final CacheException e) {
             log.error(e.getMessage(), e);
@@ -70,11 +68,10 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
         }
     }
 
+    @Override
     public boolean deleteTicket(final String ticketId) {
         try {
-            if (log.isDebugEnabled()){
-                log.debug("Removing ticket from registry for: " + ticketId);
-            }
+            log.debug("Removing ticket from registry for: ", ticketId);
             return this.cache.remove(FQN_TICKET, ticketId) != null;
         } catch (final CacheException e) {
             log.error(e.getMessage(), e);
@@ -84,14 +81,13 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
 
     /**
      * Returns a proxied instance.
-     * 
+     *
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
      */
+    @Override
     public Ticket getTicket(final String ticketId) {
         try {
-            if (log.isDebugEnabled()){
-                log.debug("Retrieving ticket from registry for: " + ticketId);
-            }
+            log.debug("Retrieving ticket from registry for: {}", ticketId);
             return getProxiedTicketInstance(this.cache.get(FQN_TICKET, ticketId));
         } catch (final CacheException e) {
             log.error(e.getMessage(), e);
@@ -99,6 +95,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
         }
     }
 
+    @Override
     public Collection<Ticket> getTickets() {
         try {
             final Node<String, Ticket> node = this.cache.getNode(FQN_TICKET);
@@ -106,7 +103,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             if (node == null) {
                 return Collections.emptyList();
             }
-            
+
             final Set<String> keys = node.getKeys();
             final List<Ticket> list = new ArrayList<Ticket>();
 

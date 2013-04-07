@@ -27,6 +27,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -35,33 +37,30 @@ import org.springframework.webflow.execution.RequestContext;
  * to construct a Principal (and thus a PrincipalBearingCredentials). If it
  * doesn't find one, this class returns and error event which tells the web flow
  * it could not find any credentials.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.5
  */
 public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
-    extends AbstractNonInteractiveCredentialsAction {
+            extends AbstractNonInteractiveCredentialsAction {
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    @Override
     protected Credentials constructCredentialsFromRequest(
-        final RequestContext context) {
+            final RequestContext context) {
         final HttpServletRequest request = WebUtils
-            .getHttpServletRequest(context);
+                .getHttpServletRequest(context);
         final Principal principal = request.getUserPrincipal();
 
         if (principal != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("UserPrincipal [" + principal.getName()
-                    + "] found in HttpServletRequest");
-            }
+
+            log.debug("UserPrincipal [{}] found in HttpServletRequest", principal.getName());
             return new PrincipalBearingCredentials(new SimplePrincipal(
-                principal.getName()));
+                    principal.getName()));
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("UserPrincipal not found in HttpServletRequest.");
-        }
-
+        log.debug("UserPrincipal not found in HttpServletRequest.");
         return null;
     }
 }

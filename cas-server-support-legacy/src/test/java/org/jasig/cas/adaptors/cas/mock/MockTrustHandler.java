@@ -25,8 +25,6 @@ import edu.yale.its.tp.cas.auth.TrustHandler;
 
 /**
  * Mock object in support of testcases involving TrustHandler.
- * 
- * @version $Revision$ $Date$
  */
 public class MockTrustHandler implements TrustHandler {
 
@@ -45,7 +43,6 @@ public class MockTrustHandler implements TrustHandler {
     /**
      * Get the username String this object will return on invocations of the
      * getUsername(Request) interface method.
-     * 
      * @return Returns the userName.
      */
     public String getUserName() {
@@ -55,14 +52,13 @@ public class MockTrustHandler implements TrustHandler {
     /**
      * Set the username String tghis object should return on invocations of the
      * getUsername(Request) method.
-     * 
      * @param userName The userName to set.
      */
-    public void setUserName(String userName) {
+    public void setUserName(final String userName) {
         this.userName = userName;
     }
 
-    public String getUsername(ServletRequest requestArg) {
+    public String getUsername(final ServletRequest requestArg) {
         /*
          * Dummy implementation simply records the request and then returns the
          * configured username.
@@ -75,7 +71,6 @@ public class MockTrustHandler implements TrustHandler {
     /**
      * Get the ServletRequest recorded from the most recent invocation of
      * getUsername(Request).
-     * 
      * @return Returns the request.
      */
     public ServletRequest getRequest() {

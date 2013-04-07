@@ -28,9 +28,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is the main entry point for OAuth version 2.0 wrapping in CAS, should be mapped to something like /oauth2.0/*. Dispatch
+ * This controller is the main entry point for OAuth version 2.0
+ * wrapping in CAS, should be mapped to something like /oauth2.0/*. Dispatch
  * request to specific controllers : authorize, accessToken...
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */

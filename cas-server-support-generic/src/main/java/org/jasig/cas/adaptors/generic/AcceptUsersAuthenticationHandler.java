@@ -38,9 +38,8 @@ import javax.validation.constraints.NotNull;
  * <p>
  * Note that this class makes an unmodifiable copy of whatever map is provided
  * to it.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class AcceptUsersAuthenticationHandler extends
@@ -55,11 +54,8 @@ public class AcceptUsersAuthenticationHandler extends
         final String cachedPassword = this.users.get(transformedUsername);
 
         if (cachedPassword == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The user [" + transformedUsername
-                    + "] was not found in the map.");
-            }
-            return false;
+           log.debug("The user [{}] was not found in the map.", transformedUsername);
+           return false;
         }
 
         final String encodedPassword = this.getPasswordEncoder().encode(

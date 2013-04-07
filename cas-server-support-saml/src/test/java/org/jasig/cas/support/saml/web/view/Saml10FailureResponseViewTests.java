@@ -18,10 +18,11 @@
  */
 package org.jasig.cas.support.saml.web.view;
 
+import static org.junit.Assert.*;
+
 import java.util.Collections;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -33,22 +34,23 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @since 3.1
  *
  */
-public class Saml10FailureResponseViewTests extends TestCase {
+public class Saml10FailureResponseViewTests {
 
     private final Saml10FailureResponseView view = new Saml10FailureResponseView();
-    
+
+    @Test
     public void testResponse() throws Exception {
         final MockHttpServletRequest request =  new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.addParameter("TARGET", "service");
-        
+
         final String description = "Validation failed";
         this.view.renderMergedOutputModel(
-            Collections.<String, Object>singletonMap("description", description), request, response);
+                Collections.<String, Object>singletonMap("description", description), request, response);
 
         final String responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));
         assertTrue(responseText.contains(description));
     }
-    
+
 }
