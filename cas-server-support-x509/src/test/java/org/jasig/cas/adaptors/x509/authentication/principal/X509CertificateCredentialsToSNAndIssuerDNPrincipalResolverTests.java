@@ -18,40 +18,47 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import static org.junit.Assert.*;
+
 import java.security.cert.X509Certificate;
 
-import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @version $Revision$ $Date$
  * @since 3.0.6
  *
  */
 public class X509CertificateCredentialsToSNAndIssuerDNPrincipalResolverTests
-    extends AbstractX509CertificateTests {
-    
-    private X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver resolver = new X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver();
-    
+extends AbstractX509CertificateTests {
+
+    private final X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver
+        resolver = new X509CertificateCredentialsToSerialNumberAndIssuerDNPrincipalResolver();
+
+    @Test
     public void testResolvePrincipalInternal() {
         final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
         c.setCertificate(VALID_CERTIFICATE);
-        
-        
-        final String value = "SERIALNUMBER=" + VALID_CERTIFICATE.getSerialNumber().toString() + ", " + VALID_CERTIFICATE.getIssuerDN().getName();
-        
+
+
+        final String value = "SERIALNUMBER="
+                + VALID_CERTIFICATE.getSerialNumber().toString()
+                + ", " + VALID_CERTIFICATE.getIssuerDN().getName();
+
         assertEquals(value, this.resolver.resolvePrincipal(c).getId());
     }
-    
+
+    @Test
     public void testSupport() {
         final X509CertificateCredentials c = new X509CertificateCredentials(new X509Certificate[] {VALID_CERTIFICATE});
         assertTrue(this.resolver.supports(c));
     }
-    
+
+    @Test
     public void testSupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredentials()));
     }
-    
+
 }

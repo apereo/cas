@@ -39,15 +39,14 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class ServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private static final String CONST_SUCCESS_VIEW = "casServiceSuccessView";
-    
+
     private static final String CONST_FAILURE_VIEW = "casServiceFailureView";
-    
+
     private ServiceValidateController serviceValidateController;
 
     @Before
@@ -56,7 +55,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
         context.refresh();
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController
-            .setCentralAuthenticationService(getCentralAuthenticationService());
+        .setCentralAuthenticationService(getCentralAuthenticationService());
         final Cas20ProxyHandler proxyHandler = new Cas20ProxyHandler();
         proxyHandler.setHttpClient(new HttpClient());
         this.serviceValidateController.setProxyHandler(proxyHandler);
@@ -66,16 +65,16 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
 
     private HttpServletRequest getHttpServletRequest() throws TicketException {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
         getCentralAuthenticationService().grantServiceTicket(tId,
-            TestUtils.getService());
+                TestUtils.getService());
         final String sId2 = getCentralAuthenticationService()
-            .grantServiceTicket(tId, TestUtils.getService());
+                .grantServiceTicket(tId, TestUtils.getService());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
-            .getId());
+                .getId());
         request.addParameter("ticket", sId2);
         request.addParameter("renew", "true");
 
@@ -85,7 +84,7 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
     @Test
     public void testAfterPropertesSetTestEverything() throws Exception {
         this.serviceValidateController
-            .setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
+        .setValidationSpecificationClass(Cas20ProtocolValidationSpecification.class);
         this.serviceValidateController.setSuccessView(CONST_SUCCESS_VIEW);
         this.serviceValidateController.setFailureView(CONST_FAILURE_VIEW);
         this.serviceValidateController.setProxyHandler(new Cas20ProxyHandler());
@@ -94,114 +93,109 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
     @Test
     public void testEmptyParams() throws Exception {
         assertNotNull(this.serviceValidateController.handleRequestInternal(
-            new MockHttpServletRequest(), new MockHttpServletResponse())
-            .getModel().get("code"));
+                new MockHttpServletRequest(), new MockHttpServletResponse())
+                .getModel().get("code"));
     }
 
     @Test
     public void testValidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
-            .grantServiceTicket(tId, TestUtils.getService());
+                .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
-            .getId());
+                .getId());
         request.addParameter("ticket", sId);
 
         assertEquals(CONST_SUCCESS_VIEW,
-            this.serviceValidateController.handleRequestInternal(request,
-                new MockHttpServletResponse()).getViewName());
+                this.serviceValidateController.handleRequestInternal(request,
+                        new MockHttpServletResponse()).getViewName());
     }
 
     @Test
     public void testValidServiceTicketInvalidSpec() throws Exception {
 
         assertEquals(CONST_FAILURE_VIEW,
-            this.serviceValidateController.handleRequestInternal(
-                getHttpServletRequest(), new MockHttpServletResponse())
-                .getViewName());
+                this.serviceValidateController.handleRequestInternal(
+                        getHttpServletRequest(), new MockHttpServletResponse())
+                        .getViewName());
     }
 
-    @Test
-    public void testValidServiceTicketRuntimeExceptionWithSpec()
-        throws Exception {
+    @Test(expected=RuntimeException.class)
+    public void testValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
         this.serviceValidateController
-            .setValidationSpecificationClass(MockValidationSpecification.class);
+        .setValidationSpecificationClass(MockValidationSpecification.class);
 
-        try {
-            assertEquals(CONST_FAILURE_VIEW,
+        assertEquals(CONST_FAILURE_VIEW,
                 this.serviceValidateController.handleRequestInternal(
-                    getHttpServletRequest(), new MockHttpServletResponse())
-                    .getViewName());
-            fail(TestUtils.CONST_EXCEPTION_EXPECTED);
-        } catch (RuntimeException e) {
-            // nothing to do here, exception is expected.
-        }
+                        getHttpServletRequest(), new MockHttpServletResponse())
+                        .getViewName());
+        fail(TestUtils.CONST_EXCEPTION_EXPECTED);
     }
 
     @Test
     public void testInvalidServiceTicket() throws Exception {
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
-            .grantServiceTicket(tId, TestUtils.getService());
+                .grantServiceTicket(tId, TestUtils.getService());
 
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId);
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
-            .getId());
+                .getId());
         request.addParameter("ticket", sId);
 
         assertEquals(CONST_FAILURE_VIEW,
-            this.serviceValidateController.handleRequestInternal(request,
-                new MockHttpServletResponse()).getViewName());
+                this.serviceValidateController.handleRequestInternal(request,
+                        new MockHttpServletResponse()).getViewName());
     }
 
     @Test
     public void testValidServiceTicketWithPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
-            .grantServiceTicket(tId, TestUtils.getService());
+                .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
-            .getId());
+                .getId());
         request.addParameter("ticket", sId);
         request
-            .addParameter("pgtUrl", "https://www.acs.rutgers.edu");
+        .addParameter("pgtUrl", "https://www.acs.rutgers.edu");
 
         assertEquals(CONST_SUCCESS_VIEW,
-            this.serviceValidateController.handleRequestInternal(request,
-                new MockHttpServletResponse()).getViewName());
+                this.serviceValidateController.handleRequestInternal(request,
+                        new MockHttpServletResponse()).getViewName());
     }
 
     @Test
     public void testValidServiceTicketWithBadPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
-            .grantServiceTicket(tId, TestUtils.getService());
+                .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
-            .getId());
+                .getId());
         request.addParameter("ticket", sId);
         request.addParameter("pgtUrl", "http://www.acs.rutgers.edu");
 
         final ModelAndView modelAndView = this.serviceValidateController
-            .handleRequestInternal(request, new MockHttpServletResponse());
+                .handleRequestInternal(request, new MockHttpServletResponse());
         assertEquals(CONST_SUCCESS_VIEW, modelAndView
-            .getViewName());
+                .getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 
@@ -209,21 +203,21 @@ public class ServiceValidateControllerTests extends AbstractCentralAuthenticatio
     public void testValidServiceTicketWithInvalidPgt() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final String tId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        TestUtils.getCredentialsWithSameUsernameAndPassword());
         final String sId = getCentralAuthenticationService()
-            .grantServiceTicket(tId, TestUtils.getService());
+                .grantServiceTicket(tId, TestUtils.getService());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", TestUtils.getService()
-            .getId());
+                .getId());
         request.addParameter("ticket", sId);
         request.addParameter("pgtUrl", "duh");
 
         final ModelAndView modelAndView = this.serviceValidateController
-            .handleRequestInternal(request, new MockHttpServletResponse());
+                .handleRequestInternal(request, new MockHttpServletResponse());
         assertEquals(CONST_SUCCESS_VIEW, modelAndView
-            .getViewName());
+                .getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 }

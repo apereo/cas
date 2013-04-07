@@ -25,7 +25,8 @@ import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.filter.Filter;
 
 /**
- * The LdapServiceMapper is responsible for how RegisteredService instances are mapped to LDAP Contexts and vice versa
+ * The LdapServiceMapper is responsible for how RegisteredService instances
+ * are mapped to LDAP Contexts and vice versa.
  *
  * @author Siegfried Puchbauer, SPP (http://www.spp.at/)
  *
@@ -33,16 +34,17 @@ import org.springframework.ldap.filter.Filter;
 public abstract class LdapServiceMapper extends AbstractParameterizedContextMapper<RegisteredService> {
 
     /**
-     * Method inherited from AbstractParameterizedContextMapper&lt;RegisteredService&gt;
+     * Method inherited from AbstractParameterizedContextMapper&lt;RegisteredService&gt;.
      * Should read the attributes from the DirContextAdapter and create a <code>RegisteredService</code>
      *
      * @param ctx the DirContextAdapter to read from
      * @return the created RegisteredServiceImpl instnace
      */
+    @Override
     protected abstract RegisteredService doMapFromContext(DirContextOperations ctx);
 
     /**
-     * This method should map the properties of the RegisteredService to the DirContextAdapter
+     * This method should map the properties of the RegisteredService to the DirContextAdapter.
      *
      * @param service the RegisteredService
      * @param ctx the DirContextAdapter
@@ -51,7 +53,7 @@ public abstract class LdapServiceMapper extends AbstractParameterizedContextMapp
     protected abstract DirContextAdapter doMapToContext(RegisteredService service, DirContextAdapter ctx);
 
     /**
-     * Create a new DirContextAdapter (set the naming attribute, sub-path etc.)
+     * Create a new DirContextAdapter (set the naming attribute, sub-path etc.).
      *
      * @param parentDn the base DN for Registered Services
      * @param service the service
@@ -60,7 +62,7 @@ public abstract class LdapServiceMapper extends AbstractParameterizedContextMapp
     protected abstract DirContextAdapter createCtx(String parentDn, RegisteredService service);
 
     /**
-     * This method returns the LDAP Filter for finding registered Services based on the given ID
+     * This method returns the LDAP Filter for finding registered Services based on the given ID.
      *
      * @param id The registered service's ID
      * @return the LDAP Filter as a <code>org.springframework.ldap.filter.Filter</code>
@@ -68,7 +70,7 @@ public abstract class LdapServiceMapper extends AbstractParameterizedContextMapp
     protected abstract Filter getSearchFilter(Long id);
 
     /**
-     * This method returns the LDAP Filter whichs fetches all Registered Services
+     * This method returns the LDAP Filter whichs fetches all Registered Services.
      *
      * @return the LDAP Filter as a <code>org.springframework.ldap.filter.Filter</code>
      */

@@ -24,26 +24,25 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.HttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
  * combination with the CentralAuthenticationServiceImpl to choose the right
  * UniqueTicketIdGenerator.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.6 $ $Date: 2007/02/27 19:31:58 $
  * @since 3.1
  */
 public final class SamlService extends AbstractWebApplicationService {
 
-    private static final Log log = LogFactory.getLog(SamlService.class);
+    private static final Logger log = LoggerFactory.getLogger(SamlService.class);
 
     /** Constant representing service. */
     private static final String CONST_PARAM_SERVICE = "TARGET";
@@ -54,9 +53,9 @@ public final class SamlService extends AbstractWebApplicationService {
     private static final String CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE = "<AssertionArtifact>";
 
     private static final String CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE = "</AssertionArtifact>";
-    
+
     private static final String CONST_START_ARTIFACT_XML_TAG = "<samlp:AssertionArtifact>";
-    
+
     private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
 
     private String requestId;
@@ -70,7 +69,8 @@ public final class SamlService extends AbstractWebApplicationService {
         super(id, id, null, new HttpClient());
     }
 
-    protected SamlService(final String id, final String originalUrl, final String artifactId, final HttpClient httpClient, final String requestId) {
+    protected SamlService(final String id, final String originalUrl,
+            final String artifactId, final HttpClient httpClient, final String requestId) {
         super(id, originalUrl, artifactId, httpClient);
         this.requestId = requestId;
     }
@@ -78,6 +78,7 @@ public final class SamlService extends AbstractWebApplicationService {
     /**
      * This always returns true because a SAML Service does not receive the TARGET value on validation.
      */
+    @Override
     public boolean matches(final Service service) {
         return true;
     }
@@ -87,18 +88,18 @@ public final class SamlService extends AbstractWebApplicationService {
     }
 
     public static SamlService createServiceFrom(
-        final HttpServletRequest request, final HttpClient httpClient) {
+            final HttpServletRequest request, final HttpClient httpClient) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
         final String artifactId;
         final String requestBody = getRequestBody(request);
         final String requestId;
-        
+
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
             return null;
         }
 
         final String id = cleanupUrl(service);
-        
+
         if (StringUtils.hasText(requestBody)) {
 
             final String tagStart;
@@ -123,16 +124,15 @@ public final class SamlService extends AbstractWebApplicationService {
             requestId = null;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Attempted to extract Request from HttpServletRequest.  Results:");
-            log.debug(String.format("Request Body: %s", requestBody));
-            log.debug(String.format("Extracted ArtifactId: %s", artifactId));
-            log.debug(String.format("Extracted Request Id: %s", requestId));
-        }
+        log.debug("Attempted to extract Request from HttpServletRequest. Results:");
+        log.debug(String.format("Request Body: %s", requestBody));
+        log.debug(String.format("Extracted ArtifactId: %s", artifactId));
+        log.debug(String.format("Extracted Request Id: %s", requestId));
 
         return new SamlService(id, service, artifactId, httpClient, requestId);
     }
 
+    @Override
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<String, String>();
 
@@ -153,23 +153,23 @@ public final class SamlService extends AbstractWebApplicationService {
 
             return requestBody.substring(position,  nextPosition);
         } catch (final Exception e) {
-            log.debug("Exception parsing RequestID from request." ,e);
+            log.debug("Exception parsing RequestID from request.", e);
             return null;
         }
     }
-    
+
     protected static String getRequestBody(final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
         try {
             final BufferedReader reader = request.getReader();
-            
+
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
             return builder.toString();
         } catch (final Exception e) {
-           return null;
+            return null;
         }
     }
 }

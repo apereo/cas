@@ -29,12 +29,10 @@ import javax.servlet.http.HttpServletRequest;
  * Implementation of a HandlerInterceptorAdapter that keeps track of a mapping
  * of IP Addresses to number of failures to authenticate.
  * <p>
- * Note, this class relies on an external method for decrementing the counts (i.e. a Quartz Job) and runs independent of the
- * threshold of the parent.
-
- * 
+ * Note, this class relies on an external method for decrementing the counts
+ * (i.e. a Quartz Job) and runs independent of the threshold of the parent.
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.5
  */
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
@@ -62,11 +60,11 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      */
     public final void decrementCounts() {
         final Set<String> keys = this.ipMap.keySet();
-        log.debug("Decrementing counts for throttler.  Starting key count: " + keys.size());
+        log.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
         final Date now = new Date();
         String key;
-        for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) { 
+        for (final Iterator<String> iter = keys.iterator(); iter.hasNext();) {
             key = iter.next();
             if (submissionRate(now, this.ipMap.get(key)) < getThresholdRate()) {
                 log.trace("Removing entry for key {}", key);

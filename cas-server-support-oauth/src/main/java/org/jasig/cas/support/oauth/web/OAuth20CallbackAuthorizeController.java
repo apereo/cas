@@ -33,9 +33,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is called after successful authentication and redirects user to the callback url of the OAuth application. A code is
+ * This controller is called after successful authentication and
+ * redirects user to the callback url of the OAuth application. A code is
  * added which is the service ticket retrieved from previous authentication.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */

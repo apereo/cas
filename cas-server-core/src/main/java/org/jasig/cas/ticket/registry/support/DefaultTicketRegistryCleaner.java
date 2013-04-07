@@ -53,10 +53,9 @@ import javax.validation.constraints.NotNull;
  * <ul>
  * <li>ticketRegistry - CAS ticket registry.</li>
  * </ul>
- * 
+ *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.0
  * @see JpaLockingStrategy
  * @see NoOpLockingStrategy
@@ -70,7 +69,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     @NotNull
     private TicketRegistry ticketRegistry;
 
-    /** Execution locking strategy */
+    /** Execution locking strategy. */
     @NotNull
     private LockingStrategy lock = new NoOpLockingStrategy();
 
@@ -79,15 +78,15 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     /**
      * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
-     */ 
+     */
     public void clean() {
-        this.log.info("Beginning ticket cleanup.");
-        this.log.debug("Attempting to acquire ticket cleanup lock.");
+        log.info("Beginning ticket cleanup.");
+        log.debug("Attempting to acquire ticket cleanup lock.");
         if (!this.lock.acquire()) {
-            this.log.info("Could not obtain lock.  Aborting cleanup.");
+            log.info("Could not obtain lock.  Aborting cleanup.");
             return;
         }
-        this.log.debug("Acquired lock.  Proceeding with cleanup.");
+        log.debug("Acquired lock.  Proceeding with cleanup.");
         try {
             final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
             final Collection<Ticket> ticketsInCache;
@@ -98,7 +97,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 }
             }
 
-            this.log.info(ticketsToRemove.size() + " tickets found to be removed.");
+            log.info("{} tickets found to be removed.", ticketsToRemove.size());
             for (final Ticket ticket : ticketsToRemove) {
                 // CAS-686: Expire TGT to trigger single sign-out
                 if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
@@ -107,11 +106,11 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
                 this.ticketRegistry.deleteTicket(ticket.getId());
             }
         } finally {
-            this.log.debug("Releasing ticket cleanup lock.");
+            log.debug("Releasing ticket cleanup lock.");
             this.lock.release();
         }
 
-        this.log.info("Finished ticket cleanup.");
+        log.info("Finished ticket cleanup.");
     }
 
 

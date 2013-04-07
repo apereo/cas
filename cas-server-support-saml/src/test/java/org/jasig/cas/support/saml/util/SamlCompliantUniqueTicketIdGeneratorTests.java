@@ -19,20 +19,23 @@
 
 package org.jasig.cas.support.saml.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.4.3
  */
-public final class SamlCompliantUniqueTicketIdGeneratorTests extends TestCase {
+public final class SamlCompliantUniqueTicketIdGeneratorTests {
 
+    @Test
     public void testSaml1Compliant() {
         final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         assertNotNull(g.getNewTicketId("TT"));
     }
 
+    @Test
     public void testSaml2Compliant() {
         final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         g.setSaml2compliant(true);

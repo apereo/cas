@@ -29,10 +29,9 @@ import javax.validation.constraints.NotNull;
  * must be username) will compare that password to a translated version of the
  * password provided by the user. If they match, then authentication succeeds.
  * Default password translator is plaintext translator.
- * 
+ *
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
@@ -40,12 +39,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     @NotNull
     private String sql;
 
+    @Override
     protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials) throws AuthenticationException {
         final String username = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String password = credentials.getPassword();
         final String encryptedPassword = this.getPasswordEncoder().encode(
-            password);
-        
+                password);
+
         try {
             final String dbPassword = getJdbcTemplate().queryForObject(this.sql, String.class, username);
             return dbPassword.equals(encryptedPassword);

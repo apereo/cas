@@ -18,11 +18,17 @@
  */
 package org.jasig.cas.authentication;
 
+/**
+ * An instance of ldap authentication exception that may occur
+ * when enforcing password policy rules.
+ * @author Misagh Moayyed
+ *
+ */
 public class LdapPasswordPolicyEnforcementException extends LdapAuthenticationException {
 
-    public static final String CODE_PASSWORD_CHANGE  = "screen.accounterror.password.message";
+    public static final String CODE_PASSWORD_CHANGE = "screen.accounterror.password.message";
 
-    private static final long  serialVersionUID      = 4365292208441435202L;
+    private static final long serialVersionUID = 4365292208441435202L;
 
     public LdapPasswordPolicyEnforcementException(final String msg) {
         this(CODE_PASSWORD_CHANGE, msg);

@@ -22,16 +22,15 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 /**
  * Interface representing a Radius Server.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public interface RadiusServer {
 
     /**
      * Method to authenticate a set of credentials.
-     * 
+     *
      * @param credentials the credentials to authenticate.
      * @return true if authenticated, false otherwise.
      */

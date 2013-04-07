@@ -33,9 +33,8 @@ import javax.validation.constraints.NotNull;
 /**
  * RegisteredServiceValidator ensures that a new RegisteredService does not have
  * a conflicting Service Id with another service already in the registry.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class RegisteredServiceValidator implements Validator {
@@ -51,39 +50,41 @@ public final class RegisteredServiceValidator implements Validator {
     @Min(0)
     private int maxDescriptionLength = DEFAULT_MAX_DESCRIPTION_LENGTH;
 
-    /** {@link IPersonAttributeDao} to manage person attributes */
+    /** {@link IPersonAttributeDao} to manage person attributes. */
     @NotNull
     private IPersonAttributeDao personAttributeDao;
 
     /**
      * Supports {@link RegisteredService} objects.
-     * 
+     *
      * @see org.springframework.validation.Validator#supports(java.lang.Class)
      */
+    @Override
     public boolean supports(final Class<?> clazz) {
         return RegisteredService.class.isAssignableFrom(clazz);
     }
 
+    @Override
     public void validate(final Object o, final Errors errors) {
         final RegisteredService r = (RegisteredService) o;
 
         if (r.getServiceId() != null) {
             for (final RegisteredService service : this.servicesManager.getAllServices()) {
                 if (r.getServiceId().equals(service.getServiceId())
-                    && r.getId() != service.getId()) {
+                        && r.getId() != service.getId()) {
                     errors.rejectValue("serviceId",
-                        "registeredService.serviceId.exists", null);
+                            "registeredService.serviceId.exists", null);
                     break;
                 }
             }
         }
 
         if (r.getDescription() != null
-            && r.getDescription().length() > this.maxDescriptionLength) {
+                && r.getDescription().length() > this.maxDescriptionLength) {
             errors.rejectValue("description",
-                "registeredService.description.length", null);
+                    "registeredService.description.length", null);
         }
-        
+
         if (!StringUtils.isBlank(r.getUsernameAttribute()) && !r.isAnonymousAccess()) {
             if (!r.isIgnoreAttributes() && !r.getAllowedAttributes().contains(r.getUsernameAttribute())) {
                 errors.rejectValue("usernameAttribute", "registeredService.usernameAttribute.notAvailable",
@@ -99,7 +100,7 @@ public final class RegisteredServiceValidator implements Validator {
             }
         }
     }
-    
+
     public void setServicesManager(final ServicesManager serviceRegistry) {
         this.servicesManager = serviceRegistry;
     }
@@ -107,8 +108,8 @@ public final class RegisteredServiceValidator implements Validator {
     public void setMaxDescriptionLength(final int maxLength) {
         this.maxDescriptionLength = maxLength;
     }
-    
-    public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
+
+    public void setPersonAttributeDao(final IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
     }
 }

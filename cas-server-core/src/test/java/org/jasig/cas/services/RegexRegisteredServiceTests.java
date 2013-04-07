@@ -33,17 +33,16 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link RegexRegisteredService}.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
-    
+
     private RegexRegisteredService service;
-    
+
     private String serviceToMatch;
 
     private boolean expected;
-    
+
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {

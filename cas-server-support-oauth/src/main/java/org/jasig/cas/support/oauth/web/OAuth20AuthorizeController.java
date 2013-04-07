@@ -35,9 +35,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is in charge of responding to the authorize call in OAuth protocol. It stores the callback url and redirects user to the
+ * This controller is in charge of responding to the authorize
+ * call in OAuth protocol. It stores the callback url and redirects user to the
  * login page with the callback service.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */

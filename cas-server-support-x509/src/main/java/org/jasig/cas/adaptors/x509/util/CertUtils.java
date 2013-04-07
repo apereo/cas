@@ -34,17 +34,16 @@ import org.springframework.core.io.Resource;
  * Utility class with methods to support various operations on X.509 certs.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
 public final class CertUtils {
     /** X509 certificate type. */
     public static final String X509_CERTIFICATE_TYPE = "X509";
-    
+
     /** Suppressed constructor of utility class. */
     private CertUtils() { /*No initialization required*/ }
-    
+
 
     /**
      * Determines whether the given CRL is expired by examining the nextUpdate field.
@@ -65,7 +64,7 @@ public final class CertUtils {
      * @param reference Reference date for comparison.
      *
      * @return True if reference date is after CRL next update, false otherwise.
-     */   
+     */
     public static boolean isExpired(final X509CRL crl, final Date reference) {
         return reference.after(crl.getNextUpdate());
     }
@@ -76,7 +75,7 @@ public final class CertUtils {
      * @param resource Resource descriptor.
      *
      * @return X.509 CRL
-     * 
+     *
      * @throws IOException On IOErrors.
      * @throws CRLException On CRL parse errors.
      */
@@ -103,7 +102,7 @@ public final class CertUtils {
 
     /**
      * Gets a certificate factory for creating X.509 artifacts.
-     * 
+     *
      * @return X509 certificate factory.
      */
     public static CertificateFactory getCertificateFactory() {

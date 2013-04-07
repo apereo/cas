@@ -21,6 +21,12 @@ package org.jasig.cas.adaptors.ldap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Ldap error definitions are mapped to ldap error code that may
+ * occur during ldap authentication, one such as account locked/disabled
+ * error.
+ * @author Misagh Moayyed
+ */
 public class LdapErrorDefinition {
 
     private Pattern ldapPattern = null;

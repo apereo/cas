@@ -25,10 +25,7 @@ import java.security.Provider;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -57,9 +54,8 @@ import org.w3c.dom.Node;
 
 /**
  * Utilities adopted from the Google sample code.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class SamlUtils {
@@ -73,76 +69,76 @@ public final class SamlUtils {
     }
 
     public static String signSamlResponse(final String samlResponse,
-        final PrivateKey privateKey, final PublicKey publicKey) {
+            final PrivateKey privateKey, final PublicKey publicKey) {
         final Document doc = constructDocumentFromXmlString(samlResponse);
 
         if (doc != null) {
             final Element signedElement = signSamlElement(doc.getRootElement(),
-                privateKey, publicKey);
+                    privateKey, publicKey);
             doc.setRootElement((Element) signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
         throw new RuntimeException("Error signing SAML Response: Null document");
     }
 
-    public static Document constructDocumentFromXmlString(String xmlString) {
+    public static Document constructDocumentFromXmlString(final String xmlString) {
         try {
             final SAXBuilder builder = new SAXBuilder();
             return builder
-                .build(new ByteArrayInputStream(xmlString.getBytes()));
+                    .build(new ByteArrayInputStream(xmlString.getBytes()));
         } catch (final Exception e) {
             return null;
         }
     }
 
-    private static Element signSamlElement(Element element, PrivateKey privKey,
-        PublicKey pubKey) {
+    private static Element signSamlElement(final Element element, final PrivateKey privKey,
+            final PublicKey pubKey) {
         try {
             final String providerName = System.getProperty("jsr105Provider",
-                JSR_105_PROVIDER);
+                    JSR_105_PROVIDER);
             final XMLSignatureFactory sigFactory = XMLSignatureFactory
-                .getInstance("DOM", (Provider) Class.forName(providerName)
-                    .newInstance());
+                    .getInstance("DOM", (Provider) Class.forName(providerName)
+                            .newInstance());
 
             final List envelopedTransform = Collections
-                .singletonList(sigFactory.newTransform(Transform.ENVELOPED,
-                    (TransformParameterSpec) null));
+                    .singletonList(sigFactory.newTransform(Transform.ENVELOPED,
+                            (TransformParameterSpec) null));
 
             final Reference ref = sigFactory.newReference("", sigFactory
-                .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform,
-                null, null);
+                    .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform,
+                    null, null);
 
             // Create the SignatureMethod based on the type of key
             SignatureMethod signatureMethod;
             if (pubKey instanceof DSAPublicKey) {
                 signatureMethod = sigFactory.newSignatureMethod(
-                    SignatureMethod.DSA_SHA1, null);
+                        SignatureMethod.DSA_SHA1, null);
             } else if (pubKey instanceof RSAPublicKey) {
                 signatureMethod = sigFactory.newSignatureMethod(
-                    SignatureMethod.RSA_SHA1, null);
+                        SignatureMethod.RSA_SHA1, null);
             } else {
                 throw new RuntimeException(
-                    "Error signing SAML element: Unsupported type of key");
+                        "Error signing SAML element: Unsupported type of key");
             }
 
             final CanonicalizationMethod canonicalizationMethod = sigFactory
-                .newCanonicalizationMethod(
-                    CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
-                    (C14NMethodParameterSpec) null);
+                    .newCanonicalizationMethod(
+                            CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+                            (C14NMethodParameterSpec) null);
 
             // Create the SignedInfo
             final SignedInfo signedInfo = sigFactory.newSignedInfo(
-                canonicalizationMethod, signatureMethod, Collections
+                    canonicalizationMethod, signatureMethod, Collections
                     .singletonList(ref));
 
             // Create a KeyValue containing the DSA or RSA PublicKey
             final KeyInfoFactory keyInfoFactory = sigFactory
-                .getKeyInfoFactory();
+                    .getKeyInfoFactory();
             final KeyValue keyValuePair = keyInfoFactory.newKeyValue(pubKey);
 
             // Create a KeyInfo and add the KeyValue to it
             final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections
-                .singletonList(keyValuePair));
+                    .singletonList(keyValuePair));
             // Convert the JDOM document to w3c (Java XML signature API requires
             // w3c
             // representation)
@@ -157,26 +153,26 @@ public final class SamlUtils {
 
             // Marshal, generate (and sign) the enveloped signature
             XMLSignature signature = sigFactory.newXMLSignature(signedInfo,
-                keyInfo);
+                    keyInfo);
             signature.sign(dsc);
 
             return toJdom(w3cElement);
 
         } catch (final Exception e) {
             throw new RuntimeException("Error signing SAML element: "
-                + e.getMessage(), e);
+                    + e.getMessage(), e);
         }
     }
 
-    private static Node getXmlSignatureInsertLocation(org.w3c.dom.Element elem) {
+    private static Node getXmlSignatureInsertLocation(final org.w3c.dom.Element elem) {
         org.w3c.dom.Node insertLocation = null;
         org.w3c.dom.NodeList nodeList = elem.getElementsByTagNameNS(
-            SAML_PROTOCOL_NS_URI_V20, "Extensions");
+                SAML_PROTOCOL_NS_URI_V20, "Extensions");
         if (nodeList.getLength() != 0) {
             insertLocation = nodeList.item(nodeList.getLength() - 1);
         } else {
             nodeList = elem.getElementsByTagNameNS(SAML_PROTOCOL_NS_URI_V20,
-                "Status");
+                    "Status");
             insertLocation = nodeList.item(nodeList.getLength() - 1);
         }
         return insertLocation;
@@ -193,16 +189,16 @@ public final class SamlUtils {
             xmlOutputter.output(doc, elemStrWriter);
             final byte[] xmlBytes = elemStrWriter.toString().getBytes();
             final DocumentBuilderFactory dbf = DocumentBuilderFactory
-                .newInstance();
+                    .newInstance();
             dbf.setNamespaceAware(true);
             return dbf.newDocumentBuilder().parse(
-                new ByteArrayInputStream(xmlBytes));
+                    new ByteArrayInputStream(xmlBytes));
         } catch (final Exception e) {
             return null;
         }
     }
-    
+
     private static Element toJdom(final org.w3c.dom.Element e) {
         return  new DOMBuilder().build(e);
-      }
+    }
 }

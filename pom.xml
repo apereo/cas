@@ -227,10 +227,38 @@
             </additionalClasspathElements>
           </configuration>
         </plugin>
+        
       </plugins>
     </pluginManagement>
     
     <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <version>2.10</version>
+            <configuration>
+                <consoleOutput>true</consoleOutput>
+                <configLocation>/checkstyle-rules.xml</configLocation>
+                <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                <failsOnError>true</failsOnError>
+            </configuration>
+            <executions>
+                <execution>
+                   <id>checkstyle</id>
+                   <goals>
+                       <goal>checkstyle</goal>
+                   </goals>
+                   <phase>compile</phase>
+                </execution>
+            </executions>
+            <dependencies>
+               <dependency>
+                  <groupId>com.puppycrawl.tools</groupId>
+                  <artifactId>checkstyle</artifactId>
+                  <version>${checkstyle.version}</version>
+               </dependency>
+            </dependencies>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -391,25 +419,6 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           </excludes>
         </configuration>
       </plugin>
-      <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.10</version>
-            <configuration>
-                <consoleOutput>true</consoleOutput>
-                <configLocation>/checkstyle-rules.xml</configLocation>
-                <failsOnError>false</failsOnError>
-            </configuration>
-            <executions>
-                <execution>
-                   <id>checkstyle</id>
-                   <goals>
-                       <goal>checkstyle</goal>
-                   </goals>
-                   <phase>compile</phase>
-                </execution>
-            </executions>
-        </plugin>
     </plugins>
   </build>
 
@@ -524,7 +533,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       
       <dependency>
         <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache-core</artifactId>
+        <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
       </dependency>  
 
@@ -917,7 +926,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9</version>
+		    <version>2.9</version>
             <configuration>
               <charset>${project.reporting.outputEncoding}</charset>
               <encoding>${project.reporting.outputEncoding}</encoding>
@@ -939,8 +948,8 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   
   <properties>
     <issues.projectKey>CAS</issues.projectKey>
-    <spring.webflow.version>2.3.1.RELEASE</spring.webflow.version>
-    <spring.version>3.1.3.RELEASE</spring.version>
+    <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
+    <spring.version>3.2.2.RELEASE</spring.version>
     <spring.ldap.version>1.3.1.RELEASE</spring.ldap.version>
     <spring.security.version>3.1.2.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
@@ -957,11 +966,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <commons.codec.version>1.4</commons.codec.version>
     <log4j.version>1.2.15</log4j.version>
     <junit.version>4.10</junit.version>
+    <checkstyle.version>5.6</checkstyle.version>
     <commons.lang.version>2.5</commons.lang.version>
     <inspektr.version>1.0.7.GA</inspektr.version>
     <commons.io.version>2.0</commons.io.version>
     <mockito.version>1.9.0</mockito.version>
-    <ehcache.version>2.6.5</ehcache.version>
+    <ehcache.version>2.7.0</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.1</joda-time.version>
 	

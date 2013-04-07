@@ -44,7 +44,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * This class tests the {@link OAuth20AuthorizeController} class.
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.2
  */
@@ -78,11 +78,11 @@ public final class OAuth20AuthorizeControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
-        final Logger logger = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(logger);
+        final Logger log = mock(Logger.class);
+        OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(logger).error("missing clientId");
+        verify(log).error("missing clientId");
     }
 
     @Test
@@ -93,11 +93,11 @@ public final class OAuth20AuthorizeControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.afterPropertiesSet();
-        final Logger logger = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(logger);
+        final Logger log = mock(Logger.class);
+        OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(logger).error("missing redirectUri");
+        verify(log).error("missing redirectUri");
     }
 
     @Test
@@ -112,11 +112,11 @@ public final class OAuth20AuthorizeControllerTests {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.afterPropertiesSet();
-        final Logger logger = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(logger);
+        final Logger log = mock(Logger.class);
+        OAuth20AuthorizeController.setLogger(log);
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(logger).error("Unknown clientId : {}", CLIENT_ID);
+        verify(log).error("Unknown clientId : {}", CLIENT_ID);
     }
 
     @Test
@@ -133,14 +133,14 @@ public final class OAuth20AuthorizeControllerTests {
         final List<RegisteredService> services = new ArrayList<RegisteredService>();
         services.add(registeredServiceImpl);
         when(servicesManager.getAllServices()).thenReturn(services);
-        final Logger logger = mock(Logger.class);
-        OAuth20AuthorizeController.setLogger(logger);
+        final Logger log = mock(Logger.class);
+        OAuth20AuthorizeController.setLogger(log);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
         oauth20WrapperController.afterPropertiesSet();
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
-        verify(logger).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
+        verify(log).error("Unsupported redirectUri : {} for serviceId : {}", REDIRECT_URI, OTHER_REDIRECT_URI);
     }
 
     @Test

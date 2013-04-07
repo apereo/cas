@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTest {
@@ -47,7 +46,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     public void onSetUp() throws Exception {
         this.action = new GenerateServiceTicketAction();
         this.action
-            .setCentralAuthenticationService(getCentralAuthenticationService());
+        .setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.afterPropertiesSet();
 
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -60,10 +59,10 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket);
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
+                new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         request.setCookies(new Cookie[] {new Cookie("TGT",
-            this.ticketGrantingTicket)});
+                this.ticketGrantingTicket)});
 
         this.action.execute(context);
 
@@ -76,10 +75,10 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.getFlowScope().put("service", TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
+                new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         WebUtils.putTicketGrantingTicketInRequestScope(context,
-            this.ticketGrantingTicket);
+                this.ticketGrantingTicket);
 
         this.action.execute(context);
 
@@ -92,7 +91,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.getFlowScope().put("service", TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
+                new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         WebUtils.putTicketGrantingTicketInRequestScope(context, "bleh");
 
@@ -105,7 +104,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         context.getFlowScope().put("service", TestUtils.getService());
         MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
+                new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter("service", "service");
         request.addParameter("gateway", "true");
         WebUtils.putTicketGrantingTicketInRequestScope(context, "bleh");

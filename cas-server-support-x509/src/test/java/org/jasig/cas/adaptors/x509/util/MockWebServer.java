@@ -25,6 +25,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 
@@ -33,11 +35,13 @@ import org.springframework.core.io.Resource;
  * all requests.  SSL/TLS is not supported.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
 public class MockWebServer {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     /** Request handler. */
     private Worker worker;
 
@@ -130,6 +134,7 @@ public class MockWebServer {
             this.running = true;
         }
 
+        @Override
         public void run() {
             while (this.running) {
                 try {
@@ -142,22 +147,22 @@ public class MockWebServer {
                 }
             }
         }
-        
+
         public void stop() {
             try {
                 this.serverSocket.close();
             } catch (IOException e) {
-                // Ignore error on close
+                log.trace("Exception when closing the server socket: {}", e.getMessage());
             }
         }
-        
+
         private void writeResponse(final Socket socket) throws IOException {
             final OutputStream out = socket.getOutputStream();
             out.write(STATUS_LINE.getBytes());
             out.write(header("Content-Length", this.resource.contentLength()));
             out.write(header("Content-Type", this.contentType));
             out.write(SEPARATOR.getBytes());
-           
+
             final byte[] buffer = new byte[BUFFER_SIZE];
             final InputStream in = this.resource.getInputStream();
             int count = 0;
@@ -167,7 +172,7 @@ public class MockWebServer {
             in.close();
             socket.shutdownOutput();
         }
-        
+
         private byte[] header(final String name, final Object value) {
             return String.format("%s: %s\r\n", name, value).getBytes();
         }

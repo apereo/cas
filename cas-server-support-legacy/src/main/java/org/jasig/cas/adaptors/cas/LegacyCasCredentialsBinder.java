@@ -26,9 +26,8 @@ import org.jasig.cas.web.bind.CredentialsBinder;
 /**
  * Custom Binder to populate the Legacy CAS Credentials with the required
  * ServletRequest.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class LegacyCasCredentialsBinder implements CredentialsBinder {

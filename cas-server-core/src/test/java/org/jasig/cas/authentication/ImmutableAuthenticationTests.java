@@ -18,23 +18,27 @@
  */
 package org.jasig.cas.authentication;
 
+import static org.junit.Assert.*;
+
 import java.util.Date;
 
 import org.jasig.cas.TestUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class ImmutableAuthenticationTests extends AbstractAuthenticationTests {
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         this.authentication = new ImmutableAuthentication(TestUtils
             .getPrincipal(), this.attributes);
     }
 
+    @Test
     public void testAuthenticatedDate() {
         Date dateFromFirstCall = this.authentication.getAuthenticatedDate();
         Date dateFromSecondCall = this.authentication.getAuthenticatedDate();

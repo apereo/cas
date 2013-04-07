@@ -26,7 +26,6 @@ import java.security.cert.X509Certificate;
  * Strategy interface for checking revocation status of a certificate.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */

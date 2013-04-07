@@ -37,9 +37,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
- * This controller returns a profile for the authenticated user (identifier + attributes), found with the access token (CAS granting
+ * This controller returns a profile for the authenticated user
+ * (identifier + attributes), found with the access token (CAS granting
  * ticket).
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */

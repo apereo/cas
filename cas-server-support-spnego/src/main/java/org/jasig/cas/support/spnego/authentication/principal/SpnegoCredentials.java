@@ -27,10 +27,9 @@ import org.springframework.util.Assert;
 
 /**
  * Credentials that are a holder for Spnego init token.
- * 
+ *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public final class SpnegoCredentials implements Credentials {
@@ -58,7 +57,7 @@ public final class SpnegoCredentials implements Credentials {
     /**
      * The authentication type should be Kerberos or NTLM.
      */
-    private boolean isNtlm;
+    private final boolean isNtlm;
 
     public SpnegoCredentials(final byte[] initToken) {
         Assert.notNull(initToken, "The initToken cannot be null.");
@@ -91,19 +90,23 @@ public final class SpnegoCredentials implements Credentials {
     }
 
     private boolean isTokenNtlm(final byte[] token) {
-        if (token == null || token.length < 8)
+        if (token == null || token.length < 8) {
             return false;
+        }
         for (int i = 0; i < 8; i++) {
-            if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i])
+            if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i]) {
                 return false;
+            }
         }
         return true;
     }
-    
+
+    @Override
     public String toString() {
         return this.principal !=null ? this.principal.getId() : "unknown";
     }
 
+    @Override
     public boolean equals(final Object obj) {
         if (obj == null || !obj.getClass().equals(this.getClass())) {
             return false;
@@ -112,12 +115,13 @@ public final class SpnegoCredentials implements Credentials {
         final SpnegoCredentials c = (SpnegoCredentials) obj;
 
         return Arrays.equals(this.initToken, c.getInitToken())
-            && this.principal.equals(c.getPrincipal())
-            && Arrays.equals(this.nextToken, c.getNextToken());
+                && this.principal.equals(c.getPrincipal())
+                && Arrays.equals(this.nextToken, c.getNextToken());
     }
 
+    @Override
     public int hashCode() {
         return this.initToken.hashCode() ^ this.nextToken.hashCode() ^ this.principal.hashCode();
     }
-    
+
 }
