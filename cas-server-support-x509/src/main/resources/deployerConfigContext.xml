@@ -82,8 +82,7 @@
           </property>
         </bean>
         <!-- | This is the authentication handler declaration that every CAS deployer will need to change
-          before deploying CAS | into production. The default SimpleTestUsernamePasswordAuthenticationHandler authenticates
-          UsernamePasswordCredentials | where the username equals the password. You will need to replace this with
+          before deploying CAS | into production. You will need to replace this with
           an AuthenticationHandler that implements your | local authentication strategy. You might accomplish this
           by coding a new such handler and declaring | edu.someschool.its.cas.MySpecialHandler here, or you might
           use one of the handlers provided in the adaptors modules. + -->
