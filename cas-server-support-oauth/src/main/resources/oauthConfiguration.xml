@@ -24,12 +24,18 @@
 	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+	xmlns:security="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 		http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     <description>
         This is the OAuth configuration XML file. It specifies the beans used by this package in conjunction with spring-security-oauth
     </description>
+    
+    <security:http>
+    	<security:custom-filter ref="oauth2ProviderFilter" before="PRE_AUTH_FILTER"/>
+    </security:http>
 	
 	<!-- Same thing for the token services -->
 	<bean id="tokenServices"
@@ -43,7 +49,9 @@
 	
 	<oauth2:authorization-server 
 		client-details-service-ref="clientDetailsService"
-		token-services-ref="tokenServices">
+		token-services-ref="tokenServices"
+		authorization-endpoint-url="/oauth2.0/authorize"
+		token-endpoint-url="/oauth2.0/accessToken">
 		<!-- Enables the authorization code grant type -->
 <!-- 		<oauth2:authorization-code -->
 <!-- 			authorization-code-services-ref="customizedAuthorizationCodeServices" -->
@@ -52,7 +60,28 @@
 		<oauth2:authorization-code/>
 	</oauth2:authorization-server>
 
-	<!-- For now, let's keep the client details in-memory. If CAS is clustered this will need to be stored off-site. -->
-	<oauth2:client-details-service id="clientDetailsService" />
+	<!-- For now, let's keep the client details in-memory. It's hard-coded, but maybe in the future we want to support dynamic client registration -->
+	<!-- Or for another idea, tie the client details service into the service registry in CAS to simplify configuration -->
+	<!-- TODO what is the authorities field? It's comma-separated. Maybe this is where we specify the services this client has access to. -->
+	
+	<!-- Another note. We're accepting the convention that the service name is the client_id and the service description is the client_secret.
+	This is because CAS only has services that are enabled/disabled globally, not per-client. The deployer of CAS needs to configure their
+	clients through the services management web application. -->
+	
+	<!-- The authorities field contains string representations of the protected resources this client is allowed to access. They happen to be
+	the URL endpoints configured through CAS, because if there are multiple clients that can access multiple services, while they may have 
+	duplicate entries in CAS they won't need separate authorities in spring-security-oauth. They will just share entries with other clients. -->
+	<oauth2:client-details-service id="clientDetailsService">
+		<oauth2:client client-id="oauth2-client" 
+			secret="oauth2-secret"
+			authorized-grant-types="web_server"
+			authorities="request_tokens, https://localhost:8433/cas/oauth2.0/profile"/>
+	</oauth2:client-details-service>
+	
+	<!-- configures an OAuth2AuthenticationProcessingFilter that we can use with spring-security that extracts an access token from the 
+	header of the request and populates the security context with an OAuth2Authentication object. -->
+	<oauth2:resource-server	id="oauth2ProviderFilter" 
+		token-services-ref="tokenServices"
+		resource-id="request_tokens" /> 
             
 </beans>
