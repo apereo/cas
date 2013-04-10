@@ -32,10 +32,6 @@
     <description>
         This is the OAuth configuration XML file. It specifies the beans used by this package in conjunction with spring-security-oauth
     </description>
-    
-    <security:http>
-    	<security:custom-filter ref="oauth2ProviderFilter" before="PRE_AUTH_FILTER"/>
-    </security:http>
 	
 	<!-- Same thing for the token services -->
 	<bean id="tokenServices"
@@ -47,18 +43,24 @@
 	<bean id="tokenStore" 
 		class="org.springframework.security.oauth2.provider.token.InMemoryTokenStore" />
 	
-	<oauth2:authorization-server 
+	<!-- the /oauth2.0 endpoint is already mapped in web.xml, so we just need to map the endpoint urls -->
+	<oauth2:authorization-server
 		client-details-service-ref="clientDetailsService"
 		token-services-ref="tokenServices"
-		authorization-endpoint-url="/oauth2.0/authorize"
-		token-endpoint-url="/oauth2.0/accessToken">
+        authorization-endpoint-url="/authorize"
+        token-endpoint-url="/accessToken">
 		<!-- Enables the authorization code grant type -->
 <!-- 		<oauth2:authorization-code -->
 <!-- 			authorization-code-services-ref="customizedAuthorizationCodeServices" -->
 <!-- 			/> -->
 		<!-- You can customize the user-approval-page and the approval-parameter-name here to match the cas login page -->
-		<oauth2:authorization-code/>
+		<oauth2:authorization-code
+			disabled="false" />
 	</oauth2:authorization-server>
+	
+	<!-- At this point our controller should be registered, but CAS might be intercepting it -->
+	
+	<!-- TODO I need to see if the authorization server actually has a registered endpoint in CAS. -->
 
 	<!-- For now, let's keep the client details in-memory. It's hard-coded, but maybe in the future we want to support dynamic client registration -->
 	<!-- Or for another idea, tie the client details service into the service registry in CAS to simplify configuration -->
@@ -75,11 +77,13 @@
 		<oauth2:client client-id="oauth2-client" 
 			secret="oauth2-secret"
 			authorized-grant-types="web_server"
-			authorities="request_tokens, https://localhost:8433/cas/oauth2.0/profile"/>
+			authorities="request_tokens"/>
 	</oauth2:client-details-service>
 	
 	<!-- configures an OAuth2AuthenticationProcessingFilter that we can use with spring-security that extracts an access token from the 
 	header of the request and populates the security context with an OAuth2Authentication object. -->
+	
+	<!-- Since our users will use CAS as their SSO, we want to handle the OAuth service repository for them -->
 	<oauth2:resource-server	id="oauth2ProviderFilter" 
 		token-services-ref="tokenServices"
 		resource-id="request_tokens" /> 
