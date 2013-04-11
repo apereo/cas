@@ -52,6 +52,7 @@
       <artifactId>cas-server-support-generic</artifactId>
       <groupId>org.jasig.cas</groupId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <artifactId>vt-crypt</artifactId>
