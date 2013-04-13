@@ -78,8 +78,8 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
         if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
             clientCredentials.setUserProfile(userProfile);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
