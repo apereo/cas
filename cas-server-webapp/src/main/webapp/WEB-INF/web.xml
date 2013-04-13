@@ -54,6 +54,10 @@
     <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/statistics</url-pattern>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/oauth2.0/*</url-pattern>
+  </filter-mapping>
 
   <filter>
     <filter-name>characterEncodingFilter</filter-name>
