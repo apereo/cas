@@ -140,7 +140,7 @@ public final class ClientAction extends AbstractAction {
             } catch (final RequiresHttpAction e) {
                 log.info("requires http action : {}", e);
                 response.flushBuffer();
-                return new Event(this, null);
+                return new Event(this, "forceBrutalStopWithUnknownEvent");
             }
 
             // retrieve parameters from web session
