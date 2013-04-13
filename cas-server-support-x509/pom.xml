@@ -49,6 +49,12 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <artifactId>cas-server-support-generic</artifactId>
+      <groupId>org.jasig.cas</groupId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <artifactId>vt-crypt</artifactId>
       <groupId>edu.vt.middleware</groupId>
       <version>2.1.4</version>
