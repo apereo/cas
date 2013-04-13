@@ -15,31 +15,31 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
 @Controller
-//@RequestMapping("/oauth2.0")
 @SessionAttributes("authorizationRequest")
 public class CustomUserApprovalEndpoint {
-    
-//    private static final Logger log = LoggerFactory.getLogger(CustomUserApprovalEndpoint.class);
 
     @RequestMapping("/confirm_access")
-    public ModelAndView getAccessConfirmation(@RequestParam String client_id, Model model) 
-            throws Exception {
-        model.addAttribute("serviceName", client_id);
-        return new ModelAndView(OAuthConstants.CONFIRM_VIEW, model.asMap());
+    public String getAccessConfirmation() {
+        return OAuthConstants.CONFIRM_VIEW;
     }
 
     @RequestMapping("/error")
-    public ModelAndView handleError(HttpServletRequest request) {
-      Map<String, Object> model = new HashMap<String, Object>();
-      model.put("error", request.getAttribute("error"));
-      return new ModelAndView(new SpelView(ERROR), model);
+    public View handleError(HttpServletRequest request, Model model) {
+      model.addAttribute("error", request.getAttribute("error"));
+      return new SpelView(ERROR);
+    }
+    
+    @ModelAttribute("authorizePath") 
+    public String getAuthorizePath() {
+        // TODO: This is hard-coded to what we want it to be, but it should 
+        // really grab it from the oauth2HandlerMapping
+        return "authorize";
     }
     
     // Shamelessly lifted from spring security ouath's WhitelabelApprovalEndpoint
@@ -87,13 +87,7 @@ public class CustomUserApprovalEndpoint {
       }
 
     }
-
-//    private static String APPROVAL = "<html><body><h1>OAuth Approval</h1>"
-//        + "<p>Do you authorize '${authorizationRequest.clientId}' to access your protected resources?</p>"
-//        + "<form id='confirmationForm' name='confirmationForm' action='${path}/authorize' method='post'><input name='user_oauth_approval' value='true' type='hidden'/><label><input name='authorize' value='Authorize' type='submit'></label></form>"
-//        + "<form id='denialForm' name='denialForm' action='${path}/authorize' method='post'><input name='user_oauth_approval' value='false' type='hidden'/><label><input name='deny' value='Deny' type='submit'></label></form>"
-//        + "</body></html>";
-
+    
     private static String ERROR = "<html><body><h1>OAuth Error</h1><p>${error.summary}</p></body></html>";
     
     // End of copy pasta
