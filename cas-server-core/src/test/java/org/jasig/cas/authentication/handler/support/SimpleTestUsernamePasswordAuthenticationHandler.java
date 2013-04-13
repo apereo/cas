@@ -28,7 +28,6 @@ import org.springframework.util.StringUtils;
  * load testing.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public final class SimpleTestUsernamePasswordAuthenticationHandler extends
