@@ -72,6 +72,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-generic</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
       <scope>compile</scope>
