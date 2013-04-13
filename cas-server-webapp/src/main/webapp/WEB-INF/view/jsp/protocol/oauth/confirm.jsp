@@ -19,14 +19,25 @@
 
 --%>
 <jsp:directive.include file="../../default/ui/includes/top.jsp" />
-		<div id="welcome">
-			<h2><spring:message code="screen.oauth.confirm.header" /></h2>
+<div id="welcome">
+	<h2>
+		<spring:message code="screen.oauth.confirm.header" />
+	</h2>
 
-			<p>
-			   <spring:message code="screen.oauth.confirm.message" arguments="${serviceName}" />
-			</p>
-			<p>
-				<a id="allow" name="allow" href="${callbackUrl}"><spring:message code="screen.oauth.confirm.allow" /></a>
-			</p>
-		</div>
+	<p>
+		<spring:message code="screen.oauth.confirm.message"
+			arguments="${client_id}" />
+	</p>
+	<form id='confirmationForm' name='confirmationForm'
+		action='${authorizePath}' method='post'>
+		<input name='user_oauth_approval' value='true' type='hidden' /> <label><input
+			name='authorize' value='Authorize' type='submit'></label>
+	</form>
+	<form id='denialForm' name='denialForm'
+		action='${authorizePath}' method='post'>
+		<input name='user_oauth_approval' value='false' type='hidden' /> <label>
+			<input name='deny' value='Deny' type='submit'>
+		</label>
+	</form>
+</div>
 <jsp:directive.include file="../../default/ui/includes/bottom.jsp" />
