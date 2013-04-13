@@ -41,6 +41,8 @@ import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -140,7 +142,9 @@ public final class ClientAction extends AbstractAction {
             } catch (final RequiresHttpAction e) {
                 log.info("requires http action : {}", e);
                 response.flushBuffer();
-                return new Event(this, "forceBrutalStopWithUnknownEvent");
+                ExternalContext externalContext = ExternalContextHolder.getExternalContext();
+                externalContext.recordResponseComplete();
+                return new Event(this, "stop");
             }
 
             // retrieve parameters from web session
