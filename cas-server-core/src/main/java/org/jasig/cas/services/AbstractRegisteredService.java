@@ -309,6 +309,7 @@ public abstract class AbstractRegisteredService
         return new CompareToBuilder()
                   .append(this.getEvaluationOrder(), other.getEvaluationOrder())
                   .append(this.getName().toLowerCase(), other.getName().toLowerCase())
+                  .append(this.getServiceId(), other.getServiceId())
                   .toComparison();
     }
 
