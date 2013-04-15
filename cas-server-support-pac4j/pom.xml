@@ -17,30 +17,31 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.jasig.cas</groupId>
 		<artifactId>cas-server</artifactId>
 		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cas-server-support-oauth</artifactId>
+	<artifactId>cas-server-support-pac4j</artifactId>
 	<packaging>jar</packaging>
-	<name>Jasig CAS OAuth Server Support</name>
+	<name>Jasig CAS Client Protocols Support using pac4j</name>
 
-  <developers>
-    <developer>
-      <id>leleuj</id>
-      <name>Jérôme Leleu</name>
-      <email>leleuj@gmail.com</email>
-      <timezone>-5</timezone>
-      <roles>
-        <role>developer</role>
-        <role>maintainer</role>
-      </roles>
-    </developer>
-  </developers>
-	
+	<developers>
+		<developer>
+			<id>leleuj</id>
+			<name>Jérôme Leleu</name>
+			<email>leleuj@gmail.com</email>
+			<timezone>-5</timezone>
+			<roles>
+				<role>developer</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.jasig.cas</groupId>
@@ -49,9 +50,20 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.0.6</version>
+			<groupId>org.pac4j</groupId>
+			<artifactId>pac4j-core</artifactId>
+			<version>${pac4j.version}</version>
 		</dependency>
-    </dependencies>
+
+		<dependency>
+			<groupId>org.pac4j</groupId>
+			<artifactId>pac4j-oauth</artifactId>
+			<scope>test</scope>
+			<version>${pac4j.version}</version>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<pac4j.version>1.4.0-SNAPSHOT</pac4j.version>
+	</properties>
 </project>

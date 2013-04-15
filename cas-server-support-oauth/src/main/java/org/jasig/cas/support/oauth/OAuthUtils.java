@@ -20,11 +20,12 @@ package org.jasig.cas.support.oauth;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -119,7 +120,11 @@ public final class OAuthUtils {
         sb.append(name);
         sb.append("=");
         if (value != null) {
-            sb.append(OAuthEncoder.encode(value));
+            try {
+                sb.append(URLEncoder.encode(value, "UTF-8"));
+            } catch (final UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
         }
         return sb.toString();
     }
