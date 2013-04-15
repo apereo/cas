@@ -33,8 +33,8 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.OAuthUtils;
 import org.junit.Test;
-import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -172,8 +172,8 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(CAS_URL + "?service="
-                + OAuthEncoder.encode(CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
+        assertEquals(
+                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
                 redirectView.getUrl());
     }
 
@@ -208,8 +208,8 @@ public final class OAuth20AuthorizeControllerTests {
         final View view = modelAndView.getView();
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
-        assertEquals(CAS_URL + "?service="
-                + OAuthEncoder.encode(CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
+        assertEquals(
+                OAuthUtils.addParameter(CAS_URL, "service", CAS_URL + CONTEXT + OAuthConstants.CALLBACK_AUTHORIZE_URL),
                 redirectView.getUrl());
     }
 }

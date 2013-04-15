@@ -26,7 +26,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cas-server-support-saml</artifactId>
     <packaging>jar</packaging>
-    <name>Jasig CAS SAML Support</name>
+    <name>Jasig CAS SAML Server and Validation Support</name>
 
     <dependencies>
         <dependency>
