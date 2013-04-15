@@ -29,7 +29,7 @@ This project includes:
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   dom4j under BSD License
-  Hamcrest Core under BSD style
+  Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   Hibernate Validator under Apache License, Version 2.0
   HSQLDB Database under HSQLDB License, a BSD open source license
@@ -38,6 +38,7 @@ This project includes:
   Inspektr - Error Logging under Apache 2.0 License
   Inspektr - Spring Framework Support under Apache 2.0 License
   Jasig CAS Core under Apache 2
+  Jasig CAS Generic Support under Apache 2
   Jasig CAS Web Application under Apache 2
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1

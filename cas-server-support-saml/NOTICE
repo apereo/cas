@@ -29,11 +29,10 @@ This project includes:
   Commons Codec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
-  Commons Lang under The Apache Software License, Version 2.0
   commons-collections under Apache License, Version 2.0
   dom4j under BSD License
   ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
-  Hamcrest Core under BSD style
+  Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   HttpClient under Apache License
   Inspektr - Auditing API under Apache 2.0 License
@@ -52,6 +51,7 @@ This project includes:
   JSR 105 - Java(TM) XML Digital Signature API under JDL license
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
+  Lang under The Apache Software License, Version 2.0
   Mockito under The MIT License
   Not Yet Commons SSL under Apache License v2
   Objenesis under MIT License
