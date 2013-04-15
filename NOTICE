@@ -114,6 +114,7 @@ This project includes:
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
   kryo under BSD style
+  Lang under The Apache Software License, Version 2.0
   Logging under The Apache Software License, Version 2.0
   minlog under BSD style
   Mockito under The MIT License
