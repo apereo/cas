@@ -26,8 +26,6 @@ package org.jasig.cas.support.oauth;
  */
 public interface OAuthConstants {
 
-    public static final String PROVIDER_TYPE = "providerType";
-
     public static final String REDIRECT_URI = "redirect_uri";
 
     public static final String CLIENT_ID = "client_id";
@@ -37,12 +35,6 @@ public interface OAuthConstants {
     public static final String CODE = "code";
 
     public static final String SERVICE = "service";
-
-    public static final String THEME = "theme";
-
-    public static final String LOCALE = "locale";
-
-    public static final String METHOD = "method";
 
     public static final String TICKET = "ticket";
 
@@ -75,6 +67,4 @@ public interface OAuthConstants {
     public static final String ACCESS_TOKEN_URL = "accessToken";
 
     public static final String PROFILE_URL = "profile";
-
-    public static final String OAUTH10_LOGIN_URL = "oauth10login";
 }

@@ -16,34 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.oauth.authentication.principal;
+package org.jasig.cas.support.pac4j.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractPersonDirectoryCredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Credentials;
 import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 
 /**
- * This class resolves the principal id regarding the OAuth credentials : it's the typed user identifier.
+ * This class resolves the principal id regarding the client credentials : it's the typed user identifier.
  *
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuthCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
-implements CredentialsToPrincipalResolver {
+public final class ClientCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
+        implements CredentialsToPrincipalResolver {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
-        final OAuthCredentials oauthCredentials = (OAuthCredentials) credentials;
-        final String principalId = oauthCredentials.getUserProfile().getTypedId();
+        final ClientCredentials clientCredentials = (ClientCredentials) credentials;
+        final String principalId = clientCredentials.getUserProfile().getTypedId();
         log.debug("principalId : {}", principalId);
         return principalId;
     }
 
     /**
-     * Return true if Credentials are OAuthCredentials, false otherwise.
+     * {@inheritDoc}
      */
     @Override
     public boolean supports(final Credentials credentials) {
-        return credentials != null && OAuthCredentials.class.isAssignableFrom(credentials.getClass());
+        return credentials != null && ClientCredentials.class.isAssignableFrom(credentials.getClass());
     }
 }
