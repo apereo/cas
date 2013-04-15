@@ -50,6 +50,7 @@ This project includes:
   Ehcache Core under The Apache Software License, Version 2.0
   ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
   ezmorph under The Apache Software License, Version 2.0
+  gnu-crypto under GNU General Public License, with the "library exception"
   guice under Apache License, Version 2.0
   Hamcrest Core under BSD style
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
@@ -67,6 +68,7 @@ This project includes:
   Jasig CAS - Uber WAR under Apache 2
   Jasig CAS ClearPass Extension under Apache 2
   Jasig CAS Client for Java - Core under Apache License Version 2.0
+  Jasig CAS Client Protocols Support using pac4j under Apache 2
   Jasig CAS Core under Apache 2
   Jasig CAS Documentation under Apache 2
   Jasig CAS Ehcache Integration under Apache 2
@@ -77,17 +79,18 @@ This project includes:
   Jasig CAS Legacy Support under Apache 2
   Jasig CAS Management Web Application under Apache 2
   Jasig CAS Memcached Integration under Apache 2
-  Jasig CAS OAuth Support under Apache 2
-  Jasig CAS OpenId Support under Apache 2
+  Jasig CAS OAuth Server Support under Apache 2
+  Jasig CAS OpenId Server Support under Apache 2
   Jasig CAS RADIUS Support under Apache 2
   Jasig CAS Restlet Integration under Apache 2
-  Jasig CAS SAML Support under Apache 2
+  Jasig CAS SAML Server and Validation Support under Apache 2
   Jasig CAS SPNEGO/NTLM Support under Apache 2
   Jasig CAS Trusted User Support under Apache 2
   Jasig CAS Web Application under Apache 2
   Jasig CAS X.509 Client Certificate Support under Apache 2
   Jasig Central Authentication Service under Apache 2
   Java Transaction API under Commons Development and Distribution License, Version 1.0
+  java-getopt under GNU General Public License, with the "library exception"
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1
   jaxb-api under Commons Development and Distribution License, Version 1.0
@@ -103,6 +106,8 @@ This project includes:
   JGroups under Library (or Lesser) GNU Public License 2.1
   Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
+  jradius-core-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
+  jradius-dictionary-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
   json-lib under Apache License, Version 2.0
   JSR 105 - Java(TM) XML Digital Signature API under JDL license
   jstl under Commons Development and Distribution License, Version 1.0
@@ -114,28 +119,25 @@ This project includes:
   minlog under BSD style
   Mockito under The MIT License
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
-  net.jradius:jradius-core under LGPL, v3.0
-  net.jradius:jradius-dictionary under LGPL, v3.0
   Not Yet Commons SSL under Apache License v2
   Objenesis under MIT License
   OGNL - Object Graph Navigation Library under The OpenSymphony Software License, Version 1.1
   OpenID4Java no dependencies under Apache 2
   OpenSAML-J under Apache 2
   OpenWS under Apache 2
-  org.gnu:gnu-crypto under GNU General Public License, with the "library exception"
-  org.gnu:java-getopt under GNU General Public License, with the "library exception"
   org.restlet.jee:org.restlet under GPL 3.0 license
   org.restlet.jee:org.restlet.ext.servlet under GPL 3.0 license
   org.restlet.jee:org.restlet.ext.slf4j under GPL 3.0 license
   org.restlet.jee:org.restlet.ext.spring under GPL 3.0 license
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
+  pac4j core under The Apache Software License, Version 2.0
+  pac4j for OAuth protocol under The Apache Software License, Version 2.0
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   quartz under The Apache Software License, Version 2.0
   reflectasm under BSD style
   Scribe OAuth Library under MIT
-  Scribe UP under The Apache Software License, Version 2.0
   servlet-api under Commons Development and Distribution License, Version 1.0
   SLF4J API Module under MIT License
   SLF4J LOG4J-12 Binding under MIT License
