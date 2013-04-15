@@ -29,7 +29,7 @@ This project includes:
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   dom4j under BSD License
-  Hamcrest Core under BSD style
+  Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   Hibernate Validator under Apache License, Version 2.0
   HSQLDB Database under HSQLDB License, a BSD open source license

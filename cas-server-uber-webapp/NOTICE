@@ -40,8 +40,7 @@ This project includes:
   dom4j under BSD License
   ehcache under The Apache Software License, Version 2.0
   Ehcache Core under The Apache Software License, Version 2.0
-  gnu-crypto under GNU General Public License, with the "library exception"
-  Hamcrest Core under BSD style
+  Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   Inspektr - Auditing API under Apache 2.0 License
   Inspektr - Common API under Apache 2.0 License
