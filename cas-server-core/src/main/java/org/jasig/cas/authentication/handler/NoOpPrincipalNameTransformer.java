@@ -22,7 +22,7 @@ package org.jasig.cas.authentication.handler;
  * Simple implementation that actually does NO transformation.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.3.6
  */
 public final class NoOpPrincipalNameTransformer implements PrincipalNameTransformer {

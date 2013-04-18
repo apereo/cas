@@ -60,7 +60,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private final JdbcTemplate jdbcTemplate;
 
     private String applicationCode = DEFAULT_APPLICATION_CODE;
-    
+
     private String authenticationFailureCode = DEFAULT_AUTHN_FAILED_ACTION;
 
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager, final DataSource dataSource) {
@@ -80,7 +80,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                 new Object[] {request.getRemoteAddr(), userToUse, this.authenticationFailureCode, this.applicationCode, cutoff.getTime()},
                 new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
                 new RowMapper<Timestamp>() {
-                    public Timestamp mapRow(ResultSet resultSet, int i) throws SQLException {
+                    @Override
+                    public Timestamp mapRow(final ResultSet resultSet, final int i) throws SQLException {
                         return resultSet.getTimestamp(1);
                     }
                 });
@@ -104,6 +105,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
             private static final long serialVersionUID = 1L;
 
+            @Override
             public String asString() {
                 return String.format("%s.recordThrottle()", this.getClass().getName());
             }
@@ -123,12 +125,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     public final void setApplicationCode(final String applicationCode) {
         this.applicationCode = applicationCode;
     }
-    
+
     public final void setAuthenticationFailureCode(final String authenticationFailureCode) {
         this.authenticationFailureCode = authenticationFailureCode;
     }
 
-    protected String constructUsername(HttpServletRequest request, String usernameParameter) {
+    protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
         final String username = request.getParameter(usernameParameter);
         return "[username: " + (username != null ? username : "") + "]";
     }

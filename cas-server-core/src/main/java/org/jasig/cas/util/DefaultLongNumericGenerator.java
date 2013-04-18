@@ -23,9 +23,9 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * The default numeric generator for generating long values. Implementation
  * allows for wrapping (to restart count) if the maximum is reached.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class DefaultLongNumericGenerator implements LongNumericGenerator {

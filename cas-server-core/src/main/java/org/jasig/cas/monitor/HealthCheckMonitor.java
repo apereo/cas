@@ -57,9 +57,14 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
         StatusCode code = StatusCode.UNKNOWN;
         Status result;
         for (final Monitor monitor : this.monitors) {
-            result = monitor.observe();
-            if (result.getCode().value() > code.value()) {
-                code = result.getCode();
+            try {
+                result = monitor.observe();
+                if (result.getCode().value() > code.value()) {
+                    code = result.getCode();
+                }
+            } catch (final Exception e) {
+                code = StatusCode.ERROR;
+                result = new Status(code, e.getClass().getSimpleName() + ": " + e.getMessage());
             }
             results.put(monitor.getName(), result);
         }

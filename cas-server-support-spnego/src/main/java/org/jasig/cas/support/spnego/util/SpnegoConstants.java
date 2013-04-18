@@ -19,19 +19,18 @@
 package org.jasig.cas.support.spnego.util;
 
 /**
- * Spnego Constants
+ * Spnego Constants.
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @version $Revision$ $Date$
  * @since 3.1
  */
 public interface SpnegoConstants {
-    
+
     String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
     String HEADER_AUTHORIZATION = "Authorization";
-    
+
     String HEADER_USER_AGENT = "User-Agent";
 
     String NEGOTIATE = "Negotiate";
@@ -42,6 +41,6 @@ public interface SpnegoConstants {
 
     byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
             (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
-    
+
     String NTLM = "NTLM";
 }

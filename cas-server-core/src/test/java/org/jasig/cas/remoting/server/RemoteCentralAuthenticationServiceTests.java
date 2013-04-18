@@ -28,7 +28,7 @@ import static org.junit.Assert.fail;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTest {
@@ -43,13 +43,15 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
 
     @Test
     public void testValidCredentials() throws Exception {
-        this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.remoteCentralAuthenticationService.createTicketGrantingTicket(
+                TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test
     public void testInvalidCredentials() throws Exception {
         try {
-            this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null));
+            this.remoteCentralAuthenticationService.createTicketGrantingTicket(
+                    TestUtils.getCredentialsWithDifferentUsernameAndPassword(null, null));
             fail("IllegalArgumentException expected.");
         } catch (IllegalArgumentException e) {
             return;
@@ -59,7 +61,8 @@ public class RemoteCentralAuthenticationServiceTests extends AbstractCentralAuth
     @Test
     public void testDontUseValidatorsToCheckValidCredentials() throws Exception {
         try {
-            this.remoteCentralAuthenticationService.createTicketGrantingTicket(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+            this.remoteCentralAuthenticationService.createTicketGrantingTicket(
+                    TestUtils.getCredentialsWithDifferentUsernameAndPassword());
             fail("AuthenticationException expected.");
         } catch (AuthenticationException e) {
             return;

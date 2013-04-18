@@ -31,79 +31,75 @@ import java.util.List;
  * @author Jan Van der Velpen
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision:$ $Date:$
  * @since 3.1
  */
 public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractLdapPersonDirectoryCredentialsToPrincipalResolver {
 
     /**
      * The CredentialsToPrincipalResolver that resolves the principal from the
-     * request
+     * request.
      */
     @NotNull
     private CredentialsToPrincipalResolver credentialsToPrincipalResolver;
-    
+
+    @Override
     protected String extractPrincipalId(final Credentials credentials) {
         final Principal principal = this.credentialsToPrincipalResolver
-            .resolvePrincipal(credentials);
+                .resolvePrincipal(credentials);
 
         if (principal == null) {
             log.info("Initial principal could not be resolved from request, "
-                + "returning null");
+                    + "returning null");
             return null;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Resolved " + principal + ". Trying LDAP resolve now...");
-        }
+        log.debug("Resolved {}. Trying LDAP resolve now...", principal);
 
         final String ldapPrincipal = resolveFromLDAP(principal.getId());
 
         if (ldapPrincipal == null) {
-            log.info("Initial principal \"" + principal.getId()
-                + "\" was not found in LDAP, returning null");
+            log.info("Initial principal {} was not found in LDAP, returning null", principal.getId());
         } else {
-            log.debug("Resolved " + principal + " to " + ldapPrincipal);
+            log.debug("Resolved {} to {}", principal, ldapPrincipal);
         }
-     
+
         return ldapPrincipal;
     }
 
     private String resolveFromLDAP(final String lookupAttributeValue) {
         final String searchFilter = LdapUtils.getFilterWithValues(getFilter(),
-            lookupAttributeValue);
+                lookupAttributeValue);
 
-        if (log.isDebugEnabled()) {
-            log.debug("LDAP search with filter \"" + searchFilter + "\"");
-        }
-        
+        log.debug("LDAP search with filter {}", searchFilter);
+
         try {
             // searching the directory
             final String idAttribute = getAttributeIds()[0];
             final List principalList = getLdapTemplate().search(
-                getSearchBase(), searchFilter, getSearchControls(),
-                
-                new AttributesMapper() {
-                    public Object mapFromAttributes(final Attributes attrs)
-                        throws NamingException {
-                        final Attribute attribute = attrs.get(idAttribute);
-                        if (attribute == null) {
-                            log.debug("Principal attribute \"" + idAttribute + "\" "
-                                + "not found in LDAP search results. Returning null.");
-                            return null;
+                    getSearchBase(), searchFilter, getSearchControls(),
+
+                    new AttributesMapper() {
+                        @Override
+                        public Object mapFromAttributes(final Attributes attrs)
+                                throws NamingException {
+                            final Attribute attribute = attrs.get(idAttribute);
+                            if (attribute == null) {
+                                log.debug("Principal attribute {} not found in LDAP search results. Returning null.",
+                                        idAttribute);
+                                return null;
+                            }
+                            return attribute.get();
                         }
-                        return attribute.get();
-                    }
-                    
-                });
+
+                    });
             if (principalList.isEmpty()) {
                 log.debug("LDAP search returned zero results.");
                 return null;
             }
             if (principalList.size() > 1) {
                 log.error("LDAP search returned multiple results "
-                    + "for filter \"" + searchFilter + "\", "
-                    + "which is not allowed.");
+                        + "for filter \"" + searchFilter + "\", "
+                        + "which is not allowed.");
 
                 return null;
             }
@@ -113,11 +109,12 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
             log.error(e.getMessage(), e);
             return null;
         }
-    } 
+    }
 
     /*
      * Delegates checking to the configured CredentialsToPrincipalResolver.
      */
+    @Override
     public boolean supports(final Credentials credentials) {
         return this.credentialsToPrincipalResolver.supports(credentials);
     }
@@ -127,7 +124,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
      * to set.
      */
     public final void setCredentialsToPrincipalResolver(
-        CredentialsToPrincipalResolver credentialsToPrincipalResolver) {
+            final CredentialsToPrincipalResolver credentialsToPrincipalResolver) {
         this.credentialsToPrincipalResolver = credentialsToPrincipalResolver;
     }
 }

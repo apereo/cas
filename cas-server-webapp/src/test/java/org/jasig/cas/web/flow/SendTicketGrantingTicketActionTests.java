@@ -34,32 +34,32 @@ import static org.junit.Assert.*;
 
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
-    
+
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    
+
     private MockRequestContext context;
 
     @Before
     public void onSetUp() throws Exception {
         this.action = new SendTicketGrantingTicketAction();
-        
+
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
-        
+
         this.ticketGrantingTicketCookieGenerator.setCookieName("TGT");
-        
+
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-        
+
         this.action.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
-       
+
         this.action.afterPropertiesSet();
-        
+
         this.context = new MockRequestContext();
     }
 
     @Test
     public void testNoTgtToSet() throws Exception {
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        
+
         assertEquals("success", this.action.execute(this.context).getId());
     }
 
@@ -67,10 +67,10 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     public void testTgtToSet() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final String TICKET_VALUE = "test";
-        
+
         WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), response));
-        
+
         assertEquals("success", this.action.execute(this.context).getId());
         assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
     }
@@ -83,7 +83,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
         request.setCookies(new Cookie[] {new Cookie("TGT", "test5")});
         WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        
+
         assertEquals("success", this.action.execute(this.context).getId());
         assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
     }

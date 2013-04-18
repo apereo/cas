@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.adaptors.x509.web.flow;
 
+import static org.junit.Assert.*;
+
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -44,11 +48,12 @@ import org.springframework.webflow.test.MockRequestContext;
 
 
 public class X509CertificateCredentialsNonInteractiveActionTests extends
-    AbstractX509CertificateTests {
-    
+        AbstractX509CertificateTests {
+
     private X509CertificateCredentialsNonInteractiveAction action;
-    
-    protected void setUp() throws Exception {
+
+    @Before
+    public void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl();
         centralAuthenticationService.setTicketRegistry(new DefaultTicketRegistry());
@@ -65,29 +70,36 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends
                 new LegacyAuthenticationHandlerAdapter(a),
         };
         authenticationManager.setAuthenticationHandlers(Arrays.asList(handlers));
-        authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(new CredentialsToPrincipalResolver[] {new X509CertificateCredentialsToSerialNumberPrincipalResolver()}));
-        
-        centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(new DefaultUniqueTicketIdGenerator());
+        authenticationManager.setCredentialsToPrincipalResolvers(Arrays.asList(
+                new CredentialsToPrincipalResolver[] {
+                        new X509CertificateCredentialsToSerialNumberPrincipalResolver()
+                }));
+        centralAuthenticationService.setTicketGrantingTicketUniqueTicketIdGenerator(
+                new DefaultUniqueTicketIdGenerator());
         centralAuthenticationService.setUniqueTicketIdGeneratorsForService(idGenerators);
         centralAuthenticationService.setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setTicketGrantingTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
         centralAuthenticationService.setAuthenticationManager(authenticationManager);
-        
+
         this.action.setCentralAuthenticationService(centralAuthenticationService);
         this.action.afterPropertiesSet();
     }
-    
+
+    @Test
     public void testNoCredentialsResultsInError() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(
+                new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
         assertEquals("error", this.action.execute(context).getId());
     }
-    
+
+    @Test
     public void testCredentialsResultsInSuccess() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("javax.servlet.request.X509Certificate", new X509Certificate[] {VALID_CERTIFICATE});
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+        context.setExternalContext(new ServletExternalContext(
+                new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals("success", this.action.execute(context).getId());
     }
 }

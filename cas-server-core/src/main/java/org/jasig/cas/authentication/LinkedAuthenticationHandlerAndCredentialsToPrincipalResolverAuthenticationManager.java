@@ -29,28 +29,32 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
 import org.jasig.cas.authentication.principal.Principal;
 
 /**
- * Ensures that all authentication handlers are tried, but if one is tried, the associated CredentialsToPrincipalResolver is used.
+ * Ensures that all authentication handlers are tried, but if one is tried,
+ * the associated CredentialsToPrincipalResolver is used.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.3.5
  */
-public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager extends AbstractAuthenticationManager {
+public class LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager
+            extends AbstractAuthenticationManager {
 
     @NotNull
     @Size(min = 1)
     private final Map<AuthenticationHandler, CredentialsToPrincipalResolver> linkedHandlers;
 
-    public LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager(final Map<AuthenticationHandler,CredentialsToPrincipalResolver> linkedHandlers) {
-        this.linkedHandlers = linkedHandlers; 
+    public LinkedAuthenticationHandlerAndCredentialsToPrincipalResolverAuthenticationManager(
+            final Map<AuthenticationHandler,CredentialsToPrincipalResolver> linkedHandlers) {
+        this.linkedHandlers = linkedHandlers;
     }
 
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials)
-            throws AuthenticationException {
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(
+            final Credentials credentials) throws AuthenticationException {
 
         final Map<String, Exception> errorMap = new LinkedHashMap<String, Exception>();
         String handlerName;
+
         for (final AuthenticationHandler authenticationHandler : this.linkedHandlers.keySet()) {
             if (!authenticationHandler.supports(credentials)) {
                 continue;

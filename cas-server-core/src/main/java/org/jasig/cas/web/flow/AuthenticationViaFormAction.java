@@ -44,9 +44,8 @@ import org.springframework.webflow.execution.RequestContext;
  * Action to authenticate credentials and retrieve a TicketGrantingTicket for
  * those credentials. If there is a request for renew, then it also generates
  * the Service Ticket required.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public class AuthenticationViaFormAction {
@@ -76,7 +75,7 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public final void doBind(final RequestContext context, final Credentials credentials) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -85,30 +84,32 @@ public class AuthenticationViaFormAction {
             this.credentialsBinder.bind(request, credentials);
         }
     }
-    
-    public final Event submit(final RequestContext context, final Credentials credentials, final MessageContext messageContext) throws Exception {
+    public final Event submit(final RequestContext context, final Credentials credentials,
+            final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
         if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
-            this.logger.warn("Invalid login ticket {}", providedLoginTicket);
+            log.warn("Invalid login ticket {}", providedLoginTicket);
             messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
             return newEvent(ERROR);
         }
 
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
-        if (StringUtils.hasText(context.getRequestParameters().get("renew")) && ticketGrantingTicketId != null && service != null) {
+        if (StringUtils.hasText(context.getRequestParameters().get("renew")) && ticketGrantingTicketId != null
+                && service != null) {
 
             try {
-                final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
+                final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+                        ticketGrantingTicketId, service, credentials);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 putWarnCookieIfRequestParameterPresent(context);
                 return newEvent(WARN);
             } catch (final AuthenticationException e) {
                 return newEvent(AUTHENTICATION_FAILURE, e);
             } catch (final TicketCreationException e) {
-                logger.warn("Invalid attempt to access service using renew=true with different credentials. Ending SSO session.");
+                log.warn("Invalid attempt to access service using renew=true with different credentials. Ending SSO session.");
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
             } catch (final TicketException e) {
                 return newEvent(ERROR, e);
@@ -116,7 +117,8 @@ public class AuthenticationViaFormAction {
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInRequestScope(context, this.centralAuthenticationService.createTicketGrantingTicket(credentials));
+            WebUtils.putTicketGrantingTicketInRequestScope(context,
+                    this.centralAuthenticationService.createTicketGrantingTicket(credentials));
             putWarnCookieIfRequestParameterPresent(context);
             return newEvent(SUCCESS);
         } catch (final AuthenticationException e) {
@@ -135,7 +137,7 @@ public class AuthenticationViaFormAction {
             this.warnCookieGenerator.removeCookie(response);
         }
     }
-    
+
     private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
         return (AuthenticationException) e.getCause();
     }
@@ -170,7 +172,7 @@ public class AuthenticationViaFormAction {
     public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
         this.credentialsBinder = credentialsBinder;
     }
-    
+
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }

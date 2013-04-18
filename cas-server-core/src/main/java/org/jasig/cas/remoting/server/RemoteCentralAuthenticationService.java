@@ -44,9 +44,9 @@ import org.springframework.util.Assert;
  * <ul>
  * <li>centralAuthenticationService - the service layer we are delegating to.</li>
  * </ul>
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {
@@ -72,7 +72,8 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
     }
 
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service) throws TicketException {
+    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
+            throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
     }
 
@@ -111,7 +112,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         if (credentials == null) {
             return;
         }
-        
+
         final Set<ConstraintViolation<Credentials>> errors = this.validator.validate(credentials);
         if (!errors.isEmpty()) {
             throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
@@ -120,7 +121,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
 
     /**
      * Set the CentralAuthenticationService.
-     * 
+     *
      * @param centralAuthenticationService The CentralAuthenticationService to
      * set.
      */
@@ -131,7 +132,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
 
     /**
      * Set the list of validators.
-     * 
+     *
      * @param validator The array of validators to use.
      */
     public void setValidator(final Validator validator) {

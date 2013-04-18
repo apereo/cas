@@ -35,9 +35,8 @@ import javax.validation.constraints.NotNull;
  * <p>
  * Only responds to LegacyCasCredentials
  * </p>
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class LegacyPasswordHandlerAdaptorAuthenticationHandler implements

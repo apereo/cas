@@ -34,7 +34,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class LogoutControllerTests extends AbstractCentralAuthenticationServiceTest {
@@ -44,7 +43,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
     private LogoutController logoutController;
 
     private CookieRetrievingCookieGenerator warnCookieGenerator;
-    
+
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     private InMemoryServiceRegistryDaoImpl serviceRegistryDao;
@@ -56,13 +55,13 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
     @Before
     public void onSetUp() throws Exception {
         this.request = new MockHttpServletRequest();
-       this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
         this.serviceRegistryDao = new InMemoryServiceRegistryDaoImpl();
         this.serviceManager = new DefaultServicesManagerImpl(serviceRegistryDao);
         this.serviceManager.reload();
-        
+
         this.warnCookieGenerator.setCookieName("test");
-        
+
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
         this.ticketGrantingTicketCookieGenerator.setCookieName(COOKIE_TGC_ID);
 
@@ -77,7 +76,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
     @Test
     public void testLogoutNoCookie() throws Exception {
         assertNotNull(this.logoutController.handleRequestInternal(
-            this.request, new MockHttpServletResponse()));
+                this.request, new MockHttpServletResponse()));
     }
 
     @Test
@@ -90,7 +89,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         this.serviceManager.save(impl);
         this.logoutController.setFollowServiceRedirects(true);
         assertTrue(this.logoutController.handleRequestInternal(request,
-            new MockHttpServletResponse()).getView() instanceof RedirectView);
+                new MockHttpServletResponse()).getView() instanceof RedirectView);
     }
 
     @Test
@@ -98,7 +97,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         this.request.addParameter("service", "TestService");
         this.logoutController.setFollowServiceRedirects(false);
         assertTrue(!(this.logoutController.handleRequestInternal(request,
-            new MockHttpServletResponse()).getView() instanceof RedirectView));
+                new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         this.serviceManager.save(impl);
         this.logoutController.setFollowServiceRedirects(true);
         assertTrue(!(this.logoutController.handleRequestInternal(request,
-            new MockHttpServletResponse()).getView() instanceof RedirectView));
+                new MockHttpServletResponse()).getView() instanceof RedirectView));
     }
 
     @Test
@@ -118,6 +117,6 @@ public class LogoutControllerTests extends AbstractCentralAuthenticationServiceT
         Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(new Cookie[] {cookie});
         assertNotNull(this.logoutController.handleRequestInternal(request,
-            new MockHttpServletResponse()));
+                new MockHttpServletResponse()));
     }
 }

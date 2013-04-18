@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.services.web;
 
+import static org.junit.Assert.*;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -35,6 +35,8 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.support.RegisteredServiceValidator;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.validation.BindingResult;
@@ -42,10 +44,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
-public class RegisteredServiceSimpleFormControllerTests extends TestCase {
+public class RegisteredServiceSimpleFormControllerTests {
 
     private RegisteredServiceSimpleFormController controller;
 
@@ -53,8 +54,8 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
 
     private StubPersonAttributeDao repository;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         final Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
         attributes.put("test", Arrays.asList(new Object[] {"test"}));
 
@@ -62,17 +63,18 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         this.repository.setBackingMap(attributes);
 
         this.manager = new DefaultServicesManagerImpl(
-            new InMemoryServiceRegistryDaoImpl());
-        
+                new InMemoryServiceRegistryDaoImpl());
+
         final RegisteredServiceValidator validator = new RegisteredServiceValidator();
         validator.setServicesManager(this.manager);
 
         this.controller = new RegisteredServiceSimpleFormController(
-            this.manager, this.repository);
+                this.manager, this.repository);
         this.controller.setCommandName("registeredService");
         this.controller.setValidator(validator);
     }
 
+    @Test
     public void testAddRegisteredServiceNoValues() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -80,16 +82,17 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         request.setMethod("POST");
 
         final ModelAndView modelAndView = this.controller.handleRequest(
-            request, response);
+                request, response);
 
         final BindingResult result = (BindingResult) modelAndView
-            .getModel()
-            .get(
-                "org.springframework.validation.BindingResult.registeredService");
+                .getModel()
+                .get(
+                        "org.springframework.validation.BindingResult.registeredService");
 
         assertTrue(result.hasErrors());
     }
 
+    @Test
     public void testAddRegisteredServiceWithValues() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -109,7 +112,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         assertTrue(this.manager.getAllServices().isEmpty());
 
         this.controller.handleRequest(
-            request, response);
+                request, response);
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
@@ -117,17 +120,18 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
             assertTrue(rs instanceof RegisteredServiceImpl);
         }
     }
-    
+
+    @Test
     public void testEditRegisteredServiceWithValues() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        
+
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId("test");
         r.setDescription("description");
-        
+
         this.manager.save(r);
 
         request.addParameter("description", "description");
@@ -144,15 +148,15 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         request.setMethod("POST");
 
         this.controller.handleRequest(
-            request, response);
+                request, response);
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
-        
+
         assertEquals("serviceId1", r2.getServiceId());
     }
 
-    // CAS-1071 test
+   @Test
     public void testAddRegexRegisteredService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -172,7 +176,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         assertTrue(this.manager.getAllServices().isEmpty());
 
         this.controller.handleRequest(
-            request, response);
+                request, response);
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
@@ -181,7 +185,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         }
     }
 
-    // CAS-1071 test
+    @Test
     public void testAddMultipleRegisteredServiceTypes() throws Exception {
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         final MockHttpServletResponse response1 = new MockHttpServletResponse();
@@ -229,7 +233,7 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
         }
     }
 
-    // test arbitrary RegisteredService subclass
+    @Test
     public void testAddMockRegisteredService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -257,7 +261,8 @@ public class RegisteredServiceSimpleFormControllerTests extends TestCase {
             assertTrue(rs instanceof MockRegisteredService);
         }
     }
-    
+
+    @Test
     public void testEditMockRegisteredService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();

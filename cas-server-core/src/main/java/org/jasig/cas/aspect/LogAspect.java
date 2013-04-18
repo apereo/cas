@@ -29,9 +29,6 @@ import java.util.Arrays;
 
 
 /**
- * 
- *
- * @version $Revision$ $Date$
  * @since 3.3.6
  */
 @Aspect
@@ -52,14 +49,13 @@ public class LogAspect {
                 } else {
                     arguments = Arrays.deepToString(args);
                 }
-                log.trace("Entering method [" + methodName + " with arguments [" + arguments + "]");
+                log.trace("Entering method [{}] with arguments [{}]", methodName, arguments);
             }
             returnVal = proceedingJoinPoint.proceed();
             return returnVal;
         } finally {
-            if (log.isTraceEnabled()) {
-                log.trace("Leaving method [" + methodName + "] with return value [" + (returnVal != null ? returnVal.toString() : "null") + "].");
-            }
+            log.trace("Leaving method [{}] with return value [{}].", methodName,
+                        (returnVal != null ? returnVal.toString() : "null"));
         }
     }
 

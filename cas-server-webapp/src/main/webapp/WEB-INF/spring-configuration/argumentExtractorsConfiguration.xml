@@ -23,11 +23,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:util="http://www.springframework.org/schema/util"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 	<description>
 		Argument Extractors are what are used to translate HTTP requests into requests of the appropriate protocol (i.e. CAS, SAML, SAML2,
-		OpenId, etc.).  By default CAS and SAML are enabled.
+		OpenId, etc.).  By default, only CAS is enabled.
 	</description>
  	<bean
  		id="casArgumentExtractor"
@@ -35,12 +35,7 @@
          p:httpClient-ref="noRedirectHttpClient"
          p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
 
- 	<bean id="samlArgumentExtractor" class="org.jasig.cas.web.support.SamlArgumentExtractor"
-             p:httpClient-ref="noRedirectHttpClient"
-             p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
- 	
  	<util:list id="argumentExtractors">
 		<ref bean="casArgumentExtractor" />
- 		<ref bean="samlArgumentExtractor" />
  	</util:list>
 </beans>

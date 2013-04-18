@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.web.support;
 
-import com.github.inspektr.common.web.ClientInfoHolder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
@@ -28,11 +27,11 @@ import org.springframework.webflow.test.MockRequestContext;
  * Base class for in-memory throttled submission handlers.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  */
-public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests 
-        extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests
+extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
+    @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();

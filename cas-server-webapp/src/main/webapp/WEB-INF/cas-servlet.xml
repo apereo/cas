@@ -23,7 +23,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
@@ -53,11 +53,6 @@
       </list>
     </property>
   </bean>
-
-  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver" 
-  		p:order="1" 
-  		p:location="/WEB-INF/view/views.xml" 
-  />
   
   <!-- Locale Resolver -->
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
@@ -68,9 +63,9 @@
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
-        p:order="2"/>
+        p:order="1"/>
   
-  <bean id="errorHandlerResolver" class="org.jasig.cas.web.NoSuchFlowExecutionExceptionResolver"/>
+  <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
 
@@ -84,8 +79,6 @@
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-        <prop key="/samlValidate">samlValidateController</prop>
-        <prop key="/openid/*">openIdProviderController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
         <prop key="/status">healthCheckController</prop>
         <prop key="/statistics">statisticsController</prop>
@@ -105,11 +98,6 @@
   </bean>
 
   <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
-
-  <bean
-      id="openIdProviderController"
-      class="org.jasig.cas.web.OpenIdProviderController"
-      p:loginUrl="${cas.loginUrl}"/>
 
   <bean
       id="serviceLogoutViewController"
@@ -168,14 +156,6 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
         p:argumentExtractor-ref="casArgumentExtractor"/>
-
-  <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
-        p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="samlArgumentExtractor"
-        p:successView="casSamlServiceSuccessView"
-        p:failureView="casSamlServiceFailureView"/>
 
   <bean id="legacyValidateController" class="org.jasig.cas.web.ServiceValidateController"
         p:proxyHandler-ref="proxy10Handler"

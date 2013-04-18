@@ -33,37 +33,37 @@ import static org.junit.Assert.*;
 
 public class TicketRegistryDecoratorTests {
 
-  @Test
-  public void testDefaultTicketRegistryWithClearPass() {
-    
-    final TicketRegistry ticketRegistry = new DefaultTicketRegistry();
-    final Map<String, String> map = new HashMap<String, String>();
-    final TicketRegistryDecorator decorator = new TicketRegistryDecorator(ticketRegistry, map);
-    assertNotNull(decorator);
-    assertEquals(decorator.serviceTicketCount(), 0);
-    assertEquals(decorator.sessionCount(), 0);
-  }
-  
-  @Test
-  public void testEhCacheTicketRegistryWithClearPass() {
-    final Cache serviceTicketsCache = new Cache("serviceTicketsCache", 200, false, false, 100, 100);
-    final Cache ticketGrantingTicketCache = new Cache("ticketGrantingTicketCache", 200, false, false, 100, 100);
+    @Test
+    public void testDefaultTicketRegistryWithClearPass() {
 
-    final CacheManager manager = new CacheManager(this.getClass().getClassLoader().getResourceAsStream("ehcacheClearPass.xml"));     
-    manager.addCache(serviceTicketsCache);
-    manager.addCache(ticketGrantingTicketCache);
-    
-    final Map<String, String> map = new HashMap<String, String>();
+        final TicketRegistry ticketRegistry = new DefaultTicketRegistry();
+        final Map<String, String> map = new HashMap<String, String>();
+        final TicketRegistryDecorator decorator = new TicketRegistryDecorator(ticketRegistry, map);
+        assertNotNull(decorator);
+        assertEquals(decorator.serviceTicketCount(), 0);
+        assertEquals(decorator.sessionCount(), 0);
+    }
 
-    final TicketRegistry ticketRegistry = new EhCacheTicketRegistry(serviceTicketsCache, ticketGrantingTicketCache);
-    final TicketRegistryDecorator decorator = new TicketRegistryDecorator(ticketRegistry, map);
-    assertNotNull(decorator);
-    
-    assertEquals(decorator.serviceTicketCount(), 0);
-    assertEquals(decorator.sessionCount(), 0);
-    
-    manager.removalAll();
-    manager.shutdown();
-    
-  }
+    @Test
+    public void testEhCacheTicketRegistryWithClearPass() {
+        final Cache serviceTicketsCache = new Cache("serviceTicketsCache", 200, false, false, 100, 100);
+        final Cache ticketGrantingTicketCache = new Cache("ticketGrantingTicketCache", 200, false, false, 100, 100);
+
+        final CacheManager manager = new CacheManager(this.getClass().getClassLoader().getResourceAsStream("ehcacheClearPass.xml"));
+        manager.addCache(serviceTicketsCache);
+        manager.addCache(ticketGrantingTicketCache);
+
+        final Map<String, String> map = new HashMap<String, String>();
+
+        final TicketRegistry ticketRegistry = new EhCacheTicketRegistry(serviceTicketsCache, ticketGrantingTicketCache);
+        final TicketRegistryDecorator decorator = new TicketRegistryDecorator(ticketRegistry, map);
+        assertNotNull(decorator);
+
+        assertEquals(decorator.serviceTicketCount(), 0);
+        assertEquals(decorator.sessionCount(), 0);
+
+        manager.removalAll();
+        manager.shutdown();
+
+    }
 }

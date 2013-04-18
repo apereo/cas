@@ -40,46 +40,47 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
- * 
+ *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-    "classpath:/core-context.xml", "classpath:/applicationContext.xml", "classpath:/jpaTestApplicationContext.xml",
-    "classpath:/inspektrThrottledSubmissionContext.xml"
+        "classpath:/core-context.xml", "classpath:/applicationContext.xml", "classpath:/jpaTestApplicationContext.xml",
+        "classpath:/inspektrThrottledSubmissionContext.xml"
 })
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
-    AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
-    
+AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+
     @Autowired
     private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
-    
+
     @Autowired
     private AuthenticationManager authenticationManager;
-    
+
     @Autowired
     private DataSource dataSource;
-    
+
+    @Override
     @Before
     public void setUp() throws Exception {
         new JdbcTemplate(dataSource).execute("CREATE TABLE COM_AUDIT_TRAIL ( "
-                                             + "AUD_USER      VARCHAR(100)  NOT NULL, "
-                                             + "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, "
-                                             + "AUD_SERVER_IP VARCHAR(15)    NOT NULL, "
-                                             + "AUD_RESOURCE  VARCHAR(100)  NOT NULL, "
-                                             + "AUD_ACTION    VARCHAR(100)  NOT NULL, "
-                                             + "APPLIC_CD     VARCHAR(5)    NOT NULL, "
-                                             + "AUD_DATE      TIMESTAMP      NOT NULL)");
+                + "AUD_USER      VARCHAR(100)  NOT NULL, "
+                + "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, "
+                + "AUD_SERVER_IP VARCHAR(15)    NOT NULL, "
+                + "AUD_RESOURCE  VARCHAR(100)  NOT NULL, "
+                + "AUD_ACTION    VARCHAR(100)  NOT NULL, "
+                + "APPLIC_CD     VARCHAR(5)    NOT NULL, "
+                + "AUD_DATE      TIMESTAMP      NOT NULL)");
     }
-    
+
+    @Override
     protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
         return throttle;
     }
-    
+
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
-        throws Exception {
+            throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setMethod("POST");
@@ -89,9 +90,9 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         context.setCurrentEvent(new Event("", "error"));
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        
+
         getThrottle().preHandle(request, response, null);
-        
+
         try {
             authenticationManager.authenticate(badCredentials(username));
         } catch (AuthenticationException e) {
@@ -101,7 +102,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         fail("Expected AuthenticationException");
         return null;
     }
-    
+
     private UsernamePasswordCredentials badCredentials(final String username) {
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
         credentials.setUsername(username);

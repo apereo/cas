@@ -55,9 +55,8 @@ import org.jasig.cas.authentication.principal.Principal;
  * CredentialsToPrincipal resolvers that know how to process the credentials
  * provided.
  * </ul>
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  * @see org.jasig.cas.authentication.handler.AuthenticationHandler
  * @see org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver
@@ -77,9 +76,8 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
     private List<CredentialsToPrincipalResolver> credentialsToPrincipalResolvers;
 
     @Override
-    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(final Credentials credentials)
-            throws AuthenticationException {
-
+    protected Pair<AuthenticationHandler, Principal> authenticateAndObtainPrincipal(
+            final Credentials credentials) throws AuthenticationException {
         boolean foundSupported = false;
         final Map<String, Exception> errorMap = new LinkedHashMap<String, Exception>();
         final Map<String, HandlerResult> successMap = new LinkedHashMap<String, HandlerResult>();
@@ -113,10 +111,11 @@ public final class AuthenticationManagerImpl extends AbstractAuthenticationManag
         }
 
         foundSupported = false;
-        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver : this.credentialsToPrincipalResolvers) {
+        for (final CredentialsToPrincipalResolver credentialsToPrincipalResolver
+                : this.credentialsToPrincipalResolvers) {
             if (credentialsToPrincipalResolver.supports(credentials)) {
                 final Principal principal = credentialsToPrincipalResolver.resolvePrincipal(credentials);
-                log.info("Resolved principal " + principal);
+                log.info("Resolved principal {}", principal);
                 foundSupported = true;
                 if (principal != null) {
                     return new Pair<AuthenticationHandler,Principal>(authenticatedClass, principal);
