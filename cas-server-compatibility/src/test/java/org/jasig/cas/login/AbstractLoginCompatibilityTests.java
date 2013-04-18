@@ -20,19 +20,21 @@ package org.jasig.cas.login;
 
 import java.io.IOException;
 
-
+/**
+ * Base class for Web compatibility tests around CAS login form.
+ */
 public abstract class AbstractLoginCompatibilityTests extends AbstractCompatibilityTests {
     public static final String FORM_USERNAME = "username";
     public static final String FORM_PASSWORD = "password";
-    
+
     /**
      * The name of the compatibility test configuration property the value of which
      * should be an alternate username to test logging into the CAS server.
      */
     public static final String ALTERNATE_USERNAME_PROPERTY = "credentials.alternate.username";
-    
+
     /**
-     * The name of the compatibility test configuration property the value of which should be 
+     * The name of the compatibility test configuration property the value of which should be
      * the correct password to go with that alternate username.
      */
     public static final String ALTERNATE_PASSWORD_PROPERTY = "credentials.alternate.password";
@@ -41,18 +43,18 @@ public abstract class AbstractLoginCompatibilityTests extends AbstractCompatibil
         super();
     }
 
-    public AbstractLoginCompatibilityTests(String name) throws IOException {
+    public AbstractLoginCompatibilityTests(final String name) throws IOException {
         super(name);
     }
-    
-    protected String getAlternateUsername(){
-    	return getProperties().getProperty(ALTERNATE_USERNAME_PROPERTY);
-    }
-    
-    protected String getAlternatePassword() {
-    	return getProperties().getProperty(ALTERNATE_PASSWORD_PROPERTY);
-    }
-	
 
-    
+    protected String getAlternateUsername(){
+        return getProperties().getProperty(ALTERNATE_USERNAME_PROPERTY);
+    }
+
+    protected String getAlternatePassword() {
+        return getProperties().getProperty(ALTERNATE_PASSWORD_PROPERTY);
+    }
+
+
+
 }

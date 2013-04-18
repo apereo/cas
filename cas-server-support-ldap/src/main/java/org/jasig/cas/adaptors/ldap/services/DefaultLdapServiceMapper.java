@@ -32,7 +32,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 
 /**
- * Default implementation of LdapServiceMapper which maps each property of RegisteredService to a explicit LDAP attribute
+ * Default implementation of LdapServiceMapper which maps each property
+ * of RegisteredService to a explicit LDAP attribute.
  *
  * @author Siegfried Puchbauer, SPP (http://www.spp.at/)
  */
@@ -72,6 +73,7 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
     private String serviceAllowedAttributesAttribute = "casAllowedAttributes";
 
 
+    @Override
     protected RegisteredService doMapFromContext(final DirContextOperations ctx) {
         RegisteredServiceImpl s = new RegisteredServiceImpl();
 
@@ -88,12 +90,13 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
         final String[] attributes = ctx.getStringAttributes(this.serviceAllowedAttributesAttribute);
 
         if (attributes != null) {
- 	 	    s.setAllowedAttributes(Arrays.asList(attributes));
+            s.setAllowedAttributes(Arrays.asList(attributes));
         }
 
         return s;
     }
 
+    @Override
     protected DirContextAdapter doMapToContext(final RegisteredService service,final  DirContextAdapter ctx) {
         ctx.setAttributeValue(this.idAttribute, String.valueOf(service.getId()));
         ctx.setAttributeValue(this.serviceIdAttribute, service.getServiceId());
@@ -104,22 +107,26 @@ public final class DefaultLdapServiceMapper extends LdapServiceMapper {
         ctx.setAttributeValue(this.serviceThemeAttribute, service.getTheme());
         ctx.setAttributeValues(this.serviceAllowedAttributesAttribute, service.getAllowedAttributes().toArray(new String[service.getAllowedAttributes().size()]), false);
         ctx.setAttributeValue(this.serviceDescriptionAttribute, service.getDescription());
-        if (!SpringLdapUtils.containsObjectClass(ctx, this.objectclass))
+        if (!SpringLdapUtils.containsObjectClass(ctx, this.objectclass)) {
             ctx.addAttributeValue(SpringLdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass);
+        }
 
         return ctx;
     }
 
+    @Override
     protected DirContextAdapter createCtx(final String parentDn, final RegisteredService service) {
         DistinguishedName dn = new DistinguishedName(parentDn);
         dn.add(this.namingAttribute, service.getName());
         return new DirContextAdapter(dn);
     }
 
+    @Override
     protected Filter getSearchFilter(final Long id) {
         return new AndFilter().and(getLoadFilter()).and(new EqualsFilter(this.idAttribute, String.valueOf(id)));
     }
 
+    @Override
     protected Filter getLoadFilter() {
         return new EqualsFilter(SpringLdapUtils.OBJECTCLASS_ATTRIBUTE, this.objectclass);
     }

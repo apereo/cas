@@ -28,57 +28,59 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is the main entry point for OAuth version 2.0 wrapping in CAS, should be mapped to something like /oauth2.0/*. Dispatch
+ * This controller is the main entry point for OAuth version 2.0
+ * wrapping in CAS, should be mapped to something like /oauth2.0/*. Dispatch
  * request to specific controllers : authorize, accessToken...
- * 
+ *
  * @author Jerome Leleu
  * @since 3.5.0
  */
 public final class OAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
-    
+
     private AbstractController authorizeController;
-    
+
     private AbstractController callbackAuthorizeController;
-    
+
     private AbstractController accessTokenController;
-    
+
     private AbstractController profileController;
-    
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
         callbackAuthorizeController = new OAuth20CallbackAuthorizeController();
         accessTokenController = new OAuth20AccessTokenController(servicesManager, ticketRegistry, timeout);
         profileController = new OAuth20ProfileController(ticketRegistry);
     }
-    
+
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
-        
+            final HttpServletResponse response) throws Exception {
+
         // authorize
         if (OAuthConstants.AUTHORIZE_URL.equals(method)) {
-            
+
             return authorizeController.handleRequest(request, response);
         }
-        
+
         // callback on authorize
         else if (OAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
-            
+
             return callbackAuthorizeController.handleRequest(request, response);
         }
-        
+
         // get access token
         else if (OAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
-            
+
             return accessTokenController.handleRequest(request, response);
         }
-        
+
         // get profile
         else if (OAuthConstants.PROFILE_URL.equals(method)) {
-            
+
             return profileController.handleRequest(request, response);
         }
-        
+
         // else error
         log.error("Unknown method : {}", method);
         OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 200);

@@ -18,26 +18,27 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import org.jasig.cas.authentication.handler.PasswordEncoder;
-import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public final class PlainTextPasswordEncoderTests extends TestCase {
+public final class PlainTextPasswordEncoderTests {
+
+    private static final String CONST_TO_ENCODE = "CAS IS COOL";
 
     private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
-    private final static String CONST_TO_ENCODE = "CAS IS COOL";
-
+    @Test
     public void testNullValueToTranslate() {
         assertEquals(null, this.passwordEncoder.encode(null));
     }
 
+    @Test
     public void testValueToTranslate() {
         assertEquals(CONST_TO_ENCODE, this.passwordEncoder
             .encode(CONST_TO_ENCODE));

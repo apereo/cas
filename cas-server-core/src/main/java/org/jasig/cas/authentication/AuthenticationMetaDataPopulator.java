@@ -27,9 +27,9 @@ import org.jasig.cas.authentication.principal.Credentials;
  * the Principal itself. AuthenticationAttributePopulators are a new feature in
  * CAS3. In order for an installation to be CAS2 compliant, deployers do not
  * need an AuthenticationMetaDataPopulator.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.
@@ -42,7 +42,7 @@ public interface AuthenticationMetaDataPopulator {
      * presented, provide any additional attributes to the Authentication
      * object. Implementations have the option of returning the same
      * Authentication object, or a new one.
-     * 
+     *
      * @param authentication The Authentication to potentially augment with
      * additional attributes.
      * @return the original Authentication object or a new Authentication

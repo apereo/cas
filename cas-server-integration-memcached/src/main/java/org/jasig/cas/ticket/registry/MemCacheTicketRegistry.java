@@ -36,12 +36,11 @@ import org.springframework.beans.factory.DisposableBean;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.3
  */
 public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegistry implements DisposableBean {
 
-    /** Memcached client */
+    /** Memcached client. */
     @NotNull
     private final MemcachedClient client;
 
@@ -65,7 +64,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      * @param ticketGrantingTicketTimeOut TGT timeout in seconds.
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
-    public MemCacheTicketRegistry(final String[] hostnames, final int ticketGrantingTicketTimeOut, final int serviceTicketTimeOut) {
+    public MemCacheTicketRegistry(final String[] hostnames, final int ticketGrantingTicketTimeOut,
+final int serviceTicketTimeOut) {
         try {
             this.client = new MemcachedClient(AddrUtil.getAddresses(Arrays.asList(hostnames)));
         } catch (final IOException e) {
@@ -85,7 +85,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      * @see MemCacheTicketRegistry#MemCacheTicketRegistry(String[], int, int)
      */
     @Deprecated
-    public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut, final String[] hostnames) {
+    public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
+            final String[] hostnames) {
         this(hostnames, (int) (ticketGrantingTicketTimeOut / 1000), (int) (serviceTicketTimeOut / 1000));
     }
 
@@ -97,7 +98,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      * @param ticketGrantingTicketTimeOut TGT timeout in seconds.
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
-    public MemCacheTicketRegistry(final MemcachedClient client, final int ticketGrantingTicketTimeOut, final int serviceTicketTimeOut) {
+    public MemCacheTicketRegistry(final MemcachedClient client, final int ticketGrantingTicketTimeOut,
+            final int serviceTicketTimeOut) {
         this.tgtTimeout = ticketGrantingTicketTimeOut;
         this.stTimeout = serviceTicketTimeOut;
         this.client = client;
@@ -110,8 +112,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
                 log.error("Failed updating {}", ticket);
             }
         } catch (final InterruptedException e) {
-            log.warn("Interrupted while waiting for response to async replace operation for ticket {}. " +
-                    "Cannot determine whether update was successful.", ticket);
+            log.warn("Interrupted while waiting for response to async replace operation for ticket {}. Cannot determine whether update was successful.", ticket);
         } catch (final Exception e) {
             log.error("Failed updating {}", ticket, e);
         }
@@ -124,8 +125,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
                 log.error("Failed adding {}", ticket);
             }
         } catch (final InterruptedException e) {
-            log.warn("Interrupted while waiting for response to async add operation for ticket {}. " +
-                    "Cannot determine whether add was successful.", ticket);
+            log.warn("Interrupted while waiting for response to async add operation for ticket {}. Cannot determine whether add was successful.", ticket);
         } catch (final Exception e) {
             log.error("Failed adding {}", ticket, e);
         }

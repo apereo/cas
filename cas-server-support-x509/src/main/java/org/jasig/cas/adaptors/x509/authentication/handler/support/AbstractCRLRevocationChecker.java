@@ -25,21 +25,19 @@ import java.security.cert.X509Certificate;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all CRL-based revocation checkers.
  *
  * @author Marvin S. Addison
- * @version $Revision$
  * @since 3.4.6
  *
  */
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
-    /** Logger instance */
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /** Policy to apply when CRL data is unavailable. */
     @NotNull
@@ -51,21 +49,20 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
 
 
     /** {@inheritDoc} */
+    @Override
     public void check(final X509Certificate cert) throws GeneralSecurityException {
         if (cert == null) {
             throw new IllegalArgumentException("Certificate cannot be null.");
         }
-        if (log.isDebugEnabled()) {
-	        log.debug("Evaluating certificate revocation status for " + CertUtils.toString(cert));
-        }
+        log.debug("Evaluating certificate revocation status for {}", CertUtils.toString(cert));
         final X509CRL crl = getCRL(cert);
         if (crl == null) {
-            log.warn("CRL data is not available for " + CertUtils.toString(cert));
+            log.warn("CRL data is not available for {}", CertUtils.toString(cert));
             this.unavailableCRLPolicy.apply(null);
             return;
         }
         if (CertUtils.isExpired(crl)) {
-            log.warn("CRL data expired on " + crl.getNextUpdate());
+            log.warn("CRL data expired on ", crl.getNextUpdate());
             this.expiredCRLPolicy.apply(crl);
         }
         final X509CRLEntry entry = crl.getRevokedCertificate(cert);
@@ -73,7 +70,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             throw new RevokedCertificateException(entry);
         }
     }
-    
+
     /**
      * Sets the policy to apply when CRL data is unavailable.
      *
@@ -82,7 +79,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     public void setUnavailableCRLPolicy(final RevocationPolicy<Void> policy) {
         this.unavailableCRLPolicy = policy;
     }
-    
+
     /**
      * Sets the policy to apply when CRL data is expired.
      *
@@ -91,12 +88,12 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     public void setExpiredCRLPolicy(final RevocationPolicy<X509CRL> policy) {
         this.expiredCRLPolicy = policy;
     }
-   
+
     /**
      * Gets the CRL for the given certificate.
      *
      * @param cert Certificate for which the CRL of the issuing CA should be retrieved.
-     * 
+     *
      * @return CRL for given cert.
      */
     protected abstract X509CRL getCRL(final X509Certificate cert);

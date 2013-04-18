@@ -24,56 +24,56 @@ import java.util.Map;
 
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
-import org.jasig.cas.util.SamlUtils;
+import org.jasig.cas.util.SamlDateUtils;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of a WebApplicationService.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.3 $ $Date: 2007/04/19 20:13:01 $
  * @since 3.1
  *
  */
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(SamlService.class);
-    
+    protected static final Logger log = LoggerFactory.getLogger(AbstractWebApplicationService.class);
+
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
-    
+
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
-    
+
     /** The id of the service. */
     private final String id;
-    
+
     /** The original url provided, used to reconstruct the redirect url. */
     private final String originalUrl;
 
     private final String artifactId;
-    
+
     private Principal principal;
-    
+
     private boolean loggedOutAlready = false;
-    
+
     private final HttpClient httpClient;
-    
-    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId, final HttpClient httpClient) {
+
+    protected AbstractWebApplicationService(final String id, final String originalUrl,
+            final String artifactId, final HttpClient httpClient) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
         this.httpClient = httpClient;
     }
-    
+
     public final String toString() {
         return this.id;
     }
-    
+
     public final String getId() {
         return this.id;
     }
-    
+
     public final String getArtifactId() {
         return this.artifactId;
     }
@@ -102,7 +102,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         return url.substring(0, jsessionPosition)
             + url.substring(questionMarkPosition);
     }
-    
+
     protected final String getOriginalUrl() {
         return this.originalUrl;
     }
@@ -124,7 +124,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
         return false;
     }
-    
+
     public int hashCode() {
         final int prime = 41;
         int result = 1;
@@ -132,7 +132,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             + ((this.id == null) ? 0 : this.id.hashCode());
         return result;
     }
-    
+
     protected Principal getPrincipal() {
         return this.principal;
     }
@@ -140,30 +140,30 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     public void setPrincipal(final Principal principal) {
         this.principal = principal;
     }
-    
+
     public boolean matches(final Service service) {
         return this.id.equals(service.getId());
     }
-    
+
     public synchronized boolean logOutOfService(final String sessionIdentifier) {
         if (this.loggedOutAlready) {
             return true;
         }
 
-        LOG.debug("Sending logout request for: " + getId());
+        log.debug("Sending logout request for: {}", getId());
 
         final String logoutRequest = "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""
             + GENERATOR.getNewTicketId("LR")
-            + "\" Version=\"2.0\" IssueInstant=\"" + SamlUtils.getCurrentDateAndTime()
+            + "\" Version=\"2.0\" IssueInstant=\"" + SamlDateUtils.getCurrentDateAndTime()
             + "\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@</saml:NameID><samlp:SessionIndex>"
             + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
-        
+
         this.loggedOutAlready = true;
-        
+
         if (this.httpClient != null) {
             return this.httpClient.sendMessageToEndPoint(getOriginalUrl(), logoutRequest, true);
         }
-        
+
         return false;
     }
 }

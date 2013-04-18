@@ -42,9 +42,8 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * <li> centralAuthenticationService - the service layer</li>
  * <li> casArgumentExtractor - the assistant for extracting parameters</li>
  * </ul>
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class ProxyController extends AbstractController {
@@ -70,6 +69,7 @@ public final class ProxyController extends AbstractController {
      * @return ModelAndView containing a view name of either
      * <code>casProxyFailureView</code> or <code>casProxySuccessView</code>
      */
+    @Override
     protected ModelAndView handleRequestInternal(
         final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {

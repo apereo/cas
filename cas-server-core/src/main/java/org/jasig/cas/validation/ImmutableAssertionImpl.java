@@ -28,9 +28,9 @@ import org.springframework.util.Assert;
 /**
  * Default implementation of the Assertion interface which returns the minimum
  * number of attributes required to conform to the CAS 2 protocol.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
 public final class ImmutableAssertionImpl implements Assertion {
@@ -49,7 +49,7 @@ public final class ImmutableAssertionImpl implements Assertion {
 
     /**
      * Constructs a new ImmutableAssertion out of the given parameters.
-     * 
+     *
      * @param principals the chain of principals
      * @param service The service we are asserting this ticket for.
      * @param fromNewLogin was the service ticket from a new login.
@@ -83,10 +83,11 @@ public final class ImmutableAssertionImpl implements Assertion {
             || !this.getClass().isAssignableFrom(o.getClass())) {
             return false;
         }
-        
+
         final Assertion a = (Assertion) o;
-        
-        return this.service.equals(a.getService()) && this.fromNewLogin == a.isFromNewLogin() && this.principals.equals(a.getChainedAuthentications());
+
+        return this.service.equals(a.getService()) && this.fromNewLogin == a.isFromNewLogin()
+                && this.principals.equals(a.getChainedAuthentications());
     }
 
     public int hashCode() {

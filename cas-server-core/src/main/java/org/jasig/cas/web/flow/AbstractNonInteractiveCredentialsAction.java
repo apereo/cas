@@ -34,18 +34,18 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Abstract class to handle the retrieval and authentication of non-interactive
  * credentials such as client certificates, NTLM, etc.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0.4
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends
     AbstractAction {
-    
+
     /** Instance of CentralAuthenticationService. */
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     protected final boolean isRenewPresent(final RequestContext context) {
         return StringUtils.hasText(context.getRequestParameters().get("renew"));
     }
@@ -56,7 +56,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
         if (credentials == null) {
             return error();
         }
-        
+
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
 
@@ -93,7 +93,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
             return error();
         }
     }
-    
+
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
@@ -102,7 +102,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     /**
      * Hook method to allow for additional processing of the response before
      * returning an error event.
-     * 
+     *
      * @param context the context for this specific request.
      * @param credentials the credentials for this request.
      */
@@ -114,7 +114,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     /**
      * Hook method to allow for additional processing of the response before
      * returning a success event.
-     * 
+     *
      * @param context the context for this specific request.
      * @param credentials the credentials for this request.
      */
@@ -126,7 +126,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends
     /**
      * Abstract method to implement to construct the credentials from the
      * request object.
-     * 
+     *
      * @param context the context for this request.
      * @return the constructed credentials or null if none could be constructed
      * from the request.

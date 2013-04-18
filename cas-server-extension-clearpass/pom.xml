@@ -32,7 +32,6 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<ehcache.version>2.6.0</ehcache.version>
 		<cas.client.version>3.2.1</cas.client.version>
 	</properties>
 
@@ -77,14 +76,14 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 			<groupId>org.jasig.cas</groupId>
 			<artifactId>cas-server-core</artifactId>
 			<version>${project.version}</version>
-      <scope>compile</scope>
+            <scope>compile</scope>
 		</dependency>
 		
 		<dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-core</artifactId>
-      <scope>compile</scope>
-	  </dependency>  
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <scope>compile</scope>
+	   </dependency>  
     
 		<dependency>
 			<groupId>org.jasig.cas</groupId>

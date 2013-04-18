@@ -31,7 +31,7 @@
   <dependencies>    
     <dependency>
       <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-core</artifactId>
+      <artifactId>ehcache</artifactId>
     </dependency>   
     <dependency>         
       <groupId>org.jasig.cas</groupId>         

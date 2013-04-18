@@ -30,7 +30,7 @@ public class MemoryStatus extends Status {
 
     /** JVM free memory. */
     private final long freeMemory;
-    
+
     /** JVM total memory. */
     private final long totalMemory;
 

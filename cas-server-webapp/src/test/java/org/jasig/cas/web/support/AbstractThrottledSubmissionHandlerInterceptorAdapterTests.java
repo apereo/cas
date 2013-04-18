@@ -33,7 +33,6 @@ import static org.junit.Assert.assertEquals;
  * Base class for submission throttle tests.
  *
  * @author Marvin S. Addison
- * @version $Revision$ $Date$
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
@@ -45,7 +44,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Before
     public void setUp() throws Exception {
@@ -86,7 +85,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         // Seed with something to compare against
         loginUnsuccessfully("mog", "1.2.3.4").getStatus();
         for (int i = 0; i < trials; i++) {
-            logger.debug("Waiting for {} ms", period);
+            log.debug("Waiting for {} ms", period);
             Thread.sleep(period);
             assertEquals(expected, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
         }

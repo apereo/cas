@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,22 +36,21 @@ import org.springframework.web.servlet.mvc.AbstractController;
  * method is to use the Jasig CAS Client for Java and its proxy authentication features.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 1.0
  */
 public final class ClearPassController extends AbstractController {
 
-    private final static Logger log = LoggerFactory.getLogger(ClearPassController.class);
-    
-	// view if clearpass request fails
+    private static final Logger log = LoggerFactory.getLogger(ClearPassController.class);
+
+    // view if clearpass request fails
     private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
 
     // view if clearpass request succeeds
     private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
-    
+
     // key under which clearpass will be placed into the model
     private static final String MODEL_CLEARPASS = "credentials";
-    
+
     // key under which failure descriptions are placed into the model
     private static final String MODEL_FAILURE_DESCRIPTION = "description";
 
@@ -59,7 +59,7 @@ public final class ClearPassController extends AbstractController {
 
     @NotNull
     private String failureView = DEFAULT_SERVICE_FAILURE_VIEW_NAME;
-    
+
     @NotNull
     private final Map<String, String> credentialsCache;
 
@@ -67,30 +67,41 @@ public final class ClearPassController extends AbstractController {
         this.credentialsCache = credentialsCache;
     }
 
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    @Override
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
+            final HttpServletResponse response) throws Exception {
         final String userName = request.getRemoteUser();
 
-        log.debug("Handling clearPass request for user " + userName);
+        log.debug("Handling clearPass request for user [{}]", userName);
 
-        if (userName != null) {
-            final String password = this.credentialsCache.get(userName);
-            return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
+        if (StringUtils.isBlank(userName)) {
+            return returnError("No username was provided to clearPass.");
         }
 
-        return returnError("No authentication information provided.");
+        if (!this.credentialsCache.containsKey(userName)) {
+            return returnError("Password could not be found in cache for user " + userName);
+        }
+
+        final String password = this.credentialsCache.get(userName);
+        if (StringUtils.isBlank(password)) {
+            return returnError("Password is null or blank");
+        }
+
+        log.debug("Retrieved credentials will be provided to the requesting service.");
+        return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
     }
-    
-    protected ModelAndView returnError(String description) {
-        ModelAndView mv=new ModelAndView(this.failureView);
+
+    protected ModelAndView returnError(final String description) {
+        final ModelAndView mv = new ModelAndView(this.failureView);
         mv.addObject(MODEL_FAILURE_DESCRIPTION, description);
-        return(mv);
+        return mv;
     }
 
     public void setSuccessView(final String successView) {
-		this.successView = successView;
-	}
+        this.successView = successView;
+    }
 
-	public void setFailureView(final String failureView) {
-		this.failureView = failureView;
-	}
+    public void setFailureView(final String failureView) {
+        this.failureView = failureView;
+    }
 }

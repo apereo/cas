@@ -24,16 +24,16 @@ import org.jasig.cas.authentication.principal.Credentials;
  * The AuthenticationManager class is the entity that determines the
  * authenticity of the credentials provided. It (or a class it delegates to) is
  * the sole authority on whether credentials are valid or not.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.
  * </p>
  */
 public interface AuthenticationManager {
-    
+
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
 
     /**
@@ -43,7 +43,7 @@ public interface AuthenticationManager {
      * attributes, but specifics are left to the individual implementations to
      * determine. Failure to authenticate is considered an exceptional case, and
      * an AuthenticationException is thrown.
-     * 
+     *
      * @param credentials The credentials provided for authentication.
      *
      * @return fully populated Authentication object.

@@ -18,43 +18,48 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision: 39552 $ $Date: 2007-01-22 15:35:37 -0500 (Mon, 22 Jan 2007) $
  * @since 3.0
  */
-public final class BadPasswordAuthenticationExceptionTests extends TestCase {
-    
+public final class BadPasswordAuthenticationExceptionTests  {
+
     private static final String CODE = "error.authentication.credentials.bad.usernameorpassword.password";
 
+    @Test
     public void testGetCode() {
         AuthenticationException e = new BadPasswordAuthenticationException();
         assertEquals(CODE, e.getCode());
         assertEquals(CODE, e.toString());
     }
-    
+
+    @Test
     public void testThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final BadPasswordAuthenticationException e = new BadPasswordAuthenticationException(r);
-        
+
         assertEquals(CODE, e.getCode());
         assertEquals(r, e.getCause());
     }
-    
+
+    @Test
     public void testCodeConstructor() {
         final String MESSAGE = "GG";
         final BadPasswordAuthenticationException e = new BadPasswordAuthenticationException(MESSAGE);
-        
+
         assertEquals(MESSAGE, e.getCode());
     }
-    
+
+    @Test
     public void testThrowableConstructorWithCode() {
         final String MESSAGE = "GG";
         final RuntimeException r = new RuntimeException();
         final BadPasswordAuthenticationException e = new BadPasswordAuthenticationException(MESSAGE, r);
-        
+
         assertEquals(MESSAGE, e.getCode());
         assertEquals(r, e.getCause());
     }

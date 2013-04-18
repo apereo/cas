@@ -48,9 +48,9 @@ import org.springframework.util.Assert;
  * java.naming.provider.url="ldap://ldapserver.my.edu:389/dc=my,dc=edu"<br />
  * java.naming.security.principal="uid=jaasauth,dc=my,dc=edu"<br />
  * java.naming.security.credentials="password" Attribute="uid" startTLS="true"; };<br />
- * 
+ *
  * @author <a href="mailto:dotmatt@uconn.edu">Matthew J. Smith</a>
- * @version $Revision$ $Date$
+
  * @since 3.0.5
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
@@ -65,9 +65,10 @@ public class JaasAuthenticationHandler extends
     /** The realm that contains the login module information. */
     @NotNull
     private String realm = DEFAULT_REALM;
-    
+
     public JaasAuthenticationHandler() {
-        Assert.notNull(Configuration.getConfiguration(), "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+        Assert.notNull(Configuration.getConfiguration(),
+                "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     protected final boolean authenticateUsernamePasswordInternal(
@@ -77,10 +78,7 @@ public class JaasAuthenticationHandler extends
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Attempting authentication for: "
-                    + transformedUsername);
-            }
+            log.debug("Attempting authentication for: {}", transformedUsername);
             final LoginContext lc = new LoginContext(this.realm,
                 new UsernamePasswordCallbackHandler(transformedUsername,
                     credentials.getPassword()));
@@ -88,17 +86,11 @@ public class JaasAuthenticationHandler extends
             lc.login();
             lc.logout();
         } catch (final LoginException fle) {
-            if (log.isDebugEnabled()) {
-                log.debug("Authentication failed for: "
-                    + transformedUsername);
-            }
+            log.debug("Authentication failed for: {}", transformedUsername);
             return false;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Authentication succeeded for: "
-                + transformedUsername);
-        }
+        log.debug("Authentication succeeded for: {}", transformedUsername);
         return true;
     }
 
@@ -122,7 +114,7 @@ public class JaasAuthenticationHandler extends
 
         /**
          * Constuctor accepts name and password to be used for authentication.
-         * 
+         *
          * @param userName name to be used for authentication
          * @param password Password to be used for authentication
          */
@@ -135,7 +127,7 @@ public class JaasAuthenticationHandler extends
 
         public void handle(final Callback[] callbacks)
             throws UnsupportedCallbackException {
-            for (final Callback callback : callbacks ) {
+            for (final Callback callback : callbacks) {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);
                 } else if (callback.getClass().equals(PasswordCallback.class)) {

@@ -18,33 +18,35 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public class UnsupportedCredentialsExceptionTests extends TestCase {
-    
+public class UnsupportedCredentialsExceptionTests {
+
     private static final String CODE = "error.authentication.credentials.unsupported";
 
+    @Test
     public void testNoParamConstructor() {
         new UnsupportedCredentialsException();
     }
 
+    @Test
     public void testGetCode() {
         assertEquals(CODE,
             new UnsupportedCredentialsException().getCode());
     }
-    
+
+    @Test
     public void testThrowableConstructor() {
         final RuntimeException r = new RuntimeException();
         final UnsupportedCredentialsException e = new UnsupportedCredentialsException(r);
-        
         assertEquals(CODE, e.getCode());
         assertEquals(r, e.getCause());
     }
-    
-    
 }
