@@ -41,4 +41,8 @@
 			<artifactId>spring-jdbc</artifactId>
 		</dependency>
 	</dependencies>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 </project>
