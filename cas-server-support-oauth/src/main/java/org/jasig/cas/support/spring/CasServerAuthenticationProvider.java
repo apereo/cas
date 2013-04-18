@@ -7,8 +7,6 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,9 +16,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 public class CasServerAuthenticationProvider implements AuthenticationProvider {
-    
-    @NotNull
-    final Logger log = LoggerFactory.getLogger(CasServerAuthenticationProvider.class);
     
     @NotNull
     private AuthenticationManager casAuthenticationManager;
@@ -57,7 +52,6 @@ public class CasServerAuthenticationProvider implements AuthenticationProvider {
         Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority("ROLE_CAS_USER"));
         
-        // TODO 
         return new UsernamePasswordAuthenticationToken(result.getPrincipal(), authentication.getCredentials(), authorities);
     }
 
