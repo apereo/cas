@@ -82,6 +82,7 @@
 
     <properties>
         <restlet.version>2.1.0</restlet.version>
+        <cs.dir>${project.parent.basedir}</cs.dir>
     </properties>
 
 </project>

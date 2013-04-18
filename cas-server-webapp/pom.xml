@@ -167,4 +167,8 @@
       </plugin>
     </plugins>
   </build>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 </project>
