@@ -65,5 +65,6 @@
 
 	<properties>
 		<pac4j.version>1.4.0-SNAPSHOT</pac4j.version>
-	</properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 </project>
