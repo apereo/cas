@@ -33,6 +33,7 @@
 
 	<properties>
 		<cas.client.version>3.2.1</cas.client.version>
+    <cs.dir>${project.parent.basedir}</cs.dir>
 	</properties>
 
 	<build>
