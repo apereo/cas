@@ -70,4 +70,8 @@
           <url>http://coova-dev.s3.amazonaws.com/mvn</url>
         </repository>
   </repositories>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 </project>

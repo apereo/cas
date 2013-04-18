@@ -238,8 +238,8 @@
             <version>2.10</version>
             <configuration>
                 <consoleOutput>true</consoleOutput>
-                <configLocation>/checkstyle-rules.xml</configLocation>
-                <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                <configLocation>${cs.dir}/checkstyle-rules.xml</configLocation>
+                <suppressionsLocation>${cs.dir}/checkstyle-suppressions.xml</suppressionsLocation>
                 <failsOnError>true</failsOnError>
             </configuration>
             <executions>
@@ -947,6 +947,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
   </profiles>
   
   <properties>
+    <cs.dir>${project.basedir}</cs.dir>
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
     <spring.version>3.2.2.RELEASE</spring.version>
