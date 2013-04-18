@@ -72,4 +72,8 @@
 			<url>http://repository.jboss.org/nexus/content/repositories/deprecated</url>
 		</repository>
 	</repositories>
+
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 </project>
