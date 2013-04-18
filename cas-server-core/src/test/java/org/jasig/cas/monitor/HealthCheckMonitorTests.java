@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.monitor;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +67,24 @@ public class HealthCheckMonitorTests {
         this.monitor.setMonitors(monitors);
         assertEquals(StatusCode.WARN, this.monitor.observe().getCode());
     }
-    
+
+    @Test
+    public void testThrowsUncheckedException() throws Exception {
+        final Monitor throwsUnchecked = new Monitor() {
+            @Override
+            public String getName() {
+                return "ThrowsUnchecked";
+            }
+
+            @Override
+            public Status observe() {
+                throw new IllegalStateException("Boogity!");
+            }
+        };
+        this.monitor.setMonitors(Collections.singleton(throwsUnchecked));
+        assertEquals(StatusCode.ERROR, this.monitor.observe().getCode());
+    }
+
     private SessionMonitor newSessionMonitor() {
         final SessionMonitor sessionMonitor = new SessionMonitor();
         sessionMonitor.setTicketRegistry(new DefaultTicketRegistry());

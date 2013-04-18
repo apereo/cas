@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
  * Unit test for {@link MultiTimeUseOrTimeoutExpirationPolicySerializer} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public class MultiTimeUseOrTimeoutExpirationPolicySerializerTests {
     @Test
@@ -41,7 +40,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicySerializerTests {
         final MultiTimeUseOrTimeoutExpirationPolicy expected = new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000);
         final MultiTimeUseOrTimeoutExpirationPolicySerializer serialzer =
                 new MultiTimeUseOrTimeoutExpirationPolicySerializer(new FieldHelper());
-       
+
         final ByteBuffer buffer = ByteBuffer.allocate(128);
         serialzer.write(buffer, expected);
         buffer.flip();

@@ -24,25 +24,22 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 import com.esotericsoftware.kryo.Kryo;
-import org.jasig.cas.authentication.principal.GoogleAccountsService;
+import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
 /**
  * Serializer for {@link GoogleAccountsService}.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 public final class GoogleAccountsServiceSerializer extends AbstractWebApplicationServiceSerializer<GoogleAccountsService> {
 
     private static final Constructor CONSTRUCTOR;
 
     private final PrivateKey privateKey;
-    
     private final PublicKey publicKey;
-    
     private final String alternateUsername;
-            
+
     static {
         try {
             CONSTRUCTOR = GoogleAccountsService.class.getDeclaredConstructor(

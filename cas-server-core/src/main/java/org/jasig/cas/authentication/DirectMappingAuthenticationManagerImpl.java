@@ -30,9 +30,9 @@ import org.jasig.cas.authentication.principal.Principal;
 /**
  * Authentication Manager that provides a direct mapping between credentials
  * provided and the authentication handler used to authenticate the user.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+ * @author Marvin S. Addison
  * @since 3.1
  */
 public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthenticationManager {
@@ -83,7 +83,10 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
         final Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping) {
         this.credentialsMapping = credentialsMapping;
     }
-    
+
+    /**
+     * Holder for authentication mappings that links credentials and handlers.
+     */
     public static final class DirectAuthenticationHandlerMappingHolder {
 
         private AuthenticationHandler authenticationHandler;

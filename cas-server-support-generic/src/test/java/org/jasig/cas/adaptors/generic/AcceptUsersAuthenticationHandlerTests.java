@@ -18,26 +18,26 @@
  */
 package org.jasig.cas.adaptors.generic;
 
+import static org.junit.Assert.*;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.jasig.cas.authentication.principal.HttpBasedServiceCredentials;
 import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  */
-public class AcceptUsersAuthenticationHandlerTests extends TestCase {
+public class AcceptUsersAuthenticationHandlerTests  {
 
-    final private Map<String, String> users;
+    private final Map<String, String> users;
 
-    final private AcceptUsersAuthenticationHandler authenticationHandler;
+    private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() throws Exception {
         this.users = new HashMap<String, String>();
@@ -51,7 +51,8 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
 
         this.authenticationHandler.setUsers(this.users);
     }
-    
+
+    @Test
     public void testSupportsSpecialCharacters() throws Exception {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
         c.setUsername("brian");
@@ -60,6 +61,7 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
 
     }
 
+    @Test
     public void testSupportsProperUserCredentials() throws Exception {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -68,6 +70,7 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
         this.authenticationHandler.authenticate(c);
     }
 
+    @Test
     public void testDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
@@ -78,6 +81,7 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
         }
     }
 
+    @Test
     public void testAuthenticatesUserInMap() {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
@@ -91,55 +95,43 @@ public class AcceptUsersAuthenticationHandlerTests extends TestCase {
         }
     }
 
-    public void testFailsUserNotInMap() {
+    @Test
+    public void testFailsUserNotInMap() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername("fds");
         c.setPassword("rutgers");
 
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testFailsNullUserName() {
+    @Test
+    public void testFailsNullUserName() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername(null);
         c.setPassword("user");
 
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testFailsNullUserNameAndPassword() {
+    @Test
+    public void testFailsNullUserNameAndPassword() throws AuthenticationException {
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername(null);
         c.setPassword(null);
 
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 
-    public void testFailsNullPassword() {
+    @Test
+    public void testFailsNullPassword() throws AuthenticationException{
         final UsernamePasswordCredentials c = new UsernamePasswordCredentials();
 
         c.setUsername("scott");
         c.setPassword(null);
 
-        try {
-            assertFalse(this.authenticationHandler.authenticate(c));
-        } catch (AuthenticationException e) {
-            // this is okay because it means the test failed.
-        }
+        assertFalse(this.authenticationHandler.authenticate(c));
     }
 }

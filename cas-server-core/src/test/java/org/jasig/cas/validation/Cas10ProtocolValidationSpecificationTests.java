@@ -18,38 +18,42 @@
  */
 package org.jasig.cas.validation;
 
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.validation.Cas10ProtocolValidationSpecification;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
-public class Cas10ProtocolValidationSpecificationTests extends TestCase {
+public class Cas10ProtocolValidationSpecificationTests {
 
+    @Test
     public void testRenewGettersAndSettersFalse() {
         Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(false);
         assertFalse(s.isRenew());
     }
 
+    @Test
     public void testRenewGettersAndSettersTrue() {
         Cas10ProtocolValidationSpecification s = new Cas10ProtocolValidationSpecification();
         s.setRenew(true);
         assertTrue(s.isRenew());
     }
 
+    @Test
     public void testRenewAsTrueAsConstructor() {
         assertTrue(new Cas10ProtocolValidationSpecification(true).isRenew());
     }
 
+    @Test
     public void testRenewAsFalseAsConstructor() {
         assertFalse(new Cas10ProtocolValidationSpecification(false).isRenew());
     }
 
+    @Test
     public void testSatisfiesSpecOfTrue() {
         assertTrue(new Cas10ProtocolValidationSpecification(true)
             .isSatisfiedBy(TestUtils.getAssertion(true)));

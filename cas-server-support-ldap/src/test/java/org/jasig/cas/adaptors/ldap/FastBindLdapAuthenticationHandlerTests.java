@@ -27,7 +27,6 @@ import static org.junit.Assert.*;
  * Unit test for {@link FastBindLdapAuthenticationHandler} class.
  *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  *
  */

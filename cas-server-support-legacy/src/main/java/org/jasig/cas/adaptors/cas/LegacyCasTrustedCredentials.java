@@ -25,9 +25,8 @@ import org.jasig.cas.authentication.principal.Credentials;
 /**
  * Credentials class that maps to the paramters required by the Legacy CAS
  * password handler.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public final class LegacyCasTrustedCredentials implements Credentials {

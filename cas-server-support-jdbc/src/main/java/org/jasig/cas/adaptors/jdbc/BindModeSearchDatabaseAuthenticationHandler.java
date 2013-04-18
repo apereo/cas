@@ -30,24 +30,24 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * database with the provided username and password. Servers are provided as a
  * Properties class with the key being the URL and the property being the type
  * of database driver needed.
- * 
+ *
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko
- * @version $Revision$ $Date$
  * @since 3.0
  */
 public class BindModeSearchDatabaseAuthenticationHandler extends
-    AbstractJdbcUsernamePasswordAuthenticationHandler {
+AbstractJdbcUsernamePasswordAuthenticationHandler {
 
+    @Override
     protected final boolean authenticateUsernamePasswordInternal(
-        final UsernamePasswordCredentials credentials)
-        throws AuthenticationException {
+            final UsernamePasswordCredentials credentials)
+                    throws AuthenticationException {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
 
         try {
             final Connection c = this.getDataSource()
-                .getConnection(username, password);
+                    .getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this.getDataSource());
             return true;
         } catch (final SQLException e) {

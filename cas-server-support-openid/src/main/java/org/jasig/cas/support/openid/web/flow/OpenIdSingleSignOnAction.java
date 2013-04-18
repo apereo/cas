@@ -36,16 +36,15 @@ import javax.validation.constraints.NotNull;
  * Principal of the existing session matches the new Principal. Note that care
  * should be taken when using credentials that are automatically provided and
  * not entered by the user.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision: 1.1 $ $Date: 2005/08/19 18:27:17 $
  * @since 3.1
  */
 public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     @NotNull
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
-    
+
     public void setExtractor(final OpenIdUserNameExtractor extractor) {
         this.extractor = extractor;
     }
@@ -54,22 +53,22 @@ public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCreden
     protected Credentials constructCredentialsFromRequest(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final String userName = this.extractor
-            .extractLocalUsernameFromUri(context.getRequestParameters()
-                .get("openid.identity"));
+                .extractLocalUsernameFromUri(context.getRequestParameters()
+                        .get("openid.identity"));
         final Service service = WebUtils.getService(context);
-        
+
         context.getExternalContext().getSessionMap().put("openIdLocalId", userName);
-        
+
         // clear the service because otherwise we can fake the username
         if (service instanceof OpenIdService && userName == null) {
             context.getFlowScope().remove("service");
         }
-        
+
         if (ticketGrantingTicketId == null || userName == null) {
             return null;
         }
-        
+
         return new OpenIdCredentials(
-            ticketGrantingTicketId, userName);
+                ticketGrantingTicketId, userName);
     }
 }

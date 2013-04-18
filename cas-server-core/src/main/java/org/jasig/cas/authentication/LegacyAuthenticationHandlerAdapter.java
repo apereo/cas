@@ -28,8 +28,8 @@ import org.jasig.cas.authentication.principal.Credentials;
  * Adapts a CAS 3.x {@link org.jasig.cas.authentication.handler.AuthenticationHandler} onto a CAS 4.x
  * {@link AuthenticationHandler}.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author Marvin S. Addison
+ * @since 4.0
  */
 public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler {
 

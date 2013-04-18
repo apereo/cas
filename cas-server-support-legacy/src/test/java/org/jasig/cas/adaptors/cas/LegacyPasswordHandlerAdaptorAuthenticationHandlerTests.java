@@ -19,33 +19,29 @@
 
 package org.jasig.cas.adaptors.cas;
 
+import static org.junit.Assert.*;
+
 import javax.servlet.ServletRequest;
 
 import org.jasig.cas.adaptors.cas.mock.MockPasswordHandler;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import junit.framework.TestCase;
 
 /**
  * Testcase for LegacyPasswordHandlerAdaptorAuthenticationHandler.
- * 
- * @version $Revision$ $Date$
  */
-public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
-    TestCase {
+public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests {
 
     private LegacyPasswordHandlerAdaptorAuthenticationHandler lphaah;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
         this.lphaah = new LegacyPasswordHandlerAdaptorAuthenticationHandler();
         this.lphaah.setPasswordHandler(new MockPasswordHandler());
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    @Test
     public void testSupports() {
         assertFalse(this.lphaah.supports(null));
         assertTrue(this.lphaah.supports(new LegacyCasCredentials()));
@@ -55,13 +51,14 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
     /**
      * Test that throws UnsupportedCredentialsException for a known unsupported
      * credential.
-     * 
      * @throws AuthenticationException as a failure modality
      */
+    @Test
     public void testAuthenticateUnsupported() {
         this.lphaah.supports(new LegacyCasTrustedCredentials());
     }
 
+    @Test
     public void testAuthenticateSuccess() {
         // configure the PasswordHandler.
         MockPasswordHandler mockHandler = new MockPasswordHandler();
@@ -80,9 +77,9 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         assertEquals("testUser", mockHandler.getUsername());
         assertEquals("testPassword", mockHandler.getPassword());
         assertSame(servletRequest, mockHandler.getRequest());
-
     }
 
+    @Test
     public void testAuthenticateFailure() {
         // configure the PasswordHandler.
         MockPasswordHandler mockHandler = new MockPasswordHandler();
@@ -101,7 +98,5 @@ public class LegacyPasswordHandlerAdaptorAuthenticationHandlerTests extends
         assertEquals("testUser", mockHandler.getUsername());
         assertEquals("testPassword", mockHandler.getPassword());
         assertSame(servletRequest, mockHandler.getRequest());
-
     }
-
 }

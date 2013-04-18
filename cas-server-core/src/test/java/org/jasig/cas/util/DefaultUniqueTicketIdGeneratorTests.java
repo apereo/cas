@@ -18,15 +18,18 @@
  */
 package org.jasig.cas.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  */
-public class DefaultUniqueTicketIdGeneratorTests extends TestCase {
+public class DefaultUniqueTicketIdGeneratorTests {
 
+    @Test
     public void testUniqueGenerationOfTicketIds() {
         DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
             10);
@@ -34,11 +37,12 @@ public class DefaultUniqueTicketIdGeneratorTests extends TestCase {
         assertNotSame(generator.getNewTicketId("TEST"), generator
             .getNewTicketId("TEST"));
     }
-    
+
+    @Test
     public void testSuffix() {
         final String SUFFIX = "suffix";
         DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
-        
+
         assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
     }
 }

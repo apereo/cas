@@ -22,16 +22,16 @@ import java.security.cert.X509Certificate;
 
 /**
  * Returns a new principal based on the Sereial Number of the certificate.
- * 
+ *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @since 3.0.4
  */
 public final class X509CertificateCredentialsToSerialNumberPrincipalResolver
-    extends AbstractX509CertificateCredentialsToPrincipalResolver {
+extends AbstractX509CertificateCredentialsToPrincipalResolver {
 
+    @Override
     protected String resolvePrincipalInternal(
-        final X509Certificate certificate) {
+            final X509Certificate certificate) {
         return certificate.getSerialNumber().toString();
     }
 }

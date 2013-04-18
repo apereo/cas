@@ -35,11 +35,11 @@ import org.jasig.cas.validation.Assertion;
  * theory, a standalone application could call these methods directly as a
  * private authentication service.
  * </p>
- * 
+ *
  * @author William G. Thompson, Jr.
  * @author Dmitry Kopylenko
  * @author Scott Battaglia
- * @version $Revision$ $Date$
+
  * @since 3.0
  * <p>
  * This is a published and supported CAS Server 3 API.
@@ -50,7 +50,7 @@ public interface CentralAuthenticationService {
     /**
      * Create a TicketGrantingTicket based on opaque credentials supplied by the
      * caller.
-     * 
+     *
      * @param credentials The credentials to create the ticket for
      * @return The String identifier of the ticket (may not be null).
      * @throws AuthenticationException on errors authenticating the credentials
@@ -61,7 +61,7 @@ public interface CentralAuthenticationService {
 
     /**
      * Grant a ServiceTicket for a Service.
-     * 
+     *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
      * @return the ServiceTicket for target Service.
@@ -74,7 +74,6 @@ public interface CentralAuthenticationService {
      * Grant a ServiceTicket for a Service *if* the principal resolved from the
      * credentials matches the principal associated with the
      * TicketGrantingTicket.
-     * 
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service The target service of the ServiceTicket.
@@ -90,7 +89,7 @@ public interface CentralAuthenticationService {
 
     /**
      * Validate a ServiceTicket for a particular Service.
-     * 
+     *
      * @param serviceTicketId Proof of prior authentication.
      * @param service Service wishing to validate a prior authentication.
      * @return ServiceTicket if valid for the service
@@ -102,7 +101,7 @@ public interface CentralAuthenticationService {
     /**
      * Destroy a TicketGrantingTicket. This has the effect of invalidating any
      * Ticket that was derived from the TicketGrantingTicket being destroyed.
-     * 
+     *
      * @param ticketGrantingTicketId the id of the ticket we want to destroy
      */
     void destroyTicketGrantingTicket(final String ticketGrantingTicketId);
@@ -110,7 +109,7 @@ public interface CentralAuthenticationService {
     /**
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
      * to other Services.
-     * 
+     *
      * @param serviceTicketId The service ticket that will delegate to a
      * TicketGrantingTicket
      * @param credentials The credentials of the service that wishes to have a

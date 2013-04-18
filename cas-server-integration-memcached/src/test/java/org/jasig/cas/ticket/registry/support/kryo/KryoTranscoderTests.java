@@ -39,13 +39,12 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link KryoTranscoder} class.
  *
  * @author Marvin S. Addison
- * @version $Revision: $
  */
 @RunWith(Parameterized.class)
 public class KryoTranscoderTests {
 
     private final KryoTranscoder transcoder;
-    
+
     public KryoTranscoderTests(final int bufferSize) {
         transcoder = new KryoTranscoder(bufferSize);
         transcoder.setSerializerMap(Collections.<Class<?>, Serializer>singletonMap(
@@ -72,7 +71,7 @@ public class KryoTranscoderTests {
                 new MockServiceTicket("ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK");
         assertEquals(expected, transcoder.decode(transcoder.encode(expected)));
     }
-    
+
     static class MockServiceTicket implements ServiceTicket {
         private String id;
 
@@ -90,11 +89,12 @@ public class KryoTranscoderTests {
             return false;
         }
 
-        public boolean isValidFor(Service service) {
+        public boolean isValidFor(final Service service) {
             return false;
         }
 
-        public TicketGrantingTicket grantTicketGrantingTicket(String id, Authentication authentication, ExpirationPolicy expirationPolicy) {
+        public TicketGrantingTicket grantTicketGrantingTicket(final String id, final Authentication authentication,
+                final ExpirationPolicy expirationPolicy) {
             return null;
         }
 
@@ -117,7 +117,7 @@ public class KryoTranscoderTests {
         public int getCountOfUses() {
             return 0;
         }
-        
+
         public boolean equals(final Object other) {
             return other instanceof MockServiceTicket && ((MockServiceTicket) other).getId().equals(id);
         }
