@@ -68,6 +68,26 @@ public class DefaultServicesManagerImplTests  {
     }
 
     @Test
+    public void testMultiServicesBySameName() {
+        RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(666);
+        r.setName("testServiceName");
+        r.setServiceId("testServiceA");
+
+        this.defaultServicesManagerImpl.save(r);
+
+        r = new RegisteredServiceImpl();
+        r.setId(999);
+        r.setName("testServiceName");
+        r.setServiceId("testServiceB");
+
+        this.defaultServicesManagerImpl.save(r);
+
+        /** Added 2 above, plus another that is added during @Setup **/
+        assertEquals(3, this.defaultServicesManagerImpl.getAllServices().size());
+    }
+
+    @Test
     public void testSaveWithReturnedPersistedInstance() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1000L);
