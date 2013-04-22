@@ -38,6 +38,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.RequiresHttpAction;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.ProfileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
@@ -103,6 +104,7 @@ public final class ClientAction extends AbstractAction {
             final Clients theClients) {
         this.centralAuthenticationService = theCentralAuthenticationService;
         this.clients = theClients;
+        ProfileHelper.setKeepRawData(true);
     }
 
     /**

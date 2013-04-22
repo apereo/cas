@@ -28,7 +28,7 @@ import org.jasig.cas.authentication.principal.CredentialsToPrincipalResolver;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class ClientCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
+public class ClientCredentialsToPrincipalResolver extends AbstractPersonDirectoryCredentialsToPrincipalResolver
         implements CredentialsToPrincipalResolver {
 
     /**
