@@ -71,9 +71,6 @@
 		<entry
 			key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
 			value-ref="serviceTicketUniqueIdGenerator" />
-        <entry
-            key="org.jasig.cas.support.openid.authentication.principal.OpenIdService"
-            value-ref="serviceTicketUniqueIdGenerator" />
 	</util:map>
 
 </beans>
