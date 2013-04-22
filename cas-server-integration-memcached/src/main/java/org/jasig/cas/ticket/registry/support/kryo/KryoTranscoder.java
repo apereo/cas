@@ -34,7 +34,6 @@ import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.MutableAuthentication;
-import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ServiceTicketImpl;
@@ -43,7 +42,6 @@ import org.jasig.cas.ticket.registry.support.kryo.serial.HardTimeoutExpirationPo
 import org.jasig.cas.ticket.registry.support.kryo.serial.ImmutableAuthenticationSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.MultiTimeUseOrTimeoutExpirationPolicySerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.MutableAuthenticationSerializer;
-import org.jasig.cas.ticket.registry.support.kryo.serial.SamlServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimplePrincipalSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.TimeoutExpirationPolicySerializer;
@@ -118,11 +116,6 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(
                 RememberMeDelegatingExpirationPolicy.class,
                 new FieldSerializer(kryo, RememberMeDelegatingExpirationPolicy.class));
-        try {
-            kryo.register(SamlService.class, new SamlServiceSerializer(kryo, fieldHelper));
-        } catch (NoClassDefFoundError e) {
-            log.warn("SAML serialization won't be supported by Kryo : please check that the cas-server-support-saml module is in the classpath if necessary");
-        }
         kryo.register(ServiceTicketImpl.class);
         kryo.register(SimplePrincipal.class, new SimplePrincipalSerializer(kryo));
         kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer(kryo));
