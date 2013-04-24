@@ -32,11 +32,29 @@
         propertySeparator="," />
         -->
 
-        <!-- Manual Peer Discovery -->
+        <!--
+            Manual Peer Discovery:
+
+            Note: The list of peers should never include the current node. Ticket activity from
+            the current node must always be broadcasted to all other nodes.
+        -->
         <cacheManagerPeerProviderFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
             properties="peerDiscovery=manual,rmiUrls=//localhost:41001/org.jasig.cas.ticket.ServiceTicket|//localhost:41001/org.jasig.cas.ticket.TicketGrantingTicket" />
+
+        <!--
+            socketTimeoutMillis:
+            The number of seconds client sockets will wait when sending messages
+            to this listener until they give up. By default this is 2000ms.
+
+            port:
+            The port the listener listens on.
+
+            remoteObjectPort:
+            The port number on which the remote objects bound in the registry receive calls. This defaults to a
+            free port if not specified. Should be an unused port in the range 1025 - 65536
+        -->
         <cacheManagerPeerListenerFactory
             class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
-            properties="port=41001,remoteObjectPort=41002" />
+            properties="port=41001,remoteObjectPort=41002,socketTimeoutMillis=2000" />
 </ehcache>
