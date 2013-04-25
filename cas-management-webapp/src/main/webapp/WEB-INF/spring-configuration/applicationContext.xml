@@ -29,14 +29,19 @@
         modify this unless you know what you're doing!
     </description>
 
-    <!-- Message source for this context, loaded from localized "messages_xx" files.
+    <!-- 
+        Message source for this context, loaded from localized "messages_xx" files.
+        
     	Disable the fallback mechanism to the system/JVM locale. By turning off this behavior, CAS
     	will be able to revert back to the default language bundle that is "messages.properties"
     	and will not rely on the JVM default locale which introduces the side effect of rendering
     	the UI in the JVM locale by default.
+      
+        Also, explicitly set the default encoding to be UTF-8 when parsing message bundles.
+        The default, if not set, is none which forces ISO-8859-1 of java.util.ResourceBundle.
     -->
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
-          p:basename="messages" p:fallbackToSystemLocale="false" />
+          p:basename="messages" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8" />
 
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl">
         <constructor-arg index="0" ref="serviceRegistryDao"/>
