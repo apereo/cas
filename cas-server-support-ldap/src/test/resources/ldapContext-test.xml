@@ -27,7 +27,7 @@
 
   <!--
   NOTE:
-  Create a ldap.properties file from ldap.properties.sample to customize unit
+  Create a ldaptive.properties file from ldaptive.properties.sample to customize unit
   tests for your environment.
    -->
 

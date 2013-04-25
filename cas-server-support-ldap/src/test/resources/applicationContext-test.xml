@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+  <import resource="file:extraConfigContext.xml" />
+
+  <context:property-placeholder location="file:ldaptive.properties"/>
+
+  <bean id="testCredentials" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+      p:location="file:credentials.properties" />
+
+  <bean id="testPrincipals" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+        p:location="file:principals.properties" />
+
+  <bean id="testUserDetails" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+        p:location="file:userdetails.properties" />
+
+  <bean id="baseConnectionConfig" class="org.ldaptive.ConnectionConfig" abstract="true"
+        p:ldapUrl="${ldap.url}"
+        p:connectTimeout="${ldap.connectTimeout}"
+        p:useStartTLS="${ldap.useStartTLS}" />
+
+  <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+        p:minPoolSize="${ldap.pool.minSize}"
+        p:maxPoolSize="${ldap.pool.maxSize}"
+        p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+        p:validatePeriodically="${ldap.pool.validatePeriodically}"
+        p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+  <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+        p:prunePeriod="${ldap.pool.prunePeriod}"
+        p:idleTime="${ldap.pool.idleTime}" />
+
+  <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+  <bean id="baseConnectionPool" class="org.ldaptive.pool.BlockingConnectionPool" abstract="true"
+        init-method="initialize"
+        p:poolConfig-ref="ldapPoolConfig"
+        p:blockWaitTime="${ldap.pool.blockWaitTime}"
+        p:validator-ref="searchValidator"
+        p:pruneStrategy-ref="pruneStrategy"/>
+
+
+  <!--
+    ================================================
+    LDAP authentication beans
+    ================================================
+  -->
+  <bean id="authnConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+        p:connectionConfig-ref="authnConnectionConfig" />
+
+  <bean id="authnConnectionPool" parent="baseConnectionPool"
+        p:connectionFactory-ref="authnConnectionFactory" />
+
+  <bean id="authnPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+        p:connectionPool-ref="authnConnectionPool" />
+
+  <bean id="authenticator" class="org.ldaptive.auth.Authenticator">
+    <!-- Define the strategy for resolving DNs from the CAS username. -->
+    <constructor-arg>
+      <bean class="org.ldaptive.auth.PooledSearchDnResolver"
+            p:baseDn="${ldap.authn.baseDn}"
+            p:allowMultipleDns="false"
+            p:connectionFactory-ref="authnPooledLdapConnectionFactory"
+            p:userFilter="${ldap.authn.searchFilter}" />
+    </constructor-arg>
+
+    <!-- Define the source of LDAP connections used for authentication. -->
+    <constructor-arg>
+      <bean class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+            p:connectionFactory-ref="authnPooledLdapConnectionFactory" />
+    </constructor-arg>
+  </bean>
+
+  <!-- TODO:
+     | Define following beans:
+     |  1. Bean of type org.jasig.cas.authentication.LdapAuthenticationHandler
+     |     that sets principalIdAttribute.
+     |  2. Bean named "authnConnectionConfig" that defines additional configuration
+     |     needed for authentication. A common case is setting up a custom trust store.
+  -->
+
+</beans>
