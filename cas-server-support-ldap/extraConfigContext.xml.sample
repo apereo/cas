@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!--
+    Environment-specific configuration required for unit test execution.
+  -->
+
+  <bean id="yourSslConfig" class="org.ldaptive.ssl.SslConfig">
+    <property name="credentialConfig">
+      <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig"
+            p:trustStore="file:/path/to/your/truststore.jks"
+            p:trustStoreType="JKS"
+            p:trustStorePassword="changeit" />
+    </property>
+  </bean>
+
+  <bean id="authnConnectionConfig" parent="baseConnectionConfig"
+        p:sslConfig-ref="yourSslConfig" />
+
+  <bean id="ldapAuthenticationHandler"
+        class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+        p:principalIdAttribute="uid">
+    <constructor-arg ref="authenticator" />
+    <property name="principalAttributeMap">
+      <map>
+        <entry key="member" value="memberOf" />
+        <entry key="eduPersonAffiliation" value="affiliation" />
+      </map>
+    </property>
+  </bean>
+</beans>
