@@ -1,3 +1,21 @@
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jasig.cas;
 
 import java.util.HashMap;
@@ -13,6 +31,7 @@ import org.springframework.test.annotation.ProfileValueSource;
  *
  * <ol>
  *     <li>authenticationConfig</li>
+ *     <li>monitorConfig</li>
  * </ol>
  *
  * @author Marvin S. Addison
@@ -29,18 +48,24 @@ public class RequiredConfigurationProfileValueSource implements ProfileValueSour
     public RequiredConfigurationProfileValueSource() {
         final Resource ldaptiveProperties = new FileSystemResource("ldaptive.properties");
         final Resource extraConfig = new FileSystemResource("extraConfigContext.xml");
-        propertyResourceMap.put(
+        this.propertyResourceMap.put(
                 "authenticationConfig",
                 new Resource[] {
                         ldaptiveProperties,
                         new FileSystemResource("credentials.properties"),
                         extraConfig
                 });
+        this.propertyResourceMap.put(
+                "monitorConfig",
+                new Resource[] {
+                        ldaptiveProperties,
+                        extraConfig
+                });
     }
 
     @Override
     public String get(final String s) {
-        final Resource[] resources = propertyResourceMap.get(s);
+        final Resource[] resources = this.propertyResourceMap.get(s);
         String result = FALSE;
         if (resources != null) {
             for (Resource res : resources) {
