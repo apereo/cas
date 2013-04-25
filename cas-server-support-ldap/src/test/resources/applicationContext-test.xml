@@ -10,6 +10,18 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
+  <!--
+     +========================================================================
+     | TODO:
+     |
+     | Define following beans:
+     |  1. Bean of type org.jasig.cas.authentication.LdapAuthenticationHandler
+     |     that sets principalIdAttribute.
+     |  2. Bean named "authnConnectionConfig" that defines additional configuration
+     |     needed for authentication. A common case is setting up a custom trust store.
+     +========================================================================
+  -->
+
   <import resource="file:extraConfigContext.xml" />
 
   <context:property-placeholder location="file:ldaptive.properties"/>
@@ -50,9 +62,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 
   <!--
-    ================================================
-    LDAP authentication beans
-    ================================================
+     +========================================================================
+     | LDAP authentication beans
+     +========================================================================
   -->
   <bean id="authnConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
         p:connectionConfig-ref="authnConnectionConfig" />
@@ -80,12 +92,27 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </constructor-arg>
   </bean>
 
-  <!-- TODO:
-     | Define following beans:
-     |  1. Bean of type org.jasig.cas.authentication.LdapAuthenticationHandler
-     |     that sets principalIdAttribute.
-     |  2. Bean named "authnConnectionConfig" that defines additional configuration
-     |     needed for authentication. A common case is setting up a custom trust store.
-  -->
 
+  <!--
+     +========================================================================
+     | LDAP monitor beans
+     +========================================================================
+  -->
+  <bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor">
+      <constructor-arg ref="authnConnectionFactory" />
+      <constructor-arg ref="searchValidator" />
+  </bean>
+
+  <bean class="org.jasig.cas.monitor.PooledConnectionFactoryMonitor"
+        p:executor-ref="poolMonitorExecutor"
+        p:maxWait="5000">
+    <constructor-arg ref="authnPooledLdapConnectionFactory" />
+    <constructor-arg ref="searchValidator" />
+  </bean>
+
+  <bean id="poolMonitorExecutor"
+        class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
+        p:corePoolSize="1"
+        p:maxPoolSize="1"
+        p:keepAliveSeconds="5" />
 </beans>
