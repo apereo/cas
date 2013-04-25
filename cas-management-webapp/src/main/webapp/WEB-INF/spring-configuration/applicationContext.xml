@@ -40,8 +40,8 @@
         Also, explicitly set the default encoding to be UTF-8 when parsing message bundles.
         The default, if not set, is none which forces ISO-8859-1 of java.util.ResourceBundle.
     -->
-    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
-          p:basename="messages" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8" />
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+          p:basename="classpath:messages" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8" p:cacheSeconds="180" />
 
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl">
         <constructor-arg index="0" ref="serviceRegistryDao"/>
