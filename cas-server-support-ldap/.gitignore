@@ -1,0 +1,5 @@
+credentials.properties
+extraConfigContext.xml
+ldap*.properties
+principals.properties
+userdetails.properties

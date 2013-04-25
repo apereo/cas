@@ -57,6 +57,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.ldap</groupId>
       <artifactId>spring-ldap-core</artifactId>
     </dependency>
@@ -96,7 +102,7 @@
             <!--
             If you enable the bind authentication handler unit tests,
             you need an LDAP infrastructure to test against.
-            Create an ldap.properties file from the ldap.properties.sample
+            Create an ldaptive.properties file from the ldaptive.properties.sample
             template suitable for your environment.
             -->
             <exclude>**/*Bind*Tests.java</exclude>
