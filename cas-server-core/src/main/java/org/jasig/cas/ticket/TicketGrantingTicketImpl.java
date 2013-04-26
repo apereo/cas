@@ -65,7 +65,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
-    private final HashMap<String,Service> services = new HashMap<String, Service>();
+    private final HashMap<String, Service> services = new HashMap<String, Service>();
 
     public TicketGrantingTicketImpl() {
         // nothing to do
@@ -107,6 +107,13 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.authentication;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>The state of the ticket is affected by this operation and the
+     * ticket will be considered used. The state update subsequently may
+     * impact the ticket expiration policy in that, depending on the policy
+     * configuration, the ticket may be considered expired.
+     */
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided) {
@@ -161,7 +168,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return Collections.unmodifiableList(list);
     }
 
-    public final boolean equals(final Object object) {
+    public boolean equals(final Object object) {
         if (object == null
             || !(object instanceof TicketGrantingTicket)) {
             return false;

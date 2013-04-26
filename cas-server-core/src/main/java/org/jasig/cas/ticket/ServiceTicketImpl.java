@@ -94,6 +94,14 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return this.service;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>The state of the ticket is affected by this operation and the
+     * ticket will be considered used regardless of the match result.
+     * The state update subsequently may impact the ticket expiration
+     * policy in that, depending on the policy configuration, the ticket
+     * may be considered expired.
+     */
     public boolean isValidFor(final Service serviceToValidate) {
         updateState();
         return serviceToValidate.matches(this.service);
