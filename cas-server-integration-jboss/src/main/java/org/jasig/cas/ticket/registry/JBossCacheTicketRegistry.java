@@ -108,7 +108,13 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
             final List<Ticket> list = new ArrayList<Ticket>();
 
             for (final String key : keys) {
-                list.add(node.get(key));
+
+                /**  Returns null if the node contains no mapping for this key. **/
+                final Ticket ticket = node.get(key);
+
+                if (ticket != null) {
+                    list.add(node.get(key));
+                }
             }
 
             return list;
