@@ -52,4 +52,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
       </map>
     </property>
   </bean>
+
+  <bean id="userDetailsConnectionConfig" parent="baseConnectionConfig"
+        p:sslConfig-ref="yourSslConfig" />
 </beans>

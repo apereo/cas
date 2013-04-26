@@ -21,6 +21,8 @@ package org.jasig.cas;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.annotation.ProfileValueSource;
@@ -32,12 +34,15 @@ import org.springframework.test.annotation.ProfileValueSource;
  * <ol>
  *     <li>authenticationConfig</li>
  *     <li>monitorConfig</li>
+ *     <li>userDetailsConfig</li>
  * </ol>
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
 public class RequiredConfigurationProfileValueSource implements ProfileValueSource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RequiredConfigurationProfileValueSource.class);
 
     private static final String TRUE = "true";
 
@@ -52,14 +57,21 @@ public class RequiredConfigurationProfileValueSource implements ProfileValueSour
                 "authenticationConfig",
                 new Resource[] {
                         ldaptiveProperties,
-                        new FileSystemResource("credentials.properties"),
-                        extraConfig
+                        extraConfig,
+                        new FileSystemResource("credentials.properties")
                 });
         this.propertyResourceMap.put(
                 "monitorConfig",
                 new Resource[] {
                         ldaptiveProperties,
                         extraConfig
+                });
+        this.propertyResourceMap.put(
+                "userDetailsConfig",
+                new Resource[] {
+                        ldaptiveProperties,
+                        extraConfig,
+                        new FileSystemResource("userdetails.properties")
                 });
     }
 
@@ -69,7 +81,9 @@ public class RequiredConfigurationProfileValueSource implements ProfileValueSour
         String result = FALSE;
         if (resources != null) {
             for (Resource res : resources) {
+                LOG.debug("Checking for {}", res);
                 if (!res.exists()) {
+                    LOG.info("Required configuration resource {} not found", res);
                     return result;
                 }
             }

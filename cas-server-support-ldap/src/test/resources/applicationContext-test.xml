@@ -39,6 +39,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
      |     that sets principalIdAttribute.
      |  2. Bean named "authnConnectionConfig" that defines additional configuration
      |     needed for authentication. A common case is setting up a custom trust store.
+     |  3. Bean named "userDetailsConnectionConfig" that defines additional configuration
+     |     needed for user details searches. A common case is setting up a custom trust store.
      +========================================================================
   -->
 
@@ -135,4 +137,55 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         p:corePoolSize="1"
         p:maxPoolSize="1"
         p:keepAliveSeconds="5" />
+
+  <!--
+     +========================================================================
+     | LDAP user details beans
+     +========================================================================
+  -->
+  <bean id="userDetailsConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+        p:connectionConfig-ref="userDetailsConnectionConfig" />
+
+  <bean id="userDetailsConnectionPool" parent="baseConnectionPool"
+        p:connectionFactory-ref="userDetailsConnectionFactory" />
+
+  <bean id="userDetailsPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+        p:connectionPool-ref="userDetailsConnectionPool" />
+
+  <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService">
+    <!-- Source of LDAP connections for search operation. -->
+    <constructor-arg ref="userDetailsPooledLdapConnectionFactory" />
+
+    <!-- Component that performs the LDAP search operation for user data. -->
+    <constructor-arg>
+      <bean class="org.ldaptive.SearchExecutor"
+            p:baseDn="${ldap.userdetails.user.baseDn}"
+            p:searchFilter="${ldap.userdetails.user.searchFilter}"
+            p:returnAttributes-ref="userDetailsUserAttributes"
+          />
+    </constructor-arg>
+
+    <!-- Component that performs the LDAP search operation for role data. -->
+    <constructor-arg>
+      <bean class="org.ldaptive.SearchExecutor"
+            p:baseDn="${ldap.userdetails.role.baseDn}"
+            p:searchFilter="${ldap.userdetails.role.searchFilter}"
+            p:returnAttributes-ref="userDetailsRoleAttributes"
+          />
+    </constructor-arg>
+
+    <!-- LDAP attribute to be used for user details username. -->
+    <constructor-arg value="${ldap.userdetails.user.attribute}" />
+
+    <!-- LDAP attribute to be used as basis for granted authority role name. -->
+    <constructor-arg value="${ldap.userdetails.role.attribute}" />
+  </bean>
+
+  <util:list id="userDetailsUserAttributes">
+    <value>${ldap.userdetails.user.attribute}</value>
+  </util:list>
+
+  <util:list id="userDetailsRoleAttributes">
+    <value>${ldap.userdetails.role.attribute}</value>
+  </util:list>
 </beans>
