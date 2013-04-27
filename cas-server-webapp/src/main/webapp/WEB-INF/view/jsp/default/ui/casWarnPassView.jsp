@@ -50,6 +50,7 @@
   function redirectTo(URL) {
     window.location = URL ;
   }
-  setTimeout("redirectTo('${param.service}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}${ticketArg}')", 10000);
+  var timeout = ${redirectTimeout};
+  setTimeout("redirectTo('${param.service}${fn:indexOf(param.service, '?') eq -1 ? '?' : '&'}${ticketArg}')", timeout);
 
 </script>
