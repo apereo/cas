@@ -205,13 +205,13 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         final LdapPasswordPolicyResult ldapResult = getEnforcedPasswordPolicy(userId);
 
         if (ldapResult == null) {
-            log.debug("Ldap password policy cannot be established. Skipping all checks...");
+            log.debug("Ldap password policy cannot be established for [{}]. Skipping all checks...", userId);
             return PASSWORD_STATUS_PASS;
         }
 
         if (StringUtils.isBlank(ldapResult.getDateResult())) {
-            log.debug("Ldap password policy could not determine the date value for {}. Skipping all checks...",
-                    this.dateAttribute);
+            log.debug("Ldap password policy could not determine the date value for {}. Skipping all checks for [{}]...",
+                    this.dateAttribute, userId);
             return PASSWORD_STATUS_PASS;
         }
 
