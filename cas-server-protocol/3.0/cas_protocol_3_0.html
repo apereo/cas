@@ -230,7 +230,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h3 id="parameters-1"><a href="#parameters-1"><strong>2.3.1. parameters</strong></a></h3>
 <p>The following HTTP request parameter MAY be specified to /logout. It is case sensitive and SHOULD be handled by /logout.</p>
 <ul>
-<li><p>url [OPTIONAL] - if &quot;url&quot; is specified, the URL specified by &quot;url&quot; SHOULD be on the logout page with descriptive text. For example, &quot;The application you just logged out of has provided a link it would like you to follow. Please click here to access http://www.example.org&quot;. As a HTTP request parameter, the value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</p></li>
+<li><p>url [OPTIONAL] - if &quot;url&quot; is specified, the URL specified by &quot;url&quot; SHOULD be on the logout page with descriptive text. For example, &quot;The application you just logged out of has provided a link it would like you to follow. Please click here to access <code>http://www.example.org&quot;.</code> As a HTTP request parameter, the value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</p></li>
 <li><p>service [OPTIONAL, CAS 3.0] - if a &quot;service&quot; parameter is specified, the browser might be automatically redirected to the URL specified by &quot;service&quot; after the logout was performed by the CAS server. If redirection by the CAS Server is actually performed depends on the server configuration. As a HTTP request parameter, the &quot;service&quot; value MUST be URL-encoded as described in Section 2.2 of RFC 1738 [<a href="#4">4</a>].</p></li>
 </ul>
 <p><a name="head2.3.2"/></p>
