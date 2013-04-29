@@ -306,7 +306,7 @@ sensitive and SHOULD be handled by /logout.
 -   url \[OPTIONAL\] - if "url" is specified, the URL specified by "url" SHOULD be
     on the logout page with descriptive text. For example, "The application you
     just logged out of has provided a link it would like you to follow. Please
-    click here to access http://www.example.org".
+    click here to access `http://www.example.org".`
     As a HTTP request parameter, the value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
