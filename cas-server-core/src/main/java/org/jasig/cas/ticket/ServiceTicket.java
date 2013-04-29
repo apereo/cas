@@ -27,7 +27,6 @@ import org.jasig.cas.authentication.principal.Service;
  * use ticket.
  *
  * @author Scott Battaglia
-
  * @since 3.0
  */
 public interface ServiceTicket extends Ticket {
@@ -50,6 +49,11 @@ public interface ServiceTicket extends Ticket {
      */
     boolean isFromNewLogin();
 
+    /**
+     * Attempts to ensure that the service specified matches the service associated with the ticket.
+     * @param service The incoming service to match this service ticket against.
+     * @return true, if the match is successful.
+     */
     boolean isValidFor(Service service);
 
     /**

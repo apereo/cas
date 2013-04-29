@@ -122,7 +122,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
             (YEARS_FROM_1601_1970 * 365 + YEARS_FROM_1601_1970 / 4 - 3) * 24 * 60 * 60;
 
     /** The list of valid scope values. */
-    private static final int[] VALID_SCOPE_VALUES = new int[] { SearchControls.OBJECT_SCOPE,
+    private static final int[] VALID_SCOPE_VALUES = new int[] {SearchControls.OBJECT_SCOPE,
             SearchControls.ONELEVEL_SCOPE, SearchControls.SUBTREE_SCOPE };
 
     /** The filter path to the lookup value of the user. */
@@ -205,7 +205,13 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         final LdapPasswordPolicyResult ldapResult = getEnforcedPasswordPolicy(userId);
 
         if (ldapResult == null) {
-            log.debug("Skipping all password policy checks...");
+            log.debug("Ldap password policy cannot be established for [{}]. Skipping all checks...", userId);
+            return PASSWORD_STATUS_PASS;
+        }
+
+        if (StringUtils.isBlank(ldapResult.getDateResult())) {
+            log.debug("Ldap password policy could not determine the date value for {}. Skipping all checks for [{}]...",
+                    this.dateAttribute, userId);
             return PASSWORD_STATUS_PASS;
         }
 
@@ -482,16 +488,9 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
     }
 
     private LdapPasswordPolicyResult getEnforcedPasswordPolicy(final String userId) {
-        LdapPasswordPolicyResult ldapResult = null;
-
-        ldapResult  = getResultsFromLdap(userId);
-
+        final LdapPasswordPolicyResult ldapResult = getResultsFromLdap(userId);
         if (ldapResult == null) {
-            String msgToLog = "No entry was found for user " + userId + ". Verify your LPPE settings. ";
-            msgToLog += "If you are not using LPPE, set the 'enabled' property to false. ";
-            msgToLog += "Password policy enforcement is currently turned on but not configured.";
-
-            log.warn(msgToLog);
+            log.warn("Ldap password policy could not be established for user {}.", userId);
         }
         return ldapResult;
     }
