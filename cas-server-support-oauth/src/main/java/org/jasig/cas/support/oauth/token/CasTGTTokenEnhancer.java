@@ -2,7 +2,6 @@ package org.jasig.cas.support.oauth.token;
 
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -27,11 +26,16 @@ public class CasTGTTokenEnhancer implements TokenEnhancer {
 
     @NotNull
     private TicketRegistry casTicketRegistry;
+    
+    public CasTGTTokenEnhancer(TokenExpirationConfig tokenExpirationConfig, TicketRegistry casTicketRegistry) {
+        this.tokenExpirationConfig = tokenExpirationConfig;
+        this.casTicketRegistry = casTicketRegistry;
+    }
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         // Get the user from the authentication
-        String casUserName = ((SimplePrincipal) authentication.getPrincipal()).getId();
+        String casUserName = authentication.getName();
         
         DefaultOAuth2AccessToken returnAccessToken = null;
         
@@ -52,16 +56,4 @@ public class CasTGTTokenEnhancer implements TokenEnhancer {
         
         return returnAccessToken != null? returnAccessToken : accessToken;
     }
-    
-    /**
-     * @param tokenExpirationConfig the tokenExpirationConfig to set
-     */
-    public void setTokenExpirationConfig(TokenExpirationConfig tokenExpirationConfig) {
-        this.tokenExpirationConfig = tokenExpirationConfig;
-    }
-
-    public void setCasTicketRegistry(TicketRegistry casTicketRegistry) {
-        this.casTicketRegistry = casTicketRegistry;
-    }
-
 }

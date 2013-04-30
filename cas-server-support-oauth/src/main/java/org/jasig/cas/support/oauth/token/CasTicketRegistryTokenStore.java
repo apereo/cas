@@ -1,13 +1,13 @@
 package org.jasig.cas.support.oauth.token;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.codec.binary.Base64;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -16,14 +16,7 @@ import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class CasTicketRegistryTokenStore implements TokenStore {
-    
-    @NotNull
-    private ObjectMapper objectMapper;
     
     @NotNull
     private TicketRegistry ticketRegistry;
@@ -50,20 +43,23 @@ public class CasTicketRegistryTokenStore implements TokenStore {
     
     @Override
     public OAuth2AccessToken readAccessToken(String tokenValue) {
-        OAuth2AccessToken accessToken = null;
+        
         try {
-            accessToken = objectMapper.readValue(Base64.decodeBase64(tokenValue), OAuth2AccessToken.class);
-        } catch (JsonParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            TicketGrantingTicket ticket = ticketRegistry.getTicket(tokenValue, TicketGrantingTicket.class);
+            
+            if (ticket == null) {
+                throw new InvalidTicketException("Ticket not found in ticket registry");
+            }
+            
+            long remainingValidSeconds = 
+                    System.currentTimeMillis() - 
+                    ticket.getCreationTime() - 
+                    TimeUnit.SECONDS.toMillis(tokenExpirationConfig.getAccessTokenValiditySeconds());
+            
+            return new CasTGTOAuth2AccessToken(ticket, remainingValidSeconds);
+        } catch (InvalidTicketException e) {
+            return null;
         }
-        return accessToken;
     }
 
     /**
@@ -168,10 +164,6 @@ public class CasTicketRegistryTokenStore implements TokenStore {
     private OAuth2AccessToken createAccessTokenFromTGT(TicketGrantingTicket ticket) {
         return new CasTGTOAuth2AccessToken(ticket, 
                 tokenExpirationConfig.getAccessTokenValiditySeconds());
-    }
-
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
     }
 
     public void setTicketRegistry(TicketRegistry ticketRegistry) {
