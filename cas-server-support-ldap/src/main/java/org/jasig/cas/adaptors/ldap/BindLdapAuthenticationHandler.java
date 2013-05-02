@@ -78,8 +78,8 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
     private boolean allowMultipleAccounts;
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(
-            final UsernamePasswordCredentials credentials) throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
+            throws AuthenticationException {
 
         final List<String> cns = new ArrayList<String>();
 
@@ -88,21 +88,19 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         final String base = this.searchBase;
         final String transformedUsername = getPrincipalNameTransformer().transform(credentials.getUsername());
         final String filter = LdapUtils.getFilterWithValues(getFilter(), transformedUsername);
-        this.getLdapTemplate().search(
-                new SearchExecutor() {
+        this.getLdapTemplate().search(new SearchExecutor() {
 
-                    @Override
-                    public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
-                        return context.search(base, filter, searchControls);
-                    }
-                },
-                new NameClassPairCallbackHandler(){
+            @Override
+            public NamingEnumeration executeSearch(final DirContext context) throws NamingException {
+                return context.search(base, filter, searchControls);
+            }
+        }, new NameClassPairCallbackHandler() {
 
-                    @Override
-                    public void handleNameClassPair(final NameClassPair nameClassPair) {
-                        cns.add(nameClassPair.getNameInNamespace());
-                    }
-                });
+            @Override
+            public void handleNameClassPair(final NameClassPair nameClassPair) {
+                cns.add(nameClassPair.getNameInNamespace());
+            }
+        });
 
         if (cns.isEmpty()) {
             log.info("Search for {} returned 0 results.", filter);
@@ -118,8 +116,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
             String finalDn = composeCompleteDnToCheck(dn, credentials);
             try {
                 log.debug("Performing LDAP bind with credential: {}", dn);
-                test = this.getContextSource().getContext(
-                        finalDn,
+                test = this.getContextSource().getContext(finalDn,
                         getPasswordEncoder().encode(credentials.getPassword()));
 
                 if (test != null) {
@@ -139,8 +136,7 @@ public class BindLdapAuthenticationHandler extends AbstractLdapUsernamePasswordA
         return false;
     }
 
-    protected String composeCompleteDnToCheck(final String dn,
-            final UsernamePasswordCredentials credentials) {
+    protected String composeCompleteDnToCheck(final String dn, final UsernamePasswordCredentials credentials) {
         return dn;
     }
 
