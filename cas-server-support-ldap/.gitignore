@@ -1,5 +1,5 @@
 credentials.properties
 extraConfigContext.xml
 ldap*.properties
-principals.properties
+principals.json
 userdetails.properties

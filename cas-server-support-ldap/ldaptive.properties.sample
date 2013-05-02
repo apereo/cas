@@ -48,8 +48,8 @@ ldap.authn.searchFilter=uid={user}
 # Principal resolution properties
 #========================================
 ldap.resolver.baseDn=ou=people,dc=ldaptive,dc=org
-ldap.resolver.searchFilter=uid={user}
-ldap.resolver.userAttribute=uid
+ldap.resolver.searchFilter=uid={0}
+ldap.resolver.userNameAttribute=mail
 
 
 #========================================

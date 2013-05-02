@@ -61,6 +61,13 @@ public class RequiredConfigurationProfileValueSource implements ProfileValueSour
                         new FileSystemResource("credentials.properties")
                 });
         this.propertyResourceMap.put(
+                "resolverConfig",
+                new Resource[] {
+                        ldaptiveProperties,
+                        extraConfig,
+                        new FileSystemResource("principals.properties")
+                });
+        this.propertyResourceMap.put(
                 "monitorConfig",
                 new Resource[] {
                         ldaptiveProperties,
