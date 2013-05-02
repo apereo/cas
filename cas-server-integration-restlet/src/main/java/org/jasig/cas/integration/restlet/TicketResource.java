@@ -19,6 +19,7 @@
 package org.jasig.cas.integration.restlet;
 
 import java.security.Principal;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Credentials;
@@ -68,20 +70,28 @@ public class TicketResource extends ServerResource {
     public final void acceptRepresentation(final Representation entity)  {
         log.debug("Obtaining credentials...");
         final Credentials c = obtainCredentials();
+
+        Formatter fmt = null;
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
             final Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
             getResponse().setLocationRef(ticketReference);
-            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>"
-                        + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription()
-                        + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticketReference
-                        + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
-                        + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>",
-                        MediaType.TEXT_HTML);
+
+            fmt = new Formatter();
+            fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
+
+            fmt.format("%s %s", getResponse().getStatus().getCode(), getResponse().getStatus().getDescription());
+            fmt.format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference);
+            fmt.format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">");
+            fmt.format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
+
+            getResponse().setEntity(fmt.toString(), MediaType.TEXT_HTML);
         } catch (final TicketException e) {
             log.error(e.getMessage(), e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(fmt);
         }
     }
     /**
