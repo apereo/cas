@@ -148,6 +148,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="message" value="All testcase must use annotations (@Test) instead of extending junit.framework.TestCase"/>
   </module>
   <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Using the junit.framework package"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="junit.framework"/>
+    <property name="message" value="The package junit.framework is deprecated. Use org.junit instead."/>
+  </module>
+  <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Checking for logging level"/>
     <property name="severity" value="warning"/>
     <property name="format" value="log\.is\w+Enabled\("/>
