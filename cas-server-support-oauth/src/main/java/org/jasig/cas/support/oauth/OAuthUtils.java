@@ -50,8 +50,7 @@ public final class OAuthUtils {
      * @param status
      * @return a null view
      */
-    public static ModelAndView writeTextError(final HttpServletResponse response,
-            final String error, final int status) {
+    public static ModelAndView writeTextError(final HttpServletResponse response, final String error, final int status) {
         return OAuthUtils.writeText(response, "error=" + error, status);
     }
 
@@ -63,8 +62,7 @@ public final class OAuthUtils {
      * @param status
      * @return a null view
      */
-    public static ModelAndView writeText(final HttpServletResponse response,
-            final String text, final int status) {
+    public static ModelAndView writeText(final HttpServletResponse response, final String text, final int status) {
         PrintWriter printWriter;
         try {
             printWriter = response.getWriter();
