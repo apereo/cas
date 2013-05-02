@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(locations = {"/applicationContext-test.xml"})
 @ProfileValueSourceConfiguration(RequiredConfigurationProfileValueSource.class)
 @IfProfileValue(name = "resolverConfig", value = "true")
-public class LdaptivePersonAttributeDaoTest {
+public class LdaptivePersonAttributeDaoTests {
 
     @Autowired
     private LdaptivePersonAttributeDao attributeDao;
