@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-
 /**
  * Container for test properties used by LDAP resolver.
  *
@@ -47,14 +46,12 @@ public class ResolverTestConfig {
         this.existsCredential = existsCredential;
     }
 
-
     /**
      * @param existsPrincipal The existsPrincipal to set.
      */
     public void setExistsPrincipal(final String existsPrincipal) {
         this.existsPrincipal = existsPrincipal;
     }
-
 
     /**
      * @return Returns the existsPrincipal.
