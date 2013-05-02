@@ -39,7 +39,6 @@ import javax.validation.constraints.NotNull;
  *
  * @author Siegfried Puchbauer, SPP (http://www.spp.at)
  * @author Scott Battaglia
- *
  */
 public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
@@ -78,7 +77,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     }
 
     public RegisteredService update(final RegisteredServiceImpl registeredService) {
-        final DirContextAdapter ctx = lookupCtx(findDn(this.ldapServiceMapper.getSearchFilter(registeredService.getId()).encode()));
+        final DirContextAdapter ctx = lookupCtx(findDn(this.ldapServiceMapper.getSearchFilter(
+                        registeredService.getId()).encode()));
         if (ctx == null) {
             return null;
         }
@@ -102,7 +102,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     }
 
     protected String findDn(final String filter) {
-        final List results = this.ldapTemplate.search(this.serviceBaseDn, filter, SearchControls.SUBTREE_SCOPE, new String[0], new ContextMapper() {
+        final List results = this.ldapTemplate.search(this.serviceBaseDn, filter, SearchControls.SUBTREE_SCOPE,
+                new String[0], new ContextMapper() {
             public Object mapFromContext(final Object ctx) {
                 return ((DirContextAdapter) ctx).getNameInNamespace();
             }
@@ -131,7 +132,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @Override
     public List<RegisteredService> load() {
         try {
-            return this.ldapTemplate.search(this.serviceBaseDn, this.ldapServiceMapper.getLoadFilter().encode(), this.cachedSearchControls, this.ldapServiceMapper);
+            return this.ldapTemplate.search(this.serviceBaseDn, this.ldapServiceMapper.getLoadFilter().encode(),
+                    this.cachedSearchControls, this.ldapServiceMapper);
         } catch (final Exception e) {
             log.error("Exception while loading Registered Services from LDAP Directory...", e);
             return new ArrayList<RegisteredService>();
@@ -140,7 +142,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return (RegisteredService) this.ldapTemplate.lookup(findDn(this.ldapServiceMapper.getSearchFilter(id).encode()), this.ldapServiceMapper);
+        return (RegisteredService) this.ldapTemplate.lookup(findDn(this.ldapServiceMapper.getSearchFilter(id).encode()),
+                this.ldapServiceMapper);
     }
 
     public void setServiceBaseDN(final String serviceBaseDN) {
