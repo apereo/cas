@@ -39,8 +39,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0
  */
-public final class LegacyPasswordHandlerAdaptorAuthenticationHandler implements
-    AuthenticationHandler {
+public final class LegacyPasswordHandlerAdaptorAuthenticationHandler implements AuthenticationHandler {
 
     @NotNull
     private PasswordHandler passwordHandler;
@@ -49,14 +48,12 @@ public final class LegacyPasswordHandlerAdaptorAuthenticationHandler implements
 
         final LegacyCasCredentials casCredentials = (LegacyCasCredentials) credentials;
 
-        return this.passwordHandler.authenticate(casCredentials
-            .getServletRequest(), casCredentials.getUsername(), casCredentials
-            .getPassword());
+        return this.passwordHandler.authenticate(casCredentials.getServletRequest(), casCredentials.getUsername(),
+                casCredentials.getPassword());
     }
 
     public boolean supports(final Credentials credentials) {
-        return credentials != null
-            && LegacyCasCredentials.class.equals(credentials.getClass());
+        return credentials != null && LegacyCasCredentials.class.equals(credentials.getClass());
     }
 
     /**
