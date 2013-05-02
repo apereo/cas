@@ -33,7 +33,8 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.1
  */
-public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractLdapPersonDirectoryCredentialsToPrincipalResolver {
+public final class CredentialsToLDAPAttributePrincipalResolver extends
+        AbstractLdapPersonDirectoryCredentialsToPrincipalResolver {
 
     /**
      * The CredentialsToPrincipalResolver that resolves the principal from the
@@ -123,7 +124,7 @@ public final class CredentialsToLDAPAttributePrincipalResolver extends AbstractL
      * @param credentialsToPrincipalResolver The credentialsToPrincipalResolver
      * to set.
      */
-    public final void setCredentialsToPrincipalResolver(
+    public void setCredentialsToPrincipalResolver(
             final CredentialsToPrincipalResolver credentialsToPrincipalResolver) {
         this.credentialsToPrincipalResolver = credentialsToPrincipalResolver;
     }
