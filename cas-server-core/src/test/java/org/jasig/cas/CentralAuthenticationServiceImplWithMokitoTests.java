@@ -113,7 +113,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
     }
 
     @Test(expected=UnauthorizedProxyingException.class)
-    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxy_CAS1019() throws TicketException {
+    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws TicketException {
         this.cas.grantServiceTicket("tgt-id", TestUtils.getService("test1"));
     }
 }
