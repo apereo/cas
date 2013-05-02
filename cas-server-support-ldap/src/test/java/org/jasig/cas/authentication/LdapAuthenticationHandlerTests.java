@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.Properties;
 
 import org.jasig.cas.RequiredConfigurationProfileValueSource;
@@ -59,22 +60,30 @@ public class LdapAuthenticationHandlerTests {
     public void testAuthenticate() throws Exception {
         String [] values;
         String password;
-        String expected;
+        String expectedPrincipal;
+        String expectedResult;
         for (String username : testCredentials.stringPropertyNames()) {
             values = testCredentials.get(username).toString().split("\\|");
-            password = values[0];
-            expected = values[1];
-            if (Boolean.TRUE.toString().equalsIgnoreCase(expected)) {
-                final HandlerResult result = this.handler.authenticate(newCredentials(username, password));
+            expectedPrincipal = values[0];
+            password = values[1];
+            expectedResult = values[2];
+            if (Boolean.TRUE.toString().equalsIgnoreCase(expectedResult)) {
+                final HandlerResult result;
+                try {
+                    result = this.handler.authenticate(newCredentials(username, password));
+                } catch (GeneralSecurityException e) {
+                    fail(username + " authentication should have succeeded but failed with error: " + e);
+                    continue;
+                }
                 assertEquals(this.handler.getName(), result.getHandlerName());
                 assertNotNull(result.getPrincipal());
-                assertEquals(username, result.getPrincipal().getId());
+                assertEquals(expectedPrincipal, result.getPrincipal().getId());
             } else {
                 try {
                     handler.authenticate(newCredentials(username, password));
-                    fail("Should have thrown " + expected);
+                    fail(username + " authentication succeeded but should have thrown " + expectedResult);
                 } catch (Exception e) {
-                    assertEquals(expected, e.getClass().getSimpleName());
+                    assertEquals(expectedResult, e.getClass().getSimpleName());
                 }
             }
         }
