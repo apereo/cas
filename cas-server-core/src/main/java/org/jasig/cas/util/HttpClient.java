@@ -65,8 +65,7 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     private static final Logger log = LoggerFactory.getLogger(HttpClient.class);
 
-    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
-
+    private static ExecutorService executorService = Executors.newFixedThreadPool(100);
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
@@ -99,11 +98,11 @@ public final class HttpClient implements Serializable, DisposableBean {
      * Note that changing this executor will affect all httpClients.  While not ideal, this change
      * was made because certain ticket registries
      * were persisting the HttpClient and thus getting serializable exceptions.
-     * @param executorService
+     * @param svc
      */
-    public void setExecutorService(final ExecutorService executorService) {
-        Assert.notNull(executorService);
-        EXECUTOR_SERVICE = executorService;
+    public void setExecutorService(@NotNull final ExecutorService svc) {
+        Assert.notNull(svc);
+        executorService = svc;
     }
 
     /**
@@ -118,7 +117,7 @@ public final class HttpClient implements Serializable, DisposableBean {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      */
     public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message,
+        final Future<Boolean> result = executorService.submit(new MessageSender(url, message,
                 this.readTimeout, this.connectionTimeout, this.followRedirects));
 
         if (async) {
@@ -174,16 +173,18 @@ public final class HttpClient implements Serializable, DisposableBean {
                 }
             }
 
-            log.debug("Response Code did not match any of the acceptable response codes. Code returned was {}", responseCode);
+            log.debug("Response Code did not match any of the acceptable response codes. Code returned was {}",
+                    responseCode);
 
             // if the response code is an error and we don't find that error acceptable above:
             if (responseCode == 500) {
                 is = connection.getInputStream();
                 final String value = IOUtils.toString(is);
-                log.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(), value);
+                log.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
+                        value);
             }
         } catch (final IOException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
         } finally {
             IOUtils.closeQuietly(is);
             if (connection != null) {
@@ -199,14 +200,22 @@ public final class HttpClient implements Serializable, DisposableBean {
      *
      * @param acceptableCodes an array of status code integers.
      */
-    public final void setAcceptableCodes(final int[] acceptableCodes) {
+    public void setAcceptableCodes(final int[] acceptableCodes) {
         this.acceptableCodes = acceptableCodes;
     }
 
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used when opening the endpoint url.
+     * @param connectionTimeout specified timeout value in milliseconds
+     */
     public void setConnectionTimeout(final int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
+    /**
+     * Sets a specified timeout value, in milliseconds, to be used when reading from the endpoint url.
+     * @param readTimeout specified timeout value in milliseconds
+     */
     public void setReadTimeout(final int readTimeout) {
         this.readTimeout = readTimeout;
     }
@@ -240,8 +249,11 @@ public final class HttpClient implements Serializable, DisposableBean {
         this.hostnameVerifier = verifier;
     }
 
+    /**
+     * Shutdown the executor service.
+     */
     public void destroy() throws Exception {
-        EXECUTOR_SERVICE.shutdown();
+        executorService.shutdown();
     }
 
     private static final class MessageSender implements Callable<Boolean> {
