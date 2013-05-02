@@ -59,8 +59,8 @@ import static org.junit.Assert.*;
  * @since 3.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:ticketRegistry.xml")
-public final class EhCacheTicketRegistryTests  implements ApplicationContextAware {
+@ContextConfiguration(locations = "classpath:ticketRegistry.xml")
+public final class EhCacheTicketRegistryTests implements ApplicationContextAware {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 
@@ -84,6 +84,7 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     public static Authentication getAuthentication() {
         return new ImmutableAuthentication(new SimplePrincipal("test"));
     }
+
     /**
      * Method to add a TicketGrantingTicket to the ticket cache. This should add
      * the ticket and return. Failure upon any exception.
@@ -91,8 +92,7 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     @Test
     public void testAddTicketToCache() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                    getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -123,8 +123,7 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     @Test
     public void testGetExistingTicketWithProperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                    getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
         } catch (Exception e) {
@@ -136,8 +135,8 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     @Test
     public void testGetExistingTicketWithInproperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                    getAuthentication(), new NeverExpiresExpirationPolicy()));
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+                    new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
         } catch (ClassCastException e) {
             return;
@@ -168,8 +167,7 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     @Test
     public void testGetExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                    getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         } catch (Exception e) {
@@ -181,8 +179,8 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     @Test
     public void testDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                    getAuthentication(), new NeverExpiresExpirationPolicy()));
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+                    new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -193,8 +191,8 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     @Test
     public void testDeleteNonExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                    getAuthentication(), new NeverExpiresExpirationPolicy()));
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
+                    new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -205,11 +203,9 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
     @Test
     public void testDeleteNullTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
-                    getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry
-                    .deleteTicket(null));
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");
@@ -232,11 +228,10 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
         final Collection<Ticket> tickets = new ArrayList<Ticket>();
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
-            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                    "TEST" + i, getAuthentication(),
-                    new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
-                    getService(), new NeverExpiresExpirationPolicy(), false);
+            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
+                    getAuthentication(), new NeverExpiresExpirationPolicy());
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, getService(),
+                    new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
@@ -245,9 +240,8 @@ public final class EhCacheTicketRegistryTests  implements ApplicationContextAwar
 
         try {
             Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
-            assertEquals(
-                    "The size of the registry is not the same as the collection.",
-                    ticketRegistryTickets.size(), tickets.size());
+            assertEquals("The size of the registry is not the same as the collection.", ticketRegistryTickets.size(),
+                    tickets.size());
 
             for (final Ticket ticket : tickets) {
                 if (!ticketRegistryTickets.contains(ticket)) {
