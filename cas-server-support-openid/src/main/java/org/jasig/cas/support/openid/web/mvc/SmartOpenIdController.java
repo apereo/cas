@@ -65,23 +65,26 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
         ParameterList parameters = new ParameterList(request.getParameterMap());
 
-        String mode = parameters.hasParameter("openid.mode") ?
-                parameters.getParameterValue("openid.mode") : null;
-                Message response = null;
-                if (mode != null && mode.equals("associate")) {
-                    response = serverManager.associationResponse(parameters);
-                }
-                final Map<String, String> responseParams = new HashMap<String, String>();
-                if (response != null) {
-                    responseParams.putAll(response.getParameterMap());
-                }
+        final String mode = parameters.hasParameter("openid.mode")
+                ? parameters.getParameterValue("openid.mode")
+                : null;
 
-                return responseParams;
+        Message response = null;
+        if (mode != null && mode.equals("associate")) {
+            response = serverManager.associationResponse(parameters);
+        }
+        final Map<String, String> responseParams = new HashMap<String, String>();
+        if (response != null) {
+            responseParams.putAll(response.getParameterMap());
+        }
+
+        return responseParams;
 
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
         final Map<String, String> parameters = new HashMap<String, String>();
         parameters.putAll(getAssociationResponse(request));
         return new ModelAndView(successView, "parameters", parameters);
