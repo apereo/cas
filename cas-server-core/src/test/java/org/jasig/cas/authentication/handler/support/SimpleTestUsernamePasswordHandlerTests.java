@@ -27,7 +27,6 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
  * Test of the simple username/password handler.
  *
@@ -41,33 +40,29 @@ public final class SimpleTestUsernamePasswordHandlerTests {
     @Before
     public void setUp() throws Exception {
         this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        this.authenticationHandler
-            .setPasswordEncoder(new PlainTextPasswordEncoder());
+        this.authenticationHandler.setPasswordEncoder(new PlainTextPasswordEncoder());
     }
 
     @Test
     public void testSupportsProperUserCredentials() {
-        assertTrue(this.authenticationHandler.supports(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void testDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(TestUtils
-            .getHttpBasedServiceCredentials()));
+        assertFalse(this.authenticationHandler.supports(TestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
     public void testValidUsernamePassword() throws AuthenticationException {
-        assertTrue(this.authenticationHandler.authenticate(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(this.authenticationHandler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void testInvalidUsernamePassword() {
         try {
             assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getCredentialsWithDifferentUsernameAndPassword()));
+                    .getCredentialsWithDifferentUsernameAndPassword()));
         } catch (final AuthenticationException ae) {
             ae.printStackTrace();
         }
@@ -77,7 +72,7 @@ public final class SimpleTestUsernamePasswordHandlerTests {
     public void testNullUsernamePassword() {
         try {
             assertFalse(this.authenticationHandler.authenticate(TestUtils
-                .getCredentialsWithSameUsernameAndPassword(null)));
+                    .getCredentialsWithSameUsernameAndPassword(null)));
         } catch (final AuthenticationException ae) {
             ae.printStackTrace();
         }

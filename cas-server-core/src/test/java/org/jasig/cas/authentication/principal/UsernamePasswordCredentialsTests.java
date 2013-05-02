@@ -27,7 +27,7 @@ import org.junit.Test;
  * @author Scott Battaglia
  * @since 3.0
  */
-public class UsernamePasswordCredentialsTests  {
+public class UsernamePasswordCredentialsTests {
 
     @Test
     public void testSetGetUsername() {
