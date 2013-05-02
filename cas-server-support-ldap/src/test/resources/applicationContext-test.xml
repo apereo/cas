@@ -48,19 +48,19 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
      +========================================================================
   -->
 
-  <import resource="file:extraConfigContext.xml" />
+  <import resource="extraConfigContext.xml" />
 
-  <context:property-placeholder location="file:ldaptive.properties"/>
+  <context:property-placeholder location="ldaptive.properties"/>
 
   <bean id="testCredentials" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
-      p:location="file:credentials.properties" />
+      p:location="credentials.properties" />
 
-  <bean id="testPrincipals" class="org.springframework.core.io.FileSystemResource">
+  <bean id="testPrincipals" class="org.springframework.core.io.ClassPathResource">
     <constructor-arg value="principals.json" />
   </bean>
 
   <bean id="testUserDetails" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
-        p:location="file:userdetails.properties" />
+        p:location="userdetails.properties" />
 
   <bean id="baseConnectionConfig" class="org.ldaptive.ConnectionConfig" abstract="true"
         p:ldapUrl="${ldap.url}"

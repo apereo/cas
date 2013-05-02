@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.annotation.ProfileValueSource;
 
@@ -51,21 +51,21 @@ public class RequiredConfigurationProfileValueSource implements ProfileValueSour
     private Map<String, Resource[]> propertyResourceMap = new HashMap<String, Resource[]>();
 
     public RequiredConfigurationProfileValueSource() {
-        final Resource ldaptiveProperties = new FileSystemResource("ldaptive.properties");
-        final Resource extraConfig = new FileSystemResource("extraConfigContext.xml");
+        final Resource ldaptiveProperties = new ClassPathResource("ldaptive.properties");
+        final Resource extraConfig = new ClassPathResource("extraConfigContext.xml");
         this.propertyResourceMap.put(
                 "authenticationConfig",
                 new Resource[] {
                         ldaptiveProperties,
                         extraConfig,
-                        new FileSystemResource("credentials.properties")
+                        new ClassPathResource("credentials.properties")
                 });
         this.propertyResourceMap.put(
                 "resolverConfig",
                 new Resource[] {
                         ldaptiveProperties,
                         extraConfig,
-                        new FileSystemResource("principals.properties")
+                        new ClassPathResource("principals.json")
                 });
         this.propertyResourceMap.put(
                 "monitorConfig",
@@ -78,7 +78,7 @@ public class RequiredConfigurationProfileValueSource implements ProfileValueSour
                 new Resource[] {
                         ldaptiveProperties,
                         extraConfig,
-                        new FileSystemResource("userdetails.properties")
+                        new ClassPathResource("userdetails.properties")
                 });
     }
 
