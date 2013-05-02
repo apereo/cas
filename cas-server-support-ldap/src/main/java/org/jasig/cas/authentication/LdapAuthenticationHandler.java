@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.principal.Credentials;
@@ -73,9 +74,14 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     /** Name of attribute to be used for resolved principal. */
     private String principalIdAttribute;
 
+    /** Flag indicating whether multiple values are allowed fo principalIdAttribute. */
+    private boolean allowMultiplePrincipalAttributeValues = false;
+
     /** Mapping of LDAP attribute name to principal attribute name. */
     @NotNull
     private Map<String, String> principalAttributeMap = Collections.emptyMap();
+
+
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes;
@@ -111,6 +117,18 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
     }
 
     /**
+     * Sets a flag that determines whether multiple values are allowed for the {@link #principalIdAttribute}.
+     * This flag only has an effect if {@link #principalIdAttribute} is configured. If multiple values are detected
+     * when the flag is false, the first value is used and a warning is logged. If multiple values are detected
+     * when the flag is true, an exception is raised.
+     *
+     * @param allowed True to allow multiple principal ID attribute values, false otherwise.
+     */
+    public void setAllowMultiplePrincipalAttributeValues(final boolean allowed) {
+        this.allowMultiplePrincipalAttributeValues = allowed;
+    }
+
+    /**
      * Sets the mapping of additional principal attributes where the key is the LDAP attribute
      * name and the value is the principal attribute name. The key set defines the set of
      * attributes read from the LDAP entry at authentication time. Note that the principal ID attribute
@@ -132,8 +150,7 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
             attributes.add(this.principalIdAttribute);
         }
         attributes.addAll(this.principalAttributeMap.keySet());
-        this.authenticatedEntryAttributes = new String[attributes.size()];
-        this.authenticatedEntryAttributes = attributes.toArray(this.authenticatedEntryAttributes);
+        this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
     }
 
     @Override
@@ -176,15 +193,22 @@ public class LdapAuthenticationHandler implements AuthenticationHandler {
      * Creates a CAS principal with attributes if the LDAP entry contains principal attributes.
      *
      * @param ldapEntry LDAP entry that may contain principal attributes.
+     *
      * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.
+     *
+     * @throws LoginException On security policy errors related to principal creation.
      */
-    private Principal createPrincipal(final LdapEntry ldapEntry) {
+    private Principal createPrincipal(final LdapEntry ldapEntry) throws LoginException {
         final LdapAttribute principalAttr = ldapEntry.getAttribute(this.principalIdAttribute);
         if (principalAttr == null || principalAttr.size() == 0) {
             return null;
         }
         if (principalAttr.size() > 1) {
-            log.warn("Found multiple values for principal ID attribute: {}.  Using first value.", principalAttr);
+            if (this.allowMultiplePrincipalAttributeValues) {
+                log.warn("Found multiple values for principal ID attribute: {}.  Using first value.", principalAttr);
+            } else {
+                throw new LoginException("Multiple principal values not allowed: " + principalAttr);
+            }
         }
         final Map<String, Object> attributeMap = new LinkedHashMap<String, Object>(this.principalAttributeMap.size());
         for (String ldapAttrName : this.principalAttributeMap.keySet()) {
