@@ -116,6 +116,8 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   </module>
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java, xml, properties, txt"/>
+    <property name="lineSeparator" value="lf" />
+    <property name="severity" value="error" />
   </module>
   <module name="Translation"/>
   <module name="FileLength"/>

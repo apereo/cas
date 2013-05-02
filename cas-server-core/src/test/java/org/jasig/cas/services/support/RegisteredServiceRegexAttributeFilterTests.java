@@ -21,7 +21,6 @@ package org.jasig.cas.services.support;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,23 +48,23 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     public RegisteredServiceRegexAttributeFilterTests() {
 
-       this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
+        this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
-       this.givenAttributesMap = new HashMap<String, Object>();
-       this.givenAttributesMap.put("uid", "loggedInTestUid");
-       this.givenAttributesMap.put("phone", "1290");
-       this.givenAttributesMap.put("familyName", "Smith");
-       this.givenAttributesMap.put("givenName", "John");
-       this.givenAttributesMap.put("employeeId", "E1234");
-       this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
-       this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
-       this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
+        this.givenAttributesMap = new HashMap<String, Object>();
+        this.givenAttributesMap.put("uid", "loggedInTestUid");
+        this.givenAttributesMap.put("phone", "1290");
+        this.givenAttributesMap.put("familyName", "Smith");
+        this.givenAttributesMap.put("givenName", "John");
+        this.givenAttributesMap.put("employeeId", "E1234");
+        this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
+        this.givenAttributesMap.put("arrayAttribute", new String[] { "math", "science", "chemistry" });
+        this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
 
-       final Map<String,String> mapAttributes = new HashMap<String,String>();
-       mapAttributes.put("uid", "loggedInTestUid");
-       mapAttributes.put("phone", "890");
-       mapAttributes.put("familyName", "Smith");
-       this.givenAttributesMap.put("mapAttribute", mapAttributes);
+        final Map<String, String> mapAttributes = new HashMap<String, String>();
+        mapAttributes.put("uid", "loggedInTestUid");
+        mapAttributes.put("phone", "890");
+        mapAttributes.put("familyName", "Smith");
+        this.givenAttributesMap.put("mapAttribute", mapAttributes);
     }
 
     @Before
@@ -100,12 +99,12 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
 
-        final Map<String, String> mapAttributes = (Map<String, String>)attrs.get("mapAttribute");
+        final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
         assertTrue(mapAttributes.containsKey("uid"));
         assertTrue(mapAttributes.containsKey("familyName"));
         assertFalse(mapAttributes.containsKey("phone"));
 
-        final String[] arrayAttrs = (String[])attrs.get("memberOf");
+        final String[] arrayAttrs = (String[]) attrs.get("memberOf");
         assertEquals(arrayAttrs.length, 2);
     }
 }
