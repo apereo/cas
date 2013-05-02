@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrew Petro
  * @since 3.0.5
  */
-public final class PrincipalBearingCredentialsAuthenticationHandler implements
-        AuthenticationHandler {
+public final class PrincipalBearingCredentialsAuthenticationHandler implements AuthenticationHandler {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
