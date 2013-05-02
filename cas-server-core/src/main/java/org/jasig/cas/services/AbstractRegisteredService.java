@@ -54,14 +54,10 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(
-        name = "expression_type",
-        length = 15,
-        discriminatorType = DiscriminatorType.STRING,
-        columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
+@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegisteredServiceImpl")
-public abstract class AbstractRegisteredService
-        implements RegisteredService, Comparable<RegisteredService>, Serializable {
+public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService>,
+        Serializable {
 
     private static final long serialVersionUID = 7645279151115635245L;
 
@@ -163,7 +159,7 @@ public abstract class AbstractRegisteredService
             return false;
         }
 
-        if (this == o)  {
+        if (this == o) {
             return true;
         }
 
@@ -173,36 +169,20 @@ public abstract class AbstractRegisteredService
 
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
 
-        return new EqualsBuilder()
-                  .append(this.allowedToProxy, that.allowedToProxy)
-                  .append(this.anonymousAccess, that.anonymousAccess)
-                  .append(this.enabled, that.enabled)
-                  .append(this.evaluationOrder, that.evaluationOrder)
-                  .append(this.ignoreAttributes, that.ignoreAttributes)
-                  .append(this.ssoEnabled, that.ssoEnabled)
-                  .append(this.allowedAttributes, that.allowedAttributes)
-                  .append(this.description, that.description)
-                  .append(this.name, that.name)
-                  .append(this.serviceId, that.serviceId)
-                  .append(this.theme, that.theme)
-                  .append(this.usernameAttribute, that.usernameAttribute)
-                  .isEquals();
+        return new EqualsBuilder().append(this.allowedToProxy, that.allowedToProxy)
+                .append(this.anonymousAccess, that.anonymousAccess).append(this.enabled, that.enabled)
+                .append(this.evaluationOrder, that.evaluationOrder)
+                .append(this.ignoreAttributes, that.ignoreAttributes).append(this.ssoEnabled, that.ssoEnabled)
+                .append(this.allowedAttributes, that.allowedAttributes).append(this.description, that.description)
+                .append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme)
+                .append(this.usernameAttribute, that.usernameAttribute).isEquals();
     }
 
     public int hashCode() {
-        return new HashCodeBuilder(7, 31)
-                  .append(this.allowedAttributes)
-                  .append(this.description)
-                  .append(this.serviceId)
-                  .append(this.name)
-                  .append(this.theme)
-                  .append(this.enabled)
-                  .append(this.ssoEnabled)
-                  .append(this.anonymousAccess)
-                  .append(this.ignoreAttributes)
-                  .append(this.evaluationOrder)
-                  .append(this.usernameAttribute)
-                  .toHashCode();
+        return new HashCodeBuilder(7, 31).append(this.allowedAttributes).append(this.description)
+                .append(this.serviceId).append(this.name).append(this.theme).append(this.enabled)
+                .append(this.ssoEnabled).append(this.anonymousAccess).append(this.ignoreAttributes)
+                .append(this.evaluationOrder).append(this.usernameAttribute).toHashCode();
     }
 
     public void setAllowedAttributes(final List<String> allowedAttributes) {
@@ -277,9 +257,9 @@ public abstract class AbstractRegisteredService
      */
     public void setUsernameAttribute(final String username) {
         if (StringUtils.isBlank(username)) {
-          this.usernameAttribute = null;
+            this.usernameAttribute = null;
         } else {
-          this.usernameAttribute = username;
+            this.usernameAttribute = username;
         }
     }
 
@@ -317,11 +297,9 @@ public abstract class AbstractRegisteredService
      * @see #getEvaluationOrder()
      */
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder()
-                  .append(this.getEvaluationOrder(), other.getEvaluationOrder())
-                  .append(this.getName().toLowerCase(), other.getName().toLowerCase())
-                  .append(this.getServiceId(), other.getServiceId())
-                  .toComparison();
+        return new CompareToBuilder().append(this.getEvaluationOrder(), other.getEvaluationOrder())
+                .append(this.getName().toLowerCase(), other.getName().toLowerCase())
+                .append(this.getServiceId(), other.getServiceId()).toComparison();
     }
 
     public String toString() {
