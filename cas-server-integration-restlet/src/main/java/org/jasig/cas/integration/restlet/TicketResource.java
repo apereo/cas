@@ -71,11 +71,16 @@ public class TicketResource extends ServerResource {
         try {
             final String ticketGrantingTicketId = this.centralAuthenticationService.createTicketGrantingTicket(c);
             getResponse().setStatus(determineStatus());
-            final Reference ticket_ref = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
-            getResponse().setLocationRef(ticket_ref);
-            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>" + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription() + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticket_ref + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input type=\"submit\" value=\"Submit\"></form></body></html>", MediaType.TEXT_HTML);
+            final Reference ticketReference = getRequest().getResourceRef().addSegment(ticketGrantingTicketId);
+            getResponse().setLocationRef(ticketReference);
+            getResponse().setEntity("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>"
+                        + getResponse().getStatus().getCode() + " " + getResponse().getStatus().getDescription()
+                        + "</title></head><body><h1>TGT Created</h1><form action=\"" + ticketReference
+                        + "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
+                        + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>",
+                        MediaType.TEXT_HTML);
         } catch (final TicketException e) {
-            log.error(e.getMessage(),e);
+            log.error(e.getMessage(), e);
             getResponse().setStatus(Status.CLIENT_ERROR_BAD_REQUEST, e.getMessage());
         }
     }
@@ -160,7 +165,7 @@ public class TicketResource extends ServerResource {
 
         @Override
         public Map<String, String[]> getParameterMap() {
-            final Map<String, String[]> conversion = new HashMap<String,String[]>();
+            final Map<String, String[]> conversion = new HashMap<String, String[]>();
 
             for (final Map.Entry<String, String> entry : this.form.getValuesMap().entrySet()) {
                 conversion.put(entry.getKey(), new String[] {entry.getValue()});
