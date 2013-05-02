@@ -41,6 +41,9 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
   <bean id="authnConnectionConfig" parent="baseConnectionConfig"
         p:sslConfig-ref="yourSslConfig" />
 
+  <bean id="resolverConnectionConfig" parent="baseConnectionConfig"
+        p:sslConfig-ref="yourSslConfig" />
+
   <bean id="ldapAuthenticationHandler"
         class="org.jasig.cas.authentication.LdapAuthenticationHandler"
         p:principalIdAttribute="uid">

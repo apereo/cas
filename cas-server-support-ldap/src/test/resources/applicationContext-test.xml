@@ -39,7 +39,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
      |     that sets principalIdAttribute.
      |  2. Bean named "authnConnectionConfig" that defines additional configuration
      |     needed for authentication. A common case is setting up a custom trust store.
-     |  3. Bean named "userDetailsConnectionConfig" that defines additional configuration
+     |  3. Bean named "resolverConnectionConfig" that defines additional configuration
+     |     needed for principal resolution. A common case is setting up a custom trust store.
+     |  4. Bean named "resultAttributeMapping" of type Map that maps LDAP attribute names onto principal attribute
+     |     names for principal resolver components.
+     |  5. Bean named "userDetailsConnectionConfig" that defines additional configuration
      |     needed for user details searches. A common case is setting up a custom trust store.
      +========================================================================
   -->
@@ -51,8 +55,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="testCredentials" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
       p:location="file:credentials.properties" />
 
-  <bean id="testPrincipals" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
-        p:location="file:principals.properties" />
+  <bean id="testPrincipals" class="org.springframework.core.io.FileSystemResource">
+    <constructor-arg value="principals.json" />
+  </bean>
 
   <bean id="testUserDetails" class="org.springframework.beans.factory.config.PropertiesFactoryBean"
         p:location="file:userdetails.properties" />
@@ -112,6 +117,36 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
       <bean class="org.ldaptive.auth.PooledBindAuthenticationHandler"
             p:connectionFactory-ref="authnPooledLdapConnectionFactory" />
     </constructor-arg>
+  </bean>
+
+
+  <!--
+     +========================================================================
+     | LDAP credential to principal resolver beans
+     +========================================================================
+  -->
+  <bean id="resolverConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+        p:connectionConfig-ref="resolverConnectionConfig" />
+
+  <bean id="resolverConnectionPool" parent="baseConnectionPool"
+        p:connectionFactory-ref="resolverConnectionFactory" />
+
+  <bean id="resolverPooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+        p:connectionPool-ref="resolverConnectionPool" />
+
+  <bean id="attributeRepository"
+        class="org.jasig.cas.persondir.LdaptivePersonAttributeDao"
+        p:baseDN="${ldap.resolver.baseDn}"
+        p:searchFilter="${ldap.resolver.searchFilter}"
+        p:connectionFactory-ref="resolverPooledLdapConnectionFactory"
+        p:unmappedUsernameAttribute="${ldap.resolver.userNameAttribute}"
+        p:resultAttributeMapping-ref="resultAttributeMapping">
+    <property name="searchControls">
+      <bean class="javax.naming.directory.SearchControls"
+            p:countLimit="5"
+            p:timeLimit="5000"
+            p:searchScope="2" />
+    </property>
   </bean>
 
 
