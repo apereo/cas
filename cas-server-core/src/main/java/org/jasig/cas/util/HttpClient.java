@@ -65,7 +65,7 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     private static final Logger log = LoggerFactory.getLogger(HttpClient.class);
 
-    private static ExecutorService executorService = Executors.newFixedThreadPool(100);
+    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(100);
 
     /** List of HTTP status codes considered valid by this AuthenticationHandler. */
     @NotNull
@@ -98,11 +98,11 @@ public final class HttpClient implements Serializable, DisposableBean {
      * Note that changing this executor will affect all httpClients.  While not ideal, this change
      * was made because certain ticket registries
      * were persisting the HttpClient and thus getting serializable exceptions.
-     * @param svc
+     * @param executorService The executor service to send messages to end points.
      */
-    public void setExecutorService(@NotNull final ExecutorService svc) {
-        Assert.notNull(svc);
-        executorService = svc;
+    public void setExecutorService(@NotNull final ExecutorService executorService) {
+        Assert.notNull(executorService);
+        EXECUTOR_SERVICE = executorService;
     }
 
     /**
@@ -117,7 +117,7 @@ public final class HttpClient implements Serializable, DisposableBean {
      * @return boolean if the message was sent, or async was used.  false if the message failed.
      */
     public boolean sendMessageToEndPoint(final String url, final String message, final boolean async) {
-        final Future<Boolean> result = executorService.submit(new MessageSender(url, message,
+        final Future<Boolean> result = EXECUTOR_SERVICE.submit(new MessageSender(url, message,
                 this.readTimeout, this.connectionTimeout, this.followRedirects));
 
         if (async) {
@@ -253,7 +253,7 @@ public final class HttpClient implements Serializable, DisposableBean {
      * Shutdown the executor service.
      */
     public void destroy() throws Exception {
-        executorService.shutdown();
+        EXECUTOR_SERVICE.shutdown();
     }
 
     private static final class MessageSender implements Callable<Boolean> {
