@@ -61,17 +61,16 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
         if (OAuthConstants.AUTHORIZE_URL.equals(method)) {
             return authorizeController.handleRequest(request, response);
         }
-
         // callback on authorize
-        else if (OAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
+        if (OAuthConstants.CALLBACK_AUTHORIZE_URL.equals(method)) {
             return callbackAuthorizeController.handleRequest(request, response);
         }
-        // get access token
-        else if (OAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
+        //get access token
+        if (OAuthConstants.ACCESS_TOKEN_URL.equals(method)) {
             return accessTokenController.handleRequest(request, response);
         }
         // get profile
-        else if (OAuthConstants.PROFILE_URL.equals(method)) {
+        if (OAuthConstants.PROFILE_URL.equals(method)) {
             return profileController.handleRequest(request, response);
         }
 
