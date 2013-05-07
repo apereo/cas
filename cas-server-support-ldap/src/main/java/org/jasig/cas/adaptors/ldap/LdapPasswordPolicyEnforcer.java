@@ -20,13 +20,16 @@ package org.jasig.cas.adaptors.ldap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.cas.authentication.AbstractPasswordPolicyEnforcer;
 import org.jasig.cas.authentication.LdapPasswordPolicyEnforcementException;
 import org.jasig.cas.util.LdapUtils;
@@ -45,6 +48,7 @@ import org.springframework.util.Assert;
  * Based on AccountStatusGetter by Bart Ophelders & Johan Peeters.
  *
  * @author Eric Pierce
+ * @author Misagh Moayyed
  */
 public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
 
@@ -389,7 +393,7 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
      * @param dateValue
      */
     private DateTime convertDateToActiveDirectoryFormat(final String dateValue) {
-        final long l = Long.parseLong(dateValue.trim());
+        final long l = NumberUtils.toLong(dateValue.trim());
 
         final long totalSecondsSince1601 = l / 10000000;
         final long totalSecondsSince1970 = totalSecondsSince1601 - TOTAL_SECONDS_FROM_1601_1970;
@@ -453,16 +457,17 @@ public class LdapPasswordPolicyEnforcer extends AbstractPasswordPolicyEnforcer {
         int daysToExpirationDate = d.getDays();
 
         if (expireDate.equals(currentTime) || expireDate.isBefore(currentTime)) {
-            String msgToLog = "Authentication failed because account password has expired with "
-                            + daysToExpirationDate + " to expiration date. ";
-            msgToLog += "Verify the value of the " + this.dateAttribute
-                    + " attribute and make sure it's not before the current date, which is "
-                    + currentTime.toString();
+            final Formatter fmt = new Formatter();
 
-            final LdapPasswordPolicyEnforcementException exc = new LdapPasswordPolicyEnforcementException(msgToLog);
+            fmt.format("Authentication failed because account password has expired with %s ", daysToExpirationDate)
+               .format("to expiration date. Verify the value of the %s attribute ", this.dateAttribute)
+               .format("and ensure it's not before the current date, which is %s", currentTime.toString());
 
-            log.error(msgToLog, exc);
+            final LdapPasswordPolicyEnforcementException exc =
+                    new LdapPasswordPolicyEnforcementException(fmt.toString());
 
+            log.error(fmt.toString(), exc);
+            IOUtils.closeQuietly(fmt);
             throw exc;
         }
 
