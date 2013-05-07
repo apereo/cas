@@ -31,8 +31,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 /**
- * This controller is the base controller for wrapping OAuth protocol in CAS. It finds the right sub controller to call according to the
- * url.
+ * This controller is the base controller for wrapping OAuth protocol in CAS.
+ * It finds the right sub controller to call according to the url.
  *
  * @author Jerome Leleu
  * @since 3.5.0
