@@ -65,32 +65,34 @@ public final class OAuth20AccessTokenController extends AbstractController {
             throws Exception {
 
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        log.debug("redirect_uri : {}", redirectUri);
+        log.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
+
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        log.debug("clientId : {}", clientId);
+        log.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
+
         final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
-        log.debug("clientSecret : {}", clientSecret);
+
         final String code = request.getParameter(OAuthConstants.CODE);
-        log.debug("code : {}", clientSecret);
+        log.debug("{} : {}", OAuthConstants.CODE, code);
 
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
-            log.error("missing clientId");
+            log.error("Missing {}", OAuthConstants.CLIENT_ID);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
-            log.error("missing redirectUri");
+            log.error("Missing {}", OAuthConstants.REDIRECT_URI);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         // clientSecret is required
         if (StringUtils.isBlank(clientSecret)) {
-            log.error("missing clientSecret");
+            log.error("Missing {}", OAuthConstants.CLIENT_SECRET);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
         // code is required
         if (StringUtils.isBlank(code)) {
-            log.error("missing code");
+            log.error("Missing {}", OAuthConstants.CODE);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
 
@@ -118,7 +120,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
         // description of the service should be the secret
         final String serviceDescription = service.getDescription();
         if (!StringUtils.equals(serviceDescription, clientSecret)) {
-            log.error("Wrong client secret : {} for service description : {}", clientSecret, serviceDescription);
+            log.error("Wrong client secret for service description : {}", serviceDescription);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
         }
 
