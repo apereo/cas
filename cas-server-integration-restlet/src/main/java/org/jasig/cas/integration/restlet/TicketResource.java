@@ -81,10 +81,10 @@ public class TicketResource extends ServerResource {
             fmt = new Formatter();
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
 
-            fmt.format("%s %s", getResponse().getStatus().getCode(), getResponse().getStatus().getDescription());
-            fmt.format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference);
-            fmt.format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">");
-            fmt.format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
+            fmt.format("%s %s", getResponse().getStatus().getCode(), getResponse().getStatus().getDescription())
+               .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference)
+               .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+               .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
 
             getResponse().setEntity(fmt.toString(), MediaType.TEXT_HTML);
         } catch (final TicketException e) {
