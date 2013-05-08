@@ -74,6 +74,7 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler implements A
      * @return true if the credentials provided are not null and the credentials
      * are a subclass of (or equal to) HttpBasedServiceCredentials.
      */
+    @Override
     public boolean supports(final Credentials credentials) {
         return credentials != null
             && HttpBasedServiceCredentials.class.isAssignableFrom(credentials

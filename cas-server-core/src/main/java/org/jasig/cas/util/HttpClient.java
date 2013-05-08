@@ -232,7 +232,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     /**
      * Set the SSL socket factory be used by the URL when submitting
      * request to check for URL endpoint validity.
-     * @param factory
+     * @param factory ssl socket factory instance to use
      * @see #isValidEndPoint(URL)
      */
     public void setSSLSocketFactory(final SSLSocketFactory factory) {
@@ -242,7 +242,7 @@ public final class HttpClient implements Serializable, DisposableBean {
     /**
      * Set the hostname verifier be used by the URL when submitting
      * request to check for URL endpoint validity.
-     * @param verifier
+     * @param verifier hostname verifier instance to use
      * @see #isValidEndPoint(URL)
      */
     public void setHostnameVerifier(final HostnameVerifier verifier) {
@@ -251,6 +251,7 @@ public final class HttpClient implements Serializable, DisposableBean {
 
     /**
      * Shutdown the executor service.
+     * @throws Exception if the executor cannot properly shut down
      */
     public void destroy() throws Exception {
         EXECUTOR_SERVICE.shutdown();
