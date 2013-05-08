@@ -38,7 +38,7 @@ public class UsernamePasswordCredentials implements Credentials {
 
     /** The username. */
     @NotNull
-    @Size(min=1,message = "required.username")
+    @Size(min=1, message = "required.username")
     private String username;
 
     /** The password. */

@@ -39,7 +39,7 @@ public final class Response {
         Pattern.compile("[\\x00-\\x19\\x7F]+");
 
     /** Log instance. */
-    protected static final Logger log = LoggerFactory.getLogger(Response.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Response.class);
 
     /** An enumeration of different response types. **/
     public static enum ResponseType {
@@ -128,7 +128,7 @@ public final class Response {
         }
         m.appendTail(sb);
         if (hasNonPrintable) {
-            log.warn("The following redirect URL has been sanitized and may be sign of attack:\n{}", url);
+            LOGGER.warn("The following redirect URL has been sanitized and may be sign of attack:\n{}", url);
         }
         return sb.toString();
     }

@@ -54,7 +54,8 @@ import javax.persistence.Transient;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
+@DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
+                     columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegisteredServiceImpl")
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService>,
         Serializable {

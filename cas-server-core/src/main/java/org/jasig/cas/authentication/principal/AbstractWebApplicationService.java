@@ -19,9 +19,11 @@
 package org.jasig.cas.authentication.principal;
 
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.SamlDateUtils;
@@ -38,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
-    protected static final Logger log = LoggerFactory.getLogger(AbstractWebApplicationService.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
 
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
 
@@ -150,16 +152,18 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
             return true;
         }
 
-        log.debug("Sending logout request for: {}", getId());
+        LOGGER.debug("Sending logout request for: {}", getId());
 
-        final String logoutRequest = "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""
-            + GENERATOR.getNewTicketId("LR")
-            + "\" Version=\"2.0\" IssueInstant=\"" + SamlDateUtils.getCurrentDateAndTime()
-            + "\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@</saml:NameID><samlp:SessionIndex>"
-            + sessionIdentifier + "</samlp:SessionIndex></samlp:LogoutRequest>";
+        final Formatter fmt = new Formatter();
+        fmt.format("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s", GENERATOR.getNewTicketId("LR"))
+           .format("\" Version=\"2.0\" IssueInstant=\"%s", SamlDateUtils.getCurrentDateAndTime())
+           .format("\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@</saml:NameID><samlp:SessionIndex>")
+           .format("%s</samlp:SessionIndex></samlp:LogoutRequest>", sessionIdentifier);
 
         this.loggedOutAlready = true;
+        final String logoutRequest = fmt.toString();
 
+        IOUtils.closeQuietly(fmt);
         if (this.httpClient != null) {
             return this.httpClient.sendMessageToEndPoint(getOriginalUrl(), logoutRequest, true);
         }
