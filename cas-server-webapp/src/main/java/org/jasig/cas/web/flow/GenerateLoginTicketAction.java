@@ -40,14 +40,14 @@ public class GenerateLoginTicketAction {
     private static final String PREFIX = "LT";
 
     /** Logger instance. */
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private UniqueTicketIdGenerator ticketIdGenerator;
 
     public final String generate(final RequestContext context) {
         final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
-        log.debug("Generated login ticket {}", loginTicket);
+        logger.debug("Generated login ticket {}", loginTicket);
         WebUtils.putLoginTicket(context, loginTicket);
         return "generated";
     }
