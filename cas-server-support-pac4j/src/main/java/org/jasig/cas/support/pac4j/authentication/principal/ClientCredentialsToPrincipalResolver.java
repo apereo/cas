@@ -38,7 +38,7 @@ public class ClientCredentialsToPrincipalResolver extends AbstractPersonDirector
     protected String extractPrincipalId(final Credentials credentials) {
         final ClientCredentials clientCredentials = (ClientCredentials) credentials;
         final String principalId = clientCredentials.getUserProfile().getTypedId();
-        log.debug("principalId : {}", principalId);
+        logger.debug("principalId : {}", principalId);
         return principalId;
     }
 
