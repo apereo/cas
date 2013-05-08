@@ -40,7 +40,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class ClearPassController extends AbstractController {
 
-    private static final Logger log = LoggerFactory.getLogger(ClearPassController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClearPassController.class);
 
     // view if clearpass request fails
     private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
@@ -72,7 +72,7 @@ public final class ClearPassController extends AbstractController {
             final HttpServletResponse response) throws Exception {
         final String userName = request.getRemoteUser();
 
-        log.debug("Handling clearPass request for user [{}]", userName);
+        LOGGER.debug("Handling clearPass request for user [{}]", userName);
 
         if (StringUtils.isBlank(userName)) {
             return returnError("No username was provided to clearPass.");
@@ -87,7 +87,7 @@ public final class ClearPassController extends AbstractController {
             return returnError("Password is null or blank");
         }
 
-        log.debug("Retrieved credentials will be provided to the requesting service.");
+        LOGGER.debug("Retrieved credentials will be provided to the requesting service.");
         return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
     }
 

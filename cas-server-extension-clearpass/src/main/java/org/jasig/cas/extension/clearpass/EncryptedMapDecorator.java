@@ -59,10 +59,10 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final String DEFAULT_ENCRYPTION_ALGORITHM = "AES";
 
-    private static final char[] HEX_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-            'e', 'f' };
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
+            'e', 'f'};
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
     private final Map<String, String> decoratedMap;
@@ -124,7 +124,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @param decoratedMap the map to decorate.  CANNOT be NULL.
      * @param hashAlgorithm the algorithm to use for hashing.  CANNOT BE NULL.
      * @param salt the salt, as a String. Gets converted to bytes.   CANNOT be NULL.
-     * @param encryptionAlgorithm the encryption algorithm. CANNOT BE NULL.
+     * @param secretKeyAlgorithm the encryption algorithm. CANNOT BE NULL.
      * @param secretKey the secret to use for the key.  Gets converted to bytes.  CANNOT be NULL.
      * @throws NoSuchAlgorithmException if the algorithm cannot be found.  Should not happen in this case.
      * @throws java.security.spec.InvalidKeySpecException if the key spec is not found.
@@ -249,7 +249,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         messageDigest.update(key.getBytes());
         final String hash = getFormattedText(messageDigest.digest());
 
-        log.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
+        logger.debug(String.format("Generated hash of value [%s] for key [%s].", hash, key));
         return hash;
     }
 
@@ -329,7 +329,8 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             try {
                 return MessageDigest.getInstance(algorithm);
             } catch (final NoSuchAlgorithmException e) {
-                throw new IllegalStateException("MessageDigest algorithm '" + algorithm + "' was supported when " + this.getClass().getSimpleName()
+                throw new IllegalStateException("MessageDigest algorithm '" + algorithm + "' was supported when "
+                        + this.getClass().getSimpleName()
                         + " was created but is not now. This should not be possible.", e);
             }
         }
@@ -338,10 +339,10 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             return (MessageDigest) this.messageDigest.clone();
         } catch (final CloneNotSupportedException e) {
             this.cloneNotSupported = true;
-            final String msg = String.format("Could not clone MessageDigest using algorithm '%s'. " +
-                        "MessageDigest.getInstance will be used from now on which will be much more expensive.",
+            final String msg = String.format("Could not clone MessageDigest using algorithm '%s'. "
+                        + "MessageDigest.getInstance will be used from now on which will be much more expensive.",
                         this.messageDigest.getAlgorithm());
-            log.warn(msg, e);
+            logger.warn(msg, e);
             return this.getMessageDigest();
         }
     }
