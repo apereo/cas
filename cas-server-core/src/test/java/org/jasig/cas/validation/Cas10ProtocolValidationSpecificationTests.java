@@ -55,23 +55,19 @@ public class Cas10ProtocolValidationSpecificationTests {
 
     @Test
     public void testSatisfiesSpecOfTrue() {
-        assertTrue(new Cas10ProtocolValidationSpecification(true)
-            .isSatisfiedBy(TestUtils.getAssertion(true)));
+        assertTrue(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
     public void testNotSatisfiesSpecOfTrue() {
-        assertFalse(new Cas10ProtocolValidationSpecification(true)
-            .isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertFalse(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
     public void testSatisfiesSpecOfFalse() {
-        assertTrue(new Cas10ProtocolValidationSpecification(false)
-            .isSatisfiedBy(TestUtils.getAssertion(true)));
+        assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
     public void testSatisfiesSpecOfFalse2() {
-        assertTrue(new Cas10ProtocolValidationSpecification(false)
-            .isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
 }

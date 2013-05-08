@@ -26,45 +26,45 @@ package org.jasig.cas.support.oauth;
  */
 public interface OAuthConstants {
 
-    public static final String REDIRECT_URI = "redirect_uri";
+    String REDIRECT_URI = "redirect_uri";
 
-    public static final String CLIENT_ID = "client_id";
+    String CLIENT_ID = "client_id";
 
-    public static final String CLIENT_SECRET = "client_secret";
+    String CLIENT_SECRET = "client_secret";
 
-    public static final String CODE = "code";
+    String CODE = "code";
 
-    public static final String SERVICE = "service";
+    String SERVICE = "service";
 
-    public static final String TICKET = "ticket";
+    String TICKET = "ticket";
 
-    public static final String STATE = "state";
+    String STATE = "state";
 
-    public static final String ACCESS_TOKEN = "access_token";
+    String ACCESS_TOKEN = "access_token";
 
-    public static final String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
+    String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
 
-    public static final String OAUTH20_SERVICE_NAME = "oauth20_service_name";
+    String OAUTH20_SERVICE_NAME = "oauth20_service_name";
 
-    public static final String OAUTH20_STATE = "oauth20_state";
+    String OAUTH20_STATE = "oauth20_state";
 
-    public static final String MISSING_ACCESS_TOKEN = "missing_accessToken";
+    String MISSING_ACCESS_TOKEN = "missing_accessToken";
 
-    public static final String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
+    String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
 
-    public static final String CONFIRM_VIEW = "oauthConfirmView";
+    String CONFIRM_VIEW = "oauthConfirmView";
 
-    public static final String ERROR_VIEW = "viewServiceErrorView";
+    String ERROR_VIEW = "viewServiceErrorView";
 
-    public static final String INVALID_REQUEST = "invalid_request";
+    String INVALID_REQUEST = "invalid_request";
 
-    public static final String INVALID_GRANT = "invalid_grant";
+    String INVALID_GRANT = "invalid_grant";
 
-    public static final String AUTHORIZE_URL = "authorize";
+    String AUTHORIZE_URL = "authorize";
 
-    public static final String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
+    String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
 
-    public static final String ACCESS_TOKEN_URL = "accessToken";
+    String ACCESS_TOKEN_URL = "accessToken";
 
-    public static final String PROFILE_URL = "profile";
+    String PROFILE_URL = "profile";
 }

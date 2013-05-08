@@ -30,17 +30,15 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @since 3.0.5
  */
 public final class PrincipalBearingCredentialsToPrincipalResolver extends
-            AbstractPersonDirectoryCredentialsToPrincipalResolver {
+        AbstractPersonDirectoryCredentialsToPrincipalResolver {
 
     @Override
     protected String extractPrincipalId(final Credentials credentials) {
-        return ((PrincipalBearingCredentials) credentials).getPrincipal()
-                .getId();
+        return ((PrincipalBearingCredentials) credentials).getPrincipal().getId();
     }
 
     @Override
     public boolean supports(final Credentials credentials) {
-        return credentials != null
-                && credentials.getClass().equals(PrincipalBearingCredentials.class);
+        return credentials != null && credentials.getClass().equals(PrincipalBearingCredentials.class);
     }
 }

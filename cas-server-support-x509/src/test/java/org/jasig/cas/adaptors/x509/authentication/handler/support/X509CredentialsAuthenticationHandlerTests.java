@@ -58,7 +58,6 @@ public class X509CredentialsAuthenticationHandlerTests {
     /** Expected result of authentication attempt. */
     private final boolean expectedAuthenticate;
 
-
     /**
      * Creates a new test class instance with the given parameters.
      *
@@ -67,11 +66,8 @@ public class X509CredentialsAuthenticationHandlerTests {
      * @param supports Expected result of supports test.
      * @param authenticationSuccess Expected result of authentication test.
      */
-    public X509CredentialsAuthenticationHandlerTests(
-            final X509CredentialsAuthenticationHandler handler,
-            final Credentials credentials,
-            final boolean supports,
-            final boolean authenticationSuccess) {
+    public X509CredentialsAuthenticationHandlerTests(final X509CredentialsAuthenticationHandler handler,
+            final Credentials credentials, final boolean supports, final boolean authenticationSuccess) {
 
         this.handler = handler;
         this.credentials = credentials;
@@ -96,69 +92,44 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Unsupported credentials type
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
-                handler,
-                new UsernamePasswordCredentials(),
-                false,
-                false,
-        });
+        params.add(new Object[] { handler, new UsernamePasswordCredentials(), false, false, });
 
         // Test case #2
         // Valid certificate
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-valid.crt")),
-                true,
-                true,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("user-valid.crt")), true,
+                true, });
 
         // Test case #3
         // Expired certificate
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-expired.crt")),
-                true,
-                false,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("user-expired.crt")),
+                true, false, });
 
         // Test case #4
         // Untrusted issuer
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US");
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("snake-oil.crt")),
-                true,
-                false,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("snake-oil.crt")), true,
+                false, });
 
         // Test case #5
         // Disallowed subject
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
         handler.setSubjectDnPattern("CN=\\w+,OU=CAS,O=Jasig,L=Westminster,ST=Colorado,C=US");
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("snake-oil.crt")),
-                true,
-                false,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("snake-oil.crt")), true,
+                false, });
 
         // Test case #6
         // Check key usage on a cert without keyUsage extension
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
         handler.setCheckKeyUsage(true);
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-valid.crt")),
-                true,
-                true,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("user-valid.crt")), true,
+                true, });
 
         // Test case #7
         // Require key usage on a cert without keyUsage extension
@@ -166,12 +137,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         handler.setCheckKeyUsage(true);
         handler.setRequireKeyUsage(true);
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-valid.crt")),
-                true,
-                false,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("user-valid.crt")), true,
+                false, });
 
         // Test case #8
         // Require key usage on a cert with acceptable keyUsage extension values
@@ -179,12 +146,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         handler.setCheckKeyUsage(true);
         handler.setRequireKeyUsage(true);
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-valid-keyUsage.crt")),
-                true,
-                true,
-        });
+        params.add(new Object[] { handler,
+                new X509CertificateCredentials(createCertificates("user-valid-keyUsage.crt")), true, true, });
 
         // Test case #9
         // Require key usage on a cert with unacceptable keyUsage extension values
@@ -192,12 +155,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         handler.setCheckKeyUsage(true);
         handler.setRequireKeyUsage(true);
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-invalid-keyUsage.crt")),
-                true,
-                false,
-        });
+        params.add(new Object[] { handler,
+                new X509CertificateCredentials(createCertificates("user-invalid-keyUsage.crt")), true, false, });
 
         //===================================
         // Revocation tests
@@ -211,12 +170,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         checker.afterPropertiesSet();
         handler.setRevocationChecker(checker);
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-valid.crt")),
-                true,
-                true,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("user-valid.crt")), true,
+                true, });
 
         // Test case #11
         // Revoked end user certificate
@@ -225,12 +180,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         checker.afterPropertiesSet();
         handler.setRevocationChecker(checker);
         handler.setTrustedIssuerDnPattern(".*");
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-revoked.crt")),
-                true,
-                false,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("user-revoked.crt")),
+                true, false, });
 
         // Test case #12
         // Valid certificate on expired CRL data
@@ -242,12 +193,8 @@ public class X509CredentialsAuthenticationHandlerTests {
         checker.setExpiredCRLPolicy(zeroThresholdPolicy);
         checker.afterPropertiesSet();
         handler.setRevocationChecker(checker);
-        params.add(new Object[] {
-                handler,
-                new X509CertificateCredentials(createCertificates("user-valid.crt")),
-                true,
-                false,
-        });
+        params.add(new Object[] { handler, new X509CertificateCredentials(createCertificates("user-valid.crt")), true,
+                false, });
 
         return params;
     }
@@ -275,14 +222,14 @@ public class X509CredentialsAuthenticationHandlerTests {
         Assert.assertEquals(this.expectedSupports, this.handler.supports(this.credentials));
     }
 
-    protected static X509Certificate[] createCertificates(final String ... files) {
+    protected static X509Certificate[] createCertificates(final String... files) {
         final X509Certificate[] certs = new X509Certificate[files.length];
 
         int i = 0;
         for (String file : files) {
             try {
-                certs[i++] = (X509Certificate) CryptReader.readCertificate(
-                        new ClassPathResource(file).getInputStream());
+                certs[i++] = (X509Certificate) CryptReader
+                        .readCertificate(new ClassPathResource(file).getInputStream());
             } catch (Exception e) {
                 throw new RuntimeException("Error creating certificate at " + file, e);
             }
