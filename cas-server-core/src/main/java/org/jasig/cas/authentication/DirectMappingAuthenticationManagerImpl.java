@@ -44,6 +44,7 @@ public final class DirectMappingAuthenticationManagerImpl extends AbstractAuthen
     private Map<Class< ? extends Credentials>, DirectAuthenticationHandlerMappingHolder> credentialsMapping;
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if a mapping cannot be found.
      * @see org.jasig.cas.authentication.AuthenticationManager#authenticate(org.jasig.cas.authentication.principal.Credentials)
      */
