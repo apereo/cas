@@ -82,7 +82,7 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
         setUpTest();
     }
 
-    private final void setUpTest() throws IOException {
+    private void setUpTest() throws IOException {
         this.properties.load(new ClassPathResource(PROPERTIES_FILE_NAME).getInputStream());
         getTestContext().setBaseUrl(this.properties.getProperty(SERVER_URL_PROPERTY));
     }

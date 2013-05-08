@@ -116,6 +116,8 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
   </module>
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java, xml, properties, txt"/>
+    <property name="lineSeparator" value="lf" />
+    <property name="severity" value="error" />
   </module>
   <module name="Translation"/>
   <module name="FileLength"/>
@@ -144,6 +146,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <property name="severity" value="error"/>
     <property name="format" value="class\s+\w+\s+extends\s+(junit\.framework\.)*TestCase"/>
     <property name="message" value="All testcase must use annotations (@Test) instead of extending junit.framework.TestCase"/>
+  </module>
+  <module name="RegexpSingleline">
+    <metadata name="net.sf.eclipsecs.core.comment" value="Using the junit.framework package"/>
+    <property name="severity" value="error"/>
+    <property name="format" value="junit.framework"/>
+    <property name="message" value="The package junit.framework belongs to JUnit v3. Use org.junit instead."/>
   </module>
   <module name="RegexpSingleline">
     <metadata name="net.sf.eclipsecs.core.comment" value="Checking for logging level"/>

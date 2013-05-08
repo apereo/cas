@@ -37,17 +37,17 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     private EntityManager entityManager;
 
     public boolean delete(final RegisteredService registeredService) {
-      if (this.entityManager.contains(registeredService)) {
-        this.entityManager.remove(registeredService);
-      } else {
-        this.entityManager.remove(this.entityManager.merge(registeredService));
-      }
-      return true;
+        if (this.entityManager.contains(registeredService)) {
+            this.entityManager.remove(registeredService);
+        } else {
+            this.entityManager.remove(this.entityManager.merge(registeredService));
+        }
+        return true;
     }
 
     public List<RegisteredService> load() {
-        return this.entityManager.createQuery("select r from AbstractRegisteredService r",
-                RegisteredService.class).getResultList();
+        return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class)
+                .getResultList();
     }
 
     public RegisteredService save(final RegisteredService registeredService) {
@@ -56,7 +56,7 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
         final RegisteredService r = this.entityManager.merge(registeredService);
 
         if (!isNew) {
-          this.entityManager.persist(r);
+            this.entityManager.persist(r);
         }
 
         return r;

@@ -35,19 +35,16 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
  * @author Dmitriy Kopylenko
  * @since 3.0
  */
-public class BindModeSearchDatabaseAuthenticationHandler extends
-AbstractJdbcUsernamePasswordAuthenticationHandler {
+public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     @Override
-    protected final boolean authenticateUsernamePasswordInternal(
-            final UsernamePasswordCredentials credentials)
-                    throws AuthenticationException {
+    protected final boolean authenticateUsernamePasswordInternal(final UsernamePasswordCredentials credentials)
+            throws AuthenticationException {
         final String username = credentials.getUsername();
         final String password = credentials.getPassword();
 
         try {
-            final Connection c = this.getDataSource()
-                    .getConnection(username, password);
+            final Connection c = this.getDataSource().getConnection(username, password);
             DataSourceUtils.releaseConnection(c, this.getDataSource());
             return true;
         } catch (final SQLException e) {

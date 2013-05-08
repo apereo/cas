@@ -32,25 +32,21 @@ public class SimpleServiceTests {
 
     @Test
     public void testProperId() {
-        assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils
-            .getService().getId());
+        assertEquals("Ids are not equal.", TestUtils.CONST_USERNAME, TestUtils.getService().getId());
     }
 
     @Test
     public void testEqualsWithNull() {
-        assertFalse("Service matches null.", TestUtils.getService()
-            .equals(null));
+        assertFalse("Service matches null.", TestUtils.getService().equals(null));
     }
 
     @Test
     public void testEqualsWithBadClass() {
-        assertFalse("Services matches String class.", TestUtils.getService()
-            .equals(new Object()));
+        assertFalse("Services matches String class.", TestUtils.getService().equals(new Object()));
     }
 
     @Test
     public void testEquals() {
-        assertTrue("Services are not equal.", TestUtils.getService().equals(
-            TestUtils.getService()));
+        assertTrue("Services are not equal.", TestUtils.getService().equals(TestUtils.getService()));
     }
 }

@@ -103,7 +103,7 @@ public final class SpnegoCredentials implements Credentials {
 
     @Override
     public String toString() {
-        return this.principal !=null ? this.principal.getId() : "unknown";
+        return this.principal != null ? this.principal.getId() : "unknown";
     }
 
     @Override
@@ -114,8 +114,7 @@ public final class SpnegoCredentials implements Credentials {
 
         final SpnegoCredentials c = (SpnegoCredentials) obj;
 
-        return Arrays.equals(this.initToken, c.getInitToken())
-                && this.principal.equals(c.getPrincipal())
+        return Arrays.equals(this.initToken, c.getInitToken()) && this.principal.equals(c.getPrincipal())
                 && Arrays.equals(this.nextToken, c.getNextToken());
     }
 

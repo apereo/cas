@@ -18,39 +18,38 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.TestUtils;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import org.jasig.cas.TestUtils;
+import org.junit.Test;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.0
  */
-public final class UsernamePasswordCredentialsToPrincipalResolverTests extends
-    TestCase {
+public final class UsernamePasswordCredentialsToPrincipalResolverTests {
 
     private CredentialsToPrincipalResolver resolver = new UsernamePasswordCredentialsToPrincipalResolver();
 
+    @Test
     public void testValidSupportsCredentials() {
-        assertTrue(this.resolver.supports(TestUtils
-            .getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(this.resolver.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
+    @Test
     public void testNullSupportsCredentials() {
         assertFalse(this.resolver.supports(null));
     }
 
+    @Test
     public void testInvalidSupportsCredentials() {
-        assertFalse(this.resolver.supports(TestUtils
-            .getHttpBasedServiceCredentials()));
+        assertFalse(this.resolver.supports(TestUtils.getHttpBasedServiceCredentials()));
     }
 
+    @Test
     public void testValidCredentials() {
-        Principal p = this.resolver.resolvePrincipal(TestUtils
-            .getCredentialsWithSameUsernameAndPassword());
+        Principal p = this.resolver.resolvePrincipal(TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        assertEquals(p.getId(), TestUtils
-            .getCredentialsWithSameUsernameAndPassword().getUsername());
+        assertEquals(p.getId(), TestUtils.getCredentialsWithSameUsernameAndPassword().getUsername());
     }
 }

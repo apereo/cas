@@ -20,10 +20,10 @@ package org.jasig.cas.ticket.registry.support.kryo.serial;
 
 import java.nio.ByteBuffer;
 
-import junit.framework.Assert;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;

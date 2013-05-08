@@ -18,8 +18,7 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

@@ -49,11 +49,10 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     @Before
     public void setUp() throws Exception {
-        this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(
-            NUMBER_OF_USES, TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        this.expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_SECONDS,
+                TimeUnit.SECONDS);
 
-        this.ticket = new TicketGrantingTicketImpl("test", TestUtils
-            .getAuthentication(), this.expirationPolicy);
+        this.ticket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), this.expirationPolicy);
 
     }
 
