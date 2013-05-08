@@ -170,6 +170,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if ticketGrantingTicketId or service are null.
      */
     @Audit(
@@ -281,6 +282,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the ServiceTicketId or the
      * Credentials are null.
      */
@@ -453,6 +455,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     }
 
     /**
+     * {@inheritDoc}
      * @throws IllegalArgumentException if the credentials are null.
      */
     @Audit(

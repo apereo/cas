@@ -119,6 +119,7 @@ public final class ManageRegisteredServicesMultiActionController extends MultiAc
      * was successful.
      * @throws IllegalArgumentException If either of the <code>id</code> or <code>evaluationOrder</code> are invalid
      * or if the service cannot be located for that id by the active implementation of the {@link ServicesManager}.
+     * @return a {@link ModelAndView} object back to the <code>jsonView</code>
      */
     public ModelAndView updateRegisteredServiceEvaluationOrder(final HttpServletRequest request, final HttpServletResponse response) {
         long id = Long.parseLong(request.getParameter("id"));
